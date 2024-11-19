@@ -53,6 +53,9 @@
                                 <a class="variable" href="#DatasetDescr.source">source</a>
                         </li>
                         <li>
+                                <a class="variable" href="#DatasetDescr.implemented_type">implemented_type</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#DatasetDescr.implemented_format_version">implemented_format_version</a>
                         </li>
                         <li>
@@ -111,7 +114,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.dataset    </h1>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Discriminator</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Discriminator</span><span class="p">,</span> <span class="n">Field</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">v0_2</span><span class="p">,</span> <span class="n">v0_3</span>
@@ -121,10 +124,15 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.dataset    </h1>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="n">DatasetDescr_v0_3</span> <span class="o">=</span> <span class="n">v0_3</span><span class="o">.</span><span class="n">DatasetDescr</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="n">AnyDatasetDescr</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">Union</span><span class="p">[</span><span class="n">DatasetDescr_v0_2</span><span class="p">,</span> <span class="n">DatasetDescr_v0_3</span><span class="p">],</span> <span class="n">Discriminator</span><span class="p">(</span><span class="s2">&quot;format_version&quot;</span><span class="p">)</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="p">]</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">&quot;&quot;&quot;Union of any released dataset desription&quot;&quot;&quot;</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="c1"># autogen: stop</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">Union</span><span class="p">[</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="n">DatasetDescr_v0_2</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;dataset 0.2&quot;</span><span class="p">)],</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="n">DatasetDescr_v0_3</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;dataset 0.3&quot;</span><span class="p">)],</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="p">],</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="n">Discriminator</span><span class="p">(</span><span class="s2">&quot;format_version&quot;</span><span class="p">),</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">),</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="p">]</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">&quot;&quot;&quot;Union of any released dataset desription&quot;&quot;&quot;</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="c1"># autogen: stop</span>
 </span></pre></div>
 
 
@@ -140,7 +148,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.dataset    </h1>
 
     </div>
     <a class="headerlink" href="#DatasetDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DatasetDescr-39"><a href="#DatasetDescr-39"><span class="linenos"> 39</span></a><span class="k">class</span> <span class="nc">DatasetDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;bioimage.io dataset specification&quot;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DatasetDescr-39"><a href="#DatasetDescr-39"><span class="linenos"> 39</span></a><span class="k">class</span> <span class="nc">DatasetDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">):</span>
 </span><span id="DatasetDescr-40"><a href="#DatasetDescr-40"><span class="linenos"> 40</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A bioimage.io dataset resource description file (dataset RDF) describes a dataset relevant to bioimage</span>
 </span><span id="DatasetDescr-41"><a href="#DatasetDescr-41"><span class="linenos"> 41</span></a><span class="sd">    processing.</span>
 </span><span id="DatasetDescr-42"><a href="#DatasetDescr-42"><span class="linenos"> 42</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -267,6 +275,18 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
 
 
                             </div>
+                            <div id="DatasetDescr.implemented_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">implemented_type</span><span class="annotation">: ClassVar[str]</span>        =
+<span class="default_value">&#39;dataset&#39;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#DatasetDescr.implemented_type"></a>
+    
+    
+
+                            </div>
                             <div id="DatasetDescr.implemented_format_version" class="classattr">
                                 <div class="attr variable">
             <span class="name">implemented_format_version</span><span class="annotation">: ClassVar[str]</span>        =
@@ -378,7 +398,7 @@ method.</p>
                     <div class="attr variable">
             <span class="name">AnyDatasetDescr</span>        =
 <input id="AnyDatasetDescr-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="AnyDatasetDescr-view-value"></label><span class="default_value">typing.Annotated[typing.Union[<a href="dataset/v0_2.html#DatasetDescr">bioimageio.spec.dataset.v0_2.DatasetDescr</a>, <a href="#DatasetDescr">DatasetDescr</a>], Discriminator(discriminator=&#39;format_version&#39;, custom_error_type=None, custom_error_message=None, custom_error_context=None)]</span>
+            <label class="view-value-button pdoc-button" for="AnyDatasetDescr-view-value"></label><span class="default_value">typing.Annotated[typing.Union[typing.Annotated[<a href="dataset/v0_2.html#DatasetDescr">bioimageio.spec.dataset.v0_2.DatasetDescr</a>, FieldInfo(annotation=NoneType, required=True, title=&#39;dataset 0.2&#39;)], typing.Annotated[<a href="#DatasetDescr">DatasetDescr</a>, FieldInfo(annotation=NoneType, required=True, title=&#39;dataset 0.3&#39;)]], Discriminator(discriminator=&#39;format_version&#39;, custom_error_type=None, custom_error_message=None, custom_error_context=None), FieldInfo(annotation=NoneType, required=True, title=&#39;dataset&#39;)]</span>
 
         
     </div>

@@ -1,4 +1,4 @@
-# bioimage.io application specification
+# 
 Bioimage.io description of an application.
 **General notes on this documentation:**
 | symbol | explanation |
@@ -124,7 +124,7 @@ file attachments
 ∈📦 file source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 ### `attachments.i.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -158,8 +158,8 @@ badge icon
 </summary>
 
 Union of
-- Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+- Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -206,8 +206,12 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 </summary>
 
-Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union of
+- Path (PathType(path_type='file'); Predicate(is_absolute); )
+- _internal.io.RelativeFilePath
+- _internal.url.HttpUrl
+
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -220,8 +224,12 @@ The recommended documentation file name is `README.md`. An `.md` suffix is manda
 
 </summary>
 
-Optional[Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))]
+Optional[Union of
+- Path (PathType(path_type='file'); Predicate(is_absolute); )
+- _internal.io.RelativeFilePath
+- _internal.url.HttpUrl
+
+(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -240,8 +248,8 @@ An icon for illustration, e.g. on bioimage.io
 
 Union of
 - str (Len(min_length=1, max_length=2))
-- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -257,7 +265,7 @@ assigned by bioimage.io; version **un**specific.
 UTF-8 emoji for display alongside the `id`.
 
 
-Optional[str (Len(min_length=1, max_length=2))]
+Optional[str (Len(min_length=1, max_length=2); )]
 
 ## `links`<sub> Sequence[str]</sub> ≝ `[]`
 IDs of other bioimage.io resources
@@ -320,8 +328,8 @@ URL or path to the source of the application
 
 </summary>
 
-Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))]
+Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 

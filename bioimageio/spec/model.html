@@ -104,6 +104,9 @@
                                 <a class="function" href="#ModelDescr.get_axis_sizes">get_axis_sizes</a>
                         </li>
                         <li>
+                                <a class="variable" href="#ModelDescr.implemented_type">implemented_type</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#ModelDescr.implemented_format_version">implemented_format_version</a>
                         </li>
                         <li>
@@ -162,7 +165,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.model    </h1>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Discriminator</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Discriminator</span><span class="p">,</span> <span class="n">Field</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">v0_4</span><span class="p">,</span> <span class="n">v0_5</span>
@@ -172,10 +175,15 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.model    </h1>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="n">ModelDescr_v0_5</span> <span class="o">=</span> <span class="n">v0_5</span><span class="o">.</span><span class="n">ModelDescr</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="n">AnyModelDescr</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">Union</span><span class="p">[</span><span class="n">ModelDescr_v0_4</span><span class="p">,</span> <span class="n">ModelDescr_v0_5</span><span class="p">],</span> <span class="n">Discriminator</span><span class="p">(</span><span class="s2">&quot;format_version&quot;</span><span class="p">)</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="p">]</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">&quot;&quot;&quot;Union of any released model desription&quot;&quot;&quot;</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="c1"># autogen: stop</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">Union</span><span class="p">[</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="n">ModelDescr_v0_4</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;model 0.4&quot;</span><span class="p">)],</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="n">ModelDescr_v0_5</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;model 0.5&quot;</span><span class="p">)],</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="p">],</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="n">Discriminator</span><span class="p">(</span><span class="s2">&quot;format_version&quot;</span><span class="p">),</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;model&quot;</span><span class="p">),</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="p">]</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">&quot;&quot;&quot;Union of any released model desription&quot;&quot;&quot;</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="c1"># autogen: stop</span>
 </span></pre></div>
 
 
@@ -191,7 +199,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.model    </h1>
 
     </div>
     <a class="headerlink" href="#ModelDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelDescr-2062"><a href="#ModelDescr-2062"><span class="linenos">2062</span></a><span class="k">class</span> <span class="nc">ModelDescr</span><span class="p">(</span><span class="n">GenericModelDescrBase</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;bioimage.io model specification&quot;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ModelDescr-2062"><a href="#ModelDescr-2062"><span class="linenos">2062</span></a><span class="k">class</span> <span class="nc">ModelDescr</span><span class="p">(</span><span class="n">GenericModelDescrBase</span><span class="p">):</span>
 </span><span id="ModelDescr-2063"><a href="#ModelDescr-2063"><span class="linenos">2063</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.</span>
 </span><span id="ModelDescr-2064"><a href="#ModelDescr-2064"><span class="linenos">2064</span></a><span class="sd">    These fields are typically stored in a YAML file which we call a model resource description file (model RDF).</span>
 </span><span id="ModelDescr-2065"><a href="#ModelDescr-2065"><span class="linenos">2065</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -864,7 +872,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
                             </div>
                             <div id="ModelDescr.documentation" class="classattr">
                                 <div class="attr variable">
-            <span class="name">documentation</span><span class="annotation">: Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function _validate_md_suffix at 0x7fd477947880&gt;), PlainSerializer(func=&lt;function _package at 0x7fd479ff8540&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
+            <span class="name">documentation</span><span class="annotation">: Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute), FieldInfo(annotation=NoneType, required=True, title=&#39;AbsoluteFilePath&#39;)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function _validate_md_suffix at 0x7fd3c304fe20&gt;), PlainSerializer(func=&lt;function _package at 0x7fd3c14dc7c0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
 
         
     </div>
@@ -893,7 +901,7 @@ with details on how to quantitatively validate the model on unseen data.</p>
                             </div>
                             <div id="ModelDescr.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_- ()&#39;), MinLen(min_length=5), MaxLen(max_length=128), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7fd46cb72020&gt;, severity=20, msg=&#39;Name longer than 64 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=64)]})]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_- ()&#39;), MinLen(min_length=5), MaxLen(max_length=128), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7fd3b5007420&gt;, severity=20, msg=&#39;Name longer than 64 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=64)]})]</span>
 
         
     </div>
@@ -949,7 +957,7 @@ Only required if those persons differ from the <code><a href="#ModelDescr.author
                             </div>
                             <div id="ModelDescr.run_mode" class="classattr">
                                 <div class="attr variable">
-            <span class="name">run_mode</span><span class="annotation">: Annotated[Optional[<a href="model/v0_4.html#RunMode">bioimageio.spec.model.v0_4.RunMode</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7fd46cb71760&gt;, severity=30, msg=&#34;Run mode &#39;{value}&#39; has limited support across consumer softwares.&#34;, context={&#39;typ&#39;: None})]</span>
+            <span class="name">run_mode</span><span class="annotation">: Annotated[Optional[<a href="model/v0_4.html#RunMode">bioimageio.spec.model.v0_4.RunMode</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7fd3b50072e0&gt;, severity=30, msg=&#34;Run mode &#39;{value}&#39; has limited support across consumer softwares.&#34;, context={&#39;typ&#39;: None})]</span>
 
         
     </div>
@@ -992,7 +1000,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
                             </div>
                             <div id="ModelDescr.weights" class="classattr">
                                 <div class="attr variable">
-            <span class="name">weights</span><span class="annotation">: Annotated[<a href="model/v0_5.html#WeightsDescr">bioimageio.spec.model.v0_5.WeightsDescr</a>, WrapSerializer(func=&lt;function package_weights at 0x7fd46e399ee0&gt;, return_type=PydanticUndefined, when_used=&#39;always&#39;)]</span>
+            <span class="name">weights</span><span class="annotation">: Annotated[<a href="model/v0_5.html#WeightsDescr">bioimageio.spec.model.v0_5.WeightsDescr</a>, WrapSerializer(func=&lt;function package_weights at 0x7fd3b57dfb00&gt;, return_type=PydanticUndefined, when_used=&#39;always&#39;)]</span>
 
         
     </div>
@@ -1362,6 +1370,18 @@ Or simply whenever you know the full input shape.</li>
 
 
                             </div>
+                            <div id="ModelDescr.implemented_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">implemented_type</span><span class="annotation">: ClassVar[str]</span>        =
+<span class="default_value">&#39;model&#39;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#ModelDescr.implemented_type"></a>
+    
+    
+
+                            </div>
                             <div id="ModelDescr.implemented_format_version" class="classattr">
                                 <div class="attr variable">
             <span class="name">implemented_format_version</span><span class="annotation">: ClassVar[str]</span>        =
@@ -1465,7 +1485,7 @@ method.</p>
                     <div class="attr variable">
             <span class="name">AnyModelDescr</span>        =
 <input id="AnyModelDescr-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="AnyModelDescr-view-value"></label><span class="default_value">typing.Annotated[typing.Union[<a href="model/v0_4.html#ModelDescr">bioimageio.spec.model.v0_4.ModelDescr</a>, <a href="#ModelDescr">ModelDescr</a>], Discriminator(discriminator=&#39;format_version&#39;, custom_error_type=None, custom_error_message=None, custom_error_context=None)]</span>
+            <label class="view-value-button pdoc-button" for="AnyModelDescr-view-value"></label><span class="default_value">typing.Annotated[typing.Union[typing.Annotated[<a href="model/v0_4.html#ModelDescr">bioimageio.spec.model.v0_4.ModelDescr</a>, FieldInfo(annotation=NoneType, required=True, title=&#39;model 0.4&#39;)], typing.Annotated[<a href="#ModelDescr">ModelDescr</a>, FieldInfo(annotation=NoneType, required=True, title=&#39;model 0.5&#39;)]], Discriminator(discriminator=&#39;format_version&#39;, custom_error_type=None, custom_error_message=None, custom_error_context=None), FieldInfo(annotation=NoneType, required=True, title=&#39;model&#39;)]</span>
 
         
     </div>

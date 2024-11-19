@@ -51,6 +51,9 @@
                                 <a class="variable" href="#DatasetDescr.source">source</a>
                         </li>
                         <li>
+                                <a class="variable" href="#DatasetDescr.implemented_type">implemented_type</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#DatasetDescr.implemented_format_version">implemented_format_version</a>
                         </li>
                         <li>
@@ -120,7 +123,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../dataset.
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="k">pass</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="k">class</span> <span class="nc">DatasetDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;bioimage.io dataset specification&quot;</span><span class="p">):</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="k">class</span> <span class="nc">DatasetDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">):</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A bioimage.io dataset resource description file (dataset RDF) describes a dataset relevant to bioimage</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">    processing.</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -197,7 +200,7 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#DatasetDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DatasetDescr-26"><a href="#DatasetDescr-26"><span class="linenos">26</span></a><span class="k">class</span> <span class="nc">DatasetDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;bioimage.io dataset specification&quot;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DatasetDescr-26"><a href="#DatasetDescr-26"><span class="linenos">26</span></a><span class="k">class</span> <span class="nc">DatasetDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">):</span>
 </span><span id="DatasetDescr-27"><a href="#DatasetDescr-27"><span class="linenos">27</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A bioimage.io dataset resource description file (dataset RDF) describes a dataset relevant to bioimage</span>
 </span><span id="DatasetDescr-28"><a href="#DatasetDescr-28"><span class="linenos">28</span></a><span class="sd">    processing.</span>
 </span><span id="DatasetDescr-29"><a href="#DatasetDescr-29"><span class="linenos">29</span></a><span class="sd">    &quot;&quot;&quot;</span>
@@ -254,6 +257,18 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
             <div class="docstring"><p>"URL to the source of the dataset.</p>
 </div>
 
+
+                            </div>
+                            <div id="DatasetDescr.implemented_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">implemented_type</span><span class="annotation">: ClassVar[str]</span>        =
+<span class="default_value">&#39;dataset&#39;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#DatasetDescr.implemented_type"></a>
+    
+    
 
                             </div>
                             <div id="DatasetDescr.implemented_format_version" class="classattr">

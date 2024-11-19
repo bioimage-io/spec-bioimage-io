@@ -1,4 +1,4 @@
-# bioimage.io model specification
+# 
 Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
 These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
 
@@ -107,7 +107,7 @@ with details on how to quantitatively validate the model on unseen data.
 [*Examples:*](#documentation) ['https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md', '…']
 
 
-Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
+Union[Path (PathType(path_type='file'); Predicate(is_absolute); ), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
 
 ## `inputs`<sub> Sequence</sub>
 Describes the input tensors expected by this model.
@@ -480,7 +480,7 @@ The file extension must be '.npy'.
 ∈📦 file source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `inputs.test_tensor.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -508,7 +508,7 @@ The image dimensionality has to match the number of axes specified in this tenso
 ∈📦 file source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `inputs.sample_tensor.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -1011,11 +1011,11 @@ free text description
 ### `outputs.axes`<sub> Sequence</sub>
 tensor axes
 
-<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fe9a0df65c0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fe9a0df65c0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fbf740e9260>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fbf740e9260>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fe9a0df65c0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fe9a0df65c0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fbf740e9260>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fbf740e9260>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BatchAxis:**
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `batch`
@@ -1495,7 +1495,7 @@ The file extension must be '.npy'.
 ∈📦 file source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `outputs.test_tensor.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -1523,7 +1523,7 @@ The image dimensionality has to match the number of axes specified in this tenso
 ∈📦 file source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `outputs.sample_tensor.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -2040,7 +2040,7 @@ The available weight formats determine which consumers can use this model.
 ∈📦 The weights file.
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `weights.keras_hdf5.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -2124,7 +2124,7 @@ TensorFlow version used to create these weights.
 ∈📦 The weights file.
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `weights.onnx.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -2208,7 +2208,7 @@ ONNX opset version
 ∈📦 The weights file.
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `weights.pytorch_state_dict.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -2285,7 +2285,7 @@ Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow
 ∈📦 file source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 ##### `weights.pytorch_state_dict.architecture.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -2348,7 +2348,7 @@ Allows to specify custom dependencies, see conda docs:
 [*Example:*](#weightspytorch_state_dictdependenciessource) 'environment.yaml'
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 ##### `weights.pytorch_state_dict.dependencies.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -2374,7 +2374,7 @@ Optional[_internal.io_basics.Sha256]
 All required files/folders should be a zip archive.
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `weights.tensorflow_js.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -2459,7 +2459,7 @@ Version of the TensorFlow library used.
 All required files/folders should be a zip archive.
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `weights.tensorflow_saved_model_bundle.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -2546,7 +2546,7 @@ Allows to specify custom dependencies, see conda docs:
 [*Example:*](#weightstensorflow_saved_model_bundledependenciessource) 'environment.yaml'
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 ##### `weights.tensorflow_saved_model_bundle.dependencies.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -2571,7 +2571,7 @@ Optional[_internal.io_basics.Sha256]
 ∈📦 The weights file.
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `weights.torchscript.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -2657,7 +2657,7 @@ file attachments
 ∈📦 file source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 ### `attachments.i.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -2698,8 +2698,12 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 </summary>
 
-Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union of
+- Path (PathType(path_type='file'); Predicate(is_absolute); )
+- _internal.io.RelativeFilePath
+- _internal.url.HttpUrl
+
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2718,8 +2722,8 @@ An icon for illustration, e.g. on bioimage.io
 
 Union of
 - str (Len(min_length=1, max_length=2))
-- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -2735,7 +2739,7 @@ assigned by bioimage.io; version **un**specific.
 UTF-8 emoji for display alongside the `id`.
 
 
-Optional[str (Len(min_length=1, max_length=2))]
+Optional[str (Len(min_length=1, max_length=2); )]
 
 ## `links`<sub> Sequence[str]</sub> ≝ `[]`
 IDs of other bioimage.io resources
@@ -2879,7 +2883,7 @@ Associated tags
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 11, 19, 8, 35, 46, 98479)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2024, 11, 19, 16, 7, 56, 110982)`
 Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
 with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
 (In Python a datetime object is valid, too).
@@ -2926,8 +2930,12 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 
 </summary>
 
-Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union of
+- Path (PathType(path_type='file'); Predicate(is_absolute); )
+- _internal.io.RelativeFilePath
+- _internal.url.HttpUrl
+
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2935,7 +2943,7 @@ Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _in
 UTF-8 emoji for display alongside the `id`.
 
 
-Optional[str (Len(min_length=1, max_length=2))]
+Optional[str (Len(min_length=1, max_length=2); )]
 
 ### `training_data.authors`<sub> Sequence[generic.v0_3.Author]</sub>
 The authors are the creators of this resource description and the primary points of contact.
@@ -2991,7 +2999,7 @@ file attachments
 ∈📦 file source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `training_data.attachments.i.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -3076,8 +3084,8 @@ An icon for illustration, e.g. on bioimage.io
 
 Union of
 - str (Len(min_length=1, max_length=2))
-- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -3180,8 +3188,12 @@ The recommended documentation file name is `README.md`. An `.md` suffix is manda
 
 </summary>
 
-Optional[Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))]
+Optional[Union of
+- Path (PathType(path_type='file'); Predicate(is_absolute); )
+- _internal.io.RelativeFilePath
+- _internal.url.HttpUrl
+
+(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -3209,8 +3221,8 @@ badge icon
 </summary>
 
 Union of
-- Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+- Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -3267,8 +3279,12 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif
 
 </summary>
 
-Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union of
+- Path (PathType(path_type='file'); Predicate(is_absolute); )
+- _internal.io.RelativeFilePath
+- _internal.url.HttpUrl
+
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -3276,7 +3292,7 @@ Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _in
 UTF-8 emoji for display alongside the `id`.
 
 
-Optional[str (Len(min_length=1, max_length=1))]
+Optional[str (Len(min_length=1, max_length=1); )]
 
 ### `training_data.authors`<sub> Sequence[generic.v0_2.Author]</sub> ≝ `[]`
 The authors are the creators of the RDF and the primary points of contact.
@@ -3335,8 +3351,8 @@ file and other attachments
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -3413,8 +3429,8 @@ An icon for illustration
 
 Union of
 - str (Len(min_length=1, max_length=2))
-- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -3499,7 +3515,7 @@ Do not set this field in a YAML file.
 
 </summary>
 
-Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 (union_mode='left_to_right')]
 
 </details>
@@ -3553,8 +3569,8 @@ badge icon
 </summary>
 
 Union of
-- Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+- Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -3579,8 +3595,8 @@ The recommended documentation file name is `README.md`. An `.md` suffix is manda
 
 </summary>
 
-Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))]
+Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 

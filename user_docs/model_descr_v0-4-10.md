@@ -1,4 +1,4 @@
-# bioimage.io model specification
+# 
 Specification of the fields used in a bioimage.io-compliant RDF that describes AI models with pretrained weights.
 
 These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
@@ -81,7 +81,7 @@ with details on how to quantitatively validate the model on unseen data.
 [*Examples:*](#documentation) ['https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md', '…']
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 ## `inputs`<sub> Sequence[InputTensorDescr]</sub>
 Describes the input tensors expected by this model.
@@ -754,8 +754,8 @@ The extension must be '.npy'.
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
 
 </details>
 
@@ -766,8 +766,8 @@ Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (Pa
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
 
 </details>
 
@@ -801,7 +801,7 @@ The available weight formats determine which consumers can use this model.
 ∈📦 The weights file.
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `weights.keras_hdf5.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -825,8 +825,8 @@ Attachments that are specific to this weights entry.
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -915,7 +915,7 @@ Optional[_internal.version_type.Version]
 ∈📦 The weights file.
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `weights.onnx.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -939,8 +939,8 @@ Attachments that are specific to this weights entry.
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1028,7 +1028,7 @@ ONNX opset version
 ∈📦 The weights file.
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `weights.pytorch_state_dict.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -1052,8 +1052,8 @@ Attachments that are specific to this weights entry.
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1169,7 +1169,7 @@ Optional[_internal.version_type.Version]
 All required files/folders should be a zip archive.
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `weights.tensorflow_js.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -1193,8 +1193,8 @@ Attachments that are specific to this weights entry.
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1283,7 +1283,7 @@ Optional[_internal.version_type.Version]
 ∈📦 The weights file.
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `weights.tensorflow_saved_model_bundle.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -1307,8 +1307,8 @@ Attachments that are specific to this weights entry.
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1397,7 +1397,7 @@ Optional[_internal.version_type.Version]
 ∈📦 The weights file.
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 #### `weights.torchscript.sha256`<sub> Optional</sub> ≝ `None`
 SHA256 checksum of the source file
@@ -1421,8 +1421,8 @@ Attachments that are specific to this weights entry.
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1516,8 +1516,8 @@ file and other attachments
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1583,8 +1583,12 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif
 
 </summary>
 
-Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union of
+- Path (PathType(path_type='file'); Predicate(is_absolute); )
+- _internal.io.RelativeFilePath
+- _internal.url.HttpUrl
+
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1608,8 +1612,8 @@ An icon for illustration
 
 Union of
 - str (Len(min_length=1, max_length=2))
-- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -1625,7 +1629,7 @@ assigned by bioimage.io; version **un**specific.
 UTF-8 emoji for display alongside the `id`.
 
 
-Optional[str (Len(min_length=1, max_length=1))]
+Optional[str (Len(min_length=1, max_length=1); )]
 
 ## `links`<sub> Sequence[str]</sub> ≝ `[]`
 IDs of other bioimage.io resources
@@ -1729,6 +1733,7 @@ The model from which this model is derived, e.g. by fine-tuning the weights.
 **LinkedModel:**
 ### `parent.id`<sub> ModelId</sub>
 A valid model `id` from the bioimage.io collection.
+[*Examples:*](#parentid) ['affable-shark', 'ambitious-sloth']
 
 
 
@@ -1747,7 +1752,7 @@ Do not set this field in a YAML file.
 
 </summary>
 
-Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 (union_mode='left_to_right')]
 
 </details>
@@ -1784,8 +1789,8 @@ The sample files primarily serve to inform a human user about an example use cas
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1796,8 +1801,8 @@ Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (Pa
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1846,8 +1851,12 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif
 
 </summary>
 
-Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _internal.io.RelativeFilePath, _internal.url.HttpUrl]
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union of
+- Path (PathType(path_type='file'); Predicate(is_absolute); )
+- _internal.io.RelativeFilePath
+- _internal.url.HttpUrl
+
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1855,7 +1864,7 @@ Sequence of Union[Path (PathType(path_type='file'); Predicate(is_absolute)), _in
 UTF-8 emoji for display alongside the `id`.
 
 
-Optional[str (Len(min_length=1, max_length=1))]
+Optional[str (Len(min_length=1, max_length=1); )]
 
 ### `training_data.authors`<sub> Sequence[generic.v0_2.Author]</sub> ≝ `[]`
 The authors are the creators of the RDF and the primary points of contact.
@@ -1914,8 +1923,8 @@ file and other attachments
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1992,8 +2001,8 @@ An icon for illustration
 
 Union of
 - str (Len(min_length=1, max_length=2))
-- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -2078,7 +2087,7 @@ Do not set this field in a YAML file.
 
 </summary>
 
-Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
+Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 (union_mode='left_to_right')]
 
 </details>
@@ -2132,8 +2141,8 @@ badge icon
 </summary>
 
 Union of
-- Union[Path (PathType(path_type='file')), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))
+- Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -2158,8 +2167,8 @@ The recommended documentation file name is `README.md`. An `.md` suffix is manda
 
 </summary>
 
-Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'))]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fe9acc53920>, return_type=PydanticUndefined, when_used='unless-none'))]
+Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fbf801ffba0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -2332,6 +2341,10 @@ https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/m
 0000-0001-2345-6789
 ### `packaged_by.i.orcid`
 0000-0001-2345-6789
+### `parent.id`
+- affable-shark
+- ambitious-sloth
+
 ### `tags`
 ('unet2d', 'pytorch', 'nucleus', 'segmentation', 'dsb2018')
 ### `training_data.covers`

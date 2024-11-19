@@ -56,6 +56,9 @@
                                 <a class="function" href="#GenericDescr.check_specific_types">check_specific_types</a>
                         </li>
                         <li>
+                                <a class="variable" href="#GenericDescr.implemented_type">implemented_type</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#GenericDescr.implemented_format_version">implemented_format_version</a>
                         </li>
                         <li>
@@ -114,7 +117,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.generic    </h1>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Discriminator</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Discriminator</span><span class="p">,</span> <span class="n">Field</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">v0_2</span><span class="p">,</span> <span class="n">v0_3</span>
@@ -124,10 +127,15 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.generic    </h1>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="n">GenericDescr_v0_3</span> <span class="o">=</span> <span class="n">v0_3</span><span class="o">.</span><span class="n">GenericDescr</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="n">AnyGenericDescr</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">Union</span><span class="p">[</span><span class="n">GenericDescr_v0_2</span><span class="p">,</span> <span class="n">GenericDescr_v0_3</span><span class="p">],</span> <span class="n">Discriminator</span><span class="p">(</span><span class="s2">&quot;format_version&quot;</span><span class="p">)</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="p">]</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">&quot;&quot;&quot;Union of any released generic desription&quot;&quot;&quot;</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="c1"># autogen: stop</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">Union</span><span class="p">[</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="n">GenericDescr_v0_2</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;generic 0.2&quot;</span><span class="p">)],</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="n">GenericDescr_v0_3</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;generic 0.3&quot;</span><span class="p">)],</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="p">],</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="n">Discriminator</span><span class="p">(</span><span class="s2">&quot;format_version&quot;</span><span class="p">),</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;generic&quot;</span><span class="p">),</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="p">]</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">&quot;&quot;&quot;Union of any released generic desription&quot;&quot;&quot;</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="c1"># autogen: stop</span>
 </span></pre></div>
 
 
@@ -143,9 +151,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.generic    </h1>
 
     </div>
     <a class="headerlink" href="#GenericDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr-410"><a href="#GenericDescr-410"><span class="linenos">410</span></a><span class="k">class</span> <span class="nc">GenericDescr</span><span class="p">(</span>
-</span><span id="GenericDescr-411"><a href="#GenericDescr-411"><span class="linenos">411</span></a>    <span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;bioimage.io generic specification&quot;</span>
-</span><span id="GenericDescr-412"><a href="#GenericDescr-412"><span class="linenos">412</span></a><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr-412"><a href="#GenericDescr-412"><span class="linenos">412</span></a><span class="k">class</span> <span class="nc">GenericDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">):</span>
 </span><span id="GenericDescr-413"><a href="#GenericDescr-413"><span class="linenos">413</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).</span>
 </span><span id="GenericDescr-414"><a href="#GenericDescr-414"><span class="linenos">414</span></a>
 </span><span id="GenericDescr-415"><a href="#GenericDescr-415"><span class="linenos">415</span></a><span class="sd">    An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.</span>
@@ -156,26 +162,28 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.generic    </h1>
 </span><span id="GenericDescr-420"><a href="#GenericDescr-420"><span class="linenos">420</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LowerCase</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="s2">&quot;generic&quot;</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="GenericDescr-421"><a href="#GenericDescr-421"><span class="linenos">421</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The resource type assigns a broad category to the resource.&quot;&quot;&quot;</span>
 </span><span id="GenericDescr-422"><a href="#GenericDescr-422"><span class="linenos">422</span></a>
-</span><span id="GenericDescr-423"><a href="#GenericDescr-423"><span class="linenos">423</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="GenericDescr-424"><a href="#GenericDescr-424"><span class="linenos">424</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;bioimage.io-wide unique resource identifier</span>
-</span><span id="GenericDescr-425"><a href="#GenericDescr-425"><span class="linenos">425</span></a><span class="sd">    assigned by bioimage.io; version **un**specific.&quot;&quot;&quot;</span>
-</span><span id="GenericDescr-426"><a href="#GenericDescr-426"><span class="linenos">426</span></a>
-</span><span id="GenericDescr-427"><a href="#GenericDescr-427"><span class="linenos">427</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="GenericDescr-428"><a href="#GenericDescr-428"><span class="linenos">428</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
-</span><span id="GenericDescr-429"><a href="#GenericDescr-429"><span class="linenos">429</span></a>
-</span><span id="GenericDescr-430"><a href="#GenericDescr-430"><span class="linenos">430</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="GenericDescr-431"><a href="#GenericDescr-431"><span class="linenos">431</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
-</span><span id="GenericDescr-432"><a href="#GenericDescr-432"><span class="linenos">432</span></a>
-</span><span id="GenericDescr-433"><a href="#GenericDescr-433"><span class="linenos">433</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="GenericDescr-434"><a href="#GenericDescr-434"><span class="linenos">434</span></a>    <span class="nd">@classmethod</span>
-</span><span id="GenericDescr-435"><a href="#GenericDescr-435"><span class="linenos">435</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="GenericDescr-436"><a href="#GenericDescr-436"><span class="linenos">436</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
-</span><span id="GenericDescr-437"><a href="#GenericDescr-437"><span class="linenos">437</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="GenericDescr-438"><a href="#GenericDescr-438"><span class="linenos">438</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
-</span><span id="GenericDescr-439"><a href="#GenericDescr-439"><span class="linenos">439</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
-</span><span id="GenericDescr-440"><a href="#GenericDescr-440"><span class="linenos">440</span></a>            <span class="p">)</span>
-</span><span id="GenericDescr-441"><a href="#GenericDescr-441"><span class="linenos">441</span></a>
-</span><span id="GenericDescr-442"><a href="#GenericDescr-442"><span class="linenos">442</span></a>        <span class="k">return</span> <span class="n">value</span>
+</span><span id="GenericDescr-423"><a href="#GenericDescr-423"><span class="linenos">423</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+</span><span id="GenericDescr-424"><a href="#GenericDescr-424"><span class="linenos">424</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;affable-shark&quot;</span><span class="p">,</span> <span class="s2">&quot;ambitious-sloth&quot;</span><span class="p">])]</span>
+</span><span id="GenericDescr-425"><a href="#GenericDescr-425"><span class="linenos">425</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="GenericDescr-426"><a href="#GenericDescr-426"><span class="linenos">426</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;bioimage.io-wide unique resource identifier</span>
+</span><span id="GenericDescr-427"><a href="#GenericDescr-427"><span class="linenos">427</span></a><span class="sd">    assigned by bioimage.io; version **un**specific.&quot;&quot;&quot;</span>
+</span><span id="GenericDescr-428"><a href="#GenericDescr-428"><span class="linenos">428</span></a>
+</span><span id="GenericDescr-429"><a href="#GenericDescr-429"><span class="linenos">429</span></a>    <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ResourceId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="GenericDescr-430"><a href="#GenericDescr-430"><span class="linenos">430</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The description from which this one is derived&quot;&quot;&quot;</span>
+</span><span id="GenericDescr-431"><a href="#GenericDescr-431"><span class="linenos">431</span></a>
+</span><span id="GenericDescr-432"><a href="#GenericDescr-432"><span class="linenos">432</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="GenericDescr-433"><a href="#GenericDescr-433"><span class="linenos">433</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The primary source of the resource&quot;&quot;&quot;</span>
+</span><span id="GenericDescr-434"><a href="#GenericDescr-434"><span class="linenos">434</span></a>
+</span><span id="GenericDescr-435"><a href="#GenericDescr-435"><span class="linenos">435</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="GenericDescr-436"><a href="#GenericDescr-436"><span class="linenos">436</span></a>    <span class="nd">@classmethod</span>
+</span><span id="GenericDescr-437"><a href="#GenericDescr-437"><span class="linenos">437</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="GenericDescr-438"><a href="#GenericDescr-438"><span class="linenos">438</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
+</span><span id="GenericDescr-439"><a href="#GenericDescr-439"><span class="linenos">439</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="GenericDescr-440"><a href="#GenericDescr-440"><span class="linenos">440</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
+</span><span id="GenericDescr-441"><a href="#GenericDescr-441"><span class="linenos">441</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
+</span><span id="GenericDescr-442"><a href="#GenericDescr-442"><span class="linenos">442</span></a>            <span class="p">)</span>
+</span><span id="GenericDescr-443"><a href="#GenericDescr-443"><span class="linenos">443</span></a>
+</span><span id="GenericDescr-444"><a href="#GenericDescr-444"><span class="linenos">444</span></a>        <span class="k">return</span> <span class="n">value</span>
 </span></pre></div>
 
 
@@ -202,7 +210,7 @@ Use this generic resource description, if none of the known specific types match
                             </div>
                             <div id="GenericDescr.id" class="classattr">
                                 <div class="attr variable">
-            <span class="name">id</span><span class="annotation">: Optional[<a href="generic/v0_3.html#ResourceId">bioimageio.spec.generic.v0_3.ResourceId</a>]</span>
+            <span class="name">id</span><span class="annotation">: Optional[Annotated[<a href="generic/v0_3.html#ResourceId">bioimageio.spec.generic.v0_3.ResourceId</a>, FieldInfo(annotation=NoneType, required=True, examples=[&#39;affable-shark&#39;, &#39;ambitious-sloth&#39;])]]</span>
 
         
     </div>
@@ -253,19 +261,31 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
 
     </div>
     <a class="headerlink" href="#GenericDescr.check_specific_types"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr.check_specific_types-433"><a href="#GenericDescr.check_specific_types-433"><span class="linenos">433</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="GenericDescr.check_specific_types-434"><a href="#GenericDescr.check_specific_types-434"><span class="linenos">434</span></a>    <span class="nd">@classmethod</span>
-</span><span id="GenericDescr.check_specific_types-435"><a href="#GenericDescr.check_specific_types-435"><span class="linenos">435</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="GenericDescr.check_specific_types-436"><a href="#GenericDescr.check_specific_types-436"><span class="linenos">436</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
-</span><span id="GenericDescr.check_specific_types-437"><a href="#GenericDescr.check_specific_types-437"><span class="linenos">437</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-</span><span id="GenericDescr.check_specific_types-438"><a href="#GenericDescr.check_specific_types-438"><span class="linenos">438</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
-</span><span id="GenericDescr.check_specific_types-439"><a href="#GenericDescr.check_specific_types-439"><span class="linenos">439</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
-</span><span id="GenericDescr.check_specific_types-440"><a href="#GenericDescr.check_specific_types-440"><span class="linenos">440</span></a>            <span class="p">)</span>
-</span><span id="GenericDescr.check_specific_types-441"><a href="#GenericDescr.check_specific_types-441"><span class="linenos">441</span></a>
-</span><span id="GenericDescr.check_specific_types-442"><a href="#GenericDescr.check_specific_types-442"><span class="linenos">442</span></a>        <span class="k">return</span> <span class="n">value</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr.check_specific_types-435"><a href="#GenericDescr.check_specific_types-435"><span class="linenos">435</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="GenericDescr.check_specific_types-436"><a href="#GenericDescr.check_specific_types-436"><span class="linenos">436</span></a>    <span class="nd">@classmethod</span>
+</span><span id="GenericDescr.check_specific_types-437"><a href="#GenericDescr.check_specific_types-437"><span class="linenos">437</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="GenericDescr.check_specific_types-438"><a href="#GenericDescr.check_specific_types-438"><span class="linenos">438</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
+</span><span id="GenericDescr.check_specific_types-439"><a href="#GenericDescr.check_specific_types-439"><span class="linenos">439</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="GenericDescr.check_specific_types-440"><a href="#GenericDescr.check_specific_types-440"><span class="linenos">440</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
+</span><span id="GenericDescr.check_specific_types-441"><a href="#GenericDescr.check_specific_types-441"><span class="linenos">441</span></a>                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; your &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; resource.&quot;</span>
+</span><span id="GenericDescr.check_specific_types-442"><a href="#GenericDescr.check_specific_types-442"><span class="linenos">442</span></a>            <span class="p">)</span>
+</span><span id="GenericDescr.check_specific_types-443"><a href="#GenericDescr.check_specific_types-443"><span class="linenos">443</span></a>
+</span><span id="GenericDescr.check_specific_types-444"><a href="#GenericDescr.check_specific_types-444"><span class="linenos">444</span></a>        <span class="k">return</span> <span class="n">value</span>
 </span></pre></div>
 
 
+    
+
+                            </div>
+                            <div id="GenericDescr.implemented_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">implemented_type</span><span class="annotation">: ClassVar[str]</span>        =
+<span class="default_value">&#39;generic&#39;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#GenericDescr.implemented_type"></a>
+    
     
 
                             </div>
@@ -380,7 +400,7 @@ method.</p>
                     <div class="attr variable">
             <span class="name">AnyGenericDescr</span>        =
 <input id="AnyGenericDescr-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="AnyGenericDescr-view-value"></label><span class="default_value">typing.Annotated[typing.Union[<a href="generic/v0_2.html#GenericDescr">bioimageio.spec.generic.v0_2.GenericDescr</a>, <a href="#GenericDescr">GenericDescr</a>], Discriminator(discriminator=&#39;format_version&#39;, custom_error_type=None, custom_error_message=None, custom_error_context=None)]</span>
+            <label class="view-value-button pdoc-button" for="AnyGenericDescr-view-value"></label><span class="default_value">typing.Annotated[typing.Union[typing.Annotated[<a href="generic/v0_2.html#GenericDescr">bioimageio.spec.generic.v0_2.GenericDescr</a>, FieldInfo(annotation=NoneType, required=True, title=&#39;generic 0.2&#39;)], typing.Annotated[<a href="#GenericDescr">GenericDescr</a>, FieldInfo(annotation=NoneType, required=True, title=&#39;generic 0.3&#39;)]], Discriminator(discriminator=&#39;format_version&#39;, custom_error_type=None, custom_error_message=None, custom_error_context=None), FieldInfo(annotation=NoneType, required=True, title=&#39;generic&#39;)]</span>
 
         
     </div>

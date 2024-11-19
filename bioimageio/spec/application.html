@@ -53,6 +53,9 @@
                                 <a class="variable" href="#ApplicationDescr.source">source</a>
                         </li>
                         <li>
+                                <a class="variable" href="#ApplicationDescr.implemented_type">implemented_type</a>
+                        </li>
+                        <li>
                                 <a class="variable" href="#ApplicationDescr.implemented_format_version">implemented_format_version</a>
                         </li>
                         <li>
@@ -111,7 +114,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.application    </h1>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Discriminator</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Discriminator</span><span class="p">,</span> <span class="n">Field</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">v0_2</span><span class="p">,</span> <span class="n">v0_3</span>
@@ -121,10 +124,15 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.application    </h1>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="n">ApplicationDescr_v0_3</span> <span class="o">=</span> <span class="n">v0_3</span><span class="o">.</span><span class="n">ApplicationDescr</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="n">AnyApplicationDescr</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">Union</span><span class="p">[</span><span class="n">ApplicationDescr_v0_2</span><span class="p">,</span> <span class="n">ApplicationDescr_v0_3</span><span class="p">],</span> <span class="n">Discriminator</span><span class="p">(</span><span class="s2">&quot;format_version&quot;</span><span class="p">)</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="p">]</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">&quot;&quot;&quot;Union of any released application desription&quot;&quot;&quot;</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="c1"># autogen: stop</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">Union</span><span class="p">[</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="n">ApplicationDescr_v0_2</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;application 0.2&quot;</span><span class="p">)],</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="n">ApplicationDescr_v0_3</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;application 0.3&quot;</span><span class="p">)],</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="p">],</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="n">Discriminator</span><span class="p">(</span><span class="s2">&quot;format_version&quot;</span><span class="p">),</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;application&quot;</span><span class="p">),</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="p">]</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">&quot;&quot;&quot;Union of any released application desription&quot;&quot;&quot;</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="c1"># autogen: stop</span>
 </span></pre></div>
 
 
@@ -140,7 +148,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.application    </h1>
 
     </div>
     <a class="headerlink" href="#ApplicationDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ApplicationDescr-32"><a href="#ApplicationDescr-32"><span class="linenos">32</span></a><span class="k">class</span> <span class="nc">ApplicationDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;bioimage.io application specification&quot;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ApplicationDescr-32"><a href="#ApplicationDescr-32"><span class="linenos">32</span></a><span class="k">class</span> <span class="nc">ApplicationDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">):</span>
 </span><span id="ApplicationDescr-33"><a href="#ApplicationDescr-33"><span class="linenos">33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Bioimage.io description of an application.&quot;&quot;&quot;</span>
 </span><span id="ApplicationDescr-34"><a href="#ApplicationDescr-34"><span class="linenos">34</span></a>
 </span><span id="ApplicationDescr-35"><a href="#ApplicationDescr-35"><span class="linenos">35</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;application&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application&quot;</span>
@@ -204,7 +212,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
                             </div>
                             <div id="ApplicationDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Optional[Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fd47a1c3d80&gt;), PlainSerializer(func=&lt;function _package at 0x7fd479ff8540&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#39;URL or path to the source of the application&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Optional[Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fd3c14dc040&gt;), PlainSerializer(func=&lt;function _package at 0x7fd3c14dc7c0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#39;URL or path to the source of the application&#39;)]</span>
 
         
     </div>
@@ -213,6 +221,18 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
             <div class="docstring"><p>The primary source of the application</p>
 </div>
 
+
+                            </div>
+                            <div id="ApplicationDescr.implemented_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">implemented_type</span><span class="annotation">: ClassVar[str]</span>        =
+<span class="default_value">&#39;application&#39;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#ApplicationDescr.implemented_type"></a>
+    
+    
 
                             </div>
                             <div id="ApplicationDescr.implemented_format_version" class="classattr">
@@ -326,7 +346,7 @@ method.</p>
                     <div class="attr variable">
             <span class="name">AnyApplicationDescr</span>        =
 <input id="AnyApplicationDescr-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="AnyApplicationDescr-view-value"></label><span class="default_value">typing.Annotated[typing.Union[<a href="application/v0_2.html#ApplicationDescr">bioimageio.spec.application.v0_2.ApplicationDescr</a>, <a href="#ApplicationDescr">ApplicationDescr</a>], Discriminator(discriminator=&#39;format_version&#39;, custom_error_type=None, custom_error_message=None, custom_error_context=None)]</span>
+            <label class="view-value-button pdoc-button" for="AnyApplicationDescr-view-value"></label><span class="default_value">typing.Annotated[typing.Union[typing.Annotated[<a href="application/v0_2.html#ApplicationDescr">bioimageio.spec.application.v0_2.ApplicationDescr</a>, FieldInfo(annotation=NoneType, required=True, title=&#39;application 0.2&#39;)], typing.Annotated[<a href="#ApplicationDescr">ApplicationDescr</a>, FieldInfo(annotation=NoneType, required=True, title=&#39;application 0.3&#39;)]], Discriminator(discriminator=&#39;format_version&#39;, custom_error_type=None, custom_error_message=None, custom_error_context=None), FieldInfo(annotation=NoneType, required=True, title=&#39;application&#39;)]</span>
 
         
     </div>
