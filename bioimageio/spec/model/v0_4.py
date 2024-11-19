@@ -890,7 +890,7 @@ class RunMode(Node):
 class LinkedModel(Node):
     """Reference to a bioimage.io model."""
 
-    id: ModelId
+    id: Annotated[ModelId, Field(examples=["affable-shark", "ambitious-sloth"])]
     """A valid model `id` from the bioimage.io collection."""
 
     version_number: Optional[int] = None

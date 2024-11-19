@@ -223,7 +223,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     )
     """∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
 
-    id_emoji: Optional[Annotated[str, Len(min_length=1, max_length=1)]] = None
+    id_emoji: Optional[
+        Annotated[str, Len(min_length=1, max_length=1), Field(examples=["🦈", "🦥"])]
+    ] = None
     """UTF-8 emoji for display alongside the `id`."""
 
     authors: List[Author] = Field(default_factory=list)
@@ -447,7 +449,9 @@ class GenericDescr(GenericDescrBase, extra="ignore"):
     type: Annotated[str, LowerCase, Field(frozen=True)] = "generic"
     """The resource type assigns a broad category to the resource."""
 
-    id: Optional[ResourceId] = None
+    id: Optional[
+        Annotated[ResourceId, Field(examples=["affable-shark", "ambitious-sloth"])]
+    ] = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 
