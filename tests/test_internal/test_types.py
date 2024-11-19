@@ -45,6 +45,7 @@ IGNORE_TYPES_MEMBERS = {
     "ClassVar",
     "datetime",
     "field_validation",
+    "FilePath",
     "FileSource",
     "FormatVersionPlaceholder",  # a literal
     "ImportantFileSource",  # an annoated union
