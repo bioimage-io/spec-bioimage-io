@@ -18,8 +18,8 @@ ModelDescr_v0_5 = v0_5.ModelDescr
 
 AnyModelDescr = Annotated[
     Union[
-        Annotated[ModelDescr_v0_4, Field(title="0.4")],
-        Annotated[ModelDescr_v0_5, Field(title="0.5")],
+        Annotated[ModelDescr_v0_4, Field(title="model 0.4")],
+        Annotated[ModelDescr_v0_5, Field(title="model 0.5")],
     ],
     Discriminator("format_version"),
     Field(title="model"),

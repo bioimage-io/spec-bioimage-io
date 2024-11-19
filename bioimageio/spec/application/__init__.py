@@ -18,8 +18,8 @@ ApplicationDescr_v0_3 = v0_3.ApplicationDescr
 
 AnyApplicationDescr = Annotated[
     Union[
-        Annotated[ApplicationDescr_v0_2, Field(title="0.2")],
-        Annotated[ApplicationDescr_v0_3, Field(title="0.3")],
+        Annotated[ApplicationDescr_v0_2, Field(title="application 0.2")],
+        Annotated[ApplicationDescr_v0_3, Field(title="application 0.3")],
     ],
     Discriminator("format_version"),
     Field(title="application"),

@@ -18,8 +18,8 @@ NotebookDescr_v0_3 = v0_3.NotebookDescr
 
 AnyNotebookDescr = Annotated[
     Union[
-        Annotated[NotebookDescr_v0_2, Field(title="0.2")],
-        Annotated[NotebookDescr_v0_3, Field(title="0.3")],
+        Annotated[NotebookDescr_v0_2, Field(title="notebook 0.2")],
+        Annotated[NotebookDescr_v0_3, Field(title="notebook 0.3")],
     ],
     Discriminator("format_version"),
     Field(title="notebook"),

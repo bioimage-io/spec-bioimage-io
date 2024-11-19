@@ -95,7 +95,7 @@ class Info:
         )
         self.all_target_nodes_plain_aliases_annotated = ", ".join(
             [
-                f'Annotated[{self.target_node}_{vm}, Field(title="{vm.strip("v").replace("_", ".")}")]'
+                f'Annotated[{self.target_node}_{vm}, Field(title="{self.target} {vm.strip("v").replace("_", ".")}")]'
                 for vm in self.all_version_modules
             ]
         )
