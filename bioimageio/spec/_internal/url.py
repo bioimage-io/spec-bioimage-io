@@ -115,6 +115,8 @@ def _validate_url_impl(
 
 
 class HttpUrl(RootHttpUrl):
+    """A URL with the HTTP or HTTPS scheme."""
+
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
     _exists: Optional[bool] = None
 

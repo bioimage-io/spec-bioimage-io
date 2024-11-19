@@ -1,16 +1,26 @@
 from pathlib import Path
 from typing import Any, ClassVar, Type
 
+import pydantic
 import zipp
 from annotated_types import Predicate
-from pydantic import DirectoryPath, FilePath, RootModel, StringConstraints
+from pydantic import RootModel, StringConstraints
 from typing_extensions import Annotated
 
 from .validated_string import ValidatedString
 
 FileName = str
-AbsoluteDirectory = Annotated[DirectoryPath, Predicate(Path.is_absolute)]
-AbsoluteFilePath = Annotated[FilePath, Predicate(Path.is_absolute)]
+FilePath = Annotated[pydantic.FilePath, pydantic.Field(title="FilePath")]
+AbsoluteDirectory = Annotated[
+    pydantic.DirectoryPath,
+    Predicate(Path.is_absolute),
+    pydantic.Field(title="AbsoluteDirectory"),
+]
+AbsoluteFilePath = Annotated[
+    pydantic.FilePath,
+    Predicate(Path.is_absolute),
+    pydantic.Field(title="AbsoluteFilePath"),
+]
 
 BIOIMAGEIO_YAML = "rdf.yaml"
 ALTERNATIVE_BIOIMAGEIO_YAML_NAMES = ("bioimageio.yaml", "model.yaml")
@@ -20,7 +30,7 @@ ZipPath = zipp.Path  # not zipfile.Path due to https://bugs.python.org/issue4056
 
 
 class Sha256(ValidatedString):
-    """SHA-256 hash value"""
+    """A SHA-256 hash value"""
 
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
         Annotated[

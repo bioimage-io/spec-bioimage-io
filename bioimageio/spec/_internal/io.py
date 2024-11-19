@@ -36,7 +36,6 @@ from pydantic import (
     AnyUrl,
     DirectoryPath,
     Field,
-    FilePath,
     GetCoreSchemaHandler,
     PlainSerializer,
     PrivateAttr,
@@ -66,6 +65,7 @@ from .io_basics import (
     AbsoluteDirectory,
     AbsoluteFilePath,
     FileName,
+    FilePath,
     Sha256,
     ZipPath,
 )
