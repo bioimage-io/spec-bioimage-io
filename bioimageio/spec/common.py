@@ -9,7 +9,12 @@ from ._internal.io import (
 )
 from ._internal.io_basics import AbsoluteDirectory, AbsoluteFilePath, FileName, Sha256
 from ._internal.root_url import RootHttpUrl
-from ._internal.types import FileSource, PermissiveFileSource, RelativeFilePath
+from ._internal.types import (
+    FilePath,
+    FileSource,
+    PermissiveFileSource,
+    RelativeFilePath,
+)
 from ._internal.url import HttpUrl
 
 __all__ = [
@@ -19,6 +24,7 @@ __all__ = [
     "BioimageioYamlSource",
     "FileDescr",
     "FileName",
+    "FilePath",
     "FileSource",
     "HttpUrl",
     "InvalidDescr",

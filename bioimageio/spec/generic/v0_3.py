@@ -221,7 +221,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = Field(default_factory=list)
     """∈📦 Cover images."""
 
-    id_emoji: Optional[Annotated[str, Len(min_length=1, max_length=2)]] = None
+    id_emoji: Optional[
+        Annotated[str, Len(min_length=1, max_length=2), Field(examples=["🦈", "🦥"])]
+    ] = None
     """UTF-8 emoji for display alongside the `id`."""
 
     authors: NotEmpty[List[Author]]
@@ -406,9 +408,7 @@ class GenericDescrBase(GenericModelDescrBase):
 ResourceDescrType = TypeVar("ResourceDescrType", bound=GenericDescrBase)
 
 
-class GenericDescr(
-    GenericDescrBase, extra="ignore", title="bioimage.io generic specification"
-):
+class GenericDescr(GenericDescrBase, extra="ignore"):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.
@@ -419,7 +419,9 @@ class GenericDescr(
     type: Annotated[str, LowerCase] = Field("generic", frozen=True)
     """The resource type assigns a broad category to the resource."""
 
-    id: Optional[ResourceId] = None
+    id: Optional[
+        Annotated[ResourceId, Field(examples=["affable-shark", "ambitious-sloth"])]
+    ] = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 

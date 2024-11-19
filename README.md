@@ -29,25 +29,27 @@ bioimageio validate path/to/your/rdf.yaml
 
 All bioimage.io description formats are defined as [Pydantic models](https://docs.pydantic.dev/latest/).
 
-| type | format version | documentation |
-| --- | --- | --- |
-| model | 0.5 </br> 0.4 | [model_descr_v0-5.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/model_descr_v0-5.md) </br> [model_descr_v0-4.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/model_descr_v0-4.md) |
-| dataset | 0.3 </br> 0.2 | [dataset_descr_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/dataset_descr_v0-3.md) </br> [dataset_descr_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/dataset_descr_v0-2.md) |
-| notebook | 0.3 </br> 0.2 | [notebook_descr_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/notebook_descr_v0-3.md) </br> [notebook_descr_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/notebook_descr_v0-2.md) |
-| application | 0.3 </br> 0.2 | [application_descr_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/application_descr_v0-3.md) </br> [application_descr_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/application_descr_v0-2.md) |
-| collection | 0.3 </br> 0.2 | [collection_descr_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/collection_descr_v0-3.md) </br> [collection_descr_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/collection_descr_v0-2.md) |
-| generic | 0.3 </br> 0.2 | [generic_descr_v0-3.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/generic_descr_v0-3.md) </br> [generic_descr_v0-2.md](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/user_docs/generic_descr_v0-2.md) |
+| Type | Format Version | Documentation[^1] | Developer Documentation[^2] |
+| --- | --- | --- | --- |
+| model | 0.5 </br> 0.4 | [model 0.5](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i2_oneOf_i1) | [ModelDescr_v0_5](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/model/v0_5.html#ModelDescr) </br> [model 0.4](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i2_oneOf_i0) | [ModelDescr_v0_4](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/model/v0_4.html#ModelDescr) |
+| dataset | 0.3 </br> 0.2 | [dataset 0.3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i1_oneOf_i1) | [DatasetDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/dataset/v0_3.html#DatasetDescr) </br> [dataset 0.2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i1_oneOf_i0) | [DatasetDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/dataset/v0_2.html#DatasetDescr) |
+| notebook | 0.3 </br> 0.2 | [notebook 0.3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i3_oneOf_i1) | [NotebookDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/notebook/v0_3.html#NotebookDescr) </br> [notebook 0.2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i3_oneOf_i0) | [NotebookDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/notebook/v0_2.html#NotebookDescr) |
+| application | 0.3 </br> 0.2 | [application 0.3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i0_oneOf_i1) | [ApplicationDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/application/v0_3.html#ApplicationDescr) </br> [application 0.2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i0_oneOf_i0) | [ApplicationDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/application/v0_2.html#ApplicationDescr) |
+| generic | 0.3 </br> 0.2 | - | [GenericDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/generic/v0_3.html#GenericDescr) </br> - | [GenericDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/generic/v0_2.html#GenericDescr) |
+
+[^1]: JSON Schema based documentation generated with [json-schema-for-humans](https://coveooss.github.io/json-schema-for-humans/).
+[^2]: Part of the bioimageio.spec package documentation generated with [pdoc](https://pdoc.dev/).
 
 ## JSON schema
 
-Simplified descriptions are available as [JSON schema](https://json-schema.org/):
+Simplified descriptions are available as [JSON schema](https://json-schema.org/) (generated with Pydantic):
 
-| bioimageio.spec version | JSON schema |
-| --- | --- |
-| latest | [bioimageio_schema_latest.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json) ([documentation (WIP)](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html)) |
-| 0.5 | [bioimageio_schema_v0-5.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json) ([documentation (WIP)](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_v0-5/index.html)) |
+| bioimageio.spec version | JSON schema | documentation[^1] |
+| --- | --- | --- |
+| latest | [bioimageio_schema_latest.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json) | [latest documentation](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html) |
+| 0.5 | [bioimageio_schema_v0-5.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json) | [0.5 documentation](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_v0-5/index.html) |
 
-These are primarily intended for syntax highlighting.
+Note: [bioimageio_schema_v0-5.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json) and  [bioimageio_schema_latest.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json) are identical, but  [bioimageio_schema_latest.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json) will eventually refer to the future `bioimageio_schema_v0-6.json`.
 
 ## Flattened, interactive docs
 

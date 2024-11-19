@@ -34,7 +34,7 @@ NotebookSource = Union[
 ]
 
 
-class NotebookDescr(GenericDescrBase, title="bioimage.io notebook specification"):
+class NotebookDescr(GenericDescrBase):
     """Bioimage.io description of a Jupyter Notebook."""
 
     type: Literal["notebook"] = "notebook"

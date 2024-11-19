@@ -27,7 +27,7 @@ class ApplicationId(ResourceId):
     pass
 
 
-class ApplicationDescr(GenericDescrBase, title="bioimage.io application specification"):
+class ApplicationDescr(GenericDescrBase):
     """Bioimage.io description of an application."""
 
     type: Literal["application"] = "application"

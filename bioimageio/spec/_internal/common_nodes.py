@@ -281,6 +281,7 @@ class ResourceDescrBase(
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset(
         {"type", "format_version"}
     )
+    implemented_type: ClassVar[str]
     implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
@@ -353,6 +354,12 @@ class ResourceDescrBase(
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
+        if (
+            "type" in cls.model_fields
+            and cls.model_fields["type"].default is not PydanticUndefined
+        ):
+            cls.implemented_type = cls.model_fields["type"].default
+
         if (
             "format_version" in cls.model_fields
             and cls.model_fields["format_version"].default is not PydanticUndefined

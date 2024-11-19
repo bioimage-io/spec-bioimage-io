@@ -22,7 +22,7 @@ class DatasetId(ResourceId):
     pass
 
 
-class DatasetDescr(GenericDescrBase, title="bioimage.io dataset specification"):
+class DatasetDescr(GenericDescrBase):
     """A bioimage.io dataset resource description file (dataset RDF) describes a dataset relevant to bioimage
     processing.
     """

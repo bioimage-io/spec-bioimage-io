@@ -4,6 +4,7 @@ from typing import (
     Any,
     Dict,
     Optional,
+    Type,
     Union,
 )
 
@@ -16,6 +17,15 @@ from .type_guards import is_kwargs
 from .validation_context import ValidationContext, validation_context_var
 
 
+def _node_title_generator(model: Type[Node]) -> str:
+    return (
+        f"{model.implemented_type} {model.implemented_format_version}"  # pyright: ignore[reportAttributeAccessIssue]
+        if hasattr(model, "implemented_type")
+        and hasattr(model, "implemented_format_version")
+        else model.__name__
+    )
+
+
 class Node(
     pydantic.BaseModel,
     extra="forbid",
@@ -26,6 +36,7 @@ class Node(
     validate_default=False,
     validate_return=True,  # TODO: check if False here would bring a speedup and can still be safe
     use_attribute_docstrings=True,
+    model_title_generator=_node_title_generator,
 ):
     """Subpart of a resource description"""
 
