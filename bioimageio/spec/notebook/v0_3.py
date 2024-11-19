@@ -26,7 +26,7 @@ class NotebookId(ResourceId):
     pass
 
 
-class NotebookDescr(GenericDescrBase, title="bioimage.io notebook specification"):
+class NotebookDescr(GenericDescrBase):
     """Bioimage.io description of a Jupyter notebook."""
 
     type: Literal["notebook"] = "notebook"

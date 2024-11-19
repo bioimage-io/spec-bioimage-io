@@ -406,9 +406,7 @@ class GenericDescrBase(GenericModelDescrBase):
 ResourceDescrType = TypeVar("ResourceDescrType", bound=GenericDescrBase)
 
 
-class GenericDescr(
-    GenericDescrBase, extra="ignore", title="bioimage.io generic specification"
-):
+class GenericDescr(GenericDescrBase, extra="ignore"):
     """Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
 
     An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.

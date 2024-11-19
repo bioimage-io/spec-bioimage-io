@@ -2058,7 +2058,7 @@ class _TensorSizes(NamedTuple):
     outputs: Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]
 
 
-class ModelDescr(GenericModelDescrBase, title="bioimage.io model specification"):
+class ModelDescr(GenericModelDescrBase):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
