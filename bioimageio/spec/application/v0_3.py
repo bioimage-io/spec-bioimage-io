@@ -14,7 +14,7 @@ from ..generic.v0_3 import BadgeDescr as BadgeDescr
 from ..generic.v0_3 import CiteEntry as CiteEntry
 from ..generic.v0_3 import DeprecatedLicenseId as DeprecatedLicenseId
 from ..generic.v0_3 import Doi as Doi
-from ..generic.v0_3 import GenericDescrBase, LinkedResourceNode, ResourceId
+from ..generic.v0_3 import GenericDescrBase, LinkedResourceBase, ResourceId
 from ..generic.v0_3 import LicenseId as LicenseId
 from ..generic.v0_3 import LinkedResource as LinkedResource
 from ..generic.v0_3 import Maintainer as Maintainer
@@ -47,7 +47,7 @@ class ApplicationDescr(GenericDescrBase):
     """The primary source of the application"""
 
 
-class LinkedApplication(LinkedResourceNode):
+class LinkedApplication(LinkedResourceBase):
     """Reference to a bioimage.io application."""
 
     id: ApplicationId

@@ -181,7 +181,24 @@ class CiteEntry(Node):
         return self
 
 
-class LinkedResource(Node):
+class LinkedResourceBase(Node):
+
+    @model_validator(mode="before")
+    def _remove_version_number(  # pyright: ignore[reportUnknownParameterType]
+        cls, value: Union[Any, Dict[Any, Any]]
+    ):
+        if isinstance(value, dict):
+            vn: Any = value.pop("version_number", None)
+            if vn is not None and value.get("version") is None:
+                value["version"] = vn
+
+        return value  # pyright: ignore[reportUnknownVariableType]
+
+    version: Optional[Version] = None
+    """The version of the linked resource following SemVer 2.0."""
+
+
+class LinkedResource(LinkedResourceBase):
     """Reference to a bioimage.io resource"""
 
     id: ResourceId
@@ -441,20 +458,3 @@ class GenericDescr(GenericDescrBase, extra="ignore"):
             )
 
         return value
-
-
-class LinkedResourceNode(Node):
-
-    @model_validator(mode="before")
-    def _remove_version_number(  # pyright: ignore[reportUnknownParameterType]
-        cls, value: Union[Any, Dict[Any, Any]]
-    ):
-        if isinstance(value, dict):
-            vn: Any = value.pop("version_number", None)
-            if vn is not None and value.get("version") is None:
-                value["version"] = vn
-
-        return value  # pyright: ignore[reportUnknownVariableType]
-
-    version: Optional[Version] = None
-    """The version of the linked resource following SemVer 2.0."""

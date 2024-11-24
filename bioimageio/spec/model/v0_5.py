@@ -93,7 +93,7 @@ from ..generic.v0_3 import DeprecatedLicenseId as DeprecatedLicenseId
 from ..generic.v0_3 import (
     DocumentationSource,
     GenericModelDescrBase,
-    LinkedResourceNode,
+    LinkedResourceBase,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
@@ -2032,7 +2032,7 @@ class ModelId(ResourceId):
     pass
 
 
-class LinkedModel(LinkedResourceNode):
+class LinkedModel(LinkedResourceBase):
     """Reference to a bioimage.io model."""
 
     id: ModelId
