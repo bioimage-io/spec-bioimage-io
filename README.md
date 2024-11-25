@@ -40,11 +40,11 @@ All bioimage.io description formats are defined as [Pydantic models](https://doc
 [^1]: JSON Schema based documentation generated with [json-schema-for-humans](https://coveooss.github.io/json-schema-for-humans/).
 [^2]: Part of the bioimageio.spec package documentation generated with [pdoc](https://pdoc.dev/).
 
-## JSON schema
+## JSON Schema
 
-Simplified descriptions are available as [JSON schema](https://json-schema.org/) (generated with Pydantic):
+Simplified descriptions are available as [JSON Schema](https://json-schema.org/) (generated with Pydantic):
 
-| bioimageio.spec version | JSON schema | documentation[^1] |
+| bioimageio.spec version | JSON Schema | documentation[^1] |
 | --- | --- | --- |
 | latest | [bioimageio_schema_latest.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json) | [latest documentation](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html) |
 | 0.5 | [bioimageio_schema_v0-5.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json) | [0.5 documentation](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_v0-5/index.html) |
@@ -237,7 +237,7 @@ To keep this relation, but avoid overbearing post releases a library version num
   * `bioimageio.spec.update_format` (interface changed)
 * switch from Marshmallow to Pydantic
   * extended validation
-  * one joint, more precise JSON schema
+  * one joint, more precise JSON Schema
 
 #### bioimageio.spec 0.4.9
 
