@@ -12,7 +12,7 @@ from .root_url import RootHttpUrl
 from .validation_context import validation_context_var
 
 
-def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.AnyUrl:
+def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.HttpUrl:
     return _validate_url_impl(url, request_mode="head")
 
 
@@ -20,7 +20,7 @@ def _validate_url_impl(
     url: Union[str, pydantic.HttpUrl],
     request_mode: Literal["head", "get_stream", "get"],
     timeout: int = 3,
-) -> pydantic.AnyUrl:
+) -> pydantic.HttpUrl:
 
     url = str(url)
     val_url = url
@@ -111,7 +111,7 @@ def _validate_url_impl(
         elif response.status_code != 200:
             raise ValueError(f"{response.status_code}: {response.reason} {url}")
 
-    return pydantic.AnyUrl(url)
+    return pydantic.HttpUrl(url)
 
 
 class HttpUrl(RootHttpUrl):
@@ -121,7 +121,7 @@ class HttpUrl(RootHttpUrl):
     _exists: Optional[bool] = None
 
     @model_validator(mode="after")
-    def _validate_url(self):
+    def _validate(self):
         url = self._validated
         context = validation_context_var.get()
         if context.perform_io_checks and str(url) not in context.known_files:
