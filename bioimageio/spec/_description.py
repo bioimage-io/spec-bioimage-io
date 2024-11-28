@@ -164,7 +164,21 @@ def validate_format(
     format_version: Union[Literal["discover", "latest"], str] = DISCOVER,
     context: Optional[ValidationContext] = None,
 ) -> ValidationSummary:
-    """validate a bioimageio.yaml file (RDF)"""
+    """Validate a dictionary holding a boiimageio description
+    (see `bioimagieo.spec.load_description_and_validate_format_only`
+    to validate a file source).
+
+    Args:
+        data: dict holding raw bioimageio.yaml content
+        format_version: format version to (update to and) use for validation
+        context: validation context, see `bioimagieo.spec.ValidationContext`
+
+    Note: Use `bioimagieo.spec.load_description_and_validate_format_only` to validate a
+        file source instead of loading the YAML content and createing the appropriate
+        `ValidationContext`.
+        Or use `bioimagieo.spec.load_description` and access the `validation_summary`
+        attribute of the returned object.
+    """
     with context or validation_context_var.get():
         rd = build_description(data, format_version=format_version)
 
