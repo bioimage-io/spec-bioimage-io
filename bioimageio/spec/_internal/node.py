@@ -17,12 +17,12 @@ from .type_guards import is_kwargs
 from .validation_context import ValidationContext, validation_context_var
 
 
-def _node_title_generator(model: Type[Node]) -> str:
+def _node_title_generator(node: Type[Node]) -> str:
     return (
-        f"{model.implemented_type} {model.implemented_format_version}"  # pyright: ignore[reportAttributeAccessIssue]
-        if hasattr(model, "implemented_type")
-        and hasattr(model, "implemented_format_version")
-        else model.__name__
+        f"{node.implemented_type} {node.implemented_format_version}"  # pyright: ignore[reportAttributeAccessIssue]
+        if hasattr(node, "implemented_type")
+        and hasattr(node, "implemented_format_version")
+        else f"{node.__module__.replace('bioimageio.spec.', '')}.{node.__name__}"
     )
 
 
@@ -38,7 +38,7 @@ class Node(
     use_attribute_docstrings=True,
     model_title_generator=_node_title_generator,
 ):
-    """Subpart of a resource description"""
+    """"""  # empty docstring to remove all pydantic docstrings from the pdoc spec docs
 
     @classmethod
     def model_validate(
