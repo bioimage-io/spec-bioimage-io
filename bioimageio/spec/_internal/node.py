@@ -38,7 +38,7 @@ class Node(
     use_attribute_docstrings=True,
     model_title_generator=_node_title_generator,
 ):
-    """Subpart of a resource description"""
+    """"""  # empty docstring to remove all pydantic docstrings from the pdoc spec docs
 
     @classmethod
     def model_validate(
