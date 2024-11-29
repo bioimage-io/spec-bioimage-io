@@ -65,7 +65,7 @@
                 "source",
                 "callable"
             ],
-            "title": "ArchitectureFromFileDescr",
+            "title": "model.v0_5.ArchitectureFromFileDescr",
             "type": "object"
         },
         "ArchitectureFromLibraryDescr": {
@@ -99,7 +99,7 @@
                 "callable",
                 "import_from"
             ],
-            "title": "ArchitectureFromLibraryDescr",
+            "title": "model.v0_5.ArchitectureFromLibraryDescr",
             "type": "object"
         },
         "AttachmentsDescr": {
@@ -131,78 +131,7 @@
                     "type": "array"
                 }
             },
-            "title": "AttachmentsDescr",
-            "type": "object"
-        },
-        "Author": {
-            "additionalProperties": false,
-            "properties": {
-                "affiliation": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Affiliation",
-                    "title": "Affiliation"
-                },
-                "email": {
-                    "anyOf": [
-                        {
-                            "format": "email",
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Email",
-                    "title": "Email"
-                },
-                "orcid": {
-                    "anyOf": [
-                        {
-                            "description": "an ORCID identifier",
-                            "title": "OrcidId",
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID\n) in hyphenated groups of 4 digits, (and [valid](\nhttps://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier\n) as per ISO 7064 11,2.)",
-                    "examples": [
-                        "0000-0001-2345-6789"
-                    ],
-                    "title": "Orcid"
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
-                },
-                "github_user": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Github User"
-                }
-            },
-            "required": [
-                "name"
-            ],
-            "title": "Author",
+            "title": "generic.v0_2.AttachmentsDescr",
             "type": "object"
         },
         "BadgeDescr": {
@@ -268,7 +197,7 @@
                 "label",
                 "url"
             ],
-            "title": "BadgeDescr",
+            "title": "generic.v0_2.BadgeDescr",
             "type": "object"
         },
         "BatchAxis": {
@@ -314,7 +243,7 @@
                     "title": "Size"
                 }
             },
-            "title": "BatchAxis",
+            "title": "model.v0_5.BatchAxis",
             "type": "object"
         },
         "BinarizeAlongAxisKwargs": {
@@ -345,23 +274,7 @@
                 "threshold",
                 "axis"
             ],
-            "title": "BinarizeAlongAxisKwargs",
-            "type": "object"
-        },
-        "BinarizeKwargs": {
-            "additionalProperties": false,
-            "description": "key word arguments for `BinarizeDescr`",
-            "properties": {
-                "threshold": {
-                    "description": "The fixed threshold",
-                    "title": "Threshold",
-                    "type": "number"
-                }
-            },
-            "required": [
-                "threshold"
-            ],
-            "title": "BinarizeKwargs",
+            "title": "model.v0_5.BinarizeAlongAxisKwargs",
             "type": "object"
         },
         "ChannelAxis": {
@@ -403,7 +316,7 @@
             "required": [
                 "channel_names"
             ],
-            "title": "ChannelAxis",
+            "title": "model.v0_5.ChannelAxis",
             "type": "object"
         },
         "ClipKwargs": {
@@ -425,7 +338,7 @@
                 "min",
                 "max"
             ],
-            "title": "ClipKwargs",
+            "title": "model.v0_4.ClipKwargs",
             "type": "object"
         },
         "DataDependentSize": {
@@ -451,7 +364,7 @@
                     "title": "Max"
                 }
             },
-            "title": "DataDependentSize",
+            "title": "model.v0_5.DataDependentSize",
             "type": "object"
         },
         "Datetime": {
@@ -480,7 +393,7 @@
             "required": [
                 "kwargs"
             ],
-            "title": "EnsureDtypeDescr",
+            "title": "model.v0_5.EnsureDtypeDescr",
             "type": "object"
         },
         "EnsureDtypeKwargs": {
@@ -508,7 +421,7 @@
             "required": [
                 "dtype"
             ],
-            "title": "EnsureDtypeKwargs",
+            "title": "model.v0_5.EnsureDtypeKwargs",
             "type": "object"
         },
         "EnvironmentFileDescr": {
@@ -560,7 +473,7 @@
             "required": [
                 "source"
             ],
-            "title": "EnvironmentFileDescr",
+            "title": "model.v0_5.EnvironmentFileDescr",
             "type": "object"
         },
         "FileDescr": {
@@ -609,7 +522,7 @@
             "required": [
                 "source"
             ],
-            "title": "FileDescr",
+            "title": "_internal.io.FileDescr",
             "type": "object"
         },
         "FixedZeroMeanUnitVarianceAlongAxisKwargs": {
@@ -652,7 +565,7 @@
                 "std",
                 "axis"
             ],
-            "title": "FixedZeroMeanUnitVarianceAlongAxisKwargs",
+            "title": "model.v0_5.FixedZeroMeanUnitVarianceAlongAxisKwargs",
             "type": "object"
         },
         "FixedZeroMeanUnitVarianceDescr": {
@@ -683,7 +596,7 @@
             "required": [
                 "kwargs"
             ],
-            "title": "FixedZeroMeanUnitVarianceDescr",
+            "title": "model.v0_5.FixedZeroMeanUnitVarianceDescr",
             "type": "object"
         },
         "FixedZeroMeanUnitVarianceKwargs": {
@@ -706,7 +619,7 @@
                 "mean",
                 "std"
             ],
-            "title": "FixedZeroMeanUnitVarianceKwargs",
+            "title": "model.v0_5.FixedZeroMeanUnitVarianceKwargs",
             "type": "object"
         },
         "ImplicitOutputShape": {
@@ -758,7 +671,7 @@
                 "scale",
                 "offset"
             ],
-            "title": "ImplicitOutputShape",
+            "title": "model.v0_4.ImplicitOutputShape",
             "type": "object"
         },
         "IndexInputAxis": {
@@ -824,7 +737,7 @@
             "required": [
                 "size"
             ],
-            "title": "IndexInputAxis",
+            "title": "model.v0_5.IndexInputAxis",
             "type": "object"
         },
         "IndexOutputAxis": {
@@ -880,7 +793,7 @@
             "required": [
                 "size"
             ],
-            "title": "IndexOutputAxis",
+            "title": "model.v0_5.IndexOutputAxis",
             "type": "object"
         },
         "IntervalOrRatioDataDescr": {
@@ -982,78 +895,7 @@
                     "title": "Offset"
                 }
             },
-            "title": "IntervalOrRatioDataDescr",
-            "type": "object"
-        },
-        "Maintainer": {
-            "additionalProperties": false,
-            "properties": {
-                "affiliation": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Affiliation",
-                    "title": "Affiliation"
-                },
-                "email": {
-                    "anyOf": [
-                        {
-                            "format": "email",
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Email",
-                    "title": "Email"
-                },
-                "orcid": {
-                    "anyOf": [
-                        {
-                            "description": "an ORCID identifier",
-                            "title": "OrcidId",
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID\n) in hyphenated groups of 4 digits, (and [valid](\nhttps://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier\n) as per ISO 7064 11,2.)",
-                    "examples": [
-                        "0000-0001-2345-6789"
-                    ],
-                    "title": "Orcid"
-                },
-                "name": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Name"
-                },
-                "github_user": {
-                    "title": "Github User",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "github_user"
-            ],
-            "title": "Maintainer",
+            "title": "model.v0_5.IntervalOrRatioDataDescr",
             "type": "object"
         },
         "NominalOrOrdinalDataDescr": {
@@ -1145,7 +987,7 @@
             "required": [
                 "values"
             ],
-            "title": "NominalOrOrdinalDataDescr",
+            "title": "model.v0_5.NominalOrOrdinalDataDescr",
             "type": "object"
         },
         "ParameterizedInputShape": {
@@ -1175,7 +1017,7 @@
                 "min",
                 "step"
             ],
-            "title": "ParameterizedInputShape",
+            "title": "model.v0_4.ParameterizedInputShape",
             "type": "object"
         },
         "ParameterizedSize": {
@@ -1197,7 +1039,7 @@
                 "min",
                 "step"
             ],
-            "title": "ParameterizedSize",
+            "title": "model.v0_5.ParameterizedSize",
             "type": "object"
         },
         "RelativeFilePath": {
@@ -1234,7 +1076,7 @@
             "required": [
                 "name"
             ],
-            "title": "RunMode",
+            "title": "model.v0_4.RunMode",
             "type": "object"
         },
         "ScaleLinearAlongAxisKwargs": {
@@ -1289,7 +1131,7 @@
             "required": [
                 "axis"
             ],
-            "title": "ScaleLinearAlongAxisKwargs",
+            "title": "model.v0_5.ScaleLinearAlongAxisKwargs",
             "type": "object"
         },
         "SizeReference": {
@@ -1320,7 +1162,7 @@
                 "tensor_id",
                 "axis_id"
             ],
-            "title": "SizeReference",
+            "title": "model.v0_5.SizeReference",
             "type": "object"
         },
         "SpaceInputAxis": {
@@ -1437,7 +1279,7 @@
             "required": [
                 "size"
             ],
-            "title": "SpaceInputAxis",
+            "title": "model.v0_5.SpaceInputAxis",
             "type": "object"
         },
         "SpaceOutputAxis": {
@@ -1541,7 +1383,7 @@
             "required": [
                 "size"
             ],
-            "title": "SpaceOutputAxis",
+            "title": "model.v0_5.SpaceOutputAxis",
             "type": "object"
         },
         "SpaceOutputAxisWithHalo": {
@@ -1643,7 +1485,7 @@
                 "halo",
                 "size"
             ],
-            "title": "SpaceOutputAxisWithHalo",
+            "title": "model.v0_5.SpaceOutputAxisWithHalo",
             "type": "object"
         },
         "TimeInputAxis": {
@@ -1752,7 +1594,7 @@
             "required": [
                 "size"
             ],
-            "title": "TimeInputAxis",
+            "title": "model.v0_5.TimeInputAxis",
             "type": "object"
         },
         "TimeOutputAxis": {
@@ -1848,7 +1690,7 @@
             "required": [
                 "size"
             ],
-            "title": "TimeOutputAxis",
+            "title": "model.v0_5.TimeOutputAxis",
             "type": "object"
         },
         "TimeOutputAxisWithHalo": {
@@ -1942,7 +1784,7 @@
                 "halo",
                 "size"
             ],
-            "title": "TimeOutputAxisWithHalo",
+            "title": "model.v0_5.TimeOutputAxisWithHalo",
             "type": "object"
         },
         "Uploader": {
@@ -1971,7 +1813,7 @@
             "required": [
                 "email"
             ],
-            "title": "Uploader",
+            "title": "generic.v0_2.Uploader",
             "type": "object"
         },
         "Version": {
@@ -2092,7 +1934,7 @@
                 "authors": {
                     "description": "The authors are the creators of the RDF and the primary points of contact.",
                     "items": {
-                        "$ref": "#/$defs/Author"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Author"
                     },
                     "title": "Authors",
                     "type": "array"
@@ -2233,7 +2075,7 @@
                 "maintainers": {
                     "description": "Maintainers of this resource.\nIf not specified `authors` are maintainers and at least some of them should specify their `github_user` name",
                     "items": {
-                        "$ref": "#/$defs/Maintainer"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Maintainer"
                     },
                     "title": "Maintainers",
                     "type": "array"
@@ -3076,7 +2918,7 @@
                 "name",
                 "description"
             ],
-            "title": "ApplicationDescr",
+            "title": "application.v0_2.ApplicationDescr",
             "type": "object"
         },
         "bioimageio__spec__application__v0_3__ApplicationDescr": {
@@ -3144,7 +2986,7 @@
                 "authors": {
                     "description": "The authors are the creators of this resource description and the primary points of contact.",
                     "items": {
-                        "$ref": "#/$defs/Author"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                     },
                     "minItems": 1,
                     "title": "Authors",
@@ -3930,7 +3772,7 @@
                 "maintainers": {
                     "description": "Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name",
                     "items": {
-                        "$ref": "#/$defs/Maintainer"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Maintainer"
                     },
                     "title": "Maintainers",
                     "type": "array"
@@ -4085,7 +3927,7 @@
                 "cite",
                 "license"
             ],
-            "title": "ApplicationDescr",
+            "title": "application.v0_3.ApplicationDescr",
             "type": "object"
         },
         "bioimageio__spec__dataset__v0_2__DatasetDescr": {
@@ -4152,7 +3994,7 @@
                 "authors": {
                     "description": "The authors are the creators of the RDF and the primary points of contact.",
                     "items": {
-                        "$ref": "#/$defs/Author"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Author"
                     },
                     "title": "Authors",
                     "type": "array"
@@ -4293,7 +4135,7 @@
                 "maintainers": {
                     "description": "Maintainers of this resource.\nIf not specified `authors` are maintainers and at least some of them should specify their `github_user` name",
                     "items": {
-                        "$ref": "#/$defs/Maintainer"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Maintainer"
                     },
                     "title": "Maintainers",
                     "type": "array"
@@ -5128,7 +4970,7 @@
                 "name",
                 "description"
             ],
-            "title": "DatasetDescr",
+            "title": "dataset.v0_2.DatasetDescr",
             "type": "object"
         },
         "bioimageio__spec__dataset__v0_2__LinkedDataset": {
@@ -5158,7 +5000,7 @@
             "required": [
                 "id"
             ],
-            "title": "LinkedDataset",
+            "title": "dataset.v0_2.LinkedDataset",
             "type": "object"
         },
         "bioimageio__spec__dataset__v0_3__DatasetDescr": {
@@ -5226,7 +5068,7 @@
                 "authors": {
                     "description": "The authors are the creators of this resource description and the primary points of contact.",
                     "items": {
-                        "$ref": "#/$defs/Author"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                     },
                     "minItems": 1,
                     "title": "Authors",
@@ -6012,7 +5854,7 @@
                 "maintainers": {
                     "description": "Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name",
                     "items": {
-                        "$ref": "#/$defs/Maintainer"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Maintainer"
                     },
                     "title": "Maintainers",
                     "type": "array"
@@ -6159,7 +6001,7 @@
                 "cite",
                 "license"
             ],
-            "title": "DatasetDescr",
+            "title": "dataset.v0_3.DatasetDescr",
             "type": "object"
         },
         "bioimageio__spec__dataset__v0_3__LinkedDataset": {
@@ -6188,7 +6030,78 @@
             "required": [
                 "id"
             ],
-            "title": "LinkedDataset",
+            "title": "dataset.v0_3.LinkedDataset",
+            "type": "object"
+        },
+        "bioimageio__spec__generic__v0_2__Author": {
+            "additionalProperties": false,
+            "properties": {
+                "affiliation": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Affiliation",
+                    "title": "Affiliation"
+                },
+                "email": {
+                    "anyOf": [
+                        {
+                            "format": "email",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Email",
+                    "title": "Email"
+                },
+                "orcid": {
+                    "anyOf": [
+                        {
+                            "description": "an ORCID identifier",
+                            "title": "OrcidId",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID\n) in hyphenated groups of 4 digits, (and [valid](\nhttps://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier\n) as per ISO 7064 11,2.)",
+                    "examples": [
+                        "0000-0001-2345-6789"
+                    ],
+                    "title": "Orcid"
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "github_user": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Github User"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "generic.v0_2.Author",
             "type": "object"
         },
         "bioimageio__spec__generic__v0_2__CiteEntry": {
@@ -6231,7 +6144,149 @@
             "required": [
                 "text"
             ],
-            "title": "CiteEntry",
+            "title": "generic.v0_2.CiteEntry",
+            "type": "object"
+        },
+        "bioimageio__spec__generic__v0_2__Maintainer": {
+            "additionalProperties": false,
+            "properties": {
+                "affiliation": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Affiliation",
+                    "title": "Affiliation"
+                },
+                "email": {
+                    "anyOf": [
+                        {
+                            "format": "email",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Email",
+                    "title": "Email"
+                },
+                "orcid": {
+                    "anyOf": [
+                        {
+                            "description": "an ORCID identifier",
+                            "title": "OrcidId",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID\n) in hyphenated groups of 4 digits, (and [valid](\nhttps://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier\n) as per ISO 7064 11,2.)",
+                    "examples": [
+                        "0000-0001-2345-6789"
+                    ],
+                    "title": "Orcid"
+                },
+                "name": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Name"
+                },
+                "github_user": {
+                    "title": "Github User",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "github_user"
+            ],
+            "title": "generic.v0_2.Maintainer",
+            "type": "object"
+        },
+        "bioimageio__spec__generic__v0_3__Author": {
+            "additionalProperties": false,
+            "properties": {
+                "affiliation": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Affiliation",
+                    "title": "Affiliation"
+                },
+                "email": {
+                    "anyOf": [
+                        {
+                            "format": "email",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Email",
+                    "title": "Email"
+                },
+                "orcid": {
+                    "anyOf": [
+                        {
+                            "description": "an ORCID identifier",
+                            "title": "OrcidId",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID\n) in hyphenated groups of 4 digits, (and [valid](\nhttps://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier\n) as per ISO 7064 11,2.)",
+                    "examples": [
+                        "0000-0001-2345-6789"
+                    ],
+                    "title": "Orcid"
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "github_user": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Github User"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "generic.v0_3.Author",
             "type": "object"
         },
         "bioimageio__spec__generic__v0_3__CiteEntry": {
@@ -6279,7 +6334,78 @@
             "required": [
                 "text"
             ],
-            "title": "CiteEntry",
+            "title": "generic.v0_3.CiteEntry",
+            "type": "object"
+        },
+        "bioimageio__spec__generic__v0_3__Maintainer": {
+            "additionalProperties": false,
+            "properties": {
+                "affiliation": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Affiliation",
+                    "title": "Affiliation"
+                },
+                "email": {
+                    "anyOf": [
+                        {
+                            "format": "email",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Email",
+                    "title": "Email"
+                },
+                "orcid": {
+                    "anyOf": [
+                        {
+                            "description": "an ORCID identifier",
+                            "title": "OrcidId",
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID\n) in hyphenated groups of 4 digits, (and [valid](\nhttps://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier\n) as per ISO 7064 11,2.)",
+                    "examples": [
+                        "0000-0001-2345-6789"
+                    ],
+                    "title": "Orcid"
+                },
+                "name": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Name"
+                },
+                "github_user": {
+                    "title": "Github User",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "github_user"
+            ],
+            "title": "generic.v0_3.Maintainer",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__BinarizeDescr": {
@@ -6296,13 +6422,29 @@
                     "type": "string"
                 },
                 "kwargs": {
-                    "$ref": "#/$defs/BinarizeKwargs"
+                    "$ref": "#/$defs/bioimageio__spec__model__v0_4__BinarizeKwargs"
                 }
             },
             "required": [
                 "kwargs"
             ],
-            "title": "BinarizeDescr",
+            "title": "model.v0_4.BinarizeDescr",
+            "type": "object"
+        },
+        "bioimageio__spec__model__v0_4__BinarizeKwargs": {
+            "additionalProperties": false,
+            "description": "key word arguments for `BinarizeDescr`",
+            "properties": {
+                "threshold": {
+                    "description": "The fixed threshold",
+                    "title": "Threshold",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "threshold"
+            ],
+            "title": "model.v0_4.BinarizeKwargs",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__ClipDescr": {
@@ -6325,7 +6467,7 @@
             "required": [
                 "kwargs"
             ],
-            "title": "ClipDescr",
+            "title": "model.v0_4.ClipDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__InputTensorDescr": {
@@ -6462,7 +6604,7 @@
                 "data_type",
                 "shape"
             ],
-            "title": "InputTensorDescr",
+            "title": "model.v0_4.InputTensorDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__KerasHdf5WeightsDescr": {
@@ -6523,7 +6665,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/Author"
+                                "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Author"
                             },
                             "type": "array"
                         },
@@ -6594,7 +6736,7 @@
             "required": [
                 "source"
             ],
-            "title": "KerasHdf5WeightsDescr",
+            "title": "model.v0_4.KerasHdf5WeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__LinkedModel": {
@@ -6628,7 +6770,7 @@
             "required": [
                 "id"
             ],
-            "title": "LinkedModel",
+            "title": "model.v0_4.LinkedModel",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__ModelDescr": {
@@ -6695,7 +6837,7 @@
                 "authors": {
                     "description": "The authors are the creators of the model RDF and the primary points of contact.",
                     "items": {
-                        "$ref": "#/$defs/Author"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Author"
                     },
                     "minItems": 1,
                     "title": "Authors",
@@ -6837,7 +6979,7 @@
                 "maintainers": {
                     "description": "Maintainers of this resource.\nIf not specified `authors` are maintainers and at least some of them should specify their `github_user` name",
                     "items": {
-                        "$ref": "#/$defs/Maintainer"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Maintainer"
                     },
                     "title": "Maintainers",
                     "type": "array"
@@ -7618,7 +7760,7 @@
                 "packaged_by": {
                     "description": "The persons that have packaged and uploaded this model.\nOnly required if those persons differ from the `authors`.",
                     "items": {
-                        "$ref": "#/$defs/Author"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Author"
                     },
                     "title": "Packaged By",
                     "type": "array"
@@ -7787,7 +7929,7 @@
                 "timestamp",
                 "weights"
             ],
-            "title": "ModelDescr",
+            "title": "model.v0_4.ModelDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__OnnxWeightsDescr": {
@@ -7848,7 +7990,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/Author"
+                                "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Author"
                             },
                             "type": "array"
                         },
@@ -7921,7 +8063,7 @@
             "required": [
                 "source"
             ],
-            "title": "OnnxWeightsDescr",
+            "title": "model.v0_4.OnnxWeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__OutputTensorDescr": {
@@ -8064,7 +8206,7 @@
                 "data_type",
                 "shape"
             ],
-            "title": "OutputTensorDescr",
+            "title": "model.v0_4.OutputTensorDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__PytorchStateDictWeightsDescr": {
@@ -8125,7 +8267,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/Author"
+                                "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Author"
                             },
                             "type": "array"
                         },
@@ -8237,7 +8379,7 @@
                 "source",
                 "architecture"
             ],
-            "title": "PytorchStateDictWeightsDescr",
+            "title": "model.v0_4.PytorchStateDictWeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__ScaleLinearDescr": {
@@ -8260,7 +8402,7 @@
             "required": [
                 "kwargs"
             ],
-            "title": "ScaleLinearDescr",
+            "title": "model.v0_4.ScaleLinearDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__ScaleLinearKwargs": {
@@ -8316,7 +8458,7 @@
                     "title": "Offset"
                 }
             },
-            "title": "ScaleLinearKwargs",
+            "title": "model.v0_4.ScaleLinearKwargs",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__ScaleMeanVarianceDescr": {
@@ -8339,7 +8481,7 @@
             "required": [
                 "kwargs"
             ],
-            "title": "ScaleMeanVarianceDescr",
+            "title": "model.v0_4.ScaleMeanVarianceDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__ScaleMeanVarianceKwargs": {
@@ -8390,7 +8532,7 @@
                 "mode",
                 "reference_tensor"
             ],
-            "title": "ScaleMeanVarianceKwargs",
+            "title": "model.v0_4.ScaleMeanVarianceKwargs",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__ScaleRangeDescr": {
@@ -8413,7 +8555,7 @@
             "required": [
                 "kwargs"
             ],
-            "title": "ScaleRangeDescr",
+            "title": "model.v0_4.ScaleRangeDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__ScaleRangeKwargs": {
@@ -8495,7 +8637,7 @@
                 "mode",
                 "axes"
             ],
-            "title": "ScaleRangeKwargs",
+            "title": "model.v0_4.ScaleRangeKwargs",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__SigmoidDescr": {
@@ -8512,7 +8654,7 @@
                     "type": "string"
                 }
             },
-            "title": "SigmoidDescr",
+            "title": "model.v0_4.SigmoidDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__TensorflowJsWeightsDescr": {
@@ -8573,7 +8715,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/Author"
+                                "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Author"
                             },
                             "type": "array"
                         },
@@ -8644,7 +8786,7 @@
             "required": [
                 "source"
             ],
-            "title": "TensorflowJsWeightsDescr",
+            "title": "model.v0_4.TensorflowJsWeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__TensorflowSavedModelBundleWeightsDescr": {
@@ -8705,7 +8847,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/Author"
+                                "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Author"
                             },
                             "type": "array"
                         },
@@ -8776,7 +8918,7 @@
             "required": [
                 "source"
             ],
-            "title": "TensorflowSavedModelBundleWeightsDescr",
+            "title": "model.v0_4.TensorflowSavedModelBundleWeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__TorchscriptWeightsDescr": {
@@ -8837,7 +8979,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/Author"
+                                "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Author"
                             },
                             "type": "array"
                         },
@@ -8908,7 +9050,7 @@
             "required": [
                 "source"
             ],
-            "title": "TorchscriptWeightsDescr",
+            "title": "model.v0_4.TorchscriptWeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__WeightsDescr": {
@@ -8981,7 +9123,7 @@
                     "default": null
                 }
             },
-            "title": "WeightsDescr",
+            "title": "model.v0_4.WeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__ZeroMeanUnitVarianceDescr": {
@@ -9004,7 +9146,7 @@
             "required": [
                 "kwargs"
             ],
-            "title": "ZeroMeanUnitVarianceDescr",
+            "title": "model.v0_4.ZeroMeanUnitVarianceDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__ZeroMeanUnitVarianceKwargs": {
@@ -9096,7 +9238,7 @@
             "required": [
                 "axes"
             ],
-            "title": "ZeroMeanUnitVarianceKwargs",
+            "title": "model.v0_4.ZeroMeanUnitVarianceKwargs",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__BinarizeDescr": {
@@ -9115,7 +9257,7 @@
                 "kwargs": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/BinarizeKwargs"
+                            "$ref": "#/$defs/bioimageio__spec__model__v0_5__BinarizeKwargs"
                         },
                         {
                             "$ref": "#/$defs/BinarizeAlongAxisKwargs"
@@ -9127,7 +9269,23 @@
             "required": [
                 "kwargs"
             ],
-            "title": "BinarizeDescr",
+            "title": "model.v0_5.BinarizeDescr",
+            "type": "object"
+        },
+        "bioimageio__spec__model__v0_5__BinarizeKwargs": {
+            "additionalProperties": false,
+            "description": "key word arguments for `BinarizeDescr`",
+            "properties": {
+                "threshold": {
+                    "description": "The fixed threshold",
+                    "title": "Threshold",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "threshold"
+            ],
+            "title": "model.v0_5.BinarizeKwargs",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__ClipDescr": {
@@ -9150,7 +9308,7 @@
             "required": [
                 "kwargs"
             ],
-            "title": "ClipDescr",
+            "title": "model.v0_5.ClipDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__InputTensorDescr": {
@@ -9315,7 +9473,7 @@
                 "axes",
                 "test_tensor"
             ],
-            "title": "InputTensorDescr",
+            "title": "model.v0_5.InputTensorDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__KerasHdf5WeightsDescr": {
@@ -9364,7 +9522,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/Author"
+                                "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                             },
                             "type": "array"
                         },
@@ -9409,7 +9567,7 @@
                 "source",
                 "tensorflow_version"
             ],
-            "title": "KerasHdf5WeightsDescr",
+            "title": "model.v0_5.KerasHdf5WeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__LinkedModel": {
@@ -9438,7 +9596,7 @@
             "required": [
                 "id"
             ],
-            "title": "LinkedModel",
+            "title": "model.v0_5.LinkedModel",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__ModelDescr": {
@@ -9506,7 +9664,7 @@
                 "authors": {
                     "description": "The authors are the creators of the model RDF and the primary points of contact.",
                     "items": {
-                        "$ref": "#/$defs/Author"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                     },
                     "minItems": 1,
                     "title": "Authors",
@@ -10292,7 +10450,7 @@
                 "maintainers": {
                     "description": "Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name",
                     "items": {
-                        "$ref": "#/$defs/Maintainer"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Maintainer"
                     },
                     "title": "Maintainers",
                     "type": "array"
@@ -10408,7 +10566,7 @@
                 "packaged_by": {
                     "description": "The persons that have packaged and uploaded this model.\nOnly required if those persons differ from the `authors`.",
                     "items": {
-                        "$ref": "#/$defs/Author"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                     },
                     "title": "Packaged By",
                     "type": "array"
@@ -10439,7 +10597,7 @@
                 },
                 "timestamp": {
                     "$ref": "#/$defs/Datetime",
-                    "default": "2024-11-28T13:47:55.917922",
+                    "default": "2024-11-29T14:04:16.811279",
                     "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).\n(In Python a datetime object is valid, too)."
                 },
                 "training_data": {
@@ -10477,7 +10635,7 @@
                 "outputs",
                 "weights"
             ],
-            "title": "ModelDescr",
+            "title": "model.v0_5.ModelDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__OnnxWeightsDescr": {
@@ -10526,7 +10684,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/Author"
+                                "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                             },
                             "type": "array"
                         },
@@ -10573,7 +10731,7 @@
                 "source",
                 "opset_version"
             ],
-            "title": "OnnxWeightsDescr",
+            "title": "model.v0_5.OnnxWeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__OutputTensorDescr": {
@@ -10768,7 +10926,7 @@
                 "axes",
                 "test_tensor"
             ],
-            "title": "OutputTensorDescr",
+            "title": "model.v0_5.OutputTensorDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__PytorchStateDictWeightsDescr": {
@@ -10817,7 +10975,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/Author"
+                                "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                             },
                             "type": "array"
                         },
@@ -10886,7 +11044,7 @@
                 "architecture",
                 "pytorch_version"
             ],
-            "title": "PytorchStateDictWeightsDescr",
+            "title": "model.v0_5.PytorchStateDictWeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__ScaleLinearDescr": {
@@ -10917,7 +11075,7 @@
             "required": [
                 "kwargs"
             ],
-            "title": "ScaleLinearDescr",
+            "title": "model.v0_5.ScaleLinearDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__ScaleLinearKwargs": {
@@ -10937,7 +11095,7 @@
                     "type": "number"
                 }
             },
-            "title": "ScaleLinearKwargs",
+            "title": "model.v0_5.ScaleLinearKwargs",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__ScaleMeanVarianceDescr": {
@@ -10960,7 +11118,7 @@
             "required": [
                 "kwargs"
             ],
-            "title": "ScaleMeanVarianceDescr",
+            "title": "model.v0_5.ScaleMeanVarianceDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__ScaleMeanVarianceKwargs": {
@@ -11012,7 +11170,7 @@
             "required": [
                 "reference_tensor"
             ],
-            "title": "ScaleMeanVarianceKwargs",
+            "title": "model.v0_5.ScaleMeanVarianceKwargs",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__ScaleRangeDescr": {
@@ -11035,7 +11193,7 @@
             "required": [
                 "kwargs"
             ],
-            "title": "ScaleRangeDescr",
+            "title": "model.v0_5.ScaleRangeDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__ScaleRangeKwargs": {
@@ -11109,7 +11267,7 @@
                     "title": "Reference Tensor"
                 }
             },
-            "title": "ScaleRangeKwargs",
+            "title": "model.v0_5.ScaleRangeKwargs",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__SigmoidDescr": {
@@ -11126,7 +11284,7 @@
                     "type": "string"
                 }
             },
-            "title": "SigmoidDescr",
+            "title": "model.v0_5.SigmoidDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__TensorflowJsWeightsDescr": {
@@ -11175,7 +11333,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/Author"
+                                "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                             },
                             "type": "array"
                         },
@@ -11220,7 +11378,7 @@
                 "source",
                 "tensorflow_version"
             ],
-            "title": "TensorflowJsWeightsDescr",
+            "title": "model.v0_5.TensorflowJsWeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__TensorflowSavedModelBundleWeightsDescr": {
@@ -11269,7 +11427,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/Author"
+                                "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                             },
                             "type": "array"
                         },
@@ -11326,7 +11484,7 @@
                 "source",
                 "tensorflow_version"
             ],
-            "title": "TensorflowSavedModelBundleWeightsDescr",
+            "title": "model.v0_5.TensorflowSavedModelBundleWeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__TorchscriptWeightsDescr": {
@@ -11375,7 +11533,7 @@
                     "anyOf": [
                         {
                             "items": {
-                                "$ref": "#/$defs/Author"
+                                "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                             },
                             "type": "array"
                         },
@@ -11420,7 +11578,7 @@
                 "source",
                 "pytorch_version"
             ],
-            "title": "TorchscriptWeightsDescr",
+            "title": "model.v0_5.TorchscriptWeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__WeightsDescr": {
@@ -11493,7 +11651,7 @@
                     "default": null
                 }
             },
-            "title": "WeightsDescr",
+            "title": "model.v0_5.WeightsDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr": {
@@ -11516,7 +11674,7 @@
             "required": [
                 "kwargs"
             ],
-            "title": "ZeroMeanUnitVarianceDescr",
+            "title": "model.v0_5.ZeroMeanUnitVarianceDescr",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceKwargs": {
@@ -11558,7 +11716,7 @@
                     "type": "number"
                 }
             },
-            "title": "ZeroMeanUnitVarianceKwargs",
+            "title": "model.v0_5.ZeroMeanUnitVarianceKwargs",
             "type": "object"
         },
         "bioimageio__spec__notebook__v0_2__NotebookDescr": {
@@ -11625,7 +11783,7 @@
                 "authors": {
                     "description": "The authors are the creators of the RDF and the primary points of contact.",
                     "items": {
-                        "$ref": "#/$defs/Author"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Author"
                     },
                     "title": "Authors",
                     "type": "array"
@@ -11766,7 +11924,7 @@
                 "maintainers": {
                     "description": "Maintainers of this resource.\nIf not specified `authors` are maintainers and at least some of them should specify their `github_user` name",
                     "items": {
-                        "$ref": "#/$defs/Maintainer"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_2__Maintainer"
                     },
                     "title": "Maintainers",
                     "type": "array"
@@ -12605,7 +12763,7 @@
                 "description",
                 "source"
             ],
-            "title": "NotebookDescr",
+            "title": "notebook.v0_2.NotebookDescr",
             "type": "object"
         },
         "bioimageio__spec__notebook__v0_3__NotebookDescr": {
@@ -12673,7 +12831,7 @@
                 "authors": {
                     "description": "The authors are the creators of this resource description and the primary points of contact.",
                     "items": {
-                        "$ref": "#/$defs/Author"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                     },
                     "minItems": 1,
                     "title": "Authors",
@@ -13459,7 +13617,7 @@
                 "maintainers": {
                     "description": "Maintainers of this resource.\nIf not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name",
                     "items": {
-                        "$ref": "#/$defs/Maintainer"
+                        "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Maintainer"
                     },
                     "title": "Maintainers",
                     "type": "array"
@@ -13610,7 +13768,7 @@
                 "license",
                 "source"
             ],
-            "title": "NotebookDescr",
+            "title": "notebook.v0_3.NotebookDescr",
             "type": "object"
         }
     },
