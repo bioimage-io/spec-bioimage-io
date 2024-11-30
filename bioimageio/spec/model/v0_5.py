@@ -1882,6 +1882,21 @@ _arch_lib_conv = _ArchLibConv(
 )
 
 
+class Tolerance(Node):
+    relative: Annotated[float, Interval(gt=0, le=0.01)] = 1e-4
+    """Relative tolerance when comparing a regenerated model output (including pre- and
+    postprocessing) to its corresponding known output test tensor. See **rtol** argument to
+    [numpy.testing.assert_allclose](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html#numpy.testing.assert_allclose).
+    Specify a single floating point value for all tensors or individual values for
+    (a subset of) individual output tensors."""
+
+    absolute: Annotated[float, Gt(0)] = 1.5e-4
+    """Absolute tolerance when comparing a regenerated model output (including pre- and
+    postprocessing) to its corresponding known output test tensor. See **atol** argument to
+    [numpy.testing.assert_allclose](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html#numpy.testing.assert_allclose).
+    """
+
+
 class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
@@ -1905,6 +1920,14 @@ class WeightsEntryDescrBase(FileDescr):
     The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
     All weight entries except one (the initial set of weights resulting from training the model),
     need to have this field."""
+
+    reproducibility_tolerance: Union[Tolerance, Mapping[TensorId, Tolerance]] = Field(
+        default_factory=Tolerance
+    )
+    """Even with seeding and selecting deterministic algorithms, model output may vary
+    across DL framework versions, OS and hardware. Models suseptable to these
+    variations may specify `reproducibility_tolerance` to compare regenerated outputs
+    less strictly to the known output test tensors."""
 
     @model_validator(mode="after")
     def check_parent_is_not_self(self) -> Self:
