@@ -130,7 +130,6 @@ from .v0_4 import WeightsFormat as WeightsFormat
 from .v0_4 import ZeroMeanUnitVarianceDescr as _ZeroMeanUnitVarianceDescr_v0_4
 from .v0_4 import package_weights
 
-# unit names from https://ngff.openmicroscopy.org/latest/#axes-md
 SpaceUnit = Literal[
     "attometer",
     "angstrom",
@@ -159,6 +158,7 @@ SpaceUnit = Literal[
     "zeptometer",
     "zettameter",
 ]
+"""Space unit compatible to the [OME-Zarr axes specification 0.5](https://ngff.openmicroscopy.org/0.5/#axes-md)"""
 
 TimeUnit = Literal[
     "attosecond",
@@ -185,6 +185,7 @@ TimeUnit = Literal[
     "zeptosecond",
     "zettasecond",
 ]
+"""Time unit compatible to the [OME-Zarr axes specification 0.5](https://ngff.openmicroscopy.org/0.5/#axes-md)"""
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
 
@@ -414,8 +415,6 @@ class SizeReference(Node):
         return axis.unit
 
 
-# this Axis definition is compatible with the NGFF draft from July 10, 2023
-# https://ngff.openmicroscopy.org/latest/#axes-md
 class AxisBase(NodeWithExplicitlySetFields):
     fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type"})
 

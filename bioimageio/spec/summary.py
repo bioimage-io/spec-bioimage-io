@@ -358,7 +358,7 @@ class ValidationSummary(BaseModel, extra="allow"):
                     [
                         "🐍",
                         format_loc(d.loc),
-                        "conda compare ({d.name}):<br>"
+                        f"conda compare ({d.name}):<br>"
                         + d.conda_compare.replace("\n", "<br>"),
                     ]
                 )

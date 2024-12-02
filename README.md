@@ -31,20 +31,20 @@ All bioimage.io description formats are defined as [Pydantic models](https://doc
 
 | Type | Format Version | Documentation[^1] | Developer Documentation[^2] |
 | --- | --- | --- | --- |
-| model | 0.5 </br> 0.4 | [model 0.5](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i2_oneOf_i1) | [ModelDescr_v0_5](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/model/v0_5.html#ModelDescr) </br> [model 0.4](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i2_oneOf_i0) | [ModelDescr_v0_4](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/model/v0_4.html#ModelDescr) |
-| dataset | 0.3 </br> 0.2 | [dataset 0.3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i1_oneOf_i1) | [DatasetDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/dataset/v0_3.html#DatasetDescr) </br> [dataset 0.2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i1_oneOf_i0) | [DatasetDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/dataset/v0_2.html#DatasetDescr) |
-| notebook | 0.3 </br> 0.2 | [notebook 0.3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i3_oneOf_i1) | [NotebookDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/notebook/v0_3.html#NotebookDescr) </br> [notebook 0.2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i3_oneOf_i0) | [NotebookDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/notebook/v0_2.html#NotebookDescr) |
-| application | 0.3 </br> 0.2 | [application 0.3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i0_oneOf_i1) | [ApplicationDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/application/v0_3.html#ApplicationDescr) </br> [application 0.2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i0_oneOf_i0) | [ApplicationDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/application/v0_2.html#ApplicationDescr) |
-| generic | 0.3 </br> 0.2 | - | [GenericDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/generic/v0_3.html#GenericDescr) </br> - | [GenericDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/generic/v0_2.html#GenericDescr) |
+| model | 0.5 </br> 0.4 | [model 0.5](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i2_oneOf_i1) </br> [model 0.4](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i2_oneOf_i0) | [ModelDescr_v0_5](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/model/v0_5.html#ModelDescr) </br> [ModelDescr_v0_4](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/model/v0_4.html#ModelDescr) |
+| dataset | 0.3 </br> 0.2 | [dataset 0.3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i1_oneOf_i1) </br> [dataset 0.2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i1_oneOf_i0) | [DatasetDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/dataset/v0_3.html#DatasetDescr) </br> [DatasetDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/dataset/v0_2.html#DatasetDescr) |
+| notebook | 0.3 </br> 0.2 | [notebook 0.3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i3_oneOf_i1) </br> [notebook 0.2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i3_oneOf_i0) | [NotebookDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/notebook/v0_3.html#NotebookDescr) </br> [NotebookDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/notebook/v0_2.html#NotebookDescr) |
+| application | 0.3 </br> 0.2 | [application 0.3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i0_oneOf_i1) </br> [application 0.2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i0_oneOf_i0) | [ApplicationDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/application/v0_3.html#ApplicationDescr) </br> [ApplicationDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/application/v0_2.html#ApplicationDescr) |
+| generic | 0.3 </br> 0.2 | - | [GenericDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/generic/v0_3.html#GenericDescr) </br> [GenericDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/generic/v0_2.html#GenericDescr) |
 
 [^1]: JSON Schema based documentation generated with [json-schema-for-humans](https://coveooss.github.io/json-schema-for-humans/).
 [^2]: Part of the bioimageio.spec package documentation generated with [pdoc](https://pdoc.dev/).
 
-## JSON schema
+## JSON Schema
 
-Simplified descriptions are available as [JSON schema](https://json-schema.org/) (generated with Pydantic):
+Simplified descriptions are available as [JSON Schema](https://json-schema.org/) (generated with Pydantic):
 
-| bioimageio.spec version | JSON schema | documentation[^1] |
+| bioimageio.spec version | JSON Schema | documentation[^1] |
 | --- | --- | --- |
 | latest | [bioimageio_schema_latest.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json) | [latest documentation](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html) |
 | 0.5 | [bioimageio_schema_v0-5.json](https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json) | [0.5 documentation](https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_v0-5/index.html) |
@@ -237,7 +237,7 @@ To keep this relation, but avoid overbearing post releases a library version num
   * `bioimageio.spec.update_format` (interface changed)
 * switch from Marshmallow to Pydantic
   * extended validation
-  * one joint, more precise JSON schema
+  * one joint, more precise JSON Schema
 
 #### bioimageio.spec 0.4.9
 
