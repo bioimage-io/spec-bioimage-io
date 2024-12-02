@@ -37,7 +37,7 @@ _ = setup(
         "packaging>=17.0",
         "pooch>=1.5,<2",
         "pydantic-settings>=2.5,<3",
-        "pydantic>=2.7.0,<2.10",
+        "pydantic>=2.7.0,<2.10",  # TODO: check and update pin after https://github.com/pydantic/pydantic/pull/11008 is released
         "python-dateutil",
         "requests",
         "rich",
