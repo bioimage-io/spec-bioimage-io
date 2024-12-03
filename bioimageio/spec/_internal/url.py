@@ -111,7 +111,10 @@ def _validate_url_impl(
         elif response.status_code != 200:
             raise ValueError(f"{response.status_code}: {response.reason} {url}")
 
-    return pydantic.HttpUrl(url)
+    return (  # pyright: ignore[reportUnknownVariableType]
+        # TODO: remove pyright ignore for pydantic > 2.9
+        pydantic.HttpUrl(url)  # pyright: ignore[reportCallIssue]
+    )
 
 
 class HttpUrl(RootHttpUrl):
