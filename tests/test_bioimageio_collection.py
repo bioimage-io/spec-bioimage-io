@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any, Collection, Dict, Iterable, Mapping, Tuple
 
 import pytest
