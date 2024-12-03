@@ -1,13 +1,11 @@
-import json
 from pathlib import Path
 from typing import Any, Collection, Dict, Iterable, Mapping, Tuple
 
-import pooch  # pyright: ignore [reportMissingTypeStubs]
 import pytest
+import requests
 
-from bioimageio.spec import settings
 from bioimageio.spec.common import HttpUrl, Sha256
-from tests.utils import ParameterSet, check_bioimageio_yaml, skip_expensive
+from tests.utils import ParameterSet, check_bioimageio_yaml, expensive_test
 
 BASE_URL = "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/"
 
@@ -27,12 +25,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
 
 
 def _get_rdf_sources():
-    all_versions_path: Any = pooch.retrieve(
-        BASE_URL + "all_versions.json", None, path=settings.cache_path
-    )
-    with Path(all_versions_path).open(encoding="utf-8") as f:
-        entries = json.load(f)["entries"]
-
+    entries: Any = requests.get(BASE_URL + "all_versions.json").json()["entries"]
     ret: Dict[str, Tuple[HttpUrl, Sha256]] = {}
     for entry in entries:
         for version in entry["versions"]:
@@ -57,10 +50,10 @@ def yield_bioimageio_yaml_urls() -> Iterable[ParameterSet]:
         yield pytest.param(descr_url, sha, key, id=key)
 
 
-@skip_expensive
+@expensive_test
 @pytest.mark.parametrize("descr_url,sha,key", list(yield_bioimageio_yaml_urls()))
 def test_rdf(
-    descr_url: Path,
+    descr_url: HttpUrl,
     sha: Sha256,
     key: str,
     bioimageio_json_schema: Mapping[Any, Any],
@@ -80,7 +73,7 @@ def test_rdf(
     )
 
 
-@skip_expensive
+@expensive_test
 @pytest.mark.parametrize(
     "rdf_id",
     [
