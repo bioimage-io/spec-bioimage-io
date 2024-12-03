@@ -7,7 +7,13 @@ from ._internal.io import (
     FileDescr,
     YamlValue,
 )
-from ._internal.io_basics import AbsoluteDirectory, AbsoluteFilePath, FileName, Sha256
+from ._internal.io_basics import (
+    AbsoluteDirectory,
+    AbsoluteFilePath,
+    FileName,
+    Sha256,
+    ZipPath,
+)
 from ._internal.root_url import RootHttpUrl
 from ._internal.types import (
     FilePath,
@@ -34,4 +40,5 @@ __all__ = [
     "Sha256",
     "ValidationError",
     "YamlValue",
+    "ZipPath",
 ]
