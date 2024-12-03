@@ -1,6 +1,8 @@
 import collections.abc
-from typing import Any, Dict, Mapping, Sequence, Tuple
+from typing import Any, Dict, List, Mapping, Sequence, Tuple
 
+import numpy as np
+from numpy.typing import NDArray
 from typing_extensions import TypeGuard
 
 
@@ -25,6 +27,15 @@ def is_sequence(v: Any) -> TypeGuard[Sequence[Any]]:
     return isinstance(v, collections.abc.Sequence)
 
 
-def is_tuple(v: Any) -> TypeGuard[Tuple[Any]]:
-    """to avoid Tuple[Unknown]"""
+def is_tuple(v: Any) -> TypeGuard[Tuple[Any, ...]]:
+    """to avoid Tuple[Unknown, ...]"""
     return isinstance(v, tuple)
+
+
+def is_list(v: Any) -> TypeGuard[List[Any]]:
+    """to avoid List[Unknown]"""
+    return isinstance(v, list)
+
+
+def is_ndarray(v: Any) -> TypeGuard[NDArray[Any]]:
+    return isinstance(v, np.ndarray)
