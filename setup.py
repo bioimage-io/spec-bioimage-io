@@ -57,6 +57,7 @@ _ = setup(
                 "pytest-cov",
                 "pytest-xdist",  # parallel pytest
                 "pytest",
+                "requests-mock",
             ]
         ),
         "dev": test_extras
