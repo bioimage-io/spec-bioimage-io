@@ -76,7 +76,9 @@ def _validate_url_impl(
             msg_context={"error": str(e)},
         )
     else:
-        if response.status_code == 302:  # found
+        if response.status_code == 200:  # ok
+            pass
+        elif response.status_code == 302:  # found
             pass
         elif response.status_code in (301, 303, 308):
             issue_warning(
@@ -88,17 +90,10 @@ def _validate_url_impl(
                     "location": response.headers.get("location"),
                 },
             )
-        elif response.status_code == 403:  # forbidden
-            if request_mode == "head":
-                return _validate_url_impl(
-                    url, request_mode="get_stream", timeout=timeout
-                )
-            elif request_mode == "get_stream":
-                return _validate_url_impl(url, request_mode="get", timeout=timeout)
-            elif request_mode == "get":
-                raise ValueError(f"{response.status_code}: {response.reason} {url}")
-            else:
-                assert_never(request_mode)
+        elif request_mode == "head":
+            return _validate_url_impl(url, request_mode="get_stream", timeout=timeout)
+        elif request_mode == "get_stream":
+            return _validate_url_impl(url, request_mode="get", timeout=timeout)
         elif response.status_code == 405:
             issue_warning(
                 "{status_code}: {reason} {value}",
@@ -108,8 +103,10 @@ def _validate_url_impl(
                     "reason": response.reason,
                 },
             )
-        elif response.status_code != 200:
+        elif request_mode == "get":
             raise ValueError(f"{response.status_code}: {response.reason} {url}")
+        else:
+            assert_never(request_mode)
 
     return (  # pyright: ignore[reportUnknownVariableType]
         # TODO: remove pyright ignore for pydantic > 2.9
