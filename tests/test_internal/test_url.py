@@ -2,6 +2,7 @@ from typing import Type
 
 import pytest
 import requests.exceptions
+from requests_mock import Mocker as RequestsMocker
 
 from bioimageio.spec._internal.validation_context import ValidationContext
 
@@ -32,11 +33,11 @@ def test_httpurl_valid(url: str):
         ("let's ignore this I guess??", 405),
     ],
 )
-def test_httpurl_mock_valid(text: str, status_code: int, requests_mock):
+def test_httpurl_mock_valid(text: str, status_code: int, requests_mock: RequestsMocker):
     from bioimageio.spec._internal.url import HttpUrl
 
     url = "https://example.com"
-    requests_mock.get(url, text=text, status_code=status_code)
+    _ = requests_mock.get(url, text=text, status_code=status_code)
     assert HttpUrl(url).exists()
 
 
@@ -48,12 +49,14 @@ def test_httpurl_mock_valid(text: str, status_code: int, requests_mock):
         ("just wrong", 199),
     ],
 )
-def test_httpurl_mock_invalid(text: str, status_code: int, requests_mock):
+def test_httpurl_mock_invalid(
+    text: str, status_code: int, requests_mock: RequestsMocker
+):
     from bioimageio.spec._internal.url import HttpUrl
 
     url = "https://example.com"
-    requests_mock.head(url, text=text, status_code=status_code)
-    requests_mock.get(url, text=text, status_code=status_code)
+    _ = requests_mock.head(url, text=text, status_code=status_code)
+    _ = requests_mock.get(url, text=text, status_code=status_code)
     with ValidationContext(perform_io_checks=True):
         with pytest.raises(ValueError):
             _ = HttpUrl(url)
@@ -68,11 +71,11 @@ def test_httpurl_mock_invalid(text: str, status_code: int, requests_mock):
         requests.exceptions.InvalidURL,
     ],
 )
-def test_httpurl_mock_exc(exc: Type[Exception], requests_mock):
+def test_httpurl_mock_exc(exc: Type[Exception], requests_mock: RequestsMocker):
     from bioimageio.spec._internal.url import HttpUrl
 
     url = "https://example.com"
-    requests_mock.head(url, exc=exc)
+    _ = requests_mock.head(url, exc=exc)
     with ValidationContext(perform_io_checks=True):
         with pytest.raises(ValueError):
             _ = HttpUrl(url)

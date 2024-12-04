@@ -60,6 +60,7 @@ from .io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName, ZipPath
 from .io_utils import write_content_to_zip
 from .node import Node
 from .packaging_context import PackagingContext
+from .root_url import RootHttpUrl
 from .url import HttpUrl
 from .utils import (
     assert_all_params_set_explicitly,
@@ -343,12 +344,12 @@ class ResourceDescrBase(
         assert self._validation_summary is not None, "access only after initialization"
         return self._validation_summary
 
-    _root: Union[HttpUrl, DirectoryPath] = PrivateAttr(
+    _root: Union[RootHttpUrl, DirectoryPath, ZipPath] = PrivateAttr(
         default_factory=lambda: validation_context_var.get().root
     )
 
     @property
-    def root(self) -> Union[HttpUrl, DirectoryPath]:
+    def root(self) -> Union[RootHttpUrl, DirectoryPath, ZipPath]:
         return self._root
 
     @classmethod

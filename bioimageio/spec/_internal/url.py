@@ -121,7 +121,7 @@ class HttpUrl(RootHttpUrl):
     _exists: Optional[bool] = None
 
     def _after_validator(self):
-        super()._after_validator()
+        self = super()._after_validator()
         context = validation_context_var.get()
         if (
             context.perform_io_checks
