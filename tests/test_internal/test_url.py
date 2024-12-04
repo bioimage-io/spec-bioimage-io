@@ -2,7 +2,6 @@ from typing import Type
 
 import pytest
 import requests.exceptions
-from pydantic import ValidationError
 
 from bioimageio.spec._internal.validation_context import ValidationContext
 

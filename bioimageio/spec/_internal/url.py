@@ -4,7 +4,7 @@ import pydantic
 import requests
 import requests.exceptions
 from loguru import logger
-from pydantic import RootModel, model_validator
+from pydantic import RootModel
 from typing_extensions import Literal, assert_never
 
 from .field_warning import issue_warning
@@ -123,12 +123,14 @@ class HttpUrl(RootHttpUrl):
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
     _exists: Optional[bool] = None
 
-    @model_validator(mode="after")
-    def _validate(self):
-        url = self._validated
+    def _after_validator(self):
+        super()._after_validator()
         context = validation_context_var.get()
-        if context.perform_io_checks and str(url) not in context.known_files:
-            self._validated = _validate_url(url)
+        if (
+            context.perform_io_checks
+            and str(self._validated) not in context.known_files
+        ):
+            self._validated = _validate_url(self._validated)
             self._exists = True
 
         return self

@@ -6,6 +6,7 @@ from pydantic_core.core_schema import (
     CoreSchema,
     no_info_after_validator_function,
 )
+from typing_extensions import Self
 
 
 class ValidatedString(str):
@@ -18,6 +19,10 @@ class ValidatedString(str):
     def __new__(cls, object: object):
         self = super().__new__(cls, object)
         self._validated = cls.root_model.model_validate(str(self)).root
+        return self._after_validator()
+
+    def _after_validator(self) -> Self:
+        """add validation after the `root_model`"""
         return self
 
     @classmethod
