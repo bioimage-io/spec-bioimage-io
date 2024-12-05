@@ -21,6 +21,7 @@ from ._description import (
     dump_description,
     validate_format,
 )
+from ._get_conda_env import get_conda_env
 from ._internal import settings
 from ._internal.common_nodes import InvalidDescr
 from ._internal.constants import VERSION
