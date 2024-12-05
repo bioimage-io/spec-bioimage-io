@@ -21,7 +21,7 @@ from ._description import (
     dump_description,
     validate_format,
 )
-from ._get_conda_env import get_conda_env
+from ._get_conda_env import BioimageioCondaEnv, get_conda_env
 from ._internal import settings
 from ._internal.common_nodes import InvalidDescr
 from ._internal.constants import VERSION
@@ -58,6 +58,7 @@ __all__ = [
     "AnyNotebookDescr",
     "application",
     "ApplicationDescr",
+    "BioimageioCondaEnv",
     "build_description",
     "common",
     "conda_env",
@@ -67,6 +68,7 @@ __all__ = [
     "enable_pretty_validation_errors_in_ipynb",
     "generic",
     "GenericDescr",
+    "get_conda_env",
     "get_resource_package_content",
     "InvalidDescr",
     "LatestResourceDescr",
