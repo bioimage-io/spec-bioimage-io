@@ -1010,7 +1010,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.3.5</footer>
+            <footer>bioimageio.spec 0.5.3.6</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -1124,7 +1124,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../model.ht
 </span><span id="L-93"><a href="#L-93"><span class="linenos">  93</span></a><span class="kn">from</span> <span class="nn">..generic.v0_3</span> <span class="kn">import</span> <span class="p">(</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos">  94</span></a>    <span class="n">DocumentationSource</span><span class="p">,</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos">  95</span></a>    <span class="n">GenericModelDescrBase</span><span class="p">,</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos">  96</span></a>    <span class="n">LinkedResourceNode</span><span class="p">,</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos">  96</span></a>    <span class="n">LinkedResourceBase</span><span class="p">,</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos">  97</span></a>    <span class="n">_author_conv</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportPrivateUsage]</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos">  98</span></a>    <span class="n">_maintainer_conv</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportPrivateUsage]</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos">  99</span></a><span class="p">)</span>
@@ -3062,7 +3062,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../model.ht
 </span><span id="L-2031"><a href="#L-2031"><span class="linenos">2031</span></a>    <span class="k">pass</span>
 </span><span id="L-2032"><a href="#L-2032"><span class="linenos">2032</span></a>
 </span><span id="L-2033"><a href="#L-2033"><span class="linenos">2033</span></a>
-</span><span id="L-2034"><a href="#L-2034"><span class="linenos">2034</span></a><span class="k">class</span> <span class="nc">LinkedModel</span><span class="p">(</span><span class="n">LinkedResourceNode</span><span class="p">):</span>
+</span><span id="L-2034"><a href="#L-2034"><span class="linenos">2034</span></a><span class="k">class</span> <span class="nc">LinkedModel</span><span class="p">(</span><span class="n">LinkedResourceBase</span><span class="p">):</span>
 </span><span id="L-2035"><a href="#L-2035"><span class="linenos">2035</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Reference to a bioimage.io model.&quot;&quot;&quot;</span>
 </span><span id="L-2036"><a href="#L-2036"><span class="linenos">2036</span></a>
 </span><span id="L-2037"><a href="#L-2037"><span class="linenos">2037</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">ModelId</span>
@@ -8472,7 +8472,7 @@ No duplicates are allowed across all inputs and outputs.</p>
 
                             <div id="EnvironmentFileDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f4eadf70040&gt;), PlainSerializer(func=&lt;function _package at 0x7f4eadf707c0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), WithSuffix(suffix=(&#39;.yaml&#39;, &#39;.yml&#39;), case_sensitive=True), FieldInfo(annotation=NoneType, required=True, examples=[&#39;environment.yaml&#39;])]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f9662bc4540&gt;), PlainSerializer(func=&lt;function _package at 0x7f9662bc6ca0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), WithSuffix(suffix=(&#39;.yaml&#39;, &#39;.yml&#39;), case_sensitive=True), FieldInfo(annotation=NoneType, required=True, examples=[&#39;environment.yaml&#39;])]</span>
 
         
     </div>
@@ -8645,7 +8645,7 @@ Allows to specify custom dependencies, see conda docs:</p>
                             </div>
                             <div id="WeightsEntryDescrBase.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f4eadf70040&gt;), PlainSerializer(func=&lt;function _package at 0x7f4eadf707c0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f9662bc4540&gt;), PlainSerializer(func=&lt;function _package at 0x7f9662bc6ca0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -9027,7 +9027,7 @@ The conda environment file should include pytorch and any version pinning has to
                             </div>
                             <div id="TensorflowJsWeightsDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f4eadf70040&gt;), PlainSerializer(func=&lt;function _package at 0x7f4eadf707c0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f9662bc4540&gt;), PlainSerializer(func=&lt;function _package at 0x7f9662bc6ca0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -9133,7 +9133,7 @@ Should include tensorflow and any version pinning has to be compatible with <cod
                             </div>
                             <div id="TensorflowSavedModelBundleWeightsDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f4eadf70040&gt;), PlainSerializer(func=&lt;function _package at 0x7f4eadf707c0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f9662bc4540&gt;), PlainSerializer(func=&lt;function _package at 0x7f9662bc6ca0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -9461,13 +9461,13 @@ errors defaults to 'strict'.</p>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">LinkedModel</span><wbr>(<span class="base"><a href="../generic/v0_3.html#LinkedResourceNode">bioimageio.spec.generic.v0_3.LinkedResourceNode</a></span>):
+    <span class="name">LinkedModel</span><wbr>(<span class="base"><a href="../generic/v0_3.html#LinkedResourceBase">bioimageio.spec.generic.v0_3.LinkedResourceBase</a></span>):
 
                 <label class="view-source-button" for="LinkedModel-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#LinkedModel"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LinkedModel-2035"><a href="#LinkedModel-2035"><span class="linenos">2035</span></a><span class="k">class</span> <span class="nc">LinkedModel</span><span class="p">(</span><span class="n">LinkedResourceNode</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LinkedModel-2035"><a href="#LinkedModel-2035"><span class="linenos">2035</span></a><span class="k">class</span> <span class="nc">LinkedModel</span><span class="p">(</span><span class="n">LinkedResourceBase</span><span class="p">):</span>
 </span><span id="LinkedModel-2036"><a href="#LinkedModel-2036"><span class="linenos">2036</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Reference to a bioimage.io model.&quot;&quot;&quot;</span>
 </span><span id="LinkedModel-2037"><a href="#LinkedModel-2037"><span class="linenos">2037</span></a>
 </span><span id="LinkedModel-2038"><a href="#LinkedModel-2038"><span class="linenos">2038</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">ModelId</span>
@@ -9495,8 +9495,8 @@ errors defaults to 'strict'.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt><a href="../generic/v0_3.html#LinkedResourceNode">bioimageio.spec.generic.v0_3.LinkedResourceNode</a></dt>
-                                <dd id="LinkedModel.version" class="variable"><a href="../generic/v0_3.html#LinkedResourceNode.version">version</a></dd>
+                                    <div><dt><a href="../generic/v0_3.html#LinkedResourceBase">bioimageio.spec.generic.v0_3.LinkedResourceBase</a></dt>
+                                <dd id="LinkedModel.version" class="variable"><a href="../generic/v0_3.html#LinkedResourceBase.version">version</a></dd>
 
             </div>
                                 </dl>
@@ -10186,7 +10186,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
                             </div>
                             <div id="ModelDescr.documentation" class="classattr">
                                 <div class="attr variable">
-            <span class="name">documentation</span><span class="annotation">: Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute), FieldInfo(annotation=NoneType, required=True, title=&#39;AbsoluteFilePath&#39;)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function _validate_md_suffix at 0x7f4ead3e14e0&gt;), PlainSerializer(func=&lt;function _package at 0x7f4eadf707c0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
+            <span class="name">documentation</span><span class="annotation">: Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute), FieldInfo(annotation=NoneType, required=True, title=&#39;AbsoluteFilePath&#39;)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function _validate_md_suffix at 0x7f96629a3100&gt;), PlainSerializer(func=&lt;function _package at 0x7f9662bc6ca0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
 
         
     </div>
@@ -10215,7 +10215,7 @@ with details on how to quantitatively validate the model on unseen data.</p>
                             </div>
                             <div id="ModelDescr.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_- ()&#39;), MinLen(min_length=5), MaxLen(max_length=128), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f4ea06525c0&gt;, severity=20, msg=&#39;Name longer than 64 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=64)]})]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_- ()&#39;), MinLen(min_length=5), MaxLen(max_length=128), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f965fe40180&gt;, severity=20, msg=&#39;Name longer than 64 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=64)]})]</span>
 
         
     </div>
@@ -10271,7 +10271,7 @@ Only required if those persons differ from the <code><a href="#ModelDescr.author
                             </div>
                             <div id="ModelDescr.run_mode" class="classattr">
                                 <div class="attr variable">
-            <span class="name">run_mode</span><span class="annotation">: Annotated[Optional[<a href="v0_4.html#RunMode">bioimageio.spec.model.v0_4.RunMode</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f4ea1b1b100&gt;, severity=30, msg=&#34;Run mode &#39;{value}&#39; has limited support across consumer softwares.&#34;, context={&#39;typ&#39;: None})]</span>
+            <span class="name">run_mode</span><span class="annotation">: Annotated[Optional[<a href="v0_4.html#RunMode">bioimageio.spec.model.v0_4.RunMode</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f966004b740&gt;, severity=30, msg=&#34;Run mode &#39;{value}&#39; has limited support across consumer softwares.&#34;, context={&#39;typ&#39;: None})]</span>
 
         
     </div>
@@ -10314,7 +10314,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
                             </div>
                             <div id="ModelDescr.weights" class="classattr">
                                 <div class="attr variable">
-            <span class="name">weights</span><span class="annotation">: Annotated[<a href="#WeightsDescr">WeightsDescr</a>, WrapSerializer(func=&lt;function package_weights at 0x7f4ea22e3b00&gt;, return_type=PydanticUndefined, when_used=&#39;always&#39;)]</span>
+            <span class="name">weights</span><span class="annotation">: Annotated[<a href="#WeightsDescr">WeightsDescr</a>, WrapSerializer(func=&lt;function package_weights at 0x7f9662647c40&gt;, return_type=PydanticUndefined, when_used=&#39;always&#39;)]</span>
 
         
     </div>

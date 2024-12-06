@@ -80,7 +80,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.3.5</footer>
+            <footer>bioimageio.spec 0.5.3.6</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -116,7 +116,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../dataset.
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">from</span> <span class="nn">..generic.v0_3</span> <span class="kn">import</span> <span class="p">(</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>    <span class="n">DocumentationSource</span><span class="p">,</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="n">GenericDescrBase</span><span class="p">,</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="n">LinkedResourceNode</span><span class="p">,</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="n">LinkedResourceBase</span><span class="p">,</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>    <span class="n">_author_conv</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportPrivateUsage]</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>    <span class="n">_maintainer_conv</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportPrivateUsage]</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="p">)</span>
@@ -206,7 +206,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../dataset.
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="k">return</span> <span class="n">data</span>
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="k">class</span> <span class="nc">LinkedDataset</span><span class="p">(</span><span class="n">LinkedResourceNode</span><span class="p">):</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="k">class</span> <span class="nc">LinkedDataset</span><span class="p">(</span><span class="n">LinkedResourceBase</span><span class="p">):</span>
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Reference to a bioimage.io dataset.&quot;&quot;&quot;</span>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">DatasetId</span>
@@ -492,13 +492,13 @@ method.</p>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">LinkedDataset</span><wbr>(<span class="base"><a href="../generic/v0_3.html#LinkedResourceNode">bioimageio.spec.generic.v0_3.LinkedResourceNode</a></span>):
+    <span class="name">LinkedDataset</span><wbr>(<span class="base"><a href="../generic/v0_3.html#LinkedResourceBase">bioimageio.spec.generic.v0_3.LinkedResourceBase</a></span>):
 
                 <label class="view-source-button" for="LinkedDataset-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#LinkedDataset"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LinkedDataset-109"><a href="#LinkedDataset-109"><span class="linenos">109</span></a><span class="k">class</span> <span class="nc">LinkedDataset</span><span class="p">(</span><span class="n">LinkedResourceNode</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LinkedDataset-109"><a href="#LinkedDataset-109"><span class="linenos">109</span></a><span class="k">class</span> <span class="nc">LinkedDataset</span><span class="p">(</span><span class="n">LinkedResourceBase</span><span class="p">):</span>
 </span><span id="LinkedDataset-110"><a href="#LinkedDataset-110"><span class="linenos">110</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Reference to a bioimage.io dataset.&quot;&quot;&quot;</span>
 </span><span id="LinkedDataset-111"><a href="#LinkedDataset-111"><span class="linenos">111</span></a>
 </span><span id="LinkedDataset-112"><a href="#LinkedDataset-112"><span class="linenos">112</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">DatasetId</span>
@@ -526,8 +526,8 @@ method.</p>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
-                                    <div><dt><a href="../generic/v0_3.html#LinkedResourceNode">bioimageio.spec.generic.v0_3.LinkedResourceNode</a></dt>
-                                <dd id="LinkedDataset.version" class="variable"><a href="../generic/v0_3.html#LinkedResourceNode.version">version</a></dd>
+                                    <div><dt><a href="../generic/v0_3.html#LinkedResourceBase">bioimageio.spec.generic.v0_3.LinkedResourceBase</a></dt>
+                                <dd id="LinkedDataset.version" class="variable"><a href="../generic/v0_3.html#LinkedResourceBase.version">version</a></dd>
 
             </div>
                                 </dl>

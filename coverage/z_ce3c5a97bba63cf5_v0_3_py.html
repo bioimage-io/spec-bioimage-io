@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_0703eb9a8d100bed___init___py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.6.8">coverage.py v7.6.8</a>,
-            created at 2024-11-29 14:03 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.6.9">coverage.py v7.6.9</a>,
+            created at 2024-12-06 13:19 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -92,7 +92,7 @@
     <p class="run"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="op">.</span><span class="nam">generic</span><span class="op">.</span><span class="nam">v0_3</span> <span class="key">import</span> <span class="nam">CiteEntry</span> <span class="key">as</span> <span class="nam">CiteEntry</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="op">.</span><span class="nam">generic</span><span class="op">.</span><span class="nam">v0_3</span> <span class="key">import</span> <span class="nam">DeprecatedLicenseId</span> <span class="key">as</span> <span class="nam">DeprecatedLicenseId</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="op">.</span><span class="nam">generic</span><span class="op">.</span><span class="nam">v0_3</span> <span class="key">import</span> <span class="nam">Doi</span> <span class="key">as</span> <span class="nam">Doi</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="op">.</span><span class="nam">generic</span><span class="op">.</span><span class="nam">v0_3</span> <span class="key">import</span> <span class="nam">GenericDescrBase</span><span class="op">,</span> <span class="nam">LinkedResourceNode</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="op">.</span><span class="nam">generic</span><span class="op">.</span><span class="nam">v0_3</span> <span class="key">import</span> <span class="nam">GenericDescrBase</span><span class="op">,</span> <span class="nam">LinkedResourceBase</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t14" href="#t14">14</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="op">.</span><span class="nam">generic</span><span class="op">.</span><span class="nam">v0_3</span> <span class="key">import</span> <span class="nam">LicenseId</span> <span class="key">as</span> <span class="nam">LicenseId</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="op">.</span><span class="nam">generic</span><span class="op">.</span><span class="nam">v0_3</span> <span class="key">import</span> <span class="nam">LinkedResource</span> <span class="key">as</span> <span class="nam">LinkedResource</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="op">.</span><span class="nam">generic</span><span class="op">.</span><span class="nam">v0_3</span> <span class="key">import</span> <span class="nam">Maintainer</span> <span class="key">as</span> <span class="nam">Maintainer</span>&nbsp;</span><span class="r"></span></p>
@@ -124,7 +124,7 @@
     <p class="run"><span class="n"><a id="t42" href="#t42">42</a></span><span class="t">    <span class="str">"""The Jupyter notebook"""</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t43" href="#t43">43</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t44" href="#t44">44</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t45" href="#t45">45</a></span><span class="t"><span class="key">class</span> <span class="nam">LinkedNotebook</span><span class="op">(</span><span class="nam">LinkedResourceNode</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t45" href="#t45">45</a></span><span class="t"><span class="key">class</span> <span class="nam">LinkedNotebook</span><span class="op">(</span><span class="nam">LinkedResourceBase</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t46" href="#t46">46</a></span><span class="t">    <span class="str">"""Reference to a bioimage.io notebook."""</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t47" href="#t47">47</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t48" href="#t48">48</a></span><span class="t">    <span class="nam">id</span><span class="op">:</span> <span class="nam">NotebookId</span>&nbsp;</span><span class="r"></span></p>
@@ -137,8 +137,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_0703eb9a8d100bed___init___py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.6.8">coverage.py v7.6.8</a>,
-            created at 2024-11-29 14:03 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.6.9">coverage.py v7.6.9</a>,
+            created at 2024-12-06 13:19 +0000
         </p>
     </div>
 </footer>
