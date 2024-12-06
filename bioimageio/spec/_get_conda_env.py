@@ -144,7 +144,6 @@ def _get_default_pytorch_env(
         )
         deps = [f"pytorch=={v}", "torchvision", "torchaudio"]
 
-    deps.append("cpuonly")
 
     # avoid `undefined symbol: iJIT_NotifyEvent` from `torch/lib/libtorch_cpu.so`
     # see https://github.com/pytorch/pytorch/issues/123097
