@@ -83,68 +83,70 @@ def _get_default_pytorch_env(
     if pytorch_version is None:
         pytorch_version = Version("1.10.1")
 
-    # dependencies to install pytorch according to https://pytorch.org/get-started/previous-versions/
-    if (v := str(pytorch_version)) == "1.6.0":
-        deps: List[Union[str, PipDeps]] = [f"pytorch=={v}", "torchvision==0.7.0"]
+    # dependencies to install pytorch according to
+    # https://pytorch.org/get-started/previous-versions/
+    v = str(pytorch_version)
+    deps: List[Union[str, PipDeps]] = [f"pytorch=={v}"]
+    if v == "1.6.0":
+        deps += ["torchvision==0.7.0"]
     elif v == "1.7.0":
-        deps = [f"pytorch=={v}", "torchvision==0.8.0", "torchaudio==0.7.0"]
+        deps += ["torchvision==0.8.0", "torchaudio==0.7.0"]
     elif v == "1.7.1":
-        deps = [f"pytorch=={v}", "torchvision==0.8.2", "torchaudio==0.7.1"]
+        deps += ["torchvision==0.8.2", "torchaudio==0.7.1"]
     elif v == "1.8.0":
-        deps = [f"pytorch=={v}", "torchvision==0.9.0", "torchaudio==0.8.0"]
+        deps += ["torchvision==0.9.0", "torchaudio==0.8.0"]
     elif v == "1.8.1":
-        deps = [f"pytorch=={v}", "torchvision==0.9.1", "torchaudio==0.8.1"]
+        deps += ["torchvision==0.9.1", "torchaudio==0.8.1"]
     elif v == "1.9.0":
-        deps = [f"pytorch=={v}", "torchvision==0.10.0", "torchaudio==0.9.0"]
+        deps += ["torchvision==0.10.0", "torchaudio==0.9.0"]
     elif v == "1.9.1":
-        deps = [f"pytorch=={v}", "torchvision==0.10.1", "torchaudio==0.9.1"]
+        deps += ["torchvision==0.10.1", "torchaudio==0.9.1"]
     elif v == "1.10.0":
-        deps = [f"pytorch=={v}", "torchvision==0.11.0", "torchaudio==0.10.0"]
+        deps += ["torchvision==0.11.0", "torchaudio==0.10.0"]
     elif v == "1.10.1":
-        deps = [f"pytorch=={v}", "torchvision==0.11.2", "torchaudio==0.10.1"]
+        deps += ["torchvision==0.11.2", "torchaudio==0.10.1"]
     elif v == "1.11.0":
-        deps = [f"pytorch=={v}", "torchvision==0.12.0", "torchaudio==0.11.0"]
+        deps += ["torchvision==0.12.0", "torchaudio==0.11.0"]
     elif v == "1.12.0":
-        deps = [f"pytorch=={v}", "torchvision==0.13.0", "torchaudio==0.12.0"]
+        deps += ["torchvision==0.13.0", "torchaudio==0.12.0"]
     elif v == "1.12.1":
-        deps = [f"pytorch=={v}", "torchvision==0.13.1", "torchaudio==0.12.1"]
+        deps += ["torchvision==0.13.1", "torchaudio==0.12.1"]
     elif v == "1.13.0":
-        deps = [f"pytorch=={v}", "torchvision==0.14.0", "torchaudio==0.13.0"]
+        deps += ["torchvision==0.14.0", "torchaudio==0.13.0"]
     elif v == "1.13.1":
-        deps = [f"pytorch=={v}", "torchvision==0.14.1", "torchaudio==0.13.1"]
+        deps += ["torchvision==0.14.1", "torchaudio==0.13.1"]
     elif v == "2.0.0":
-        deps = [f"pytorch=={v}", "torchvision==0.15.0", "torchaudio==2.0.0"]
+        deps += ["torchvision==0.15.0", "torchaudio==2.0.0"]
     elif v == "2.0.1":
-        deps = [f"pytorch=={v}", "torchvision==0.15.2", "torchaudio==2.0.2"]
+        deps += ["torchvision==0.15.2", "torchaudio==2.0.2"]
     elif v == "2.1.0":
-        deps = [f"pytorch=={v}", "torchvision==0.16.0", "torchaudio==2.1.0"]
+        deps += ["torchvision==0.16.0", "torchaudio==2.1.0"]
     elif v == "2.1.1":
-        deps = [f"pytorch=={v}", "torchvision==0.16.1", "torchaudio==2.1.1"]
+        deps += ["torchvision==0.16.1", "torchaudio==2.1.1"]
     elif v == "2.1.2":
-        deps = [f"pytorch=={v}", "torchvision==0.16.2", "torchaudio==2.1.2"]
+        deps += ["torchvision==0.16.2", "torchaudio==2.1.2"]
     elif v == "2.2.0":
-        deps = [f"pytorch=={v}", "torchvision==0.17.0", "torchaudio==2.2.0"]
+        deps += ["torchvision==0.17.0", "torchaudio==2.2.0"]
     elif v == "2.2.1":
-        deps = [f"pytorch=={v}", "torchvision==0.17.1", "torchaudio==2.2.1"]
+        deps += ["torchvision==0.17.1", "torchaudio==2.2.1"]
     elif v == "2.2.2":
-        deps = [f"pytorch=={v}", "torchvision==0.17.2", "torchaudio==2.2.2"]
+        deps += ["torchvision==0.17.2", "torchaudio==2.2.2"]
     elif v == "2.3.0":
-        deps = [f"pytorch=={v}", "torchvision==0.18.0", "torchaudio==2.3.0"]
+        deps += ["torchvision==0.18.0", "torchaudio==2.3.0"]
     elif v == "2.3.1":
-        deps = [f"pytorch=={v}", "torchvision==0.18.1", "torchaudio==2.3.1"]
+        deps += ["torchvision==0.18.1", "torchaudio==2.3.1"]
     elif v == "2.4.0":
-        deps = [f"pytorch=={v}", "torchvision==0.19.0", "torchaudio==2.4.0"]
+        deps += ["torchvision==0.19.0", "torchaudio==2.4.0"]
     elif v == "2.4.1":
-        deps = [f"pytorch=={v}", "torchvision==0.19.1", "torchaudio==2.4.1"]
+        deps += ["torchvision==0.19.1", "torchaudio==2.4.1"]
     elif v == "2.5.0":
-        deps = [f"pytorch=={v}", "torchvision==0.20.0", "torchaudio==2.5.0"]
+        deps += ["torchvision==0.20.0", "torchaudio==2.5.0"]
     else:
         set_github_warning(
-            "UPDATE NEEDED", f"Specify pins for additional pytorch=={v} dependencies!"
+            "UPDATE NEEDED",
+            f"Leaving torchvision and torchaudio unpinned for pytorch=={v}",
         )
-        deps = [f"pytorch=={v}", "torchvision", "torchaudio"]
-
-    deps.append("cpuonly")
+        deps += ["torchvision", "torchaudio"]
 
     # avoid `undefined symbol: iJIT_NotifyEvent` from `torch/lib/libtorch_cpu.so`
     # see https://github.com/pytorch/pytorch/issues/123097
@@ -153,9 +155,7 @@ def _get_default_pytorch_env(
     ):
         deps.append("mkl ==2024.0.0")
 
-    if pytorch_version.major == 1 or (
-        pytorch_version.major == 2 and pytorch_version.minor < 2
-    ):
+    if pytorch_version < Version("2.2"):
         # avoid ImportError: cannot import name 'packaging' from 'pkg_resources'
         # see https://github.com/pypa/setuptools/issues/4376#issuecomment-2126162839
         deps.append("setuptools <70.0.0")

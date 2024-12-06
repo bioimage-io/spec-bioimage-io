@@ -86,8 +86,8 @@ class BioimageioCondaEnv(CondaEnv):
             pip_section = None
 
         if (
-            pip_section is not None
-            and any(pd.startswith("bioimageio.core") for pd in pip_section.pip)
+            pip_section is None
+            or any(pd.startswith("bioimageio.core") for pd in pip_section.pip)
         ) and not any(
             d.startswith("bioimageio.core")
             or d.startswith("conda-forge::bioimageio.core")
