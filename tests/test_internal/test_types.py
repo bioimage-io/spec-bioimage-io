@@ -83,7 +83,7 @@ def test_type_is_usable(name: str):
         args = TYPE_ARGS[typ]
         if not isinstance(args, tuple):
             args = (args,)
-        _ = typ(*args)
+        _ = typ(*args)  # pyright: ignore[reportCallIssue,reportArgumentType]
     elif isinstance(typ, str):
         pass  # ignore string constants
     else:
