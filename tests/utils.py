@@ -46,9 +46,9 @@ yaml = YAML(typ="safe")
 
 unset = object()
 
-skip_expensive = pytest.mark.skipif(
-    (run := os.getenv("SKIP_EXPENSIVE_TESTS")) == "true",
-    reason=f"Skipping expensive test (SKIP_EXPENSIVE_TESTS {run}!=true )",
+expensive_test = pytest.mark.skipif(
+    (run := os.getenv("RUN_EXPENSIVE_TESTS")) != "true",
+    reason="Skipping expensive test (enable by RUN_EXPENSIVE_TESTS='true')",
 )
 
 

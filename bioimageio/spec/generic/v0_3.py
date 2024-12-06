@@ -25,45 +25,55 @@ from .._internal.common_nodes import (
     Node,
     ResourceDescrBase,
 )
-from .._internal.constants import (
-    TAG_CATEGORIES,
-)
+from .._internal.constants import TAG_CATEGORIES
 from .._internal.field_validation import validate_gh_user
 from .._internal.field_warning import as_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
+    FileDescr,
     V_suffix,
     YamlValue,
     include_in_package_serializer,
     validate_suffix,
 )
-from .._internal.io import FileDescr as FileDescr
-from .._internal.io_basics import AbsoluteFilePath
-from .._internal.io_basics import Sha256 as Sha256
-from .._internal.license_id import DeprecatedLicenseId as DeprecatedLicenseId
-from .._internal.license_id import LicenseId as LicenseId
-from .._internal.types import (
-    ImportantFileSource,
-    NotEmpty,
-)
-from .._internal.types import RelativeFilePath as RelativeFilePath
-from .._internal.url import HttpUrl as HttpUrl
+from .._internal.io_basics import AbsoluteFilePath, Sha256
+from .._internal.license_id import DeprecatedLicenseId, LicenseId
+from .._internal.types import ImportantFileSource, NotEmpty, RelativeFilePath
+from .._internal.url import HttpUrl
 from .._internal.validated_string import ValidatedString
 from .._internal.validator_annotations import (
     AfterValidator,
     Predicate,
     RestrictCharacters,
 )
-from .._internal.version_type import Version as Version
+from .._internal.version_type import Version
 from .._internal.warning_levels import ALERT, INFO
 from ._v0_3_converter import convert_from_older_format
 from .v0_2 import Author as _Author_v0_2
-from .v0_2 import BadgeDescr as BadgeDescr
-from .v0_2 import CoverImageSource
-from .v0_2 import Doi as Doi
+from .v0_2 import BadgeDescr, CoverImageSource, Doi, OrcidId, Uploader
 from .v0_2 import Maintainer as _Maintainer_v0_2
-from .v0_2 import OrcidId as OrcidId
-from .v0_2 import Uploader as Uploader
+
+__all__ = [
+    "Author",
+    "BadgeDescr",
+    "CiteEntry",
+    "DeprecatedLicenseId",
+    "Doi",
+    "FileDescr",
+    "GenericDescr",
+    "HttpUrl",
+    "KNOWN_SPECIFIC_RESOURCE_TYPES",
+    "LicenseId",
+    "LinkedResource",
+    "Maintainer",
+    "OrcidId",
+    "RelativeFilePath",
+    "ResourceId",
+    "Sha256",
+    "Uploader",
+    "VALID_COVER_IMAGE_EXTENSIONS",
+    "Version",
+]
 
 KNOWN_SPECIFIC_RESOURCE_TYPES = (
     "application",
@@ -181,7 +191,24 @@ class CiteEntry(Node):
         return self
 
 
-class LinkedResource(Node):
+class LinkedResourceBase(Node):
+
+    @model_validator(mode="before")
+    def _remove_version_number(  # pyright: ignore[reportUnknownParameterType]
+        cls, value: Union[Any, Dict[Any, Any]]
+    ):
+        if isinstance(value, dict):
+            vn: Any = value.pop("version_number", None)
+            if vn is not None and value.get("version") is None:
+                value["version"] = vn
+
+        return value  # pyright: ignore[reportUnknownVariableType]
+
+    version: Optional[Version] = None
+    """The version of the linked resource following SemVer 2.0."""
+
+
+class LinkedResource(LinkedResourceBase):
     """Reference to a bioimage.io resource"""
 
     id: ResourceId
@@ -441,20 +468,3 @@ class GenericDescr(GenericDescrBase, extra="ignore"):
             )
 
         return value
-
-
-class LinkedResourceNode(Node):
-
-    @model_validator(mode="before")
-    def _remove_version_number(  # pyright: ignore[reportUnknownParameterType]
-        cls, value: Union[Any, Dict[Any, Any]]
-    ):
-        if isinstance(value, dict):
-            vn: Any = value.pop("version_number", None)
-            if vn is not None and value.get("version") is None:
-                value["version"] = vn
-
-        return value  # pyright: ignore[reportUnknownVariableType]
-
-    version: Optional[Version] = None
-    """The version of the linked resource following SemVer 2.0."""

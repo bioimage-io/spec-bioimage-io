@@ -10,7 +10,7 @@ from zipfile import ZipFile
 from pydantic import DirectoryPath
 
 from ._settings import settings
-from .io_basics import AbsoluteDirectory, FileName, Sha256
+from .io_basics import FileName, Sha256
 from .root_url import RootHttpUrl
 from .warning_levels import WarningLevel
 
@@ -21,7 +21,7 @@ class ValidationContext:
         init=False, default_factory=list
     )
 
-    root: Union[RootHttpUrl, AbsoluteDirectory, ZipFile] = Path()
+    root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path()
     """url/directory serving as base to resolve any relative file paths"""
 
     warning_level: WarningLevel = 50

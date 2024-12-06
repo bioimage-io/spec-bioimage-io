@@ -32,6 +32,7 @@ def load_description(
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
     perform_io_checks: bool = settings.perform_io_checks,
     known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
 ) -> Union[ResourceDescr, InvalidDescr]:
     """load a bioimage.io resource description
 
@@ -45,6 +46,7 @@ def load_description(
                            absolute file paths is still being checked.
         known_files: Allows to bypass download and hashing of referenced files
                      (even if perform_io_checks is True).
+        sha256: Optional SHA-256 value of **source**
 
     Returns:
         An object holding all metadata of the bioimage.io resource
@@ -55,7 +57,7 @@ def load_description(
         logger.warning("returning already loaded description '{}' as is", name)
         return source  # pyright: ignore[reportReturnType]
 
-    opened = open_bioimageio_yaml(source)
+    opened = open_bioimageio_yaml(source, sha256=sha256)
 
     context = validation_context_var.get().replace(
         root=opened.original_root,
@@ -78,6 +80,7 @@ def load_model_description(
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
     perform_io_checks: bool = settings.perform_io_checks,
     known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
 ) -> AnyModelDescr:
     """same as `load_description`, but addtionally ensures that the loaded
     description is valid and of type 'model'.
@@ -90,6 +93,7 @@ def load_model_description(
         format_version=format_version,
         perform_io_checks=perform_io_checks,
         known_files=known_files,
+        sha256=sha256,
     )
     return ensure_description_is_model(rd)
 
@@ -101,6 +105,7 @@ def load_dataset_description(
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
     perform_io_checks: bool = settings.perform_io_checks,
     known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
 ) -> AnyDatasetDescr:
     """same as `load_description`, but addtionally ensures that the loaded
     description is valid and of type 'dataset'.
@@ -110,6 +115,7 @@ def load_dataset_description(
         format_version=format_version,
         perform_io_checks=perform_io_checks,
         known_files=known_files,
+        sha256=sha256,
     )
     return ensure_description_is_dataset(rd)
 
@@ -140,19 +146,9 @@ def load_description_and_validate_format_only(
     format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
     perform_io_checks: bool = settings.perform_io_checks,
     known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
 ) -> ValidationSummary:
-    """load a bioimage.io resource description
-
-    Args:
-        source: Path or URL to an rdf.yaml or a bioimage.io package
-                (zip-file with rdf.yaml in it).
-        format_version: (optional) Use this argument to load the resource and
-                        convert its metadata to a higher format_version.
-        perform_io_checks: Wether or not to perform validation that requires file io,
-                           e.g. downloading a remote files. The existence of local
-                           absolute file paths is still being checked.
-        known_files: Allows to bypass download and hashing of referenced files
-                     (even if perform_io_checks is True).
+    """same as `load_description`, but only return the validation summary.
 
     Returns:
         Validation summary of the bioimage.io resource found at `source`.
@@ -163,6 +159,7 @@ def load_description_and_validate_format_only(
         format_version=format_version,
         perform_io_checks=perform_io_checks,
         known_files=known_files,
+        sha256=sha256,
     )
     assert rd.validation_summary is not None
     return rd.validation_summary

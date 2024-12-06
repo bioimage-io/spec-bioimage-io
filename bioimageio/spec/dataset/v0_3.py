@@ -15,7 +15,7 @@ from ..generic.v0_3 import DeprecatedLicenseId as DeprecatedLicenseId
 from ..generic.v0_3 import (
     DocumentationSource,
     GenericDescrBase,
-    LinkedResourceNode,
+    LinkedResourceBase,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
@@ -105,7 +105,7 @@ class DatasetDescr(GenericDescrBase):
         return data
 
 
-class LinkedDataset(LinkedResourceNode):
+class LinkedDataset(LinkedResourceBase):
     """Reference to a bioimage.io dataset."""
 
     id: DatasetId

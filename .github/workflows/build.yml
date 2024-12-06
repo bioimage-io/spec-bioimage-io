@@ -16,7 +16,7 @@ jobs:
         include:
           - python-version: "3.12"
             is-dev-version: true
-            run_expensive_tests: true
+            run-expensive-tests: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -53,7 +53,7 @@ jobs:
       - run: pytest
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
-          SKIP_EXPENSIVE_TESTS: ${{ matrix.run_expensive_tests && 'false' || 'true' }}
+          RUN_EXPENSIVE_TESTS: ${{ matrix.run-expensive-tests && 'true' || 'false' }}
       - uses: actions/cache/save@v4
         # explicit restore/save instead of cache action to cache even if coverage fails
         with:

@@ -124,6 +124,10 @@ To keep the bioimageio.spec Python package version in sync with the (model) desc
 
 ### bioimageio.spec Python package
 
+#### bioimageio.spec 0.5.3.6
+
+* fix URL validation (checking with actual http requests was erroneously skipped)
+
 #### bioimageio.spec 0.5.3.5
 
 * fix loading tifffile in python 3.8 (pin tifffile)
