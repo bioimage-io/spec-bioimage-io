@@ -66,7 +66,7 @@ def test_get_conda_env(
     w: Mapping[str, Any],
     unet2d_path: Path,
 ):
-    from bioimageio.spec.get_conda_env import get_conda_env
+    from bioimageio.spec import get_conda_env
 
     with ValidationContext(perform_io_checks=False, root=unet2d_path.parent):
         w_descr = descr_class.model_validate(w)
@@ -78,10 +78,10 @@ def test_get_conda_env(
 
 
 def test_get_default_pytorch_env():
-    from bioimageio.spec._internal.version_type import Version
-    from bioimageio.spec.get_conda_env import (
+    from bioimageio.spec._get_conda_env import (
         _get_default_pytorch_env,  # pyright: ignore[reportPrivateUsage]
     )
+    from bioimageio.spec._internal.version_type import Version
 
     versions: Dict[str, List[Optional[str]]] = {
         "pytorch": [
