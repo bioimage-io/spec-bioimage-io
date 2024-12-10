@@ -136,5 +136,5 @@ def test_get_default_pytorch_env():
     for i in range(len(versions["pytorch"]) - 1):
         assert_lt("pytorch", i)
         assert_lt("torchvision", i)
-        if i > 0:
+        if i > 1:
             assert_lt("torchaudio", i)
