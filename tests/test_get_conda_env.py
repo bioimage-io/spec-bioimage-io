@@ -85,6 +85,7 @@ def test_get_default_pytorch_env():
 
     versions: Dict[str, List[Optional[str]]] = {
         "pytorch": [
+            "1.5.1",
             "1.6.0",
             "1.7.0",
             "1.7.1",
@@ -135,5 +136,5 @@ def test_get_default_pytorch_env():
     for i in range(len(versions["pytorch"]) - 1):
         assert_lt("pytorch", i)
         assert_lt("torchvision", i)
-        if i > 0:
+        if i > 1:
             assert_lt("torchaudio", i)

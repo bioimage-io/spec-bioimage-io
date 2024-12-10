@@ -87,7 +87,9 @@ def _get_default_pytorch_env(
     # https://pytorch.org/get-started/previous-versions/
     v = str(pytorch_version)
     deps: List[Union[str, PipDeps]] = [f"pytorch=={v}"]
-    if v == "1.6.0":
+    if v == "1.5.1":
+        deps += ["torchvision==0.6.1"]
+    elif v == "1.6.0":
         deps += ["torchvision==0.7.0"]
     elif v == "1.7.0":
         deps += ["torchvision==0.8.0", "torchaudio==0.7.0"]
