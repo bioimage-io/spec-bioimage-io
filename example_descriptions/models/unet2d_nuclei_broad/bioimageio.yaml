@@ -93,6 +93,11 @@ outputs:
     sample_tensor:
       source: test_output.png
       sha256: 7bce8b53bcd0a12487a61f953aafe0f3700652848980d1083964c5bcb9555eec
+    postprocessing:
+      - id: sigmoid
+      - id: ensure_dtype
+        kwargs:
+          dtype: float32
 
 weights:
   pytorch_state_dict:
@@ -105,7 +110,7 @@ weights:
     architecture:
       callable: UNet2d
       source: unet2d.py
-      sha256: 7cdd8332dc3e3735e71c328f81b63a9ac86c028f80522312484ca9a4027d4ce1
+      sha256: 589f0c9e60fa00f015213cd251541bcbf9582644f3ecffb2e6f3a30d2af1931a
       kwargs: { input_channels: 1, output_channels: 1 }
     dependencies:
       source: environment.yaml
