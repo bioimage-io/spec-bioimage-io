@@ -1,3 +1,5 @@
+"""utils to test bioimageio.spec"""
+
 import os
 from contextlib import nullcontext
 from copy import deepcopy
