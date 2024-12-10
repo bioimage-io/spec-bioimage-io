@@ -10597,7 +10597,7 @@
                 },
                 "timestamp": {
                     "$ref": "#/$defs/Datetime",
-                    "default": "2024-12-10T09:40:40.873745",
+                    "default": "2024-12-10T09:45:20.558200",
                     "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).\n(In Python a datetime object is valid, too)."
                 },
                 "training_data": {
