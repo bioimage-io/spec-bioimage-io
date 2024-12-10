@@ -53,6 +53,8 @@ outputs:
       reference_tensor: raw
       scale: [1.0, 0.0, 1.0, 1.0]
       offset: [0.0, 0.5, 0.0, 0.0]
+    postprocessing:
+      - name: sigmoid
 
 test_inputs: [test_input.npy]
 test_outputs: [test_output.npy]
@@ -69,7 +71,7 @@ weights:
     source: https://zenodo.org/records/3446812/files/unet2d_weights.torch
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
     architecture: unet2d.py:UNet2d
-    architecture_sha256: 7cdd8332dc3e3735e71c328f81b63a9ac86c028f80522312484ca9a4027d4ce1
+    architecture_sha256: 589f0c9e60fa00f015213cd251541bcbf9582644f3ecffb2e6f3a30d2af1931a
     kwargs: { input_channels: 1, output_channels: 1 }
     dependencies: conda:environment.yaml
   onnx:
