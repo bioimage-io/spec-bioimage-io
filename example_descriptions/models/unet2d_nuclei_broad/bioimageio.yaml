@@ -95,6 +95,9 @@ outputs:
       sha256: 7bce8b53bcd0a12487a61f953aafe0f3700652848980d1083964c5bcb9555eec
     postprocessing:
       - id: sigmoid
+      - id: ensure_dtype
+        kwargs:
+          dtype: float32
 
 weights:
   pytorch_state_dict:
