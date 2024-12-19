@@ -2,7 +2,7 @@ import io
 import shutil
 from pathlib import Path
 
-from deepdiff import DeepDiff
+from deepdiff.diff import DeepDiff
 
 from bioimageio.spec.model import v0_5
 

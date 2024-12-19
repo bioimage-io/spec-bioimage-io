@@ -3,9 +3,9 @@ import sys
 from argparse import ArgumentParser
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, Literal, Final
+from typing import Any, Dict, Final, Literal
 
-from deepdiff import DeepDiff  # pyright: ignore [reportMissingTypeStubs]
+from deepdiff.diff import DeepDiff
 from pydantic import ConfigDict, TypeAdapter
 from typing_extensions import assert_never
 

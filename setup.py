@@ -69,7 +69,7 @@ _ = setup(
             "jupyter",
             "pdoc",
             "pre-commit",
-            "pyright==1.1.390",
+            "pyright==1.1.391",
             "ruff",
         ],
     },
