@@ -29,14 +29,6 @@
             "brain",
             "whole-organism"
         ],
-        "software": [
-            "ilastik",
-            "imagej",
-            "fiji",
-            "imjoy",
-            "deepimagej",
-            "n2v"
-        ],
         "network": [
             "unet",
             "densenet",
