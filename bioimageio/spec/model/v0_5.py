@@ -2026,6 +2026,37 @@ class WeightsDescr(Node):
 
         return self
 
+    def __getitem__(
+        self,
+        key: Literal[
+            "keras_hdf5",
+            "onnx",
+            "pytorch_state_dict",
+            "tensorflow_js",
+            "tensorflow_saved_model_bundle",
+            "torchscript",
+        ],
+    ):
+        if key == "keras_hdf5":
+            ret = self.keras_hdf5
+        elif key == "onnx":
+            ret = self.onnx
+        elif key == "pytorch_state_dict":
+            ret = self.pytorch_state_dict
+        elif key == "tensorflow_js":
+            ret = self.tensorflow_js
+        elif key == "tensorflow_saved_model_bundle":
+            ret = self.tensorflow_saved_model_bundle
+        elif key == "torchscript":
+            ret = self.torchscript
+        else:
+            raise KeyError(key)
+
+        if ret is None:
+            raise KeyError(key)
+
+        return ret
+
 
 class ModelId(ResourceId):
     pass

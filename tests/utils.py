@@ -21,7 +21,7 @@ from zipfile import ZipFile
 
 import jsonschema
 import pytest
-from deepdiff import DeepDiff  # pyright: ignore [reportMissingTypeStubs]
+from deepdiff.diff import DeepDiff
 from pydantic import (
     DirectoryPath,
     RootModel,
