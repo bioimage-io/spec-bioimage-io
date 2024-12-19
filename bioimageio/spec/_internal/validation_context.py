@@ -22,25 +22,29 @@ class ValidationContext:
     )
 
     root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path()
-    """url/directory serving as base to resolve any relative file paths"""
+    """Url/directory/archive serving as base to resolve any relative file paths."""
 
     warning_level: WarningLevel = 50
-    """raise warnings of severity `s` as validation errors if `s >= warning_level`"""
+    """Treat warnings of severity `s` as validation errors if `s >= warning_level`."""
 
     log_warnings: bool = settings.log_warnings
-    """if `True` log warnings that are not raised to the console"""
+    """If `True` warnings are logged to the terminal
+
+    Note: This setting does not affect warning entries
+        of a generated `bioimageio.spec.ValidationSummary`.
+    """
 
     file_name: Optional[FileName] = None
-    """file name of the bioimageio Yaml file"""
+    """File name of the bioimageio Yaml file."""
 
     perform_io_checks: bool = settings.perform_io_checks
-    """wether or not to perform validation that requires file io,
+    """Wether or not to perform validation that requires file io,
     e.g. downloading a remote files.
 
     Existence of local absolute file paths is still being checked."""
 
     known_files: Dict[str, Sha256] = field(default_factory=dict)
-    """allows to bypass download and hashing of referenced files"""
+    """Allows to bypass download and hashing of referenced files."""
 
     def replace(
         self,
