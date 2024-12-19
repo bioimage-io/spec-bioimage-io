@@ -42,5 +42,11 @@
             "in-silico-labeling",
             "super-resolution"
         ]
+    },
+    "dataset": {
+        "modality": ["<TODO: same as for 'model'>"]
+    },
+    "notebook": {
+        "task": ["<TODO: same as for 'model'>"]
     }
 }
