@@ -29,13 +29,6 @@
             "brain",
             "whole-organism"
         ],
-        "network": [
-            "unet",
-            "densenet",
-            "resnet",
-            "inception",
-            "shufflenet"
-        ],
         "task": [
             "semantic-segmentation",
             "instance-segmentation",
