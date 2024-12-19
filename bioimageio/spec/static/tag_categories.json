@@ -9,8 +9,7 @@
             "x-ray-microscopy",
             "force-microscopy",
             "high-content-imaging",
-            "whole-slide-imaging",
-            "other"
+            "whole-slide-imaging"
         ],
         "dims": [
             "2d",
