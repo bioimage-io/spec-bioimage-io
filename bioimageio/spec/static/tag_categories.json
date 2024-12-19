@@ -38,7 +38,8 @@
             "denoising",
             "image-restoration",
             "image-reconstruction",
-            "in-silico-labeling"
+            "in-silico-labeling",
+            "super-resolution"
         ]
     }
 }
