@@ -29,11 +29,6 @@
             "brain",
             "whole-organism"
         ],
-        "framework": [
-            "tensorflow",
-            "pytorch",
-            "tensorflow.js"
-        ],
         "software": [
             "ilastik",
             "imagej",
