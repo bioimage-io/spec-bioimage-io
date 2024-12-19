@@ -1,3 +1,4 @@
 {
-  "electron-microscopy": ["EM"]
+  "electron-microscopy": ["EM"],
+  "light-field-microscopy": ["LFM"]
 }
