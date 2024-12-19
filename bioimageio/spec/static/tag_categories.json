@@ -3,6 +3,7 @@
         "modality": [
             "electron-microscopy",
             "cryo-electron-microscopy",
+            "light-field-microscopy",
             "light-microscopy",
             "fluorescence-light-microscopy",
             "transmission-light-microscopy",
