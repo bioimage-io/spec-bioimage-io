@@ -418,6 +418,7 @@ class ResourceDescrBase(
         val_errors: List[ErrorEntry] = []
         val_warnings: List[WarningEntry] = []
 
+        context = validation_context_var.get()
         try:
             rd = cls.model_validate(data)
         except pydantic.ValidationError as e:
@@ -431,12 +432,14 @@ class ResourceDescrBase(
                             severity=severity,
                         )
                     )
+                elif context.raise_errors:
+                    raise e
                 else:
                     val_errors.append(
                         ErrorEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"])
                     )
 
-            if len(val_errors) == 0:
+            if len(val_errors) == 0:  # FIXME is this reduntant?
                 val_errors.append(
                     ErrorEntry(
                         loc=(),
@@ -449,6 +452,9 @@ class ResourceDescrBase(
                     )
                 )
         except Exception as e:
+            if context.raise_errors:
+                raise e
+
             val_errors.append(
                 ErrorEntry(
                     loc=(),
@@ -461,10 +467,14 @@ class ResourceDescrBase(
         if rd is None:
             try:
                 rd = InvalidDescr.model_validate(data)
-            except Exception:
+            except Exception as e:
+                if context.raise_errors:
+                    raise e
                 resource_type = cls.model_fields["type"].default
                 format_version = cls.implemented_format_version
                 rd = InvalidDescr(type=resource_type, format_version=format_version)
+                if context.raise_errors:
+                    raise ValueError(rd)
 
         return rd, val_errors, val_warnings
 
