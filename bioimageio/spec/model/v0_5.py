@@ -38,6 +38,7 @@ from imageio.v3 import imread, imwrite  # pyright: ignore[reportUnknownVariableT
 from loguru import logger
 from numpy.typing import NDArray
 from pydantic import (
+    AfterValidator,
     Discriminator,
     Field,
     RootModel,
@@ -196,9 +197,17 @@ class TensorId(LowerCaseIdentifier):
     ]
 
 
+def _normalize_channel_and_batch(a: str):
+    return {"c": "channel", "b": "batch"}.get(a, a)
+
+
 class AxisId(LowerCaseIdentifier):
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
-        Annotated[LowerCaseIdentifierAnno, MaxLen(16)]
+        Annotated[
+            LowerCaseIdentifierAnno,
+            MaxLen(16),
+            AfterValidator(_normalize_channel_and_batch),
+        ]
     ]
 
 
