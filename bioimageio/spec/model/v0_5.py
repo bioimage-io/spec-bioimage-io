@@ -591,6 +591,15 @@ class SpaceInputAxis(SpaceAxisBase, _WithInputAxisSize):
     """
 
 
+INPUT_AXIS_TYPES = (
+    BatchAxis,
+    ChannelAxis,
+    IndexInputAxis,
+    TimeInputAxis,
+    SpaceInputAxis,
+)
+"""intended for isinstance comparisons in py<3.10"""
+
 _InputAxisUnion = Union[
     BatchAxis, ChannelAxis, IndexInputAxis, TimeInputAxis, SpaceInputAxis
 ]
@@ -661,7 +670,22 @@ _OutputAxisUnion = Union[
 ]
 OutputAxis = Annotated[_OutputAxisUnion, Discriminator("type")]
 
+OUTPUT_AXIS_TYPES = (
+    BatchAxis,
+    ChannelAxis,
+    IndexOutputAxis,
+    TimeOutputAxis,
+    TimeOutputAxisWithHalo,
+    SpaceOutputAxis,
+    SpaceOutputAxisWithHalo,
+)
+"""intended for isinstance comparisons in py<3.10"""
+
+
 AnyAxis = Union[InputAxis, OutputAxis]
+
+ANY_AXIS_TYPES = INPUT_AXIS_TYPES + OUTPUT_AXIS_TYPES
+"""intended for isinstance comparisons in py<3.10"""
 
 TVs = Union[
     NotEmpty[List[int]],
