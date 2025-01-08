@@ -50,7 +50,6 @@ from pydantic import (
 from typing_extensions import Annotated, LiteralString, Self, assert_never
 
 from .._internal.common_nodes import (
-    Converter,
     InvalidDescr,
     Node,
     NodeWithExplicitlySetFields,
@@ -63,6 +62,7 @@ from .._internal.io import WithSuffix, YamlValue, download
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_utils import load_array
+from .._internal.node_converter import Converter
 from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
 from .._internal.types import (

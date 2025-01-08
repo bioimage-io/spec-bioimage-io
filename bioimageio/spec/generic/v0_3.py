@@ -20,11 +20,7 @@ from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import Field, RootModel, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
-from .._internal.common_nodes import (
-    Converter,
-    Node,
-    ResourceDescrBase,
-)
+from .._internal.common_nodes import Node, ResourceDescrBase
 from .._internal.constants import TAG_CATEGORIES
 from .._internal.field_validation import validate_gh_user
 from .._internal.field_warning import as_warning, warn
@@ -38,6 +34,7 @@ from .._internal.io import (
 )
 from .._internal.io_basics import AbsoluteFilePath, Sha256
 from .._internal.license_id import DeprecatedLicenseId, LicenseId
+from .._internal.node_converter import Converter
 from .._internal.types import ImportantFileSource, NotEmpty, RelativeFilePath
 from .._internal.url import HttpUrl
 from .._internal.validated_string import ValidatedString
