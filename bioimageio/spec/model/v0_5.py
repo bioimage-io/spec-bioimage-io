@@ -904,7 +904,7 @@ class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
     """key word arguments for `ScaleLinearDescr`"""
 
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
-    """The axis of of gains/offsets values."""
+    """The axis of gain and offset values."""
 
     gain: Union[float, NotEmpty[List[float]]] = 1.0
     """multiplicative factor"""
