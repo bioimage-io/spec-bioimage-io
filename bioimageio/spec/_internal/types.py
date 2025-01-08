@@ -106,6 +106,8 @@ class Datetime(
 
 
 class Doi(ValidatedString):
+    """A digital object identifier, see https://www.doi.org/"""
+
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
         Annotated[str, StringConstraints(pattern=DOI_REGEX)]
     ]
@@ -131,7 +133,7 @@ class LowerCaseIdentifier(ValidatedString):
 
 
 class OrcidId(ValidatedString):
-    """an ORCID identifier"""
+    """An ORCID identifier, see https://orcid.org/"""
 
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
         Annotated[str, AfterValidator(_validate_orcid_id)]
@@ -146,7 +148,7 @@ def _normalize_multiplication(si_unit: Union[Any, str]) -> Union[Any, str]:
 
 
 class SiUnit(ValidatedString):
-    """Si unit"""
+    """An SI unit"""
 
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
         Annotated[
