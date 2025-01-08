@@ -315,11 +315,11 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 
                         <label class="view-source-button" for="mod-v0_3-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">import</span> <span class="nn">string</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>    <span class="n">Any</span><span class="p">,</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>    <span class="n">ClassVar</span><span class="p">,</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>    <span class="n">Dict</span><span class="p">,</span>
@@ -332,20 +332,20 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>    <span class="n">Union</span><span class="p">,</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="p">)</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="kn">import</span> <span class="nn">annotated_types</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="kn">from</span> <span class="nn">annotated_types</span> <span class="kn">import</span> <span class="n">Len</span><span class="p">,</span> <span class="n">LowerCase</span><span class="p">,</span> <span class="n">MaxLen</span><span class="p">,</span> <span class="n">MinLen</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">RootModel</span><span class="p">,</span> <span class="n">ValidationInfo</span><span class="p">,</span> <span class="n">field_validator</span><span class="p">,</span> <span class="n">model_validator</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Annotated</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">annotated_types</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">annotated_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Len</span><span class="p">,</span> <span class="n">LowerCase</span><span class="p">,</span> <span class="n">MaxLen</span><span class="p">,</span> <span class="n">MinLen</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">RootModel</span><span class="p">,</span> <span class="n">ValidationInfo</span><span class="p">,</span> <span class="n">field_validator</span><span class="p">,</span> <span class="n">model_validator</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="kn">from</span> <span class="nn">.._internal.common_nodes</span> <span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.common_nodes</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="n">Converter</span><span class="p">,</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>    <span class="n">Node</span><span class="p">,</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>    <span class="n">ResourceDescrBase</span><span class="p">,</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="p">)</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="kn">from</span> <span class="nn">.._internal.constants</span> <span class="kn">import</span> <span class="n">TAG_CATEGORIES</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="kn">from</span> <span class="nn">.._internal.field_validation</span> <span class="kn">import</span> <span class="n">validate_gh_user</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="kn">from</span> <span class="nn">.._internal.field_warning</span> <span class="kn">import</span> <span class="n">as_warning</span><span class="p">,</span> <span class="n">warn</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="kn">from</span> <span class="nn">.._internal.io</span> <span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">TAG_CATEGORIES</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.field_validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_gh_user</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.field_warning</span><span class="w"> </span><span class="kn">import</span> <span class="n">as_warning</span><span class="p">,</span> <span class="n">warn</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.io</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="n">BioimageioYamlContent</span><span class="p">,</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>    <span class="n">FileDescr</span><span class="p">,</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="n">V_suffix</span><span class="p">,</span>
@@ -353,22 +353,22 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>    <span class="n">include_in_package_serializer</span><span class="p">,</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="n">validate_suffix</span><span class="p">,</span>
 </span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="p">)</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="kn">from</span> <span class="nn">.._internal.io_basics</span> <span class="kn">import</span> <span class="n">AbsoluteFilePath</span><span class="p">,</span> <span class="n">Sha256</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="kn">from</span> <span class="nn">.._internal.license_id</span> <span class="kn">import</span> <span class="n">DeprecatedLicenseId</span><span class="p">,</span> <span class="n">LicenseId</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="kn">from</span> <span class="nn">.._internal.types</span> <span class="kn">import</span> <span class="n">ImportantFileSource</span><span class="p">,</span> <span class="n">NotEmpty</span><span class="p">,</span> <span class="n">RelativeFilePath</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="kn">from</span> <span class="nn">.._internal.url</span> <span class="kn">import</span> <span class="n">HttpUrl</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="kn">from</span> <span class="nn">.._internal.validated_string</span> <span class="kn">import</span> <span class="n">ValidatedString</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="kn">from</span> <span class="nn">.._internal.validator_annotations</span> <span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.io_basics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbsoluteFilePath</span><span class="p">,</span> <span class="n">Sha256</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.license_id</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeprecatedLicenseId</span><span class="p">,</span> <span class="n">LicenseId</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportantFileSource</span><span class="p">,</span> <span class="n">NotEmpty</span><span class="p">,</span> <span class="n">RelativeFilePath</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.url</span><span class="w"> </span><span class="kn">import</span> <span class="n">HttpUrl</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.validated_string</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidatedString</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.validator_annotations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="n">AfterValidator</span><span class="p">,</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="n">Predicate</span><span class="p">,</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">RestrictCharacters</span><span class="p">,</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="p">)</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="kn">from</span> <span class="nn">.._internal.version_type</span> <span class="kn">import</span> <span class="n">Version</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="kn">from</span> <span class="nn">.._internal.warning_levels</span> <span class="kn">import</span> <span class="n">ALERT</span><span class="p">,</span> <span class="n">INFO</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="kn">from</span> <span class="nn">._v0_3_converter</span> <span class="kn">import</span> <span class="n">convert_from_older_format</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="kn">from</span> <span class="nn">.v0_2</span> <span class="kn">import</span> <span class="n">Author</span> <span class="k">as</span> <span class="n">_Author_v0_2</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="kn">from</span> <span class="nn">.v0_2</span> <span class="kn">import</span> <span class="n">BadgeDescr</span><span class="p">,</span> <span class="n">CoverImageSource</span><span class="p">,</span> <span class="n">Doi</span><span class="p">,</span> <span class="n">OrcidId</span><span class="p">,</span> <span class="n">Uploader</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="kn">from</span> <span class="nn">.v0_2</span> <span class="kn">import</span> <span class="n">Maintainer</span> <span class="k">as</span> <span class="n">_Maintainer_v0_2</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.version_type</span><span class="w"> </span><span class="kn">import</span> <span class="n">Version</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.._internal.warning_levels</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALERT</span><span class="p">,</span> <span class="n">INFO</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._v0_3_converter</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_from_older_format</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.v0_2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Author</span> <span class="k">as</span> <span class="n">_Author_v0_2</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.v0_2</span><span class="w"> </span><span class="kn">import</span> <span class="n">BadgeDescr</span><span class="p">,</span> <span class="n">CoverImageSource</span><span class="p">,</span> <span class="n">Doi</span><span class="p">,</span> <span class="n">OrcidId</span><span class="p">,</span> <span class="n">Uploader</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.v0_2</span><span class="w"> </span><span class="kn">import</span> <span class="n">Maintainer</span> <span class="k">as</span> <span class="n">_Maintainer_v0_2</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="s2">&quot;Author&quot;</span><span class="p">,</span>
@@ -408,7 +408,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="p">)</span>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">class</span> <span class="nc">ResourceId</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ResourceId</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="n">Annotated</span><span class="p">[</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>            <span class="n">NotEmpty</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
@@ -420,7 +420,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="p">]</span>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
 </span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="k">def</span> <span class="nf">_validate_md_suffix</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">V_suffix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">V_suffix</span><span class="p">:</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="k">def</span><span class="w"> </span><span class="nf">_validate_md_suffix</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">V_suffix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">V_suffix</span><span class="p">:</span>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>    <span class="k">return</span> <span class="n">validate_suffix</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.md&quot;</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
 </span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>
@@ -432,24 +432,24 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="p">]</span>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
 </span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="k">def</span> <span class="nf">_has_no_slash</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="k">def</span><span class="w"> </span><span class="nf">_has_no_slash</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="k">return</span> <span class="s2">&quot;/&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">and</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>
 </span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="k">class</span> <span class="nc">Author</span><span class="p">(</span><span class="n">_Author_v0_2</span><span class="p">):</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Author</span><span class="p">(</span><span class="n">_Author_v0_2</span><span class="p">):</span>
 </span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">_has_no_slash</span><span class="p">)]</span>
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>    <span class="n">github_user</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;github_user&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>    <span class="k">def</span> <span class="nf">_validate_gh_user</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_gh_user</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
 </span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>            <span class="k">return</span> <span class="kc">None</span>
 </span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>            <span class="k">return</span> <span class="n">validate_gh_user</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>
 </span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="k">class</span> <span class="nc">_AuthorConv</span><span class="p">(</span><span class="n">Converter</span><span class="p">[</span><span class="n">_Author_v0_2</span><span class="p">,</span> <span class="n">Author</span><span class="p">]):</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="k">class</span><span class="w"> </span><span class="nc">_AuthorConv</span><span class="p">(</span><span class="n">Converter</span><span class="p">[</span><span class="n">_Author_v0_2</span><span class="p">,</span> <span class="n">Author</span><span class="p">]):</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_convert</span><span class="p">(</span>
 </span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">_Author_v0_2</span><span class="p">,</span> <span class="n">tgt</span><span class="p">:</span> <span class="s2">&quot;type[Author] | type[dict[str, Any]]&quot;</span>
 </span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Author | dict[str, Any]&quot;</span><span class="p">:</span>
 </span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>        <span class="k">return</span> <span class="n">tgt</span><span class="p">(</span>
@@ -464,17 +464,17 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="n">_author_conv</span> <span class="o">=</span> <span class="n">_AuthorConv</span><span class="p">(</span><span class="n">_Author_v0_2</span><span class="p">,</span> <span class="n">Author</span><span class="p">)</span>
 </span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="k">class</span> <span class="nc">Maintainer</span><span class="p">(</span><span class="n">_Maintainer_v0_2</span><span class="p">):</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Maintainer</span><span class="p">(</span><span class="n">_Maintainer_v0_2</span><span class="p">):</span>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">_has_no_slash</span><span class="p">)]]</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="n">github_user</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
 </span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;github_user&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>    <span class="k">def</span> <span class="nf">validate_gh_user</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate_gh_user</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 </span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>        <span class="k">return</span> <span class="n">validate_gh_user</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
 </span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="k">class</span> <span class="nc">_MaintainerConv</span><span class="p">(</span><span class="n">Converter</span><span class="p">[</span><span class="n">_Maintainer_v0_2</span><span class="p">,</span> <span class="n">Maintainer</span><span class="p">]):</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="k">class</span><span class="w"> </span><span class="nc">_MaintainerConv</span><span class="p">(</span><span class="n">Converter</span><span class="p">[</span><span class="n">_Maintainer_v0_2</span><span class="p">,</span> <span class="n">Maintainer</span><span class="p">]):</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_convert</span><span class="p">(</span>
 </span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">_Maintainer_v0_2</span><span class="p">,</span> <span class="n">tgt</span><span class="p">:</span> <span class="s2">&quot;type[Maintainer | dict[str, Any]]&quot;</span>
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Maintainer | dict[str, Any]&quot;</span><span class="p">:</span>
 </span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>        <span class="k">return</span> <span class="n">tgt</span><span class="p">(</span>
@@ -489,7 +489,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="n">_maintainer_conv</span> <span class="o">=</span> <span class="n">_MaintainerConv</span><span class="p">(</span><span class="n">_Maintainer_v0_2</span><span class="p">,</span> <span class="n">Maintainer</span><span class="p">)</span>
 </span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>
 </span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="k">class</span> <span class="nc">CiteEntry</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="k">class</span><span class="w"> </span><span class="nc">CiteEntry</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
 </span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;free text description&quot;&quot;&quot;</span>
 </span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
@@ -501,17 +501,17 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;URL to cite (preferably specify a `doi` instead)&quot;&quot;&quot;</span>
 </span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>
 </span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>    <span class="k">def</span> <span class="nf">_check_doi_or_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_doi_or_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">doi</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
 </span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either &#39;doi&#39; or &#39;url&#39; is required&quot;</span><span class="p">)</span>
 </span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>
 </span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>        <span class="k">return</span> <span class="bp">self</span>
 </span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>
 </span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>
-</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a><span class="k">class</span> <span class="nc">LinkedResourceBase</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a><span class="k">class</span><span class="w"> </span><span class="nc">LinkedResourceBase</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
 </span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>
 </span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
-</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownParameterType]</span>
+</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_remove_version_number</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownParameterType]</span>
 </span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
 </span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>    <span class="p">):</span>
 </span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -525,14 +525,14 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The version of the linked resource following SemVer 2.0.&quot;&quot;&quot;</span>
 </span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a>
 </span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a>
-</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a><span class="k">class</span> <span class="nc">LinkedResource</span><span class="p">(</span><span class="n">LinkedResourceBase</span><span class="p">):</span>
+</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a><span class="k">class</span><span class="w"> </span><span class="nc">LinkedResource</span><span class="p">(</span><span class="n">LinkedResourceBase</span><span class="p">):</span>
 </span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Reference to a bioimage.io resource&quot;&quot;&quot;</span>
 </span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a>
 </span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">ResourceId</span>
 </span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A valid resource `id` from the official bioimage.io collection.&quot;&quot;&quot;</span>
 </span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a>
 </span><span id="L-217"><a href="#L-217"><span class="linenos">217</span></a>
-</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a><span class="k">class</span> <span class="nc">GenericModelDescrBase</span><span class="p">(</span><span class="n">ResourceDescrBase</span><span class="p">):</span>
+</span><span id="L-218"><a href="#L-218"><span class="linenos">218</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GenericModelDescrBase</span><span class="p">(</span><span class="n">ResourceDescrBase</span><span class="p">):</span>
 </span><span id="L-219"><a href="#L-219"><span class="linenos">219</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base for all resource descriptions including of model descriptions&quot;&quot;&quot;</span>
 </span><span id="L-220"><a href="#L-220"><span class="linenos">220</span></a>
 </span><span id="L-221"><a href="#L-221"><span class="linenos">221</span></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
@@ -666,7 +666,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-349"><a href="#L-349"><span class="linenos">349</span></a>    <span class="nd">@partial</span><span class="p">(</span><span class="n">as_warning</span><span class="p">,</span> <span class="n">severity</span><span class="o">=</span><span class="n">ALERT</span><span class="p">)</span>
 </span><span id="L-350"><a href="#L-350"><span class="linenos">350</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;maintainers&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
 </span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a>    <span class="nd">@classmethod</span>
-</span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a>    <span class="k">def</span> <span class="nf">check_maintainers_exist</span><span class="p">(</span>
+</span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_maintainers_exist</span><span class="p">(</span>
 </span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">maintainers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Maintainer</span><span class="p">],</span> <span class="n">info</span><span class="p">:</span> <span class="n">ValidationInfo</span>
 </span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Maintainer</span><span class="p">]:</span>
 </span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">maintainers</span> <span class="ow">and</span> <span class="s2">&quot;authors&quot;</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
@@ -688,7 +688,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a>    <span class="nd">@as_warning</span>
 </span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;tags&quot;</span><span class="p">)</span>
 </span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>    <span class="nd">@classmethod</span>
-</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>    <span class="k">def</span> <span class="nf">warn_about_tag_categories</span><span class="p">(</span>
+</span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">warn_about_tag_categories</span><span class="p">(</span>
 </span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">info</span><span class="p">:</span> <span class="n">ValidationInfo</span>
 </span><span id="L-376"><a href="#L-376"><span class="linenos">376</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 </span><span id="L-377"><a href="#L-377"><span class="linenos">377</span></a>        <span class="n">categories</span> <span class="o">=</span> <span class="n">TAG_CATEGORIES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span> <span class="p">{})</span>
@@ -708,7 +708,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The version of the resource following SemVer 2.0.&quot;&quot;&quot;</span>
 </span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>
 </span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
-</span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>    <span class="k">def</span> <span class="nf">_remove_version_number</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownParameterType]</span>
+</span><span id="L-394"><a href="#L-394"><span class="linenos">394</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_remove_version_number</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportUnknownParameterType]</span>
 </span><span id="L-395"><a href="#L-395"><span class="linenos">395</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
 </span><span id="L-396"><a href="#L-396"><span class="linenos">396</span></a>    <span class="p">):</span>
 </span><span id="L-397"><a href="#L-397"><span class="linenos">397</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -719,7 +719,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-402"><a href="#L-402"><span class="linenos">402</span></a>        <span class="k">return</span> <span class="n">value</span>  <span class="c1"># pyright: ignore[reportUnknownVariableType]</span>
 </span><span id="L-403"><a href="#L-403"><span class="linenos">403</span></a>
 </span><span id="L-404"><a href="#L-404"><span class="linenos">404</span></a>
-</span><span id="L-405"><a href="#L-405"><span class="linenos">405</span></a><span class="k">class</span> <span class="nc">GenericDescrBase</span><span class="p">(</span><span class="n">GenericModelDescrBase</span><span class="p">):</span>
+</span><span id="L-405"><a href="#L-405"><span class="linenos">405</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GenericDescrBase</span><span class="p">(</span><span class="n">GenericModelDescrBase</span><span class="p">):</span>
 </span><span id="L-406"><a href="#L-406"><span class="linenos">406</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base for all resource descriptions except for the model descriptions&quot;&quot;&quot;</span>
 </span><span id="L-407"><a href="#L-407"><span class="linenos">407</span></a>
 </span><span id="L-408"><a href="#L-408"><span class="linenos">408</span></a>    <span class="n">format_version</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;0.3.0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0.3.0&quot;</span>
@@ -727,7 +727,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-410"><a href="#L-410"><span class="linenos">410</span></a>
 </span><span id="L-411"><a href="#L-411"><span class="linenos">411</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
 </span><span id="L-412"><a href="#L-412"><span class="linenos">412</span></a>    <span class="nd">@classmethod</span>
-</span><span id="L-413"><a href="#L-413"><span class="linenos">413</span></a>    <span class="k">def</span> <span class="nf">_convert_from_older_format</span><span class="p">(</span>
+</span><span id="L-413"><a href="#L-413"><span class="linenos">413</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_from_older_format</span><span class="p">(</span>
 </span><span id="L-414"><a href="#L-414"><span class="linenos">414</span></a>        <span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BioimageioYamlContent</span><span class="p">,</span> <span class="o">/</span>
 </span><span id="L-415"><a href="#L-415"><span class="linenos">415</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BioimageioYamlContent</span><span class="p">:</span>
 </span><span id="L-416"><a href="#L-416"><span class="linenos">416</span></a>        <span class="n">convert_from_older_format</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -752,7 +752,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-435"><a href="#L-435"><span class="linenos">435</span></a><span class="n">ResourceDescrType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ResourceDescrType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">GenericDescrBase</span><span class="p">)</span>
 </span><span id="L-436"><a href="#L-436"><span class="linenos">436</span></a>
 </span><span id="L-437"><a href="#L-437"><span class="linenos">437</span></a>
-</span><span id="L-438"><a href="#L-438"><span class="linenos">438</span></a><span class="k">class</span> <span class="nc">GenericDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">):</span>
+</span><span id="L-438"><a href="#L-438"><span class="linenos">438</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GenericDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">):</span>
 </span><span id="L-439"><a href="#L-439"><span class="linenos">439</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).</span>
 </span><span id="L-440"><a href="#L-440"><span class="linenos">440</span></a>
 </span><span id="L-441"><a href="#L-441"><span class="linenos">441</span></a><span class="sd">    An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.</span>
@@ -777,7 +777,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="L-460"><a href="#L-460"><span class="linenos">460</span></a>
 </span><span id="L-461"><a href="#L-461"><span class="linenos">461</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
 </span><span id="L-462"><a href="#L-462"><span class="linenos">462</span></a>    <span class="nd">@classmethod</span>
-</span><span id="L-463"><a href="#L-463"><span class="linenos">463</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-463"><a href="#L-463"><span class="linenos">463</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="L-464"><a href="#L-464"><span class="linenos">464</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
 </span><span id="L-465"><a href="#L-465"><span class="linenos">465</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
 </span><span id="L-466"><a href="#L-466"><span class="linenos">466</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
@@ -800,12 +800,12 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 
     </div>
     <a class="headerlink" href="#Author"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Author-123"><a href="#Author-123"><span class="linenos">123</span></a><span class="k">class</span> <span class="nc">Author</span><span class="p">(</span><span class="n">_Author_v0_2</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Author-123"><a href="#Author-123"><span class="linenos">123</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Author</span><span class="p">(</span><span class="n">_Author_v0_2</span><span class="p">):</span>
 </span><span id="Author-124"><a href="#Author-124"><span class="linenos">124</span></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">_has_no_slash</span><span class="p">)]</span>
 </span><span id="Author-125"><a href="#Author-125"><span class="linenos">125</span></a>    <span class="n">github_user</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="Author-126"><a href="#Author-126"><span class="linenos">126</span></a>
 </span><span id="Author-127"><a href="#Author-127"><span class="linenos">127</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;github_user&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="Author-128"><a href="#Author-128"><span class="linenos">128</span></a>    <span class="k">def</span> <span class="nf">_validate_gh_user</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+</span><span id="Author-128"><a href="#Author-128"><span class="linenos">128</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_gh_user</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
 </span><span id="Author-129"><a href="#Author-129"><span class="linenos">129</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="Author-130"><a href="#Author-130"><span class="linenos">130</span></a>            <span class="k">return</span> <span class="kc">None</span>
 </span><span id="Author-131"><a href="#Author-131"><span class="linenos">131</span></a>        <span class="k">else</span><span class="p">:</span>
@@ -817,7 +817,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 
                             <div id="Author.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f77c23859e0&gt;)]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7fa650e92340&gt;)]</span>
 
         
     </div>
@@ -860,7 +860,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 
     </div>
     <a class="headerlink" href="#BadgeDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BadgeDescr-141"><a href="#BadgeDescr-141"><span class="linenos">141</span></a><span class="k">class</span> <span class="nc">BadgeDescr</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BadgeDescr-141"><a href="#BadgeDescr-141"><span class="linenos">141</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BadgeDescr</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
 </span><span id="BadgeDescr-142"><a href="#BadgeDescr-142"><span class="linenos">142</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A custom badge&quot;&quot;&quot;</span>
 </span><span id="BadgeDescr-143"><a href="#BadgeDescr-143"><span class="linenos">143</span></a>
 </span><span id="BadgeDescr-144"><a href="#BadgeDescr-144"><span class="linenos">144</span></a>    <span class="n">label</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Open in Colab&quot;</span><span class="p">])]</span>
@@ -903,7 +903,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
                             </div>
                             <div id="BadgeDescr.icon" class="classattr">
                                 <div class="attr variable">
-            <span class="name">icon</span><span class="annotation">: Annotated[Union[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)], <a href="#RelativeFilePath">RelativeFilePath</a>], AfterValidator(func=&lt;function wo_special_file_name at 0x7f77cd9cafc0&gt;), PlainSerializer(func=&lt;function _package at 0x7f77cd9cb7e0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], <a href="#HttpUrl">HttpUrl</a>, Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)], NoneType], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://colab.research.google.com/assets/colab-badge.svg&#39;])]</span>
+            <span class="name">icon</span><span class="annotation">: Annotated[Union[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)], <a href="#RelativeFilePath">RelativeFilePath</a>], AfterValidator(func=&lt;function wo_special_file_name at 0x7fa6511db740&gt;), PlainSerializer(func=&lt;function _package at 0x7fa6511daa20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], <a href="#HttpUrl">HttpUrl</a>, Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)], NoneType], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://colab.research.google.com/assets/colab-badge.svg&#39;])]</span>
 
         
     </div>
@@ -939,7 +939,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 
     </div>
     <a class="headerlink" href="#CiteEntry"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CiteEntry-176"><a href="#CiteEntry-176"><span class="linenos">176</span></a><span class="k">class</span> <span class="nc">CiteEntry</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CiteEntry-176"><a href="#CiteEntry-176"><span class="linenos">176</span></a><span class="k">class</span><span class="w"> </span><span class="nc">CiteEntry</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
 </span><span id="CiteEntry-177"><a href="#CiteEntry-177"><span class="linenos">177</span></a>    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="CiteEntry-178"><a href="#CiteEntry-178"><span class="linenos">178</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;free text description&quot;&quot;&quot;</span>
 </span><span id="CiteEntry-179"><a href="#CiteEntry-179"><span class="linenos">179</span></a>
@@ -951,7 +951,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 </span><span id="CiteEntry-185"><a href="#CiteEntry-185"><span class="linenos">185</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;URL to cite (preferably specify a `doi` instead)&quot;&quot;&quot;</span>
 </span><span id="CiteEntry-186"><a href="#CiteEntry-186"><span class="linenos">186</span></a>
 </span><span id="CiteEntry-187"><a href="#CiteEntry-187"><span class="linenos">187</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="CiteEntry-188"><a href="#CiteEntry-188"><span class="linenos">188</span></a>    <span class="k">def</span> <span class="nf">_check_doi_or_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="CiteEntry-188"><a href="#CiteEntry-188"><span class="linenos">188</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_doi_or_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="CiteEntry-189"><a href="#CiteEntry-189"><span class="linenos">189</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">doi</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
 </span><span id="CiteEntry-190"><a href="#CiteEntry-190"><span class="linenos">190</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either &#39;doi&#39; or &#39;url&#39; is required&quot;</span><span class="p">)</span>
 </span><span id="CiteEntry-191"><a href="#CiteEntry-191"><span class="linenos">191</span></a>
@@ -1013,7 +1013,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
 
     </div>
     <a class="headerlink" href="#DeprecatedLicenseId"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DeprecatedLicenseId-24"><a href="#DeprecatedLicenseId-24"><span class="linenos">24</span></a><span class="k">class</span> <span class="nc">DeprecatedLicenseId</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DeprecatedLicenseId-24"><a href="#DeprecatedLicenseId-24"><span class="linenos">24</span></a><span class="k">class</span><span class="w"> </span><span class="nc">DeprecatedLicenseId</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
 </span><span id="DeprecatedLicenseId-25"><a href="#DeprecatedLicenseId-25"><span class="linenos">25</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span><span class="n">DeprecatedLicenseIdLiteral</span><span class="p">]</span>
 </span></pre></div>
 
@@ -1058,7 +1058,7 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#Doi"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Doi-109"><a href="#Doi-109"><span class="linenos">109</span></a><span class="k">class</span> <span class="nc">Doi</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Doi-109"><a href="#Doi-109"><span class="linenos">109</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Doi</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
 </span><span id="Doi-110"><a href="#Doi-110"><span class="linenos">110</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
 </span><span id="Doi-111"><a href="#Doi-111"><span class="linenos">111</span></a>        <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StringConstraints</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="n">DOI_REGEX</span><span class="p">)]</span>
 </span><span id="Doi-112"><a href="#Doi-112"><span class="linenos">112</span></a>    <span class="p">]</span>
@@ -1104,7 +1104,7 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#FileDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FileDescr-768"><a href="#FileDescr-768"><span class="linenos">768</span></a><span class="k">class</span> <span class="nc">FileDescr</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileDescr-768"><a href="#FileDescr-768"><span class="linenos">768</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FileDescr</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
 </span><span id="FileDescr-769"><a href="#FileDescr-769"><span class="linenos">769</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">ImportantFileSource</span>
 </span><span id="FileDescr-770"><a href="#FileDescr-770"><span class="linenos">770</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;∈📦 file source&quot;&quot;&quot;</span>
 </span><span id="FileDescr-771"><a href="#FileDescr-771"><span class="linenos">771</span></a>
@@ -1112,7 +1112,7 @@ errors defaults to 'strict'.</p>
 </span><span id="FileDescr-773"><a href="#FileDescr-773"><span class="linenos">773</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SHA256 checksum of the source file&quot;&quot;&quot;</span>
 </span><span id="FileDescr-774"><a href="#FileDescr-774"><span class="linenos">774</span></a>
 </span><span id="FileDescr-775"><a href="#FileDescr-775"><span class="linenos">775</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="FileDescr-776"><a href="#FileDescr-776"><span class="linenos">776</span></a>    <span class="k">def</span> <span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+</span><span id="FileDescr-776"><a href="#FileDescr-776"><span class="linenos">776</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 </span><span id="FileDescr-777"><a href="#FileDescr-777"><span class="linenos">777</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 </span><span id="FileDescr-778"><a href="#FileDescr-778"><span class="linenos">778</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="o">.</span><span class="n">perform_io_checks</span><span class="p">:</span>
 </span><span id="FileDescr-779"><a href="#FileDescr-779"><span class="linenos">779</span></a>            <span class="k">return</span> <span class="bp">self</span>
@@ -1134,7 +1134,7 @@ errors defaults to 'strict'.</p>
 </span><span id="FileDescr-795"><a href="#FileDescr-795"><span class="linenos">795</span></a>
 </span><span id="FileDescr-796"><a href="#FileDescr-796"><span class="linenos">796</span></a>        <span class="k">return</span> <span class="bp">self</span>
 </span><span id="FileDescr-797"><a href="#FileDescr-797"><span class="linenos">797</span></a>
-</span><span id="FileDescr-798"><a href="#FileDescr-798"><span class="linenos">798</span></a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="FileDescr-798"><a href="#FileDescr-798"><span class="linenos">798</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="FileDescr-799"><a href="#FileDescr-799"><span class="linenos">799</span></a>
 </span><span id="FileDescr-800"><a href="#FileDescr-800"><span class="linenos">800</span></a>        <span class="k">return</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span>
 </span></pre></div>
@@ -1144,7 +1144,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="FileDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="#HttpUrl">HttpUrl</a>, <a href="#RelativeFilePath">RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f77cd9cafc0&gt;), PlainSerializer(func=&lt;function _package at 0x7f77cd9cb7e0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="#HttpUrl">HttpUrl</a>, <a href="#RelativeFilePath">RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fa6511db740&gt;), PlainSerializer(func=&lt;function _package at 0x7fa6511daa20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -1181,7 +1181,7 @@ errors defaults to 'strict'.</p>
     </div>
     <a class="headerlink" href="#FileDescr.validate_sha256"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="FileDescr.validate_sha256-775"><a href="#FileDescr.validate_sha256-775"><span class="linenos">775</span></a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="FileDescr.validate_sha256-776"><a href="#FileDescr.validate_sha256-776"><span class="linenos">776</span></a>    <span class="k">def</span> <span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+</span><span id="FileDescr.validate_sha256-776"><a href="#FileDescr.validate_sha256-776"><span class="linenos">776</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 </span><span id="FileDescr.validate_sha256-777"><a href="#FileDescr.validate_sha256-777"><span class="linenos">777</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 </span><span id="FileDescr.validate_sha256-778"><a href="#FileDescr.validate_sha256-778"><span class="linenos">778</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="o">.</span><span class="n">perform_io_checks</span><span class="p">:</span>
 </span><span id="FileDescr.validate_sha256-779"><a href="#FileDescr.validate_sha256-779"><span class="linenos">779</span></a>            <span class="k">return</span> <span class="bp">self</span>
@@ -1219,7 +1219,7 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#FileDescr.download"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FileDescr.download-798"><a href="#FileDescr.download-798"><span class="linenos">798</span></a>    <span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileDescr.download-798"><a href="#FileDescr.download-798"><span class="linenos">798</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="FileDescr.download-799"><a href="#FileDescr.download-799"><span class="linenos">799</span></a>
 </span><span id="FileDescr.download-800"><a href="#FileDescr.download-800"><span class="linenos">800</span></a>        <span class="k">return</span> <span class="n">download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sha256</span><span class="p">)</span>
 </span></pre></div>
@@ -1240,7 +1240,7 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#GenericDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr-439"><a href="#GenericDescr-439"><span class="linenos">439</span></a><span class="k">class</span> <span class="nc">GenericDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr-439"><a href="#GenericDescr-439"><span class="linenos">439</span></a><span class="k">class</span><span class="w"> </span><span class="nc">GenericDescr</span><span class="p">(</span><span class="n">GenericDescrBase</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">):</span>
 </span><span id="GenericDescr-440"><a href="#GenericDescr-440"><span class="linenos">440</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).</span>
 </span><span id="GenericDescr-441"><a href="#GenericDescr-441"><span class="linenos">441</span></a>
 </span><span id="GenericDescr-442"><a href="#GenericDescr-442"><span class="linenos">442</span></a><span class="sd">    An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.</span>
@@ -1265,7 +1265,7 @@ errors defaults to 'strict'.</p>
 </span><span id="GenericDescr-461"><a href="#GenericDescr-461"><span class="linenos">461</span></a>
 </span><span id="GenericDescr-462"><a href="#GenericDescr-462"><span class="linenos">462</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
 </span><span id="GenericDescr-463"><a href="#GenericDescr-463"><span class="linenos">463</span></a>    <span class="nd">@classmethod</span>
-</span><span id="GenericDescr-464"><a href="#GenericDescr-464"><span class="linenos">464</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="GenericDescr-464"><a href="#GenericDescr-464"><span class="linenos">464</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="GenericDescr-465"><a href="#GenericDescr-465"><span class="linenos">465</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
 </span><span id="GenericDescr-466"><a href="#GenericDescr-466"><span class="linenos">466</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
 </span><span id="GenericDescr-467"><a href="#GenericDescr-467"><span class="linenos">467</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
@@ -1352,7 +1352,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
     <a class="headerlink" href="#GenericDescr.check_specific_types"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr.check_specific_types-462"><a href="#GenericDescr.check_specific_types-462"><span class="linenos">462</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
 </span><span id="GenericDescr.check_specific_types-463"><a href="#GenericDescr.check_specific_types-463"><span class="linenos">463</span></a>    <span class="nd">@classmethod</span>
-</span><span id="GenericDescr.check_specific_types-464"><a href="#GenericDescr.check_specific_types-464"><span class="linenos">464</span></a>    <span class="k">def</span> <span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="GenericDescr.check_specific_types-464"><a href="#GenericDescr.check_specific_types-464"><span class="linenos">464</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_specific_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="GenericDescr.check_specific_types-465"><a href="#GenericDescr.check_specific_types-465"><span class="linenos">465</span></a>        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">KNOWN_SPECIFIC_RESOURCE_TYPES</span><span class="p">:</span>
 </span><span id="GenericDescr.check_specific_types-466"><a href="#GenericDescr.check_specific_types-466"><span class="linenos">466</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
 </span><span id="GenericDescr.check_specific_types-467"><a href="#GenericDescr.check_specific_types-467"><span class="linenos">467</span></a>                <span class="sa">f</span><span class="s2">&quot;Use the </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> description instead of this generic description for&quot;</span>
@@ -1413,7 +1413,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
 
     </div>
     <a class="headerlink" href="#GenericDescr.model_post_init"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr.model_post_init-124"><a href="#GenericDescr.model_post_init-124"><span class="linenos">124</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GenericDescr.model_post_init-124"><a href="#GenericDescr.model_post_init-124"><span class="linenos">124</span></a>                    <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="GenericDescr.model_post_init-125"><a href="#GenericDescr.model_post_init-125"><span class="linenos">125</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
 </span><span id="GenericDescr.model_post_init-126"><a href="#GenericDescr.model_post_init-126"><span class="linenos">126</span></a><span class="sd">                        method.</span>
 </span><span id="GenericDescr.model_post_init-127"><a href="#GenericDescr.model_post_init-127"><span class="linenos">127</span></a><span class="sd">                        &quot;&quot;&quot;</span>
@@ -1472,13 +1472,13 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#HttpUrl"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="HttpUrl-118"><a href="#HttpUrl-118"><span class="linenos">118</span></a><span class="k">class</span> <span class="nc">HttpUrl</span><span class="p">(</span><span class="n">RootHttpUrl</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="HttpUrl-118"><a href="#HttpUrl-118"><span class="linenos">118</span></a><span class="k">class</span><span class="w"> </span><span class="nc">HttpUrl</span><span class="p">(</span><span class="n">RootHttpUrl</span><span class="p">):</span>
 </span><span id="HttpUrl-119"><a href="#HttpUrl-119"><span class="linenos">119</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A URL with the HTTP or HTTPS scheme.&quot;&quot;&quot;</span>
 </span><span id="HttpUrl-120"><a href="#HttpUrl-120"><span class="linenos">120</span></a>
 </span><span id="HttpUrl-121"><a href="#HttpUrl-121"><span class="linenos">121</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span><span class="n">pydantic</span><span class="o">.</span><span class="n">HttpUrl</span><span class="p">]</span>
 </span><span id="HttpUrl-122"><a href="#HttpUrl-122"><span class="linenos">122</span></a>    <span class="n">_exists</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="HttpUrl-123"><a href="#HttpUrl-123"><span class="linenos">123</span></a>
-</span><span id="HttpUrl-124"><a href="#HttpUrl-124"><span class="linenos">124</span></a>    <span class="k">def</span> <span class="nf">_after_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="HttpUrl-124"><a href="#HttpUrl-124"><span class="linenos">124</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_after_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="HttpUrl-125"><a href="#HttpUrl-125"><span class="linenos">125</span></a>        <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_after_validator</span><span class="p">()</span>
 </span><span id="HttpUrl-126"><a href="#HttpUrl-126"><span class="linenos">126</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 </span><span id="HttpUrl-127"><a href="#HttpUrl-127"><span class="linenos">127</span></a>        <span class="k">if</span> <span class="p">(</span>
@@ -1490,7 +1490,7 @@ method.</p>
 </span><span id="HttpUrl-133"><a href="#HttpUrl-133"><span class="linenos">133</span></a>
 </span><span id="HttpUrl-134"><a href="#HttpUrl-134"><span class="linenos">134</span></a>        <span class="k">return</span> <span class="bp">self</span>
 </span><span id="HttpUrl-135"><a href="#HttpUrl-135"><span class="linenos">135</span></a>
-</span><span id="HttpUrl-136"><a href="#HttpUrl-136"><span class="linenos">136</span></a>    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="HttpUrl-136"><a href="#HttpUrl-136"><span class="linenos">136</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="HttpUrl-137"><a href="#HttpUrl-137"><span class="linenos">137</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;True if URL is available&quot;&quot;&quot;</span>
 </span><span id="HttpUrl-138"><a href="#HttpUrl-138"><span class="linenos">138</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="HttpUrl-139"><a href="#HttpUrl-139"><span class="linenos">139</span></a>            <span class="k">try</span><span class="p">:</span>
@@ -1535,7 +1535,7 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#HttpUrl.exists"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="HttpUrl.exists-136"><a href="#HttpUrl.exists-136"><span class="linenos">136</span></a>    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="HttpUrl.exists-136"><a href="#HttpUrl.exists-136"><span class="linenos">136</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="HttpUrl.exists-137"><a href="#HttpUrl.exists-137"><span class="linenos">137</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;True if URL is available&quot;&quot;&quot;</span>
 </span><span id="HttpUrl.exists-138"><a href="#HttpUrl.exists-138"><span class="linenos">138</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="HttpUrl.exists-139"><a href="#HttpUrl.exists-139"><span class="linenos">139</span></a>            <span class="k">try</span><span class="p">:</span>
@@ -1579,7 +1579,7 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#LicenseId"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LicenseId-20"><a href="#LicenseId-20"><span class="linenos">20</span></a><span class="k">class</span> <span class="nc">LicenseId</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LicenseId-20"><a href="#LicenseId-20"><span class="linenos">20</span></a><span class="k">class</span><span class="w"> </span><span class="nc">LicenseId</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
 </span><span id="LicenseId-21"><a href="#LicenseId-21"><span class="linenos">21</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span><span class="n">LicenseIdLiteral</span><span class="p">]</span>
 </span></pre></div>
 
@@ -1624,7 +1624,7 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#LinkedResource"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LinkedResource-212"><a href="#LinkedResource-212"><span class="linenos">212</span></a><span class="k">class</span> <span class="nc">LinkedResource</span><span class="p">(</span><span class="n">LinkedResourceBase</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LinkedResource-212"><a href="#LinkedResource-212"><span class="linenos">212</span></a><span class="k">class</span><span class="w"> </span><span class="nc">LinkedResource</span><span class="p">(</span><span class="n">LinkedResourceBase</span><span class="p">):</span>
 </span><span id="LinkedResource-213"><a href="#LinkedResource-213"><span class="linenos">213</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Reference to a bioimage.io resource&quot;&quot;&quot;</span>
 </span><span id="LinkedResource-214"><a href="#LinkedResource-214"><span class="linenos">214</span></a>
 </span><span id="LinkedResource-215"><a href="#LinkedResource-215"><span class="linenos">215</span></a>    <span class="nb">id</span><span class="p">:</span> <span class="n">ResourceId</span>
@@ -1670,12 +1670,12 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#Maintainer"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Maintainer-151"><a href="#Maintainer-151"><span class="linenos">151</span></a><span class="k">class</span> <span class="nc">Maintainer</span><span class="p">(</span><span class="n">_Maintainer_v0_2</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Maintainer-151"><a href="#Maintainer-151"><span class="linenos">151</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Maintainer</span><span class="p">(</span><span class="n">_Maintainer_v0_2</span><span class="p">):</span>
 </span><span id="Maintainer-152"><a href="#Maintainer-152"><span class="linenos">152</span></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">_has_no_slash</span><span class="p">)]]</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="Maintainer-153"><a href="#Maintainer-153"><span class="linenos">153</span></a>    <span class="n">github_user</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="Maintainer-154"><a href="#Maintainer-154"><span class="linenos">154</span></a>
 </span><span id="Maintainer-155"><a href="#Maintainer-155"><span class="linenos">155</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;github_user&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="Maintainer-156"><a href="#Maintainer-156"><span class="linenos">156</span></a>    <span class="k">def</span> <span class="nf">validate_gh_user</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="Maintainer-156"><a href="#Maintainer-156"><span class="linenos">156</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate_gh_user</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 </span><span id="Maintainer-157"><a href="#Maintainer-157"><span class="linenos">157</span></a>        <span class="k">return</span> <span class="n">validate_gh_user</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </span></pre></div>
 
@@ -1684,7 +1684,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="Maintainer.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f77c23859e0&gt;)]]</span>
+            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7fa650e92340&gt;)]]</span>
 
         
     </div>
@@ -1717,7 +1717,7 @@ errors defaults to 'strict'.</p>
     </div>
     <a class="headerlink" href="#Maintainer.validate_gh_user"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Maintainer.validate_gh_user-155"><a href="#Maintainer.validate_gh_user-155"><span class="linenos">155</span></a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;github_user&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
-</span><span id="Maintainer.validate_gh_user-156"><a href="#Maintainer.validate_gh_user-156"><span class="linenos">156</span></a>    <span class="k">def</span> <span class="nf">validate_gh_user</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="Maintainer.validate_gh_user-156"><a href="#Maintainer.validate_gh_user-156"><span class="linenos">156</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate_gh_user</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 </span><span id="Maintainer.validate_gh_user-157"><a href="#Maintainer.validate_gh_user-157"><span class="linenos">157</span></a>        <span class="k">return</span> <span class="n">validate_gh_user</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </span></pre></div>
 
@@ -1748,7 +1748,7 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#OrcidId"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="OrcidId-134"><a href="#OrcidId-134"><span class="linenos">134</span></a><span class="k">class</span> <span class="nc">OrcidId</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="OrcidId-134"><a href="#OrcidId-134"><span class="linenos">134</span></a><span class="k">class</span><span class="w"> </span><span class="nc">OrcidId</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
 </span><span id="OrcidId-135"><a href="#OrcidId-135"><span class="linenos">135</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;an ORCID identifier&quot;&quot;&quot;</span>
 </span><span id="OrcidId-136"><a href="#OrcidId-136"><span class="linenos">136</span></a>
 </span><span id="OrcidId-137"><a href="#OrcidId-137"><span class="linenos">137</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
@@ -1787,19 +1787,19 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#RelativeFilePath"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativeFilePath-186"><a href="#RelativeFilePath-186"><span class="linenos">186</span></a><span class="k">class</span> <span class="nc">RelativeFilePath</span><span class="p">(</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativeFilePath-186"><a href="#RelativeFilePath-186"><span class="linenos">186</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RelativeFilePath</span><span class="p">(</span>
 </span><span id="RelativeFilePath-187"><a href="#RelativeFilePath-187"><span class="linenos">187</span></a>    <span class="n">RelativePathBase</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">AbsoluteFilePath</span><span class="p">,</span> <span class="n">HttpUrl</span><span class="p">,</span> <span class="n">ZipPath</span><span class="p">]],</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span>
 </span><span id="RelativeFilePath-188"><a href="#RelativeFilePath-188"><span class="linenos">188</span></a><span class="p">):</span>
 </span><span id="RelativeFilePath-189"><a href="#RelativeFilePath-189"><span class="linenos">189</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A path relative to the `rdf.yaml` file (also if the RDF source is a URL).&quot;&quot;&quot;</span>
 </span><span id="RelativeFilePath-190"><a href="#RelativeFilePath-190"><span class="linenos">190</span></a>
-</span><span id="RelativeFilePath-191"><a href="#RelativeFilePath-191"><span class="linenos">191</span></a>    <span class="k">def</span> <span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="RelativeFilePath-191"><a href="#RelativeFilePath-191"><span class="linenos">191</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="RelativeFilePath-192"><a href="#RelativeFilePath-192"><span class="linenos">192</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;add validation @private&quot;&quot;&quot;</span>
 </span><span id="RelativeFilePath-193"><a href="#RelativeFilePath-193"><span class="linenos">193</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>  <span class="c1"># an empty path can only be a directory</span>
 </span><span id="RelativeFilePath-194"><a href="#RelativeFilePath-194"><span class="linenos">194</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2"> is not a valid file path.&quot;</span><span class="p">)</span>
 </span><span id="RelativeFilePath-195"><a href="#RelativeFilePath-195"><span class="linenos">195</span></a>
 </span><span id="RelativeFilePath-196"><a href="#RelativeFilePath-196"><span class="linenos">196</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">model_post_init</span><span class="p">(</span><span class="n">__context</span><span class="p">)</span>
 </span><span id="RelativeFilePath-197"><a href="#RelativeFilePath-197"><span class="linenos">197</span></a>
-</span><span id="RelativeFilePath-198"><a href="#RelativeFilePath-198"><span class="linenos">198</span></a>    <span class="k">def</span> <span class="nf">get_absolute</span><span class="p">(</span>
+</span><span id="RelativeFilePath-198"><a href="#RelativeFilePath-198"><span class="linenos">198</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_absolute</span><span class="p">(</span>
 </span><span id="RelativeFilePath-199"><a href="#RelativeFilePath-199"><span class="linenos">199</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="s2">&quot;RootHttpUrl | Path | AnyUrl | ZipFile&quot;</span>
 </span><span id="RelativeFilePath-200"><a href="#RelativeFilePath-200"><span class="linenos">200</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AbsoluteFilePath | HttpUrl | ZipPath&quot;</span><span class="p">:</span>
 </span><span id="RelativeFilePath-201"><a href="#RelativeFilePath-201"><span class="linenos">201</span></a>        <span class="n">absolute</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_absolute_impl</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
@@ -1830,7 +1830,7 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#RelativeFilePath.model_post_init"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativeFilePath.model_post_init-124"><a href="#RelativeFilePath.model_post_init-124"><span class="linenos">124</span></a>                    <span class="k">def</span> <span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativeFilePath.model_post_init-124"><a href="#RelativeFilePath.model_post_init-124"><span class="linenos">124</span></a>                    <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="RelativeFilePath.model_post_init-125"><a href="#RelativeFilePath.model_post_init-125"><span class="linenos">125</span></a><span class="w">                        </span><span class="sd">&quot;&quot;&quot;We need to both initialize private attributes and call the user-defined model_post_init</span>
 </span><span id="RelativeFilePath.model_post_init-126"><a href="#RelativeFilePath.model_post_init-126"><span class="linenos">126</span></a><span class="sd">                        method.</span>
 </span><span id="RelativeFilePath.model_post_init-127"><a href="#RelativeFilePath.model_post_init-127"><span class="linenos">127</span></a><span class="sd">                        &quot;&quot;&quot;</span>
@@ -1856,7 +1856,7 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#RelativeFilePath.get_absolute"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativeFilePath.get_absolute-198"><a href="#RelativeFilePath.get_absolute-198"><span class="linenos">198</span></a>    <span class="k">def</span> <span class="nf">get_absolute</span><span class="p">(</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RelativeFilePath.get_absolute-198"><a href="#RelativeFilePath.get_absolute-198"><span class="linenos">198</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_absolute</span><span class="p">(</span>
 </span><span id="RelativeFilePath.get_absolute-199"><a href="#RelativeFilePath.get_absolute-199"><span class="linenos">199</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="s2">&quot;RootHttpUrl | Path | AnyUrl | ZipFile&quot;</span>
 </span><span id="RelativeFilePath.get_absolute-200"><a href="#RelativeFilePath.get_absolute-200"><span class="linenos">200</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AbsoluteFilePath | HttpUrl | ZipPath&quot;</span><span class="p">:</span>
 </span><span id="RelativeFilePath.get_absolute-201"><a href="#RelativeFilePath.get_absolute-201"><span class="linenos">201</span></a>        <span class="n">absolute</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_absolute_impl</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
@@ -1887,7 +1887,7 @@ method.</p>
 
     </div>
     <a class="headerlink" href="#ResourceId"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ResourceId-95"><a href="#ResourceId-95"><span class="linenos"> 95</span></a><span class="k">class</span> <span class="nc">ResourceId</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ResourceId-95"><a href="#ResourceId-95"><span class="linenos"> 95</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ResourceId</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
 </span><span id="ResourceId-96"><a href="#ResourceId-96"><span class="linenos"> 96</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
 </span><span id="ResourceId-97"><a href="#ResourceId-97"><span class="linenos"> 97</span></a>        <span class="n">Annotated</span><span class="p">[</span>
 </span><span id="ResourceId-98"><a href="#ResourceId-98"><span class="linenos"> 98</span></a>            <span class="n">NotEmpty</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
@@ -1939,7 +1939,7 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#Sha256"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Sha256-33"><a href="#Sha256-33"><span class="linenos">33</span></a><span class="k">class</span> <span class="nc">Sha256</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Sha256-33"><a href="#Sha256-33"><span class="linenos">33</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Sha256</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
 </span><span id="Sha256-34"><a href="#Sha256-34"><span class="linenos">34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A SHA-256 hash value&quot;&quot;&quot;</span>
 </span><span id="Sha256-35"><a href="#Sha256-35"><span class="linenos">35</span></a>
 </span><span id="Sha256-36"><a href="#Sha256-36"><span class="linenos">36</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
@@ -1983,7 +1983,7 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#Uploader"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Uploader-109"><a href="#Uploader-109"><span class="linenos">109</span></a><span class="k">class</span> <span class="nc">Uploader</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Uploader-109"><a href="#Uploader-109"><span class="linenos">109</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Uploader</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
 </span><span id="Uploader-110"><a href="#Uploader-110"><span class="linenos">110</span></a>    <span class="n">email</span><span class="p">:</span> <span class="n">EmailStr</span>
 </span><span id="Uploader-111"><a href="#Uploader-111"><span class="linenos">111</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Email&quot;&quot;&quot;</span>
 </span><span id="Uploader-112"><a href="#Uploader-112"><span class="linenos">112</span></a>    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AfterValidator</span><span class="p">(</span><span class="n">_remove_slashes</span><span class="p">)]]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -2008,7 +2008,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="Uploader.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7f77c25afd80&gt;)]]</span>
+            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7fa6510b6e80&gt;)]]</span>
 
         
     </div>
@@ -2043,28 +2043,28 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#Version"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Version-10"><a href="#Version-10"><span class="linenos"> 10</span></a><span class="k">class</span> <span class="nc">Version</span><span class="p">(</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Version-10"><a href="#Version-10"><span class="linenos"> 10</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Version</span><span class="p">(</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]):</span>
 </span><span id="Version-11"><a href="#Version-11"><span class="linenos"> 11</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;wraps a packaging.version.Version instance for validation in pydantic models&quot;&quot;&quot;</span>
 </span><span id="Version-12"><a href="#Version-12"><span class="linenos"> 12</span></a>
 </span><span id="Version-13"><a href="#Version-13"><span class="linenos"> 13</span></a>    <span class="n">_version</span><span class="p">:</span> <span class="n">packaging</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">Version</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">()</span>
 </span><span id="Version-14"><a href="#Version-14"><span class="linenos"> 14</span></a>
-</span><span id="Version-15"><a href="#Version-15"><span class="linenos"> 15</span></a>    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="Version-15"><a href="#Version-15"><span class="linenos"> 15</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="Version-16"><a href="#Version-16"><span class="linenos"> 16</span></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="p">)</span>
 </span><span id="Version-17"><a href="#Version-17"><span class="linenos"> 17</span></a>
-</span><span id="Version-18"><a href="#Version-18"><span class="linenos"> 18</span></a>    <span class="k">def</span> <span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Version-18"><a href="#Version-18"><span class="linenos"> 18</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="Version-19"><a href="#Version-19"><span class="linenos"> 19</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;set `_version` attribute @private&quot;&quot;&quot;</span>
 </span><span id="Version-20"><a href="#Version-20"><span class="linenos"> 20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_version</span> <span class="o">=</span> <span class="n">packaging</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">Version</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">))</span>
 </span><span id="Version-21"><a href="#Version-21"><span class="linenos"> 21</span></a>        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">model_post_init</span><span class="p">(</span><span class="n">__context</span><span class="p">)</span>
 </span><span id="Version-22"><a href="#Version-22"><span class="linenos"> 22</span></a>
-</span><span id="Version-23"><a href="#Version-23"><span class="linenos"> 23</span></a>    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Version</span><span class="p">):</span>
+</span><span id="Version-23"><a href="#Version-23"><span class="linenos"> 23</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Version</span><span class="p">):</span>
 </span><span id="Version-24"><a href="#Version-24"><span class="linenos"> 24</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">_version</span>
 </span><span id="Version-25"><a href="#Version-25"><span class="linenos"> 25</span></a>
-</span><span id="Version-26"><a href="#Version-26"><span class="linenos"> 26</span></a>    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Version</span><span class="p">):</span>
+</span><span id="Version-26"><a href="#Version-26"><span class="linenos"> 26</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Version</span><span class="p">):</span>
 </span><span id="Version-27"><a href="#Version-27"><span class="linenos"> 27</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_version</span>
 </span><span id="Version-28"><a href="#Version-28"><span class="linenos"> 28</span></a>
 </span><span id="Version-29"><a href="#Version-29"><span class="linenos"> 29</span></a>    <span class="c1"># the properties below are adopted from and mirror properties of packaging.version.Version</span>
 </span><span id="Version-30"><a href="#Version-30"><span class="linenos"> 30</span></a>    <span class="nd">@property</span>
-</span><span id="Version-31"><a href="#Version-31"><span class="linenos"> 31</span></a>    <span class="k">def</span> <span class="nf">epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="Version-31"><a href="#Version-31"><span class="linenos"> 31</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="Version-32"><a href="#Version-32"><span class="linenos"> 32</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The epoch of the version.</span>
 </span><span id="Version-33"><a href="#Version-33"><span class="linenos"> 33</span></a>
 </span><span id="Version-34"><a href="#Version-34"><span class="linenos"> 34</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;2.0.0&quot;).epoch</span>
@@ -2075,7 +2075,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-39"><a href="#Version-39"><span class="linenos"> 39</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">epoch</span>
 </span><span id="Version-40"><a href="#Version-40"><span class="linenos"> 40</span></a>
 </span><span id="Version-41"><a href="#Version-41"><span class="linenos"> 41</span></a>    <span class="nd">@property</span>
-</span><span id="Version-42"><a href="#Version-42"><span class="linenos"> 42</span></a>    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+</span><span id="Version-42"><a href="#Version-42"><span class="linenos"> 42</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 </span><span id="Version-43"><a href="#Version-43"><span class="linenos"> 43</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The components of the &quot;release&quot; segment of the version.</span>
 </span><span id="Version-44"><a href="#Version-44"><span class="linenos"> 44</span></a>
 </span><span id="Version-45"><a href="#Version-45"><span class="linenos"> 45</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).release</span>
@@ -2091,7 +2091,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-55"><a href="#Version-55"><span class="linenos"> 55</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">release</span>
 </span><span id="Version-56"><a href="#Version-56"><span class="linenos"> 56</span></a>
 </span><span id="Version-57"><a href="#Version-57"><span class="linenos"> 57</span></a>    <span class="nd">@property</span>
-</span><span id="Version-58"><a href="#Version-58"><span class="linenos"> 58</span></a>    <span class="k">def</span> <span class="nf">pre</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+</span><span id="Version-58"><a href="#Version-58"><span class="linenos"> 58</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">pre</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
 </span><span id="Version-59"><a href="#Version-59"><span class="linenos"> 59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The pre-release segment of the version.</span>
 </span><span id="Version-60"><a href="#Version-60"><span class="linenos"> 60</span></a>
 </span><span id="Version-61"><a href="#Version-61"><span class="linenos"> 61</span></a><span class="sd">        &gt;&gt;&gt; print(Version(&quot;1.2.3&quot;).pre)</span>
@@ -2106,7 +2106,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-70"><a href="#Version-70"><span class="linenos"> 70</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">pre</span>
 </span><span id="Version-71"><a href="#Version-71"><span class="linenos"> 71</span></a>
 </span><span id="Version-72"><a href="#Version-72"><span class="linenos"> 72</span></a>    <span class="nd">@property</span>
-</span><span id="Version-73"><a href="#Version-73"><span class="linenos"> 73</span></a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+</span><span id="Version-73"><a href="#Version-73"><span class="linenos"> 73</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 </span><span id="Version-74"><a href="#Version-74"><span class="linenos"> 74</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The post-release number of the version.</span>
 </span><span id="Version-75"><a href="#Version-75"><span class="linenos"> 75</span></a>
 </span><span id="Version-76"><a href="#Version-76"><span class="linenos"> 76</span></a><span class="sd">        &gt;&gt;&gt; print(Version(&quot;1.2.3&quot;).post)</span>
@@ -2117,7 +2117,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-81"><a href="#Version-81"><span class="linenos"> 81</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">post</span>
 </span><span id="Version-82"><a href="#Version-82"><span class="linenos"> 82</span></a>
 </span><span id="Version-83"><a href="#Version-83"><span class="linenos"> 83</span></a>    <span class="nd">@property</span>
-</span><span id="Version-84"><a href="#Version-84"><span class="linenos"> 84</span></a>    <span class="k">def</span> <span class="nf">dev</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+</span><span id="Version-84"><a href="#Version-84"><span class="linenos"> 84</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dev</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 </span><span id="Version-85"><a href="#Version-85"><span class="linenos"> 85</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The development number of the version.</span>
 </span><span id="Version-86"><a href="#Version-86"><span class="linenos"> 86</span></a>
 </span><span id="Version-87"><a href="#Version-87"><span class="linenos"> 87</span></a><span class="sd">        &gt;&gt;&gt; print(Version(&quot;1.2.3&quot;).dev)</span>
@@ -2128,7 +2128,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-92"><a href="#Version-92"><span class="linenos"> 92</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">dev</span>
 </span><span id="Version-93"><a href="#Version-93"><span class="linenos"> 93</span></a>
 </span><span id="Version-94"><a href="#Version-94"><span class="linenos"> 94</span></a>    <span class="nd">@property</span>
-</span><span id="Version-95"><a href="#Version-95"><span class="linenos"> 95</span></a>    <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="Version-95"><a href="#Version-95"><span class="linenos"> 95</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 </span><span id="Version-96"><a href="#Version-96"><span class="linenos"> 96</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The local version segment of the version.</span>
 </span><span id="Version-97"><a href="#Version-97"><span class="linenos"> 97</span></a>
 </span><span id="Version-98"><a href="#Version-98"><span class="linenos"> 98</span></a><span class="sd">        &gt;&gt;&gt; print(Version(&quot;1.2.3&quot;).local)</span>
@@ -2139,7 +2139,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-103"><a href="#Version-103"><span class="linenos">103</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">local</span>
 </span><span id="Version-104"><a href="#Version-104"><span class="linenos">104</span></a>
 </span><span id="Version-105"><a href="#Version-105"><span class="linenos">105</span></a>    <span class="nd">@property</span>
-</span><span id="Version-106"><a href="#Version-106"><span class="linenos">106</span></a>    <span class="k">def</span> <span class="nf">public</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Version-106"><a href="#Version-106"><span class="linenos">106</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">public</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="Version-107"><a href="#Version-107"><span class="linenos">107</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The public portion of the version.</span>
 </span><span id="Version-108"><a href="#Version-108"><span class="linenos">108</span></a>
 </span><span id="Version-109"><a href="#Version-109"><span class="linenos">109</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).public</span>
@@ -2152,7 +2152,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-116"><a href="#Version-116"><span class="linenos">116</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">public</span>
 </span><span id="Version-117"><a href="#Version-117"><span class="linenos">117</span></a>
 </span><span id="Version-118"><a href="#Version-118"><span class="linenos">118</span></a>    <span class="nd">@property</span>
-</span><span id="Version-119"><a href="#Version-119"><span class="linenos">119</span></a>    <span class="k">def</span> <span class="nf">base_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Version-119"><a href="#Version-119"><span class="linenos">119</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">base_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="Version-120"><a href="#Version-120"><span class="linenos">120</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The &quot;base version&quot; of the version.</span>
 </span><span id="Version-121"><a href="#Version-121"><span class="linenos">121</span></a>
 </span><span id="Version-122"><a href="#Version-122"><span class="linenos">122</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).base_version</span>
@@ -2168,7 +2168,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-132"><a href="#Version-132"><span class="linenos">132</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">base_version</span>
 </span><span id="Version-133"><a href="#Version-133"><span class="linenos">133</span></a>
 </span><span id="Version-134"><a href="#Version-134"><span class="linenos">134</span></a>    <span class="nd">@property</span>
-</span><span id="Version-135"><a href="#Version-135"><span class="linenos">135</span></a>    <span class="k">def</span> <span class="nf">is_prerelease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Version-135"><a href="#Version-135"><span class="linenos">135</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_prerelease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="Version-136"><a href="#Version-136"><span class="linenos">136</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether this version is a pre-release.</span>
 </span><span id="Version-137"><a href="#Version-137"><span class="linenos">137</span></a>
 </span><span id="Version-138"><a href="#Version-138"><span class="linenos">138</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).is_prerelease</span>
@@ -2185,7 +2185,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-149"><a href="#Version-149"><span class="linenos">149</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">is_prerelease</span>
 </span><span id="Version-150"><a href="#Version-150"><span class="linenos">150</span></a>
 </span><span id="Version-151"><a href="#Version-151"><span class="linenos">151</span></a>    <span class="nd">@property</span>
-</span><span id="Version-152"><a href="#Version-152"><span class="linenos">152</span></a>    <span class="k">def</span> <span class="nf">is_postrelease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Version-152"><a href="#Version-152"><span class="linenos">152</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_postrelease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="Version-153"><a href="#Version-153"><span class="linenos">153</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether this version is a post-release.</span>
 </span><span id="Version-154"><a href="#Version-154"><span class="linenos">154</span></a>
 </span><span id="Version-155"><a href="#Version-155"><span class="linenos">155</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).is_postrelease</span>
@@ -2196,7 +2196,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-160"><a href="#Version-160"><span class="linenos">160</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">is_postrelease</span>
 </span><span id="Version-161"><a href="#Version-161"><span class="linenos">161</span></a>
 </span><span id="Version-162"><a href="#Version-162"><span class="linenos">162</span></a>    <span class="nd">@property</span>
-</span><span id="Version-163"><a href="#Version-163"><span class="linenos">163</span></a>    <span class="k">def</span> <span class="nf">is_devrelease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Version-163"><a href="#Version-163"><span class="linenos">163</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_devrelease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="Version-164"><a href="#Version-164"><span class="linenos">164</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether this version is a development release.</span>
 </span><span id="Version-165"><a href="#Version-165"><span class="linenos">165</span></a>
 </span><span id="Version-166"><a href="#Version-166"><span class="linenos">166</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).is_devrelease</span>
@@ -2207,7 +2207,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-171"><a href="#Version-171"><span class="linenos">171</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">is_devrelease</span>
 </span><span id="Version-172"><a href="#Version-172"><span class="linenos">172</span></a>
 </span><span id="Version-173"><a href="#Version-173"><span class="linenos">173</span></a>    <span class="nd">@property</span>
-</span><span id="Version-174"><a href="#Version-174"><span class="linenos">174</span></a>    <span class="k">def</span> <span class="nf">major</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="Version-174"><a href="#Version-174"><span class="linenos">174</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">major</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="Version-175"><a href="#Version-175"><span class="linenos">175</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The first item of :attr:`release` or ``0`` if unavailable.</span>
 </span><span id="Version-176"><a href="#Version-176"><span class="linenos">176</span></a>
 </span><span id="Version-177"><a href="#Version-177"><span class="linenos">177</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).major</span>
@@ -2216,7 +2216,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-180"><a href="#Version-180"><span class="linenos">180</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">major</span>
 </span><span id="Version-181"><a href="#Version-181"><span class="linenos">181</span></a>
 </span><span id="Version-182"><a href="#Version-182"><span class="linenos">182</span></a>    <span class="nd">@property</span>
-</span><span id="Version-183"><a href="#Version-183"><span class="linenos">183</span></a>    <span class="k">def</span> <span class="nf">minor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="Version-183"><a href="#Version-183"><span class="linenos">183</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">minor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="Version-184"><a href="#Version-184"><span class="linenos">184</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The second item of :attr:`release` or ``0`` if unavailable.</span>
 </span><span id="Version-185"><a href="#Version-185"><span class="linenos">185</span></a>
 </span><span id="Version-186"><a href="#Version-186"><span class="linenos">186</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).minor</span>
@@ -2227,7 +2227,7 @@ errors defaults to 'strict'.</p>
 </span><span id="Version-191"><a href="#Version-191"><span class="linenos">191</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">minor</span>
 </span><span id="Version-192"><a href="#Version-192"><span class="linenos">192</span></a>
 </span><span id="Version-193"><a href="#Version-193"><span class="linenos">193</span></a>    <span class="nd">@property</span>
-</span><span id="Version-194"><a href="#Version-194"><span class="linenos">194</span></a>    <span class="k">def</span> <span class="nf">micro</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="Version-194"><a href="#Version-194"><span class="linenos">194</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">micro</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="Version-195"><a href="#Version-195"><span class="linenos">195</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The third item of :attr:`release` or ``0`` if unavailable.</span>
 </span><span id="Version-196"><a href="#Version-196"><span class="linenos">196</span></a>
 </span><span id="Version-197"><a href="#Version-197"><span class="linenos">197</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).micro</span>
@@ -2253,7 +2253,7 @@ errors defaults to 'strict'.</p>
     </div>
     <a class="headerlink" href="#Version.epoch"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.epoch-30"><a href="#Version.epoch-30"><span class="linenos">30</span></a>    <span class="nd">@property</span>
-</span><span id="Version.epoch-31"><a href="#Version.epoch-31"><span class="linenos">31</span></a>    <span class="k">def</span> <span class="nf">epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="Version.epoch-31"><a href="#Version.epoch-31"><span class="linenos">31</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="Version.epoch-32"><a href="#Version.epoch-32"><span class="linenos">32</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The epoch of the version.</span>
 </span><span id="Version.epoch-33"><a href="#Version.epoch-33"><span class="linenos">33</span></a>
 </span><span id="Version.epoch-34"><a href="#Version.epoch-34"><span class="linenos">34</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;2.0.0&quot;).epoch</span>
@@ -2288,7 +2288,7 @@ errors defaults to 'strict'.</p>
     </div>
     <a class="headerlink" href="#Version.release"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.release-41"><a href="#Version.release-41"><span class="linenos">41</span></a>    <span class="nd">@property</span>
-</span><span id="Version.release-42"><a href="#Version.release-42"><span class="linenos">42</span></a>    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+</span><span id="Version.release-42"><a href="#Version.release-42"><span class="linenos">42</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 </span><span id="Version.release-43"><a href="#Version.release-43"><span class="linenos">43</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The components of the &quot;release&quot; segment of the version.</span>
 </span><span id="Version.release-44"><a href="#Version.release-44"><span class="linenos">44</span></a>
 </span><span id="Version.release-45"><a href="#Version.release-45"><span class="linenos">45</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).release</span>
@@ -2333,7 +2333,7 @@ post-release suffixes.</p>
     </div>
     <a class="headerlink" href="#Version.pre"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.pre-57"><a href="#Version.pre-57"><span class="linenos">57</span></a>    <span class="nd">@property</span>
-</span><span id="Version.pre-58"><a href="#Version.pre-58"><span class="linenos">58</span></a>    <span class="k">def</span> <span class="nf">pre</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+</span><span id="Version.pre-58"><a href="#Version.pre-58"><span class="linenos">58</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">pre</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
 </span><span id="Version.pre-59"><a href="#Version.pre-59"><span class="linenos">59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The pre-release segment of the version.</span>
 </span><span id="Version.pre-60"><a href="#Version.pre-60"><span class="linenos">60</span></a>
 </span><span id="Version.pre-61"><a href="#Version.pre-61"><span class="linenos">61</span></a><span class="sd">        &gt;&gt;&gt; print(Version(&quot;1.2.3&quot;).pre)</span>
@@ -2376,7 +2376,7 @@ post-release suffixes.</p>
     </div>
     <a class="headerlink" href="#Version.post"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.post-72"><a href="#Version.post-72"><span class="linenos">72</span></a>    <span class="nd">@property</span>
-</span><span id="Version.post-73"><a href="#Version.post-73"><span class="linenos">73</span></a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+</span><span id="Version.post-73"><a href="#Version.post-73"><span class="linenos">73</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 </span><span id="Version.post-74"><a href="#Version.post-74"><span class="linenos">74</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The post-release number of the version.</span>
 </span><span id="Version.post-75"><a href="#Version.post-75"><span class="linenos">75</span></a>
 </span><span id="Version.post-76"><a href="#Version.post-76"><span class="linenos">76</span></a><span class="sd">        &gt;&gt;&gt; print(Version(&quot;1.2.3&quot;).post)</span>
@@ -2411,7 +2411,7 @@ post-release suffixes.</p>
     </div>
     <a class="headerlink" href="#Version.dev"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.dev-83"><a href="#Version.dev-83"><span class="linenos">83</span></a>    <span class="nd">@property</span>
-</span><span id="Version.dev-84"><a href="#Version.dev-84"><span class="linenos">84</span></a>    <span class="k">def</span> <span class="nf">dev</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+</span><span id="Version.dev-84"><a href="#Version.dev-84"><span class="linenos">84</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">dev</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 </span><span id="Version.dev-85"><a href="#Version.dev-85"><span class="linenos">85</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The development number of the version.</span>
 </span><span id="Version.dev-86"><a href="#Version.dev-86"><span class="linenos">86</span></a>
 </span><span id="Version.dev-87"><a href="#Version.dev-87"><span class="linenos">87</span></a><span class="sd">        &gt;&gt;&gt; print(Version(&quot;1.2.3&quot;).dev)</span>
@@ -2446,7 +2446,7 @@ post-release suffixes.</p>
     </div>
     <a class="headerlink" href="#Version.local"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.local-94"><a href="#Version.local-94"><span class="linenos"> 94</span></a>    <span class="nd">@property</span>
-</span><span id="Version.local-95"><a href="#Version.local-95"><span class="linenos"> 95</span></a>    <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="Version.local-95"><a href="#Version.local-95"><span class="linenos"> 95</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 </span><span id="Version.local-96"><a href="#Version.local-96"><span class="linenos"> 96</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The local version segment of the version.</span>
 </span><span id="Version.local-97"><a href="#Version.local-97"><span class="linenos"> 97</span></a>
 </span><span id="Version.local-98"><a href="#Version.local-98"><span class="linenos"> 98</span></a><span class="sd">        &gt;&gt;&gt; print(Version(&quot;1.2.3&quot;).local)</span>
@@ -2481,7 +2481,7 @@ post-release suffixes.</p>
     </div>
     <a class="headerlink" href="#Version.public"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.public-105"><a href="#Version.public-105"><span class="linenos">105</span></a>    <span class="nd">@property</span>
-</span><span id="Version.public-106"><a href="#Version.public-106"><span class="linenos">106</span></a>    <span class="k">def</span> <span class="nf">public</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Version.public-106"><a href="#Version.public-106"><span class="linenos">106</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">public</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="Version.public-107"><a href="#Version.public-107"><span class="linenos">107</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The public portion of the version.</span>
 </span><span id="Version.public-108"><a href="#Version.public-108"><span class="linenos">108</span></a>
 </span><span id="Version.public-109"><a href="#Version.public-109"><span class="linenos">109</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).public</span>
@@ -2520,7 +2520,7 @@ post-release suffixes.</p>
     </div>
     <a class="headerlink" href="#Version.base_version"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.base_version-118"><a href="#Version.base_version-118"><span class="linenos">118</span></a>    <span class="nd">@property</span>
-</span><span id="Version.base_version-119"><a href="#Version.base_version-119"><span class="linenos">119</span></a>    <span class="k">def</span> <span class="nf">base_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Version.base_version-119"><a href="#Version.base_version-119"><span class="linenos">119</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">base_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="Version.base_version-120"><a href="#Version.base_version-120"><span class="linenos">120</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The &quot;base version&quot; of the version.</span>
 </span><span id="Version.base_version-121"><a href="#Version.base_version-121"><span class="linenos">121</span></a>
 </span><span id="Version.base_version-122"><a href="#Version.base_version-122"><span class="linenos">122</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).base_version</span>
@@ -2565,7 +2565,7 @@ release markers.</p>
     </div>
     <a class="headerlink" href="#Version.is_prerelease"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.is_prerelease-134"><a href="#Version.is_prerelease-134"><span class="linenos">134</span></a>    <span class="nd">@property</span>
-</span><span id="Version.is_prerelease-135"><a href="#Version.is_prerelease-135"><span class="linenos">135</span></a>    <span class="k">def</span> <span class="nf">is_prerelease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Version.is_prerelease-135"><a href="#Version.is_prerelease-135"><span class="linenos">135</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_prerelease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="Version.is_prerelease-136"><a href="#Version.is_prerelease-136"><span class="linenos">136</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether this version is a pre-release.</span>
 </span><span id="Version.is_prerelease-137"><a href="#Version.is_prerelease-137"><span class="linenos">137</span></a>
 </span><span id="Version.is_prerelease-138"><a href="#Version.is_prerelease-138"><span class="linenos">138</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).is_prerelease</span>
@@ -2612,7 +2612,7 @@ release markers.</p>
     </div>
     <a class="headerlink" href="#Version.is_postrelease"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.is_postrelease-151"><a href="#Version.is_postrelease-151"><span class="linenos">151</span></a>    <span class="nd">@property</span>
-</span><span id="Version.is_postrelease-152"><a href="#Version.is_postrelease-152"><span class="linenos">152</span></a>    <span class="k">def</span> <span class="nf">is_postrelease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Version.is_postrelease-152"><a href="#Version.is_postrelease-152"><span class="linenos">152</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_postrelease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="Version.is_postrelease-153"><a href="#Version.is_postrelease-153"><span class="linenos">153</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether this version is a post-release.</span>
 </span><span id="Version.is_postrelease-154"><a href="#Version.is_postrelease-154"><span class="linenos">154</span></a>
 </span><span id="Version.is_postrelease-155"><a href="#Version.is_postrelease-155"><span class="linenos">155</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).is_postrelease</span>
@@ -2647,7 +2647,7 @@ release markers.</p>
     </div>
     <a class="headerlink" href="#Version.is_devrelease"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.is_devrelease-162"><a href="#Version.is_devrelease-162"><span class="linenos">162</span></a>    <span class="nd">@property</span>
-</span><span id="Version.is_devrelease-163"><a href="#Version.is_devrelease-163"><span class="linenos">163</span></a>    <span class="k">def</span> <span class="nf">is_devrelease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="Version.is_devrelease-163"><a href="#Version.is_devrelease-163"><span class="linenos">163</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_devrelease</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="Version.is_devrelease-164"><a href="#Version.is_devrelease-164"><span class="linenos">164</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether this version is a development release.</span>
 </span><span id="Version.is_devrelease-165"><a href="#Version.is_devrelease-165"><span class="linenos">165</span></a>
 </span><span id="Version.is_devrelease-166"><a href="#Version.is_devrelease-166"><span class="linenos">166</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).is_devrelease</span>
@@ -2682,7 +2682,7 @@ release markers.</p>
     </div>
     <a class="headerlink" href="#Version.major"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.major-173"><a href="#Version.major-173"><span class="linenos">173</span></a>    <span class="nd">@property</span>
-</span><span id="Version.major-174"><a href="#Version.major-174"><span class="linenos">174</span></a>    <span class="k">def</span> <span class="nf">major</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="Version.major-174"><a href="#Version.major-174"><span class="linenos">174</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">major</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="Version.major-175"><a href="#Version.major-175"><span class="linenos">175</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The first item of :attr:`release` or ``0`` if unavailable.</span>
 </span><span id="Version.major-176"><a href="#Version.major-176"><span class="linenos">176</span></a>
 </span><span id="Version.major-177"><a href="#Version.major-177"><span class="linenos">177</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).major</span>
@@ -2713,7 +2713,7 @@ release markers.</p>
     </div>
     <a class="headerlink" href="#Version.minor"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.minor-182"><a href="#Version.minor-182"><span class="linenos">182</span></a>    <span class="nd">@property</span>
-</span><span id="Version.minor-183"><a href="#Version.minor-183"><span class="linenos">183</span></a>    <span class="k">def</span> <span class="nf">minor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="Version.minor-183"><a href="#Version.minor-183"><span class="linenos">183</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">minor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="Version.minor-184"><a href="#Version.minor-184"><span class="linenos">184</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The second item of :attr:`release` or ``0`` if unavailable.</span>
 </span><span id="Version.minor-185"><a href="#Version.minor-185"><span class="linenos">185</span></a>
 </span><span id="Version.minor-186"><a href="#Version.minor-186"><span class="linenos">186</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).minor</span>
@@ -2748,7 +2748,7 @@ release markers.</p>
     </div>
     <a class="headerlink" href="#Version.micro"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Version.micro-193"><a href="#Version.micro-193"><span class="linenos">193</span></a>    <span class="nd">@property</span>
-</span><span id="Version.micro-194"><a href="#Version.micro-194"><span class="linenos">194</span></a>    <span class="k">def</span> <span class="nf">micro</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="Version.micro-194"><a href="#Version.micro-194"><span class="linenos">194</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">micro</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 </span><span id="Version.micro-195"><a href="#Version.micro-195"><span class="linenos">195</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;The third item of :attr:`release` or ``0`` if unavailable.</span>
 </span><span id="Version.micro-196"><a href="#Version.micro-196"><span class="linenos">196</span></a>
 </span><span id="Version.micro-197"><a href="#Version.micro-197"><span class="linenos">197</span></a><span class="sd">        &gt;&gt;&gt; Version(&quot;1.2.3&quot;).micro</span>
