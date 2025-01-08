@@ -1013,7 +1013,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
-    To normalize samples indepdencently, leave out the "batch" axis.
+    To normalize samples independently, leave out the "batch" axis.
     Default: Scale all axes jointly."""
 
     min_percentile: Annotated[float, Interval(ge=0, lt=100)] = 0.0
@@ -1044,7 +1044,28 @@ class ScaleRangeKwargs(ProcessingKwargs):
 
 
 class ScaleRangeDescr(ProcessingDescrBase):
-    """Scale with percentiles."""
+    """Scale with percentiles.
+
+    Examples:
+    - in YAML
+        ```yaml
+        preprocessing:
+          - id: scale_range
+            kwargs:
+              axes: ['y', 'x']
+              max_percentile: 99.8
+              min_percentile: 5.0
+        ```
+
+    - use in Python:
+        >>> preprocessing = [ScaleRangeDescr(
+        >>>   kwargs=ScaleRangeKwargs(
+        >>>       axes= (AxisId('y'), AxisId('x')),
+        >>>       max_percentile= 99.8,
+        >>>       min_percentile= 5.0,
+        >>>   )
+        >>> )]
+    """
 
     id: Literal["scale_range"] = "scale_range"
     kwargs: ScaleRangeKwargs
