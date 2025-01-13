@@ -13,4 +13,4 @@ pdoc \
     --logo-link "https://bioimage.io/" \
     --favicon "https://bioimage.io/static/img/bioimage-io-icon-small.svg" \
     --footer-text "bioimageio.spec $(python -c 'import bioimageio.spec;print(bioimageio.spec.__version__)')" \
-    -o ./dist bioimageio.spec
+    -o ./dist bioimageio.spec bioimageio.spec._internal
