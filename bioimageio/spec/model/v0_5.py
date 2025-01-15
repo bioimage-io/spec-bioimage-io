@@ -809,6 +809,23 @@ class BinarizeDescr(ProcessingDescrBase):
 
     Values above `BinarizeKwargs.threshold`/`BinarizeAlongAxisKwargs.threshold`
     will be set to one, values below the threshold to zero.
+
+    Examples:
+    - in YAML
+        ```yaml
+        postprocessing:
+          - id: binarize
+            kwargs:
+              axis: 'channel'
+              threshold: [0.25, 0.5, 0.75]
+        ```
+    - in Python:
+        >>> postprocessing = [BinarizeDescr(
+        >>>   kwargs=BinarizeAlongAxisKwargs(
+        >>>       axis=AxisId('channel'),
+        >>>       threshold=[0.25, 0.5, 0.75],
+        >>>   )
+        >>> )]
     """
 
     id: Literal["binarize"] = "binarize"
@@ -816,7 +833,10 @@ class BinarizeDescr(ProcessingDescrBase):
 
 
 class ClipDescr(ProcessingDescrBase):
-    """Set tensor values below min to min and above max to max."""
+    """Set tensor values below min to min and above max to max.
+
+    See `ScaleRangeDescr` for examples.
+    """
 
     id: Literal["clip"] = "clip"
     kwargs: ClipKwargs
@@ -841,14 +861,55 @@ class EnsureDtypeKwargs(ProcessingKwargs):
 
 
 class EnsureDtypeDescr(ProcessingDescrBase):
-    """cast the tensor data type to `EnsureDtypeKwargs.dtype` (if not matching)"""
+    """Cast the tensor data type to `EnsureDtypeKwargs.dtype` (if not matching).
+
+    This can for example be used to ensure the inner neural network model gets a
+    different input tensor data type than the fully described bioimage.io model does.
+
+    Examples:
+    - in YAML
+      1. The described bioimage.io model (incl. preprocessing) accepts any
+        float32-compatible tensor, normalizes it with percentiles and clipping and then
+        casts it to uint8, which is what the neural network in this example expects.
+        ```yaml
+        inputs:
+        - data:
+            type: float32  # described bioimage.io model is compatible with any float32 input tensor
+          preprocessing:
+          - id: scale_range
+            kwargs:
+              axes: ['y', 'x']
+              max_percentile: 99.8
+              min_percentile: 5.0
+          - id: clip
+            kwargs:
+              min: 0.0
+              max: 1.0
+          - id: ensure_dtype
+            kwargs:
+              dtype: uint8
+        ```
+
+    - in Python:
+        >>> preprocessing = [
+        >>>     ScaleRangeDescr(
+        >>>         kwargs=ScaleRangeKwargs(
+        >>>           axes= (AxisId('y'), AxisId('x')),
+        >>>           max_percentile= 99.8,
+        >>>           min_percentile= 5.0,
+        >>>         )
+        >>>     ),
+        >>>     ClipDescr(kwargs=ClipKwargs(min=0.0, max=1.0)),
+        >>>     EnsureDtype(kwargs=EnsureDtype(dtype="uint8")),
+        >>> ]
+    """
 
     id: Literal["ensure_dtype"] = "ensure_dtype"
     kwargs: EnsureDtypeKwargs
 
 
 class ScaleLinearKwargs(ProcessingKwargs):
-    """key word arguments for `ScaleLinearDescr`"""
+    """Key word arguments for `ScaleLinearDescr`"""
 
     gain: float = 1.0
     """multiplicative factor"""
@@ -868,7 +929,7 @@ class ScaleLinearKwargs(ProcessingKwargs):
 
 
 class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
-    """key word arguments for `ScaleLinearDescr`"""
+    """Key word arguments for `ScaleLinearDescr`"""
 
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
     """The axis of of gains/offsets values."""
@@ -907,7 +968,39 @@ class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
 
 
 class ScaleLinearDescr(ProcessingDescrBase):
-    """Fixed linear scaling."""
+    """Fixed linear scaling.
+
+    Examples:
+    - in YAML
+      1.
+        ```yaml
+        preprocessing:
+          - id: scale_linear
+            kwargs:
+              gain: 2.0
+              offset: 3.0
+        ```
+      2.
+        ```yaml
+        preprocessing:
+          - id: scale_linear
+            kwargs:
+              axis: 'channel'
+              gain: [1.0, 2.0, 3.0]
+        ```
+
+    - in Python:
+      - 1.
+        >>> preprocessing = [
+        >>>     ScaleLinear(kwargs=ScaleLinear(gain= 2.0, offset=3.0))
+        >>> ]
+
+      - 2.
+        >>> preprocessing = [
+        >>>     ScaleLinear(kwargs=ScaleLinear(axis=AxisId("channel"), gain=[1.0, 2.0, 3.0]))
+        >>> ]
+
+    """
 
     id: Literal["scale_linear"] = "scale_linear"
     kwargs: Union[ScaleLinearKwargs, ScaleLinearAlongAxisKwargs]
@@ -1048,6 +1141,7 @@ class ScaleRangeDescr(ProcessingDescrBase):
 
     Examples:
     - in YAML
+      1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0
         ```yaml
         preprocessing:
           - id: scale_range
@@ -1056,8 +1150,23 @@ class ScaleRangeDescr(ProcessingDescrBase):
               max_percentile: 99.8
               min_percentile: 5.0
         ```
+      2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.
+        ```yaml
+        preprocessing:
+          - id: scale_range
+            kwargs:
+              axes: ['y', 'x']
+              max_percentile: 99.8
+              min_percentile: 5.0
+                  - id: scale_range
+           - id: clip
+             kwargs:
+              min: 0.0
+              max: 1.0
+        ```
 
-    - use in Python:
+    - in Python:
+      - 1.
         >>> preprocessing = [ScaleRangeDescr(
         >>>   kwargs=ScaleRangeKwargs(
         >>>       axes= (AxisId('y'), AxisId('x')),
@@ -1065,6 +1174,24 @@ class ScaleRangeDescr(ProcessingDescrBase):
         >>>       min_percentile= 5.0,
         >>>   )
         >>> )]
+
+      - 2.
+        >>> preprocessing = [
+        >>>     ScaleRangeDescr(
+        >>>         kwargs=ScaleRangeKwargs(
+        >>>           axes= (AxisId('y'), AxisId('x')),
+        >>>           max_percentile= 99.8,
+        >>>           min_percentile= 5.0,
+        >>>         )
+        >>>     ),
+        >>>     ClipDescr(
+        >>>         kwargs=ClipKwargs(
+        >>>             min=0.0,
+        >>>             max=1.0,
+        >>>         )
+        >>>     ),
+        >>> ]
+
     """
 
     id: Literal["scale_range"] = "scale_range"
