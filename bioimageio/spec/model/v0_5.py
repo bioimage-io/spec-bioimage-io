@@ -821,11 +821,11 @@ class BinarizeDescr(ProcessingDescrBase):
         ```
     - in Python:
         >>> postprocessing = [BinarizeDescr(
-        >>>   kwargs=BinarizeAlongAxisKwargs(
-        >>>       axis=AxisId('channel'),
-        >>>       threshold=[0.25, 0.5, 0.75],
-        >>>   )
-        >>> )]
+        ...   kwargs=BinarizeAlongAxisKwargs(
+        ...       axis=AxisId('channel'),
+        ...       threshold=[0.25, 0.5, 0.75],
+        ...   )
+        ... )]
     """
 
     id: Literal["binarize"] = "binarize"
@@ -892,16 +892,16 @@ class EnsureDtypeDescr(ProcessingDescrBase):
 
     - in Python:
         >>> preprocessing = [
-        >>>     ScaleRangeDescr(
-        >>>         kwargs=ScaleRangeKwargs(
-        >>>           axes= (AxisId('y'), AxisId('x')),
-        >>>           max_percentile= 99.8,
-        >>>           min_percentile= 5.0,
-        >>>         )
-        >>>     ),
-        >>>     ClipDescr(kwargs=ClipKwargs(min=0.0, max=1.0)),
-        >>>     EnsureDtype(kwargs=EnsureDtype(dtype="uint8")),
-        >>> ]
+        ...     ScaleRangeDescr(
+        ...         kwargs=ScaleRangeKwargs(
+        ...           axes= (AxisId('y'), AxisId('x')),
+        ...           max_percentile= 99.8,
+        ...           min_percentile= 5.0,
+        ...         )
+        ...     ),
+        ...     ClipDescr(kwargs=ClipKwargs(min=0.0, max=1.0)),
+        ...     EnsureDtype(kwargs=EnsureDtype(dtype="uint8")),
+        ... ]
     """
 
     id: Literal["ensure_dtype"] = "ensure_dtype"
@@ -992,13 +992,13 @@ class ScaleLinearDescr(ProcessingDescrBase):
     - in Python:
       - 1.
         >>> preprocessing = [
-        >>>     ScaleLinear(kwargs=ScaleLinear(gain= 2.0, offset=3.0))
-        >>> ]
+        ...     ScaleLinear(kwargs=ScaleLinear(gain= 2.0, offset=3.0))
+        ... ]
 
       - 2.
         >>> preprocessing = [
-        >>>     ScaleLinear(kwargs=ScaleLinear(axis=AxisId("channel"), gain=[1.0, 2.0, 3.0]))
-        >>> ]
+        ...     ScaleLinear(kwargs=ScaleLinear(axis=AxisId("channel"), gain=[1.0, 2.0, 3.0]))
+        ... ]
 
     """
 
@@ -1168,29 +1168,29 @@ class ScaleRangeDescr(ProcessingDescrBase):
     - in Python:
       - 1.
         >>> preprocessing = [ScaleRangeDescr(
-        >>>   kwargs=ScaleRangeKwargs(
-        >>>       axes= (AxisId('y'), AxisId('x')),
-        >>>       max_percentile= 99.8,
-        >>>       min_percentile= 5.0,
-        >>>   )
-        >>> )]
+        ...   kwargs=ScaleRangeKwargs(
+        ...       axes= (AxisId('y'), AxisId('x')),
+        ...       max_percentile= 99.8,
+        ...       min_percentile= 5.0,
+        ...   )
+        ... )]
 
       - 2.
         >>> preprocessing = [
-        >>>     ScaleRangeDescr(
-        >>>         kwargs=ScaleRangeKwargs(
-        >>>           axes= (AxisId('y'), AxisId('x')),
-        >>>           max_percentile= 99.8,
-        >>>           min_percentile= 5.0,
-        >>>         )
-        >>>     ),
-        >>>     ClipDescr(
-        >>>         kwargs=ClipKwargs(
-        >>>             min=0.0,
-        >>>             max=1.0,
-        >>>         )
-        >>>     ),
-        >>> ]
+        ...     ScaleRangeDescr(
+        ...         kwargs=ScaleRangeKwargs(
+        ...           axes= (AxisId('y'), AxisId('x')),
+        ...           max_percentile= 99.8,
+        ...           min_percentile= 5.0,
+        ...         )
+        ...     ),
+        ...     ClipDescr(
+        ...         kwargs=ClipKwargs(
+        ...             min=0.0,
+        ...             max=1.0,
+        ...         )
+        ...     ),
+        ... ]
 
     """
 
