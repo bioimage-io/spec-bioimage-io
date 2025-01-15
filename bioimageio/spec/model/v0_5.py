@@ -314,7 +314,7 @@ class SizeReference(Node):
     ...     unit="millimeter",
     ...     scale=4,
     ... )
-    >>> print(h.size.compute(h, w))
+    >>> print(h.size.get_size(h, w))
     49
 
     -> h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49
