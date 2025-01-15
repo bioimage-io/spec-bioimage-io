@@ -900,7 +900,7 @@ class EnsureDtypeDescr(ProcessingDescrBase):
         ...         )
         ...     ),
         ...     ClipDescr(kwargs=ClipKwargs(min=0.0, max=1.0)),
-        ...     EnsureDtype(kwargs=EnsureDtype(dtype="uint8")),
+        ...     EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype="uint8")),
         ... ]
     """
 
@@ -992,12 +992,17 @@ class ScaleLinearDescr(ProcessingDescrBase):
     - in Python:
       - 1.
         >>> preprocessing = [
-        ...     ScaleLinear(kwargs=ScaleLinear(gain= 2.0, offset=3.0))
+        ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))
         ... ]
 
       - 2.
         >>> preprocessing = [
-        ...     ScaleLinear(kwargs=ScaleLinear(axis=AxisId("channel"), gain=[1.0, 2.0, 3.0]))
+        ...     ScaleLinearDescr(
+        ...         kwargs=ScaleLinearAlongAxisKwargs(
+        ...             axis=AxisId("channel"),
+        ...             gain=[1.0, 2.0, 3.0],
+        ...         )
+        ...     )
         ... ]
 
     """
