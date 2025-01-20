@@ -1087,6 +1087,7 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
         >>> preprocessing = [FixedZeroMeanUnitVarianceDescr(
         ...   kwargs=FixedZeroMeanUnitVarianceKwargs(mean=103.5, std=13.7)
         ... )]
+
     2. independently along an axis
         - in YAML
         ```yaml
@@ -1094,7 +1095,7 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
           - id: fixed_zero_mean_unit_variance
             kwargs:
               axis: channel
-              mean: [101.5, 102.5 103.5]
+              mean: [101.5, 102.5, 103.5]
               std: [11.7, 12.7, 13.7]
         ```
         - in Python
@@ -1144,7 +1145,9 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     """
 
     id: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
-    kwargs: ZeroMeanUnitVarianceKwargs
+    kwargs: ZeroMeanUnitVarianceKwargs = Field(
+        default_factory=ZeroMeanUnitVarianceKwargs
+    )
 
 
 class ScaleRangeKwargs(ProcessingKwargs):
