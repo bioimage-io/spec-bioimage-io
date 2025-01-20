@@ -1813,6 +1813,7 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     reproducibility: Reproducibility = Field(default_factory=Reproducibility)
     """Options to tolerate small numerical differences in the output
     generated from inputs.**test_tensor** compared to (outputs.)**test_tensor**."""
+    # TODO: check pdoc reference to **inputs.test_tensor**
 
     @model_validator(mode="after")
     def _validate_postprocessing_kwargs(self) -> Self:
