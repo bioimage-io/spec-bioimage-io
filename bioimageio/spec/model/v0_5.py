@@ -294,14 +294,14 @@ class SizeReference(Node):
 
     `axis.size = reference.size * reference.scale / axis.scale + offset`
 
-    note:
+    Note:
     1. The axis and the referenced axis need to have the same unit (or no unit).
     2. Batch axes may not be referenced.
     3. Fractions are rounded down.
     4. If the reference axis is `concatenable` the referencing axis is assumed to be
         `concatenable` as well with the same block order.
 
-    example:
+    Example:
     An unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm².
     Let's assume that we want to express the image height h in relation to its width w
     instead of only accepting input images of exactly 100*49 pixels
@@ -317,7 +317,7 @@ class SizeReference(Node):
     >>> print(h.size.get_size(h, w))
     49
 
-    -> h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49
+    ⇒ h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49
     """
 
     tensor_id: TensorId
@@ -867,41 +867,40 @@ class EnsureDtypeDescr(ProcessingDescrBase):
     different input tensor data type than the fully described bioimage.io model does.
 
     Examples:
-    - in YAML
-      1. The described bioimage.io model (incl. preprocessing) accepts any
+        The described bioimage.io model (incl. preprocessing) accepts any
         float32-compatible tensor, normalizes it with percentiles and clipping and then
         casts it to uint8, which is what the neural network in this example expects.
-        ```yaml
-        inputs:
-        - data:
-            type: float32  # described bioimage.io model is compatible with any float32 input tensor
-          preprocessing:
-          - id: scale_range
-            kwargs:
-              axes: ['y', 'x']
-              max_percentile: 99.8
-              min_percentile: 5.0
-          - id: clip
-            kwargs:
-              min: 0.0
-              max: 1.0
-          - id: ensure_dtype
-            kwargs:
-              dtype: uint8
-        ```
-
-    - in Python:
-        >>> preprocessing = [
-        ...     ScaleRangeDescr(
-        ...         kwargs=ScaleRangeKwargs(
-        ...           axes= (AxisId('y'), AxisId('x')),
-        ...           max_percentile= 99.8,
-        ...           min_percentile= 5.0,
-        ...         )
-        ...     ),
-        ...     ClipDescr(kwargs=ClipKwargs(min=0.0, max=1.0)),
-        ...     EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype="uint8")),
-        ... ]
+        - in YAML
+            ```yaml
+            inputs:
+            - data:
+                type: float32  # described bioimage.io model is compatible with any float32 input tensor
+            preprocessing:
+            - id: scale_range
+                kwargs:
+                axes: ['y', 'x']
+                max_percentile: 99.8
+                min_percentile: 5.0
+            - id: clip
+                kwargs:
+                min: 0.0
+                max: 1.0
+            - id: ensure_dtype
+                kwargs:
+                dtype: uint8
+            ```
+        - in Python:
+            >>> preprocessing = [
+            ...     ScaleRangeDescr(
+            ...         kwargs=ScaleRangeKwargs(
+            ...           axes= (AxisId('y'), AxisId('x')),
+            ...           max_percentile= 99.8,
+            ...           min_percentile= 5.0,
+            ...         )
+            ...     ),
+            ...     ClipDescr(kwargs=ClipKwargs(min=0.0, max=1.0)),
+            ...     EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype="uint8")),
+            ... ]
     """
 
     id: Literal["ensure_dtype"] = "ensure_dtype"
@@ -971,8 +970,8 @@ class ScaleLinearDescr(ProcessingDescrBase):
     """Fixed linear scaling.
 
     Examples:
-    - in YAML
-      1.
+      1. Scale with scalar gain and offset
+        - in YAML
         ```yaml
         preprocessing:
           - id: scale_linear
@@ -980,7 +979,13 @@ class ScaleLinearDescr(ProcessingDescrBase):
               gain: 2.0
               offset: 3.0
         ```
-      2.
+        - in Python:
+        >>> preprocessing = [
+        ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))
+        ... ]
+
+      2. Independent scaling along an axis
+        - in YAML
         ```yaml
         preprocessing:
           - id: scale_linear
@@ -988,14 +993,7 @@ class ScaleLinearDescr(ProcessingDescrBase):
               axis: 'channel'
               gain: [1.0, 2.0, 3.0]
         ```
-
-    - in Python:
-      - 1.
-        >>> preprocessing = [
-        ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))
-        ... ]
-
-      - 2.
+        - in Python:
         >>> preprocessing = [
         ...     ScaleLinearDescr(
         ...         kwargs=ScaleLinearAlongAxisKwargs(
@@ -1012,7 +1010,17 @@ class ScaleLinearDescr(ProcessingDescrBase):
 
 
 class SigmoidDescr(ProcessingDescrBase):
-    """The logistic sigmoid funciton, a.k.a. expit function."""
+    """The logistic sigmoid funciton, a.k.a. expit function.
+
+    Examples:
+    - in YAML
+        ```yaml
+        postprocessing:
+          - id: sigmoid
+        ```
+    - in Python:
+        >>> postprocessing = [SigmoidDescr()]
+    """
 
     id: Literal["sigmoid"] = "sigmoid"
 
@@ -1064,6 +1072,39 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     `FixedZeroMeanUnitVarianceKwargs.mean` and `FixedZeroMeanUnitVarianceKwargs.std`
     Use `FixedZeroMeanUnitVarianceAlongAxisKwargs` for independent scaling along given
     axes.
+
+    Examples:
+    1. scalar value for whole tensor
+        - in YAML
+        ```yaml
+        preprocessing:
+          - id: fixed_zero_mean_unit_variance
+            kwargs:
+              mean: 103.5
+              std: 13.7
+        ```
+        - in Python
+        >>> preprocessing = [FixedZeroMeanUnitVarianceDescr(
+        ...   kwargs=FixedZeroMeanUnitVarianceKwargs(mean=103.5, std=13.7)
+        ... )]
+    2. independently along an axis
+        - in YAML
+        ```yaml
+        preprocessing:
+          - id: fixed_zero_mean_unit_variance
+            kwargs:
+              axis: channel
+              mean: [101.5, 102.5 103.5]
+              std: [11.7, 12.7, 13.7]
+        ```
+        - in Python
+        >>> preprocessing = [FixedZeroMeanUnitVarianceDescr(
+        ...   kwargs=FixedZeroMeanUnitVarianceAlongAxisKwargs(
+        ...     axis=AxisId("channel"),
+        ...     mean=[101.5, 102.5 103.5],
+        ...     std=[11.7, 12.7, 13.7],
+        ...   )
+        ... )]
     """
 
     id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
@@ -1089,7 +1130,18 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
 
 
 class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
-    """Subtract mean and divide by variance."""
+    """Subtract mean and divide by variance.
+
+    Examples:
+        Subtract tensor mean and variance
+        - in YAML
+        ```yaml
+        preprocessing:
+          - id: zero_mean_unit_variance
+        ```
+        - in Python
+        >>> preprocessing = [ZeroMeanUnitVarianceDescr()]
+    """
 
     id: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
     kwargs: ZeroMeanUnitVarianceKwargs
@@ -1145,8 +1197,8 @@ class ScaleRangeDescr(ProcessingDescrBase):
     """Scale with percentiles.
 
     Examples:
-    - in YAML
-      1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0
+    1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0
+        - in YAML
         ```yaml
         preprocessing:
           - id: scale_range
@@ -1155,32 +1207,7 @@ class ScaleRangeDescr(ProcessingDescrBase):
               max_percentile: 99.8
               min_percentile: 5.0
         ```
-      2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.
-        ```yaml
-        preprocessing:
-          - id: scale_range
-            kwargs:
-              axes: ['y', 'x']
-              max_percentile: 99.8
-              min_percentile: 5.0
-                  - id: scale_range
-           - id: clip
-             kwargs:
-              min: 0.0
-              max: 1.0
-        ```
-
-    - in Python:
-      - 1.
-        >>> preprocessing = [ScaleRangeDescr(
-        ...   kwargs=ScaleRangeKwargs(
-        ...       axes= (AxisId('y'), AxisId('x')),
-        ...       max_percentile= 99.8,
-        ...       min_percentile= 5.0,
-        ...   )
-        ... )]
-
-      - 2.
+        - in Python
         >>> preprocessing = [
         ...     ScaleRangeDescr(
         ...         kwargs=ScaleRangeKwargs(
@@ -1196,6 +1223,30 @@ class ScaleRangeDescr(ProcessingDescrBase):
         ...         )
         ...     ),
         ... ]
+
+      2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.
+        - in YAML
+        ```yaml
+        preprocessing:
+          - id: scale_range
+            kwargs:
+              axes: ['y', 'x']
+              max_percentile: 99.8
+              min_percentile: 5.0
+                  - id: scale_range
+           - id: clip
+             kwargs:
+              min: 0.0
+              max: 1.0
+        ```
+        - in Python
+        >>> preprocessing = [ScaleRangeDescr(
+        ...   kwargs=ScaleRangeKwargs(
+        ...       axes= (AxisId('y'), AxisId('x')),
+        ...       max_percentile= 99.8,
+        ...       min_percentile= 5.0,
+        ...   )
+        ... )]
 
     """
 
