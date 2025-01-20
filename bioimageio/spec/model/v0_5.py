@@ -1102,7 +1102,7 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
         >>> preprocessing = [FixedZeroMeanUnitVarianceDescr(
         ...   kwargs=FixedZeroMeanUnitVarianceAlongAxisKwargs(
         ...     axis=AxisId("channel"),
-        ...     mean=[101.5, 102.5 103.5],
+        ...     mean=[101.5, 102.5, 103.5],
         ...     std=[11.7, 12.7, 13.7],
         ...   )
         ... )]
