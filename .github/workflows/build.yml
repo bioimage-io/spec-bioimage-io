@@ -51,11 +51,10 @@ jobs:
       - run: pyright -p pyproject.toml --pythonversion ${{ matrix.python-version }}
         if: matrix.is-dev-version
       - run: pytest
-        if: matrix.is-dev-version
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
           RUN_EXPENSIVE_TESTS: ${{ matrix.run-expensive-tests && 'true' || 'false' }}
-      - run: pytest --ignore=scripts/  # test scripts only for dev-version
+      - run: pytest scripts  # also test docstrings in scripts for dev-version
         if: ${{!matrix.is-dev-version}}
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
