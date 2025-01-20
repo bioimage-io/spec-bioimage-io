@@ -47,7 +47,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated, LiteralString, Self, assert_never
+from typing_extensions import Annotated, LiteralString, Self, assert_never, get_args
 
 from .._internal.common_nodes import (
     InvalidDescr,
@@ -2260,6 +2260,37 @@ class WeightsDescr(Node):
             raise KeyError(key)
 
         return ret
+
+    @property
+    def available_formats(self):
+        return {
+            **({} if self.keras_hdf5 is None else {"keras_hdf5": self.keras_hdf5}),
+            **({} if self.onnx is None else {"onnx": self.onnx}),
+            **(
+                {}
+                if self.pytorch_state_dict is None
+                else {"pytorch_state_dict": self.pytorch_state_dict}
+            ),
+            **(
+                {}
+                if self.tensorflow_js is None
+                else {"tensorflow_js": self.tensorflow_js}
+            ),
+            **(
+                {}
+                if self.tensorflow_saved_model_bundle is None
+                else {
+                    "tensorflow_saved_model_bundle": self.tensorflow_saved_model_bundle
+                }
+            ),
+            **({} if self.torchscript is None else {"torchscript": self.torchscript}),
+        }
+
+    @property
+    def missing_formats(self):
+        return {
+            wf for wf in get_args(WeightsFormat) if wf not in self.available_formats
+        }
 
 
 class ModelId(ResourceId):
