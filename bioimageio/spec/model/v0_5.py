@@ -63,14 +63,17 @@ from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_utils import load_array
 from .._internal.node_converter import Converter
-from .._internal.types import Datetime as Datetime
-from .._internal.types import Identifier as Identifier
 from .._internal.types import (
+    AbsoluteTolerance,
     ImportantFileSource,
     LowerCaseIdentifier,
     LowerCaseIdentifierAnno,
+    MismatchedElementsPerMillion,
+    RelativeTolerance,
     SiUnit,
 )
+from .._internal.types import Datetime as Datetime
+from .._internal.types import Identifier as Identifier
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validation_context import validation_context_var
@@ -1773,6 +1776,28 @@ class _InputTensorConv(
 _input_tensor_conv = _InputTensorConv(_InputTensorDescr_v0_4, InputTensorDescr)
 
 
+class Reproducibility(Node):
+    """Describes what small numerical differences -- if any -- may be tolerated
+    in the generated output when executing in different environments.
+
+    A tensor element *output* is considered mismatched to the **test_tensor** if
+    abs(*output* - **test_tensor**) > **absolute_tolerance** + **relative_tolerance** * abs(**test_tensor**).
+
+    Motivation:
+        For testing we can request the respective deep learning frameworks to be as
+        reproducible as possible by setting seeds and chosing deterministic algorithms,
+        but differences in operating systems, available hardware and installed drivers
+        may still lead to numerical differences.
+    """
+
+    relative_tolerance: RelativeTolerance = 1e-4
+    """Maximum relative tolerance of reproduced test tensor."""
+    absolute_tolerance: AbsoluteTolerance = 0
+    """Maximum absolute tolerance of reproduced test tensor."""
+    mismatched_elements_per_million: MismatchedElementsPerMillion = 0
+    """Maximum number of mismatched elements/pixels per million to tolerate."""
+
+
 class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     id: TensorId = TensorId("output")
     """Output tensor id.
@@ -1784,6 +1809,10 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     note: `postprocessing` always ends with an 'ensure_dtype' operation.
           If not given this is added to cast to this tensor's `data.type`.
     """
+
+    reproducibility: Reproducibility = Field(default_factory=Reproducibility)
+    """Options to tolerate small numerical differences in the output
+    generated from inputs.**test_tensor** compared to (outputs.)**test_tensor**."""
 
     @model_validator(mode="after")
     def _validate_postprocessing_kwargs(self) -> Self:
