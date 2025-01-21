@@ -47,10 +47,9 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated, LiteralString, Self, assert_never
+from typing_extensions import Annotated, LiteralString, Self, assert_never, get_args
 
 from .._internal.common_nodes import (
-    Converter,
     InvalidDescr,
     Node,
     NodeWithExplicitlySetFields,
@@ -63,6 +62,7 @@ from .._internal.io import WithSuffix, YamlValue, download
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_utils import load_array
+from .._internal.node_converter import Converter
 from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
 from .._internal.types import (
@@ -294,14 +294,14 @@ class SizeReference(Node):
 
     `axis.size = reference.size * reference.scale / axis.scale + offset`
 
-    note:
+    Note:
     1. The axis and the referenced axis need to have the same unit (or no unit).
     2. Batch axes may not be referenced.
     3. Fractions are rounded down.
     4. If the reference axis is `concatenable` the referencing axis is assumed to be
         `concatenable` as well with the same block order.
 
-    example:
+    Example:
     An unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm².
     Let's assume that we want to express the image height h in relation to its width w
     instead of only accepting input images of exactly 100*49 pixels
@@ -314,10 +314,10 @@ class SizeReference(Node):
     ...     unit="millimeter",
     ...     scale=4,
     ... )
-    >>> print(h.size.compute(h, w))
+    >>> print(h.size.get_size(h, w))
     49
 
-    -> h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49
+    ⇒ h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49
     """
 
     tensor_id: TensorId
@@ -809,6 +809,23 @@ class BinarizeDescr(ProcessingDescrBase):
 
     Values above `BinarizeKwargs.threshold`/`BinarizeAlongAxisKwargs.threshold`
     will be set to one, values below the threshold to zero.
+
+    Examples:
+    - in YAML
+        ```yaml
+        postprocessing:
+          - id: binarize
+            kwargs:
+              axis: 'channel'
+              threshold: [0.25, 0.5, 0.75]
+        ```
+    - in Python:
+        >>> postprocessing = [BinarizeDescr(
+        ...   kwargs=BinarizeAlongAxisKwargs(
+        ...       axis=AxisId('channel'),
+        ...       threshold=[0.25, 0.5, 0.75],
+        ...   )
+        ... )]
     """
 
     id: Literal["binarize"] = "binarize"
@@ -816,7 +833,10 @@ class BinarizeDescr(ProcessingDescrBase):
 
 
 class ClipDescr(ProcessingDescrBase):
-    """Set tensor values below min to min and above max to max."""
+    """Set tensor values below min to min and above max to max.
+
+    See `ScaleRangeDescr` for examples.
+    """
 
     id: Literal["clip"] = "clip"
     kwargs: ClipKwargs
@@ -841,14 +861,54 @@ class EnsureDtypeKwargs(ProcessingKwargs):
 
 
 class EnsureDtypeDescr(ProcessingDescrBase):
-    """cast the tensor data type to `EnsureDtypeKwargs.dtype` (if not matching)"""
+    """Cast the tensor data type to `EnsureDtypeKwargs.dtype` (if not matching).
+
+    This can for example be used to ensure the inner neural network model gets a
+    different input tensor data type than the fully described bioimage.io model does.
+
+    Examples:
+        The described bioimage.io model (incl. preprocessing) accepts any
+        float32-compatible tensor, normalizes it with percentiles and clipping and then
+        casts it to uint8, which is what the neural network in this example expects.
+        - in YAML
+            ```yaml
+            inputs:
+            - data:
+                type: float32  # described bioimage.io model is compatible with any float32 input tensor
+            preprocessing:
+            - id: scale_range
+                kwargs:
+                axes: ['y', 'x']
+                max_percentile: 99.8
+                min_percentile: 5.0
+            - id: clip
+                kwargs:
+                min: 0.0
+                max: 1.0
+            - id: ensure_dtype
+                kwargs:
+                dtype: uint8
+            ```
+        - in Python:
+            >>> preprocessing = [
+            ...     ScaleRangeDescr(
+            ...         kwargs=ScaleRangeKwargs(
+            ...           axes= (AxisId('y'), AxisId('x')),
+            ...           max_percentile= 99.8,
+            ...           min_percentile= 5.0,
+            ...         )
+            ...     ),
+            ...     ClipDescr(kwargs=ClipKwargs(min=0.0, max=1.0)),
+            ...     EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype="uint8")),
+            ... ]
+    """
 
     id: Literal["ensure_dtype"] = "ensure_dtype"
     kwargs: EnsureDtypeKwargs
 
 
 class ScaleLinearKwargs(ProcessingKwargs):
-    """key word arguments for `ScaleLinearDescr`"""
+    """Key word arguments for `ScaleLinearDescr`"""
 
     gain: float = 1.0
     """multiplicative factor"""
@@ -868,7 +928,7 @@ class ScaleLinearKwargs(ProcessingKwargs):
 
 
 class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
-    """key word arguments for `ScaleLinearDescr`"""
+    """Key word arguments for `ScaleLinearDescr`"""
 
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
     """The axis of of gains/offsets values."""
@@ -907,14 +967,60 @@ class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
 
 
 class ScaleLinearDescr(ProcessingDescrBase):
-    """Fixed linear scaling."""
+    """Fixed linear scaling.
+
+    Examples:
+      1. Scale with scalar gain and offset
+        - in YAML
+        ```yaml
+        preprocessing:
+          - id: scale_linear
+            kwargs:
+              gain: 2.0
+              offset: 3.0
+        ```
+        - in Python:
+        >>> preprocessing = [
+        ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))
+        ... ]
+
+      2. Independent scaling along an axis
+        - in YAML
+        ```yaml
+        preprocessing:
+          - id: scale_linear
+            kwargs:
+              axis: 'channel'
+              gain: [1.0, 2.0, 3.0]
+        ```
+        - in Python:
+        >>> preprocessing = [
+        ...     ScaleLinearDescr(
+        ...         kwargs=ScaleLinearAlongAxisKwargs(
+        ...             axis=AxisId("channel"),
+        ...             gain=[1.0, 2.0, 3.0],
+        ...         )
+        ...     )
+        ... ]
+
+    """
 
     id: Literal["scale_linear"] = "scale_linear"
     kwargs: Union[ScaleLinearKwargs, ScaleLinearAlongAxisKwargs]
 
 
 class SigmoidDescr(ProcessingDescrBase):
-    """The logistic sigmoid funciton, a.k.a. expit function."""
+    """The logistic sigmoid funciton, a.k.a. expit function.
+
+    Examples:
+    - in YAML
+        ```yaml
+        postprocessing:
+          - id: sigmoid
+        ```
+    - in Python:
+        >>> postprocessing = [SigmoidDescr()]
+    """
 
     id: Literal["sigmoid"] = "sigmoid"
 
@@ -966,6 +1072,40 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     `FixedZeroMeanUnitVarianceKwargs.mean` and `FixedZeroMeanUnitVarianceKwargs.std`
     Use `FixedZeroMeanUnitVarianceAlongAxisKwargs` for independent scaling along given
     axes.
+
+    Examples:
+    1. scalar value for whole tensor
+        - in YAML
+        ```yaml
+        preprocessing:
+          - id: fixed_zero_mean_unit_variance
+            kwargs:
+              mean: 103.5
+              std: 13.7
+        ```
+        - in Python
+        >>> preprocessing = [FixedZeroMeanUnitVarianceDescr(
+        ...   kwargs=FixedZeroMeanUnitVarianceKwargs(mean=103.5, std=13.7)
+        ... )]
+
+    2. independently along an axis
+        - in YAML
+        ```yaml
+        preprocessing:
+          - id: fixed_zero_mean_unit_variance
+            kwargs:
+              axis: channel
+              mean: [101.5, 102.5, 103.5]
+              std: [11.7, 12.7, 13.7]
+        ```
+        - in Python
+        >>> preprocessing = [FixedZeroMeanUnitVarianceDescr(
+        ...   kwargs=FixedZeroMeanUnitVarianceAlongAxisKwargs(
+        ...     axis=AxisId("channel"),
+        ...     mean=[101.5, 102.5, 103.5],
+        ...     std=[11.7, 12.7, 13.7],
+        ...   )
+        ... )]
     """
 
     id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
@@ -991,10 +1131,23 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
 
 
 class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
-    """Subtract mean and divide by variance."""
+    """Subtract mean and divide by variance.
+
+    Examples:
+        Subtract tensor mean and variance
+        - in YAML
+        ```yaml
+        preprocessing:
+          - id: zero_mean_unit_variance
+        ```
+        - in Python
+        >>> preprocessing = [ZeroMeanUnitVarianceDescr()]
+    """
 
     id: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
-    kwargs: ZeroMeanUnitVarianceKwargs
+    kwargs: ZeroMeanUnitVarianceKwargs = Field(
+        default_factory=ZeroMeanUnitVarianceKwargs
+    )
 
 
 class ScaleRangeKwargs(ProcessingKwargs):
@@ -1013,7 +1166,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
-    To normalize samples indepdencently, leave out the "batch" axis.
+    To normalize samples independently, leave out the "batch" axis.
     Default: Scale all axes jointly."""
 
     min_percentile: Annotated[float, Interval(ge=0, lt=100)] = 0.0
@@ -1044,7 +1197,61 @@ class ScaleRangeKwargs(ProcessingKwargs):
 
 
 class ScaleRangeDescr(ProcessingDescrBase):
-    """Scale with percentiles."""
+    """Scale with percentiles.
+
+    Examples:
+    1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0
+        - in YAML
+        ```yaml
+        preprocessing:
+          - id: scale_range
+            kwargs:
+              axes: ['y', 'x']
+              max_percentile: 99.8
+              min_percentile: 5.0
+        ```
+        - in Python
+        >>> preprocessing = [
+        ...     ScaleRangeDescr(
+        ...         kwargs=ScaleRangeKwargs(
+        ...           axes= (AxisId('y'), AxisId('x')),
+        ...           max_percentile= 99.8,
+        ...           min_percentile= 5.0,
+        ...         )
+        ...     ),
+        ...     ClipDescr(
+        ...         kwargs=ClipKwargs(
+        ...             min=0.0,
+        ...             max=1.0,
+        ...         )
+        ...     ),
+        ... ]
+
+      2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.
+        - in YAML
+        ```yaml
+        preprocessing:
+          - id: scale_range
+            kwargs:
+              axes: ['y', 'x']
+              max_percentile: 99.8
+              min_percentile: 5.0
+                  - id: scale_range
+           - id: clip
+             kwargs:
+              min: 0.0
+              max: 1.0
+        ```
+        - in Python
+        >>> preprocessing = [ScaleRangeDescr(
+        ...   kwargs=ScaleRangeKwargs(
+        ...       axes= (AxisId('y'), AxisId('x')),
+        ...       max_percentile= 99.8,
+        ...       min_percentile= 5.0,
+        ...   )
+        ... )]
+
+    """
 
     id: Literal["scale_range"] = "scale_range"
     kwargs: ScaleRangeKwargs
@@ -2056,6 +2263,37 @@ class WeightsDescr(Node):
             raise KeyError(key)
 
         return ret
+
+    @property
+    def available_formats(self):
+        return {
+            **({} if self.keras_hdf5 is None else {"keras_hdf5": self.keras_hdf5}),
+            **({} if self.onnx is None else {"onnx": self.onnx}),
+            **(
+                {}
+                if self.pytorch_state_dict is None
+                else {"pytorch_state_dict": self.pytorch_state_dict}
+            ),
+            **(
+                {}
+                if self.tensorflow_js is None
+                else {"tensorflow_js": self.tensorflow_js}
+            ),
+            **(
+                {}
+                if self.tensorflow_saved_model_bundle is None
+                else {
+                    "tensorflow_saved_model_bundle": self.tensorflow_saved_model_bundle
+                }
+            ),
+            **({} if self.torchscript is None else {"torchscript": self.torchscript}),
+        }
+
+    @property
+    def missing_formats(self):
+        return {
+            wf for wf in get_args(WeightsFormat) if wf not in self.available_formats
+        }
 
 
 class ModelId(ResourceId):

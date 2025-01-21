@@ -2,7 +2,8 @@ from typing import Any
 
 
 def test_converter_with_arg():
-    from bioimageio.spec._internal.common_nodes import Converter, Node
+    from bioimageio.spec._internal.common_nodes import Node
+    from bioimageio.spec._internal.node_converter import Converter
 
     class A(Node):
         a: int

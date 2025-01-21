@@ -54,6 +54,11 @@ jobs:
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
           RUN_EXPENSIVE_TESTS: ${{ matrix.run-expensive-tests && 'true' || 'false' }}
+      - run: pytest scripts  # also test docstrings in scripts for dev-version
+        if: ${{matrix.is-dev-version}}
+        env:
+          BIOIMAGEIO_CACHE_PATH: bioimageio_cache
+          RUN_EXPENSIVE_TESTS: ${{ matrix.run-expensive-tests && 'true' || 'false' }}
       - uses: actions/cache/save@v4
         # explicit restore/save instead of cache action to cache even if coverage fails
         with:
