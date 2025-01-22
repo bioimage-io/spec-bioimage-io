@@ -567,3 +567,9 @@ def test_validate_parameterized_size(model: ModelDescr):
     param_size = model.inputs[0].axes[3].size
     assert isinstance(param_size, ParameterizedSize), type(param_size)
     assert (actual := param_size.validate_size(512)) == 512, actual
+
+
+def test_absolute_tolerance(model_data: Dict[str, Any]):
+    model_data["outputs"][0]["reproducibility"]["absolute_tolerance"] = 100000
+    with pytest.raises(ValidationError):
+        _ = ModelDescr.model_validate(model_data)
