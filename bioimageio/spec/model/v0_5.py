@@ -1836,6 +1836,7 @@ class Reproducibility(Node):
 
     A tensor element *output* is considered mismatched to the **test_tensor** if
     abs(*output* - **test_tensor**) > **absolute_tolerance** + **relative_tolerance** * abs(**test_tensor**).
+    (Internally we call [numpy.testing.assert_allclose](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html).)
 
     Motivation:
         For testing we can request the respective deep learning frameworks to be as
