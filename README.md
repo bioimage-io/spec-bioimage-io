@@ -72,7 +72,7 @@ and an [example notebook to programmatically access the models, applications, no
 
 ## ⌨ bioimageio command-line interface (CLI)
 
-The bioimageio CLI has moved entirely to [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python).
+The bioimageio CLI has moved to [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python).
 
 ## 🖥 Installation
 
