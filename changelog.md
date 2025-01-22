@@ -10,8 +10,9 @@ In this file we log both:
 
 This changelog includes implementation details and my reference the [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
-#### bioimageio.spec 0.5.3.7 (to be released)
+#### bioimageio.spec 0.5.4.0 (to be released)
 
+- [model format 0.5.4](#model-054)
 - update conda environments (remove `cpuonly` from pytorch envs)
 
 #### bioimageio.spec 0.5.3.6
@@ -260,6 +261,11 @@ Which fields a resource description field has and how they are to be interpreted
 Here is a list of changes for each `type` and `format_version`.
 Note that 'generic' changes apply to `type` application, dataset and notebook of the same `format_versions`.
 If the changes also apply to `type` model, the coresponding model format version is noted, e.g. [generic 0.3.1 and model 0.5.3](#generic-031-and-model-053).
+
+#### model 0.5.4
+
+- Non-breaking changes
+  - added optional `outputs[i].reproducibility` to store relative and absolute tolerances as well as a tolerance for mismatched elements.
 
 #### generic 0.3.1 and model 0.5.3
 
