@@ -1950,7 +1950,9 @@ TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
 
 def validate_tensors(
     tensors: Mapping[TensorId, Tuple[TensorDescr, NDArray[Any]]],
-    tensor_origin: str,  # for more precise error messages, e.g. 'test_tensor'
+    tensor_origin: Literal[
+        "test_tensor"
+    ],  # for more precise error messages, e.g. 'test_tensor'
 ):
     all_tensor_axes: Dict[TensorId, Dict[AxisId, Tuple[AnyAxis, int]]] = {}
 
@@ -2023,6 +2025,21 @@ def validate_tensors(
                     )
             else:
                 assert_never(a.size)
+
+        if (
+            isinstance(descr, OutputTensorDescr)
+            and descr.reproducibility.absolute_tolerance
+            and (
+                descr.reproducibility.absolute_tolerance
+                > (max_test_value := array.max()) * 0.01
+            )
+            and tensor_origin == "test_tensor"
+        ):
+            raise ValueError(
+                f"{e_msg(descr)}.reproducibility.absolute_tolerance="
+                + f"{descr.reproducibility.absolute_tolerance} > 0.01*{max_test_value}"
+                + " (1% of the maximum value of the test tensor)"
+            )
 
 
 class EnvironmentFileDescr(FileDescr):
