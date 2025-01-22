@@ -571,5 +571,8 @@ def test_validate_parameterized_size(model: ModelDescr):
 
 def test_absolute_tolerance(model_data: Dict[str, Any]):
     model_data["outputs"][0]["reproducibility"]["absolute_tolerance"] = 100000
-    with pytest.raises(ValidationError):
-        _ = ModelDescr.model_validate(model_data)
+    with ValidationContext(perform_io_checks=False):
+        model_descr = ModelDescr.model_validate(model_data)
+
+    with pytest.raises(ValueError), ValidationContext(perform_io_checks=True):
+        _ = model_descr._validate_test_tensors()  # type: ignore[reportPrivateUsage]
