@@ -311,7 +311,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.common    </h1>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">FileDescr</span><wbr>(<span class="base">bioimageio.spec._internal.node.Node</span>):
+    <span class="name">FileDescr</span><wbr>(<span class="base"><a href="_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></span>):
 
                 <label class="view-source-button" for="FileDescr-view-source"><span>View Source</span></label>
 
@@ -357,7 +357,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.common    </h1>
 
                             <div id="FileDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="#HttpUrl">HttpUrl</a>, <a href="#RelativeFilePath">RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fa6511db740&gt;), PlainSerializer(func=&lt;function _package at 0x7fa6511daa20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="#HttpUrl">HttpUrl</a>, <a href="#RelativeFilePath">RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7efea0ce3740&gt;), PlainSerializer(func=&lt;function _package at 0x7efea0ce2a20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -440,6 +440,15 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.common    </h1>
 
     
 
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="FileDescr.model_validate" class="function"><a href="_internal/node.html#Node.model_validate">model_validate</a></dd>
+
+            </div>
+                                </dl>
                             </div>
                 </section>
                 <section id="FileName">
@@ -574,28 +583,41 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.common    </h1>
 
 
                             </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="#RootHttpUrl">RootHttpUrl</a></dt>
+                                <dd id="HttpUrl.absolute" class="function"><a href="#RootHttpUrl.absolute">absolute</a></dd>
+                <dd id="HttpUrl.scheme" class="variable"><a href="#RootHttpUrl.scheme">scheme</a></dd>
+                <dd id="HttpUrl.host" class="variable"><a href="#RootHttpUrl.host">host</a></dd>
+                <dd id="HttpUrl.path" class="variable"><a href="#RootHttpUrl.path">path</a></dd>
+                <dd id="HttpUrl.parent" class="variable"><a href="#RootHttpUrl.parent">parent</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
                 <section id="InvalidDescr">
                             <input id="InvalidDescr-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">InvalidDescr</span><wbr>(<span class="base">bioimageio.spec._internal.common_nodes.ResourceDescrBase</span>):
+    <span class="name">InvalidDescr</span><wbr>(<span class="base"><a href="_internal/common_nodes.html#ResourceDescrBase">bioimageio.spec._internal.common_nodes.ResourceDescrBase</a></span>):
 
                 <label class="view-source-button" for="InvalidDescr-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#InvalidDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="InvalidDescr-522"><a href="#InvalidDescr-522"><span class="linenos">522</span></a><span class="k">class</span><span class="w"> </span><span class="nc">InvalidDescr</span><span class="p">(</span>
-</span><span id="InvalidDescr-523"><a href="#InvalidDescr-523"><span class="linenos">523</span></a>    <span class="n">ResourceDescrBase</span><span class="p">,</span>
-</span><span id="InvalidDescr-524"><a href="#InvalidDescr-524"><span class="linenos">524</span></a>    <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span>
-</span><span id="InvalidDescr-525"><a href="#InvalidDescr-525"><span class="linenos">525</span></a>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;An invalid resource description&quot;</span><span class="p">,</span>
-</span><span id="InvalidDescr-526"><a href="#InvalidDescr-526"><span class="linenos">526</span></a><span class="p">):</span>
-</span><span id="InvalidDescr-527"><a href="#InvalidDescr-527"><span class="linenos">527</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A representation of an invalid resource description&quot;&quot;&quot;</span>
-</span><span id="InvalidDescr-528"><a href="#InvalidDescr-528"><span class="linenos">528</span></a>
-</span><span id="InvalidDescr-529"><a href="#InvalidDescr-529"><span class="linenos">529</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
-</span><span id="InvalidDescr-530"><a href="#InvalidDescr-530"><span class="linenos">530</span></a>    <span class="n">format_version</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
-</span><span id="InvalidDescr-531"><a href="#InvalidDescr-531"><span class="linenos">531</span></a>    <span class="n">fields_to_set_explicitly</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">FrozenSet</span><span class="p">[</span><span class="n">LiteralString</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="InvalidDescr-431"><a href="#InvalidDescr-431"><span class="linenos">431</span></a><span class="k">class</span><span class="w"> </span><span class="nc">InvalidDescr</span><span class="p">(</span>
+</span><span id="InvalidDescr-432"><a href="#InvalidDescr-432"><span class="linenos">432</span></a>    <span class="n">ResourceDescrBase</span><span class="p">,</span>
+</span><span id="InvalidDescr-433"><a href="#InvalidDescr-433"><span class="linenos">433</span></a>    <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span>
+</span><span id="InvalidDescr-434"><a href="#InvalidDescr-434"><span class="linenos">434</span></a>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;An invalid resource description&quot;</span><span class="p">,</span>
+</span><span id="InvalidDescr-435"><a href="#InvalidDescr-435"><span class="linenos">435</span></a><span class="p">):</span>
+</span><span id="InvalidDescr-436"><a href="#InvalidDescr-436"><span class="linenos">436</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A representation of an invalid resource description&quot;&quot;&quot;</span>
+</span><span id="InvalidDescr-437"><a href="#InvalidDescr-437"><span class="linenos">437</span></a>
+</span><span id="InvalidDescr-438"><a href="#InvalidDescr-438"><span class="linenos">438</span></a>    <span class="nb">type</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+</span><span id="InvalidDescr-439"><a href="#InvalidDescr-439"><span class="linenos">439</span></a>    <span class="n">format_version</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+</span><span id="InvalidDescr-440"><a href="#InvalidDescr-440"><span class="linenos">440</span></a>    <span class="n">fields_to_set_explicitly</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">FrozenSet</span><span class="p">[</span><span class="n">LiteralString</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -701,6 +723,27 @@ method.</p>
 </div>
 
 
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="_internal/common_nodes.html#ResourceDescrBase">bioimageio.spec._internal.common_nodes.ResourceDescrBase</a></dt>
+                                <dd id="InvalidDescr.validation_summary" class="variable"><a href="_internal/common_nodes.html#ResourceDescrBase.validation_summary">validation_summary</a></dd>
+                <dd id="InvalidDescr.root" class="variable"><a href="_internal/common_nodes.html#ResourceDescrBase.root">root</a></dd>
+                <dd id="InvalidDescr.load" class="function"><a href="_internal/common_nodes.html#ResourceDescrBase.load">load</a></dd>
+                <dd id="InvalidDescr.package" class="function"><a href="_internal/common_nodes.html#ResourceDescrBase.package">package</a></dd>
+                <dd id="InvalidDescr.get_package_content" class="function"><a href="_internal/common_nodes.html#ResourceDescrBase.get_package_content">get_package_content</a></dd>
+
+            </div>
+            <div><dt><a href="_internal/common_nodes.html#NodeWithExplicitlySetFields">bioimageio.spec._internal.common_nodes.NodeWithExplicitlySetFields</a></dt>
+                                <dd id="InvalidDescr.set_fields_explicitly" class="function"><a href="_internal/common_nodes.html#NodeWithExplicitlySetFields.set_fields_explicitly">set_fields_explicitly</a></dd>
+
+            </div>
+            <div><dt><a href="_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="InvalidDescr.model_validate" class="function"><a href="_internal/node.html#Node.model_validate">model_validate</a></dd>
+
+            </div>
+                                </dl>
                             </div>
                 </section>
                 <section id="PermissiveFileSource">
@@ -815,13 +858,23 @@ method.</p>
     
 
                             </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="_internal/io.html#RelativePathBase">bioimageio.spec._internal.io.RelativePathBase</a></dt>
+                                <dd id="RelativeFilePath.path" class="variable"><a href="_internal/io.html#RelativePathBase.path">path</a></dd>
+                <dd id="RelativeFilePath.absolute" class="function"><a href="_internal/io.html#RelativePathBase.absolute">absolute</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
                 <section id="RootHttpUrl">
                             <input id="RootHttpUrl-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">RootHttpUrl</span><wbr>(<span class="base">bioimageio.spec._internal.validated_string.ValidatedString</span>):
+    <span class="name">RootHttpUrl</span><wbr>(<span class="base"><a href="_internal/validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a></span>):
 
                 <label class="view-source-button" for="RootHttpUrl-view-source"><span>View Source</span></label>
 
@@ -1016,7 +1069,7 @@ method.</p>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">Sha256</span><wbr>(<span class="base">bioimageio.spec._internal.validated_string.ValidatedString</span>):
+    <span class="name">Sha256</span><wbr>(<span class="base"><a href="_internal/validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a></span>):
 
                 <label class="view-source-button" for="Sha256-view-source"><span>View Source</span></label>
 

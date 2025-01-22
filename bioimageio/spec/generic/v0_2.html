@@ -773,7 +773,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">ResourceId</span><wbr>(<span class="base">bioimageio.spec._internal.validated_string.ValidatedString</span>):
+    <span class="name">ResourceId</span><wbr>(<span class="base"><a href="../_internal/validated_string.html#ValidatedString">bioimageio.spec._internal.validated_string.ValidatedString</a></span>):
 
                 <label class="view-source-button" for="ResourceId-view-source"><span>View Source</span></label>
 
@@ -850,7 +850,7 @@ errors defaults to 'strict'.</p>
                     <div class="attr variable">
             <span class="name">CoverImageSource</span>        =
 <input id="CoverImageSource-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="CoverImageSource-view-value"></label><span class="default_value">typing.Annotated[typing.Union[typing.Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute), FieldInfo(annotation=NoneType, required=True, title=&#39;AbsoluteFilePath&#39;)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix(suffix=(&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;), case_sensitive=False), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <label class="view-value-button pdoc-button" for="CoverImageSource-view-value"></label><span class="default_value">typing.Annotated[typing.Union[typing.Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute), FieldInfo(annotation=NoneType, required=True, title=&#39;AbsoluteFilePath&#39;)], <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix(suffix=(&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;), case_sensitive=False), PlainSerializer(func=&lt;function _package&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -864,7 +864,7 @@ errors defaults to 'strict'.</p>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">AttachmentsDescr</span><wbr>(<span class="base">bioimageio.spec._internal.node.Node</span>):
+    <span class="name">AttachmentsDescr</span><wbr>(<span class="base"><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></span>):
 
                 <label class="view-source-button" for="AttachmentsDescr-view-source"><span>View Source</span></label>
 
@@ -897,7 +897,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="AttachmentsDescr.files" class="classattr">
                                 <div class="attr variable">
-            <span class="name">files</span><span class="annotation">: List[Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fa6511db740&gt;), PlainSerializer(func=&lt;function _package at 0x7fa6511daa20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]]</span>
+            <span class="name">files</span><span class="annotation">: List[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7efea0ce3740&gt;), PlainSerializer(func=&lt;function _package at 0x7efea0ce2a20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]]</span>
 
         
     </div>
@@ -908,13 +908,22 @@ errors defaults to 'strict'.</p>
 
 
                             </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="AttachmentsDescr.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
                 <section id="Uploader">
                             <input id="Uploader-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">Uploader</span><wbr>(<span class="base">bioimageio.spec._internal.node.Node</span>):
+    <span class="name">Uploader</span><wbr>(<span class="base"><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></span>):
 
                 <label class="view-source-button" for="Uploader-view-source"><span>View Source</span></label>
 
@@ -945,7 +954,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="Uploader.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7fa6510b6e80&gt;)]]</span>
+            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7efea0bbb240&gt;)]]</span>
 
         
     </div>
@@ -955,6 +964,15 @@ errors defaults to 'strict'.</p>
 </div>
 
 
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="Uploader.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
+
+            </div>
+                                </dl>
                             </div>
                 </section>
                 <section id="Author">
@@ -978,7 +996,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="Author.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7fa6510b6e80&gt;)]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7efea0bbb240&gt;)]</span>
 
         
     </div>
@@ -1007,6 +1025,10 @@ errors defaults to 'strict'.</p>
                 <dd id="Author.orcid" class="variable"><a href="#_Person.orcid">orcid</a></dd>
 
             </div>
+            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="Author.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
+
+            </div>
                                 </dl>
                             </div>
                 </section>
@@ -1031,7 +1053,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="Maintainer.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7fa6510b6e80&gt;)]]</span>
+            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7efea0bbb240&gt;)]]</span>
 
         
     </div>
@@ -1060,6 +1082,10 @@ errors defaults to 'strict'.</p>
                 <dd id="Maintainer.orcid" class="variable"><a href="#_Person.orcid">orcid</a></dd>
 
             </div>
+            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="Maintainer.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
+
+            </div>
                                 </dl>
                             </div>
                 </section>
@@ -1068,7 +1094,7 @@ errors defaults to 'strict'.</p>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">BadgeDescr</span><wbr>(<span class="base">bioimageio.spec._internal.node.Node</span>):
+    <span class="name">BadgeDescr</span><wbr>(<span class="base"><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></span>):
 
                 <label class="view-source-button" for="BadgeDescr-view-source"><span>View Source</span></label>
 
@@ -1117,7 +1143,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="BadgeDescr.icon" class="classattr">
                                 <div class="attr variable">
-            <span class="name">icon</span><span class="annotation">: Annotated[Union[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)], bioimageio.spec._internal.io.RelativeFilePath], AfterValidator(func=&lt;function wo_special_file_name at 0x7fa6511db740&gt;), PlainSerializer(func=&lt;function _package at 0x7fa6511daa20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], bioimageio.spec._internal.url.HttpUrl, Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)], NoneType], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://colab.research.google.com/assets/colab-badge.svg&#39;])]</span>
+            <span class="name">icon</span><span class="annotation">: Annotated[Union[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)], <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>], AfterValidator(func=&lt;function wo_special_file_name at 0x7efea0ce3740&gt;), PlainSerializer(func=&lt;function _package at 0x7efea0ce2a20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)], NoneType], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://colab.research.google.com/assets/colab-badge.svg&#39;])]</span>
 
         
     </div>
@@ -1130,7 +1156,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="BadgeDescr.url" class="classattr">
                                 <div class="attr variable">
-            <span class="name">url</span><span class="annotation">: Annotated[bioimageio.spec._internal.url.HttpUrl, FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb&#39;])]</span>
+            <span class="name">url</span><span class="annotation">: Annotated[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb&#39;])]</span>
 
         
     </div>
@@ -1141,13 +1167,22 @@ errors defaults to 'strict'.</p>
 
 
                             </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="BadgeDescr.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
                 <section id="CiteEntry">
                             <input id="CiteEntry-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">CiteEntry</span><wbr>(<span class="base">bioimageio.spec._internal.node.Node</span>):
+    <span class="name">CiteEntry</span><wbr>(<span class="base"><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></span>):
 
                 <label class="view-source-button" for="CiteEntry-view-source"><span>View Source</span></label>
 
@@ -1201,7 +1236,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="CiteEntry.doi" class="classattr">
                                 <div class="attr variable">
-            <span class="name">doi</span><span class="annotation">: Optional[bioimageio.spec._internal.types.Doi]</span>
+            <span class="name">doi</span><span class="annotation">: Optional[<a href="../_internal/types.html#Doi">bioimageio.spec._internal.types.Doi</a>]</span>
 
         
     </div>
@@ -1255,13 +1290,22 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
 
 
                             </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="CiteEntry.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
                 <section id="LinkedResource">
                             <input id="LinkedResource-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">LinkedResource</span><wbr>(<span class="base">bioimageio.spec._internal.node.Node</span>):
+    <span class="name">LinkedResource</span><wbr>(<span class="base"><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></span>):
 
                 <label class="view-source-button" for="LinkedResource-view-source"><span>View Source</span></label>
 
@@ -1308,13 +1352,22 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
 
 
                             </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="LinkedResource.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
                 </section>
                 <section id="GenericModelDescrBase">
                             <input id="GenericModelDescrBase-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">GenericModelDescrBase</span><wbr>(<span class="base">bioimageio.spec._internal.common_nodes.ResourceDescrBase</span>):
+    <span class="name">GenericModelDescrBase</span><wbr>(<span class="base"><a href="../_internal/common_nodes.html#ResourceDescrBase">bioimageio.spec._internal.common_nodes.ResourceDescrBase</a></span>):
 
                 <label class="view-source-button" for="GenericModelDescrBase-view-source"><span>View Source</span></label>
 
@@ -1493,7 +1546,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
 
                             <div id="GenericModelDescrBase.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, MinLen(min_length=1), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7fa650f6c040&gt;, severity=30, msg=&#39;Longer than 128 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=128)]})]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, MinLen(min_length=1), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7efea05439c0&gt;, severity=30, msg=&#39;Longer than 128 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=128)]})]</span>
 
         
     </div>
@@ -1517,7 +1570,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
                             </div>
                             <div id="GenericModelDescrBase.covers" class="classattr">
                                 <div class="attr variable">
-            <span class="name">covers</span><span class="annotation">: Annotated[List[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute), FieldInfo(annotation=NoneType, required=True, title=&#39;AbsoluteFilePath&#39;)], bioimageio.spec._internal.io.RelativeFilePath, bioimageio.spec._internal.url.HttpUrl], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix(suffix=(&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;), case_sensitive=False), PlainSerializer(func=&lt;function _package at 0x7fa6511daa20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;)&#34;, examples=[&#39;cover.png&#39;])]</span>
+            <span class="name">covers</span><span class="annotation">: Annotated[List[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), Predicate(is_absolute), FieldInfo(annotation=NoneType, required=True, title=&#39;AbsoluteFilePath&#39;)], <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, <a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), WithSuffix(suffix=(&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;), case_sensitive=False), PlainSerializer(func=&lt;function _package at 0x7efea0ce2a20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, description=&#34;Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: (&#39;.gif&#39;, &#39;.jpeg&#39;, &#39;.jpg&#39;, &#39;.png&#39;, &#39;.svg&#39;, &#39;.tif&#39;, &#39;.tiff&#39;)&#34;, examples=[&#39;cover.png&#39;])]</span>
 
         
     </div>
@@ -1648,7 +1701,7 @@ an altered rdf.yaml file with local references to the downloaded files)</p>
                             </div>
                             <div id="GenericModelDescrBase.download_url" class="classattr">
                                 <div class="attr variable">
-            <span class="name">download_url</span><span class="annotation">: Optional[bioimageio.spec._internal.url.HttpUrl]</span>
+            <span class="name">download_url</span><span class="annotation">: Optional[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>]</span>
 
         
     </div>
@@ -1674,7 +1727,7 @@ an altered rdf.yaml file with local references to the downloaded files)</p>
                             </div>
                             <div id="GenericModelDescrBase.icon" class="classattr">
                                 <div class="attr variable">
-            <span class="name">icon</span><span class="annotation">: Union[Annotated[str, Len(min_length=1, max_length=2)], Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fa6511db740&gt;), PlainSerializer(func=&lt;function _package at 0x7fa6511daa20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], NoneType]</span>
+            <span class="name">icon</span><span class="annotation">: Union[Annotated[str, Len(min_length=1, max_length=2)], Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7efea0ce3740&gt;), PlainSerializer(func=&lt;function _package at 0x7efea0ce2a20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], NoneType]</span>
 
         
     </div>
@@ -1727,7 +1780,7 @@ If not specified <code><a href="#GenericModelDescrBase.authors">authors</a></cod
                             </div>
                             <div id="GenericModelDescrBase.rdf_source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">rdf_source</span><span class="annotation">: Optional[Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)])]]</span>
+            <span class="name">rdf_source</span><span class="annotation">: Optional[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)])]]</span>
 
         
     </div>
@@ -1783,7 +1836,7 @@ Do not set this field in a YAML file.</p>
                             </div>
                             <div id="GenericModelDescrBase.version" class="classattr">
                                 <div class="attr variable">
-            <span class="name">version</span><span class="annotation">: Optional[bioimageio.spec._internal.version_type.Version]</span>
+            <span class="name">version</span><span class="annotation">: Optional[<a href="../_internal/version_type.html#Version">bioimageio.spec._internal.version_type.Version</a>]</span>
 
         
     </div>
@@ -1832,6 +1885,36 @@ method.</p>
 </div>
 
 
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="../_internal/common_nodes.html#ResourceDescrBase">bioimageio.spec._internal.common_nodes.ResourceDescrBase</a></dt>
+                                <dd id="GenericModelDescrBase.fields_to_set_explicitly" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
+                <dd id="GenericModelDescrBase.implemented_type" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.implemented_type">implemented_type</a></dd>
+                <dd id="GenericModelDescrBase.implemented_format_version" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.implemented_format_version">implemented_format_version</a></dd>
+                <dd id="GenericModelDescrBase.implemented_format_version_tuple" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.implemented_format_version_tuple">implemented_format_version_tuple</a></dd>
+                <dd id="GenericModelDescrBase.validation_summary" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.validation_summary">validation_summary</a></dd>
+                <dd id="GenericModelDescrBase.root" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.root">root</a></dd>
+                <dd id="GenericModelDescrBase.load" class="function"><a href="../_internal/common_nodes.html#ResourceDescrBase.load">load</a></dd>
+                <dd id="GenericModelDescrBase.package" class="function"><a href="../_internal/common_nodes.html#ResourceDescrBase.package">package</a></dd>
+                <dd id="GenericModelDescrBase.get_package_content" class="function"><a href="../_internal/common_nodes.html#ResourceDescrBase.get_package_content">get_package_content</a></dd>
+
+            </div>
+            <div><dt><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields">bioimageio.spec._internal.common_nodes.NodeWithExplicitlySetFields</a></dt>
+                                <dd id="GenericModelDescrBase.set_fields_explicitly" class="function"><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields.set_fields_explicitly">set_fields_explicitly</a></dd>
+
+            </div>
+            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="GenericModelDescrBase.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
+
+            </div>
+            <div><dt><a href="../_internal/common_nodes.html#_ResourceDescrBaseAbstractFieldsProtocol">bioimageio.spec._internal.common_nodes._ResourceDescrBaseAbstractFieldsProtocol</a></dt>
+                                <dd id="GenericModelDescrBase.type" class="variable"><a href="../_internal/common_nodes.html#_ResourceDescrBaseAbstractFieldsProtocol.type">type</a></dd>
+                <dd id="GenericModelDescrBase.format_version" class="variable"><a href="../_internal/common_nodes.html#_ResourceDescrBaseAbstractFieldsProtocol.format_version">format_version</a></dd>
+
+            </div>
+                                </dl>
                             </div>
                 </section>
                 <section id="GenericDescrBase">
@@ -1950,7 +2033,7 @@ The <code><a href="#GenericDescrBase.format_version">format_version</a></code> i
                             </div>
                             <div id="GenericDescrBase.documentation" class="classattr">
                                 <div class="attr variable">
-            <span class="name">documentation</span><span class="annotation">: Annotated[Optional[Annotated[Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7fa6511db740&gt;), PlainSerializer(func=&lt;function _package at 0x7fa6511daa20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
+            <span class="name">documentation</span><span class="annotation">: Annotated[Optional[Annotated[Union[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="../_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7efea0ce3740&gt;), PlainSerializer(func=&lt;function _package at 0x7efea0ce2a20&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</span>
 
         
     </div>
@@ -1964,7 +2047,7 @@ The recommended documentation file name is <code>README.md</code>. An <code>.md<
                             </div>
                             <div id="GenericDescrBase.license" class="classattr">
                                 <div class="attr variable">
-            <span class="name">license</span><span class="annotation">: Annotated[Union[bioimageio.spec._internal.license_id.LicenseId, bioimageio.spec._internal.license_id.DeprecatedLicenseId, str, NoneType], FieldInfo(annotation=NoneType, required=True, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;], metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)])]</span>
+            <span class="name">license</span><span class="annotation">: Annotated[Union[<a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a>, <a href="../_internal/license_id.html#DeprecatedLicenseId">bioimageio.spec._internal.license_id.DeprecatedLicenseId</a>, str, NoneType], FieldInfo(annotation=NoneType, required=True, examples=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;], metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)])]</span>
 
         
     </div>
@@ -1985,7 +2068,7 @@ We do not support custom license beyond the SPDX license list, if you need that 
         <div class="decorator decorator-classmethod">@classmethod</div>
 
         <span class="def">def</span>
-        <span class="name">deprecated_spdx_license</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">cls</span>,</span><span class="param">	<span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">bioimageio</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">license_id</span><span class="o">.</span><span class="n">LicenseId</span><span class="p">,</span> <span class="n">bioimageio</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">_internal</span><span class="o">.</span><span class="n">license_id</span><span class="o">.</span><span class="n">DeprecatedLicenseId</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span></span><span class="return-annotation">):</span></span>
+        <span class="name">deprecated_spdx_license</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">cls</span>,</span><span class="param">	<span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n"><a href="../_internal/license_id.html#LicenseId">bioimageio.spec._internal.license_id.LicenseId</a></span><span class="p">,</span> <span class="n"><a href="../_internal/license_id.html#DeprecatedLicenseId">bioimageio.spec._internal.license_id.DeprecatedLicenseId</a></span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">]</span></span><span class="return-annotation">):</span></span>
 
                 <label class="view-source-button" for="GenericDescrBase.deprecated_spdx_license-view-source"><span>View Source</span></label>
 
@@ -2098,6 +2181,28 @@ method.</p>
                 <dd id="GenericDescrBase.version_number" class="variable"><a href="#GenericModelDescrBase.version_number">version_number</a></dd>
 
             </div>
+            <div><dt><a href="../_internal/common_nodes.html#ResourceDescrBase">bioimageio.spec._internal.common_nodes.ResourceDescrBase</a></dt>
+                                <dd id="GenericDescrBase.fields_to_set_explicitly" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
+                <dd id="GenericDescrBase.implemented_type" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.implemented_type">implemented_type</a></dd>
+                <dd id="GenericDescrBase.validation_summary" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.validation_summary">validation_summary</a></dd>
+                <dd id="GenericDescrBase.root" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.root">root</a></dd>
+                <dd id="GenericDescrBase.load" class="function"><a href="../_internal/common_nodes.html#ResourceDescrBase.load">load</a></dd>
+                <dd id="GenericDescrBase.package" class="function"><a href="../_internal/common_nodes.html#ResourceDescrBase.package">package</a></dd>
+                <dd id="GenericDescrBase.get_package_content" class="function"><a href="../_internal/common_nodes.html#ResourceDescrBase.get_package_content">get_package_content</a></dd>
+
+            </div>
+            <div><dt><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields">bioimageio.spec._internal.common_nodes.NodeWithExplicitlySetFields</a></dt>
+                                <dd id="GenericDescrBase.set_fields_explicitly" class="function"><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields.set_fields_explicitly">set_fields_explicitly</a></dd>
+
+            </div>
+            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="GenericDescrBase.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
+
+            </div>
+            <div><dt><a href="../_internal/common_nodes.html#_ResourceDescrBaseAbstractFieldsProtocol">bioimageio.spec._internal.common_nodes._ResourceDescrBaseAbstractFieldsProtocol</a></dt>
+                                <dd id="GenericDescrBase.type" class="variable"><a href="../_internal/common_nodes.html#_ResourceDescrBaseAbstractFieldsProtocol.type">type</a></dd>
+
+            </div>
                                 </dl>
                             </div>
                 </section>
@@ -2182,7 +2287,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
                             </div>
                             <div id="GenericDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Optional[bioimageio.spec._internal.url.HttpUrl]</span>
+            <span class="name">source</span><span class="annotation">: Optional[<a href="../_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>]</span>
 
         
     </div>
@@ -2316,6 +2421,23 @@ method.</p>
                 <dd id="GenericDescr.warn_about_tag_categories" class="function"><a href="#GenericModelDescrBase.warn_about_tag_categories">warn_about_tag_categories</a></dd>
                 <dd id="GenericDescr.version" class="variable"><a href="#GenericModelDescrBase.version">version</a></dd>
                 <dd id="GenericDescr.version_number" class="variable"><a href="#GenericModelDescrBase.version_number">version_number</a></dd>
+
+            </div>
+            <div><dt><a href="../_internal/common_nodes.html#ResourceDescrBase">bioimageio.spec._internal.common_nodes.ResourceDescrBase</a></dt>
+                                <dd id="GenericDescr.fields_to_set_explicitly" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.fields_to_set_explicitly">fields_to_set_explicitly</a></dd>
+                <dd id="GenericDescr.validation_summary" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.validation_summary">validation_summary</a></dd>
+                <dd id="GenericDescr.root" class="variable"><a href="../_internal/common_nodes.html#ResourceDescrBase.root">root</a></dd>
+                <dd id="GenericDescr.load" class="function"><a href="../_internal/common_nodes.html#ResourceDescrBase.load">load</a></dd>
+                <dd id="GenericDescr.package" class="function"><a href="../_internal/common_nodes.html#ResourceDescrBase.package">package</a></dd>
+                <dd id="GenericDescr.get_package_content" class="function"><a href="../_internal/common_nodes.html#ResourceDescrBase.get_package_content">get_package_content</a></dd>
+
+            </div>
+            <div><dt><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields">bioimageio.spec._internal.common_nodes.NodeWithExplicitlySetFields</a></dt>
+                                <dd id="GenericDescr.set_fields_explicitly" class="function"><a href="../_internal/common_nodes.html#NodeWithExplicitlySetFields.set_fields_explicitly">set_fields_explicitly</a></dd>
+
+            </div>
+            <div><dt><a href="../_internal/node.html#Node">bioimageio.spec._internal.node.Node</a></dt>
+                                <dd id="GenericDescr.model_validate" class="function"><a href="../_internal/node.html#Node.model_validate">model_validate</a></dd>
 
             </div>
                                 </dl>

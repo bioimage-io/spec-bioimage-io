@@ -375,7 +375,7 @@
         },
         "EnsureDtypeDescr": {
             "additionalProperties": false,
-            "description": "cast the tensor data type to `EnsureDtypeKwargs.dtype` (if not matching)",
+            "description": "Cast the tensor data type to `EnsureDtypeKwargs.dtype` (if not matching).\n\nThis can for example be used to ensure the inner neural network model gets a\ndifferent input tensor data type than the fully described bioimage.io model does.\n\nExamples:\n    The described bioimage.io model (incl. preprocessing) accepts any\n    float32-compatible tensor, normalizes it with percentiles and clipping and then\n    casts it to uint8, which is what the neural network in this example expects.\n    - in YAML\n        ```yaml\n        inputs:\n        - data:\n            type: float32  # described bioimage.io model is compatible with any float32 input tensor\n        preprocessing:\n        - id: scale_range\n            kwargs:\n            axes: ['y', 'x']\n            max_percentile: 99.8\n            min_percentile: 5.0\n        - id: clip\n            kwargs:\n            min: 0.0\n            max: 1.0\n        - id: ensure_dtype\n            kwargs:\n            dtype: uint8\n        ```\n    - in Python:\n        >>> preprocessing = [\n        ...     ScaleRangeDescr(\n        ...         kwargs=ScaleRangeKwargs(\n        ...           axes= (AxisId('y'), AxisId('x')),\n        ...           max_percentile= 99.8,\n        ...           min_percentile= 5.0,\n        ...         )\n        ...     ),\n        ...     ClipDescr(kwargs=ClipKwargs(min=0.0, max=1.0)),\n        ...     EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype=\"uint8\")),\n        ... ]",
             "properties": {
                 "id": {
                     "const": "ensure_dtype",
@@ -570,7 +570,7 @@
         },
         "FixedZeroMeanUnitVarianceDescr": {
             "additionalProperties": false,
-            "description": "Subtract a given mean and divide by the standard deviation.\n\nNormalize with fixed, precomputed values for\n`FixedZeroMeanUnitVarianceKwargs.mean` and `FixedZeroMeanUnitVarianceKwargs.std`\nUse `FixedZeroMeanUnitVarianceAlongAxisKwargs` for independent scaling along given\naxes.",
+            "description": "Subtract a given mean and divide by the standard deviation.\n\nNormalize with fixed, precomputed values for\n`FixedZeroMeanUnitVarianceKwargs.mean` and `FixedZeroMeanUnitVarianceKwargs.std`\nUse `FixedZeroMeanUnitVarianceAlongAxisKwargs` for independent scaling along given\naxes.\n\nExamples:\n1. scalar value for whole tensor\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: fixed_zero_mean_unit_variance\n        kwargs:\n          mean: 103.5\n          std: 13.7\n    ```\n    - in Python\n    >>> preprocessing = [FixedZeroMeanUnitVarianceDescr(\n    ...   kwargs=FixedZeroMeanUnitVarianceKwargs(mean=103.5, std=13.7)\n    ... )]\n\n2. independently along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: fixed_zero_mean_unit_variance\n        kwargs:\n          axis: channel\n          mean: [101.5, 102.5, 103.5]\n          std: [11.7, 12.7, 13.7]\n    ```\n    - in Python\n    >>> preprocessing = [FixedZeroMeanUnitVarianceDescr(\n    ...   kwargs=FixedZeroMeanUnitVarianceAlongAxisKwargs(\n    ...     axis=AxisId(\"channel\"),\n    ...     mean=[101.5, 102.5, 103.5],\n    ...     std=[11.7, 12.7, 13.7],\n    ...   )\n    ... )]",
             "properties": {
                 "id": {
                     "const": "fixed_zero_mean_unit_variance",
@@ -865,7 +865,7 @@
                             "type": "string"
                         },
                         {
-                            "description": "Si unit",
+                            "description": "An SI unit",
                             "minLength": 1,
                             "pattern": "^(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?((\u00b7(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?)|(/(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^+?[1-9]\\d*)?))*$",
                             "title": "SiUnit",
@@ -970,7 +970,7 @@
                             "type": "string"
                         },
                         {
-                            "description": "Si unit",
+                            "description": "An SI unit",
                             "minLength": 1,
                             "pattern": "^(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?((\u00b7(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?)|(/(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^+?[1-9]\\d*)?))*$",
                             "title": "SiUnit",
@@ -1081,7 +1081,7 @@
         },
         "ScaleLinearAlongAxisKwargs": {
             "additionalProperties": false,
-            "description": "key word arguments for `ScaleLinearDescr`",
+            "description": "Key word arguments for `ScaleLinearDescr`",
             "properties": {
                 "axis": {
                     "description": "The axis of of gains/offsets values.",
@@ -1136,7 +1136,7 @@
         },
         "SizeReference": {
             "additionalProperties": false,
-            "description": "A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.\n\n`axis.size = reference.size * reference.scale / axis.scale + offset`\n\nnote:\n1. The axis and the referenced axis need to have the same unit (or no unit).\n2. Batch axes may not be referenced.\n3. Fractions are rounded down.\n4. If the reference axis is `concatenable` the referencing axis is assumed to be\n    `concatenable` as well with the same block order.\n\nexample:\nAn unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm\u00b2.\nLet's assume that we want to express the image height h in relation to its width w\ninstead of only accepting input images of exactly 100*49 pixels\n(for example to express a range of valid image shapes by parametrizing w, see `ParameterizedSize`).\n\n>>> w = SpaceInputAxis(id=AxisId(\"w\"), size=100, unit=\"millimeter\", scale=2)\n>>> h = SpaceInputAxis(\n...     id=AxisId(\"h\"),\n...     size=SizeReference(tensor_id=TensorId(\"input\"), axis_id=AxisId(\"w\"), offset=-1),\n...     unit=\"millimeter\",\n...     scale=4,\n... )\n>>> print(h.size.compute(h, w))\n49\n\n-> h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49",
+            "description": "A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.\n\n`axis.size = reference.size * reference.scale / axis.scale + offset`\n\nNote:\n1. The axis and the referenced axis need to have the same unit (or no unit).\n2. Batch axes may not be referenced.\n3. Fractions are rounded down.\n4. If the reference axis is `concatenable` the referencing axis is assumed to be\n    `concatenable` as well with the same block order.\n\nExample:\nAn unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm\u00b2.\nLet's assume that we want to express the image height h in relation to its width w\ninstead of only accepting input images of exactly 100*49 pixels\n(for example to express a range of valid image shapes by parametrizing w, see `ParameterizedSize`).\n\n>>> w = SpaceInputAxis(id=AxisId(\"w\"), size=100, unit=\"millimeter\", scale=2)\n>>> h = SpaceInputAxis(\n...     id=AxisId(\"h\"),\n...     size=SizeReference(tensor_id=TensorId(\"input\"), axis_id=AxisId(\"w\"), offset=-1),\n...     unit=\"millimeter\",\n...     scale=4,\n... )\n>>> print(h.size.get_size(h, w))\n49\n\n\u21d2 h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49",
             "properties": {
                 "tensor_id": {
                     "description": "tensor id of the reference axis",
@@ -6066,7 +6066,7 @@
                 "orcid": {
                     "anyOf": [
                         {
-                            "description": "an ORCID identifier",
+                            "description": "An ORCID identifier, see https://orcid.org/",
                             "title": "OrcidId",
                             "type": "string"
                         },
@@ -6115,6 +6115,7 @@
                 "doi": {
                     "anyOf": [
                         {
+                            "description": "A digital object identifier, see https://www.doi.org/",
                             "pattern": "^10\\.[0-9]{4}.+$",
                             "title": "Doi",
                             "type": "string"
@@ -6180,7 +6181,7 @@
                 "orcid": {
                     "anyOf": [
                         {
-                            "description": "an ORCID identifier",
+                            "description": "An ORCID identifier, see https://orcid.org/",
                             "title": "OrcidId",
                             "type": "string"
                         },
@@ -6251,7 +6252,7 @@
                 "orcid": {
                     "anyOf": [
                         {
-                            "description": "an ORCID identifier",
+                            "description": "An ORCID identifier, see https://orcid.org/",
                             "title": "OrcidId",
                             "type": "string"
                         },
@@ -6300,6 +6301,7 @@
                 "doi": {
                     "anyOf": [
                         {
+                            "description": "A digital object identifier, see https://www.doi.org/",
                             "pattern": "^10\\.[0-9]{4}.+$",
                             "title": "Doi",
                             "type": "string"
@@ -6370,7 +6372,7 @@
                 "orcid": {
                     "anyOf": [
                         {
-                            "description": "an ORCID identifier",
+                            "description": "An ORCID identifier, see https://orcid.org/",
                             "title": "OrcidId",
                             "type": "string"
                         },
@@ -9243,7 +9245,7 @@
         },
         "bioimageio__spec__model__v0_5__BinarizeDescr": {
             "additionalProperties": false,
-            "description": "Binarize the tensor with a fixed threshold.\n\nValues above `BinarizeKwargs.threshold`/`BinarizeAlongAxisKwargs.threshold`\nwill be set to one, values below the threshold to zero.",
+            "description": "Binarize the tensor with a fixed threshold.\n\nValues above `BinarizeKwargs.threshold`/`BinarizeAlongAxisKwargs.threshold`\nwill be set to one, values below the threshold to zero.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: binarize\n        kwargs:\n          axis: 'channel'\n          threshold: [0.25, 0.5, 0.75]\n    ```\n- in Python:\n    >>> postprocessing = [BinarizeDescr(\n    ...   kwargs=BinarizeAlongAxisKwargs(\n    ...       axis=AxisId('channel'),\n    ...       threshold=[0.25, 0.5, 0.75],\n    ...   )\n    ... )]",
             "properties": {
                 "id": {
                     "const": "binarize",
@@ -9290,7 +9292,7 @@
         },
         "bioimageio__spec__model__v0_5__ClipDescr": {
             "additionalProperties": false,
-            "description": "Set tensor values below min to min and above max to max.",
+            "description": "Set tensor values below min to min and above max to max.\n\nSee `ScaleRangeDescr` for examples.",
             "properties": {
                 "id": {
                     "const": "clip",
@@ -10597,7 +10599,7 @@
                 },
                 "timestamp": {
                     "$ref": "#/$defs/Datetime",
-                    "default": "2025-01-08T13:55:08.818564",
+                    "default": "2025-01-22T14:49:35.779264",
                     "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).\n(In Python a datetime object is valid, too)."
                 },
                 "training_data": {
@@ -11049,7 +11051,7 @@
         },
         "bioimageio__spec__model__v0_5__ScaleLinearDescr": {
             "additionalProperties": false,
-            "description": "Fixed linear scaling.",
+            "description": "Fixed linear scaling.\n\nExamples:\n  1. Scale with scalar gain and offset\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          gain: 2.0\n          offset: 3.0\n    ```\n    - in Python:\n    >>> preprocessing = [\n    ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))\n    ... ]\n\n  2. Independent scaling along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          axis: 'channel'\n          gain: [1.0, 2.0, 3.0]\n    ```\n    - in Python:\n    >>> preprocessing = [\n    ...     ScaleLinearDescr(\n    ...         kwargs=ScaleLinearAlongAxisKwargs(\n    ...             axis=AxisId(\"channel\"),\n    ...             gain=[1.0, 2.0, 3.0],\n    ...         )\n    ...     )\n    ... ]",
             "properties": {
                 "id": {
                     "const": "scale_linear",
@@ -11080,7 +11082,7 @@
         },
         "bioimageio__spec__model__v0_5__ScaleLinearKwargs": {
             "additionalProperties": false,
-            "description": "key word arguments for `ScaleLinearDescr`",
+            "description": "Key word arguments for `ScaleLinearDescr`",
             "properties": {
                 "gain": {
                     "default": 1.0,
@@ -11175,7 +11177,7 @@
         },
         "bioimageio__spec__model__v0_5__ScaleRangeDescr": {
             "additionalProperties": false,
-            "description": "Scale with percentiles.",
+            "description": "Scale with percentiles.\n\nExamples:\n1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: ['y', 'x']\n          max_percentile: 99.8\n          min_percentile: 5.0\n    ```\n    - in Python\n    >>> preprocessing = [\n    ...     ScaleRangeDescr(\n    ...         kwargs=ScaleRangeKwargs(\n    ...           axes= (AxisId('y'), AxisId('x')),\n    ...           max_percentile= 99.8,\n    ...           min_percentile= 5.0,\n    ...         )\n    ...     ),\n    ...     ClipDescr(\n    ...         kwargs=ClipKwargs(\n    ...             min=0.0,\n    ...             max=1.0,\n    ...         )\n    ...     ),\n    ... ]\n\n  2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: ['y', 'x']\n          max_percentile: 99.8\n          min_percentile: 5.0\n              - id: scale_range\n       - id: clip\n         kwargs:\n          min: 0.0\n          max: 1.0\n    ```\n    - in Python\n    >>> preprocessing = [ScaleRangeDescr(\n    ...   kwargs=ScaleRangeKwargs(\n    ...       axes= (AxisId('y'), AxisId('x')),\n    ...       max_percentile= 99.8,\n    ...       min_percentile= 5.0,\n    ...   )\n    ... )]",
             "properties": {
                 "id": {
                     "const": "scale_range",
@@ -11216,7 +11218,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.\nFor example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')\nresulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.\nTo normalize samples indepdencently, leave out the \"batch\" axis.\nDefault: Scale all axes jointly.",
+                    "description": "The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.\nFor example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')\nresulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.\nTo normalize samples independently, leave out the \"batch\" axis.\nDefault: Scale all axes jointly.",
                     "examples": [
                         [
                             "batch",
@@ -11272,7 +11274,7 @@
         },
         "bioimageio__spec__model__v0_5__SigmoidDescr": {
             "additionalProperties": false,
-            "description": "The logistic sigmoid funciton, a.k.a. expit function.",
+            "description": "The logistic sigmoid funciton, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n    >>> postprocessing = [SigmoidDescr()]",
             "properties": {
                 "id": {
                     "const": "sigmoid",
@@ -11656,7 +11658,7 @@
         },
         "bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr": {
             "additionalProperties": false,
-            "description": "Subtract mean and divide by variance.",
+            "description": "Subtract mean and divide by variance.\n\nExamples:\n    Subtract tensor mean and variance\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: zero_mean_unit_variance\n    ```\n    - in Python\n    >>> preprocessing = [ZeroMeanUnitVarianceDescr()]",
             "properties": {
                 "id": {
                     "const": "zero_mean_unit_variance",
@@ -11671,9 +11673,6 @@
                     "$ref": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceKwargs"
                 }
             },
-            "required": [
-                "kwargs"
-            ],
             "title": "model.v0_5.ZeroMeanUnitVarianceDescr",
             "type": "object"
         },
