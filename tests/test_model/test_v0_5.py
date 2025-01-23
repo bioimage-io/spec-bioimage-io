@@ -233,7 +233,6 @@ def model():
             documentation=UNET2D_ROOT / "README.md",
             license=LicenseId("MIT"),
             git_repo=HttpUrl("https://github.com/bioimage-io/core-bioimage-io-python"),
-            format_version="0.5.3",
             description="description",
             authors=[
                 Author(name="Author 1", affiliation="Affiliation 1"),
