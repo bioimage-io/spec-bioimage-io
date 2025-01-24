@@ -133,6 +133,6 @@ training_data:
 config:
   bioimageio:
     reproducibility_tolerance:
-      relative_tolerance: 1.0e-5
-      absolute_tolerance: 0.0
-      mismatched_elements_per_million: 0
+      - relative_tolerance: 1.0e-5
+        absolute_tolerance: 0.0
+        mismatched_elements_per_million: 0

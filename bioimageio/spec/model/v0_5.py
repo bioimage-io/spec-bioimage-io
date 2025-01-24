@@ -27,7 +27,6 @@ from typing import (
     Set,
     Tuple,
     Type,
-    TypedDict,
     TypeVar,
     Union,
     cast,
@@ -2332,10 +2331,6 @@ class _TensorSizes(NamedTuple):
     outputs: Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]
 
 
-class BioimageioModelConfigTestKwargs(TypedDict, total=False):
-    relative_tolerance: RelativeTolerance
-
-
 class ReproducibilityTolerance(Node, extra="allow"):
     """Describes what small numerical differences -- if any -- may be tolerated
     in the generated output when executing in different environments.
@@ -2367,7 +2362,7 @@ class ReproducibilityTolerance(Node, extra="allow"):
     """Limits the weights formats these details apply to."""
 
 
-class BioimageioModelConfig(Node, extra="allow"):
+class BioimageioConfig(Node, extra="allow"):
     reproducibility_tolerance: Sequence[ReproducibilityTolerance] = ()
     """Tolerances to allow when reproducing the model's test outputs
     from the model's test inputs.
@@ -2376,7 +2371,7 @@ class BioimageioModelConfig(Node, extra="allow"):
 
 
 class Config(Node, extra="allow"):
-    bioimageio: BioimageioModelConfig = Field(default_factory=BioimageioModelConfig)
+    bioimageio: BioimageioConfig = Field(default_factory=BioimageioConfig)
 
 
 class ModelDescr(GenericModelDescrBase):

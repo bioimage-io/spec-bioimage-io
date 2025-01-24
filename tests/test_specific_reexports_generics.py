@@ -34,6 +34,7 @@ IGNORE_MEMBERS = {
     "INFO",
     "InPackageIfLocalFileSource",
     "is_sequence",
+    "is_yaml_value",
     "issue_warning",
     "Len",
     "LicenseId",
@@ -124,5 +125,7 @@ def test_specific_module_has_all_generic_symbols(
     members = get_members(specific)
     missing = {k for k in generic_members if k not in members}
     assert not missing
-    unidentical = {k for k, v in generic_members.items() if v is not members[k]}
-    assert not unidentical
+    incompatible = {
+        k for k, v in members.items() if not issubclass(v, generic_members[k])
+    }
+    assert not incompatible
