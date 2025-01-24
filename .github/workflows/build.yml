@@ -54,7 +54,7 @@ jobs:
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
           RUN_EXPENSIVE_TESTS: ${{ matrix.run-expensive-tests && 'true' || 'false' }}
-      - run: pytest --append scripts  # also test docstrings in scripts for dev-version
+      - run: pytest --cov-append scripts  # also test docstrings in scripts for dev-version
         if: ${{matrix.is-dev-version}}
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
