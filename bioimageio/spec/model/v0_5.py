@@ -2418,7 +2418,7 @@ class ModelDescr(GenericModelDescrBase):
         doc_path = download(value).path
         doc_content = doc_path.read_text(encoding="utf-8")
         assert isinstance(doc_content, str)
-        if not re.match("#.*[vV]alidation", doc_content):
+        if not re.search("#.*[vV]alidation", doc_content):
             issue_warning(
                 "No '# Validation' (sub)section found in {value}.",
                 value=value,
