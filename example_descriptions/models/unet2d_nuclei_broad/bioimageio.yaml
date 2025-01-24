@@ -1,5 +1,5 @@
 type: model
-format_version: 0.5.3
+format_version: 0.5.4
 
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
@@ -98,10 +98,6 @@ outputs:
       - id: ensure_dtype
         kwargs:
           dtype: float32
-    reproducibility:
-      relative_tolerance: 1.0e-5
-      absolute_tolerance: 0.0
-      mismatched_elements_per_million: 0
 
 weights:
   pytorch_state_dict:
@@ -133,3 +129,10 @@ weights:
 
 training_data:
   id: ilastik/covid_if_training_data/1 # note: not the real training data
+
+config:
+  bioimageio:
+    reproducibility_tolerance:
+      relative_tolerance: 1.0e-5
+      absolute_tolerance: 0.0
+      mismatched_elements_per_million: 0

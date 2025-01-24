@@ -79,7 +79,7 @@ class DatasetDescr(GenericDescrBase):
                     cite=[
                         {"text": c.text, "doi": c.doi, "url": c.url} for c in old.cite
                     ],  # pyright: ignore[reportArgumentType]
-                    config=old.config,
+                    config=old.config,  # pyright: ignore[reportArgumentType]
                     covers=old.covers,
                     description=old.description,
                     documentation=cast(DocumentationSource, old.documentation),
