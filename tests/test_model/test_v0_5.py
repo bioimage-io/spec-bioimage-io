@@ -569,7 +569,9 @@ def test_validate_parameterized_size(model: ModelDescr):
 
 
 def test_absolute_tolerance(model_data: Dict[str, Any]):
-    model_data["outputs"][0]["reproducibility"]["absolute_tolerance"] = 100000
+    model_data["config"]["bioimageio"]["reproducibility_tolerance"] = [
+        {"absolute_tolerance": 100000}
+    ]
     with ValidationContext(perform_io_checks=False):
         model_descr = ModelDescr.model_validate(model_data)
 
