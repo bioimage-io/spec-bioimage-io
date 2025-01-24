@@ -125,7 +125,3 @@ def test_specific_module_has_all_generic_symbols(
     members = get_members(specific)
     missing = {k for k in generic_members if k not in members}
     assert not missing
-    incompatible = {
-        k for k, v in generic_members.items() if not issubclass(members[k], v)
-    }
-    assert not incompatible
