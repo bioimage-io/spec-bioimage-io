@@ -14,6 +14,8 @@ This changelog includes implementation details and my reference the [changes to 
 
 - [model format 0.5.4](#model-054)
 - update conda environments (remove `cpuonly` from pytorch envs)
+- bugfix: Fix wrong warning by matching a '# Validation' section within the
+    documentation (not only at the start).
 
 #### bioimageio.spec 0.5.3.6
 
@@ -265,7 +267,7 @@ If the changes also apply to `type` model, the coresponding model format version
 #### model 0.5.4
 
 - Non-breaking changes
-  - added optional `outputs[i].reproducibility` to store relative and absolute tolerances as well as a tolerance for mismatched elements.
+  - validate `config.bioimageio.reproducibility_tolerance` to store relative and absolute tolerances as well as a tolerance for mismatched elements.
 
 #### generic 0.3.1 and model 0.5.3
 

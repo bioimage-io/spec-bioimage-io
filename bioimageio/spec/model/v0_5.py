@@ -27,6 +27,7 @@ from typing import (
     Set,
     Tuple,
     Type,
+    TypedDict,
     TypeVar,
     Union,
     cast,
@@ -1830,29 +1831,6 @@ class _InputTensorConv(
 _input_tensor_conv = _InputTensorConv(_InputTensorDescr_v0_4, InputTensorDescr)
 
 
-class Reproducibility(Node):
-    """Describes what small numerical differences -- if any -- may be tolerated
-    in the generated output when executing in different environments.
-
-    A tensor element *output* is considered mismatched to the **test_tensor** if
-    abs(*output* - **test_tensor**) > **absolute_tolerance** + **relative_tolerance** * abs(**test_tensor**).
-    (Internally we call [numpy.testing.assert_allclose](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html).)
-
-    Motivation:
-        For testing we can request the respective deep learning frameworks to be as
-        reproducible as possible by setting seeds and chosing deterministic algorithms,
-        but differences in operating systems, available hardware and installed drivers
-        may still lead to numerical differences.
-    """
-
-    relative_tolerance: RelativeTolerance = 1e-4
-    """Maximum relative tolerance of reproduced test tensor."""
-    absolute_tolerance: AbsoluteTolerance = 0
-    """Maximum absolute tolerance of reproduced test tensor."""
-    mismatched_elements_per_million: MismatchedElementsPerMillion = 0
-    """Maximum number of mismatched elements/pixels per million to tolerate."""
-
-
 class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     id: TensorId = TensorId("output")
     """Output tensor id.
@@ -1864,11 +1842,6 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     note: `postprocessing` always ends with an 'ensure_dtype' operation.
           If not given this is added to cast to this tensor's `data.type`.
     """
-
-    reproducibility: Reproducibility = Field(default_factory=Reproducibility)
-    """Options to tolerate small numerical differences in the output
-    generated from inputs.**test_tensor** compared to (outputs.)**test_tensor**."""
-    # TODO: check pdoc reference to **inputs.test_tensor**
 
     @model_validator(mode="after")
     def _validate_postprocessing_kwargs(self) -> Self:
@@ -2025,21 +1998,6 @@ def validate_tensors(
                     )
             else:
                 assert_never(a.size)
-
-        if (
-            isinstance(descr, OutputTensorDescr)
-            and descr.reproducibility.absolute_tolerance
-            and (
-                descr.reproducibility.absolute_tolerance
-                > (max_test_value := array.max()) * 0.01
-            )
-            and tensor_origin == "test_tensor"
-        ):
-            raise ValueError(
-                f"{e_msg(descr)}.reproducibility.absolute_tolerance="
-                + f"{descr.reproducibility.absolute_tolerance} > 0.01*{max_test_value}"
-                + " (1% of the maximum value of the test tensor)"
-            )
 
 
 class EnvironmentFileDescr(FileDescr):
@@ -2374,6 +2332,53 @@ class _TensorSizes(NamedTuple):
     outputs: Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]
 
 
+class BioimageioModelConfigTestKwargs(TypedDict, total=False):
+    relative_tolerance: RelativeTolerance
+
+
+class ReproducibilityTolerance(Node, extra="allow"):
+    """Describes what small numerical differences -- if any -- may be tolerated
+    in the generated output when executing in different environments.
+
+    A tensor element *output* is considered mismatched to the **test_tensor** if
+    abs(*output* - **test_tensor**) > **absolute_tolerance** + **relative_tolerance** * abs(**test_tensor**).
+    (Internally we call [numpy.testing.assert_allclose](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html).)
+
+    Motivation:
+        For testing we can request the respective deep learning frameworks to be as
+        reproducible as possible by setting seeds and chosing deterministic algorithms,
+        but differences in operating systems, available hardware and installed drivers
+        may still lead to numerical differences.
+    """
+
+    relative_tolerance: RelativeTolerance = 1e-4
+    """Maximum relative tolerance of reproduced test tensor."""
+
+    absolute_tolerance: AbsoluteTolerance = 0
+    """Maximum absolute tolerance of reproduced test tensor."""
+
+    mismatched_elements_per_million: MismatchedElementsPerMillion = 0
+    """Maximum number of mismatched elements/pixels per million to tolerate."""
+
+    output_ids: Sequence[TensorId] = ()
+    """Limits the output tensor IDs these reproducibility details apply to."""
+
+    weights_formats: Sequence[WeightsFormat] = ()
+    """Limits the weights formats these details apply to."""
+
+
+class BioimageioModelConfig(Node, extra="allow"):
+    reproducibility_tolerance: Sequence[ReproducibilityTolerance] = ()
+    """Tolerances to allow when reproducing the model's test outputs
+    from the model's test inputs.
+    Only the first entry matching tensor id and weights format is considered.
+    """
+
+
+class Config(Node, extra="allow"):
+    bioimageio: BioimageioModelConfig = Field(default_factory=BioimageioModelConfig)
+
+
 class ModelDescr(GenericModelDescrBase):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
@@ -2554,6 +2559,7 @@ class ModelDescr(GenericModelDescrBase):
             for descr, array in zip(chain(self.inputs, self.outputs), test_arrays)
         }
         validate_tensors(tensors, tensor_origin="test_tensor")
+
         return self
 
     @model_validator(mode="after")
@@ -2723,6 +2729,8 @@ class ModelDescr(GenericModelDescrBase):
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
+
+    config: Config = Field(default_factory=Config)
 
     @model_validator(mode="after")
     def _add_default_cover(self) -> Self:
@@ -3042,7 +3050,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             cite=[
                 {"text": c.text, "doi": c.doi, "url": c.url} for c in src.cite
             ],  # pyright: ignore[reportArgumentType]
-            config=src.config,
+            config=src.config,  # pyright: ignore[reportArgumentType]
             covers=src.covers,
             description=src.description,
             documentation=src.documentation,
