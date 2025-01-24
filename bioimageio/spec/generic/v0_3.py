@@ -216,7 +216,7 @@ class BioimageioConfig(Node, extra="allow"):
     """bioimage.io internal metadata."""
 
 
-class Config(Node):
+class Config(Node, extra="allow"):
     """A place to store additional metadata (often tool specific).
 
     Such additional metadata is typically set programmatically by the respective tool
