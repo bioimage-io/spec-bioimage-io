@@ -2550,15 +2550,44 @@ class ModelDescr(GenericModelDescrBase):
         if not validation_context_var.get().perform_io_checks:
             return self
 
-        test_arrays = [
-            load_array(descr.test_tensor.download().path)
-            for descr in chain(self.inputs, self.outputs)
+        test_output_arrays = [
+            load_array(descr.test_tensor.download().path) for descr in self.outputs
         ]
+        test_input_arrays = [
+            load_array(descr.test_tensor.download().path) for descr in self.inputs
+        ]
+
         tensors = {
             descr.id: (descr, array)
-            for descr, array in zip(chain(self.inputs, self.outputs), test_arrays)
+            for descr, array in zip(
+                chain(self.inputs, self.outputs), test_input_arrays + test_output_arrays
+            )
         }
         validate_tensors(tensors, tensor_origin="test_tensor")
+
+        output_arrays = {
+            descr.id: array for descr, array in zip(self.outputs, test_output_arrays)
+        }
+        for rep_tol in self.config.bioimageio.reproducibility_tolerance:
+            if not rep_tol.absolute_tolerance:
+                continue
+
+            if rep_tol.output_ids:
+                out_arrays = {
+                    oid: a
+                    for oid, a in output_arrays.items()
+                    if oid in rep_tol.output_ids
+                }
+            else:
+                out_arrays = output_arrays
+
+            for out_id, array in out_arrays.items():
+                if rep_tol.absolute_tolerance > (max_test_value := array.max()) * 0.01:
+                    raise ValueError(
+                        "config.bioimageio.reproducibility_tolerance.absolute_tolerance="
+                        + f"{rep_tol.absolute_tolerance} > 0.01*{max_test_value}"
+                        + f" (1% of the maximum value of the test tensor '{out_id}')"
+                    )
 
         return self
 
