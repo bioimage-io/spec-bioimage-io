@@ -266,6 +266,8 @@ If the changes also apply to `type` model, the coresponding model format version
 
 #### model 0.5.4
 
+- Breaking changes (that shouldn't affect any released models though)
+  - Do not allow a model to reference itself in the `parent` field
 - Non-breaking changes
   - validate `config.bioimageio.reproducibility_tolerance` to store relative and absolute tolerances as well as a tolerance for mismatched elements.
 

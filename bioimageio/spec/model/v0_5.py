@@ -2727,13 +2727,12 @@ class ModelDescr(GenericModelDescrBase):
     parent: Optional[LinkedModel] = None
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
 
-    # todo: add parent self check once we have `id`
-    # @model_validator(mode="after")
-    # def validate_parent_is_not_self(self) -> Self:
-    #     if self.parent is not None and self.parent == self.id:
-    #         raise ValueError("The model may not reference itself as parent model")
+    @model_validator(mode="after")
+    def _validate_parent_is_not_self(self) -> Self:
+        if self.parent is not None and self.parent.id == self.id:
+            raise ValueError("A model description may not reference itself as parent.")
 
-    #     return self
+        return self
 
     run_mode: Annotated[
         Optional[RunMode],
