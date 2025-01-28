@@ -493,7 +493,7 @@ else:
         Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]],
     )
 BioimageioYamlContent = Dict[str, YamlValue]
-BioimageioYamlSource = Union[PermissiveFileSource, BioimageioYamlContent]
+BioimageioYamlSource = Union[PermissiveFileSource, ZipFile, BioimageioYamlContent]
 
 
 def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:

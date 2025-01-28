@@ -22,14 +22,13 @@ from typing import (
 
 import rich.console
 import rich.markdown
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import TypedDict, assert_never
 
 from ._internal.constants import VERSION
 from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml
-from ._internal.type_guards import is_mapping
 from ._internal.warning_levels import (
     ALERT,
     ALERT_NAME,
@@ -79,30 +78,10 @@ class WarningEntry(ValidationEntry):
     """A warning in a `ValidationDetail`"""
 
     severity: WarningSeverity = WARNING
-    severity_name: WarningSeverityName = WARNING_NAME
 
-    @model_validator(mode="before")
-    @classmethod
-    def sync_severity_with_severity_name(
-        cls, data: Union[Mapping[Any, Any], Any]
-    ) -> Any:
-        if is_mapping(data):
-            data = dict(data)
-            if (
-                "severity" in data
-                and "severity_name" not in data
-                and data["severity"] in WARNING_SEVERITY_TO_NAME
-            ):
-                data["severity_name"] = WARNING_SEVERITY_TO_NAME[data["severity"]]
-
-            if (
-                "severity" in data
-                and "severity_name" not in data
-                and data["severity"] in WARNING_SEVERITY_TO_NAME
-            ):
-                data["severity"] = WARNING_NAME_TO_LEVEL[data["severity_name"]]
-
-        return data
+    @property
+    def severity_name(self) -> WarningSeverityName:
+        return WARNING_SEVERITY_TO_NAME[self.severity]
 
 
 def format_loc(loc: Loc, enclose_in: str = "`") -> str:

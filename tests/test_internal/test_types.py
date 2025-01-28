@@ -33,6 +33,9 @@ TYPE_ARGS = {
     types.Version: "1.0",
     types.HttpUrl: "http://example.com",
     bioimageio.spec._internal.io_basics.Sha256: "0" * 64,
+    types.AbsoluteTolerance: 3,
+    types.RelativeTolerance: 1.0e-6,
+    types.MismatchedElementsPerMillion: 99,
 }
 
 IGNORE_TYPES_MEMBERS = {

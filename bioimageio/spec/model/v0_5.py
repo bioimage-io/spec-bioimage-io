@@ -63,14 +63,17 @@ from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_utils import load_array
 from .._internal.node_converter import Converter
-from .._internal.types import Datetime as Datetime
-from .._internal.types import Identifier as Identifier
 from .._internal.types import (
+    AbsoluteTolerance,
     ImportantFileSource,
     LowerCaseIdentifier,
     LowerCaseIdentifierAnno,
+    MismatchedElementsPerMillion,
+    RelativeTolerance,
     SiUnit,
 )
+from .._internal.types import Datetime as Datetime
+from .._internal.types import Identifier as Identifier
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validation_context import validation_context_var
@@ -1919,7 +1922,9 @@ TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
 
 def validate_tensors(
     tensors: Mapping[TensorId, Tuple[TensorDescr, NDArray[Any]]],
-    tensor_origin: str,  # for more precise error messages, e.g. 'test_tensor'
+    tensor_origin: Literal[
+        "test_tensor"
+    ],  # for more precise error messages, e.g. 'test_tensor'
 ):
     all_tensor_axes: Dict[TensorId, Dict[AxisId, Tuple[AnyAxis, int]]] = {}
 
@@ -2326,12 +2331,55 @@ class _TensorSizes(NamedTuple):
     outputs: Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]
 
 
+class ReproducibilityTolerance(Node, extra="allow"):
+    """Describes what small numerical differences -- if any -- may be tolerated
+    in the generated output when executing in different environments.
+
+    A tensor element *output* is considered mismatched to the **test_tensor** if
+    abs(*output* - **test_tensor**) > **absolute_tolerance** + **relative_tolerance** * abs(**test_tensor**).
+    (Internally we call [numpy.testing.assert_allclose](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html).)
+
+    Motivation:
+        For testing we can request the respective deep learning frameworks to be as
+        reproducible as possible by setting seeds and chosing deterministic algorithms,
+        but differences in operating systems, available hardware and installed drivers
+        may still lead to numerical differences.
+    """
+
+    relative_tolerance: RelativeTolerance = 1e-4
+    """Maximum relative tolerance of reproduced test tensor."""
+
+    absolute_tolerance: AbsoluteTolerance = 0
+    """Maximum absolute tolerance of reproduced test tensor."""
+
+    mismatched_elements_per_million: MismatchedElementsPerMillion = 0
+    """Maximum number of mismatched elements/pixels per million to tolerate."""
+
+    output_ids: Sequence[TensorId] = ()
+    """Limits the output tensor IDs these reproducibility details apply to."""
+
+    weights_formats: Sequence[WeightsFormat] = ()
+    """Limits the weights formats these details apply to."""
+
+
+class BioimageioConfig(Node, extra="allow"):
+    reproducibility_tolerance: Sequence[ReproducibilityTolerance] = ()
+    """Tolerances to allow when reproducing the model's test outputs
+    from the model's test inputs.
+    Only the first entry matching tensor id and weights format is considered.
+    """
+
+
+class Config(Node, extra="allow"):
+    bioimageio: BioimageioConfig = Field(default_factory=BioimageioConfig)
+
+
 class ModelDescr(GenericModelDescrBase):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    format_version: Literal["0.5.3"] = "0.5.3"
+    format_version: Literal["0.5.4"] = "0.5.4"
     """Version of the bioimage.io model description specification used.
     When creating a new model always use the latest micro/patch version described here.
     The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -2370,7 +2418,7 @@ class ModelDescr(GenericModelDescrBase):
         doc_path = download(value).path
         doc_content = doc_path.read_text(encoding="utf-8")
         assert isinstance(doc_content, str)
-        if not re.match("#.*[vV]alidation", doc_content):
+        if not re.search("#.*[vV]alidation", doc_content):
             issue_warning(
                 "No '# Validation' (sub)section found in {value}.",
                 value=value,
@@ -2497,15 +2545,45 @@ class ModelDescr(GenericModelDescrBase):
         if not validation_context_var.get().perform_io_checks:
             return self
 
-        test_arrays = [
-            load_array(descr.test_tensor.download().path)
-            for descr in chain(self.inputs, self.outputs)
+        test_output_arrays = [
+            load_array(descr.test_tensor.download().path) for descr in self.outputs
         ]
+        test_input_arrays = [
+            load_array(descr.test_tensor.download().path) for descr in self.inputs
+        ]
+
         tensors = {
             descr.id: (descr, array)
-            for descr, array in zip(chain(self.inputs, self.outputs), test_arrays)
+            for descr, array in zip(
+                chain(self.inputs, self.outputs), test_input_arrays + test_output_arrays
+            )
         }
         validate_tensors(tensors, tensor_origin="test_tensor")
+
+        output_arrays = {
+            descr.id: array for descr, array in zip(self.outputs, test_output_arrays)
+        }
+        for rep_tol in self.config.bioimageio.reproducibility_tolerance:
+            if not rep_tol.absolute_tolerance:
+                continue
+
+            if rep_tol.output_ids:
+                out_arrays = {
+                    oid: a
+                    for oid, a in output_arrays.items()
+                    if oid in rep_tol.output_ids
+                }
+            else:
+                out_arrays = output_arrays
+
+            for out_id, array in out_arrays.items():
+                if rep_tol.absolute_tolerance > (max_test_value := array.max()) * 0.01:
+                    raise ValueError(
+                        "config.bioimageio.reproducibility_tolerance.absolute_tolerance="
+                        + f"{rep_tol.absolute_tolerance} > 0.01*{max_test_value}"
+                        + f" (1% of the maximum value of the test tensor '{out_id}')"
+                    )
+
         return self
 
     @model_validator(mode="after")
@@ -2644,13 +2722,12 @@ class ModelDescr(GenericModelDescrBase):
     parent: Optional[LinkedModel] = None
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
 
-    # todo: add parent self check once we have `id`
-    # @model_validator(mode="after")
-    # def validate_parent_is_not_self(self) -> Self:
-    #     if self.parent is not None and self.parent == self.id:
-    #         raise ValueError("The model may not reference itself as parent model")
+    @model_validator(mode="after")
+    def _validate_parent_is_not_self(self) -> Self:
+        if self.parent is not None and self.parent.id == self.id:
+            raise ValueError("A model description may not reference itself as parent.")
 
-    #     return self
+        return self
 
     run_mode: Annotated[
         Optional[RunMode],
@@ -2675,6 +2752,8 @@ class ModelDescr(GenericModelDescrBase):
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
+
+    config: Config = Field(default_factory=Config)
 
     @model_validator(mode="after")
     def _add_default_cover(self) -> Self:
@@ -2913,6 +2992,14 @@ class ModelDescr(GenericModelDescrBase):
     @model_validator(mode="before")
     @classmethod
     def _convert(cls, data: Dict[str, Any]) -> Dict[str, Any]:
+        cls.convert_from_old_format_wo_validation(data)
+        return data
+
+    @classmethod
+    def convert_from_old_format_wo_validation(cls, data: Dict[str, Any]) -> None:
+        """Convert metadata following an older format version to this classes' format
+        without validating the result.
+        """
         if (
             data.get("type") == "model"
             and isinstance(fv := data.get("format_version"), str)
@@ -2932,8 +3019,6 @@ class ModelDescr(GenericModelDescrBase):
             elif fv_tuple[:2] == (0, 5):
                 # bump patch version
                 data["format_version"] = cls.implemented_format_version
-
-        return data
 
 
 class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
@@ -2994,11 +3079,11 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             cite=[
                 {"text": c.text, "doi": c.doi, "url": c.url} for c in src.cite
             ],  # pyright: ignore[reportArgumentType]
-            config=src.config,
+            config=src.config,  # pyright: ignore[reportArgumentType]
             covers=src.covers,
             description=src.description,
             documentation=src.documentation,
-            format_version="0.5.3",
+            format_version="0.5.4",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
             id=None if src.id is None else ModelId(src.id),

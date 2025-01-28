@@ -157,3 +157,8 @@ class SiUnit(ValidatedString):
             BeforeValidator(_normalize_multiplication),
         ]
     ]
+
+
+RelativeTolerance = Annotated[float, annotated_types.Interval(ge=0, le=1e-2)]
+AbsoluteTolerance = Annotated[float, annotated_types.Interval(ge=0)]
+MismatchedElementsPerMillion = Annotated[int, annotated_types.Interval(ge=0, le=100)]

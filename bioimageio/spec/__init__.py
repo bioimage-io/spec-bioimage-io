@@ -19,6 +19,7 @@ from ._description import (
     SpecificResourceDescr,
     build_description,
     dump_description,
+    update_format,
     validate_format,
 )
 from ._get_conda_env import BioimageioCondaEnv, get_conda_env
@@ -88,6 +89,7 @@ __all__ = [
     "settings",
     "SpecificResourceDescr",
     "summary",
+    "update_format",
     "utils",
     "validate_format",
     "ValidationContext",
