@@ -54,7 +54,7 @@ def read_yaml(file: Union[FilePath, ZipPath, IO[str], IO[bytes]]) -> YamlValue:
 
 
 def write_yaml(
-    content: YamlValue,
+    content: Union[YamlValue, BioimageioYamlContent],
     /,
     file: Union[NewPath, FilePath, IO[str], IO[bytes], ZipPath],
 ):
