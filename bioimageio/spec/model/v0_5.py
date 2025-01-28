@@ -2992,6 +2992,14 @@ class ModelDescr(GenericModelDescrBase):
     @model_validator(mode="before")
     @classmethod
     def _convert(cls, data: Dict[str, Any]) -> Dict[str, Any]:
+        cls.convert_from_old_format_wo_validation(data)
+        return data
+
+    @classmethod
+    def convert_from_old_format_wo_validation(cls, data: Dict[str, Any]) -> None:
+        """Convert metadata following an older format version to this classes' format
+        without validating the result.
+        """
         if (
             data.get("type") == "model"
             and isinstance(fv := data.get("format_version"), str)
@@ -3011,8 +3019,6 @@ class ModelDescr(GenericModelDescrBase):
             elif fv_tuple[:2] == (0, 5):
                 # bump patch version
                 data["format_version"] = cls.implemented_format_version
-
-        return data
 
 
 class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):

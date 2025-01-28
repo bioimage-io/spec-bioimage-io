@@ -410,8 +410,15 @@ class GenericDescrBase(GenericModelDescrBase):
     def _convert_from_older_format(
         cls, data: BioimageioYamlContent, /
     ) -> BioimageioYamlContent:
-        convert_from_older_format(data)
+        cls.convert_from_old_format_wo_validation(data)
         return data
+
+    @classmethod
+    def convert_from_old_format_wo_validation(cls, data: BioimageioYamlContent) -> None:
+        """Convert metadata following an older format version to this classes' format
+        without validating the result.
+        """
+        convert_from_older_format(data)
 
     documentation: Annotated[
         Optional[DocumentationSource],
