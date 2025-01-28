@@ -14,6 +14,7 @@ This changelog includes implementation details and my reference the [changes to 
 
 - [model format 0.5.4](#model-054)
 - new utlity function `update_format`
+- environment for tensorflow 1 is now using tf 2.17 (to support py >=3.8)
 - update conda environments (remove `cpuonly` from pytorch envs)
 - bugfix: Fix wrong warning by matching a '# Validation' section within the
     documentation (not only at the start).
