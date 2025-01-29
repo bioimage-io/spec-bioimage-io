@@ -210,8 +210,8 @@ def update_format(
 ) -> BioimageioYamlContent:
     """Update of an rdf.yaml (or bioimageio.yaml) file without validating it.
 
-    Note: This function does not update patch version related changes.
-        Use `load_description` to update the patch version.
+    Note: This function does not update all patch version related changes.
+        Use `load_description` to update to the latest patch version.
     """
 
     if isinstance(source, dict):
