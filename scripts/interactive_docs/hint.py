@@ -140,6 +140,7 @@ def field_has_default_value(info: FieldInfo) -> bool:
         return True
     return False
 
+
 class Hint(ABC):
     @staticmethod
     def get_subclasses() -> Sequence[Type["Hint"]]:
