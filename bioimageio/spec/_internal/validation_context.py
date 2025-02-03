@@ -22,25 +22,33 @@ class ValidationContext:
     )
 
     root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path()
-    """url/directory serving as base to resolve any relative file paths"""
+    """Url/directory/archive serving as base to resolve any relative file paths."""
 
     warning_level: WarningLevel = 50
-    """raise warnings of severity `s` as validation errors if `s >= warning_level`"""
+    """Treat warnings of severity `s` as validation errors if `s >= warning_level`."""
 
     log_warnings: bool = settings.log_warnings
-    """if `True` log warnings that are not raised to the console"""
+    """If `True` warnings are logged to the terminal
+
+    Note: This setting does not affect warning entries
+        of a generated `bioimageio.spec.ValidationSummary`.
+    """
 
     file_name: Optional[FileName] = None
-    """file name of the bioimageio Yaml file"""
+    """File name of the bioimageio Yaml file."""
 
     perform_io_checks: bool = settings.perform_io_checks
-    """wether or not to perform validation that requires file io,
+    """Wether or not to perform validation that requires file io,
     e.g. downloading a remote files.
 
     Existence of local absolute file paths is still being checked."""
 
     known_files: Dict[str, Sha256] = field(default_factory=dict)
-    """allows to bypass download and hashing of referenced files"""
+    """Allows to bypass download and hashing of referenced files."""
+
+    raise_errors: bool = False
+    """Directly raise any validation errors
+    instead of aggregating errors and returning a `bioimageio.spec.InvalidDescr`. (for debugging)"""
 
     def replace(
         self,
@@ -50,6 +58,7 @@ class ValidationContext:
         file_name: Optional[str] = None,
         perform_io_checks: Optional[bool] = None,
         known_files: Optional[Dict[str, Sha256]] = None,
+        raise_errors: Optional[bool] = None,
     ) -> "ValidationContext":
         if known_files is None and root is not None and self.root != root:
             # reset known files if root changes, but no new known_files are given
@@ -68,6 +77,7 @@ class ValidationContext:
                 else perform_io_checks
             ),
             known_files=self.known_files if known_files is None else known_files,
+            raise_errors=self.raise_errors if raise_errors is None else raise_errors,
         )
 
     def __enter__(self):

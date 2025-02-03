@@ -38,6 +38,7 @@ from imageio.v3 import imread, imwrite  # pyright: ignore[reportUnknownVariableT
 from loguru import logger
 from numpy.typing import NDArray
 from pydantic import (
+    AfterValidator,
     Discriminator,
     Field,
     RootModel,
@@ -199,9 +200,17 @@ class TensorId(LowerCaseIdentifier):
     ]
 
 
+def _normalize_channel_and_batch(a: str):
+    return {"c": "channel", "b": "batch"}.get(a, a)
+
+
 class AxisId(LowerCaseIdentifier):
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
-        Annotated[LowerCaseIdentifierAnno, MaxLen(16)]
+        Annotated[
+            LowerCaseIdentifierAnno,
+            MaxLen(16),
+            AfterValidator(_normalize_channel_and_batch),
+        ]
     ]
 
 
@@ -585,6 +594,15 @@ class SpaceInputAxis(SpaceAxisBase, _WithInputAxisSize):
     """
 
 
+INPUT_AXIS_TYPES = (
+    BatchAxis,
+    ChannelAxis,
+    IndexInputAxis,
+    TimeInputAxis,
+    SpaceInputAxis,
+)
+"""intended for isinstance comparisons in py<3.10"""
+
 _InputAxisUnion = Union[
     BatchAxis, ChannelAxis, IndexInputAxis, TimeInputAxis, SpaceInputAxis
 ]
@@ -655,7 +673,22 @@ _OutputAxisUnion = Union[
 ]
 OutputAxis = Annotated[_OutputAxisUnion, Discriminator("type")]
 
+OUTPUT_AXIS_TYPES = (
+    BatchAxis,
+    ChannelAxis,
+    IndexOutputAxis,
+    TimeOutputAxis,
+    TimeOutputAxisWithHalo,
+    SpaceOutputAxis,
+    SpaceOutputAxisWithHalo,
+)
+"""intended for isinstance comparisons in py<3.10"""
+
+
 AnyAxis = Union[InputAxis, OutputAxis]
+
+ANY_AXIS_TYPES = INPUT_AXIS_TYPES + OUTPUT_AXIS_TYPES
+"""intended for isinstance comparisons in py<3.10"""
 
 TVs = Union[
     NotEmpty[List[int]],
@@ -934,7 +967,7 @@ class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
     """Key word arguments for `ScaleLinearDescr`"""
 
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
-    """The axis of of gains/offsets values."""
+    """The axis of gain and offset values."""
 
     gain: Union[float, NotEmpty[List[float]]] = 1.0
     """multiplicative factor"""
