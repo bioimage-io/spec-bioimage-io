@@ -1764,10 +1764,8 @@ class FieldsWidget(Widget):
                     ])
                 ])
                 for field in fields
-                    ],
-                ),
-            ],
-        )
+            ]),
+        ])
         # fmt: on
 
         # fmt: off
