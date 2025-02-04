@@ -250,13 +250,22 @@ SAME_AS_TYPE = "<same as type>"
 
 
 ParameterizedSize_N = int
+"""
+Annotates an integer to calculate a concrete axis size from a `ParameterizedSize`.
+"""
 
 
 class ParameterizedSize(Node):
-    """Describes a range of valid tensor axis sizes as `size = min + n*step`."""
+    """Describes a range of valid tensor axis sizes as `size = min + n*step`.
+
+    - **min** and **step** are given by the model description.
+    - All blocksize paramters n = 0,1,2,... yield a valid `size`.
+    - A greater blocksize paramter n = 0,1,2,... results in a greater **size**.
+      This allows to adjust the axis size more generically.
+    """
 
     N: ClassVar[Type[int]] = ParameterizedSize_N
-    """integer to parameterize this axis"""
+    """Positive integer to parameterize this axis"""
 
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
