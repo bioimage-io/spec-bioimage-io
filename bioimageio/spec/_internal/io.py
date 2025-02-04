@@ -442,8 +442,10 @@ def identify_bioimageio_yaml_file_name(file_names: Iterable[FileName]) -> FileNa
     )
 
 
-def find_bioimageio_yaml_file_name(path: Path) -> FileName:
-    if path.is_file():
+def find_bioimageio_yaml_file_name(path: Union[Path, ZipFile]) -> FileName:
+    if isinstance(path, ZipFile):
+        file_names = identify_bioimageio_yaml_file_name(path.namelist())
+    elif path.is_file():
         if not is_zipfile(path):
             return path.name
 
@@ -545,7 +547,14 @@ _file_source_adapter: TypeAdapter[Union[HttpUrl, RelativeFilePath, FilePath]] = 
 
 
 def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
-    if isinstance(file_source, (HttpUrl, Path)):
+    if isinstance(file_source, Path):
+        if file_source.is_dir():
+            raise FileNotFoundError(
+                f"{file_source} is a directory, but expected a file."
+            )
+        return file_source
+
+    if isinstance(file_source, HttpUrl):
         return file_source
 
     if isinstance(file_source, pydantic.AnyUrl):
@@ -553,6 +562,8 @@ def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
 
     with validation_context_var.get().replace(perform_io_checks=False):
         strict = _file_source_adapter.validate_python(file_source)
+        if isinstance(strict, Path) and strict.is_dir():
+            raise FileNotFoundError(f"{strict} is a directory, but expected a file.")
 
     return strict
 
@@ -681,6 +692,9 @@ def resolve(
             )
 
     if isinstance(strict_source, PurePath):
+        if strict_source.is_dir():
+            raise FileNotFoundError(f"{strict_source} is a directory, not a file")
+
         if not strict_source.exists():
             raise FileNotFoundError(strict_source)
         local_source = strict_source
