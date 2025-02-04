@@ -738,7 +738,7 @@ def resolve_and_extract(
 
     note: If source points to a zip file it is not extracted
     """
-    local = resolve(source, progressbar=progressbar)
+    local = resolve(source, progressbar=progressbar, **kwargs)
     if isinstance(local, LocalFile):
         return local
 
