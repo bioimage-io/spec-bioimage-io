@@ -32,9 +32,9 @@ from .io import (
     LightHttpFileDescr,
     OpenedBioimageioYaml,
     YamlValue,
-    download,
     find_bioimageio_yaml_file_name,
     identify_bioimageio_yaml_file_name,
+    resolve,
 )
 from .io_basics import FileName, ZipPath
 from .types import FileSource, PermissiveFileSource
@@ -104,7 +104,14 @@ def open_bioimageio_yaml(
         return _open_bioimageio_zip(source)
 
     try:
-        downloaded = download(source, **kwargs)
+        if isinstance(source, (Path, str)) and (source_dir := Path(source)).is_dir():
+            # open bioimageio yaml from a folder
+            src = source_dir / find_bioimageio_yaml_file_name(source_dir)
+        else:
+            src = source
+
+        downloaded = resolve(src, **kwargs)
+
     except Exception:
         # check if `source` is a collection id
         if (
@@ -232,7 +239,7 @@ def write_zip(
 
 
 def load_array(source: Union[FileSource, FileDescr, ZipPath]) -> NDArray[Any]:
-    path = download(source).path
+    path = resolve(source).path
     with path.open(mode="rb") as f:
         assert not isinstance(f, io.TextIOWrapper)
         return numpy.load(f, allow_pickle=False)
