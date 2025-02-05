@@ -1406,7 +1406,6 @@ class Widget:
             {subclasses_css}
 
             table{{
-                border: {theme_border};
                 border-collapse: collapse;
             }}
             th{{
@@ -1422,7 +1421,7 @@ class Widget:
 
             /*border*/
             td, th{{
-                border: {theme_border};
+                border-bottom: {theme_border};
                 border-collapse: collapse;
             }}
 
@@ -1663,7 +1662,7 @@ class ColumnControls(Widget):
         """
 
     def __init__(
-        self, root_element_id: str, style: str = "float: right; margin-left: 4em;"
+        self, root_element_id: str, style: str = "float: right; margin-left: 4em; margin-right: 1em;"
     ):
         # fmt: off
         super().__init__(
@@ -1732,6 +1731,7 @@ class FieldsWidget(Widget):
                 background-color: #84b4dd;
                 font-weight: bold;
                 padding: 0.3em;
+                padding-right: 0;
             }}
             .{cls.EXAMPLE_FIELD_CSS_CLASS}{{
                 background-color: #f6f5b2;
