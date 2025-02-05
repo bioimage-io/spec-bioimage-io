@@ -1421,8 +1421,13 @@ class Widget:
 
             /*border*/
             td, th{{
-                border-bottom: {theme_border};
                 border-collapse: collapse;
+            }}
+            tr{{
+                border-bottom: solid 1px black;
+            }}
+            tr:last-child{{
+                border-bottom: 0;
             }}
 
             th{{
@@ -1732,6 +1737,7 @@ class FieldsWidget(Widget):
                 font-weight: bold;
                 padding: 0.3em;
                 padding-right: 0;
+                padding-bottom: 0;
             }}
             .{cls.EXAMPLE_FIELD_CSS_CLASS}{{
                 background-color: #f6f5b2;
