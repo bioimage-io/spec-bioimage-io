@@ -134,7 +134,11 @@ def get_field_annotation(field_info: FieldInfo) -> Any:
 
 
 def field_has_default_value(info: FieldInfo) -> bool:
-    return not isinstance(info.default, PydanticUndefinedType)
+    if not isinstance(info.default, PydanticUndefinedType):
+        return True
+    if info.default_factory is not None:
+        return True
+    return False
 
 
 class Hint(ABC):
@@ -934,6 +938,8 @@ class ModelHint(Hint):
         for field_name, (hint, example) in self.fields.items():
             field_info = self.model.model_fields[field_name]
             field_default = field_info.default
+            if field_info.default_factory is not None:
+                field_default = field_info.default_factory()
             if not isinstance(field_default, PydanticUndefinedType):
                 field_default = Example.try_from_value(field_default)
                 assert not isinstance(field_default, Exception)
@@ -1764,10 +1770,8 @@ class FieldsWidget(Widget):
                     ])
                 ])
                 for field in fields
-                    ],
-                ),
-            ],
-        )
+            ]),
+        ])
         # fmt: on
 
         # fmt: off

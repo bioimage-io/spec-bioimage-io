@@ -72,7 +72,7 @@ _ = setup(
                 "pre-commit",
                 "pyright==1.1.393",
                 "ruff",
-            ],
+            ]
         ),
     },
     scripts=[],
