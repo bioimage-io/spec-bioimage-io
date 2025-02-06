@@ -2662,7 +2662,7 @@ class ModelDescr(GenericModelDescrBase):
 
     name: Annotated[
         Annotated[
-            str, RestrictCharacters(string.ascii_letters + string.digits + "_- ()")
+            str, RestrictCharacters(string.ascii_letters + string.digits + "_+- ()")
         ],
         MinLen(5),
         MaxLen(128),
@@ -3072,7 +3072,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
         self, src: _ModelDescr_v0_4, tgt: "type[ModelDescr] | type[dict[str, Any]]"
     ) -> "ModelDescr | dict[str, Any]":
         name = "".join(
-            c if c in string.ascii_letters + string.digits + "_- ()" else " "
+            c if c in string.ascii_letters + string.digits + "_+- ()" else " "
             for c in src.name
         )
 

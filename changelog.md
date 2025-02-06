@@ -273,6 +273,7 @@ If the changes also apply to `type` model, the coresponding model format version
   - Do not allow a model to reference itself in the `parent` field
 - Non-breaking changes
   - validate `config.bioimageio.reproducibility_tolerance` to store relative and absolute tolerances as well as a tolerance for mismatched elements.
+  - allow `+` in name
 
 #### generic 0.3.1 and model 0.5.3
 

@@ -250,7 +250,7 @@ class GenericModelDescrBase(ResourceDescrBase):
 
     name: Annotated[
         Annotated[
-            str, RestrictCharacters(string.ascii_letters + string.digits + "_- ()")
+            str, RestrictCharacters(string.ascii_letters + string.digits + "_+- ()")
         ],
         MinLen(5),
         MaxLen(128),
