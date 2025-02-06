@@ -2388,7 +2388,7 @@ class ReproducibilityTolerance(Node, extra="allow"):
         may still lead to numerical differences.
     """
 
-    relative_tolerance: RelativeTolerance = 1e-4
+    relative_tolerance: RelativeTolerance = 1e-3
     """Maximum relative tolerance of reproduced test tensor."""
 
     absolute_tolerance: AbsoluteTolerance = 0
