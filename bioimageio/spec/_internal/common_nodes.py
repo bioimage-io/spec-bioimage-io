@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import collections.abc
 import traceback
 from abc import ABC
 from copy import deepcopy
@@ -17,24 +16,14 @@ from typing import (
     Optional,
     Protocol,
     Tuple,
-    Type,
     Union,
-    get_type_hints,
 )
 from zipfile import ZipFile
 
 import pydantic
-from pydantic import (
-    DirectoryPath,
-    Field,
-    GetCoreSchemaHandler,
-    PrivateAttr,
-    StringConstraints,
-    TypeAdapter,
-    model_validator,
-)
-from pydantic_core import PydanticUndefined, core_schema
-from typing_extensions import Annotated, LiteralString, Self
+from pydantic import DirectoryPath, PrivateAttr, model_validator
+from pydantic_core import PydanticUndefined
+from typing_extensions import LiteralString, Self
 
 from ..summary import (
     WARNING_LEVEL_TO_NAME,
@@ -60,87 +49,6 @@ from .validation_context import (
     validation_context_var,
 )
 from .warning_levels import ALERT, ERROR, INFO
-
-
-class StringNode(collections.UserString, ABC):
-    """deprecated! don't use for new spec fields!"""
-
-    _pattern: ClassVar[str]
-    _node_class: Type[Node]
-    _node: Optional[Node] = None
-
-    def __init__(self, seq: object) -> None:
-        super().__init__(seq)
-        type_hints = {
-            fn: t
-            for fn, t in get_type_hints(self.__class__).items()
-            if not fn.startswith("_")
-        }
-        defaults = {fn: getattr(self.__class__, fn, Field()) for fn in type_hints}
-        field_definitions: Dict[str, Any] = {
-            fn: (t, defaults[fn]) for fn, t in type_hints.items()
-        }
-        self._node_class = pydantic.create_model(
-            self.__class__.__name__,
-            __base__=Node,
-            __module__=self.__module__,
-            **field_definitions,
-        )
-
-        # freeze after initialization
-        def __setattr__(self: Self, __name: str, __value: Any):  # type: ignore
-            raise AttributeError(f"{self} is immutable.")
-
-        self.__setattr__ = __setattr__  # type: ignore
-
-    @property
-    def model_fields(self):
-        return self._node_class.model_fields
-
-    def __getattr__(self, name: str):
-        if name in self._node_class.model_fields:
-            if self._node is None:
-                raise AttributeError(f"{name} only available after validation")
-
-            return getattr(self._node, name)
-
-        raise AttributeError(name)
-
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source: Type[Any], handler: GetCoreSchemaHandler
-    ) -> core_schema.CoreSchema:
-        assert issubclass(source, StringNode), source
-        return core_schema.no_info_after_validator_function(
-            cls._validate,
-            core_schema.str_schema(pattern=cls._pattern),
-            serialization=core_schema.plain_serializer_function_ser_schema(
-                cls._serialize,
-                info_arg=False,
-                return_schema=core_schema.str_schema(),
-            ),
-        )
-
-    @classmethod
-    def _get_data(cls, valid_string_data: str) -> Dict[str, Any]:
-        raise NotImplementedError(f"{cls.__name__}._get_data()")
-
-    @classmethod
-    def _validate(cls, value: str) -> Self:
-        constrained_str_type = Annotated[str, StringConstraints(pattern=cls._pattern)]
-        constrained_str_adapter: TypeAdapter[str] = TypeAdapter(constrained_str_type)
-        valid_string_data = constrained_str_adapter.validate_python(value)
-        data = cls._get_data(valid_string_data)
-        self = cls(valid_string_data)
-        object.__setattr__(self, "_node", self._node_class.model_validate(data))
-        return self
-
-    def _serialize(self) -> str:
-        # serialize inner node to call _package when needed
-        if self._node is not None:
-            _ = self._node.model_dump(mode="json")
-
-        return self.data
 
 
 class NodeWithExplicitlySetFields(Node):

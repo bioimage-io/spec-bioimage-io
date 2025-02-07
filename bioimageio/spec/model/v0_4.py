@@ -11,6 +11,7 @@ from typing import (
     Optional,
     Sequence,
     Tuple,
+    Type,
     Union,
 )
 
@@ -21,8 +22,10 @@ from pydantic import (
     AllowInfNan,
     Discriminator,
     Field,
+    RootModel,
     SerializationInfo,
     SerializerFunctionWrapHandler,
+    StringConstraints,
     TypeAdapter,
     ValidationInfo,
     WrapSerializer,
@@ -35,7 +38,6 @@ from .._internal.common_nodes import (
     KwargsNode,
     Node,
     NodeWithExplicitlySetFields,
-    StringNode,
 )
 from .._internal.constants import SHA256_HINT
 from .._internal.field_validation import validate_unique_entries
@@ -57,6 +59,7 @@ from .._internal.types import ImportantFileSource, LowerCaseIdentifier
 from .._internal.types import LicenseId as LicenseId
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
+from .._internal.validated_string_with_inner_node import ValidatedStringWithInnerNode
 from .._internal.validator_annotations import AfterValidator, RestrictCharacters
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import ALERT, INFO
@@ -112,42 +115,82 @@ class TensorName(LowerCaseIdentifier):
     pass
 
 
-class CallableFromDepencency(StringNode):
-    _pattern = r"^.+\..+$"
+class CallableFromDepencencyNode(Node):
     _submodule_adapter = TypeAdapter(Identifier)
 
     module_name: str
+    """The Python module that implements **callable_name**."""
 
     @field_validator("module_name", mode="after")
-    def check_submodules(cls, module_name: str) -> str:
+    def _check_submodules(cls, module_name: str) -> str:
         for submod in module_name.split("."):
             _ = cls._submodule_adapter.validate_python(submod)
 
         return module_name
 
     callable_name: Identifier
+    """The callable Python identifier implemented in module **module_name**."""
+
+
+class CallableFromDepencency(ValidatedStringWithInnerNode[CallableFromDepencencyNode]):
+    _inner_node_class = CallableFromDepencencyNode
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[
+            str,
+            StringConstraints(strip_whitespace=True, pattern=r"^.+\..+$"),
+        ]
+    ]
 
     @classmethod
     def _get_data(cls, valid_string_data: str):
         *mods, callname = valid_string_data.split(".")
         return dict(module_name=".".join(mods), callable_name=callname)
 
+    @property
+    def module_name(self):
+        """The Python module that implements **callable_name**."""
+        return self._inner_node.module_name
 
-class CallableFromFile(StringNode):
-    _pattern = r"^.+:.+$"
+    @property
+    def callable_name(self):
+        """The callable Python identifier implemented in module **module_name**."""
+        return self._inner_node.callable_name
+
+
+class CallableFromFileNode(Node):
     source_file: Annotated[
         Union[RelativeFilePath, HttpUrl],
         Field(union_mode="left_to_right"),
         include_in_package_serializer,
     ]
-    """∈📦 Python module that implements `callable_name`"""
+    """The Python source file that implements **callable_name**."""
     callable_name: Identifier
-    """The Python identifier of  """
+    """The callable Python identifier implemented in **source_file**."""
+
+
+class CallableFromFile(ValidatedStringWithInnerNode[CallableFromFileNode]):
+    _inner_node_class = CallableFromFileNode
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[
+            str,
+            StringConstraints(strip_whitespace=True, pattern=r"^.+:.+$"),
+        ]
+    ]
 
     @classmethod
     def _get_data(cls, valid_string_data: str):
         *file_parts, callname = valid_string_data.split(":")
         return dict(source_file=":".join(file_parts), callable_name=callname)
+
+    @property
+    def source_file(self):
+        """The Python source file that implements **callable_name**."""
+        return self._inner_node.source_file
+
+    @property
+    def callable_name(self):
+        """The callable Python identifier implemented in **source_file**."""
+        return self._inner_node.callable_name
 
 
 CustomCallable = Annotated[
@@ -155,21 +198,37 @@ CustomCallable = Annotated[
 ]
 
 
-class Dependencies(StringNode):
-    _pattern = r"^.+:.+$"
+class DependenciesNode(Node):
     manager: Annotated[NotEmpty[str], Field(examples=["conda", "maven", "pip"])]
     """Dependency manager"""
 
-    file: Annotated[
-        ImportantFileSource,
-        Field(examples=["environment.yaml", "pom.xml", "requirements.txt"]),
+    file: ImportantFileSource
+    """Dependency file"""
+
+
+class Dependencies(ValidatedStringWithInnerNode[DependenciesNode]):
+    _inner_node_class = DependenciesNode
+    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        Annotated[
+            str,
+            StringConstraints(strip_whitespace=True, pattern=r"^.+:.+$"),
+        ]
     ]
-    """∈📦 Dependency file"""
 
     @classmethod
     def _get_data(cls, valid_string_data: str):
         manager, *file_parts = valid_string_data.split(":")
         return dict(manager=manager, file=":".join(file_parts))
+
+    @property
+    def manager(self):
+        """Dependency manager"""
+        return self._inner_node.manager
+
+    @property
+    def file(self):
+        """Dependency file"""
+        return self._inner_node.manager
 
 
 WeightsFormat = Literal[
@@ -270,7 +329,7 @@ class WeightsEntryDescrBase(FileDescr):
     weights_format_name: ClassVar[str]  # human readable
 
     source: ImportantFileSource
-    """∈📦 The weights file."""
+    """The weights file."""
 
     attachments: Annotated[
         Union[AttachmentsDescr, None],
@@ -462,7 +521,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
         return value
 
     source: ImportantFileSource
-    """∈📦 The multi-file weights.
+    """The multi-file weights.
     All required files/folders should be a zip archive."""
 
 
@@ -1012,7 +1071,7 @@ class ModelDescr(GenericModelDescrBase):
             ],
         ),
     ]
-    """∈📦 URL or relative path to a markdown file with additional documentation.
+    """URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
@@ -1198,17 +1257,17 @@ class ModelDescr(GenericModelDescrBase):
     No standard run modes are defined yet."""
 
     sample_inputs: List[ImportantFileSource] = Field(default_factory=list)
-    """∈📦 URLs/relative paths to sample inputs to illustrate possible inputs for the model,
+    """URLs/relative paths to sample inputs to illustrate possible inputs for the model,
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
     sample_outputs: List[ImportantFileSource] = Field(default_factory=list)
-    """∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
+    """URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
     test_inputs: NotEmpty[
         List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]
     ]
-    """∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
+    """Test input tensors compatible with the `inputs` description for a **single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
     Each test input should be a file with an ndarray in
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
@@ -1217,7 +1276,7 @@ class ModelDescr(GenericModelDescrBase):
     test_outputs: NotEmpty[
         List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]
     ]
-    """∈📦 Analog to `test_inputs`."""
+    """Analog to `test_inputs`."""
 
     timestamp: Datetime
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
