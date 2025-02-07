@@ -18,6 +18,7 @@ This changelog includes implementation details and my reference the [changes to 
 - update conda environments (remove `cpuonly` from pytorch envs)
 - bugfix: Fix wrong warning by matching a '# Validation' section within the
     documentation (not only at the start).
+- bugfix: Include dependency file when packaging 0.4 models.
 - experimental feature for debugging: raise validation errors with `ValidationContext.raise_errors=True`
 - remove deprecated `IN_PACKAGE_MESSAGE`
 
