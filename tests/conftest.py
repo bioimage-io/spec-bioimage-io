@@ -62,6 +62,11 @@ def unet2d_path() -> Path:
 
 
 @pytest.fixture(scope="session")
+def unet2d_path_old() -> Path:
+    return UNET2D_ROOT / "v0_4_9.bioimageio.yaml"
+
+
+@pytest.fixture(scope="session")
 def unet2d_data(unet2d_path: Path):
     with unet2d_path.open() as f:
         data = yaml.load(f)
