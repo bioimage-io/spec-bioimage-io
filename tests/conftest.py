@@ -5,7 +5,6 @@ from types import MappingProxyType
 from typing import Any, Dict, Union
 
 import pytest
-from filelock import FileLock
 from ruyaml import YAML
 
 from bioimageio.spec._internal.constants import (
@@ -15,6 +14,11 @@ from bioimageio.spec._internal.constants import (
     N_KNOWN_INVALID_GH_USERS,
 )
 from bioimageio.spec._internal.type_guards import is_dict, is_kwargs
+
+try:
+    from filelock import FileLock
+except ImportError:
+    FileLock = None
 
 yaml = YAML(typ="safe")
 
@@ -38,6 +42,7 @@ def bioimageio_json_schema(
         generate_json_schemas(root_tmp_dir, "generate")
         schema: Union[Any, Dict[Any, Any]] = json.loads(path.read_text())
     else:
+        assert FileLock is not None
         with FileLock(path.with_suffix(path.suffix + ".lock")):
             if not path.is_file():
                 generate_json_schemas(root_tmp_dir, "generate")

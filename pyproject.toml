@@ -43,7 +43,7 @@ typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
 
 [tool.pytest.ini_options]
-addopts = "--cov=bioimageio --cov-report=xml --cov-append -n auto --capture=no --failed-first --doctest-modules"
+addopts = "--cov=bioimageio --cov-report=xml --cov-append --capture=no --failed-first --doctest-modules"
 testpaths = ["bioimageio/spec", "tests"]
 
 [tool.ruff]

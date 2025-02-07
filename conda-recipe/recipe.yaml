@@ -40,11 +40,8 @@ tests:
       run:
         # {TEST_DEPENDENCIES}
         - deepdiff
-        - filelock
         - jsonschema
         - pytest
-        - pytest-xdist
-        - psutil
     files:
       source:
         - tests

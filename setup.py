@@ -51,11 +51,8 @@ _ = setup(
         "tests": (
             test_extras := [
                 "deepdiff",
-                "filelock",  # for session fixtures due to pytest-xdist
                 "lxml",
-                "psutil",  # parallel pytest with '-n auto'
                 "pytest-cov",
-                "pytest-xdist",  # parallel pytest
                 "pytest",
                 "requests-mock",
             ]
