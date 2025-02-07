@@ -116,7 +116,7 @@ class TensorName(LowerCaseIdentifier):
 
 
 class CallableFromDepencencyNode(Node):
-    _submodule_adapter = TypeAdapter(Identifier)
+    _submodule_adapter: ClassVar[TypeAdapter[Identifier]] = TypeAdapter(Identifier)
 
     module_name: str
     """The Python module that implements **callable_name**."""
