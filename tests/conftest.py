@@ -28,7 +28,7 @@ UNET2D_ROOT = EXAMPLE_DESCRIPTIONS / "models/unet2d_nuclei_broad"
 
 @pytest.fixture(scope="session")
 def bioimageio_json_schema(
-    tmp_path_factory: pytest.TempPathFactory, worker_id: str
+    tmp_path_factory: pytest.TempPathFactory, worker_id: str = "master"
 ) -> Dict[Any, Any]:
     """generates json schema (only run with one worker)
     see https://pytest-xdist.readthedocs.io/en/latest/how-to.html#making-session-scoped-fixtures-execute-only-once
