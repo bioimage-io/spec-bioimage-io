@@ -10,7 +10,7 @@ from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
 from bioimageio.spec._internal.validation_context import ValidationContext
 
 from ._description_impl import DISCOVER, build_description_impl, get_rd_class_impl
-from ._internal.common_nodes import InvalidDescr
+from ._internal.common_nodes import InvalidDescr, ResourceDescrBase
 from ._internal.io import BioimageioYamlContent, BioimageioYamlSource
 from ._internal.io_utils import write_yaml
 from ._internal.types import FormatVersionPlaceholder
@@ -202,7 +202,7 @@ def validate_format(
 
 
 def update_format(
-    source: BioimageioYamlSource,
+    source: Union[BioimageioYamlSource, ResourceDescr, InvalidDescr],
     *,
     output_path: Optional[Path] = None,
     # target_format_version: Union[Literal["latest"], str] = LATEST,
@@ -214,7 +214,9 @@ def update_format(
         Use `load_description` to update to the latest patch version.
     """
 
-    if isinstance(source, dict):
+    if isinstance(source, ResourceDescrBase):
+        content = dump_description(source)
+    elif isinstance(source, dict):
         content = deepcopy(source)
     else:
         opened = open_bioimageio_yaml(source)
@@ -222,8 +224,8 @@ def update_format(
 
     source_type = s if isinstance((s := content.get("type")), str) else "unknown"
     rd_class = LATEST_DESCRIPTIONS_MAP.get(source_type, GenericDescr)
-    converted_content = rd_class.convert_from_old_format_wo_validation(content)
-    descr = InvalidDescr.model_validate(converted_content)
+    rd_class.convert_from_old_format_wo_validation(content)
+    descr = InvalidDescr.model_validate(content)
 
     updated_content = dump_description(descr)
     if output_path is not None:
