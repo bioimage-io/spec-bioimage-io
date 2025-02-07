@@ -19,6 +19,7 @@ This changelog includes implementation details and my reference the [changes to 
 - bugfix: Fix wrong warning by matching a '# Validation' section within the
     documentation (not only at the start).
 - experimental feature for debugging: raise validation errors with `ValidationContext.raise_errors=True`
+- remove deprecated `IN_PACKAGE_MESSAGE`
 
 #### bioimageio.spec 0.5.3.6
 

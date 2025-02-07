@@ -22,7 +22,6 @@ from bioimageio.spec import (
     notebook,
 )
 from bioimageio.spec._internal.common_nodes import Node
-from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.utils import unindent
 
 Loc = Tuple[str, ...]
@@ -72,8 +71,6 @@ ADDITIONAL_DESCRIPTION_ANY_RESOURCE = (
     " specific class (here: [{class_name}]({rd_class_dev_doc_url})).|\n"
     "| `field` ≝ 🡇 | Default field value is not displayed in-line, but in the code"
     " block below. |\n"
-    f"| {IN_PACKAGE_MESSAGE} | Files referenced in fields which are marked with"
-    f" '{IN_PACKAGE_MESSAGE}' "
     "are included when packaging the resource to a .zip archive. "
     "The resource description YAML file (RDF) is always included as well as"
     " 'rdf.yaml'. |\n"
