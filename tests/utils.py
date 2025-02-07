@@ -177,7 +177,7 @@ def check_bioimageio_yaml(
         assert isinstance(rd, InvalidDescr)
         return
 
-    assert summary.status == "passed", summary.format()
+    assert summary.status == "passed", summary.display()
     assert rd is not None
 
     json_data = rd.model_dump(mode="json")

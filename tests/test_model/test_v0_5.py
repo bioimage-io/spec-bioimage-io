@@ -370,7 +370,7 @@ def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
         model_data, context=ValidationContext(perform_io_checks=False)
     )
     summary.display()
-    assert summary.status == "passed", summary.format()
+    assert summary.status == "passed", summary.display()
 
 
 def test_warn_long_name(model_data: Dict[str, Any]):
@@ -381,8 +381,8 @@ def test_warn_long_name(model_data: Dict[str, Any]):
         model_data, context=ValidationContext(perform_io_checks=False)
     )
 
-    assert summary.status == "passed", summary.format()
-    assert summary.details[1].warnings[0].loc == ("name",), summary.format()
+    assert summary.status == "passed", summary.display()
+    assert summary.details[1].warnings[0].loc == ("name",), summary.display()
     assert summary.details[1].warnings[0].msg == "Name longer than 64 characters."
 
 
@@ -391,7 +391,7 @@ def test_model_schema_raises_invalid_input_id(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "failed", summary.format()
+    assert summary.status == "failed", summary.display()
 
 
 def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
@@ -399,7 +399,7 @@ def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "failed", summary.format()
+    assert summary.status == "failed", summary.display()
 
 
 def test_get_axis_sizes_with_surplus_n(model: ModelDescr):
@@ -439,7 +439,7 @@ def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "passed", summary.format()
+    assert summary.status == "passed", summary.display()
     # input_1.x -> input_1.z
     model_data["outputs"][0]["axes"][2] = {
         "type": "space",
@@ -450,7 +450,7 @@ def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "failed", summary.format()
+    assert summary.status == "failed", summary.display()
 
 
 def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
@@ -463,13 +463,13 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "passed", summary.format()
+    assert summary.status == "passed", summary.display()
 
     model_data["outputs"][0]["axes"][2]["halo"] = 999
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "failed", summary.format()
+    assert summary.status == "failed", summary.display()
 
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):
@@ -477,7 +477,7 @@ def test_model_has_parent_with_id(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "passed", summary.format()
+    assert summary.status == "passed", summary.display()
 
 
 def test_model_with_expanded_output(model_data: Dict[str, Any]):
@@ -529,7 +529,7 @@ def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "passed", summary.format()
+    assert summary.status == "passed", summary.display()
 
 
 def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
@@ -537,7 +537,7 @@ def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "failed", summary.format()
+    assert summary.status == "failed", summary.display()
 
 
 def test_empty_axis_data():

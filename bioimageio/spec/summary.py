@@ -249,9 +249,6 @@ class ValidationSummary(BaseModel, extra="allow"):
     def warnings(self) -> List[WarningEntry]:
         return list(chain.from_iterable(d.warnings for d in self.details))
 
-    def __str__(self):
-        return f"{self.__class__.__name__}:\n" + self.format()
-
     @staticmethod
     def _format_md_table(rows: List[List[str]]) -> str:
         """format `rows` as markdown table"""
