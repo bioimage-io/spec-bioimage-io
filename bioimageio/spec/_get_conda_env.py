@@ -83,6 +83,10 @@ def _get_default_pytorch_env(
     if pytorch_version is None:
         pytorch_version = Version("1.10.1")
 
+    channels = ["conda-forge", "nodefaults"]
+    if pytorch_version < Version("2.5.2"):
+        channels.insert(0, "pytorch")
+
     # dependencies to install pytorch according to
     # https://pytorch.org/get-started/previous-versions/
     v = str(pytorch_version)
@@ -171,10 +175,7 @@ def _get_default_pytorch_env(
     else:
         deps.append("numpy >=2,<3")
 
-    return BioimageioCondaEnv(
-        channels=["pytorch", "conda-forge", "nodefaults"],
-        dependencies=deps,
-    )
+    return BioimageioCondaEnv(channels=channels, dependencies=deps)
 
 
 def _get_default_onnx_env(*, opset_version: Optional[int]) -> BioimageioCondaEnv:
