@@ -2160,6 +2160,9 @@ class WeightsEntryDescrBase(FileDescr):
     All weight entries except one (the initial set of weights resulting from training the model),
     need to have this field."""
 
+    comment: str = ""
+    """A comment about this weights entry, for example how these weights were created."""
+
     @model_validator(mode="after")
     def check_parent_is_not_self(self) -> Self:
         if self.type == self.parent:
