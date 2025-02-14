@@ -10,7 +10,6 @@ from typing_extensions import Annotated
 import bioimageio.spec._internal.io_basics
 from bioimageio.spec._internal import types
 from bioimageio.spec._internal.io import RelativeFilePath
-from bioimageio.spec._internal.types import Datetime, SiUnit
 from tests.utils import check_type
 
 TYPE_ARGS = {
@@ -109,14 +108,19 @@ def test_relative_path(path: Path):
         )
 
 
+@pytest.mark.parametrize("value", ["0000-0002-1109-110X"])
+def test_orcid_id(value: str):
+    check_type(types.OrcidId, value)
+
+
 @pytest.mark.parametrize("value", ["lx·s", "kg/m^2·s^-2"])
 def test_si_unit(value: str):
-    check_type(SiUnit, value)
+    check_type(types.SiUnit, value)
 
 
 @pytest.mark.parametrize("value", ["lxs", " kg"])
 def test_si_unit_invalid(value: str):
-    check_type(SiUnit, value, is_invalid=True)
+    check_type(types.SiUnit, value, is_invalid=True)
 
 
 @pytest.mark.parametrize(
@@ -138,7 +142,7 @@ def test_si_unit_invalid(value: str):
 )
 def test_datetime(value: str, expected: datetime):
     check_type(
-        Datetime,
+        types.Datetime,
         value,
         expected_root=expected,
         expected_deserialized=value,
@@ -160,7 +164,7 @@ def test_datetime_more(value: str):
         _serialize_datetime_json,  # pyright: ignore[reportPrivateUsage]
     )
 
-    root_adapter = TypeAdapter(Datetime)
+    root_adapter = TypeAdapter(types.Datetime)
     datetime_adapter: TypeAdapter[Any] = TypeAdapter(
         Annotated[
             datetime,
@@ -170,7 +174,7 @@ def test_datetime_more(value: str):
 
     expected = isoparse(value)
 
-    actual_init = Datetime(expected)
+    actual_init = types.Datetime(expected)
     assert actual_init.root == expected
 
     actual_root = root_adapter.validate_python(value)
@@ -200,4 +204,4 @@ def test_datetime_more(value: str):
     ],
 )
 def test_datetime_invalid(value: str):
-    check_type(Datetime, value, is_invalid=True)
+    check_type(types.Datetime, value, is_invalid=True)
