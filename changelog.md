@@ -21,6 +21,7 @@ This changelog includes implementation details and my reference the [changes to 
 - bugfix: Include dependency file when packaging 0.4 models.
 - experimental feature for debugging: raise validation errors with `ValidationContext.raise_errors=True`
 - remove deprecated `IN_PACKAGE_MESSAGE`
+- added utitlity methods `ValidationSummary.save_markdown`, `ValidationSummary.save`, `ValidationSummary.load`
 
 #### bioimageio.spec 0.5.3.6
 

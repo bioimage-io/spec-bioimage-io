@@ -401,6 +401,7 @@ class ValidationSummary(BaseModel, extra="allow"):
                 return
 
         rich_markdown = rich.markdown.Markdown(formatted)
+        rich_markdown
         console = rich.console.Console()
         console.print(rich_markdown)
 
@@ -411,6 +412,21 @@ class ValidationSummary(BaseModel, extra="allow"):
             assert_never(detail.status)
 
         self.details.append(detail)
+
+    def save_markdown(self, path: Path):
+        """Save rendered validation summary as markdown file."""
+        formatted = self.format()
+        _ = path.write_text(formatted, encoding="utf-8")
+
+    def save(self, path: Path, *, indent: Optional[int] = 2):
+        """Save validation summary as JSON file"""
+        json_str = self.model_dump_json(indent=indent)
+        _ = path.write_text(json_str, encoding="utf-8")
+
+    def load(self, path: Path):
+        """Load validation summary from a suitable JSON file"""
+        json_str = path.read_text(encoding="utf-8")
+        return self.model_validate_json(json_str)
 
     @field_validator("env", mode="before")
     def _convert_dict(cls, value: List[Union[List[str], Dict[str, str]]]):
