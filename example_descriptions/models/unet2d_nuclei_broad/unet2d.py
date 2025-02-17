@@ -4,9 +4,9 @@ import torch.nn as nn
 
 
 class Upsample(nn.Module):
-    def __init__(self, scale_factor, mode="bilinear"):
+    def __init__(self, scale_factor: float, mode="bilinear"):
         super().__init__()
-        self.scale_factor = scale_factor
+        self.scale_factor = float(scale_factor)
         self.mode = mode
 
     def forward(self, input):
@@ -46,8 +46,20 @@ class UNet2d(nn.Module):
         kernel_size = 3
         padding = 1
         return nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size, padding=padding),
-            nn.Conv2d(out_channels, out_channels, kernel_size, padding=padding),
+            nn.Conv2d(
+                in_channels,
+                out_channels,
+                kernel_size,
+                padding=padding,
+                dtype=torch.float32,
+            ),
+            nn.Conv2d(
+                out_channels,
+                out_channels,
+                kernel_size,
+                padding=padding,
+                dtype=torch.float32,
+            ),
             nn.ReLU(inplace=True),
         )
 
@@ -68,9 +80,10 @@ class UNet2d(nn.Module):
 
         x = self.base(x)
 
-        for decoder, sampler, enc in zip(
-            self.decoders, self.upsamplers, from_encoder[::-1]
+        for i, (decoder, sampler) in enumerate(
+            zip(self.decoders, self.upsamplers), start=1
         ):
+            enc = from_encoder[-i]
             x = sampler(x)
             x = torch.cat([enc, x], dim=1)
             x = decoder(x)
