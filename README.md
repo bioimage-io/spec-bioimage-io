@@ -61,14 +61,15 @@ You can also generate these docs locally by running `PYTHONPATH=./scripts python
 
 ## Examples
 
-We provide some [examples for using rdf.yaml files to describe models, applications, notebooks and datasets](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_descriptions/examples.md),
-and an [example notebook to programmatically access the models, applications, notebooks and datasets descriptions](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example/load_model_and_create_your_own.ipynb).
+We provide some [bioimageio.yaml/rdf.yaml example files](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_descriptions/) to describe models, applications, notebooks and datasets; more examples are available at [bioimage.io](https://bioimage.io).
+There is also an [example notebook](https://github.com/bioimage-io/spec-bioimage-io/blob/main/example/load_model_and_create_your_own.ipynb) demonstrating how to programmatically access the models, applications, notebooks and datasets descriptions in Python.
+For integration of bioimageio resources we recommend the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package.
 
 ## 💁 Recommendations
 
-* Due to the limitations of storage services such as Zenodo, which does not support subfolders, it is recommended to place other files in the same directory level of the `rdf.yaml` file and try to avoid using subdirectories.
-* Use the [bioimageio.core Python package](https://github.com/bioimage-io/core-bioimage-io-python) to validate your `rdf.yaml` file.
+* Use the [bioimageio.core Python package](https://github.com/bioimage-io/core-bioimage-io-python) to not only validate the format of your `bioimageio.yaml`/`rdf.yaml` file, but also test and deploy it (e.g. model inference).
 * bioimageio.spec keeps evolving. Try to use and upgrade to the most current format version!
+  Note: The command line interface `bioimageio` (part of [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python)) has the `update-format` command to help you with that.
 
 ## ⌨ bioimageio command-line interface (CLI)
 
