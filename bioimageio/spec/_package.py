@@ -170,7 +170,10 @@ def save_bioimageio_package_as_folder(
                         + f" (extracted from '{src.name}' in '{src.root.filename}')"
                     ) from e
         else:
-            shutil.copy(src, output_path / name)
+            try:
+                shutil.copy(src, output_path / name)
+            except shutil.SameFileError:
+                pass
 
     return output_path
 

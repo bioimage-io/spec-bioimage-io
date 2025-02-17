@@ -243,12 +243,12 @@ def ensure_description_is_model(
     """
     if isinstance(rd, InvalidDescr):
         rd.validation_summary.display()
-        raise ValueError("resource description is invalid")
+        raise ValueError(f"Invalid {rd.type} description")
 
     if rd.type != "model":
         rd.validation_summary.display()
         raise ValueError(
-            f"expected a model resource, but got resource type '{rd.type}'"
+            f"Expected a model resource, but got resource type '{rd.type}'"
         )
 
     assert not isinstance(
@@ -267,12 +267,12 @@ def ensure_description_is_dataset(
 ) -> AnyDatasetDescr:
     if isinstance(rd, InvalidDescr):
         rd.validation_summary.display()
-        raise ValueError("resource description is invalid")
+        raise ValueError(f"Invalid {rd.type} description.")
 
     if rd.type != "dataset":
         rd.validation_summary.display()
         raise ValueError(
-            f"expected a dataset resource, but got resource type '{rd.type}'"
+            f"Expected a dataset resource, but got resource type '{rd.type}'"
         )
 
     assert not isinstance(

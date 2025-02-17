@@ -159,12 +159,12 @@ class ResourceDescrBase(
         assert self._validation_summary is not None, "access only after initialization"
         return self._validation_summary
 
-    _root: Union[RootHttpUrl, DirectoryPath, ZipPath] = PrivateAttr(
+    _root: Union[RootHttpUrl, DirectoryPath, ZipFile] = PrivateAttr(
         default_factory=lambda: validation_context_var.get().root
     )
 
     @property
-    def root(self) -> Union[RootHttpUrl, DirectoryPath, ZipPath]:
+    def root(self) -> Union[RootHttpUrl, DirectoryPath, ZipFile]:
         """The URL/Path prefix to resolve any relative paths with."""
         return self._root
 

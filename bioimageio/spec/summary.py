@@ -13,6 +13,7 @@ from typing import (
     Mapping,
     NamedTuple,
     Optional,
+    Self,
     Sequence,
     Set,
     Tuple,
@@ -413,17 +414,19 @@ class ValidationSummary(BaseModel, extra="allow"):
 
         self.details.append(detail)
 
-    def save_markdown(self, path: Path):
+    def save_markdown(self, path: Path = Path("validation_summary.md")):
         """Save rendered validation summary as markdown file."""
         formatted = self.format()
         _ = path.write_text(formatted, encoding="utf-8")
 
-    def save(self, path: Path, *, indent: Optional[int] = 2):
+    def save(
+        self, path: Path = Path("validation_summary.json"), *, indent: Optional[int] = 2
+    ):
         """Save validation summary as JSON file"""
         json_str = self.model_dump_json(indent=indent)
         _ = path.write_text(json_str, encoding="utf-8")
 
-    def load(self, path: Path):
+    def load(self, path: Path) -> Self:
         """Load validation summary from a suitable JSON file"""
         json_str = path.read_text(encoding="utf-8")
         return self.model_validate_json(json_str)
