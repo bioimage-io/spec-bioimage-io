@@ -146,7 +146,10 @@ class ResourceDescrBase(
             status="failed" if isinstance(self, InvalidDescr) else "passed",
             details=[
                 ValidationDetail(
-                    name=f"initialized {self.__class__.__name__} to describe {self.type} {self.implemented_format_version}",
+                    name=(
+                        f"Created {self.__class__.__name__} object."
+                        + " Further validation is pending."
+                    ),
                     status="passed",
                     context=None,  # context for format validation detail is identical
                 )
