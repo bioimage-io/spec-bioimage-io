@@ -13,7 +13,6 @@ from typing import (
     Mapping,
     NamedTuple,
     Optional,
-    Self,
     Sequence,
     Set,
     Tuple,
@@ -25,7 +24,7 @@ import rich.console
 import rich.markdown
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core.core_schema import ErrorType
-from typing_extensions import TypedDict, assert_never
+from typing_extensions import Self, TypedDict, assert_never
 
 from ._internal.constants import VERSION
 from ._internal.io import is_yaml_value
