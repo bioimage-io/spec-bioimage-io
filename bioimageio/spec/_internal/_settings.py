@@ -20,13 +20,12 @@ class Settings(BaseSettings, extra="ignore"):
     id_map: str = (
         "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map.json"
     )
-    """url to bioimageio id_map.json to resolve resource IDs.
-    """
+    """URL to bioimageio id_map.json to resolve resource IDs."""
 
     id_map_draft: str = (
         "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map_draft.json"
     )
-    """url to bioimageio id_map_draft.json to resolve draft IDs ending with '/draft'."""
+    """URL to bioimageio id_map_draft.json to resolve draft IDs ending with '/draft'."""
 
     resolve_draft: bool = True
     """Flag to resolve draft resource versions following the pattern
@@ -37,13 +36,13 @@ class Settings(BaseSettings, extra="ignore"):
     and disallow loading draft versions."""
 
     perform_io_checks: bool = True
-    """wether or not to perform validation that requires file io,
+    """Wether or not to perform validation that requires file io,
     e.g. downloading a remote files.
 
     Existence of any local absolute file paths is still being checked."""
 
     log_warnings: bool = True
-    """log validation warnings to console"""
+    """Log validation warnings to console."""
 
     github_username: Optional[str] = None
     """GitHub username for API requests"""
@@ -52,7 +51,7 @@ class Settings(BaseSettings, extra="ignore"):
     """GitHub token for API requests"""
 
     CI: Annotated[Union[bool, str], Field(alias="CI")] = False
-    """wether or not the execution happens in a continuous integration (CI) environment"""
+    """Wether or not the execution happens in a continuous integration (CI) environment."""
 
     user_agent: Optional[str] = None
     """user agent for http requests"""
