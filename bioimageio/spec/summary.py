@@ -1,4 +1,5 @@
 import subprocess
+from datetime import datetime, timezone
 from io import StringIO
 from itertools import chain
 from pathlib import Path
@@ -20,8 +21,10 @@ from typing import (
     no_type_check,
 )
 
+import markdown
 import rich.console
 import rich.markdown
+from loguru import logger
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import Self, TypedDict, assert_never
@@ -29,6 +32,7 @@ from typing_extensions import Self, TypedDict, assert_never
 from ._internal.constants import VERSION
 from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml
+from ._internal.types import NotEmpty
 from ._internal.warning_levels import (
     ALERT,
     ALERT_NAME,
@@ -223,7 +227,7 @@ class ValidationSummary(BaseModel, extra="allow"):
     type: str
     format_version: str
     status: Literal["passed", "failed"]
-    details: List[ValidationDetail]
+    details: NotEmpty[List[ValidationDetail]]
     env: Set[InstalledPackage] = Field(
         default_factory=lambda: {
             InstalledPackage(name="bioimageio.spec", version=VERSION)
@@ -405,6 +409,36 @@ class ValidationSummary(BaseModel, extra="allow"):
         console = rich.console.Console()
         console.print(rich_markdown)
 
+    def log(
+        self,
+        path: Union[Path, Sequence[Path]] = Path("bioimageio_summary_{now}"),
+    ) -> Sequence[Path]:
+        """Convenience method to display and save validation/test summary.
+
+        Args:
+            path: A folder or file paths to save validation/test summaries to.
+
+        Returns: Sequence of log file paths written.
+        """
+        self.display()
+        if isinstance(path, (str, Path)):
+            path = Path(path)
+            if path.suffix:
+                path = [path]
+            else:
+                path = [
+                    path / "summary.json",
+                    path / "summary.md",
+                    path / "summary.html",
+                ]
+
+        now = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        for p in path:
+            p = Path(str(p).format(now=now))
+            self.save(p)
+
+        return path
+
     def add_detail(self, detail: ValidationDetail):
         if detail.status == "failed":
             self.status = "failed"
@@ -413,20 +447,49 @@ class ValidationSummary(BaseModel, extra="allow"):
 
         self.details.append(detail)
 
-    def save_markdown(self, path: Path = Path("validation_summary.md")):
-        """Save rendered validation summary as markdown file."""
-        formatted = self.format()
-        _ = path.write_text(formatted, encoding="utf-8")
+    def save(self, path: Path = Path("summary.json")):
+        """Save the validation/tests summary in JSON, Markdown or HTML format.
+        (Format is chosen based on the suffix: `.json`, `.md`, `.html`.)
+        """
 
-    def save(
-        self, path: Path = Path("validation_summary.json"), *, indent: Optional[int] = 2
+        if path.suffix == ".json":
+            save_impl = self.save_json
+        elif path.suffix == ".md":
+            save_impl = self.save_markdown
+        elif path.suffix == ".html":
+            save_impl = self.save_html
+        else:
+            raise ValueError(f"Unknown summary path suffix '{path.suffix}'")
+
+        save_impl(path)
+
+    def save_json(
+        self, path: Path = Path("summary.json"), *, indent: Optional[int] = 2
     ):
-        """Save validation summary as JSON file"""
+        """Save validation/test summary as JSON file."""
         json_str = self.model_dump_json(indent=indent)
+        path.parent.mkdir(exist_ok=True)
         _ = path.write_text(json_str, encoding="utf-8")
+        logger.info("Saved summary to {}", path.absolute())
 
-    def load(self, path: Path) -> Self:
-        """Load validation summary from a suitable JSON file"""
+    def save_markdown(self, path: Path = Path("summary.md")):
+        """Save rendered validation/test summary as Markdown file."""
+        formatted = self.format()
+        path.parent.mkdir(exist_ok=True)
+        _ = path.write_text(formatted, encoding="utf-8")
+        logger.info("Saved Markdown formatted summary  to {}", path.absolute())
+
+    def save_html(self, path: Path = Path("summary.html")) -> None:
+        """Save rendered validation/test summary as HTML file."""
+        path.parent.mkdir(exist_ok=True)
+
+        formatted = self.format()
+        html = markdown.markdown(formatted, extensions=["tables"])
+        _ = path.write_text(html, encoding="utf-8")
+        logger.info("Saved HTML formatted summary to {}", path.absolute())
+
+    def load_json(self, path: Path) -> Self:
+        """Load validation/test summary from a suitable JSON file"""
         json_str = path.read_text(encoding="utf-8")
         return self.model_validate_json(json_str)
 
