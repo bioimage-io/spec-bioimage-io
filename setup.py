@@ -33,6 +33,7 @@ _ = setup(
         "email_validator",
         "imageio",
         "loguru",
+        "markdown",
         "numpy>=1.21",
         "packaging>=17.0",
         "pooch>=1.5,<2",
