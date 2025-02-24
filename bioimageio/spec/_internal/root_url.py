@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, ClassVar, Optional, Type
+from typing import Any, ClassVar, Iterable, Optional, Type
 from urllib.parse import urlsplit, urlunsplit
 
 import pydantic
@@ -55,3 +55,11 @@ class RootHttpUrl(ValidatedString):
                 )
             )
         )
+
+    @property
+    def parents(self) -> Iterable[RootHttpUrl]:
+        """iterate over all URL parents (max 100)"""
+        current = self
+        for _ in range(100):
+            current = current.parent
+            yield current
