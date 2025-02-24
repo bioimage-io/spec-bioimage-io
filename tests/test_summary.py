@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 def test_save_markdown(tmp_path: Path):
-    from bioimageio.spec.summary import ValidationSummary
+    from bioimageio.spec.summary import ValidationDetail, ValidationSummary
 
     summary = ValidationSummary(
         type="model",
@@ -10,7 +10,7 @@ def test_save_markdown(tmp_path: Path):
         name="test",
         source_name="source",
         status="passed",
-        details=[],
+        details=[ValidationDetail(name="test", status="passed")],
     )
     p = tmp_path / "out.md"
     summary.save_markdown(p)
@@ -18,7 +18,7 @@ def test_save_markdown(tmp_path: Path):
 
 
 def test_summary_io(tmp_path: Path):
-    from bioimageio.spec.summary import ValidationSummary
+    from bioimageio.spec.summary import ValidationDetail, ValidationSummary
 
     summary = ValidationSummary(
         type="generic",
@@ -26,7 +26,7 @@ def test_summary_io(tmp_path: Path):
         name="test",
         source_name="source",
         status="failed",
-        details=[],
+        details=[ValidationDetail(name="test", status="passed")],
     )
     p = tmp_path / "summary.json"
     summary.save(p)
