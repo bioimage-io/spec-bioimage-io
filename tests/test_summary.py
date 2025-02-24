@@ -30,5 +30,5 @@ def test_summary_io(tmp_path: Path):
     )
     p = tmp_path / "summary.json"
     summary.save(p)
-    loaded_summary = summary.load(p)
+    loaded_summary = summary.load_json(p)
     assert loaded_summary == summary
