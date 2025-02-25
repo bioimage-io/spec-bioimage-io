@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, TypeVar
+from typing import Any, Dict, Generic, Type, TypeVar
 
 from pydantic import SerializationInfo, SerializerFunctionWrapHandler, model_serializer
 
@@ -12,7 +12,7 @@ InnerNodeT = TypeVar("InnerNodeT", bound=Node)
 class ValidatedStringWithInnerNode(ABC, ValidatedString, Generic[InnerNodeT]):
     """A validated string with further validation and serialization using a `Node`"""
 
-    _inner_node_class: type[InnerNodeT]
+    _inner_node_class: Type[InnerNodeT]
     _inner_node: InnerNodeT  # initalized in _after_validator called in __new__
 
     @model_serializer(mode="wrap")
