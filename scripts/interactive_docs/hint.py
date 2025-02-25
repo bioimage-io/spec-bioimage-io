@@ -1667,7 +1667,9 @@ class ColumnControls(Widget):
         """
 
     def __init__(
-        self, root_element_id: str, style: str = "float: right; margin-left: 4em; margin-right: 1em;"
+        self,
+        root_element_id: str,
+        style: str = "float: right; margin-left: 4em; margin-right: 1em;",
     ):
         # fmt: off
         super().__init__(
