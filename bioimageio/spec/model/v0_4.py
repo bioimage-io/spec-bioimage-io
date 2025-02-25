@@ -630,7 +630,7 @@ class ProcessingDescrBase(NodeWithExplicitlySetFields):
     """processing base class"""
 
     # name: Literal[PreprocessingName, PostprocessingName]  # todo: make abstract field
-    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"name"})
+    _fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"name"})
 
 
 class BinarizeKwargs(ProcessingKwargs):

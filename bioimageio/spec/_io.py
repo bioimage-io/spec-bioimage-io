@@ -202,7 +202,6 @@ def save_bioimageio_yaml_only(
     file: Union[NewPath, FilePath, TextIO],
     *,
     exclude_unset: bool = True,
-    exclude_defaults: bool = False,
 ):
     """write the metadata of a resource description (`rd`) to `file`
     without writing any of the referenced files in it.
@@ -211,15 +210,12 @@ def save_bioimageio_yaml_only(
         rd: bioimageio resource description
         file: file or stream to save to
         exclude_unset: Exclude fields that have not explicitly be set
-        exclude_defaults: Exclude fields that have the default value (even if set expliclity)
 
     Note: To save a resource description with its associated files as a package,
     use `save_bioimageio_package` or `save_bioimageio_package_as_folder`.
     """
     if isinstance(rd, ResourceDescrBase):
-        content = dump_description(
-            rd, exclude_unset=exclude_unset, exclude_defaults=exclude_defaults
-        )
+        content = dump_description(rd, exclude_unset=exclude_unset)
     else:
         content = rd
 

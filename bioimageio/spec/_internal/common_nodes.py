@@ -52,9 +52,9 @@ from .warning_levels import ALERT, ERROR, INFO
 
 
 class NodeWithExplicitlySetFields(Node):
-    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
-    """set set these fields explicitly with their default value if they are not set,
-    such that they are always included even when dumping with 'exlude_unset'"""
+    _fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
+    """set these fields explicitly with their default value if they are not set,
+    such that they are always included even when dumping with 'exclude_unset'"""
 
     @model_validator(mode="before")
     @classmethod
@@ -62,7 +62,7 @@ class NodeWithExplicitlySetFields(Node):
         cls, data: Union[Any, Dict[str, Any]]
     ) -> Union[Any, Dict[str, Any]]:
         if isinstance(data, dict):
-            for name in cls.fields_to_set_explicitly:
+            for name in cls._fields_to_set_explicitly:
                 if name not in data:
                     data[name] = cls.model_fields[name].get_default(
                         call_default_factory=True
@@ -94,7 +94,7 @@ class ResourceDescrBase(
 
     _validation_summary: Optional[ValidationSummary] = None
 
-    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset(
+    _fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset(
         {"type", "format_version"}
     )
     implemented_type: ClassVar[str]
@@ -357,7 +357,7 @@ class InvalidDescr(
 
     type: Any = "unknown"
     format_version: Any = "unknown"
-    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
+    _fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
 
 
 class KwargsNode(Node):

@@ -437,7 +437,7 @@ class SizeReference(Node):
 
 
 class AxisBase(NodeWithExplicitlySetFields):
-    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type"})
+    _fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type"})
 
     id: AxisId
     """An axis id unique across all axes of one tensor."""
@@ -829,7 +829,7 @@ class ProcessingDescrBase(NodeWithExplicitlySetFields, ABC):
     """processing base class"""
 
     # id: Literal[PreprocessingId, PostprocessingId]  # make abstract field
-    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"id"})
+    _fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"id"})
 
 
 class BinarizeKwargs(ProcessingKwargs):
