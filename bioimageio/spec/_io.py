@@ -24,8 +24,8 @@ from ._internal.io_utils import open_bioimageio_yaml, write_yaml
 from ._internal.types import FormatVersionPlaceholder
 from ._internal.validation_context import validation_context_var
 from .common import PermissiveFileSource
-from .dataset import AnyDatasetDescr
-from .model import AnyModelDescr
+from .dataset import AnyDatasetDescr, DatasetDescr
+from .model import AnyModelDescr, ModelDescr
 from .summary import ValidationSummary
 
 
@@ -101,11 +101,35 @@ def load_description(
     )
 
 
+@overload
 def load_model_description(
     source: Union[PermissiveFileSource, ZipFile],
     /,
     *,
-    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+    format_version: Literal["latest"],
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
+) -> ModelDescr: ...
+
+
+@overload
+def load_model_description(
+    source: Union[PermissiveFileSource, ZipFile],
+    /,
+    *,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
+) -> AnyModelDescr: ...
+
+
+def load_model_description(
+    source: Union[PermissiveFileSource, ZipFile],
+    /,
+    *,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: bool = settings.perform_io_checks,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
@@ -126,11 +150,35 @@ def load_model_description(
     return ensure_description_is_model(rd)
 
 
+@overload
 def load_dataset_description(
     source: Union[PermissiveFileSource, ZipFile],
     /,
     *,
-    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+    format_version: Literal["latest"],
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
+) -> DatasetDescr: ...
+
+
+@overload
+def load_dataset_description(
+    source: Union[PermissiveFileSource, ZipFile],
+    /,
+    *,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
+) -> AnyDatasetDescr: ...
+
+
+def load_dataset_description(
+    source: Union[PermissiveFileSource, ZipFile],
+    /,
+    *,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: bool = settings.perform_io_checks,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
@@ -171,7 +219,7 @@ def load_description_and_validate_format_only(
     source: Union[PermissiveFileSource, ZipFile],
     /,
     *,
-    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: bool = settings.perform_io_checks,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
@@ -194,7 +242,13 @@ def load_description_and_validate_format_only(
 
 
 def update_format(
-    source: Union[ResourceDescr, PermissiveFileSource, ZipFile, BioimageioYamlContent],
+    source: Union[
+        ResourceDescr,
+        PermissiveFileSource,
+        ZipFile,
+        BioimageioYamlContent,
+        InvalidDescr,
+    ],
     /,
     *,
     output: Union[Path, TextIO, None] = None,

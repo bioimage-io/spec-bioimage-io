@@ -3059,11 +3059,21 @@ class ModelDescr(GenericModelDescrBase):
             assert cls.implemented_format_version_tuple[0:2] == (0, 5)
             if fv_tuple[:2] in ((0, 3), (0, 4)):
                 m04 = _ModelDescr_v0_4.load(data)
-                if not isinstance(m04, InvalidDescr):
-                    for k in list(data):
-                        _ = data.pop(k)
+                if isinstance(m04, InvalidDescr):
+                    try:
+                        updated = _model_conv.convert_as_dict(m04)  # pyright: ignore[reportArgumentType]
+                    except Exception:
+                        logger.error(
+                            "Failed to convert from invalid model 0.4 description."
+                            + " Proceeding with model 0.5 validation without conversion."
+                        )
+                        updated = None
+                else:
+                    updated = _model_conv.convert_as_dict(m04)
 
-                    data.update(_model_conv.convert_as_dict(m04))
+                if updated is not None:
+                    data.clear()
+                    data.update(updated)
 
             elif fv_tuple[:2] == (0, 5):
                 # bump patch version

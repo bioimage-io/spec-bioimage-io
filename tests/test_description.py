@@ -1,7 +1,5 @@
-from bioimageio.spec._description import update_format, validate_format
-from bioimageio.spec._internal.io import BioimageioYamlContent
-from bioimageio.spec._internal.root_url import RootHttpUrl
-from bioimageio.spec._internal.validation_context import ValidationContext
+from bioimageio.spec import ValidationContext, update_format, validate_format
+from bioimageio.spec.common import BioimageioYamlContent, RootHttpUrl
 from bioimageio.spec.model import ModelDescr
 
 EXAMPLE_COM = RootHttpUrl("https://example.com/")
@@ -46,5 +44,5 @@ def test_no_forward_compatibility(unet2d_data: BioimageioYamlContent):
 
 def test_update_format(unet2d_path_old: str):
     updated = update_format(unet2d_path_old)
-    assert updated["type"] == "model"
-    assert updated["format_version"] == ModelDescr.implemented_format_version
+    assert updated.type == "model"
+    assert updated.format_version == ModelDescr.implemented_format_version
