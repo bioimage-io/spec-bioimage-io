@@ -1,6 +1,6 @@
 """implementation details for building a bioimage.io resource description"""
 
-from typing import Any, Callable, List, Mapping, Optional, Type, TypeVar, Union
+from typing import Any, Callable, List, Literal, Mapping, Optional, Type, TypeVar, Union
 
 from ._internal.common_nodes import InvalidDescr, ResourceDescrBase
 from ._internal.io import BioimageioYamlContent
@@ -16,7 +16,7 @@ from .summary import (
 ResourceDescrT = TypeVar("ResourceDescrT", bound=ResourceDescrBase)
 
 
-DISCOVER: FormatVersionPlaceholder = "discover"
+DISCOVER: Literal["discover"] = "discover"
 """placeholder for whatever format version an RDF specifies"""
 
 
@@ -37,6 +37,7 @@ def get_rd_class_impl(
     if not isinstance(typ, str) or typ not in descriptions_map:
         typ = None
 
+    format_version = str(format_version)
     if (ndots := format_version.count(".")) == 0:
         use_format_version = format_version + ".0"
     elif ndots == 2:
@@ -103,7 +104,11 @@ def build_description_impl(
     rd_class = get_rd_class(typ, content["format_version"])
     rd = rd_class.load(content, context=context)
 
-    if format_version != DISCOVER and not isinstance(rd, InvalidDescr):
+    if str(format_version).lower() not in (
+        DISCOVER,
+        rd_class.implemented_format_version,
+        ".".join(map(str, rd_class.implemented_format_version_tuple[:2])),
+    ):
         # load with requested format_version
         discover_details = rd.validation_summary.details
         as_rd_class = get_rd_class(typ, format_version)

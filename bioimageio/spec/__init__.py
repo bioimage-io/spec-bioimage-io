@@ -19,7 +19,6 @@ from ._description import (
     SpecificResourceDescr,
     build_description,
     dump_description,
-    update_format,
     validate_format,
 )
 from ._get_conda_env import BioimageioCondaEnv, get_conda_env
@@ -33,6 +32,7 @@ from ._io import (
     load_description_and_validate_format_only,
     load_model_description,
     save_bioimageio_yaml_only,
+    update_format,
 )
 from ._package import (
     get_resource_package_content,

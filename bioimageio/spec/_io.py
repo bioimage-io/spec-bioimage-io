@@ -1,4 +1,5 @@
-from typing import Dict, Literal, Optional, TextIO, Union, cast
+from pathlib import Path
+from typing import Dict, Literal, Optional, TextIO, Union, cast, overload
 from zipfile import ZipFile
 
 from loguru import logger
@@ -6,7 +7,9 @@ from pydantic import FilePath, NewPath
 
 from ._description import (
     DISCOVER,
+    LATEST,
     InvalidDescr,
+    LatestResourceDescr,
     ResourceDescr,
     build_description,
     dump_description,
@@ -18,6 +21,7 @@ from ._internal.common_nodes import ResourceDescrBase
 from ._internal.io import BioimageioYamlContent, YamlValue
 from ._internal.io_basics import Sha256
 from ._internal.io_utils import open_bioimageio_yaml, write_yaml
+from ._internal.types import FormatVersionPlaceholder
 from ._internal.validation_context import validation_context_var
 from .common import PermissiveFileSource
 from .dataset import AnyDatasetDescr
@@ -25,11 +29,35 @@ from .model import AnyModelDescr
 from .summary import ValidationSummary
 
 
+@overload
 def load_description(
     source: Union[PermissiveFileSource, ZipFile],
     /,
     *,
-    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+    format_version: Literal["latest"],
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
+) -> Union[LatestResourceDescr, InvalidDescr]: ...
+
+
+@overload
+def load_description(
+    source: Union[PermissiveFileSource, ZipFile],
+    /,
+    *,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
+) -> Union[ResourceDescr, InvalidDescr]: ...
+
+
+def load_description(
+    source: Union[PermissiveFileSource, ZipFile],
+    /,
+    *,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: bool = settings.perform_io_checks,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
@@ -163,3 +191,44 @@ def load_description_and_validate_format_only(
     )
     assert rd.validation_summary is not None
     return rd.validation_summary
+
+
+def update_format(
+    source: Union[ResourceDescr, PermissiveFileSource, ZipFile, BioimageioYamlContent],
+    /,
+    *,
+    output: Union[Path, TextIO, None] = None,
+) -> Union[LatestResourceDescr, InvalidDescr]:
+    """Update a resource description.
+
+    Notes:
+    - Invalid **source** descriptions may fail to update.
+    - The updated description might be invalid (even if the **source** was valid).
+    """
+
+    if isinstance(source, ResourceDescrBase):
+        root = source.root
+        source = dump_description(source)
+    else:
+        root = None
+
+    if isinstance(source, dict):
+        descr = build_description(
+            source,
+            context=validation_context_var.get().replace(
+                root=root, perform_io_checks=False
+            ),
+            format_version=LATEST,
+        )
+
+    else:
+        descr = load_description(
+            source,
+            perform_io_checks=False,
+            format_version=LATEST,
+        )
+
+    if output is not None:
+        save_bioimageio_yaml_only(descr, file=output)
+
+    return descr

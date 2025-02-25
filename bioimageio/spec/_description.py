@@ -1,18 +1,14 @@
-from copy import deepcopy
-from pathlib import Path
 from types import MappingProxyType
-from typing import Any, Literal, Optional, TypeVar, Union
+from typing import Any, Literal, Optional, TypeVar, Union, overload
 
 from pydantic import Discriminator
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
 from bioimageio.spec._internal.validation_context import ValidationContext
 
 from ._description_impl import DISCOVER, build_description_impl, get_rd_class_impl
-from ._internal.common_nodes import InvalidDescr, ResourceDescrBase
-from ._internal.io import BioimageioYamlContent, BioimageioYamlSource
-from ._internal.io_utils import write_yaml
+from ._internal.common_nodes import InvalidDescr
+from ._internal.io import BioimageioYamlContent
 from ._internal.types import FormatVersionPlaceholder
 from ._internal.validation_context import validation_context_var
 from .application import (
@@ -32,7 +28,7 @@ from .notebook import (
 )
 from .summary import ValidationSummary
 
-LATEST: FormatVersionPlaceholder = "latest"
+LATEST: Literal["latest"] = "latest"
 """placeholder for the latest available format version"""
 
 
@@ -141,6 +137,26 @@ def _get_rd_class(typ: Any, format_version: Any):
     return get_rd_class_impl(typ, format_version, DESCRIPTIONS_MAP)
 
 
+@overload
+def build_description(
+    content: BioimageioYamlContent,
+    /,
+    *,
+    context: Optional[ValidationContext] = None,
+    format_version: Literal["latest"],
+) -> Union[LatestResourceDescr, InvalidDescr]: ...
+
+
+@overload
+def build_description(
+    content: BioimageioYamlContent,
+    /,
+    *,
+    context: Optional[ValidationContext] = None,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
+) -> Union[ResourceDescr, InvalidDescr]: ...
+
+
 def build_description(
     content: BioimageioYamlContent,
     /,
@@ -201,39 +217,6 @@ def validate_format(
 
     assert rd.validation_summary is not None
     return rd.validation_summary
-
-
-def update_format(
-    source: Union[BioimageioYamlSource, ResourceDescr, InvalidDescr],
-    *,
-    output_path: Optional[Path] = None,
-    # target_format_version: Union[Literal["latest"], str] = LATEST,
-    # TODO: support updating to non-latest format versions
-) -> BioimageioYamlContent:
-    """Update of an rdf.yaml (or bioimageio.yaml) file without validating it.
-
-    Note: This function does not update all patch version related changes.
-        Use `load_description` to update to the latest patch version.
-    """
-
-    if isinstance(source, ResourceDescrBase):
-        content = dump_description(source)
-    elif isinstance(source, dict):
-        content = deepcopy(source)
-    else:
-        opened = open_bioimageio_yaml(source)
-        content = opened.content
-
-    source_type = s if isinstance((s := content.get("type")), str) else "unknown"
-    rd_class = LATEST_DESCRIPTIONS_MAP.get(source_type, GenericDescr)
-    rd_class.convert_from_old_format_wo_validation(content)
-    descr = InvalidDescr.model_validate(content)
-
-    updated_content = dump_description(descr)
-    if output_path is not None:
-        write_yaml(updated_content, output_path)
-
-    return updated_content
 
 
 def ensure_description_is_model(
