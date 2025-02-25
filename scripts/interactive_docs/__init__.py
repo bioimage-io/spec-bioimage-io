@@ -14,6 +14,7 @@ def generate_docs(*, raw_type: Any, root_path: List[str]) -> "str | Exception":
         <!doctype html>
         <html>
             <head>
+                <meta charset="utf-8">
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/school-book.min.css">
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
