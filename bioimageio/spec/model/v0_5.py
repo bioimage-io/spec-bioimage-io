@@ -1857,6 +1857,8 @@ class _InputTensorConv(
             assert not isinstance(cp, ScaleMeanVarianceDescr)
             prep.append(cp)
 
+        prep.append(EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype="float32")))
+
         return tgt(
             axes=axes,
             id=TensorId(str(src.name)),
@@ -3061,7 +3063,9 @@ class ModelDescr(GenericModelDescrBase):
                 m04 = _ModelDescr_v0_4.load(data)
                 if isinstance(m04, InvalidDescr):
                     try:
-                        updated = _model_conv.convert_as_dict(m04)  # pyright: ignore[reportArgumentType]
+                        updated = _model_conv.convert_as_dict(
+                            m04  # pyright: ignore[reportArgumentType]
+                        )
                     except Exception:
                         logger.error(
                             "Failed to convert from invalid model 0.4 description."
