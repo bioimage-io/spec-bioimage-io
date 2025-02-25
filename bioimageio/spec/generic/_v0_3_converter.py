@@ -34,7 +34,7 @@ def convert_from_older_format(data: BioimageioYamlContent) -> None:
 
     if "name" in data and isinstance(data["name"], str):
         data["name"] = "".join(
-            c if c in string.ascii_letters + string.digits + "_- ()" else " "
+            c if c in string.ascii_letters + string.digits + "_+- ()" else " "
             for c in data["name"]
         )[:128]
 

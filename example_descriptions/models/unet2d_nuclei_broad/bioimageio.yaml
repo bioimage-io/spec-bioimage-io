@@ -1,5 +1,5 @@
 type: model
-format_version: 0.5.3
+format_version: 0.5.4
 
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
@@ -106,26 +106,34 @@ weights:
         affiliation: "EMBL Heidelberg"
         orcid: "0000-0001-6562-7187"
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
-    source: "https://zenodo.org/records/3446812/files/unet2d_weights.torch"
+    source: https://zenodo.org/records/3446812/files/unet2d_weights.torch
     architecture:
       callable: UNet2d
       source: unet2d.py
-      sha256: 589f0c9e60fa00f015213cd251541bcbf9582644f3ecffb2e6f3a30d2af1931a
+      sha256: d00721e7d00f55222e8cbf90019dd85ce9df0ae42fd46a07f0e6ea45729b310d
       kwargs: { input_channels: 1, output_channels: 1 }
     dependencies:
       source: environment.yaml
       sha256: 129d589d2ec801398719b1a6d1bf20ea36b3632f14ccb56a24700df7d719fd10
     pytorch_version: "1.5.1"
   onnx:
-    sha256: f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c
+    opset_version: 20
+    parent: pytorch_state_dict
+    sha256: 85f5ac80fa977fea3562ef97c8c5950288be2c4f4cdb5d994807df97008ce088
     source: weights.onnx
-    opset_version: 12
-    parent: pytorch_state_dict
   torchscript:
-    sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
-    source: weights.pt
+    comment: Converted with bioimageio.core 0.7.0 with use_tracing=False.
     parent: pytorch_state_dict
-    pytorch_version: "1.5.1"
+    pytorch_version: 2.5.1
+    sha256: a4b0659a1b48454588b12179855ad0a0c9b69ccaa89b8bb06e6271e8f60b02fe
+    source: weights.pt
 
 training_data:
   id: ilastik/covid_if_training_data/1 # note: not the real training data
+
+config:
+  bioimageio:
+    reproducibility_tolerance:
+      - relative_tolerance: 1.0e-3
+        absolute_tolerance: 0.0
+        mismatched_elements_per_million: 0

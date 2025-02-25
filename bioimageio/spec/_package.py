@@ -3,7 +3,7 @@ import shutil
 from io import BytesIO
 from pathlib import Path
 from tempfile import NamedTemporaryFile, mkdtemp
-from typing import IO, Dict, Literal, Optional, Sequence, Union, cast
+from typing import IO, Dict, Literal, Optional, Sequence, Union
 from zipfile import ZIP_DEFLATED
 
 from pydantic import DirectoryPath, FilePath, NewPath
@@ -13,7 +13,6 @@ from ._internal.common_nodes import ResourceDescrBase
 from ._internal.io import (
     BioimageioYamlContent,
     BioimageioYamlSource,
-    YamlValue,
     download,
     ensure_is_valid_bioimageio_yaml_name,
 )
@@ -158,7 +157,7 @@ def save_bioimageio_package_as_folder(
     output_path.mkdir(exist_ok=True, parents=True)
     for name, src in package_content.items():
         if isinstance(src, collections.abc.Mapping):
-            write_yaml(cast(YamlValue, src), output_path / name)
+            write_yaml(src, output_path / name)
         elif isinstance(src, ZipPath):
             extracted = Path(src.root.extract(src.name, output_path))
             if extracted.name != src.name:
@@ -171,7 +170,10 @@ def save_bioimageio_package_as_folder(
                         + f" (extracted from '{src.name}' in '{src.root.filename}')"
                     ) from e
         else:
-            shutil.copy(src, output_path / name)
+            try:
+                shutil.copy(src, output_path / name)
+            except shutil.SameFileError:
+                pass
 
     return output_path
 

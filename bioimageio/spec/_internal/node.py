@@ -9,9 +9,7 @@ from typing import (
 )
 
 import pydantic
-from typing_extensions import (
-    Self,
-)
+from typing_extensions import Self
 
 from .type_guards import is_kwargs
 from .validation_context import ValidationContext, validation_context_var

@@ -8,7 +8,6 @@ from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
-from functools import lru_cache
 from pathlib import Path, PurePath
 from tempfile import mktemp
 from typing import (
@@ -45,7 +44,6 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core import core_schema
-from tqdm import tqdm
 from typing_extensions import (
     Annotated,
     LiteralString,
@@ -442,8 +440,10 @@ def identify_bioimageio_yaml_file_name(file_names: Iterable[FileName]) -> FileNa
     )
 
 
-def find_bioimageio_yaml_file_name(path: Path) -> FileName:
-    if path.is_file():
+def find_bioimageio_yaml_file_name(path: Union[Path, ZipFile]) -> FileName:
+    if isinstance(path, ZipFile):
+        file_names = identify_bioimageio_yaml_file_name(path.namelist())
+    elif path.is_file():
         if not is_zipfile(path):
             return path.name
 
@@ -493,7 +493,7 @@ else:
         Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]],
     )
 BioimageioYamlContent = Dict[str, YamlValue]
-BioimageioYamlSource = Union[PermissiveFileSource, BioimageioYamlContent]
+BioimageioYamlSource = Union[PermissiveFileSource, ZipFile, BioimageioYamlContent]
 
 
 def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
@@ -545,7 +545,14 @@ _file_source_adapter: TypeAdapter[Union[HttpUrl, RelativeFilePath, FilePath]] = 
 
 
 def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
-    if isinstance(file_source, (HttpUrl, Path)):
+    if isinstance(file_source, Path):
+        if file_source.is_dir():
+            raise FileNotFoundError(
+                f"{file_source} is a directory, but expected a file."
+            )
+        return file_source
+
+    if isinstance(file_source, HttpUrl):
         return file_source
 
     if isinstance(file_source, pydantic.AnyUrl):
@@ -553,6 +560,8 @@ def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
 
     with validation_context_var.get().replace(perform_io_checks=False):
         strict = _file_source_adapter.validate_python(file_source)
+        if isinstance(strict, Path) and strict.is_dir():
+            raise FileNotFoundError(f"{strict} is a directory, but expected a file.")
 
     return strict
 
@@ -681,6 +690,9 @@ def resolve(
             )
 
     if isinstance(strict_source, PurePath):
+        if strict_source.is_dir():
+            raise FileNotFoundError(f"{strict_source} is a directory, not a file")
+
         if not strict_source.exists():
             raise FileNotFoundError(strict_source)
         local_source = strict_source
@@ -738,7 +750,7 @@ def resolve_and_extract(
 
     note: If source points to a zip file it is not extracted
     """
-    local = resolve(source, progressbar=progressbar)
+    local = resolve(source, progressbar=progressbar, **kwargs)
     if isinstance(local, LocalFile):
         return local
 
@@ -821,22 +833,16 @@ def extract_file_name(
             return url.path.split("/")[-1]
 
 
-@lru_cache
 def get_sha256(path: Union[Path, ZipPath]) -> Sha256:
     """from https://stackoverflow.com/a/44873382"""
-    desc = f"computing SHA256 of {path.name}"
     if isinstance(path, ZipPath):
         # no buffered reading available
         zf = path.root
         assert isinstance(zf, ZipFile)
-        file_size = zf.NameToInfo[path.at].file_size
-        pbar = tqdm(desc=desc, total=file_size)
         data = path.read_bytes()
         assert isinstance(data, bytes)
         h = hashlib.sha256(data)
     else:
-        file_size = path.stat().st_size
-        pbar = tqdm(desc=desc, total=file_size)
         h = hashlib.sha256()
         chunksize = 128 * 1024
         b = bytearray(chunksize)
@@ -844,10 +850,7 @@ def get_sha256(path: Union[Path, ZipPath]) -> Sha256:
         with open(path, "rb", buffering=0) as f:
             for n in iter(lambda: f.readinto(mv), 0):
                 h.update(mv[:n])
-                _ = pbar.update(n)
 
     sha = h.hexdigest()
-    pbar.set_description(desc=desc + f" (result: {sha})")
-    pbar.close()
     assert len(sha) == 64
     return Sha256(sha)

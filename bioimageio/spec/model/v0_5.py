@@ -38,6 +38,7 @@ from imageio.v3 import imread, imwrite  # pyright: ignore[reportUnknownVariableT
 from loguru import logger
 from numpy.typing import NDArray
 from pydantic import (
+    AfterValidator,
     Discriminator,
     Field,
     RootModel,
@@ -63,14 +64,17 @@ from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_utils import load_array
 from .._internal.node_converter import Converter
-from .._internal.types import Datetime as Datetime
-from .._internal.types import Identifier as Identifier
 from .._internal.types import (
+    AbsoluteTolerance,
     ImportantFileSource,
     LowerCaseIdentifier,
     LowerCaseIdentifierAnno,
+    MismatchedElementsPerMillion,
+    RelativeTolerance,
     SiUnit,
 )
+from .._internal.types import Datetime as Datetime
+from .._internal.types import Identifier as Identifier
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validation_context import validation_context_var
@@ -196,9 +200,17 @@ class TensorId(LowerCaseIdentifier):
     ]
 
 
+def _normalize_channel_and_batch(a: str):
+    return {"c": "channel", "b": "batch"}.get(a, a)
+
+
 class AxisId(LowerCaseIdentifier):
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
-        Annotated[LowerCaseIdentifierAnno, MaxLen(16)]
+        Annotated[
+            LowerCaseIdentifierAnno,
+            MaxLen(16),
+            AfterValidator(_normalize_channel_and_batch),
+        ]
     ]
 
 
@@ -238,13 +250,22 @@ SAME_AS_TYPE = "<same as type>"
 
 
 ParameterizedSize_N = int
+"""
+Annotates an integer to calculate a concrete axis size from a `ParameterizedSize`.
+"""
 
 
 class ParameterizedSize(Node):
-    """Describes a range of valid tensor axis sizes as `size = min + n*step`."""
+    """Describes a range of valid tensor axis sizes as `size = min + n*step`.
+
+    - **min** and **step** are given by the model description.
+    - All blocksize paramters n = 0,1,2,... yield a valid `size`.
+    - A greater blocksize paramter n = 0,1,2,... results in a greater **size**.
+      This allows to adjust the axis size more generically.
+    """
 
     N: ClassVar[Type[int]] = ParameterizedSize_N
-    """integer to parameterize this axis"""
+    """Positive integer to parameterize this axis"""
 
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
@@ -582,6 +603,15 @@ class SpaceInputAxis(SpaceAxisBase, _WithInputAxisSize):
     """
 
 
+INPUT_AXIS_TYPES = (
+    BatchAxis,
+    ChannelAxis,
+    IndexInputAxis,
+    TimeInputAxis,
+    SpaceInputAxis,
+)
+"""intended for isinstance comparisons in py<3.10"""
+
 _InputAxisUnion = Union[
     BatchAxis, ChannelAxis, IndexInputAxis, TimeInputAxis, SpaceInputAxis
 ]
@@ -652,7 +682,22 @@ _OutputAxisUnion = Union[
 ]
 OutputAxis = Annotated[_OutputAxisUnion, Discriminator("type")]
 
+OUTPUT_AXIS_TYPES = (
+    BatchAxis,
+    ChannelAxis,
+    IndexOutputAxis,
+    TimeOutputAxis,
+    TimeOutputAxisWithHalo,
+    SpaceOutputAxis,
+    SpaceOutputAxisWithHalo,
+)
+"""intended for isinstance comparisons in py<3.10"""
+
+
 AnyAxis = Union[InputAxis, OutputAxis]
+
+ANY_AXIS_TYPES = INPUT_AXIS_TYPES + OUTPUT_AXIS_TYPES
+"""intended for isinstance comparisons in py<3.10"""
 
 TVs = Union[
     NotEmpty[List[int]],
@@ -931,7 +976,7 @@ class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
     """Key word arguments for `ScaleLinearDescr`"""
 
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
-    """The axis of of gains/offsets values."""
+    """The axis of gain and offset values."""
 
     gain: Union[float, NotEmpty[List[float]]] = 1.0
     """multiplicative factor"""
@@ -1812,6 +1857,8 @@ class _InputTensorConv(
             assert not isinstance(cp, ScaleMeanVarianceDescr)
             prep.append(cp)
 
+        prep.append(EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype="float32")))
+
         return tgt(
             axes=axes,
             id=TensorId(str(src.name)),
@@ -1919,7 +1966,9 @@ TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
 
 def validate_tensors(
     tensors: Mapping[TensorId, Tuple[TensorDescr, NDArray[Any]]],
-    tensor_origin: str,  # for more precise error messages, e.g. 'test_tensor'
+    tensor_origin: Literal[
+        "test_tensor"
+    ],  # for more precise error messages, e.g. 'test_tensor'
 ):
     all_tensor_axes: Dict[TensorId, Dict[AxisId, Tuple[AnyAxis, int]]] = {}
 
@@ -2112,6 +2161,9 @@ class WeightsEntryDescrBase(FileDescr):
     The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
     All weight entries except one (the initial set of weights resulting from training the model),
     need to have this field."""
+
+    comment: str = ""
+    """A comment about this weights entry, for example how these weights were created."""
 
     @model_validator(mode="after")
     def check_parent_is_not_self(self) -> Self:
@@ -2326,12 +2378,55 @@ class _TensorSizes(NamedTuple):
     outputs: Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]
 
 
+class ReproducibilityTolerance(Node, extra="allow"):
+    """Describes what small numerical differences -- if any -- may be tolerated
+    in the generated output when executing in different environments.
+
+    A tensor element *output* is considered mismatched to the **test_tensor** if
+    abs(*output* - **test_tensor**) > **absolute_tolerance** + **relative_tolerance** * abs(**test_tensor**).
+    (Internally we call [numpy.testing.assert_allclose](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html).)
+
+    Motivation:
+        For testing we can request the respective deep learning frameworks to be as
+        reproducible as possible by setting seeds and chosing deterministic algorithms,
+        but differences in operating systems, available hardware and installed drivers
+        may still lead to numerical differences.
+    """
+
+    relative_tolerance: RelativeTolerance = 1e-3
+    """Maximum relative tolerance of reproduced test tensor."""
+
+    absolute_tolerance: AbsoluteTolerance = 0
+    """Maximum absolute tolerance of reproduced test tensor."""
+
+    mismatched_elements_per_million: MismatchedElementsPerMillion = 0
+    """Maximum number of mismatched elements/pixels per million to tolerate."""
+
+    output_ids: Sequence[TensorId] = ()
+    """Limits the output tensor IDs these reproducibility details apply to."""
+
+    weights_formats: Sequence[WeightsFormat] = ()
+    """Limits the weights formats these details apply to."""
+
+
+class BioimageioConfig(Node, extra="allow"):
+    reproducibility_tolerance: Sequence[ReproducibilityTolerance] = ()
+    """Tolerances to allow when reproducing the model's test outputs
+    from the model's test inputs.
+    Only the first entry matching tensor id and weights format is considered.
+    """
+
+
+class Config(Node, extra="allow"):
+    bioimageio: BioimageioConfig = Field(default_factory=BioimageioConfig)
+
+
 class ModelDescr(GenericModelDescrBase):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    format_version: Literal["0.5.3"] = "0.5.3"
+    format_version: Literal["0.5.4"] = "0.5.4"
     """Version of the bioimage.io model description specification used.
     When creating a new model always use the latest micro/patch version described here.
     The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -2370,7 +2465,7 @@ class ModelDescr(GenericModelDescrBase):
         doc_path = download(value).path
         doc_content = doc_path.read_text(encoding="utf-8")
         assert isinstance(doc_content, str)
-        if not re.match("#.*[vV]alidation", doc_content):
+        if not re.search("#.*[vV]alidation", doc_content):
             issue_warning(
                 "No '# Validation' (sub)section found in {value}.",
                 value=value,
@@ -2497,15 +2592,45 @@ class ModelDescr(GenericModelDescrBase):
         if not validation_context_var.get().perform_io_checks:
             return self
 
-        test_arrays = [
-            load_array(descr.test_tensor.download().path)
-            for descr in chain(self.inputs, self.outputs)
+        test_output_arrays = [
+            load_array(descr.test_tensor.download().path) for descr in self.outputs
         ]
+        test_input_arrays = [
+            load_array(descr.test_tensor.download().path) for descr in self.inputs
+        ]
+
         tensors = {
             descr.id: (descr, array)
-            for descr, array in zip(chain(self.inputs, self.outputs), test_arrays)
+            for descr, array in zip(
+                chain(self.inputs, self.outputs), test_input_arrays + test_output_arrays
+            )
         }
         validate_tensors(tensors, tensor_origin="test_tensor")
+
+        output_arrays = {
+            descr.id: array for descr, array in zip(self.outputs, test_output_arrays)
+        }
+        for rep_tol in self.config.bioimageio.reproducibility_tolerance:
+            if not rep_tol.absolute_tolerance:
+                continue
+
+            if rep_tol.output_ids:
+                out_arrays = {
+                    oid: a
+                    for oid, a in output_arrays.items()
+                    if oid in rep_tol.output_ids
+                }
+            else:
+                out_arrays = output_arrays
+
+            for out_id, array in out_arrays.items():
+                if rep_tol.absolute_tolerance > (max_test_value := array.max()) * 0.01:
+                    raise ValueError(
+                        "config.bioimageio.reproducibility_tolerance.absolute_tolerance="
+                        + f"{rep_tol.absolute_tolerance} > 0.01*{max_test_value}"
+                        + f" (1% of the maximum value of the test tensor '{out_id}')"
+                    )
+
         return self
 
     @model_validator(mode="after")
@@ -2542,7 +2667,7 @@ class ModelDescr(GenericModelDescrBase):
 
     name: Annotated[
         Annotated[
-            str, RestrictCharacters(string.ascii_letters + string.digits + "_- ()")
+            str, RestrictCharacters(string.ascii_letters + string.digits + "_+- ()")
         ],
         MinLen(5),
         MaxLen(128),
@@ -2644,13 +2769,12 @@ class ModelDescr(GenericModelDescrBase):
     parent: Optional[LinkedModel] = None
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
 
-    # todo: add parent self check once we have `id`
-    # @model_validator(mode="after")
-    # def validate_parent_is_not_self(self) -> Self:
-    #     if self.parent is not None and self.parent == self.id:
-    #         raise ValueError("The model may not reference itself as parent model")
+    @model_validator(mode="after")
+    def _validate_parent_is_not_self(self) -> Self:
+        if self.parent is not None and self.parent.id == self.id:
+            raise ValueError("A model description may not reference itself as parent.")
 
-    #     return self
+        return self
 
     run_mode: Annotated[
         Optional[RunMode],
@@ -2675,6 +2799,8 @@ class ModelDescr(GenericModelDescrBase):
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
+
+    config: Config = Field(default_factory=Config)
 
     @model_validator(mode="after")
     def _add_default_cover(self) -> Self:
@@ -2913,6 +3039,14 @@ class ModelDescr(GenericModelDescrBase):
     @model_validator(mode="before")
     @classmethod
     def _convert(cls, data: Dict[str, Any]) -> Dict[str, Any]:
+        cls.convert_from_old_format_wo_validation(data)
+        return data
+
+    @classmethod
+    def convert_from_old_format_wo_validation(cls, data: Dict[str, Any]) -> None:
+        """Convert metadata following an older format version to this classes' format
+        without validating the result.
+        """
         if (
             data.get("type") == "model"
             and isinstance(fv := data.get("format_version"), str)
@@ -2920,20 +3054,34 @@ class ModelDescr(GenericModelDescrBase):
         ):
             fv_parts = fv.split(".")
             if any(not p.isdigit() for p in fv_parts):
-                return data
+                return
 
             fv_tuple = tuple(map(int, fv_parts))
 
             assert cls.implemented_format_version_tuple[0:2] == (0, 5)
             if fv_tuple[:2] in ((0, 3), (0, 4)):
                 m04 = _ModelDescr_v0_4.load(data)
-                if not isinstance(m04, InvalidDescr):
-                    return _model_conv.convert_as_dict(m04)
+                if isinstance(m04, InvalidDescr):
+                    try:
+                        updated = _model_conv.convert_as_dict(
+                            m04  # pyright: ignore[reportArgumentType]
+                        )
+                    except Exception:
+                        logger.error(
+                            "Failed to convert from invalid model 0.4 description."
+                            + " Proceeding with model 0.5 validation without conversion."
+                        )
+                        updated = None
+                else:
+                    updated = _model_conv.convert_as_dict(m04)
+
+                if updated is not None:
+                    data.clear()
+                    data.update(updated)
+
             elif fv_tuple[:2] == (0, 5):
                 # bump patch version
                 data["format_version"] = cls.implemented_format_version
-
-        return data
 
 
 class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
@@ -2941,7 +3089,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
         self, src: _ModelDescr_v0_4, tgt: "type[ModelDescr] | type[dict[str, Any]]"
     ) -> "ModelDescr | dict[str, Any]":
         name = "".join(
-            c if c in string.ascii_letters + string.digits + "_- ()" else " "
+            c if c in string.ascii_letters + string.digits + "_+- ()" else " "
             for c in src.name
         )
 
@@ -2994,11 +3142,11 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             cite=[
                 {"text": c.text, "doi": c.doi, "url": c.url} for c in src.cite
             ],  # pyright: ignore[reportArgumentType]
-            config=src.config,
+            config=src.config,  # pyright: ignore[reportArgumentType]
             covers=src.covers,
             description=src.description,
             documentation=src.documentation,
-            format_version="0.5.3",
+            format_version="0.5.4",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
             id=None if src.id is None else ModelId(src.id),

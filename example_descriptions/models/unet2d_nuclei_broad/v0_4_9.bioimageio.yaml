@@ -76,12 +76,12 @@ weights:
     dependencies: conda:environment.yaml
   onnx:
     source: weights.onnx
-    sha256: f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c
-    opset_version: 12
+    sha256: 85f5ac80fa977fea3562ef97c8c5950288be2c4f4cdb5d994807df97008ce088
+    opset_version: 20
     parent: pytorch_state_dict
   torchscript:
     source: weights.pt
-    sha256: 62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210
+    sha256: a4b0659a1b48454588b12179855ad0a0c9b69ccaa89b8bb06e6271e8f60b02fe
     parent: pytorch_state_dict
 
 type: model

@@ -32,6 +32,7 @@ from ._io import (
     load_description_and_validate_format_only,
     load_model_description,
     save_bioimageio_yaml_only,
+    update_format,
 )
 from ._package import (
     get_resource_package_content,
@@ -88,6 +89,7 @@ __all__ = [
     "settings",
     "SpecificResourceDescr",
     "summary",
+    "update_format",
     "utils",
     "validate_format",
     "ValidationContext",

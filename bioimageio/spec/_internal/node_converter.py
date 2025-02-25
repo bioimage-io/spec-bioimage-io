@@ -17,13 +17,13 @@ from typing_extensions import (
     Unpack,
 )
 
-from .common_nodes import StringNode
 from .node import Node
 from .utils import (
     assert_all_params_set_explicitly,
 )
+from .validated_string import ValidatedString
 
-SRC = TypeVar("SRC", bound=Union[Node, StringNode])
+SRC = TypeVar("SRC", bound=Union[Node, ValidatedString])
 TGT = TypeVar("TGT", bound=Node)
 
 

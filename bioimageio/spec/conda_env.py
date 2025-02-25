@@ -9,6 +9,11 @@ class PipDeps(BaseModel):
 
     pip: List[str] = Field(default_factory=list)
 
+    @field_validator("pip", mode="after")
+    @classmethod
+    def _remove_empty_and_sort(cls, value: List[str]) -> List[str]:
+        return sorted((vs for v in value if (vs := v.strip())))
+
     def __lt__(self, other: Any):
         if isinstance(other, PipDeps):
             return len(self.pip) < len(other.pip)
@@ -87,7 +92,7 @@ class BioimageioCondaEnv(CondaEnv):
 
         if (
             pip_section is None
-            or any(pd.startswith("bioimageio.core") for pd in pip_section.pip)
+            or not any(pd.startswith("bioimageio.core") for pd in pip_section.pip)
         ) and not any(
             d.startswith("bioimageio.core")
             or d.startswith("conda-forge::bioimageio.core")
