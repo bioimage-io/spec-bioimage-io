@@ -63,10 +63,22 @@ ResourceDescr = Union[SpecificResourceDescr, AnyGenericDescr]
 
 
 def dump_description(
-    rd: Union[ResourceDescr, InvalidDescr], exclude_unset: bool = True
+    rd: Union[ResourceDescr, InvalidDescr],
+    /,
+    *,
+    exclude_unset: bool = True,
+    exclude_defaults: bool = False,
 ) -> BioimageioYamlContent:
-    """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
-    return rd.model_dump(mode="json", exclude_unset=exclude_unset)
+    """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML.
+
+    Args:
+        rd: bioimageio resource description
+        exclude_unset: Exclude fields that have not explicitly be set.
+        exclude_defaults: Exclude fields that have the default value (even if set expliclity).
+    """
+    return rd.model_dump(
+        mode="json", exclude_unset=exclude_unset, exclude_defaults=exclude_defaults
+    )
 
 
 RD = TypeVar("RD", bound=ResourceDescr)
