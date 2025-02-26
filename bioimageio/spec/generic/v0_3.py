@@ -3,6 +3,7 @@ from __future__ import annotations
 import string
 from functools import partial
 from typing import (
+    TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
@@ -402,8 +403,12 @@ class GenericModelDescrBase(ResourceDescrBase):
 class GenericDescrBase(GenericModelDescrBase):
     """Base for all resource descriptions except for the model descriptions"""
 
-    format_version: Literal["0.3.0"] = "0.3.0"
-    """The **format** version of this resource specification"""
+    implemented_format_version: ClassVar[Literal["0.3.0"]] = "0.3.0"
+    if TYPE_CHECKING:
+        format_version: Literal["0.3.0"] = "0.3.0"
+    else:
+        format_version: Literal["0.3.0"]
+        """The **format** version of this resource specification"""
 
     @model_validator(mode="before")
     @classmethod

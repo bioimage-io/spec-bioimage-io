@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import TYPE_CHECKING, ClassVar, Literal, Optional
 
 from pydantic import Field
 from typing_extensions import Annotated
@@ -33,7 +33,11 @@ class ApplicationId(ResourceId):
 class ApplicationDescr(GenericDescrBase):
     """Bioimage.io description of an application."""
 
-    type: Literal["application"] = "application"
+    implemented_type: ClassVar[Literal["application"]] = "application"
+    if TYPE_CHECKING:
+        type: Literal["application"] = "application"
+    else:
+        type: Literal["application"]
 
     id: Optional[ApplicationId] = None
     """bioimage.io-wide unique resource identifier

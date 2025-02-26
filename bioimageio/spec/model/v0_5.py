@@ -16,7 +16,6 @@ from typing import (
     Any,
     ClassVar,
     Dict,
-    FrozenSet,
     Generic,
     List,
     Literal,
@@ -48,7 +47,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated, LiteralString, Self, assert_never, get_args
+from typing_extensions import Annotated, Self, assert_never, get_args
 
 from .._internal.common_nodes import (
     InvalidDescr,
@@ -437,8 +436,6 @@ class SizeReference(Node):
 
 
 class AxisBase(NodeWithExplicitlySetFields):
-    _fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type"})
-
     id: AxisId
     """An axis id unique across all axes of one tensor."""
 
@@ -469,7 +466,12 @@ BATCH_AXIS_ID = AxisId("batch")
 
 
 class BatchAxis(AxisBase):
-    type: Literal["batch"] = "batch"
+    implemented_type: ClassVar[Literal["batch"]] = "batch"
+    if TYPE_CHECKING:
+        type: Literal["batch"] = "batch"
+    else:
+        type: Literal["batch"]
+
     id: Annotated[AxisId, Predicate(_is_batch)] = BATCH_AXIS_ID
     size: Optional[Literal[1]] = None
     """The batch size may be fixed to 1,
@@ -489,7 +491,12 @@ class BatchAxis(AxisBase):
 
 
 class ChannelAxis(AxisBase):
-    type: Literal["channel"] = "channel"
+    implemented_type: ClassVar[Literal["channel"]] = "channel"
+    if TYPE_CHECKING:
+        type: Literal["channel"] = "channel"
+    else:
+        type: Literal["channel"]
+
     id: NonBatchAxisId = AxisId("channel")
     channel_names: NotEmpty[List[Identifier]]
 
@@ -511,7 +518,12 @@ class ChannelAxis(AxisBase):
 
 
 class IndexAxisBase(AxisBase):
-    type: Literal["index"] = "index"
+    implemented_type: ClassVar[Literal["index"]] = "index"
+    if TYPE_CHECKING:
+        type: Literal["index"] = "index"
+    else:
+        type: Literal["index"]
+
     id: NonBatchAxisId = AxisId("index")
 
     @property
@@ -572,7 +584,12 @@ class IndexOutputAxis(IndexAxisBase):
 
 
 class TimeAxisBase(AxisBase):
-    type: Literal["time"] = "time"
+    implemented_type: ClassVar[Literal["time"]] = "time"
+    if TYPE_CHECKING:
+        type: Literal["time"] = "time"
+    else:
+        type: Literal["time"]
+
     id: NonBatchAxisId = AxisId("time")
     unit: Optional[TimeUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
@@ -588,7 +605,12 @@ class TimeInputAxis(TimeAxisBase, _WithInputAxisSize):
 
 
 class SpaceAxisBase(AxisBase):
-    type: Literal["space"] = "space"
+    implemented_type: ClassVar[Literal["space"]] = "space"
+    if TYPE_CHECKING:
+        type: Literal["space"] = "space"
+    else:
+        type: Literal["space"]
+
     id: Annotated[NonBatchAxisId, Field(examples=["x", "y", "z"])] = AxisId("x")
     unit: Optional[SpaceUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
@@ -828,9 +850,6 @@ TensorDataDescr = Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr]
 class ProcessingDescrBase(NodeWithExplicitlySetFields, ABC):
     """processing base class"""
 
-    # id: Literal[PreprocessingId, PostprocessingId]  # make abstract field
-    _fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"id"})
-
 
 class BinarizeKwargs(ProcessingKwargs):
     """key word arguments for `BinarizeDescr`"""
@@ -873,7 +892,11 @@ class BinarizeDescr(ProcessingDescrBase):
         ... )]
     """
 
-    id: Literal["binarize"] = "binarize"
+    implemented_id: ClassVar[Literal["binarize"]] = "binarize"
+    if TYPE_CHECKING:
+        id: Literal["binarize"] = "binarize"
+    else:
+        id: Literal["binarize"]
     kwargs: Union[BinarizeKwargs, BinarizeAlongAxisKwargs]
 
 
@@ -883,7 +906,12 @@ class ClipDescr(ProcessingDescrBase):
     See `ScaleRangeDescr` for examples.
     """
 
-    id: Literal["clip"] = "clip"
+    implemented_id: ClassVar[Literal["clip"]] = "clip"
+    if TYPE_CHECKING:
+        id: Literal["clip"] = "clip"
+    else:
+        id: Literal["clip"]
+
     kwargs: ClipKwargs
 
 
@@ -948,7 +976,12 @@ class EnsureDtypeDescr(ProcessingDescrBase):
             ... ]
     """
 
-    id: Literal["ensure_dtype"] = "ensure_dtype"
+    implemented_id: ClassVar[Literal["ensure_dtype"]] = "ensure_dtype"
+    if TYPE_CHECKING:
+        id: Literal["ensure_dtype"] = "ensure_dtype"
+    else:
+        id: Literal["ensure_dtype"]
+
     kwargs: EnsureDtypeKwargs
 
 
@@ -1050,7 +1083,11 @@ class ScaleLinearDescr(ProcessingDescrBase):
 
     """
 
-    id: Literal["scale_linear"] = "scale_linear"
+    implemented_id: ClassVar[Literal["scale_linear"]] = "scale_linear"
+    if TYPE_CHECKING:
+        id: Literal["scale_linear"] = "scale_linear"
+    else:
+        id: Literal["scale_linear"]
     kwargs: Union[ScaleLinearKwargs, ScaleLinearAlongAxisKwargs]
 
 
@@ -1067,7 +1104,11 @@ class SigmoidDescr(ProcessingDescrBase):
         >>> postprocessing = [SigmoidDescr()]
     """
 
-    id: Literal["sigmoid"] = "sigmoid"
+    implemented_id: ClassVar[Literal["sigmoid"]] = "sigmoid"
+    if TYPE_CHECKING:
+        id: Literal["sigmoid"] = "sigmoid"
+    else:
+        id: Literal["sigmoid"]
 
     @property
     def kwargs(self) -> ProcessingKwargs:
@@ -1153,7 +1194,14 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
         ... )]
     """
 
-    id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
+    implemented_id: ClassVar[Literal["fixed_zero_mean_unit_variance"]] = (
+        "fixed_zero_mean_unit_variance"
+    )
+    if TYPE_CHECKING:
+        id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
+    else:
+        id: Literal["fixed_zero_mean_unit_variance"]
+
     kwargs: Union[
         FixedZeroMeanUnitVarianceKwargs, FixedZeroMeanUnitVarianceAlongAxisKwargs
     ]
@@ -1189,7 +1237,14 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
         >>> preprocessing = [ZeroMeanUnitVarianceDescr()]
     """
 
-    id: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
+    implemented_id: ClassVar[Literal["zero_mean_unit_variance"]] = (
+        "zero_mean_unit_variance"
+    )
+    if TYPE_CHECKING:
+        id: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
+    else:
+        id: Literal["zero_mean_unit_variance"]
+
     kwargs: ZeroMeanUnitVarianceKwargs = Field(
         default_factory=ZeroMeanUnitVarianceKwargs
     )
@@ -1298,7 +1353,11 @@ class ScaleRangeDescr(ProcessingDescrBase):
 
     """
 
-    id: Literal["scale_range"] = "scale_range"
+    implemented_id: ClassVar[Literal["scale_range"]] = "scale_range"
+    if TYPE_CHECKING:
+        id: Literal["scale_range"] = "scale_range"
+    else:
+        id: Literal["scale_range"]
     kwargs: ScaleRangeKwargs
 
 
@@ -1327,7 +1386,11 @@ class ScaleMeanVarianceDescr(ProcessingDescrBase):
     `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`
     """
 
-    id: Literal["scale_mean_variance"] = "scale_mean_variance"
+    implemented_id: ClassVar[Literal["scale_mean_variance"]] = "scale_mean_variance"
+    if TYPE_CHECKING:
+        id: Literal["scale_mean_variance"] = "scale_mean_variance"
+    else:
+        id: Literal["scale_mean_variance"]
     kwargs: ScaleMeanVarianceKwargs
 
 
@@ -2426,14 +2489,22 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    format_version: Literal["0.5.4"] = "0.5.4"
-    """Version of the bioimage.io model description specification used.
-    When creating a new model always use the latest micro/patch version described here.
-    The `format_version` is important for any consumer software to understand how to parse the fields.
-    """
+    implemented_format_version: ClassVar[Literal["0.5.4"]] = "0.5.4"
+    if TYPE_CHECKING:
+        format_version: Literal["0.5.4"] = "0.5.4"
+    else:
+        format_version: Literal["0.5.4"]
+        """Version of the bioimage.io model description specification used.
+        When creating a new model always use the latest micro/patch version described here.
+        The `format_version` is important for any consumer software to understand how to parse the fields.
+        """
 
-    type: Literal["model"] = "model"
-    """Specialized resource type 'model'"""
+    implemented_type: ClassVar[Literal["model"]] = "model"
+    if TYPE_CHECKING:
+        type: Literal["model"] = "model"
+    else:
+        type: Literal["model"]
+        """Specialized resource type 'model'"""
 
     id: Optional[ModelId] = None
     """bioimage.io-wide unique resource identifier

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Literal, Optional, cast
 
 from pydantic import model_validator
 
@@ -42,7 +42,11 @@ class DatasetDescr(GenericDescrBase):
     processing.
     """
 
-    type: Literal["dataset"] = "dataset"
+    implemented_type: ClassVar[Literal["dataset"]] = "dataset"
+    if TYPE_CHECKING:
+        type: Literal["dataset"] = "dataset"
+    else:
+        type: Literal["dataset"]
 
     id: Optional[DatasetId] = None
     """bioimage.io-wide unique resource identifier

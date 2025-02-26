@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import TYPE_CHECKING, ClassVar, Literal, Optional
 
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
@@ -31,7 +31,11 @@ class NotebookId(ResourceId):
 class NotebookDescr(GenericDescrBase):
     """Bioimage.io description of a Jupyter notebook."""
 
-    type: Literal["notebook"] = "notebook"
+    implemented_type: ClassVar[Literal["notebook"]] = "notebook"
+    if TYPE_CHECKING:
+        type: Literal["notebook"] = "notebook"
+    else:
+        type: Literal["notebook"]
 
     id: Optional[NotebookId] = None
     """bioimage.io-wide unique resource identifier

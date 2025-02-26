@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import collections.abc
 from typing import (
+    TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
-    FrozenSet,
     List,
     Literal,
     Optional,
@@ -32,7 +32,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated, LiteralString, Self, assert_never, get_args
+from typing_extensions import Annotated, Self, assert_never, get_args
 
 from .._internal.common_nodes import (
     KwargsNode,
@@ -629,9 +629,6 @@ class ProcessingKwargs(KwargsNode):
 class ProcessingDescrBase(NodeWithExplicitlySetFields):
     """processing base class"""
 
-    # name: Literal[PreprocessingName, PostprocessingName]  # todo: make abstract field
-    _fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"name"})
-
 
 class BinarizeKwargs(ProcessingKwargs):
     """key word arguments for `BinarizeDescr`"""
@@ -645,7 +642,12 @@ class BinarizeDescr(ProcessingDescrBase):
     Values above the threshold will be set to one, values below the threshold to zero.
     """
 
-    name: Literal["binarize"] = "binarize"
+    implemented_name: ClassVar[Literal["binarize"]] = "binarize"
+    if TYPE_CHECKING:
+        name: Literal["binarize"] = "binarize"
+    else:
+        name: Literal["binarize"]
+
     kwargs: BinarizeKwargs
 
 
@@ -665,7 +667,11 @@ class ClipDescr(ProcessingDescrBase):
     and above `ClipKwargs.max` to `ClipKwargs.max`.
     """
 
-    name: Literal["clip"] = "clip"
+    implemented_name: ClassVar[Literal["clip"]] = "clip"
+    if TYPE_CHECKING:
+        name: Literal["clip"] = "clip"
+    else:
+        name: Literal["clip"]
 
     kwargs: ClipKwargs
 
@@ -705,14 +711,23 @@ class ScaleLinearKwargs(ProcessingKwargs):
 class ScaleLinearDescr(ProcessingDescrBase):
     """Fixed linear scaling."""
 
-    name: Literal["scale_linear"] = "scale_linear"
+    implemented_name: ClassVar[Literal["scale_linear"]] = "scale_linear"
+    if TYPE_CHECKING:
+        name: Literal["scale_linear"] = "scale_linear"
+    else:
+        name: Literal["scale_linear"]
+
     kwargs: ScaleLinearKwargs
 
 
 class SigmoidDescr(ProcessingDescrBase):
     """The logistic sigmoid funciton, a.k.a. expit function."""
 
-    name: Literal["sigmoid"] = "sigmoid"
+    implemented_name: ClassVar[Literal["sigmoid"]] = "sigmoid"
+    if TYPE_CHECKING:
+        name: Literal["sigmoid"] = "sigmoid"
+    else:
+        name: Literal["sigmoid"]
 
     @property
     def kwargs(self) -> ProcessingKwargs:
@@ -763,7 +778,14 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
 class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     """Subtract mean and divide by variance."""
 
-    name: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
+    implemented_name: ClassVar[Literal["zero_mean_unit_variance"]] = (
+        "zero_mean_unit_variance"
+    )
+    if TYPE_CHECKING:
+        name: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
+    else:
+        name: Literal["zero_mean_unit_variance"]
+
     kwargs: ZeroMeanUnitVarianceKwargs
 
 
@@ -821,7 +843,12 @@ class ScaleRangeKwargs(ProcessingKwargs):
 class ScaleRangeDescr(ProcessingDescrBase):
     """Scale with percentiles."""
 
-    name: Literal["scale_range"] = "scale_range"
+    implemented_name: ClassVar[Literal["scale_range"]] = "scale_range"
+    if TYPE_CHECKING:
+        name: Literal["scale_range"] = "scale_range"
+    else:
+        name: Literal["scale_range"]
+
     kwargs: ScaleRangeKwargs
 
 
@@ -852,7 +879,12 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs):
 class ScaleMeanVarianceDescr(ProcessingDescrBase):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
-    name: Literal["scale_mean_variance"] = "scale_mean_variance"
+    implemented_name: ClassVar[Literal["scale_mean_variance"]] = "scale_mean_variance"
+    if TYPE_CHECKING:
+        name: Literal["scale_mean_variance"] = "scale_mean_variance"
+    else:
+        name: Literal["scale_mean_variance"]
+
     kwargs: ScaleMeanVarianceKwargs
 
 
@@ -1044,14 +1076,22 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    format_version: Literal["0.4.10",] = "0.4.10"
-    """Version of the bioimage.io model description specification used.
-    When creating a new model always use the latest micro/patch version described here.
-    The `format_version` is important for any consumer software to understand how to parse the fields.
-    """
+    implemented_format_version: ClassVar[Literal["0.4.10"]] = "0.4.10"
+    if TYPE_CHECKING:
+        format_version: Literal["0.4.10"] = "0.4.10"
+    else:
+        format_version: Literal["0.4.10"]
+        """Version of the bioimage.io model description specification used.
+        When creating a new model always use the latest micro/patch version described here.
+        The `format_version` is important for any consumer software to understand how to parse the fields.
+        """
 
-    type: Literal["model"] = "model"
-    """Specialized resource type 'model'"""
+    implemented_type: ClassVar[Literal["model"]] = "model"
+    if TYPE_CHECKING:
+        type: Literal["model"] = "model"
+    else:
+        type: Literal["model"]
+        """Specialized resource type 'model'"""
 
     id: Optional[ModelId] = None
     """bioimage.io-wide unique resource identifier

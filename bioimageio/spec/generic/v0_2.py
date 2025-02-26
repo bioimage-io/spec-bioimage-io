@@ -15,6 +15,7 @@ from typing import (
 
 import annotated_types
 from annotated_types import Len, LowerCase, MaxLen
+from git import TYPE_CHECKING
 from pydantic import (
     EmailStr,
     Field,
@@ -369,12 +370,16 @@ class GenericModelDescrBase(ResourceDescrBase):
 class GenericDescrBase(GenericModelDescrBase):
     """Base for all resource descriptions except for the model descriptions"""
 
-    format_version: Literal["0.2.4"] = "0.2.4"
-    """The format version of this resource specification
-    (not the `version` of the resource description)
-    When creating a new resource always use the latest micro/patch version described here.
-    The `format_version` is important for any consumer software to understand how to parse the fields.
-    """
+    implemented_format_version: ClassVar[Literal["0.2.4"]] = "0.2.4"
+    if TYPE_CHECKING:
+        format_version: Literal["0.2.4"] = "0.2.4"
+    else:
+        format_version: Literal["0.2.4"]
+        """The format version of this resource specification
+        (not the `version` of the resource description)
+        When creating a new resource always use the latest micro/patch version described here.
+        The `format_version` is important for any consumer software to understand how to parse the fields.
+        """
 
     @model_validator(mode="before")
     @classmethod

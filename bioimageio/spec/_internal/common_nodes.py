@@ -5,14 +5,15 @@ from abc import ABC
 from copy import deepcopy
 from io import BytesIO
 from pathlib import Path
+from types import MappingProxyType
 from typing import (
     IO,
     TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
-    FrozenSet,
     List,
+    Literal,
     Optional,
     Protocol,
     Tuple,
@@ -23,7 +24,7 @@ from zipfile import ZipFile
 import pydantic
 from pydantic import DirectoryPath, PrivateAttr, model_validator
 from pydantic_core import PydanticUndefined
-from typing_extensions import LiteralString, Self
+from typing_extensions import Self
 
 from ..summary import (
     WARNING_LEVEL_TO_NAME,
@@ -52,21 +53,35 @@ from .warning_levels import ALERT, ERROR, INFO
 
 
 class NodeWithExplicitlySetFields(Node):
-    _fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
-    """set these fields explicitly with their default value if they are not set,
-    such that they are always included even when dumping with 'exclude_unset'"""
+    _fields_to_set_explicitly: ClassVar[MappingProxyType[str, Any]]
+
+    @classmethod
+    def __pydantic_init_subclass__(cls, **kwargs: Any) -> None:
+        explict_fields: Dict[str, Any] = {}
+        for attr in dir(cls):
+            if attr.startswith("implemented_"):
+                field_name = attr.replace("implemented_", "")
+                if field_name not in cls.model_fields:
+                    continue
+
+                assert (
+                    cls.model_fields[field_name].get_default() is PydanticUndefined
+                ), field_name
+                default = getattr(cls, attr)
+                explict_fields[field_name] = default
+
+        cls._fields_to_set_explicitly = MappingProxyType(explict_fields)
+        return super().__pydantic_init_subclass__(**kwargs)
 
     @model_validator(mode="before")
     @classmethod
-    def set_fields_explicitly(
+    def _set_fields_explicitly(
         cls, data: Union[Any, Dict[str, Any]]
     ) -> Union[Any, Dict[str, Any]]:
         if isinstance(data, dict):
-            for name in cls._fields_to_set_explicitly:
+            for name, default in cls._fields_to_set_explicitly.items():
                 if name not in data:
-                    data[name] = cls.model_fields[name].get_default(
-                        call_default_factory=True
-                    )
+                    data[name] = default
 
         return data  # pyright: ignore[reportUnknownVariableType]
 
@@ -74,12 +89,14 @@ class NodeWithExplicitlySetFields(Node):
 if TYPE_CHECKING:
 
     class _ResourceDescrBaseAbstractFieldsProtocol(Protocol):
-        """workaround to add abstract fields to ResourceDescrBase"""
+        """workaround to add "abstract" fields to ResourceDescrBase"""
 
         # TODO: implement as proper abstract fields of ResourceDescrBase
 
         type: Any  # should be LiteralString
         format_version: Any  # should be LiteralString
+        implemented_type: ClassVar[Any]
+        implemented_format_version: ClassVar[Any]
 
 else:
 
@@ -94,11 +111,6 @@ class ResourceDescrBase(
 
     _validation_summary: Optional[ValidationSummary] = None
 
-    _fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset(
-        {"type", "format_version"}
-    )
-    implemented_type: ClassVar[str]
-    implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
     # @field_validator("format_version", mode="before", check_fields=False)
@@ -174,17 +186,8 @@ class ResourceDescrBase(
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
-        if (
-            "type" in cls.model_fields
-            and cls.model_fields["type"].default is not PydanticUndefined
-        ):
-            cls.implemented_type = cls.model_fields["type"].default
-
-        if (
-            "format_version" in cls.model_fields
-            and cls.model_fields["format_version"].default is not PydanticUndefined
-        ):
-            cls.implemented_format_version = cls.model_fields["format_version"].default
+        # set classvar implemented_format_version_tuple
+        if "format_version" in cls.model_fields:
             if "." not in cls.implemented_format_version:
                 cls.implemented_format_version_tuple = (0, 0, 0)
             else:
@@ -355,9 +358,17 @@ class InvalidDescr(
 ):
     """A representation of an invalid resource description"""
 
-    type: Any = "unknown"
-    format_version: Any = "unknown"
-    _fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
+    implemented_type: ClassVar[Literal["unknown"]] = "unknown"
+    if TYPE_CHECKING:  # see NodeWithExplicitlySetFields
+        type: Any = "unknown"
+    else:
+        type: Any
+
+    implemented_format_version: ClassVar[Literal["unknown"]] = "unknown"
+    if TYPE_CHECKING:  # see NodeWithExplicitlySetFields
+        format_version: Any = "unknown"
+    else:
+        format_version: Any
 
 
 class KwargsNode(Node):
