@@ -1424,7 +1424,7 @@ class Widget:
                 border-collapse: collapse;
             }}
             tr{{
-                border-bottom: solid 1px black;
+                border-bottom: {theme_border};
             }}
             tr:last-child{{
                 border-bottom: 0;
