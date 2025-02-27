@@ -41,6 +41,9 @@ from .types import FileSource, PermissiveFileSource
 from .utils import cache
 
 yaml = YAML(typ="safe")
+yaml.version = (1, 2)  # pyright: ignore[reportAttributeAccessIssue]
+yaml.default_flow_style = False
+yaml.indent(mapping=2, sequence=4, offset=2)
 
 
 def read_yaml(file: Union[FilePath, ZipPath, IO[str], IO[bytes]]) -> YamlValue:

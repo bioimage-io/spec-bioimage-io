@@ -29,11 +29,11 @@ from pydantic import (
     ValidationError,
     create_model,
 )
-from ruyaml import YAML
 
 from bioimageio.spec import InvalidDescr, ValidationContext, build_description
 from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.io import download
+from bioimageio.spec._internal.io_utils import yaml
 from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
 from bioimageio.spec.common import HttpUrl, Sha256
@@ -42,9 +42,6 @@ from bioimageio.spec.generic._v0_2_converter import DOI_PREFIXES
 from bioimageio.spec.generic.v0_2 import GenericDescr as GenericDescr02
 from bioimageio.spec.model.v0_4 import ModelDescr as ModelDescr04
 from bioimageio.spec.notebook.v0_2 import NotebookDescr as NotebookDescr02
-
-yaml = YAML(typ="safe")
-
 
 unset = object()
 

@@ -5,7 +5,6 @@ from types import MappingProxyType
 from typing import Any, Dict, Union
 
 import pytest
-from ruyaml import YAML
 
 from bioimageio.spec._internal.constants import (
     KNOWN_GH_USERS,
@@ -13,14 +12,13 @@ from bioimageio.spec._internal.constants import (
     N_KNOWN_GH_USERS,
     N_KNOWN_INVALID_GH_USERS,
 )
+from bioimageio.spec._internal.io_utils import yaml
 from bioimageio.spec._internal.type_guards import is_dict, is_kwargs
 
 try:
     from filelock import FileLock
 except ImportError:
     FileLock = None
-
-yaml = YAML(typ="safe")
 
 EXAMPLE_DESCRIPTIONS = Path(__file__).parent / "../example_descriptions/"
 UNET2D_ROOT = EXAMPLE_DESCRIPTIONS / "models/unet2d_nuclei_broad"
