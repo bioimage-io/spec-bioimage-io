@@ -264,6 +264,7 @@ def update_format(
     *,
     output: Union[Path, TextIO, None] = None,
     exclude_defaults: bool = True,
+    perform_io_checks: bool = settings.perform_io_checks,
 ) -> Union[LatestResourceDescr, InvalidDescr]:
     """Update a resource description.
 
@@ -282,7 +283,7 @@ def update_format(
         descr = build_description(
             source,
             context=validation_context_var.get().replace(
-                root=root, perform_io_checks=False
+                root=root, perform_io_checks=perform_io_checks
             ),
             format_version=LATEST,
         )
@@ -290,7 +291,7 @@ def update_format(
     else:
         descr = load_description(
             source,
-            perform_io_checks=False,
+            perform_io_checks=perform_io_checks,
             format_version=LATEST,
         )
 
