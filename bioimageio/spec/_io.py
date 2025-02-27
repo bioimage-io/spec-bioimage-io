@@ -210,7 +210,7 @@ def save_bioimageio_yaml_only(
     Args:
         rd: bioimageio resource description
         file: file or stream to save to
-        exclude_unset: Exclude fields that have not explicitly be set
+        exclude_unset: Exclude fields that have not explicitly be set.
         exclude_defaults: Exclude fields that have the default value (even if set explicitly).
 
     Note: To save a resource description with its associated files as a package,
@@ -299,3 +299,24 @@ def update_format(
         save_bioimageio_yaml_only(descr, file=output, exclude_defaults=exclude_defaults)
 
     return descr
+
+
+def update_hashes(
+    source: Union[PermissiveFileSource, ZipFile, ResourceDescr, BioimageioYamlContent],
+    /,
+) -> Union[ResourceDescr, InvalidDescr]:
+    """Update hash values of the files referenced in **source**."""
+    if isinstance(source, ResourceDescrBase):
+        root = source.root
+        source = dump_description(source)
+    else:
+        root = None
+
+    context = validation_context_var.get().replace(
+        update_hashes=True, root=root, perform_io_checks=True
+    )
+    with context:
+        if isinstance(source, dict):
+            return build_description(source)
+        else:
+            return load_description(source, perform_io_checks=True)

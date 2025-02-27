@@ -795,7 +795,7 @@ class FileDescr(Node):
             actual_sha = get_sha256(local_source)
             context.known_files[str(self.source)] = actual_sha
 
-        if self.sha256 is None:
+        if self.sha256 is None or context.update_hashes:
             self.sha256 = actual_sha
         elif self.sha256 != actual_sha:
             raise ValueError(

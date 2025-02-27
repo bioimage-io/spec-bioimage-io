@@ -13,7 +13,7 @@ This changelog includes implementation details and my reference the [changes to 
 #### bioimageio.spec 0.5.4.0
 
 - [model format 0.5.4](#model-054)
-- new utlity function `update_format`
+- new utlity functions `update_format`, `update_hashes`
 - environment for tensorflow 1 is now using tf 2.17 (to support py >=3.8)
 - update conda environments (remove `cpuonly` from pytorch envs)
 - bugfix: Fix wrong warning by matching a '# Validation' section within the

@@ -50,6 +50,10 @@ class ValidationContext:
     """Directly raise any validation errors
     instead of aggregating errors and returning a `bioimageio.spec.InvalidDescr`. (for debugging)"""
 
+    update_hashes: bool = False
+    """Overwrite specified file hashes with values computed from the referenced file (instead of comparing them).
+    (Has no effect if `perform_io_checks=False`.)"""
+
     def replace(
         self,
         root: Optional[Union[RootHttpUrl, DirectoryPath, ZipFile]] = None,
@@ -59,6 +63,7 @@ class ValidationContext:
         perform_io_checks: Optional[bool] = None,
         known_files: Optional[Dict[str, Sha256]] = None,
         raise_errors: Optional[bool] = None,
+        update_hashes: Optional[bool] = None,
     ) -> "ValidationContext":
         if known_files is None and root is not None and self.root != root:
             # reset known files if root changes, but no new known_files are given
@@ -78,6 +83,9 @@ class ValidationContext:
             ),
             known_files=self.known_files if known_files is None else known_files,
             raise_errors=self.raise_errors if raise_errors is None else raise_errors,
+            update_hashes=(
+                self.update_hashes if update_hashes is None else update_hashes
+            ),
         )
 
     def __enter__(self):
