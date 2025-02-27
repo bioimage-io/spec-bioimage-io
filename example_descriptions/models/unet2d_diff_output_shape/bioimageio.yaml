@@ -3,6 +3,10 @@ authors:
 cite:
   - { doi: 10.5281/zenodo.5108853, text: training library }
   - { doi: 10.1007/978-3-319-24574-4_28, text: architecture }
+config:
+  bioimageio:
+    reproducibility_tolerance:
+      - { absolute_tolerance: 0.0001 }
 covers: [cover.jpg]
 description: Different output shape
 documentation: documentation.md
@@ -10,7 +14,7 @@ format_version: 0.5.4
 git_repo: https://github.com/constantinpape/torch-em.git
 inputs:
   - axes:
-      - type: batch
+      - { type: batch }
       - channel_names: [channel0]
         type: channel
       - id: y
@@ -26,13 +30,17 @@ inputs:
           axes: [channel, y, x]
       - id: ensure_dtype
         kwargs: { dtype: float32 }
-    test_tensor: { source: test_input.npy }
+    test_tensor:
+      {
+        sha256: f0af5576a51eae4ef0ab8d905b2cca1e51ee8fcd4162f3d53f14059a81993ad7,
+        source: test_input.npy,
+      }
 license: CC-BY-4.0
 links: [ilastik/ilastik]
 name: Diff-output-shape
 outputs:
   - axes:
-      - type: batch
+      - { type: batch }
       - channel_names: [channel0]
         type: channel
       - id: y
@@ -45,7 +53,11 @@ outputs:
     postprocessing:
       - id: ensure_dtype
         kwargs: { dtype: float32 }
-    test_tensor: { source: test_output.npy }
+    test_tensor:
+      {
+        sha256: c826bcd21d076db39a08d3bfd22c49c778934c8449dc26ec3b7a90cdea50752a,
+        source: test_output.npy,
+      }
 tags: [segmentation]
 timestamp: "2021-09-12T14:18:58.389834+00:00"
 type: model
@@ -58,4 +70,5 @@ weights:
       sha256: 1d260e6a124f2c344ead9915b71f01af074ec45178847307e10471ebe0512842
       source: resize_unet.py
     pytorch_version: 1.6
+    sha256: 2c475874f358eb75dc5f3b6af8d186e4fbf8da3acf43fb6662f0d5de21b0a838
     source: weights.pt
