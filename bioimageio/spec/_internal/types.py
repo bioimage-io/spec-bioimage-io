@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 from keyword import iskeyword
 from typing import Any, ClassVar, Sequence, Type, TypeVar, Union
 
@@ -88,7 +88,7 @@ def _validate_orcid_id(orcid_id: str):
 # TODO follow up on https://github.com/pydantic/pydantic/issues/8964
 # to remove _serialize_datetime
 def _serialize_datetime_json(dt: datetime) -> str:
-    return dt.isoformat()
+    return dt.astimezone(UTC).isoformat(timespec="seconds")
 
 
 class Datetime(
