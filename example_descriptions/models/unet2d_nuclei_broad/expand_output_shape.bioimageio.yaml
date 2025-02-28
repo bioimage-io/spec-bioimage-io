@@ -9,9 +9,8 @@ authors:
     orcid: 0000-0002-8567-6389
 cite:
   - doi: 10.1007/978-3-319-24574-4_28
-    text:
-      'Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation.
-      MICCAI 2015.'
+    text: 'Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image
+      segmentation. MICCAI 2015.'
   - text: 2018 Data Science Bowl
     url: https://www.kaggle.com/c/data-science-bowl-2018
 covers:
@@ -51,7 +50,7 @@ inputs:
         kwargs:
           dtype: float32
     test_tensor:
-      sha256: 92768a2e0f2643c80b57afa5494019a5aafe5b0d92fe36ae740763adf3594abb
+      sha256: 92768a2e0f2643c80b57afa5494019a5aafe5b0d92fe36ae740763adf3594a57
       source: test_input.npy
 license: MIT
 maintainers:
@@ -101,7 +100,7 @@ tags:
   - nucleus
   - segmentation
   - dsb2018
-timestamp: '2019-12-11T12:22:32Z'
+timestamp: '2019-12-11T12:22:32+00:00'
 training_data:
   id: ilastik/covid_if_training_data
 type: model
@@ -113,7 +112,7 @@ weights:
       kwargs:
         input_channels: 1
         output_channels: 1
-      sha256: 1441e8cfaf387a98a1c0bb937d59a2e9d6c311a8912cd88b39c11ecff503ccfe
+      sha256: 62b976622d0f1ff898fb28577688a14a52f8389fb08943f8e003cfa4fabb56ff
       source: unet2d_expand_output_shape.py
     authors:
       - affiliation: EMBL Heidelberg
