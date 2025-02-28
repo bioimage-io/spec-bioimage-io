@@ -796,7 +796,7 @@ class FileDescr(Node):
             context.known_files[str(self.source)] = actual_sha
 
         if self.sha256 is None or context.update_hashes:
-            self.sha256 = actual_sha
+            return self.__class__.model_construct(source=self.source, sha256=actual_sha)
         elif self.sha256 != actual_sha:
             raise ValueError(
                 f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got "

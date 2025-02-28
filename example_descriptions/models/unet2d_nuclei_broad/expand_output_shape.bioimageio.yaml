@@ -51,7 +51,7 @@ inputs:
         kwargs:
           dtype: float32
     test_tensor:
-      sha256: 92768a2e0f2643c80b57afa5494019a5aafe5b0d92fe36ae740763adf3594a57
+      sha256: 92768a2e0f2643c80b57afa5494019a5aafe5b0d92fe36ae740763adf3594abb
       source: test_input.npy
 license: MIT
 maintainers:

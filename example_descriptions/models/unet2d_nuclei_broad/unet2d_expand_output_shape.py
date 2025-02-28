@@ -77,7 +77,7 @@ class UNet2d(nn.Module):
 
         x = self.output(x)
 
-        # expand the shape across z
-        out_shape = tuple(x.shape)
-        expanded_shape = out_shape[:2] + (1,) + out_shape[2:]
-        return x.expand(expanded_shape)
+        # add explicit singleton z axis
+        x = x.unsqueeze(2)
+
+        return x
