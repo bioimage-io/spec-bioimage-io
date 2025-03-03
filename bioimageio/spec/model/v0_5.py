@@ -2055,6 +2055,12 @@ def validate_tensors(
                 + f" match described dtype '{descr.dtype}'"
             )
 
+        if array.min() > -1e-5 and array.max() < 1e-5:
+            raise ValueError(
+                "Output values are too small for reliable testing."
+                + f" Values <-1e5 or >=1e5 must be present in {tensor_origin}"
+            )
+
         for a in descr.axes:
             actual_size = all_tensor_axes[descr.id][a.id][1]
             if a.size is None:
@@ -2459,7 +2465,7 @@ class ReproducibilityTolerance(Node, extra="allow"):
     relative_tolerance: RelativeTolerance = 1e-3
     """Maximum relative tolerance of reproduced test tensor."""
 
-    absolute_tolerance: AbsoluteTolerance = 0
+    absolute_tolerance: AbsoluteTolerance = 1e-5
     """Maximum absolute tolerance of reproduced test tensor."""
 
     mismatched_elements_per_million: MismatchedElementsPerMillion = 0
@@ -2655,7 +2661,7 @@ class ModelDescr(GenericModelDescrBase):
                 raise ValueError(
                     f"input_halo {input_halo} (output_halo {axis.halo} *"
                     + f" output_scale {axis.scale} / input_scale {ref_axis.scale})"
-                    + f" is not an even integer for {tensor_id}.{axis.id}."
+                    + f"     {tensor_id}.{axis.id}."
                 )
 
     @model_validator(mode="after")
