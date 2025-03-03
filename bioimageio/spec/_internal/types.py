@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from keyword import iskeyword
 from typing import Any, ClassVar, Sequence, Type, TypeVar, Union
 
@@ -17,6 +17,8 @@ from .url import HttpUrl
 from .validated_string import ValidatedString
 from .validator_annotations import AfterValidator, BeforeValidator
 from .version_type import Version
+
+UTC = timezone.utc
 
 __all__ = [
     "AbsoluteDirectory",
@@ -66,7 +68,7 @@ def _validate_datetime(dt: Union[datetime, str, Any]) -> datetime:
     if isinstance(dt, datetime):
         return dt
     elif isinstance(dt, str):
-        return isoparse(dt)
+        return isoparse(dt).astimezone(UTC)
 
     raise ValueError(f"'{dt}' not a string or datetime.")
 
@@ -103,6 +105,10 @@ class Datetime(
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
     """
+
+    @classmethod
+    def now(cls):
+        return cls(datetime.now(UTC))
 
 
 class Doi(ValidatedString):

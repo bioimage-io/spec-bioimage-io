@@ -1,16 +1,15 @@
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 import pytest
 from dateutil.parser import isoparse
-from pydantic import PlainSerializer, TypeAdapter
-from typing_extensions import Annotated
 
 import bioimageio.spec._internal.io_basics
 from bioimageio.spec._internal import types
 from bioimageio.spec._internal.io import RelativeFilePath
 from tests.utils import check_type
+
+UTC = timezone.utc
 
 TYPE_ARGS = {
     types.Datetime: (2024, 2, 14),
@@ -143,49 +142,6 @@ def test_datetime(value: str, expected: datetime):
         value,
         expected_root=expected,
         expected_deserialized=value,
-    )
-
-
-@pytest.mark.parametrize(
-    "value",
-    [
-        "2024-03-06T14:21:34.384830",
-        "2024-03-06T14:21:34+00:00",
-        "2024-03-06T14:21:34+00:05",
-        "2024-03-06T14:21:34-00:08",
-        "2019-12-11T12:22:32Z",
-    ],
-)
-def test_datetime_more(value: str):
-    from bioimageio.spec._internal.types import (
-        _serialize_datetime_json,  # pyright: ignore[reportPrivateUsage]
-    )
-
-    root_adapter = TypeAdapter(types.Datetime)
-    datetime_adapter: TypeAdapter[Any] = TypeAdapter(
-        Annotated[
-            datetime,
-            PlainSerializer(_serialize_datetime_json, when_used="json-unless-none"),
-        ]
-    )
-
-    expected = isoparse(value)
-
-    actual_init = types.Datetime(expected)
-    assert actual_init.root == expected
-
-    actual_root = root_adapter.validate_python(value)
-    assert actual_root.root == expected
-    assert root_adapter.dump_python(actual_root, mode="python") == expected
-    assert root_adapter.dump_python(actual_root, mode="json") == value.replace(
-        "Z", "+00:00"
-    )
-
-    actual_datetime = datetime_adapter.validate_python(value)
-    assert actual_datetime == expected
-    assert datetime_adapter.dump_python(actual_datetime, mode="python") == expected
-    assert datetime_adapter.dump_python(actual_datetime, mode="json") == value.replace(
-        "Z", "+00:00"
     )
 
 

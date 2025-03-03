@@ -2855,7 +2855,7 @@ class ModelDescr(GenericModelDescrBase):
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    timestamp: Datetime = Datetime(datetime.now())
+    timestamp: Datetime = Field(default_factory=Datetime.now)
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
     (In Python a datetime object is valid, too)."""
