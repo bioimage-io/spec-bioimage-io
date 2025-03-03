@@ -1,5 +1,6 @@
 import string
 from typing import (
+    TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
@@ -15,7 +16,6 @@ from typing import (
 
 import annotated_types
 from annotated_types import Len, LowerCase, MaxLen
-from git import TYPE_CHECKING
 from pydantic import (
     EmailStr,
     Field,
