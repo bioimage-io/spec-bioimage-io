@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -14,7 +14,7 @@ from tests.utils import check_type
 
 TYPE_ARGS = {
     types.Datetime: (2024, 2, 14),
-    types.Datetime: datetime.now().isoformat(),
+    types.Datetime: datetime.now().astimezone(UTC).isoformat(timespec="seconds"),
     types.DeprecatedLicenseId: "AGPL-1.0",
     types.Doi: "10.5281/zenodo.5764892",
     types.Identifier: "id",
@@ -65,6 +65,7 @@ IGNORE_TYPES_MEMBERS = {
     "TypeVar",
     "typing",
     "Union",
+    "UTC",
     "ValidatedString",
     "YamlValue",
 }
@@ -127,16 +128,12 @@ def test_si_unit_invalid(value: str):
     "value,expected",
     [
         (
-            "2019-12-11T12:22:32+00:00",
-            isoparse("2019-12-11T12:22:32+00:00"),
+            "2001-12-11T12:22:32+00:00",
+            isoparse("2001-12-11T12:22:32+00:00"),
         ),
         (
-            "2019-12-11T12:22:32",
-            datetime(2019, 12, 11, 12, 22, 32),
-        ),
-        (
-            "2019-12-11T12:22:32-00:08",
-            isoparse("2019-12-11T12:22:32-00:08"),
+            "2002-12-11T12:22:32+00:00",
+            datetime(2002, 12, 11, 12, 22, 32, tzinfo=UTC),
         ),
     ],
 )

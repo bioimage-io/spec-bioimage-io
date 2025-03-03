@@ -35,7 +35,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
     #     "dependencies",
     #     "weights",
     # },
-    "models/unet2d_multi_tensor/v0_4.bioimageio.yaml": {"dependencies", "weights"},
+    "models/unet2d_multi_tensor/bioimageio.yaml": {"dependencies", "weights"},
     "models/unet2d_nuclei_broad/v0_4_0.bioimageio.yaml": {
         "dependencies",
         "weights",

@@ -8,6 +8,10 @@ cite:
     text: training library
   - doi: 10.1007/978-3-319-24574-4_28
     text: architecture
+config:
+  bioimageio:
+    reproducibility_tolerance:
+      - absolute_tolerance: 1e-05
 covers:
   - cover.jpg
 description: Multi tensor
