@@ -14,6 +14,7 @@ from typing import (
     Dict,
     List,
     Literal,
+    Mapping,
     Optional,
     Protocol,
     Tuple,
@@ -53,7 +54,7 @@ from .warning_levels import ALERT, ERROR, INFO
 
 
 class NodeWithExplicitlySetFields(Node):
-    _fields_to_set_explicitly: ClassVar[MappingProxyType[str, Any]]
+    _fields_to_set_explicitly: ClassVar[Mapping[str, Any]]
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any) -> None:
