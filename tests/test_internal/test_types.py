@@ -60,6 +60,7 @@ IGNORE_TYPES_MEMBERS = {
     "S",
     "Sequence",
     "StringConstraints",
+    "timezone",
     "Type",
     "TypeVar",
     "typing",
