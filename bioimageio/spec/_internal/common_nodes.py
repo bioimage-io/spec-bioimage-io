@@ -178,10 +178,19 @@ class ResourceDescrBase(
         default_factory=lambda: validation_context_var.get().root
     )
 
+    _file_name: Optional[FileName] = PrivateAttr(
+        default_factory=lambda: validation_context_var.get().file_name
+    )
+
     @property
     def root(self) -> Union[RootHttpUrl, DirectoryPath, ZipFile]:
         """The URL/Path prefix to resolve any relative paths with."""
         return self._root
+
+    @property
+    def file_name(self) -> Optional[FileName]:
+        """File name of the bioimageio.yaml file the description was loaded from."""
+        return self._file_name
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):

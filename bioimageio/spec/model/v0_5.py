@@ -6,7 +6,6 @@ import string
 import warnings
 from abc import ABC
 from copy import deepcopy
-from datetime import datetime
 from itertools import chain
 from math import ceil
 from pathlib import Path, PurePosixPath
