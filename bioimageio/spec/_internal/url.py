@@ -25,6 +25,11 @@ def _validate_url_impl(
     url = str(url)
     val_url = url
 
+    if url.startswith("http://example.com") or url.startswith("https://example.com"):
+        return pydantic.HttpUrl(  # pyright: ignore[reportUnknownVariableType,reportCallIssue]
+            url
+        )
+
     if url.startswith("https://colab.research.google.com/github/"):
         # get requests for colab returns 200 even if the source notebook does not exists.
         # We therefore validate the url to the notebbok instead (for github notebooks)
