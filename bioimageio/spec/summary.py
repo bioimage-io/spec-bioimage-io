@@ -433,11 +433,13 @@ class ValidationSummary(BaseModel, extra="allow"):
                 ]
 
         now = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        formatted_paths: List[Path] = []
         for p in path:
             p = Path(str(p).format(now=now))
             self.save(p)
+            formatted_paths.append(p)
 
-        return path
+        return formatted_paths
 
     def add_detail(self, detail: ValidationDetail):
         if detail.status == "failed":
