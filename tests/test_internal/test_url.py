@@ -54,7 +54,7 @@ def test_httpurl_mock_invalid(
 ):
     from bioimageio.spec._internal.url import HttpUrl
 
-    url = "https://example.com"
+    url = "https://bad_example.com"
     _ = requests_mock.head(url, text=text, status_code=status_code)
     _ = requests_mock.get(url, text=text, status_code=status_code)
     with ValidationContext(perform_io_checks=True):
