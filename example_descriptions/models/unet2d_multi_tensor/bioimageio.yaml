@@ -149,7 +149,8 @@ weights:
     sha256: c498522b3f2b02429b41fe9dbcb722ce0d7ad4cae7fcf8059cee27857ae49b00
     source: weights.pt
   torchscript:
+    comment: Converted with bioimageio.core 0.7.0 with use_tracing=True.
     parent: pytorch_state_dict
-    pytorch_version: 1.6
-    sha256: 097bb5062df1fe48a5e7473ea2f6025c77d334a9e3f92af79fc3d6d530c01720
-    source: weights-torchscript.pt
+    pytorch_version: 2.5.1
+    sha256: 5a6800f5796e5485525621f0b6846c2a25cee36f60bb6cca74cd5bc2ee259a90
+    source: weights_torchscript_traced.pt
