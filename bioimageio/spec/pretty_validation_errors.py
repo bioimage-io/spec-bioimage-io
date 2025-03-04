@@ -48,7 +48,7 @@ try:
         assert isinstance(evalue, ValidationError), type(etype)
 
         stb: Union[Any, List[Union[str, Any]]]
-        stb = self.InteractiveTB.structured_traceback(  # pyright: ignore[reportUnknownVariableType]
+        stb = self.InteractiveTB.structured_traceback(
             etype, PrettyValidationError(evalue), tb, tb_offset=tb_offset
         )
 
