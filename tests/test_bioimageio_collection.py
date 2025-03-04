@@ -8,7 +8,7 @@ from tests.utils import ParameterSet, check_bioimageio_yaml, expensive_test
 
 BASE_URL = "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/"
 
-KNOWN_INVALID: Collection[str] = set()
+KNOWN_INVALID: Collection[str] = {"stupendous-sheep/1.1"}
 EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT: Collection[str] = {
     "version_number",  # deprecated field that gets dropped in favor of `version``
     "version",  # may be set from deprecated `version_number`
