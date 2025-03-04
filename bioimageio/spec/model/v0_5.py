@@ -2048,7 +2048,23 @@ def validate_tensors(
             }
 
     for descr, array in tensors.values():
-        if array.dtype.name != descr.dtype:
+        if descr.dtype in ("float32", "float64"):
+            invalid_test_tensor_dtype = array.dtype.name not in (
+                "float32",
+                "float64",
+                "uint8",
+                "int8",
+                "uint16",
+                "int16",
+                "uint32",
+                "int32",
+                "uint64",
+                "int64",
+            )
+        else:
+            invalid_test_tensor_dtype = array.dtype.name != descr.dtype
+
+        if invalid_test_tensor_dtype:
             raise ValueError(
                 f"{e_msg(descr)}.{tensor_origin}.dtype '{array.dtype.name}' does not"
                 + f" match described dtype '{descr.dtype}'"
