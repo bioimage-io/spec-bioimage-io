@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import TYPE_CHECKING, ClassVar, Literal, Optional
 
 from pydantic import Field
 from typing_extensions import Annotated
@@ -11,7 +11,9 @@ from .._internal.url import HttpUrl as HttpUrl
 from ..generic.v0_3 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
 from ..generic.v0_3 import Author as Author
 from ..generic.v0_3 import BadgeDescr as BadgeDescr
+from ..generic.v0_3 import BioimageioConfig as BioimageioConfig
 from ..generic.v0_3 import CiteEntry as CiteEntry
+from ..generic.v0_3 import Config as Config
 from ..generic.v0_3 import DeprecatedLicenseId as DeprecatedLicenseId
 from ..generic.v0_3 import Doi as Doi
 from ..generic.v0_3 import GenericDescrBase, LinkedResourceBase, ResourceId
@@ -31,7 +33,11 @@ class ApplicationId(ResourceId):
 class ApplicationDescr(GenericDescrBase):
     """Bioimage.io description of an application."""
 
-    type: Literal["application"] = "application"
+    implemented_type: ClassVar[Literal["application"]] = "application"
+    if TYPE_CHECKING:
+        type: Literal["application"] = "application"
+    else:
+        type: Literal["application"]
 
     id: Optional[ApplicationId] = None
     """bioimage.io-wide unique resource identifier

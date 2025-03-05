@@ -22,7 +22,6 @@ from bioimageio.spec import (
     notebook,
 )
 from bioimageio.spec._internal.common_nodes import Node
-from bioimageio.spec._internal.constants import IN_PACKAGE_MESSAGE
 from bioimageio.spec._internal.utils import unindent
 
 Loc = Tuple[str, ...]
@@ -69,13 +68,11 @@ ADDITIONAL_DESCRIPTION_ANY_RESOURCE = (
     "and determine which bioimage.io specification applies. They are optional only when"
     " creating a resource "
     "description in Python code using the appropriate, `type` and `format_version`"
-    " specific class.|\n"
+    " specific class (here: [{class_name}]({rd_class_dev_doc_url})).|\n"
     "| `field` ≝ 🡇 | Default field value is not displayed in-line, but in the code"
     " block below. |\n"
-    f"| {IN_PACKAGE_MESSAGE} | Files referenced in fields which are marked with"
-    f" '{IN_PACKAGE_MESSAGE}' "
     "are included when packaging the resource to a .zip archive. "
-    "The resource description YAML file (RDF) is always included well as"
+    "The resource description YAML file (RDF) is always included as well as"
     " 'rdf.yaml'. |\n"
 )
 
@@ -426,7 +423,10 @@ def export_documentation(folder: Path, rd_class: Type[ResourceDescr]) -> Path:
         + "\n"
         + (
             unindent(rd_class.__doc__ or "", ignore_first_line=True)
-            + ADDITIONAL_DESCRIPTION_ANY_RESOURCE
+            + ADDITIONAL_DESCRIPTION_ANY_RESOURCE.format(
+                class_name=f"{rd_class.__module__}.{rd_class.__name__}",
+                rd_class_dev_doc_url=f"https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/{rd_class.__module__[len('bioimageio.spec.'):].replace('.', '/')}.html#{rd_class.__name__}",
+            )
         )
     )
     all_fields = [

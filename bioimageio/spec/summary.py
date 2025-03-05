@@ -1,4 +1,5 @@
 import subprocess
+from datetime import datetime, timezone
 from io import StringIO
 from itertools import chain
 from pathlib import Path
@@ -20,16 +21,18 @@ from typing import (
     no_type_check,
 )
 
+import markdown
 import rich.console
 import rich.markdown
-from pydantic import BaseModel, Field, field_validator, model_validator
+from loguru import logger
+from pydantic import BaseModel, Field, field_validator
 from pydantic_core.core_schema import ErrorType
-from typing_extensions import TypedDict, assert_never
+from typing_extensions import Self, TypedDict, assert_never
 
 from ._internal.constants import VERSION
 from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml
-from ._internal.type_guards import is_mapping
+from ._internal.types import NotEmpty
 from ._internal.warning_levels import (
     ALERT,
     ALERT_NAME,
@@ -79,30 +82,10 @@ class WarningEntry(ValidationEntry):
     """A warning in a `ValidationDetail`"""
 
     severity: WarningSeverity = WARNING
-    severity_name: WarningSeverityName = WARNING_NAME
 
-    @model_validator(mode="before")
-    @classmethod
-    def sync_severity_with_severity_name(
-        cls, data: Union[Mapping[Any, Any], Any]
-    ) -> Any:
-        if is_mapping(data):
-            data = dict(data)
-            if (
-                "severity" in data
-                and "severity_name" not in data
-                and data["severity"] in WARNING_SEVERITY_TO_NAME
-            ):
-                data["severity_name"] = WARNING_SEVERITY_TO_NAME[data["severity"]]
-
-            if (
-                "severity" in data
-                and "severity_name" not in data
-                and data["severity"] in WARNING_SEVERITY_TO_NAME
-            ):
-                data["severity"] = WARNING_NAME_TO_LEVEL[data["severity_name"]]
-
-        return data
+    @property
+    def severity_name(self) -> WarningSeverityName:
+        return WARNING_SEVERITY_TO_NAME[self.severity]
 
 
 def format_loc(loc: Loc, enclose_in: str = "`") -> str:
@@ -244,7 +227,7 @@ class ValidationSummary(BaseModel, extra="allow"):
     type: str
     format_version: str
     status: Literal["passed", "failed"]
-    details: List[ValidationDetail]
+    details: NotEmpty[List[ValidationDetail]]
     env: Set[InstalledPackage] = Field(
         default_factory=lambda: {
             InstalledPackage(name="bioimageio.spec", version=VERSION)
@@ -269,9 +252,6 @@ class ValidationSummary(BaseModel, extra="allow"):
     @property
     def warnings(self) -> List[WarningEntry]:
         return list(chain.from_iterable(d.warnings for d in self.details))
-
-    def __str__(self):
-        return f"{self.__class__.__name__}:\n" + self.format()
 
     @staticmethod
     def _format_md_table(rows: List[List[str]]) -> str:
@@ -425,8 +405,41 @@ class ValidationSummary(BaseModel, extra="allow"):
                 return
 
         rich_markdown = rich.markdown.Markdown(formatted)
+        rich_markdown
         console = rich.console.Console()
         console.print(rich_markdown)
+
+    def log(
+        self,
+        path: Union[Path, Sequence[Path]] = Path("bioimageio_summary_{now}"),
+    ) -> Sequence[Path]:
+        """Convenience method to display and save validation/test summary.
+
+        Args:
+            path: A folder or file paths to save validation/test summaries to.
+
+        Returns: Sequence of log file paths written.
+        """
+        self.display()
+        if isinstance(path, (str, Path)):
+            path = Path(path)
+            if path.suffix:
+                path = [path]
+            else:
+                path = [
+                    path / "summary.json",
+                    path / "summary.md",
+                    path / "summary.html",
+                ]
+
+        now = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        formatted_paths: List[Path] = []
+        for p in path:
+            p = Path(str(p).format(now=now))
+            self.save(p)
+            formatted_paths.append(p)
+
+        return formatted_paths
 
     def add_detail(self, detail: ValidationDetail):
         if detail.status == "failed":
@@ -435,6 +448,52 @@ class ValidationSummary(BaseModel, extra="allow"):
             assert_never(detail.status)
 
         self.details.append(detail)
+
+    def save(self, path: Path = Path("summary.json")):
+        """Save the validation/tests summary in JSON, Markdown or HTML format.
+        (Format is chosen based on the suffix: `.json`, `.md`, `.html`.)
+        """
+
+        if path.suffix == ".json":
+            save_impl = self.save_json
+        elif path.suffix == ".md":
+            save_impl = self.save_markdown
+        elif path.suffix == ".html":
+            save_impl = self.save_html
+        else:
+            raise ValueError(f"Unknown summary path suffix '{path.suffix}'")
+
+        save_impl(path)
+
+    def save_json(
+        self, path: Path = Path("summary.json"), *, indent: Optional[int] = 2
+    ):
+        """Save validation/test summary as JSON file."""
+        json_str = self.model_dump_json(indent=indent)
+        path.parent.mkdir(exist_ok=True)
+        _ = path.write_text(json_str, encoding="utf-8")
+        logger.info("Saved summary to {}", path.absolute())
+
+    def save_markdown(self, path: Path = Path("summary.md")):
+        """Save rendered validation/test summary as Markdown file."""
+        formatted = self.format()
+        path.parent.mkdir(exist_ok=True)
+        _ = path.write_text(formatted, encoding="utf-8")
+        logger.info("Saved Markdown formatted summary  to {}", path.absolute())
+
+    def save_html(self, path: Path = Path("summary.html")) -> None:
+        """Save rendered validation/test summary as HTML file."""
+        path.parent.mkdir(exist_ok=True)
+
+        formatted = self.format()
+        html = markdown.markdown(formatted, extensions=["tables"])
+        _ = path.write_text(html, encoding="utf-8")
+        logger.info("Saved HTML formatted summary to {}", path.absolute())
+
+    def load_json(self, path: Path) -> Self:
+        """Load validation/test summary from a suitable JSON file"""
+        json_str = path.read_text(encoding="utf-8")
+        return self.model_validate_json(json_str)
 
     @field_validator("env", mode="before")
     def _convert_dict(cls, value: List[Union[List[str], Dict[str, str]]]):

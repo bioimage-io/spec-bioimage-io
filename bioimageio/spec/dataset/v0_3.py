@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Literal, Optional, cast
 
 from pydantic import model_validator
 
@@ -10,7 +10,9 @@ from .._internal.url import HttpUrl as HttpUrl
 from ..generic.v0_3 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
 from ..generic.v0_3 import Author as Author
 from ..generic.v0_3 import BadgeDescr as BadgeDescr
+from ..generic.v0_3 import BioimageioConfig as BioimageioConfig
 from ..generic.v0_3 import CiteEntry as CiteEntry
+from ..generic.v0_3 import Config as Config
 from ..generic.v0_3 import DeprecatedLicenseId as DeprecatedLicenseId
 from ..generic.v0_3 import (
     DocumentationSource,
@@ -40,7 +42,11 @@ class DatasetDescr(GenericDescrBase):
     processing.
     """
 
-    type: Literal["dataset"] = "dataset"
+    implemented_type: ClassVar[Literal["dataset"]] = "dataset"
+    if TYPE_CHECKING:
+        type: Literal["dataset"] = "dataset"
+    else:
+        type: Literal["dataset"]
 
     id: Optional[DatasetId] = None
     """bioimage.io-wide unique resource identifier
@@ -79,7 +85,7 @@ class DatasetDescr(GenericDescrBase):
                     cite=[
                         {"text": c.text, "doi": c.doi, "url": c.url} for c in old.cite
                     ],  # pyright: ignore[reportArgumentType]
-                    config=old.config,
+                    config=old.config,  # pyright: ignore[reportArgumentType]
                     covers=old.covers,
                     description=old.description,
                     documentation=cast(DocumentationSource, old.documentation),

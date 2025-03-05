@@ -25,6 +25,11 @@ def _validate_url_impl(
     url = str(url)
     val_url = url
 
+    if url.startswith("http://example.com") or url.startswith("https://example.com"):
+        return pydantic.HttpUrl(  # pyright: ignore[reportUnknownVariableType,reportCallIssue]
+            url
+        )
+
     if url.startswith("https://colab.research.google.com/github/"):
         # get requests for colab returns 200 even if the source notebook does not exists.
         # We therefore validate the url to the notebbok instead (for github notebooks)
@@ -78,9 +83,9 @@ def _validate_url_impl(
     else:
         if response.status_code == 200:  # ok
             pass
-        elif response.status_code == 302:  # found
+        elif response.status_code in (302, 303):  # found
             pass
-        elif response.status_code in (301, 303, 308):
+        elif response.status_code in (301, 308):
             issue_warning(
                 "URL redirected ({status_code}): consider updating {value} with new"
                 + " location: {location}",

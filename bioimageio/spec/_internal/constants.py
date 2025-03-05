@@ -15,10 +15,6 @@ DOI_REGEX = (  # lax DOI regex validating the first 7 DOI characters only
     r"^10\.[0-9]{4}.+$"
 )
 
-IN_PACKAGE_MESSAGE = "∈📦 "
-"""DEPRECATED, use ImportantFileSource to indicate that a file source should be included in a package"""
-
-
 SHA256_HINT = """You can drag and drop your file to this
 [online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate a SHA256 in your browser.
 Or you can generate a SHA256 checksum with Python's `hashlib`,

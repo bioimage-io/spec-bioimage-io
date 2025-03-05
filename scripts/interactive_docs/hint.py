@@ -293,7 +293,7 @@ class RecursionHint(Hint):
         # fmt: on
 
 
-class StringNodeHint(Hint):
+class StringNodeHint(Hint):  # TODO: remove and add `ValidatedStringHint` instead
     def __init__(self, pattern: str) -> None:
         super().__init__()
 
@@ -1424,7 +1424,7 @@ class Widget:
                 border-collapse: collapse;
             }}
             tr{{
-                border-bottom: solid 1px black;
+                border-bottom: {theme_border};
             }}
             tr:last-child{{
                 border-bottom: 0;
@@ -1667,7 +1667,9 @@ class ColumnControls(Widget):
         """
 
     def __init__(
-        self, root_element_id: str, style: str = "float: right; margin-left: 4em; margin-right: 1em;"
+        self,
+        root_element_id: str,
+        style: str = "float: right; margin-left: 4em; margin-right: 1em;",
     ):
         # fmt: off
         super().__init__(

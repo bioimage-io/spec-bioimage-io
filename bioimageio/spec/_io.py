@@ -1,4 +1,5 @@
-from typing import Dict, Literal, Optional, TextIO, Union, cast
+from pathlib import Path
+from typing import Dict, Literal, Optional, TextIO, Union, cast, overload
 from zipfile import ZipFile
 
 from loguru import logger
@@ -6,7 +7,9 @@ from pydantic import FilePath, NewPath
 
 from ._description import (
     DISCOVER,
+    LATEST,
     InvalidDescr,
+    LatestResourceDescr,
     ResourceDescr,
     build_description,
     dump_description,
@@ -18,18 +21,43 @@ from ._internal.common_nodes import ResourceDescrBase
 from ._internal.io import BioimageioYamlContent, YamlValue
 from ._internal.io_basics import Sha256
 from ._internal.io_utils import open_bioimageio_yaml, write_yaml
+from ._internal.types import FormatVersionPlaceholder
 from ._internal.validation_context import validation_context_var
 from .common import PermissiveFileSource
-from .dataset import AnyDatasetDescr
-from .model import AnyModelDescr
+from .dataset import AnyDatasetDescr, DatasetDescr
+from .model import AnyModelDescr, ModelDescr
 from .summary import ValidationSummary
+
+
+@overload
+def load_description(
+    source: Union[PermissiveFileSource, ZipFile],
+    /,
+    *,
+    format_version: Literal["latest"],
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
+) -> Union[LatestResourceDescr, InvalidDescr]: ...
+
+
+@overload
+def load_description(
+    source: Union[PermissiveFileSource, ZipFile],
+    /,
+    *,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
+) -> Union[ResourceDescr, InvalidDescr]: ...
 
 
 def load_description(
     source: Union[PermissiveFileSource, ZipFile],
     /,
     *,
-    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: bool = settings.perform_io_checks,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
@@ -73,11 +101,35 @@ def load_description(
     )
 
 
+@overload
 def load_model_description(
     source: Union[PermissiveFileSource, ZipFile],
     /,
     *,
-    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+    format_version: Literal["latest"],
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
+) -> ModelDescr: ...
+
+
+@overload
+def load_model_description(
+    source: Union[PermissiveFileSource, ZipFile],
+    /,
+    *,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
+) -> AnyModelDescr: ...
+
+
+def load_model_description(
+    source: Union[PermissiveFileSource, ZipFile],
+    /,
+    *,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: bool = settings.perform_io_checks,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
@@ -98,11 +150,35 @@ def load_model_description(
     return ensure_description_is_model(rd)
 
 
+@overload
 def load_dataset_description(
     source: Union[PermissiveFileSource, ZipFile],
     /,
     *,
-    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+    format_version: Literal["latest"],
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
+) -> DatasetDescr: ...
+
+
+@overload
+def load_dataset_description(
+    source: Union[PermissiveFileSource, ZipFile],
+    /,
+    *,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
+    perform_io_checks: bool = settings.perform_io_checks,
+    known_files: Optional[Dict[str, Sha256]] = None,
+    sha256: Optional[Sha256] = None,
+) -> AnyDatasetDescr: ...
+
+
+def load_dataset_description(
+    source: Union[PermissiveFileSource, ZipFile],
+    /,
+    *,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: bool = settings.perform_io_checks,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
@@ -124,15 +200,26 @@ def save_bioimageio_yaml_only(
     rd: Union[ResourceDescr, BioimageioYamlContent, InvalidDescr],
     /,
     file: Union[NewPath, FilePath, TextIO],
+    *,
+    exclude_unset: bool = True,
+    exclude_defaults: bool = False,
 ):
     """write the metadata of a resource description (`rd`) to `file`
     without writing any of the referenced files in it.
+
+    Args:
+        rd: bioimageio resource description
+        file: file or stream to save to
+        exclude_unset: Exclude fields that have not explicitly be set.
+        exclude_defaults: Exclude fields that have the default value (even if set explicitly).
 
     Note: To save a resource description with its associated files as a package,
     use `save_bioimageio_package` or `save_bioimageio_package_as_folder`.
     """
     if isinstance(rd, ResourceDescrBase):
-        content = dump_description(rd)
+        content = dump_description(
+            rd, exclude_unset=exclude_unset, exclude_defaults=exclude_defaults
+        )
     else:
         content = rd
 
@@ -143,7 +230,7 @@ def load_description_and_validate_format_only(
     source: Union[PermissiveFileSource, ZipFile],
     /,
     *,
-    format_version: Union[Literal["discover"], Literal["latest"], str] = DISCOVER,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: bool = settings.perform_io_checks,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
@@ -163,3 +250,73 @@ def load_description_and_validate_format_only(
     )
     assert rd.validation_summary is not None
     return rd.validation_summary
+
+
+def update_format(
+    source: Union[
+        ResourceDescr,
+        PermissiveFileSource,
+        ZipFile,
+        BioimageioYamlContent,
+        InvalidDescr,
+    ],
+    /,
+    *,
+    output: Union[Path, TextIO, None] = None,
+    exclude_defaults: bool = True,
+    perform_io_checks: bool = settings.perform_io_checks,
+) -> Union[LatestResourceDescr, InvalidDescr]:
+    """Update a resource description.
+
+    Notes:
+    - Invalid **source** descriptions may fail to update.
+    - The updated description might be invalid (even if the **source** was valid).
+    """
+
+    if isinstance(source, ResourceDescrBase):
+        root = source.root
+        source = dump_description(source)
+    else:
+        root = None
+
+    if isinstance(source, dict):
+        descr = build_description(
+            source,
+            context=validation_context_var.get().replace(
+                root=root, perform_io_checks=perform_io_checks
+            ),
+            format_version=LATEST,
+        )
+
+    else:
+        descr = load_description(
+            source,
+            perform_io_checks=perform_io_checks,
+            format_version=LATEST,
+        )
+
+    if output is not None:
+        save_bioimageio_yaml_only(descr, file=output, exclude_defaults=exclude_defaults)
+
+    return descr
+
+
+def update_hashes(
+    source: Union[PermissiveFileSource, ZipFile, ResourceDescr, BioimageioYamlContent],
+    /,
+) -> Union[ResourceDescr, InvalidDescr]:
+    """Update hash values of the files referenced in **source**."""
+    if isinstance(source, ResourceDescrBase):
+        root = source.root
+        source = dump_description(source)
+    else:
+        root = None
+
+    context = validation_context_var.get().replace(
+        update_hashes=True, root=root, perform_io_checks=True
+    )
+    with context:
+        if isinstance(source, dict):
+            return build_description(source)
+        else:
+            return load_description(source, perform_io_checks=True)
