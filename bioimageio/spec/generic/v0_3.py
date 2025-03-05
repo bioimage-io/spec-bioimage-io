@@ -171,15 +171,23 @@ _maintainer_conv = _MaintainerConv(_Maintainer_v0_2, Maintainer)
 
 
 class CiteEntry(Node):
+    """A citation that should be referenced in work using this resource."""
+
     text: str
     """free text description"""
 
     doi: Optional[Doi] = None
     """A digital object identifier (DOI) is the prefered citation reference.
-    See https://www.doi.org/ for details. (alternatively specify `url`)"""
+    See https://www.doi.org/ for details.
+    Note:
+        Either **doi** or **url** have to be specified.
+    """
 
     url: Optional[HttpUrl] = None
-    """URL to cite (preferably specify a `doi` instead)"""
+    """URL to cite (preferably specify a **doi** instead/also).
+    Note:
+        Either **doi** or **url** have to be specified.
+    """
 
     @model_validator(mode="after")
     def _check_doi_or_url(self):
