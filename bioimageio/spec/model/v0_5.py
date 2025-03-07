@@ -746,7 +746,7 @@ NominalOrOrdinalDType = Literal[
 class NominalOrOrdinalDataDescr(Node):
     values: TVs
     """A fixed set of nominal or an ascending sequence of ordinal values.
-    In this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'.
+    In this case `data.type` is required to be an unsigend integer type, e.g. 'uint8'.
     String `values` are interpreted as labels for tensor values 0, ..., N.
     Note: as YAML 1.2 does not natively support a "set" datatype,
     nominal values should be given as a sequence (aka list/array) as well.
@@ -835,7 +835,7 @@ class IntervalOrRatioDataDescr(Node):
         None,
     )
     """Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
-    `None` corresponds to min/max of what can be expressed by `data_type`."""
+    `None` corresponds to min/max of what can be expressed by **type**."""
     unit: Union[Literal["arbitrary unit"], SiUnit] = "arbitrary unit"
     scale: float = 1.0
     """Scale for data on an interval (or ratio) scale."""
@@ -3158,10 +3158,11 @@ class ModelDescr(GenericModelDescrBase):
                         updated = _model_conv.convert_as_dict(
                             m04  # pyright: ignore[reportArgumentType]
                         )
-                    except Exception:
+                    except Exception as e:
                         logger.error(
                             "Failed to convert from invalid model 0.4 description."
-                            + " Proceeding with model 0.5 validation without conversion."
+                            + f"\nerror: {e}"
+                            + "\nProceeding with model 0.5 validation without conversion."
                         )
                         updated = None
                 else:
