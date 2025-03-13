@@ -90,7 +90,12 @@ def _open_bioimageio_rdf_in_zip(source: ZipFile, rdf_name: str) -> OpenedBioimag
     with source.open(rdf_name) as f:
         content = _sanitize_bioimageio_yaml(read_yaml(f))
 
-    return OpenedBioimageioYaml(content, source, source.filename or "bioimageio.zip")
+    return OpenedBioimageioYaml(
+        content,
+        source,
+        source.filename or "bioimageio.zip",
+        local_source=ZipPath(source, rdf_name),
+    )
 
 
 def _open_bioimageio_zip(source: ZipFile) -> OpenedBioimageioYaml:
@@ -158,6 +163,7 @@ def open_bioimageio_yaml(
         content,
         root.original_root if isinstance(root, FileInZip) else root,
         downloaded.original_file_name,
+        local_source=local_source,
     )
 
 
