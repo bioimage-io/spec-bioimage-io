@@ -12,7 +12,7 @@ from bioimageio.spec._internal.constants import (
     N_KNOWN_GH_USERS,
     N_KNOWN_INVALID_GH_USERS,
 )
-from bioimageio.spec._internal.io_utils import yaml
+from bioimageio.spec._internal.io_utils import read_yaml
 from bioimageio.spec._internal.type_guards import is_dict, is_kwargs
 
 try:
@@ -53,10 +53,11 @@ def bioimageio_json_schema(
 
 @pytest.fixture(scope="session")
 def stardist04_data():
-    with (
+    data = read_yaml(
         EXAMPLE_DESCRIPTIONS / "models/stardist_example_model/v0_4.bioimageio.yaml"
-    ).open() as f:
-        return MappingProxyType(yaml.load(f))
+    )
+    assert isinstance(data, dict)
+    return MappingProxyType(data)
 
 
 @pytest.fixture(scope="session")
@@ -71,9 +72,7 @@ def unet2d_path_old() -> Path:
 
 @pytest.fixture(scope="session")
 def unet2d_data(unet2d_path: Path):
-    with unet2d_path.open() as f:
-        data = yaml.load(f)
-
+    data = read_yaml(unet2d_path)
     assert is_kwargs(data)
     return MappingProxyType(data)
 
