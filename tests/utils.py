@@ -33,8 +33,9 @@ from pydantic import (
 from bioimageio.spec import InvalidDescr, ValidationContext, build_description
 from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.io import download
-from bioimageio.spec._internal.io_utils import yaml
+from bioimageio.spec._internal.io_utils import read_yaml
 from bioimageio.spec._internal.root_url import RootHttpUrl
+from bioimageio.spec._internal.type_guards import is_kwargs
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
 from bioimageio.spec.common import HttpUrl, Sha256
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr02
@@ -153,9 +154,8 @@ def check_bioimageio_yaml(
     root = downloaded_source.original_root
     raw = downloaded_source.path.read_text(encoding="utf-8")
     assert isinstance(raw, str)
-    data: Dict[Any, Any] = yaml.load(StringIO(raw))
-
-    assert isinstance(data, dict), type(data)
+    data = read_yaml(StringIO(raw))
+    assert is_kwargs(data), type(data)
     format_version = "latest" if as_latest else "discover"
     with ValidationContext(
         root=root,
