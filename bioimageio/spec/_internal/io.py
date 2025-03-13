@@ -442,13 +442,13 @@ def identify_bioimageio_yaml_file_name(file_names: Iterable[FileName]) -> FileNa
 
 def find_bioimageio_yaml_file_name(path: Union[Path, ZipFile]) -> FileName:
     if isinstance(path, ZipFile):
-        file_names = identify_bioimageio_yaml_file_name(path.namelist())
+        file_names = path.namelist()
     elif path.is_file():
         if not is_zipfile(path):
             return path.name
 
         with ZipFile(path, "r") as f:
-            file_names = identify_bioimageio_yaml_file_name(f.namelist())
+            file_names = f.namelist()
     else:
         file_names = [p.name for p in path.glob("*")]
 
