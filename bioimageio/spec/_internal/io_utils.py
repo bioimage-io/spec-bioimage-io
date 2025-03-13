@@ -40,10 +40,13 @@ from .io_basics import FileName, ZipPath
 from .types import FileSource, PermissiveFileSource
 from .utils import cache
 
-yaml = YAML(typ="safe")
-yaml.version = (1, 2)  # pyright: ignore[reportAttributeAccessIssue]
-yaml.default_flow_style = False
-yaml.indent(mapping=2, sequence=4, offset=2)
+_yaml_load = YAML(typ="safe")
+
+_yaml_dump = YAML()
+_yaml_dump.version = (1, 2)  # pyright: ignore[reportAttributeAccessIssue]
+_yaml_dump.default_flow_style = False
+_yaml_dump.indent(mapping=2, sequence=4, offset=2)
+_yaml_dump.width = 88  # pyright: ignore[reportAttributeAccessIssue]
 
 
 def read_yaml(file: Union[FilePath, ZipPath, IO[str], IO[bytes]]) -> YamlValue:
@@ -52,7 +55,7 @@ def read_yaml(file: Union[FilePath, ZipPath, IO[str], IO[bytes]]) -> YamlValue:
     else:
         data = file
 
-    content: YamlValue = yaml.load(data)
+    content: YamlValue = _yaml_load.load(data)
     return content
 
 
@@ -67,7 +70,7 @@ def write_yaml(
         cm = nullcontext(file)
 
     with cm as f:
-        yaml.dump(content, f)
+        _yaml_dump.dump(content, f)
 
 
 def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
