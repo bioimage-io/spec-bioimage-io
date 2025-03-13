@@ -21,6 +21,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
     "philosophical-panda/0.0.11": {"outputs"},  # int -> float
     "philosophical-panda/0.1.0": {"outputs"},  # int -> float
     "polite-pig/1.1": {"inputs", "outputs"},
+    "charismatic-whale/1.0.2": {"inputs", "outputs"},  # int -> float
 }
 
 
