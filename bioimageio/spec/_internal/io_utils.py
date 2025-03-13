@@ -38,7 +38,9 @@ from .io import (
 )
 from .io_basics import FileName, ZipPath
 from .types import FileSource, PermissiveFileSource
+from .url import HttpUrl
 from .utils import cache
+from .validation_context import ValidationContext
 
 _yaml_load = YAML(typ="safe")
 
@@ -91,13 +93,15 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
 
 def _open_bioimageio_rdf_in_zip(source: ZipFile, rdf_name: str) -> OpenedBioimageioYaml:
     with source.open(rdf_name) as f:
-        content = _sanitize_bioimageio_yaml(read_yaml(f))
+        unparsed_content = f.read().decode(encoding="utf-8")
+
+    content = _sanitize_bioimageio_yaml(read_yaml(io.StringIO(unparsed_content)))
 
     return OpenedBioimageioYaml(
         content,
         source,
         source.filename or "bioimageio.zip",
-        local_source=ZipPath(source, rdf_name),
+        unparsed_content=unparsed_content,
     )
 
 
@@ -131,6 +135,32 @@ def open_bioimageio_yaml(
             or "/" not in settings.id_map
         ):
             raise
+
+        if settings.collection_http_pattern:
+            with ValidationContext(perform_io_checks=False):
+                url = HttpUrl(
+                    settings.collection_http_pattern.format(bioimageio_id=source)
+                )
+
+            try:
+                r = requests.get(url)
+                r.raise_for_status()
+                unparsed_content = r.content.decode(encoding="utf-8")
+                content = _sanitize_bioimageio_yaml(
+                    read_yaml(io.StringIO(unparsed_content))
+                )
+            except Exception as e:
+                logger.warning("Failed to get bioimageio.yaml from {}: {}", url, e)
+            else:
+                original_file_name = (
+                    "rdf.yaml" if url.path is None else url.path.split("/")[-1]
+                )
+                return OpenedBioimageioYaml(
+                    content=content,
+                    original_root=url.parent,
+                    original_file_name=original_file_name,
+                    unparsed_content=unparsed_content,
+                )
 
         id_map = get_id_map()
         if id_map and source not in id_map:
@@ -166,7 +196,7 @@ def open_bioimageio_yaml(
         content,
         root.original_root if isinstance(root, FileInZip) else root,
         downloaded.original_file_name,
-        local_source=local_source,
+        unparsed_content=local_source.read_text(encoding="utf-8"),
     )
 
 

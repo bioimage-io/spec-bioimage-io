@@ -519,7 +519,7 @@ class OpenedBioimageioYaml:
     content: BioimageioYamlContent
     original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
     original_file_name: FileName
-    local_source: Union[Path, ZipPath]
+    unparsed_content: str
 
 
 @dataclass

@@ -17,6 +17,17 @@ class Settings(BaseSettings, extra="ignore"):
     cache_path: Path = pooch.os_cache("bioimageio")
     """bioimageio cache location"""
 
+    collection_http_pattern: str = (
+        "https://hypha.aicell.io/bioimage-io/artifacts/{bioimageio_id}/files/rdf.yaml"
+    )
+    """A pattern to map bioimageio IDs to bioimageio.yaml URLs.
+    Notes:
+    - '{bioimageio_id}' is replaced with user query,
+      e.g. "affable-shark" when calling `load_description("affable-shark")`.
+    - This method takes precedence over resolving via **id_map**.
+    - If this endpoints fails, we fall back to **id_map**.
+    """
+
     id_map: str = (
         "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map.json"
     )
