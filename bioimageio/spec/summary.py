@@ -27,12 +27,13 @@ import rich.markdown
 from loguru import logger
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core.core_schema import ErrorType
-from typing_extensions import Self, TypedDict, assert_never
+from typing_extensions import Self, assert_never
 
 from ._internal.constants import VERSION
 from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml
 from ._internal.types import NotEmpty
+from ._internal.validation_context import ValidationContextSummary
 from ._internal.warning_levels import (
     ALERT,
     ALERT_NAME,
@@ -107,13 +108,6 @@ class InstalledPackage(NamedTuple):
     version: str
     build: str = ""
     channel: str = ""
-
-
-class ValidationContextSummary(TypedDict):
-    perform_io_checks: bool
-    known_files: Mapping[str, str]
-    root: str
-    warning_level: str
 
 
 class ValidationDetail(BaseModel, extra="allow"):
@@ -297,23 +291,31 @@ class ValidationSummary(BaseModel, extra="allow"):
             return "`" + (".".join(map(str, root_loc + loc)) or ".") + "`"
 
         details = [["❓", "location", "detail"]]
+        last_context: Optional[ValidationContextSummary] = None
         for d in self.details:
             details.append([d.status_icon, format_loc(d.loc), d.name])
-            if d.context is not None:
+            if d.context is not None and d.context != last_context:
+                last_context = d.context
+                # only log new contexts to reduce the clutter
+                # TODO: limit context summary comparison to fields that are actually logged
                 details.append(
                     [
                         "🔍",
                         "context.perform_io_checks",
-                        str(d.context["perform_io_checks"]),
+                        str(d.context.perform_io_checks),
                     ]
                 )
-                if d.context["perform_io_checks"]:
-                    details.append(["🔍", "context.root", d.context["root"]])
-                    for kfn, sha in d.context["known_files"].items():
+                if d.context.perform_io_checks:
+                    details.append(["🔍", "context.root", str(d.context.root)])
+                    for kfn, sha in d.context.known_files.items():
                         details.append(["🔍", f"context.known_files.{kfn}", sha])
 
                 details.append(
-                    ["🔍", "context.warning_level", d.context["warning_level"]]
+                    [
+                        "🔍",
+                        "context.warning_level",
+                        WARNING_LEVEL_TO_NAME[d.context.warning_level],
+                    ]
                 )
 
             if d.recommended_env is not None:
@@ -391,6 +393,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         return f"{info}{self._format_md_table(details)}"
 
     # TODO: fix bug which casuses extensive white space between the info table and details table
+    # (the generated markdown seems fine)
     @no_type_check
     def display(self) -> None:
         formatted = self.format()

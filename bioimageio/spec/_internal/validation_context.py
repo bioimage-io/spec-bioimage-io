@@ -3,11 +3,12 @@ from __future__ import annotations
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Literal, Optional, Union
 from urllib.parse import urlsplit, urlunsplit
 from zipfile import ZipFile
 
-from pydantic import DirectoryPath
+from pydantic import ConfigDict, DirectoryPath
+from typing_extensions import Self
 
 from ._settings import settings
 from .io_basics import FileName, Sha256
@@ -16,14 +17,7 @@ from .warning_levels import WarningLevel
 
 
 @dataclass(frozen=True)
-class ValidationContext:
-    _context_tokens: "List[Token[ValidationContext]]" = field(
-        init=False, default_factory=list
-    )
-
-    root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path()
-    """Url/directory/archive serving as base to resolve any relative file paths."""
-
+class ValidationContextBase:
     warning_level: WarningLevel = 50
     """Treat warnings of severity `s` as validation errors if `s >= warning_level`."""
 
@@ -54,7 +48,53 @@ class ValidationContext:
     """Overwrite specified file hashes with values computed from the referenced file (instead of comparing them).
     (Has no effect if `perform_io_checks=False`.)"""
 
-    def replace(
+
+@dataclass(frozen=True)
+class ValidationContextSummary(ValidationContextBase):
+    __pydantic_config__ = ConfigDict(extra="forbid")
+    """Pydantic config to include **ValdationContextSummary** in **ValidationDetail**."""
+
+    root: Union[RootHttpUrl, Path, Literal["in-memory"]] = Path()
+
+
+@dataclass(frozen=True)
+class ValidationContext(ValidationContextBase):
+    _context_tokens: "List[Token[ValidationContext]]" = field(
+        init=False, default_factory=list
+    )
+
+    root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path()
+    """Url/directory/archive serving as base to resolve any relative file paths."""
+
+    @property
+    def summary(self):
+        if isinstance(self.root, ZipFile):
+            if self.root.filename is None:
+                root = "in-memory"
+            else:
+                root = Path(self.root.filename)
+        else:
+            root = self.root
+
+        return ValidationContextSummary(
+            root=root,
+            warning_level=self.warning_level,
+            log_warnings=self.log_warnings,
+            file_name=self.file_name,
+            perform_io_checks=self.perform_io_checks,
+            known_files=dict(self.known_files),
+            raise_errors=self.raise_errors,
+            update_hashes=self.update_hashes,
+        )
+
+    def __enter__(self):
+        self._context_tokens.append(validation_context_var.set(self))
+        return self
+
+    def __exit__(self, type, value, traceback):  # type: ignore
+        validation_context_var.reset(self._context_tokens.pop(-1))
+
+    def replace(  # TODO: probably use __replace__ when py>=3.13
         self,
         root: Optional[Union[RootHttpUrl, DirectoryPath, ZipFile]] = None,
         warning_level: Optional[WarningLevel] = None,
@@ -64,12 +104,12 @@ class ValidationContext:
         known_files: Optional[Dict[str, Sha256]] = None,
         raise_errors: Optional[bool] = None,
         update_hashes: Optional[bool] = None,
-    ) -> "ValidationContext":
+    ) -> Self:
         if known_files is None and root is not None and self.root != root:
             # reset known files if root changes, but no new known_files are given
             known_files = {}
 
-        return ValidationContext(
+        return self.__class__(
             root=self.root if root is None else root,
             warning_level=(
                 self.warning_level if warning_level is None else warning_level
@@ -87,13 +127,6 @@ class ValidationContext:
                 self.update_hashes if update_hashes is None else update_hashes
             ),
         )
-
-    def __enter__(self):
-        self._context_tokens.append(validation_context_var.set(self))
-        return self
-
-    def __exit__(self, type, value, traceback):  # type: ignore
-        validation_context_var.reset(self._context_tokens.pop(-1))
 
     @property
     def source_name(self) -> str:

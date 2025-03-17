@@ -30,7 +30,6 @@ from typing_extensions import Self
 from ..summary import (
     WARNING_LEVEL_TO_NAME,
     ErrorEntry,
-    ValidationContextSummary,
     ValidationDetail,
     ValidationSummary,
     WarningEntry,
@@ -164,7 +163,7 @@ class ResourceDescrBase(
                         + " Further validation is pending."
                     ),
                     status="passed",
-                    context=None,  # context for format validation detail is identical
+                    context=context.summary,
                 )
             ],
         )
@@ -232,12 +231,7 @@ class ResourceDescrBase(
                 ),
                 status="failed" if errors else "passed",
                 warnings=val_warnings,
-                context=ValidationContextSummary(
-                    perform_io_checks=context.perform_io_checks,
-                    known_files=context.known_files,
-                    root=str(context.root),
-                    warning_level=WARNING_LEVEL_TO_NAME[context.warning_level],
-                ),
+                context=context.summary,  # context for format validation detail is identical
             )
         )
 
