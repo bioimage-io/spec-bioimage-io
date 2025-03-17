@@ -671,6 +671,19 @@ def resolve(
     **kwargs: Unpack[HashKwargs],
 ) -> Union[LocalFile, FileInZip]:
     """Resolve file `source` (download if needed)"""
+
+    if isinstance(source, str):
+        source = interprete_file_source(source)
+
+    if isinstance(source, RelativeFilePath):
+        source = source.absolute()
+        if isinstance(source, ZipPath):
+            return FileInZip(source, source.root, extract_file_name(source))
+
+    if isinstance(source, pydantic.AnyUrl):
+        with validation_context_var.get().replace(perform_io_checks=False):
+            source = HttpUrl(source)
+
     if isinstance(source, FileDescr):
         return source.download()
     elif isinstance(source, ZipPath):
@@ -681,26 +694,17 @@ def resolve(
             zip_root,
             extract_file_name(source),
         )
+    elif isinstance(source, Path):
+        if source.is_dir():
+            raise FileNotFoundError(f"{source} is a directory, not a file")
 
-    strict_source = interprete_file_source(source)
-    if isinstance(strict_source, RelativeFilePath):
-        strict_source = strict_source.absolute()
-        if isinstance(strict_source, ZipPath):
-            return FileInZip(
-                strict_source, strict_source.root, extract_file_name(strict_source)
-            )
-
-    if isinstance(strict_source, PurePath):
-        if strict_source.is_dir():
-            raise FileNotFoundError(f"{strict_source} is a directory, not a file")
-
-        if not strict_source.exists():
-            raise FileNotFoundError(strict_source)
-        local_source = strict_source
-        root: Union[RootHttpUrl, DirectoryPath] = strict_source.parent
-    else:
-        if strict_source.scheme not in ("http", "https"):
-            raise NotImplementedError(strict_source.scheme)
+        if not source.exists():
+            raise FileNotFoundError(source)
+        local_source = source
+        root: Union[RootHttpUrl, DirectoryPath] = source.parent
+    elif isinstance(source, HttpUrl):
+        if source.scheme not in ("http", "https"):
+            raise NotImplementedError(source.scheme)
 
         if settings.CI:
             headers = {"User-Agent": "ci"}
@@ -718,21 +722,23 @@ def resolve(
             headers=headers,
             progressbar=progressbar,  # pyright: ignore[reportArgumentType]
         )
-        fname = _get_unique_file_name(strict_source)
+        fname = _get_unique_file_name(source)
         _ls: Any = pooch.retrieve(
-            url=str(strict_source),
+            url=str(source),
             known_hash=_get_known_hash(kwargs),
             downloader=downloader,
             fname=fname,
             path=settings.cache_path,
         )
         local_source = Path(_ls).absolute()
-        root = strict_source.parent
+        root = source.parent
+    else:
+        assert_never(source)
 
     return LocalFile(
         local_source,
         root,
-        extract_file_name(strict_source),
+        extract_file_name(source),
     )
 
 
