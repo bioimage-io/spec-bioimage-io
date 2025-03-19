@@ -16,7 +16,6 @@ from ._description import (
     ensure_description_is_dataset,
     ensure_description_is_model,
 )
-from ._internal._settings import settings
 from ._internal.common_nodes import ResourceDescrBase
 from ._internal.io import BioimageioYamlContent, YamlValue
 from ._internal.io_basics import Sha256
@@ -35,7 +34,7 @@ def load_description(
     /,
     *,
     format_version: Literal["latest"],
-    perform_io_checks: bool = settings.perform_io_checks,
+    perform_io_checks: Optional[bool] = None,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
 ) -> Union[LatestResourceDescr, InvalidDescr]: ...
@@ -47,7 +46,7 @@ def load_description(
     /,
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: bool = settings.perform_io_checks,
+    perform_io_checks: Optional[bool] = None,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
 ) -> Union[ResourceDescr, InvalidDescr]: ...
@@ -58,7 +57,7 @@ def load_description(
     /,
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: bool = settings.perform_io_checks,
+    perform_io_checks: Optional[bool] = None,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
 ) -> Union[ResourceDescr, InvalidDescr]:
@@ -107,7 +106,7 @@ def load_model_description(
     /,
     *,
     format_version: Literal["latest"],
-    perform_io_checks: bool = settings.perform_io_checks,
+    perform_io_checks: Optional[bool] = None,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
 ) -> ModelDescr: ...
@@ -119,7 +118,7 @@ def load_model_description(
     /,
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: bool = settings.perform_io_checks,
+    perform_io_checks: Optional[bool] = None,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
 ) -> AnyModelDescr: ...
@@ -130,7 +129,7 @@ def load_model_description(
     /,
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: bool = settings.perform_io_checks,
+    perform_io_checks: Optional[bool] = None,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
 ) -> AnyModelDescr:
@@ -156,7 +155,7 @@ def load_dataset_description(
     /,
     *,
     format_version: Literal["latest"],
-    perform_io_checks: bool = settings.perform_io_checks,
+    perform_io_checks: Optional[bool] = None,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
 ) -> DatasetDescr: ...
@@ -168,7 +167,7 @@ def load_dataset_description(
     /,
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: bool = settings.perform_io_checks,
+    perform_io_checks: Optional[bool] = None,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
 ) -> AnyDatasetDescr: ...
@@ -179,7 +178,7 @@ def load_dataset_description(
     /,
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: bool = settings.perform_io_checks,
+    perform_io_checks: Optional[bool] = None,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
 ) -> AnyDatasetDescr:
@@ -231,7 +230,7 @@ def load_description_and_validate_format_only(
     /,
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: bool = settings.perform_io_checks,
+    perform_io_checks: Optional[bool] = None,
     known_files: Optional[Dict[str, Sha256]] = None,
     sha256: Optional[Sha256] = None,
 ) -> ValidationSummary:
@@ -264,7 +263,7 @@ def update_format(
     *,
     output: Union[Path, TextIO, None] = None,
     exclude_defaults: bool = True,
-    perform_io_checks: bool = settings.perform_io_checks,
+    perform_io_checks: Optional[bool] = None,
 ) -> Union[LatestResourceDescr, InvalidDescr]:
     """Update a resource description.
 
