@@ -228,7 +228,7 @@ class Dependencies(ValidatedStringWithInnerNode[DependenciesNode]):
     @property
     def file(self):
         """Dependency file"""
-        return self._inner_node.manager
+        return self._inner_node.file
 
 
 WeightsFormat = Literal[
