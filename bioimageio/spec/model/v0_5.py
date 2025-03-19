@@ -191,6 +191,23 @@ TimeUnit = Literal[
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
 
+_AXIS_TYPE_MAP: Mapping[str, AxisType] = {
+    "b": "batch",
+    "t": "time",
+    "i": "index",
+    "c": "channel",
+    "x": "space",
+    "y": "space",
+    "z": "space",
+}
+
+_AXIS_ID_MAP = {
+    "b": "batch",
+    "t": "time",
+    "i": "index",
+    "c": "channel",
+}
+
 
 class TensorId(LowerCaseIdentifier):
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
@@ -198,8 +215,9 @@ class TensorId(LowerCaseIdentifier):
     ]
 
 
-def _normalize_channel_and_batch(a: str):
-    return {"c": "channel", "b": "batch"}.get(a, a)
+def _normalize_axis_id(a: str):
+    a = str(a)
+    return _AXIS_ID_MAP.get(a, a)
 
 
 class AxisId(LowerCaseIdentifier):
@@ -207,13 +225,13 @@ class AxisId(LowerCaseIdentifier):
         Annotated[
             LowerCaseIdentifierAnno,
             MaxLen(16),
-            AfterValidator(_normalize_channel_and_batch),
+            AfterValidator(_normalize_axis_id),
         ]
     ]
 
 
 def _is_batch(a: str) -> bool:
-    return a == BATCH_AXIS_ID
+    return str(a) == "batch"
 
 
 def _is_not_batch(a: str) -> bool:
@@ -1762,30 +1780,13 @@ def convert_axes(
     return ret
 
 
-_AXIS_TYPE_MAP = {
-    "b": "batch",
-    "t": "time",
-    "i": "index",
-    "c": "channel",
-    "x": "space",
-    "y": "space",
-    "z": "space",
-}
-
-_AXIS_ID_MAP = {
-    "b": "batch",
-    "t": "time",
-    "i": "index",
-    "c": "channel",
-}
-
-
 def _axes_letters_to_ids(
     axes: Optional[str],
 ) -> Optional[List[AxisId]]:
     if axes is None:
         return None
-    return [AxisId(_AXIS_ID_MAP.get(a, a)) for a in map(str, axes)]
+
+    return [AxisId(a) for a in axes]
 
 
 def _get_complement_v04_axis(
