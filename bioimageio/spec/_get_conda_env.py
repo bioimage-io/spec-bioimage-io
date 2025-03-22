@@ -89,7 +89,7 @@ def _get_default_pytorch_env(
 
     # dependencies to install pytorch according to
     # https://pytorch.org/get-started/previous-versions/
-    v = str(pytorch_version)
+    v = pytorch_version.base_version
     deps: List[Union[str, PipDeps]] = [f"pytorch=={v}"]
     if v == "1.5.1":
         deps += ["torchvision==0.6.1"]
