@@ -17,8 +17,9 @@ class ValidatedString(str):
     _validated: Any  # pyright: ignore[reportUninitializedInstanceVariable]  # initalized in __new__
 
     def __new__(cls, object: object):
-        self = super().__new__(cls, object)
-        self._validated = cls.root_model.model_validate(str(self)).root
+        _validated = cls.root_model.model_validate(object).root
+        self = super().__new__(cls, _validated)
+        self._validated = _validated
         return self._after_validator()
 
     def _after_validator(self) -> Self:
