@@ -288,9 +288,9 @@ class ValidationSummary(BaseModel, extra="allow"):
         )
 
         def format_loc(loc: Loc):
-            return "`" + (".".join(map(str, root_loc + loc)) or ".") + "`"
+            return "`" + ".".join(map(str, root_loc + loc)) + "`"
 
-        details = [["", "location", "detail"]]
+        details = [["", "Location", "Details"]]
         last_context: Optional[ValidationContextSummary] = None
         for d in self.details:
             details.append([d.status_icon, format_loc(d.loc), d.name])
@@ -309,14 +309,6 @@ class ValidationSummary(BaseModel, extra="allow"):
                     details.append(["🔍", "context.root", str(d.context.root)])
                     for kfn, sha in d.context.known_files.items():
                         details.append(["🔍", f"context.known_files.{kfn}", sha])
-
-                details.append(
-                    [
-                        "🔍",
-                        "context.warning_level",
-                        WARNING_LEVEL_TO_NAME[d.context.warning_level],
-                    ]
-                )
 
             if d.recommended_env is not None:
                 rec_env = StringIO()
@@ -482,7 +474,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         formatted = self.format()
         path.parent.mkdir(exist_ok=True)
         _ = path.write_text(formatted, encoding="utf-8")
-        logger.info("Saved Markdown formatted summary  to {}", path.absolute())
+        logger.info("Saved Markdown formatted summary to {}", path.absolute())
 
     def save_html(self, path: Path = Path("summary.html")) -> None:
         """Save rendered validation/test summary as HTML file."""

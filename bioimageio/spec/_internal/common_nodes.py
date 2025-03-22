@@ -159,7 +159,7 @@ class ResourceDescrBase(
             details=[
                 ValidationDetail(
                     name=(
-                        f"Created {self.__class__.__name__} object."
+                        f"Sucessfully created `{self.__class__.__name__}` object."
                         + " Further validation is pending."
                     ),
                     status="passed",
@@ -213,11 +213,13 @@ class ResourceDescrBase(
         """factory method to create a resource description object"""
         context = context or validation_context_var.get()
         assert isinstance(data, dict)
-        with context.replace(log_warnings=False):  # don't log warnings to console
+        with context:
             rd, errors, val_warnings = cls._load_impl(deepcopy(data))
 
         if context.warning_level > INFO:
-            all_warnings_context = context.replace(warning_level=INFO)
+            all_warnings_context = context.replace(
+                warning_level=INFO, log_warnings=False
+            )
             # raise all validation warnings by reloading
             with all_warnings_context:
                 _, _, val_warnings = cls._load_impl(deepcopy(data))

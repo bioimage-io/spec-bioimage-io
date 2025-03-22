@@ -18,16 +18,6 @@ from .warning_levels import WarningLevel
 
 @dataclass(frozen=True)
 class ValidationContextBase:
-    warning_level: WarningLevel = 50
-    """Treat warnings of severity `s` as validation errors if `s >= warning_level`."""
-
-    log_warnings: bool = settings.log_warnings
-    """If `True` warnings are logged to the terminal
-
-    Note: This setting does not affect warning entries
-        of a generated `bioimageio.spec.ValidationSummary`.
-    """
-
     file_name: Optional[FileName] = None
     """File name of the bioimageio Yaml file."""
 
@@ -40,10 +30,6 @@ class ValidationContextBase:
     known_files: Dict[str, Sha256] = field(default_factory=dict)
     """Allows to bypass download and hashing of referenced files."""
 
-    raise_errors: bool = False
-    """Directly raise any validation errors
-    instead of aggregating errors and returning a `bioimageio.spec.InvalidDescr`. (for debugging)"""
-
     update_hashes: bool = False
     """Overwrite specified file hashes with values computed from the referenced file (instead of comparing them).
     (Has no effect if `perform_io_checks=False`.)"""
@@ -51,6 +37,8 @@ class ValidationContextBase:
 
 @dataclass(frozen=True)
 class ValidationContextSummary(ValidationContextBase):
+    """Summary of the validation context without internally used context fields."""
+
     __pydantic_config__ = ConfigDict(extra="forbid")
     """Pydantic config to include **ValdationContextSummary** in **ValidationDetail**."""
 
@@ -59,12 +47,33 @@ class ValidationContextSummary(ValidationContextBase):
 
 @dataclass(frozen=True)
 class ValidationContext(ValidationContextBase):
+    """A validation context used to control validation of bioimageio resources.
+
+    For example a relative file path in a bioimageio description requires the **root**
+    context to evaluate if the file is available and, if **perform_io_checks** is true,
+    if it matches its expected SHA256 hash value.
+    """
+
     _context_tokens: "List[Token[ValidationContext]]" = field(
         init=False, default_factory=list
     )
 
     root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path()
     """Url/directory/archive serving as base to resolve any relative file paths."""
+
+    warning_level: WarningLevel = 50
+    """Treat warnings of severity `s` as validation errors if `s >= warning_level`."""
+
+    log_warnings: bool = settings.log_warnings
+    """If `True` warnings are logged to the terminal
+
+    Note: This setting does not affect warning entries
+        of a generated `bioimageio.spec.ValidationSummary`.
+    """
+
+    raise_errors: bool = False
+    """Directly raise any validation errors
+    instead of aggregating errors and returning a `bioimageio.spec.InvalidDescr`. (for debugging)"""
 
     @property
     def summary(self):
@@ -78,12 +87,9 @@ class ValidationContext(ValidationContextBase):
 
         return ValidationContextSummary(
             root=root,
-            warning_level=self.warning_level,
-            log_warnings=self.log_warnings,
             file_name=self.file_name,
             perform_io_checks=self.perform_io_checks,
             known_files=dict(self.known_files),
-            raise_errors=self.raise_errors,
             update_hashes=self.update_hashes,
         )
 
