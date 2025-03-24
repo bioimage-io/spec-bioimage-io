@@ -25,7 +25,7 @@ from ._get_conda_env import BioimageioCondaEnv, get_conda_env
 from ._internal import settings
 from ._internal.common_nodes import InvalidDescr
 from ._internal.constants import VERSION
-from ._internal.validation_context import ValidationContext
+from ._internal.validation_context import ValidationContext, get_validation_context
 from ._io import (
     load_dataset_description,
     load_description,
@@ -72,6 +72,7 @@ __all__ = [
     "GenericDescr",
     "get_conda_env",
     "get_resource_package_content",
+    "get_validation_context",
     "InvalidDescr",
     "LatestResourceDescr",
     "load_dataset_description",

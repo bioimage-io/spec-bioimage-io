@@ -163,3 +163,8 @@ class ValidationContext(ValidationContextBase):
 validation_context_var: ContextVar[ValidationContext] = ContextVar(
     "validation_context_var", default=ValidationContext()
 )
+
+
+def get_validation_context():
+    """Get the currently active validation context"""
+    return validation_context_var.get()

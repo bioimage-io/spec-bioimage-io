@@ -72,7 +72,7 @@ from .packaging_context import packaging_context_var
 from .root_url import RootHttpUrl
 from .type_guards import is_mapping, is_sequence
 from .url import HttpUrl
-from .validation_context import validation_context_var
+from .validation_context import get_validation_context
 from .validator_annotations import AfterValidator
 
 if sys.version_info < (3, 10):
@@ -112,7 +112,7 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
             raise ValueError(f"{self.root} looks like an http url.")
 
         self._absolute = (  # pyright: ignore[reportAttributeAccessIssue]
-            self.get_absolute(validation_context_var.get().root)
+            self.get_absolute(get_validation_context().root)
         )
         super().model_post_init(__context)
 
@@ -198,7 +198,7 @@ class RelativeFilePath(
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
-            and (context := validation_context_var.get()).perform_io_checks
+            and (context := get_validation_context()).perform_io_checks
             and str(self.root) not in context.known_files
             and not absolute.is_file()
         ):
@@ -216,7 +216,7 @@ class RelativeDirectory(
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
-            and validation_context_var.get().perform_io_checks
+            and get_validation_context().perform_io_checks
             and not absolute.is_dir()
         ):
             raise ValueError(f"{absolute} does not point to an existing directory")
@@ -559,7 +559,7 @@ def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
     if isinstance(file_source, pydantic.AnyUrl):
         file_source = str(file_source)
 
-    with validation_context_var.get().replace(perform_io_checks=False):
+    with get_validation_context().replace(perform_io_checks=False):
         strict = _file_source_adapter.validate_python(file_source)
         if isinstance(strict, Path) and strict.is_dir():
             raise FileNotFoundError(f"{strict} is a directory, but expected a file.")
@@ -681,7 +681,7 @@ def resolve(
             return FileInZip(source, source.root, extract_file_name(source))
 
     if isinstance(source, pydantic.AnyUrl):
-        with validation_context_var.get().replace(perform_io_checks=False):
+        with get_validation_context().replace(perform_io_checks=False):
             source = HttpUrl(source)
 
     if isinstance(source, FileDescr):
