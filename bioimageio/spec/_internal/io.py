@@ -791,11 +791,15 @@ class FileDescr(Node):
     """SHA256 checksum of the source file"""
 
     @model_validator(mode="after")
-    def validate_sha256(self) -> Self:
-        context = validation_context_var.get()
-        if not context.perform_io_checks:
-            return self
-        elif (src_str := str(self.source)) in context.known_files:
+    def _validate_sha256(self) -> Self:
+        if get_validation_context().perform_io_checks:
+            self.validate_sha256()
+
+        return self
+
+    def validate_sha256(self):
+        context = get_validation_context()
+        if (src_str := str(self.source)) in context.known_files:
             actual_sha = context.known_files[src_str]
         else:
             local_source = download(self.source, sha256=self.sha256).path
@@ -813,7 +817,7 @@ class FileDescr(Node):
                 + "file."
             )
 
-        return self
+        return
 
     def download(self):
 
