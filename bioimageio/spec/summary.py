@@ -168,7 +168,7 @@ class ValidationDetail(BaseModel, extra="allow"):
             )
             self.conda_compare = (
                 compare_proc.stdout
-                or f"conda compare exited with {compare_proc.returncode}"
+                or f"`conda compare` exited with {compare_proc.returncode}"
             )
 
     @property
@@ -177,7 +177,6 @@ class ValidationDetail(BaseModel, extra="allow"):
             return "✔️"
         else:
             return "❌"
-
 
 
 class ValidationSummary(BaseModel, extra="allow"):
@@ -235,18 +234,40 @@ class ValidationSummary(BaseModel, extra="allow"):
         )
         return "\n| " + " |\n| ".join(lines) + " |\n"
 
+    @staticmethod
+    def _format_html_table(rows: List[List[str]]) -> str:
+        """format `rows` as HTML table"""
+
+        def get_line(cells: List[str], cell_tag: Literal["th", "td"] = "td"):
+            return (
+                ["  <tr>"]
+                + [f"    <{cell_tag}>{c}</{cell_tag}>" for c in cells]
+                + ["  </tr>"]
+            )
+
+        table = ["<table>"] + get_line(rows[0], cell_tag="th")
+        for r in rows[1:]:
+            table.extend(get_line(r))
+
+        table.append("</table>")
+
+        return "\n".join(table)
+
     def format(
         self,
         hide_tracebacks: bool = False,
         hide_source: bool = False,
         hide_env: bool = False,
         root_loc: Loc = (),
+        optimize_for_html: bool = False,
     ) -> str:
-        """Format summary as Markdown string
+        """Format summary Markdown string (with HTML elements)"""
+        parts: List[str] = []
+        format_table = (
+            self._format_html_table if optimize_for_html else self._format_md_table
+        )
 
-        Suitable to embed in HTML using '<br>' instead of '\n'.
-        """
-        info = self._format_md_table(
+        info_table = format_table(
             [[self.status_icon, f"{self.name.strip('.').strip()} {self.status}"]]
             + ([] if hide_source else [["source", self.source_name]])
             + [
@@ -254,29 +275,97 @@ class ValidationSummary(BaseModel, extra="allow"):
             ]
             + ([] if hide_env else [[e.name, e.version] for e in self.env])
         )
+        parts.append(info_table)
+        details_below: Dict[str, str] = {}
+        left_out_details: int = 0
+        left_out_details_header = "Left out details"
 
-        def format_loc(loc: Loc):
-            return "`" + ".".join(map(str, root_loc + loc)) + "`"
+        def get_md_tag(header: str):
+            return (
+                "#"
+                + header.replace("`", "")
+                .replace("(", "")
+                .replace(")", "")
+                .replace(" ", "-")
+                .lower()
+            )
+
+        def add_as_details_below(title: str, text: str):
+            """returns a header and its tag to link to details below"""
+            for n in range(1, 4):
+                header = f"{title} {n}"
+                if header in details_below:
+                    if details_below[header] == text:
+                        return header, get_md_tag(header)
+                else:
+                    details_below[header] = text
+                    return header, get_md_tag(header)
+
+            nonlocal left_out_details
+            left_out_details += 1
+            return left_out_details_header, get_md_tag(left_out_details_header)
+
+        def format_ctxt_name(*ctxt: str):
+            return "`context:" + ".".join(ctxt) + "`"
+
+        def format_code(
+            code: str,
+            lang: str = "",
+            title: str = "Details",
+            cell_line_limit: int = -1,
+            cell_width_limit: int = 120,
+        ):
+            put_below = (
+                code.count("\n") > cell_line_limit
+                or max(map(len, code.split("\n"))) > cell_width_limit
+            )
+            if optimize_for_html:
+                html_lang = f' lang="{lang}"' if lang else ""
+                code = f"<pre{html_lang}>{code}</pre>"
+            else:
+                if put_below:
+                    code = f"\n```{lang}\n{code}```\n"
+                else:
+                    # format each line of code individually
+                    # (no syntax highlighting, but it works in a table cell)
+                    code = code.replace("\n", "</code><br><code>")
+                    code = f"<pre><code>{code}</code></pre>"
+
+            if put_below:
+                header, tag = add_as_details_below(title, code)
+                return f"See [{header}]({tag})."
+            else:
+                return code
+
+        def format_text(text: str):
+            if not optimize_for_html:
+                text = text.replace("\n\n", "<br>").replace("\n", "<br>")
+
+            return f"<pre>{text}</pre>"
 
         details = [["", "Location", "Details"]]
         last_context: Optional[ValidationContextSummary] = None
         for d in self.details:
             details.append([d.status_icon, format_loc(d.loc), d.name])
             if d.context is not None and d.context != last_context:
-                last_context = d.context
                 # only log new contexts to reduce the clutter
-                # TODO: limit context summary comparison to fields that are actually logged
                 details.append(
                     [
                         "🔍",
-                        "context.perform_io_checks",
+                        format_ctxt_name("perform_io_checks"),
                         str(d.context.perform_io_checks),
                     ]
                 )
                 if d.context.perform_io_checks:
-                    details.append(["🔍", "context.root", str(d.context.root)])
+                    details.append(
+                        ["🔍", format_ctxt_name("root"), str(d.context.root)]
+                    )
                     for kfn, sha in d.context.known_files.items():
-                        details.append(["🔍", f"context.known_files.{kfn}", sha])
+                        details.append(
+                            ["🔍", format_ctxt_name("known_files", kfn), sha]
+                        )
+
+                last_context = d.context
 
             if d.recommended_env is not None:
                 rec_env = StringIO()
@@ -285,23 +374,30 @@ class ValidationSummary(BaseModel, extra="allow"):
                 )
                 assert is_yaml_value(json_env)
                 write_yaml(json_env, rec_env)
-                rec_env_code = rec_env.getvalue().replace("\n", "</code><br><code>")
                 details.append(
                     [
                         "🐍",
                         format_loc(d.loc),
                         f"recommended conda env ({d.name})<br>"
-                        + f"<pre><code>{rec_env_code}</code></pre>",
+                        + format_code(
+                            rec_env.getvalue(),
+                            lang="yaml",
+                            title="Conda Environment",
+                            cell_line_limit=15,
+                        ),
                     ]
                 )
 
             if d.conda_compare:
+
                 details.append(
                     [
                         "🐍",
                         format_loc(d.loc),
                         f"conda compare ({d.name}):<br>"
-                        + d.conda_compare.replace("\n", "<br>"),
+                        + format_code(
+                            d.conda_compare, title="`conda compare`", cell_line_limit=15
+                        ),
                     ]
                 )
 
@@ -310,7 +406,7 @@ class ValidationSummary(BaseModel, extra="allow"):
                     [
                         "❌",
                         format_loc(entry.loc),
-                        entry.msg.replace("\n\n", "<br>").replace("\n", "<br>"),
+                        format_text(entry.msg),
                     ]
                 )
                 if not hide_tracebacks:
@@ -324,9 +420,20 @@ class ValidationSummary(BaseModel, extra="allow"):
                     )
 
             for entry in d.warnings:
-                details.append(["⚠", format_loc(entry.loc), entry.msg])
+                details.append(["⚠", format_loc(entry.loc), format_text(entry.msg)])
 
-        return f"{info}{self._format_md_table(details)}"
+        details_table = format_table(details)
+        parts.append(details_table)
+
+        for header, text in details_below.items():
+            parts.append(f"\n{header}\n{text}\n")
+
+        if left_out_details:
+            parts.append(
+                f"\n{left_out_details_header}\nLeft out {left_out_details} more details for brevity.\n"
+            )
+
+        return "".join(parts)
 
     # TODO: fix bug which casuses extensive white space between the info table and details table
     # (the generated markdown seems fine)
@@ -424,7 +531,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         """Save rendered validation/test summary as HTML file."""
         path.parent.mkdir(exist_ok=True)
 
-        formatted = self.format()
+        formatted = self.format(optimize_for_html=True)
         html = markdown.markdown(formatted, extensions=["tables"])
         _ = path.write_text(html, encoding="utf-8")
         logger.info("Saved HTML formatted summary to {}", path.absolute())
