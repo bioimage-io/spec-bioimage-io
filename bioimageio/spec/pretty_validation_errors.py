@@ -29,7 +29,7 @@ try:
                 ipt = " ".join([il.strip() for il in ipt_lines])
 
                 errors.append(
-                    f"\n{format_loc(e['loc'], enclose_in='')}\n  {e['msg']} [input={ipt}]"
+                    f"\n{format_loc(e['loc'], 'plain')}\n  {e['msg']} [input={ipt}]"
                 )
 
             return (
