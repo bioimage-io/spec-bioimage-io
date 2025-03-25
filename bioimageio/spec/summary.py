@@ -154,9 +154,6 @@ class ValidationDetail(BaseModel, extra="allow"):
                 or f"conda compare exited with {compare_proc.returncode}"
             )
 
-    def __str__(self):
-        return f"{self.__class__.__name__}:\n" + self.format()
-
     @property
     def status_icon(self):
         if self.status == "passed":
@@ -164,52 +161,6 @@ class ValidationDetail(BaseModel, extra="allow"):
         else:
             return "❌"
 
-    def format(self, hide_tracebacks: bool = False, root_loc: Loc = ()) -> str:
-        """format as Markdown string"""
-        indent = "    " if root_loc else ""
-        errs_wrns = self._format_errors_and_warnings(
-            hide_tracebacks=hide_tracebacks, root_loc=root_loc
-        )
-        return f"{indent}{self.status_icon} {self.name.strip('.')}: {self.status}{errs_wrns}"
-
-    def _format_errors_and_warnings(self, hide_tracebacks: bool, root_loc: Loc):
-        indent = "    " if root_loc else ""
-        if hide_tracebacks:
-            tbs = [""] * len(self.errors)
-        else:
-            slim_tracebacks = [
-                [tt.replace("\n", "<br>") for t in e.traceback if (tt := t.strip())]
-                for e in self.errors
-            ]
-            tbs = [
-                ("<br>      Traceback:<br>      " if st else "") + "<br>      ".join(st)
-                for st in slim_tracebacks
-            ]
-
-        def join_parts(parts: Iterable[Tuple[str, str]]):
-            last_loc = None
-            lines: List[str] = []
-            for loc, msg in parts:
-                if loc == last_loc:
-                    lines.append(f"<br>  {loc} {msg}")
-                else:
-                    lines.append(f"<br>- {loc} {msg}")
-
-                last_loc = loc
-
-            return "".join(lines)
-
-        es = join_parts(
-            (format_loc(root_loc + e.loc), f"{e.msg}{tb}")
-            for e, tb in zip(self.errors, tbs)
-        )
-        ws = join_parts((format_loc(root_loc + w.loc), w.msg) for w in self.warnings)
-
-        return (
-            f"\n{indent}errors:\n{es}"
-            if es
-            else "" + f"\n{indent}warnings:\n{ws}" if ws else ""
-        )
 
 
 class ValidationSummary(BaseModel, extra="allow"):
