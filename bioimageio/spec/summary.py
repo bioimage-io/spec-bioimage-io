@@ -1,3 +1,4 @@
+import os
 import subprocess
 from datetime import datetime, timezone
 from io import StringIO
@@ -8,7 +9,6 @@ from types import MappingProxyType
 from typing import (
     Any,
     Dict,
-    Iterable,
     List,
     Literal,
     Mapping,
@@ -76,7 +76,24 @@ class ValidationEntry(BaseModel):
 class ErrorEntry(ValidationEntry):
     """An error in a `ValidationDetail`"""
 
-    traceback: List[str] = Field(default_factory=list)
+    with_traceback: bool = False
+    traceback_md: str = ""
+    traceback_html: str = ""
+
+    def model_post_init(self, __context: Any):
+        if self.with_traceback and not (self.traceback_md or self.traceback_html):
+            console = rich.console.Console(
+                record=True,
+                file=open(os.devnull, "wt", encoding="utf-8"),
+                color_system="truecolor",
+                width=100,
+            )
+            console.print_exception()
+            if not self.traceback_md:
+                self.traceback_md = console.export_text(clear=False)
+
+            if not self.traceback_html:
+                self.traceback_html = console.export_html(clear=False)
 
 
 class WarningEntry(ValidationEntry):
@@ -296,39 +313,15 @@ class ValidationSummary(BaseModel, extra="allow"):
                         entry.msg.replace("\n\n", "<br>").replace("\n", "<br>"),
                     ]
                 )
-                if hide_tracebacks:
-                    continue
-
-                formatted_tb_lines: List[str] = []
-                for tb in entry.traceback:
-                    if not (tb_stripped := tb.strip()):
-                        continue
-
-                    first_tb_line, *tb_lines = tb_stripped.split("\n")
-                    if (
-                        first_tb_line.startswith('File "')
-                        and '", line' in first_tb_line
-                    ):
-                        path, where = first_tb_line[len('File "') :].split('", line')
-                        try:
-                            p = Path(path)
-                        except Exception:
-                            file_name = path
-                        else:
-                            path = p.as_posix()
-                            file_name = p.name
-
-                        where = ", line" + where
-                        first_tb_line = f'[{file_name}]({file_name} "{path}"){where}'
-
-                    if tb_lines:
-                        tb_rest = "<br>`" + "`<br>`".join(tb_lines) + "`"
-                    else:
-                        tb_rest = ""
-
-                    formatted_tb_lines.append(first_tb_line + tb_rest)
-
-                details.append(["", "", "<br>".join(formatted_tb_lines)])
+                if not hide_tracebacks:
+                    formatted_tb = (
+                        entry.traceback_html
+                        if optimize_for_html
+                        else entry.traceback_md
+                    )
+                    details.append(
+                        ["", "", format_code(formatted_tb, title="Traceback")]
+                    )
 
             for entry in d.warnings:
                 details.append(["⚠", format_loc(entry.loc), entry.msg])

@@ -289,7 +289,7 @@ class ResourceDescrBase(
                     loc=(),
                     msg=str(e),
                     type=type(e).__name__,
-                    traceback=traceback.format_tb(e.__traceback__),
+                    with_traceback=True,
                 )
             )
 
