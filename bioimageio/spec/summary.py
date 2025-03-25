@@ -288,32 +288,36 @@ class ValidationSummary(BaseModel, extra="allow"):
     def save(
         self, path: Union[Path, Sequence[Path]] = Path("bioimageio_summary_{now}")
     ) -> List[Path]:
-        """Save the validation/tests summary in JSON, Markdown and/or HTML format.
+        """Save the validation/test summary in JSON, Markdown or HTML format.
 
         Returns:
             List of file paths the summary was saved to.
 
         Notes:
         - Format is chosen based on the suffix: `.json`, `.md`, `.html`.
-        - If **path** has not suffix it is assumed to be a direcotry to which a
+        - If **path** has no suffix it is assumed to be a direcotry to which a
           `summary.json`, `summary.md` and `summary.html` are saved to.
         """
         if isinstance(path, (str, Path)):
-            path = Path(path)
-            if path.suffix:
-                path = [path]
+            path = [Path(path)]
+
+        # folder to file paths
+        file_paths: List[Path] = []
+        for p in path:
+            if p.suffix:
+                file_paths.append(p)
             else:
-                path = [
-                    path / "summary.json",
-                    path / "summary.md",
-                    path / "summary.html",
-                ]
+                file_paths.extend(
+                    [
+                        p / "summary.json",
+                        p / "summary.md",
+                        p / "summary.html",
+                    ]
+                )
 
         now = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-        formatted_paths: List[Path] = []
-        for p in path:
-            p = Path(str(p).format(now=now))
-            formatted_paths.append(p)
+        for p in file_paths:
+            p = Path(str(p).format(now=now))  # expand {now}
             if p.suffix == ".json":
                 self.save_json(p)
             elif p.suffix == ".md":
@@ -323,7 +327,7 @@ class ValidationSummary(BaseModel, extra="allow"):
             else:
                 raise ValueError(f"Unknown summary path suffix '{p.suffix}'")
 
-        return formatted_paths
+        return file_paths
 
     def save_json(
         self, path: Path = Path("summary.json"), *, indent: Optional[int] = 2
