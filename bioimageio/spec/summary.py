@@ -285,6 +285,27 @@ class ValidationSummary(BaseModel, extra="allow"):
 
         self.details.append(detail)
 
+    def log(
+        self,
+        to: Union[Literal["display"], Path, Sequence[Union[Literal["display"], Path]]],
+    ) -> List[Path]:
+        """Convenience method to display the validation summary in the terminal and/or
+        save it to disk. See `save` for details."""
+        if to == "display":
+            display = True
+            save_to = []
+        elif isinstance(to, Path):
+            display = False
+            save_to = [to]
+        else:
+            display = "display" in to
+            save_to = [p for p in to if p != "display"]
+
+        if display:
+            self.display()
+
+        return self.save(save_to)
+
     def save(
         self, path: Union[Path, Sequence[Path]] = Path("bioimageio_summary_{now}")
     ) -> List[Path]:
