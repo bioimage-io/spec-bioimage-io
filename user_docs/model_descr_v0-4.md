@@ -11,16 +11,16 @@ These fields are typically stored in a YAML file which we call a model resource 
 | Literal[a, b, ...] | indicates that a field value must be the specific value a or b, etc.|
 | Type* := Type (restrictions) | A field Type* followed by an asterisk indicates that annotations, e.g. value restriction apply. These are listed in parentheses in the expanded type description. They are not always intuitively understandable and merely a hint at more complex validation.|
 | \<type\>.v\<major\>_\<minor\>.\<sub spec\> | Subparts of a spec might be taken from another spec type or format version. |
-| `field` ≝ `default` | Default field values are indicated after '≝' and make a field optional. However, `type` and `format_version` alwyas need to be set for resource descriptions written as YAML files and determine which bioimage.io specification applies. They are optional only when creating a resource description in Python code using the appropriate, `type` and `format_version` specific class.|
+| `field` ≝ `default` | Default field values are indicated after '≝' and make a field optional. However, `type` and `format_version` alwyas need to be set for resource descriptions written as YAML files and determine which bioimage.io specification applies. They are optional only when creating a resource description in Python code using the appropriate, `type` and `format_version` specific class (here: [bioimageio.spec.model.v0_4.ModelDescr](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/model/v0_4.html#ModelDescr)).|
 | `field` ≝ 🡇 | Default field value is not displayed in-line, but in the code block below. |
-| ∈📦  | Files referenced in fields which are marked with '∈📦 ' are included when packaging the resource to a .zip archive. The resource description YAML file (RDF) is always included well as 'rdf.yaml'. |
+are included when packaging the resource to a .zip archive. The resource description YAML file (RDF) is always included as well as 'rdf.yaml'. |
 
-## `type`<sub> Literal[model]</sub> ≝ `model`
+## `type`<sub> Literal[model]</sub>
 Specialized resource type 'model'
 
 
 
-## `format_version`<sub> Literal[0.4.10]</sub> ≝ `0.4.10`
+## `format_version`<sub> Literal[0.4.10]</sub>
 Version of the bioimage.io model description specification used.
 When creating a new model always use the latest micro/patch version described here.
 The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -74,7 +74,7 @@ Optional[_internal.types.OrcidId]
 
 
 ## `documentation`<sub> Union</sub>
-∈📦 URL or relative path to a markdown file with additional documentation.
+URL or relative path to a markdown file with additional documentation.
 The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
 The documentation should include a '[#[#]]# Validation' (sub)section
 with details on how to quantitatively validate the model on unseen data.
@@ -163,7 +163,7 @@ Sequence of Union[BinarizeDescr, ClipDescr, ScaleLinearDescr, SigmoidDescr, Zero
 (Discriminator(discriminator='name', custom_error_type=None, custom_error_message=None, custom_error_context=None))
 
 **BinarizeDescr:**
-#### `inputs.i.preprocessing.i.name`<sub> Literal[binarize]</sub> ≝ `binarize`
+#### `inputs.i.preprocessing.i.name`<sub> Literal[binarize]</sub>
 
 
 
@@ -185,7 +185,7 @@ The fixed threshold
 </details>
 
 **ClipDescr:**
-#### `inputs.i.preprocessing.i.name`<sub> Literal[clip]</sub> ≝ `clip`
+#### `inputs.i.preprocessing.i.name`<sub> Literal[clip]</sub>
 
 
 
@@ -212,7 +212,7 @@ maximum value for clipping
 </details>
 
 **ScaleLinearDescr:**
-#### `inputs.i.preprocessing.i.name`<sub> Literal[scale_linear]</sub> ≝ `scale_linear`
+#### `inputs.i.preprocessing.i.name`<sub> Literal[scale_linear]</sub>
 
 
 
@@ -247,13 +247,13 @@ additive term
 </details>
 
 **SigmoidDescr:**
-#### `inputs.i.preprocessing.i.name`<sub> Literal[sigmoid]</sub> ≝ `sigmoid`
+#### `inputs.i.preprocessing.i.name`<sub> Literal[sigmoid]</sub>
 
 
 
 
 **ZeroMeanUnitVarianceDescr:**
-#### `inputs.i.preprocessing.i.name`<sub> Literal[zero_mean_unit_variance]</sub> ≝ `zero_mean_unit_variance`
+#### `inputs.i.preprocessing.i.name`<sub> Literal[zero_mean_unit_variance]</sub>
 
 
 
@@ -308,7 +308,7 @@ epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.
 </details>
 
 **ScaleRangeDescr:**
-#### `inputs.i.preprocessing.i.name`<sub> Literal[scale_range]</sub> ≝ `scale_range`
+#### `inputs.i.preprocessing.i.name`<sub> Literal[scale_range]</sub>
 
 
 
@@ -489,7 +489,7 @@ Sequence of Union of
 (Discriminator(discriminator='name', custom_error_type=None, custom_error_message=None, custom_error_context=None))
 
 **BinarizeDescr:**
-#### `outputs.i.postprocessing.i.name`<sub> Literal[binarize]</sub> ≝ `binarize`
+#### `outputs.i.postprocessing.i.name`<sub> Literal[binarize]</sub>
 
 
 
@@ -511,7 +511,7 @@ The fixed threshold
 </details>
 
 **ClipDescr:**
-#### `outputs.i.postprocessing.i.name`<sub> Literal[clip]</sub> ≝ `clip`
+#### `outputs.i.postprocessing.i.name`<sub> Literal[clip]</sub>
 
 
 
@@ -538,7 +538,7 @@ maximum value for clipping
 </details>
 
 **ScaleLinearDescr:**
-#### `outputs.i.postprocessing.i.name`<sub> Literal[scale_linear]</sub> ≝ `scale_linear`
+#### `outputs.i.postprocessing.i.name`<sub> Literal[scale_linear]</sub>
 
 
 
@@ -573,13 +573,13 @@ additive term
 </details>
 
 **SigmoidDescr:**
-#### `outputs.i.postprocessing.i.name`<sub> Literal[sigmoid]</sub> ≝ `sigmoid`
+#### `outputs.i.postprocessing.i.name`<sub> Literal[sigmoid]</sub>
 
 
 
 
 **ZeroMeanUnitVarianceDescr:**
-#### `outputs.i.postprocessing.i.name`<sub> Literal[zero_mean_unit_variance]</sub> ≝ `zero_mean_unit_variance`
+#### `outputs.i.postprocessing.i.name`<sub> Literal[zero_mean_unit_variance]</sub>
 
 
 
@@ -634,7 +634,7 @@ epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.
 </details>
 
 **ScaleRangeDescr:**
-#### `outputs.i.postprocessing.i.name`<sub> Literal[scale_range]</sub> ≝ `scale_range`
+#### `outputs.i.postprocessing.i.name`<sub> Literal[scale_range]</sub>
 
 
 
@@ -694,7 +694,7 @@ For a tensor in `outputs` only input tensor refereences are allowed if `mode: pe
 </details>
 
 **ScaleMeanVarianceDescr:**
-#### `outputs.i.postprocessing.i.name`<sub> Literal[scale_mean_variance]</sub> ≝ `scale_mean_variance`
+#### `outputs.i.postprocessing.i.name`<sub> Literal[scale_mean_variance]</sub>
 
 
 
@@ -744,7 +744,7 @@ Epsilon for numeric stability:
 </details>
 
 ## `test_inputs`<sub> Sequence</sub>
-∈📦 Test input tensors compatible with the `inputs` description for a **single test case**.
+Test input tensors compatible with the `inputs` description for a **single test case**.
 This means if your model has more than one input, you should provide one URL/relative path for each input.
 Each test input should be a file with an ndarray in
 [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
@@ -755,19 +755,19 @@ The extension must be '.npy'.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
 
 </details>
 
 ## `test_outputs`<sub> Sequence</sub>
-∈📦 Analog to `test_inputs`.
+Analog to `test_inputs`.
 
 <details><summary>Sequence[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
 
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.npy', case_sensitive=True))
 
 </details>
 
@@ -798,7 +798,7 @@ The available weight formats determine which consumers can use this model.
 
 **KerasHdf5WeightsDescr:**
 #### `weights.keras_hdf5.source`<sub> Union</sub>
-∈📦 The weights file.
+The weights file.
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
@@ -826,7 +826,7 @@ Attachments that are specific to this weights entry.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -912,7 +912,7 @@ Optional[_internal.version_type.Version]
 
 **OnnxWeightsDescr:**
 #### `weights.onnx.source`<sub> Union</sub>
-∈📦 The weights file.
+The weights file.
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
@@ -940,7 +940,7 @@ Attachments that are specific to this weights entry.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1025,7 +1025,7 @@ ONNX opset version
 
 **PytorchStateDictWeightsDescr:**
 #### `weights.pytorch_state_dict.source`<sub> Union</sub>
-∈📦 The weights file.
+The weights file.
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
@@ -1053,7 +1053,7 @@ Attachments that are specific to this weights entry.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1165,7 +1165,7 @@ Optional[_internal.version_type.Version]
 
 **TensorflowJsWeightsDescr:**
 #### `weights.tensorflow_js.source`<sub> Union</sub>
-∈📦 The multi-file weights.
+The multi-file weights.
 All required files/folders should be a zip archive.
 
 
@@ -1194,7 +1194,7 @@ Attachments that are specific to this weights entry.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1280,7 +1280,7 @@ Optional[_internal.version_type.Version]
 
 **TensorflowSavedModelBundleWeightsDescr:**
 #### `weights.tensorflow_saved_model_bundle.source`<sub> Union</sub>
-∈📦 The weights file.
+The weights file.
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
@@ -1308,7 +1308,7 @@ Attachments that are specific to this weights entry.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1394,7 +1394,7 @@ Optional[_internal.version_type.Version]
 
 **TorchscriptWeightsDescr:**
 #### `weights.torchscript.source`<sub> Union</sub>
-∈📦 The weights file.
+The weights file.
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
@@ -1422,7 +1422,7 @@ Attachments that are specific to this weights entry.
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1517,7 +1517,7 @@ file and other attachments
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1588,7 +1588,7 @@ Sequence of Union of
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1613,7 +1613,7 @@ An icon for illustration
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -1781,7 +1781,7 @@ Run mode specific key word arguments
 </details>
 
 ## `sample_inputs`<sub> Sequence</sub> ≝ `[]`
-∈📦 URLs/relative paths to sample inputs to illustrate possible inputs for the model,
+URLs/relative paths to sample inputs to illustrate possible inputs for the model,
 for example stored as PNG or TIFF images.
 The sample files primarily serve to inform a human user about an example use case
 
@@ -1790,19 +1790,19 @@ The sample files primarily serve to inform a human user about an example use cas
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
 ## `sample_outputs`<sub> Sequence</sub> ≝ `[]`
-∈📦 URLs/relative paths to sample outputs corresponding to the `sample_inputs`.
+URLs/relative paths to sample outputs corresponding to the `sample_inputs`.
 
 <details><summary>Sequence[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
 
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1856,7 +1856,7 @@ Sequence of Union of
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -1924,7 +1924,7 @@ file and other attachments
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2002,7 +2002,7 @@ An icon for illustration
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -2109,7 +2109,7 @@ version number (n-th published version, not the semantic version)
 
 
 
-### `training_data.format_version`<sub> Literal[0.2.4]</sub> ≝ `0.2.4`
+### `training_data.format_version`<sub> Literal[0.2.4]</sub>
 The format version of this resource specification
 (not the `version` of the resource description)
 When creating a new resource always use the latest micro/patch version described here.
@@ -2142,7 +2142,7 @@ badge icon
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -2168,7 +2168,7 @@ The recommended documentation file name is `README.md`. An `.md` suffix is manda
 </summary>
 
 Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -2182,7 +2182,7 @@ We do not support custom license beyond the SPDX license list, if you need that 
 
 Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, str, None]
 
-### `training_data.type`<sub> Literal[dataset]</sub> ≝ `dataset`
+### `training_data.type`<sub> Literal[dataset]</sub>
 
 
 

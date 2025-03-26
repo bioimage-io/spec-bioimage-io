@@ -56,7 +56,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.3.6</footer>
+            <footer>bioimageio.spec 0.5.4.0</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -94,13 +94,13 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="n">Unpack</span><span class="p">,</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="p">)</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.common_nodes</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringNode</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">assert_all_params_set_explicitly</span><span class="p">,</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="p">)</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="n">assert_all_params_set_explicitly</span><span class="p">,</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="p">)</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.validated_string</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidatedString</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="n">SRC</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;SRC&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">StringNode</span><span class="p">])</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="n">SRC</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;SRC&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">ValidatedString</span><span class="p">])</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="n">TGT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;TGT&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Node</span><span class="p">)</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>

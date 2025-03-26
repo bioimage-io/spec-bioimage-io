@@ -218,7 +218,6 @@
                 },
                 "type": {
                     "const": "batch",
-                    "default": "batch",
                     "enum": [
                         "batch"
                     ],
@@ -243,6 +242,9 @@
                     "title": "Size"
                 }
             },
+            "required": [
+                "type"
+            ],
             "title": "model.v0_5.BatchAxis",
             "type": "object"
         },
@@ -295,7 +297,6 @@
                 },
                 "type": {
                     "const": "channel",
-                    "default": "channel",
                     "enum": [
                         "channel"
                     ],
@@ -314,6 +315,7 @@
                 }
             },
             "required": [
+                "type",
                 "channel_names"
             ],
             "title": "model.v0_5.ChannelAxis",
@@ -379,7 +381,6 @@
             "properties": {
                 "id": {
                     "const": "ensure_dtype",
-                    "default": "ensure_dtype",
                     "enum": [
                         "ensure_dtype"
                     ],
@@ -391,6 +392,7 @@
                 }
             },
             "required": [
+                "id",
                 "kwargs"
             ],
             "title": "model.v0_5.EnsureDtypeDescr",
@@ -574,7 +576,6 @@
             "properties": {
                 "id": {
                     "const": "fixed_zero_mean_unit_variance",
-                    "default": "fixed_zero_mean_unit_variance",
                     "enum": [
                         "fixed_zero_mean_unit_variance"
                     ],
@@ -594,6 +595,7 @@
                 }
             },
             "required": [
+                "id",
                 "kwargs"
             ],
             "title": "model.v0_5.FixedZeroMeanUnitVarianceDescr",
@@ -720,7 +722,6 @@
                 },
                 "type": {
                     "const": "index",
-                    "default": "index",
                     "enum": [
                         "index"
                     ],
@@ -735,7 +736,8 @@
                 }
             },
             "required": [
-                "size"
+                "size",
+                "type"
             ],
             "title": "model.v0_5.IndexInputAxis",
             "type": "object"
@@ -758,7 +760,6 @@
                 },
                 "type": {
                     "const": "index",
-                    "default": "index",
                     "enum": [
                         "index"
                     ],
@@ -791,6 +792,7 @@
                 }
             },
             "required": [
+                "type",
                 "size"
             ],
             "title": "model.v0_5.IndexOutputAxis",
@@ -827,7 +829,7 @@
                         null,
                         null
                     ],
-                    "description": "Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.\n`None` corresponds to min/max of what can be expressed by `data_type`.",
+                    "description": "Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.\n`None` corresponds to min/max of what can be expressed by **type**.",
                     "maxItems": 2,
                     "minItems": 2,
                     "prefixItems": [
@@ -932,7 +934,7 @@
                             "type": "array"
                         }
                     ],
-                    "description": "A fixed set of nominal or an ascending sequence of ordinal values.\nIn this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'.\nString `values` are interpreted as labels for tensor values 0, ..., N.\nNote: as YAML 1.2 does not natively support a \"set\" datatype,\nnominal values should be given as a sequence (aka list/array) as well.",
+                    "description": "A fixed set of nominal or an ascending sequence of ordinal values.\nIn this case `data.type` is required to be an unsigend integer type, e.g. 'uint8'.\nString `values` are interpreted as labels for tensor values 0, ..., N.\nNote: as YAML 1.2 does not natively support a \"set\" datatype,\nnominal values should be given as a sequence (aka list/array) as well.",
                     "title": "Values"
                 },
                 "type": {
@@ -1022,7 +1024,7 @@
         },
         "ParameterizedSize": {
             "additionalProperties": false,
-            "description": "Describes a range of valid tensor axis sizes as `size = min + n*step`.",
+            "description": "Describes a range of valid tensor axis sizes as `size = min + n*step`.\n\n- **min** and **step** are given by the model description.\n- All blocksize paramters n = 0,1,2,... yield a valid `size`.\n- A greater blocksize paramter n = 0,1,2,... results in a greater **size**.\n  This allows to adjust the axis size more generically.",
             "properties": {
                 "min": {
                     "exclusiveMinimum": 0,
@@ -1047,6 +1049,66 @@
             "format": "path",
             "title": "RelativeFilePath",
             "type": "string"
+        },
+        "ReproducibilityTolerance": {
+            "additionalProperties": true,
+            "description": "Describes what small numerical differences -- if any -- may be tolerated\nin the generated output when executing in different environments.\n\nA tensor element *output* is considered mismatched to the **test_tensor** if\nabs(*output* - **test_tensor**) > **absolute_tolerance** + **relative_tolerance** * abs(**test_tensor**).\n(Internally we call [numpy.testing.assert_allclose](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html).)\n\nMotivation:\n    For testing we can request the respective deep learning frameworks to be as\n    reproducible as possible by setting seeds and chosing deterministic algorithms,\n    but differences in operating systems, available hardware and installed drivers\n    may still lead to numerical differences.",
+            "properties": {
+                "relative_tolerance": {
+                    "default": 0.001,
+                    "description": "Maximum relative tolerance of reproduced test tensor.",
+                    "maximum": 0.01,
+                    "minimum": 0.0,
+                    "title": "Relative Tolerance",
+                    "type": "number"
+                },
+                "absolute_tolerance": {
+                    "default": 0.0001,
+                    "description": "Maximum absolute tolerance of reproduced test tensor.",
+                    "minimum": 0.0,
+                    "title": "Absolute Tolerance",
+                    "type": "number"
+                },
+                "mismatched_elements_per_million": {
+                    "default": 0,
+                    "description": "Maximum number of mismatched elements/pixels per million to tolerate.",
+                    "maximum": 100,
+                    "minimum": 0,
+                    "title": "Mismatched Elements Per Million",
+                    "type": "integer"
+                },
+                "output_ids": {
+                    "default": [],
+                    "description": "Limits the output tensor IDs these reproducibility details apply to.",
+                    "items": {
+                        "maxLength": 32,
+                        "minLength": 1,
+                        "title": "TensorId",
+                        "type": "string"
+                    },
+                    "title": "Output Ids",
+                    "type": "array"
+                },
+                "weights_formats": {
+                    "default": [],
+                    "description": "Limits the weights formats these details apply to.",
+                    "items": {
+                        "enum": [
+                            "keras_hdf5",
+                            "onnx",
+                            "pytorch_state_dict",
+                            "tensorflow_js",
+                            "tensorflow_saved_model_bundle",
+                            "torchscript"
+                        ],
+                        "type": "string"
+                    },
+                    "title": "Weights Formats",
+                    "type": "array"
+                }
+            },
+            "title": "model.v0_5.ReproducibilityTolerance",
+            "type": "object"
         },
         "RunMode": {
             "additionalProperties": false,
@@ -1084,7 +1146,7 @@
             "description": "Key word arguments for `ScaleLinearDescr`",
             "properties": {
                 "axis": {
-                    "description": "The axis of of gains/offsets values.",
+                    "description": "The axis of gain and offset values.",
                     "examples": [
                         "channel"
                     ],
@@ -1216,7 +1278,6 @@
                 },
                 "type": {
                     "const": "space",
-                    "default": "space",
                     "enum": [
                         "space"
                     ],
@@ -1277,7 +1338,8 @@
                 }
             },
             "required": [
-                "size"
+                "size",
+                "type"
             ],
             "title": "model.v0_5.SpaceInputAxis",
             "type": "object"
@@ -1326,7 +1388,6 @@
                 },
                 "type": {
                     "const": "space",
-                    "default": "space",
                     "enum": [
                         "space"
                     ],
@@ -1381,7 +1442,8 @@
                 }
             },
             "required": [
-                "size"
+                "size",
+                "type"
             ],
             "title": "model.v0_5.SpaceOutputAxis",
             "type": "object"
@@ -1427,7 +1489,6 @@
                 },
                 "type": {
                     "const": "space",
-                    "default": "space",
                     "enum": [
                         "space"
                     ],
@@ -1483,7 +1544,8 @@
             },
             "required": [
                 "halo",
-                "size"
+                "size",
+                "type"
             ],
             "title": "model.v0_5.SpaceOutputAxisWithHalo",
             "type": "object"
@@ -1534,7 +1596,6 @@
                 },
                 "type": {
                     "const": "time",
-                    "default": "time",
                     "enum": [
                         "time"
                     ],
@@ -1592,7 +1653,8 @@
                 }
             },
             "required": [
-                "size"
+                "size",
+                "type"
             ],
             "title": "model.v0_5.TimeInputAxis",
             "type": "object"
@@ -1636,7 +1698,6 @@
                 },
                 "type": {
                     "const": "time",
-                    "default": "time",
                     "enum": [
                         "time"
                     ],
@@ -1688,7 +1749,8 @@
                 }
             },
             "required": [
-                "size"
+                "size",
+                "type"
             ],
             "title": "model.v0_5.TimeOutputAxis",
             "type": "object"
@@ -1729,7 +1791,6 @@
                 },
                 "type": {
                     "const": "time",
-                    "default": "time",
                     "enum": [
                         "time"
                     ],
@@ -1782,7 +1843,8 @@
             },
             "required": [
                 "halo",
-                "size"
+                "size",
+                "type"
             ],
             "title": "model.v0_5.TimeOutputAxisWithHalo",
             "type": "object"
@@ -2150,7 +2212,6 @@
                 },
                 "format_version": {
                     "const": "0.2.4",
-                    "default": "0.2.4",
                     "description": "The format version of this resource specification\n(not the `version` of the resource description)\nWhen creating a new resource always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
                     "enum": [
                         "0.2.4"
@@ -2865,7 +2926,6 @@
                 },
                 "type": {
                     "const": "application",
-                    "default": "application",
                     "enum": [
                         "application"
                     ],
@@ -2916,9 +2976,11 @@
             },
             "required": [
                 "name",
-                "description"
+                "description",
+                "format_version",
+                "type"
             ],
-            "title": "application.v0_2.ApplicationDescr",
+            "title": "application 0.2.4",
             "type": "object"
         },
         "bioimageio__spec__application__v0_3__ApplicationDescr": {
@@ -3669,27 +3731,6 @@
                     ],
                     "title": "License"
                 },
-                "config": {
-                    "additionalProperties": {
-                        "$ref": "#/$defs/YamlValue"
-                    },
-                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)",
-                    "examples": [
-                        {
-                            "bioimageio": {
-                                "another_key": {
-                                    "nested": "value"
-                                },
-                                "my_custom_key": 3837283
-                            },
-                            "imagej": {
-                                "macro_dir": "path/to/macro/file"
-                            }
-                        }
-                    ],
-                    "title": "Config",
-                    "type": "object"
-                },
                 "git_repo": {
                     "anyOf": [
                         {
@@ -3808,7 +3849,6 @@
                 },
                 "format_version": {
                     "const": "0.3.0",
-                    "default": "0.3.0",
                     "description": "The **format** version of this resource specification",
                     "enum": [
                         "0.3.0"
@@ -3854,9 +3894,12 @@
                     "title": "Badges",
                     "type": "array"
                 },
+                "config": {
+                    "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Config",
+                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    giraffe_neckometer:  # here is the domain name\n        length: 3837283\n        address:\n            home: zoo\n    imagej:              # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)"
+                },
                 "type": {
                     "const": "application",
-                    "default": "application",
                     "enum": [
                         "application"
                     ],
@@ -3925,9 +3968,11 @@
                 "description",
                 "authors",
                 "cite",
-                "license"
+                "license",
+                "format_version",
+                "type"
             ],
-            "title": "application.v0_3.ApplicationDescr",
+            "title": "application 0.3.0",
             "type": "object"
         },
         "bioimageio__spec__dataset__v0_2__DatasetDescr": {
@@ -4210,7 +4255,6 @@
                 },
                 "format_version": {
                     "const": "0.2.4",
-                    "default": "0.2.4",
                     "description": "The format version of this resource specification\n(not the `version` of the resource description)\nWhen creating a new resource always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
                     "enum": [
                         "0.2.4"
@@ -4925,7 +4969,6 @@
                 },
                 "type": {
                     "const": "dataset",
-                    "default": "dataset",
                     "enum": [
                         "dataset"
                     ],
@@ -4968,9 +5011,11 @@
             },
             "required": [
                 "name",
-                "description"
+                "description",
+                "format_version",
+                "type"
             ],
-            "title": "dataset.v0_2.DatasetDescr",
+            "title": "dataset 0.2.4",
             "type": "object"
         },
         "bioimageio__spec__dataset__v0_2__LinkedDataset": {
@@ -5751,27 +5796,6 @@
                     ],
                     "title": "License"
                 },
-                "config": {
-                    "additionalProperties": {
-                        "$ref": "#/$defs/YamlValue"
-                    },
-                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)",
-                    "examples": [
-                        {
-                            "bioimageio": {
-                                "another_key": {
-                                    "nested": "value"
-                                },
-                                "my_custom_key": 3837283
-                            },
-                            "imagej": {
-                                "macro_dir": "path/to/macro/file"
-                            }
-                        }
-                    ],
-                    "title": "Config",
-                    "type": "object"
-                },
                 "git_repo": {
                     "anyOf": [
                         {
@@ -5890,7 +5914,6 @@
                 },
                 "format_version": {
                     "const": "0.3.0",
-                    "default": "0.3.0",
                     "description": "The **format** version of this resource specification",
                     "enum": [
                         "0.3.0"
@@ -5936,9 +5959,12 @@
                     "title": "Badges",
                     "type": "array"
                 },
+                "config": {
+                    "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Config",
+                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    giraffe_neckometer:  # here is the domain name\n        length: 3837283\n        address:\n            home: zoo\n    imagej:              # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)"
+                },
                 "type": {
                     "const": "dataset",
-                    "default": "dataset",
                     "enum": [
                         "dataset"
                     ],
@@ -5999,9 +6025,11 @@
                 "description",
                 "authors",
                 "cite",
-                "license"
+                "license",
+                "format_version",
+                "type"
             ],
-            "title": "dataset.v0_3.DatasetDescr",
+            "title": "dataset 0.3.0",
             "type": "object"
         },
         "bioimageio__spec__dataset__v0_3__LinkedDataset": {
@@ -6290,8 +6318,16 @@
             "title": "generic.v0_3.Author",
             "type": "object"
         },
+        "bioimageio__spec__generic__v0_3__BioimageioConfig": {
+            "additionalProperties": true,
+            "description": "bioimage.io internal metadata.",
+            "properties": {},
+            "title": "generic.v0_3.BioimageioConfig",
+            "type": "object"
+        },
         "bioimageio__spec__generic__v0_3__CiteEntry": {
             "additionalProperties": false,
+            "description": "A citation that should be referenced in work using this resource.",
             "properties": {
                 "text": {
                     "description": "free text description",
@@ -6311,7 +6347,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "A digital object identifier (DOI) is the prefered citation reference.\nSee https://www.doi.org/ for details. (alternatively specify `url`)",
+                    "description": "A digital object identifier (DOI) is the prefered citation reference.\nSee https://www.doi.org/ for details.\nNote:\n    Either **doi** or **url** have to be specified.",
                     "title": "Doi"
                 },
                 "url": {
@@ -6329,7 +6365,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "URL to cite (preferably specify a `doi` instead)",
+                    "description": "URL to cite (preferably specify a **doi** instead/also).\nNote:\n    Either **doi** or **url** have to be specified.",
                     "title": "Url"
                 }
             },
@@ -6337,6 +6373,17 @@
                 "text"
             ],
             "title": "generic.v0_3.CiteEntry",
+            "type": "object"
+        },
+        "bioimageio__spec__generic__v0_3__Config": {
+            "additionalProperties": true,
+            "description": "A place to store additional metadata (often tool specific).\n\nSuch additional metadata is typically set programmatically by the respective tool\nor by people with specific insights into the tool.\nIf you want to store additional metadata that does not match any of the other\nfields, think of a key unlikely to collide with anyone elses use-case/tool and save\nit here.\n\nPlease consider creating [an issue in the bioimageio.spec repository](https://github.com/bioimage-io/spec-bioimage-io/issues/new?template=Blank+issue)\nif you are not sure if an existing field could cover your use case\nor if you think such a field should exist.",
+            "properties": {
+                "bioimageio": {
+                    "$ref": "#/$defs/bioimageio__spec__generic__v0_3__BioimageioConfig"
+                }
+            },
+            "title": "generic.v0_3.Config",
             "type": "object"
         },
         "bioimageio__spec__generic__v0_3__Maintainer": {
@@ -6416,7 +6463,6 @@
             "properties": {
                 "name": {
                     "const": "binarize",
-                    "default": "binarize",
                     "enum": [
                         "binarize"
                     ],
@@ -6428,6 +6474,7 @@
                 }
             },
             "required": [
+                "name",
                 "kwargs"
             ],
             "title": "model.v0_4.BinarizeDescr",
@@ -6455,7 +6502,6 @@
             "properties": {
                 "name": {
                     "const": "clip",
-                    "default": "clip",
                     "enum": [
                         "clip"
                     ],
@@ -6467,6 +6513,7 @@
                 }
             },
             "required": [
+                "name",
                 "kwargs"
             ],
             "title": "model.v0_4.ClipDescr",
@@ -6631,7 +6678,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 The weights file.",
+                    "description": "The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -6683,6 +6730,7 @@
                     "anyOf": [
                         {
                             "pattern": "^.+:.+$",
+                            "title": "Dependencies",
                             "type": "string"
                         },
                         {
@@ -7056,7 +7104,6 @@
                 },
                 "format_version": {
                     "const": "0.4.10",
-                    "default": "0.4.10",
                     "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
                     "enum": [
                         "0.4.10"
@@ -7066,7 +7113,6 @@
                 },
                 "type": {
                     "const": "model",
-                    "default": "model",
                     "description": "Specialized resource type 'model'",
                     "enum": [
                         "model"
@@ -7108,7 +7154,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.\nThe documentation should include a '[#[#]]# Validation' (sub)section\nwith details on how to quantitatively validate the model on unseen data.",
+                    "description": "URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.\nThe documentation should include a '[#[#]]# Validation' (sub)section\nwith details on how to quantitatively validate the model on unseen data.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -7792,7 +7838,7 @@
                     "description": "Custom run mode for this model: for more complex prediction procedures like test time\ndata augmentation that currently cannot be expressed in the specification.\nNo standard run modes are defined yet."
                 },
                 "sample_inputs": {
-                    "description": "\u2208\ud83d\udce6 URLs/relative paths to sample inputs to illustrate possible inputs for the model,\nfor example stored as PNG or TIFF images.\nThe sample files primarily serve to inform a human user about an example use case",
+                    "description": "URLs/relative paths to sample inputs to illustrate possible inputs for the model,\nfor example stored as PNG or TIFF images.\nThe sample files primarily serve to inform a human user about an example use case",
                     "items": {
                         "anyOf": [
                             {
@@ -7817,7 +7863,7 @@
                     "type": "array"
                 },
                 "sample_outputs": {
-                    "description": "\u2208\ud83d\udce6 URLs/relative paths to sample outputs corresponding to the `sample_inputs`.",
+                    "description": "URLs/relative paths to sample outputs corresponding to the `sample_inputs`.",
                     "items": {
                         "anyOf": [
                             {
@@ -7842,7 +7888,7 @@
                     "type": "array"
                 },
                 "test_inputs": {
-                    "description": "\u2208\ud83d\udce6 Test input tensors compatible with the `inputs` description for a **single test case**.\nThis means if your model has more than one input, you should provide one URL/relative path for each input.\nEach test input should be a file with an ndarray in\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe extension must be '.npy'.",
+                    "description": "Test input tensors compatible with the `inputs` description for a **single test case**.\nThis means if your model has more than one input, you should provide one URL/relative path for each input.\nEach test input should be a file with an ndarray in\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe extension must be '.npy'.",
                     "items": {
                         "anyOf": [
                             {
@@ -7868,7 +7914,7 @@
                     "type": "array"
                 },
                 "test_outputs": {
-                    "description": "\u2208\ud83d\udce6 Analog to `test_inputs`.",
+                    "description": "Analog to `test_inputs`.",
                     "items": {
                         "anyOf": [
                             {
@@ -7922,6 +7968,8 @@
                 "name",
                 "description",
                 "authors",
+                "format_version",
+                "type",
                 "documentation",
                 "inputs",
                 "license",
@@ -7931,7 +7979,7 @@
                 "timestamp",
                 "weights"
             ],
-            "title": "model.v0_4.ModelDescr",
+            "title": "model 0.4.10",
             "type": "object"
         },
         "bioimageio__spec__model__v0_4__OnnxWeightsDescr": {
@@ -7956,7 +8004,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 The weights file.",
+                    "description": "The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -8008,6 +8056,7 @@
                     "anyOf": [
                         {
                             "pattern": "^.+:.+$",
+                            "title": "Dependencies",
                             "type": "string"
                         },
                         {
@@ -8233,7 +8282,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 The weights file.",
+                    "description": "The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -8285,6 +8334,7 @@
                     "anyOf": [
                         {
                             "pattern": "^.+:.+$",
+                            "title": "Dependencies",
                             "type": "string"
                         },
                         {
@@ -8328,10 +8378,12 @@
                     "anyOf": [
                         {
                             "pattern": "^.+:.+$",
+                            "title": "CallableFromFile",
                             "type": "string"
                         },
                         {
                             "pattern": "^.+\\..+$",
+                            "title": "CallableFromDepencency",
                             "type": "string"
                         }
                     ],
@@ -8390,7 +8442,6 @@
             "properties": {
                 "name": {
                     "const": "scale_linear",
-                    "default": "scale_linear",
                     "enum": [
                         "scale_linear"
                     ],
@@ -8402,6 +8453,7 @@
                 }
             },
             "required": [
+                "name",
                 "kwargs"
             ],
             "title": "model.v0_4.ScaleLinearDescr",
@@ -8469,7 +8521,6 @@
             "properties": {
                 "name": {
                     "const": "scale_mean_variance",
-                    "default": "scale_mean_variance",
                     "enum": [
                         "scale_mean_variance"
                     ],
@@ -8481,6 +8532,7 @@
                 }
             },
             "required": [
+                "name",
                 "kwargs"
             ],
             "title": "model.v0_4.ScaleMeanVarianceDescr",
@@ -8543,7 +8595,6 @@
             "properties": {
                 "name": {
                     "const": "scale_range",
-                    "default": "scale_range",
                     "enum": [
                         "scale_range"
                     ],
@@ -8555,6 +8606,7 @@
                 }
             },
             "required": [
+                "name",
                 "kwargs"
             ],
             "title": "model.v0_4.ScaleRangeDescr",
@@ -8648,7 +8700,6 @@
             "properties": {
                 "name": {
                     "const": "sigmoid",
-                    "default": "sigmoid",
                     "enum": [
                         "sigmoid"
                     ],
@@ -8656,6 +8707,9 @@
                     "type": "string"
                 }
             },
+            "required": [
+                "name"
+            ],
             "title": "model.v0_4.SigmoidDescr",
             "type": "object"
         },
@@ -8681,7 +8735,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 The multi-file weights.\nAll required files/folders should be a zip archive.",
+                    "description": "The multi-file weights.\nAll required files/folders should be a zip archive.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -8733,6 +8787,7 @@
                     "anyOf": [
                         {
                             "pattern": "^.+:.+$",
+                            "title": "Dependencies",
                             "type": "string"
                         },
                         {
@@ -8813,7 +8868,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 The weights file.",
+                    "description": "The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -8865,6 +8920,7 @@
                     "anyOf": [
                         {
                             "pattern": "^.+:.+$",
+                            "title": "Dependencies",
                             "type": "string"
                         },
                         {
@@ -8945,7 +9001,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 The weights file.",
+                    "description": "The weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -8997,6 +9053,7 @@
                     "anyOf": [
                         {
                             "pattern": "^.+:.+$",
+                            "title": "Dependencies",
                             "type": "string"
                         },
                         {
@@ -9134,7 +9191,6 @@
             "properties": {
                 "name": {
                     "const": "zero_mean_unit_variance",
-                    "default": "zero_mean_unit_variance",
                     "enum": [
                         "zero_mean_unit_variance"
                     ],
@@ -9146,6 +9202,7 @@
                 }
             },
             "required": [
+                "name",
                 "kwargs"
             ],
             "title": "model.v0_4.ZeroMeanUnitVarianceDescr",
@@ -9249,7 +9306,6 @@
             "properties": {
                 "id": {
                     "const": "binarize",
-                    "default": "binarize",
                     "enum": [
                         "binarize"
                     ],
@@ -9269,6 +9325,7 @@
                 }
             },
             "required": [
+                "id",
                 "kwargs"
             ],
             "title": "model.v0_5.BinarizeDescr",
@@ -9290,13 +9347,28 @@
             "title": "model.v0_5.BinarizeKwargs",
             "type": "object"
         },
+        "bioimageio__spec__model__v0_5__BioimageioConfig": {
+            "additionalProperties": true,
+            "properties": {
+                "reproducibility_tolerance": {
+                    "default": [],
+                    "description": "Tolerances to allow when reproducing the model's test outputs\nfrom the model's test inputs.\nOnly the first entry matching tensor id and weights format is considered.",
+                    "items": {
+                        "$ref": "#/$defs/ReproducibilityTolerance"
+                    },
+                    "title": "Reproducibility Tolerance",
+                    "type": "array"
+                }
+            },
+            "title": "model.v0_5.BioimageioConfig",
+            "type": "object"
+        },
         "bioimageio__spec__model__v0_5__ClipDescr": {
             "additionalProperties": false,
             "description": "Set tensor values below min to min and above max to max.\n\nSee `ScaleRangeDescr` for examples.",
             "properties": {
                 "id": {
                     "const": "clip",
-                    "default": "clip",
                     "enum": [
                         "clip"
                     ],
@@ -9308,9 +9380,20 @@
                 }
             },
             "required": [
+                "id",
                 "kwargs"
             ],
             "title": "model.v0_5.ClipDescr",
+            "type": "object"
+        },
+        "bioimageio__spec__model__v0_5__Config": {
+            "additionalProperties": true,
+            "properties": {
+                "bioimageio": {
+                    "$ref": "#/$defs/bioimageio__spec__model__v0_5__BioimageioConfig"
+                }
+            },
+            "title": "model.v0_5.Config",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__InputTensorDescr": {
@@ -9559,6 +9642,12 @@
                         "pytorch_state_dict"
                     ],
                     "title": "Parent"
+                },
+                "comment": {
+                    "default": "",
+                    "description": "A comment about this weights entry, for example how these weights were created.",
+                    "title": "Comment",
+                    "type": "string"
                 },
                 "tensorflow_version": {
                     "$ref": "#/$defs/Version",
@@ -10349,27 +10438,6 @@
                     ],
                     "title": "License"
                 },
-                "config": {
-                    "additionalProperties": {
-                        "$ref": "#/$defs/YamlValue"
-                    },
-                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)",
-                    "examples": [
-                        {
-                            "bioimageio": {
-                                "another_key": {
-                                    "nested": "value"
-                                },
-                                "my_custom_key": 3837283
-                            },
-                            "imagej": {
-                                "macro_dir": "path/to/macro/file"
-                            }
-                        }
-                    ],
-                    "title": "Config",
-                    "type": "object"
-                },
                 "git_repo": {
                     "anyOf": [
                         {
@@ -10487,18 +10555,16 @@
                     "description": "The version of the resource following SemVer 2.0."
                 },
                 "format_version": {
-                    "const": "0.5.3",
-                    "default": "0.5.3",
+                    "const": "0.5.4",
                     "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
                     "enum": [
-                        "0.5.3"
+                        "0.5.4"
                     ],
                     "title": "Format Version",
                     "type": "string"
                 },
                 "type": {
                     "const": "model",
-                    "default": "model",
                     "description": "Specialized resource type 'model'",
                     "enum": [
                         "model"
@@ -10599,7 +10665,6 @@
                 },
                 "timestamp": {
                     "$ref": "#/$defs/Datetime",
-                    "default": "2025-02-05T13:54:22.448747",
                     "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).\n(In Python a datetime object is valid, too)."
                 },
                 "training_data": {
@@ -10624,6 +10689,9 @@
                 "weights": {
                     "$ref": "#/$defs/bioimageio__spec__model__v0_5__WeightsDescr",
                     "description": "The weights for this model.\nWeights can be given for different formats, but should otherwise be equivalent.\nThe available weight formats determine which consumers can use this model."
+                },
+                "config": {
+                    "$ref": "#/$defs/bioimageio__spec__model__v0_5__Config"
                 }
             },
             "required": [
@@ -10632,12 +10700,14 @@
                 "authors",
                 "cite",
                 "license",
+                "format_version",
+                "type",
                 "documentation",
                 "inputs",
                 "outputs",
                 "weights"
             ],
-            "title": "model.v0_5.ModelDescr",
+            "title": "model 0.5.4",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__OnnxWeightsDescr": {
@@ -10721,6 +10791,12 @@
                         "pytorch_state_dict"
                     ],
                     "title": "Parent"
+                },
+                "comment": {
+                    "default": "",
+                    "description": "A comment about this weights entry, for example how these weights were created.",
+                    "title": "Comment",
+                    "type": "string"
                 },
                 "opset_version": {
                     "description": "ONNX opset version",
@@ -11013,6 +11089,12 @@
                     ],
                     "title": "Parent"
                 },
+                "comment": {
+                    "default": "",
+                    "description": "A comment about this weights entry, for example how these weights were created.",
+                    "title": "Comment",
+                    "type": "string"
+                },
                 "architecture": {
                     "anyOf": [
                         {
@@ -11055,7 +11137,6 @@
             "properties": {
                 "id": {
                     "const": "scale_linear",
-                    "default": "scale_linear",
                     "enum": [
                         "scale_linear"
                     ],
@@ -11075,6 +11156,7 @@
                 }
             },
             "required": [
+                "id",
                 "kwargs"
             ],
             "title": "model.v0_5.ScaleLinearDescr",
@@ -11106,7 +11188,6 @@
             "properties": {
                 "id": {
                     "const": "scale_mean_variance",
-                    "default": "scale_mean_variance",
                     "enum": [
                         "scale_mean_variance"
                     ],
@@ -11118,6 +11199,7 @@
                 }
             },
             "required": [
+                "id",
                 "kwargs"
             ],
             "title": "model.v0_5.ScaleMeanVarianceDescr",
@@ -11181,7 +11263,6 @@
             "properties": {
                 "id": {
                     "const": "scale_range",
-                    "default": "scale_range",
                     "enum": [
                         "scale_range"
                     ],
@@ -11193,6 +11274,7 @@
                 }
             },
             "required": [
+                "id",
                 "kwargs"
             ],
             "title": "model.v0_5.ScaleRangeDescr",
@@ -11278,7 +11360,6 @@
             "properties": {
                 "id": {
                     "const": "sigmoid",
-                    "default": "sigmoid",
                     "enum": [
                         "sigmoid"
                     ],
@@ -11286,6 +11367,9 @@
                     "type": "string"
                 }
             },
+            "required": [
+                "id"
+            ],
             "title": "model.v0_5.SigmoidDescr",
             "type": "object"
         },
@@ -11370,6 +11454,12 @@
                         "pytorch_state_dict"
                     ],
                     "title": "Parent"
+                },
+                "comment": {
+                    "default": "",
+                    "description": "A comment about this weights entry, for example how these weights were created.",
+                    "title": "Comment",
+                    "type": "string"
                 },
                 "tensorflow_version": {
                     "$ref": "#/$defs/Version",
@@ -11464,6 +11554,12 @@
                         "pytorch_state_dict"
                     ],
                     "title": "Parent"
+                },
+                "comment": {
+                    "default": "",
+                    "description": "A comment about this weights entry, for example how these weights were created.",
+                    "title": "Comment",
+                    "type": "string"
                 },
                 "tensorflow_version": {
                     "$ref": "#/$defs/Version",
@@ -11571,6 +11667,12 @@
                     ],
                     "title": "Parent"
                 },
+                "comment": {
+                    "default": "",
+                    "description": "A comment about this weights entry, for example how these weights were created.",
+                    "title": "Comment",
+                    "type": "string"
+                },
                 "pytorch_version": {
                     "$ref": "#/$defs/Version",
                     "description": "Version of the PyTorch library used."
@@ -11662,7 +11764,6 @@
             "properties": {
                 "id": {
                     "const": "zero_mean_unit_variance",
-                    "default": "zero_mean_unit_variance",
                     "enum": [
                         "zero_mean_unit_variance"
                     ],
@@ -11673,6 +11774,9 @@
                     "$ref": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceKwargs"
                 }
             },
+            "required": [
+                "id"
+            ],
             "title": "model.v0_5.ZeroMeanUnitVarianceDescr",
             "type": "object"
         },
@@ -11998,7 +12102,6 @@
                 },
                 "format_version": {
                     "const": "0.2.4",
-                    "default": "0.2.4",
                     "description": "The format version of this resource specification\n(not the `version` of the resource description)\nWhen creating a new resource always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
                     "enum": [
                         "0.2.4"
@@ -12713,7 +12816,6 @@
                 },
                 "type": {
                     "const": "notebook",
-                    "default": "notebook",
                     "enum": [
                         "notebook"
                     ],
@@ -12760,9 +12862,11 @@
             "required": [
                 "name",
                 "description",
+                "format_version",
+                "type",
                 "source"
             ],
-            "title": "notebook.v0_2.NotebookDescr",
+            "title": "notebook 0.2.4",
             "type": "object"
         },
         "bioimageio__spec__notebook__v0_3__NotebookDescr": {
@@ -13513,27 +13617,6 @@
                     ],
                     "title": "License"
                 },
-                "config": {
-                    "additionalProperties": {
-                        "$ref": "#/$defs/YamlValue"
-                    },
-                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    bioimageio:  # here is the domain name\n        my_custom_key: 3837283\n        another_key:\n            nested: value\n    imagej:       # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)",
-                    "examples": [
-                        {
-                            "bioimageio": {
-                                "another_key": {
-                                    "nested": "value"
-                                },
-                                "my_custom_key": 3837283
-                            },
-                            "imagej": {
-                                "macro_dir": "path/to/macro/file"
-                            }
-                        }
-                    ],
-                    "title": "Config",
-                    "type": "object"
-                },
                 "git_repo": {
                     "anyOf": [
                         {
@@ -13652,7 +13735,6 @@
                 },
                 "format_version": {
                     "const": "0.3.0",
-                    "default": "0.3.0",
                     "description": "The **format** version of this resource specification",
                     "enum": [
                         "0.3.0"
@@ -13698,9 +13780,12 @@
                     "title": "Badges",
                     "type": "array"
                 },
+                "config": {
+                    "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Config",
+                    "description": "A field for custom configuration that can contain any keys not present in the RDF spec.\nThis means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.\nKeys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,\nit is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,\nfor example:\n```yaml\nconfig:\n    giraffe_neckometer:  # here is the domain name\n        length: 3837283\n        address:\n            home: zoo\n    imagej:              # config specific to ImageJ\n        macro_dir: path/to/macro/file\n```\nIf possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.\nYou may want to list linked files additionally under `attachments` to include them when packaging a resource.\n(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains\nan altered rdf.yaml file with local references to the downloaded files.)"
+                },
                 "type": {
                     "const": "notebook",
-                    "default": "notebook",
                     "enum": [
                         "notebook"
                     ],
@@ -13765,9 +13850,11 @@
                 "authors",
                 "cite",
                 "license",
+                "format_version",
+                "type",
                 "source"
             ],
-            "title": "notebook.v0_3.NotebookDescr",
+            "title": "notebook 0.3.0",
             "type": "object"
         }
     },
@@ -13817,7 +13904,7 @@
                 "discriminator": {
                     "mapping": {
                         "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-                        "0.5.3": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+                        "0.5.4": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
                     },
                     "propertyName": "format_version"
                 },
@@ -13901,7 +13988,7 @@
             "discriminator": {
                 "mapping": {
                     "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-                    "0.5.3": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+                    "0.5.4": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
                 },
                 "propertyName": "format_version"
             },

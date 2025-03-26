@@ -53,13 +53,16 @@
                         <li>
                                 <a class="variable" href="#RootHttpUrl.parent">parent</a>
                         </li>
+                        <li>
+                                <a class="variable" href="#RootHttpUrl.parents">parents</a>
+                        </li>
                 </ul>
 
             </li>
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.3.6</footer>
+            <footer>bioimageio.spec 0.5.4.0</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -80,7 +83,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlsplit</span><span class="p">,</span> <span class="n">urlunsplit</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pydantic</span>
@@ -135,6 +138,14 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>                <span class="p">)</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>            <span class="p">)</span>
 </span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="p">)</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="nd">@property</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">RootHttpUrl</span><span class="p">]:</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;iterate over all URL parents (max 100)&quot;&quot;&quot;</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="n">current</span> <span class="o">=</span> <span class="bp">self</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>            <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">parent</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>            <span class="k">yield</span> <span class="n">current</span>
 </span></pre></div>
 
 
@@ -196,6 +207,14 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="RootHttpUrl-56"><a href="#RootHttpUrl-56"><span class="linenos">56</span></a>                <span class="p">)</span>
 </span><span id="RootHttpUrl-57"><a href="#RootHttpUrl-57"><span class="linenos">57</span></a>            <span class="p">)</span>
 </span><span id="RootHttpUrl-58"><a href="#RootHttpUrl-58"><span class="linenos">58</span></a>        <span class="p">)</span>
+</span><span id="RootHttpUrl-59"><a href="#RootHttpUrl-59"><span class="linenos">59</span></a>
+</span><span id="RootHttpUrl-60"><a href="#RootHttpUrl-60"><span class="linenos">60</span></a>    <span class="nd">@property</span>
+</span><span id="RootHttpUrl-61"><a href="#RootHttpUrl-61"><span class="linenos">61</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">RootHttpUrl</span><span class="p">]:</span>
+</span><span id="RootHttpUrl-62"><a href="#RootHttpUrl-62"><span class="linenos">62</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;iterate over all URL parents (max 100)&quot;&quot;&quot;</span>
+</span><span id="RootHttpUrl-63"><a href="#RootHttpUrl-63"><span class="linenos">63</span></a>        <span class="n">current</span> <span class="o">=</span> <span class="bp">self</span>
+</span><span id="RootHttpUrl-64"><a href="#RootHttpUrl-64"><span class="linenos">64</span></a>        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+</span><span id="RootHttpUrl-65"><a href="#RootHttpUrl-65"><span class="linenos">65</span></a>            <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">parent</span>
+</span><span id="RootHttpUrl-66"><a href="#RootHttpUrl-66"><span class="linenos">66</span></a>            <span class="k">yield</span> <span class="n">current</span>
 </span></pre></div>
 
 
@@ -331,6 +350,30 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
 
     
+
+                            </div>
+                            <div id="RootHttpUrl.parents" class="classattr">
+                                        <input id="RootHttpUrl.parents-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">parents</span><span class="annotation">: Iterable[<a href="#RootHttpUrl">RootHttpUrl</a>]</span>
+
+                <label class="view-source-button" for="RootHttpUrl.parents-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#RootHttpUrl.parents"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RootHttpUrl.parents-60"><a href="#RootHttpUrl.parents-60"><span class="linenos">60</span></a>    <span class="nd">@property</span>
+</span><span id="RootHttpUrl.parents-61"><a href="#RootHttpUrl.parents-61"><span class="linenos">61</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">parents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">RootHttpUrl</span><span class="p">]:</span>
+</span><span id="RootHttpUrl.parents-62"><a href="#RootHttpUrl.parents-62"><span class="linenos">62</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;iterate over all URL parents (max 100)&quot;&quot;&quot;</span>
+</span><span id="RootHttpUrl.parents-63"><a href="#RootHttpUrl.parents-63"><span class="linenos">63</span></a>        <span class="n">current</span> <span class="o">=</span> <span class="bp">self</span>
+</span><span id="RootHttpUrl.parents-64"><a href="#RootHttpUrl.parents-64"><span class="linenos">64</span></a>        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+</span><span id="RootHttpUrl.parents-65"><a href="#RootHttpUrl.parents-65"><span class="linenos">65</span></a>            <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">parent</span>
+</span><span id="RootHttpUrl.parents-66"><a href="#RootHttpUrl.parents-66"><span class="linenos">66</span></a>            <span class="k">yield</span> <span class="n">current</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>iterate over all URL parents (max 100)</p>
+</div>
+
 
                             </div>
                 </section>

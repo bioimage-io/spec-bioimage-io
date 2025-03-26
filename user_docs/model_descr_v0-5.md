@@ -10,16 +10,16 @@ These fields are typically stored in a YAML file which we call a model resource 
 | Literal[a, b, ...] | indicates that a field value must be the specific value a or b, etc.|
 | Type* := Type (restrictions) | A field Type* followed by an asterisk indicates that annotations, e.g. value restriction apply. These are listed in parentheses in the expanded type description. They are not always intuitively understandable and merely a hint at more complex validation.|
 | \<type\>.v\<major\>_\<minor\>.\<sub spec\> | Subparts of a spec might be taken from another spec type or format version. |
-| `field` ≝ `default` | Default field values are indicated after '≝' and make a field optional. However, `type` and `format_version` alwyas need to be set for resource descriptions written as YAML files and determine which bioimage.io specification applies. They are optional only when creating a resource description in Python code using the appropriate, `type` and `format_version` specific class.|
+| `field` ≝ `default` | Default field values are indicated after '≝' and make a field optional. However, `type` and `format_version` alwyas need to be set for resource descriptions written as YAML files and determine which bioimage.io specification applies. They are optional only when creating a resource description in Python code using the appropriate, `type` and `format_version` specific class (here: [bioimageio.spec.model.v0_5.ModelDescr](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/model/v0_5.html#ModelDescr)).|
 | `field` ≝ 🡇 | Default field value is not displayed in-line, but in the code block below. |
-| ∈📦  | Files referenced in fields which are marked with '∈📦 ' are included when packaging the resource to a .zip archive. The resource description YAML file (RDF) is always included well as 'rdf.yaml'. |
+are included when packaging the resource to a .zip archive. The resource description YAML file (RDF) is always included as well as 'rdf.yaml'. |
 
-## `type`<sub> Literal[model]</sub> ≝ `model`
+## `type`<sub> Literal[model]</sub>
 Specialized resource type 'model'
 
 
 
-## `format_version`<sub> Literal[0.5.3]</sub> ≝ `0.5.3`
+## `format_version`<sub> Literal[0.5.4]</sub>
 Version of the bioimage.io model description specification used.
 When creating a new model always use the latest micro/patch version described here.
 The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -83,12 +83,16 @@ free text description
 
 ### `cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
 A digital object identifier (DOI) is the prefered citation reference.
-See https://www.doi.org/ for details. (alternatively specify `url`)
+See https://www.doi.org/ for details.
+Note:
+    Either **doi** or **url** have to be specified.
 
 
 
 ### `cite.i.url`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
-URL to cite (preferably specify a `doi` instead)
+URL to cite (preferably specify a **doi** instead/also).
+Note:
+    Either **doi** or **url** have to be specified.
 
 
 
@@ -149,7 +153,7 @@ Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bio
 
 
 
-#### `inputs.axes.type`<sub> Literal[batch]</sub> ≝ `batch`
+#### `inputs.axes.type`<sub> Literal[batch]</sub>
 
 
 
@@ -171,7 +175,7 @@ otherwise (the default) it may be chosen arbitrarily depending on available memo
 
 
 
-#### `inputs.axes.type`<sub> Literal[channel]</sub> ≝ `channel`
+#### `inputs.axes.type`<sub> Literal[channel]</sub>
 
 
 
@@ -234,7 +238,7 @@ axis id of the reference axis
 
 
 
-#### `inputs.axes.type`<sub> Literal[index]</sub> ≝ `index`
+#### `inputs.axes.type`<sub> Literal[index]</sub>
 
 
 
@@ -299,7 +303,7 @@ axis id of the reference axis
 
 
 
-#### `inputs.axes.type`<sub> Literal[time]</sub> ≝ `time`
+#### `inputs.axes.type`<sub> Literal[time]</sub>
 
 
 
@@ -405,7 +409,7 @@ axis id of the reference axis
 
 
 
-#### `inputs.axes.type`<sub> Literal[space]</sub> ≝ `space`
+#### `inputs.axes.type`<sub> Literal[space]</sub>
 
 
 
@@ -536,7 +540,7 @@ Union of
 **NominalOrOrdinalDataDescr:**
 #### `inputs.data.values`<sub> Union</sub>
 A fixed set of nominal or an ascending sequence of ordinal values.
-In this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'.
+In this case `data.type` is required to be an unsigend integer type, e.g. 'uint8'.
 String `values` are interpreted as labels for tensor values 0, ..., N.
 Note: as YAML 1.2 does not natively support a "set" datatype,
 nominal values should be given as a sequence (aka list/array) as well.
@@ -577,7 +581,7 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 
 #### `inputs.data.range`<sub> Sequence</sub> ≝ `(None, None)`
 Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
-`None` corresponds to min/max of what can be expressed by `data_type`.
+`None` corresponds to min/max of what can be expressed by **type**.
 
 
 Sequence[Optional[float], Optional[float]]
@@ -601,7 +605,7 @@ Offset for data on a ratio scale.
 **NominalOrOrdinalDataDescr:**
 #### `inputs.data.values`<sub> Union</sub>
 A fixed set of nominal or an ascending sequence of ordinal values.
-In this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'.
+In this case `data.type` is required to be an unsigend integer type, e.g. 'uint8'.
 String `values` are interpreted as labels for tensor values 0, ..., N.
 Note: as YAML 1.2 does not natively support a "set" datatype,
 nominal values should be given as a sequence (aka list/array) as well.
@@ -642,7 +646,7 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 
 #### `inputs.data.range`<sub> Sequence</sub> ≝ `(None, None)`
 Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
-`None` corresponds to min/max of what can be expressed by `data_type`.
+`None` corresponds to min/max of what can be expressed by **type**.
 
 
 Sequence[Optional[float], Optional[float]]
@@ -697,7 +701,7 @@ Sequence of Union of
 (Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None))
 
 **BinarizeDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[binarize]</sub> ≝ `binarize`
+#### `inputs.preprocessing.i.id`<sub> Literal[binarize]</sub>
 
 
 
@@ -731,7 +735,7 @@ The `threshold` axis
 </details>
 
 **ClipDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[clip]</sub> ≝ `clip`
+#### `inputs.preprocessing.i.id`<sub> Literal[clip]</sub>
 
 
 
@@ -758,7 +762,7 @@ maximum value for clipping
 </details>
 
 **EnsureDtypeDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[ensure_dtype]</sub> ≝ `ensure_dtype`
+#### `inputs.preprocessing.i.id`<sub> Literal[ensure_dtype]</sub>
 
 
 
@@ -781,7 +785,7 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 </details>
 
 **ScaleLinearDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[scale_linear]</sub> ≝ `scale_linear`
+#### `inputs.preprocessing.i.id`<sub> Literal[scale_linear]</sub>
 
 
 
@@ -807,7 +811,7 @@ additive term
 
 **ScaleLinearAlongAxisKwargs:**
 ##### `inputs.preprocessing.i.kwargs.axis`<sub> AxisId</sub>
-The axis of of gains/offsets values.
+The axis of gain and offset values.
 [*Example:*](#inputspreprocessingikwargsaxis) 'channel'
 
 
@@ -827,13 +831,13 @@ Union[float, Sequence[float] (MinLen(min_length=1))]
 </details>
 
 **SigmoidDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[sigmoid]</sub> ≝ `sigmoid`
+#### `inputs.preprocessing.i.id`<sub> Literal[sigmoid]</sub>
 
 
 
 
 **FixedZeroMeanUnitVarianceDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal</sub> ≝ `fixed_zero_mean_unit_variance`
+#### `inputs.preprocessing.i.id`<sub> Literal</sub>
 
 
 
@@ -880,7 +884,7 @@ separately.
 </details>
 
 **ZeroMeanUnitVarianceDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[zero_mean_unit_variance]</sub> ≝ `zero_mean_unit_variance`
+#### `inputs.preprocessing.i.id`<sub> Literal[zero_mean_unit_variance]</sub>
 
 
 
@@ -913,7 +917,7 @@ epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.
 </details>
 
 **ScaleRangeDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[scale_range]</sub> ≝ `scale_range`
+#### `inputs.preprocessing.i.id`<sub> Literal[scale_range]</sub>
 
 
 
@@ -1011,11 +1015,11 @@ free text description
 ### `outputs.axes`<sub> Sequence</sub>
 tensor axes
 
-<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fd8d1f8f560>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fd8d1f8f560>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f037b1ce480>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f037b1ce480>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fd8d1f8f560>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fd8d1f8f560>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f037b1ce480>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f037b1ce480>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BatchAxis:**
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `batch`
@@ -1028,7 +1032,7 @@ Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bio
 
 
 
-#### `outputs.axes.type`<sub> Literal[batch]</sub> ≝ `batch`
+#### `outputs.axes.type`<sub> Literal[batch]</sub>
 
 
 
@@ -1050,7 +1054,7 @@ otherwise (the default) it may be chosen arbitrarily depending on available memo
 
 
 
-#### `outputs.axes.type`<sub> Literal[channel]</sub> ≝ `channel`
+#### `outputs.axes.type`<sub> Literal[channel]</sub>
 
 
 
@@ -1072,7 +1076,7 @@ Sequence[_internal.types.Identifier]
 
 
 
-#### `outputs.axes.type`<sub> Literal[index]</sub> ≝ `index`
+#### `outputs.axes.type`<sub> Literal[index]</sub>
 
 
 
@@ -1158,7 +1162,7 @@ axis id of the reference axis
 
 
 
-#### `outputs.axes.type`<sub> Literal[time]</sub> ≝ `time`
+#### `outputs.axes.type`<sub> Literal[time]</sub>
 
 
 
@@ -1248,7 +1252,7 @@ axis id of the reference axis
 
 
 
-#### `outputs.axes.type`<sub> Literal[time]</sub> ≝ `time`
+#### `outputs.axes.type`<sub> Literal[time]</sub>
 
 
 
@@ -1334,7 +1338,7 @@ axis id of the reference axis
 
 
 
-#### `outputs.axes.type`<sub> Literal[space]</sub> ≝ `space`
+#### `outputs.axes.type`<sub> Literal[space]</sub>
 
 
 
@@ -1428,7 +1432,7 @@ axis id of the reference axis
 
 
 
-#### `outputs.axes.type`<sub> Literal[space]</sub> ≝ `space`
+#### `outputs.axes.type`<sub> Literal[space]</sub>
 
 
 
@@ -1551,7 +1555,7 @@ Union of
 **NominalOrOrdinalDataDescr:**
 #### `outputs.data.values`<sub> Union</sub>
 A fixed set of nominal or an ascending sequence of ordinal values.
-In this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'.
+In this case `data.type` is required to be an unsigend integer type, e.g. 'uint8'.
 String `values` are interpreted as labels for tensor values 0, ..., N.
 Note: as YAML 1.2 does not natively support a "set" datatype,
 nominal values should be given as a sequence (aka list/array) as well.
@@ -1592,7 +1596,7 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 
 #### `outputs.data.range`<sub> Sequence</sub> ≝ `(None, None)`
 Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
-`None` corresponds to min/max of what can be expressed by `data_type`.
+`None` corresponds to min/max of what can be expressed by **type**.
 
 
 Sequence[Optional[float], Optional[float]]
@@ -1616,7 +1620,7 @@ Offset for data on a ratio scale.
 **NominalOrOrdinalDataDescr:**
 #### `outputs.data.values`<sub> Union</sub>
 A fixed set of nominal or an ascending sequence of ordinal values.
-In this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'.
+In this case `data.type` is required to be an unsigend integer type, e.g. 'uint8'.
 String `values` are interpreted as labels for tensor values 0, ..., N.
 Note: as YAML 1.2 does not natively support a "set" datatype,
 nominal values should be given as a sequence (aka list/array) as well.
@@ -1657,7 +1661,7 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 
 #### `outputs.data.range`<sub> Sequence</sub> ≝ `(None, None)`
 Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
-`None` corresponds to min/max of what can be expressed by `data_type`.
+`None` corresponds to min/max of what can be expressed by **type**.
 
 
 Sequence[Optional[float], Optional[float]]
@@ -1704,7 +1708,7 @@ Sequence of Union of
 (Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None))
 
 **BinarizeDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[binarize]</sub> ≝ `binarize`
+#### `outputs.postprocessing.i.id`<sub> Literal[binarize]</sub>
 
 
 
@@ -1738,7 +1742,7 @@ The `threshold` axis
 </details>
 
 **ClipDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[clip]</sub> ≝ `clip`
+#### `outputs.postprocessing.i.id`<sub> Literal[clip]</sub>
 
 
 
@@ -1765,7 +1769,7 @@ maximum value for clipping
 </details>
 
 **EnsureDtypeDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[ensure_dtype]</sub> ≝ `ensure_dtype`
+#### `outputs.postprocessing.i.id`<sub> Literal[ensure_dtype]</sub>
 
 
 
@@ -1788,7 +1792,7 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 </details>
 
 **ScaleLinearDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[scale_linear]</sub> ≝ `scale_linear`
+#### `outputs.postprocessing.i.id`<sub> Literal[scale_linear]</sub>
 
 
 
@@ -1814,7 +1818,7 @@ additive term
 
 **ScaleLinearAlongAxisKwargs:**
 ##### `outputs.postprocessing.i.kwargs.axis`<sub> AxisId</sub>
-The axis of of gains/offsets values.
+The axis of gain and offset values.
 [*Example:*](#outputspostprocessingikwargsaxis) 'channel'
 
 
@@ -1834,13 +1838,13 @@ Union[float, Sequence[float] (MinLen(min_length=1))]
 </details>
 
 **SigmoidDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[sigmoid]</sub> ≝ `sigmoid`
+#### `outputs.postprocessing.i.id`<sub> Literal[sigmoid]</sub>
 
 
 
 
 **FixedZeroMeanUnitVarianceDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal</sub> ≝ `fixed_zero_mean_unit_variance`
+#### `outputs.postprocessing.i.id`<sub> Literal</sub>
 
 
 
@@ -1887,7 +1891,7 @@ separately.
 </details>
 
 **ZeroMeanUnitVarianceDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[zero_mean_unit_variance]</sub> ≝ `zero_mean_unit_variance`
+#### `outputs.postprocessing.i.id`<sub> Literal[zero_mean_unit_variance]</sub>
 
 
 
@@ -1920,7 +1924,7 @@ epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.
 </details>
 
 **ScaleRangeDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[scale_range]</sub> ≝ `scale_range`
+#### `outputs.postprocessing.i.id`<sub> Literal[scale_range]</sub>
 
 
 
@@ -1974,7 +1978,7 @@ For any tensor in `inputs` only input tensor references are allowed.
 </details>
 
 **ScaleMeanVarianceDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[scale_mean_variance]</sub> ≝ `scale_mean_variance`
+#### `outputs.postprocessing.i.id`<sub> Literal[scale_mean_variance]</sub>
 
 
 
@@ -2104,6 +2108,11 @@ need to have this field.
 
 Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
 
+#### `weights.keras_hdf5.comment`<sub> str</sub> ≝ ``
+A comment about this weights entry, for example how these weights were created.
+
+
+
 #### `weights.keras_hdf5.tensorflow_version`<sub> _internal.version_type.Version</sub>
 TensorFlow version used to create these weights.
 
@@ -2188,6 +2197,11 @@ need to have this field.
 
 Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
 
+#### `weights.onnx.comment`<sub> str</sub> ≝ ``
+A comment about this weights entry, for example how these weights were created.
+
+
+
 #### `weights.onnx.opset_version`<sub> int</sub>
 ONNX opset version
 
@@ -2271,6 +2285,11 @@ need to have this field.
 
 
 Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+
+#### `weights.pytorch_state_dict.comment`<sub> str</sub> ≝ ``
+A comment about this weights entry, for example how these weights were created.
+
+
 
 #### `weights.pytorch_state_dict.architecture`<sub> Union</sub>
 
@@ -2438,6 +2457,11 @@ need to have this field.
 
 Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
 
+#### `weights.tensorflow_js.comment`<sub> str</sub> ≝ ``
+A comment about this weights entry, for example how these weights were created.
+
+
+
 #### `weights.tensorflow_js.tensorflow_version`<sub> _internal.version_type.Version</sub>
 Version of the TensorFlow library used.
 
@@ -2522,6 +2546,11 @@ need to have this field.
 
 
 Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+
+#### `weights.tensorflow_saved_model_bundle.comment`<sub> str</sub> ≝ ``
+A comment about this weights entry, for example how these weights were created.
+
+
 
 #### `weights.tensorflow_saved_model_bundle.tensorflow_version`<sub> _internal.version_type.Version</sub>
 Version of the TensorFlow library used.
@@ -2635,6 +2664,11 @@ need to have this field.
 
 Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
 
+#### `weights.torchscript.comment`<sub> str</sub> ≝ ``
+A comment about this weights entry, for example how these weights were created.
+
+
+
 #### `weights.torchscript.pytorch_version`<sub> _internal.version_type.Version</sub>
 Version of the PyTorch library used.
 
@@ -2667,28 +2701,72 @@ Optional[_internal.io_basics.Sha256]
 
 </details>
 
-## `config`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
-A field for custom configuration that can contain any keys not present in the RDF spec.
-This means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.
-Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,
-it is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,
-for example:
-```yaml
-config:
-    bioimageio:  # here is the domain name
-        my_custom_key: 3837283
-        another_key:
-            nested: value
-    imagej:       # config specific to ImageJ
-        macro_dir: path/to/macro/file
-```
-If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.
-You may want to list linked files additionally under `attachments` to include them when packaging a resource.
-(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
-an altered rdf.yaml file with local references to the downloaded files.)
-[*Example:*](#config) {'bioimageio': {'my_custom_key': 3837283, 'another_key': {'nested': 'value'}}, 'imagej': {'macro_dir': 'path/to/macro/file'}}
+## `config`<sub> Config</sub> ≝ `bioimageio=BioimageioConfig(reproducibility_tolerance=())`
 
 
+<details><summary>Config
+
+</summary>
+
+
+**Config:**
+### `config.bioimageio`<sub> BioimageioConfig</sub> ≝ `reproducibility_tolerance=()`
+
+
+<details><summary>BioimageioConfig
+
+</summary>
+
+
+**BioimageioConfig:**
+#### `config.bioimageio.reproducibility_tolerance`<sub> Sequence</sub> ≝ `()`
+Tolerances to allow when reproducing the model's test outputs
+from the model's test inputs.
+Only the first entry matching tensor id and weights format is considered.
+
+<details><summary>Sequence[bioimageio.spec.model.v0_5.ReproducibilityTolerance]
+
+</summary>
+
+
+**ReproducibilityTolerance:**
+##### `config.bioimageio.reproducibility_tolerance.relative_tolerance`<sub> float</sub> ≝ `0.001`
+Maximum relative tolerance of reproduced test tensor.
+
+
+
+##### `config.bioimageio.reproducibility_tolerance.absolute_tolerance`<sub> float</sub> ≝ `0.0001`
+Maximum absolute tolerance of reproduced test tensor.
+
+
+
+##### `config.bioimageio.reproducibility_tolerance.mismatched_elements_per_million`<sub> int</sub> ≝ `0`
+Maximum number of mismatched elements/pixels per million to tolerate.
+
+
+
+##### `config.bioimageio.reproducibility_tolerance.output_ids`<sub> Sequence</sub> ≝ `()`
+Limits the output tensor IDs these reproducibility details apply to.
+
+
+Sequence[bioimageio.spec.model.v0_5.TensorId]
+
+##### `config.bioimageio.reproducibility_tolerance.weights_formats`<sub> Sequence</sub> ≝ `()`
+Limits the weights formats these details apply to.
+
+<details><summary>Sequence[typing.Literal['keras_hdf5', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
+
+</summary>
+
+Sequence[typing.Literal['keras_hdf5', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
+
+</details>
+
+</details>
+
+</details>
+
+</details>
 
 ## `covers`<sub> Sequence</sub> ≝ `[]`
 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.
@@ -2703,7 +2781,7 @@ Sequence of Union of
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -2723,7 +2801,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -2883,7 +2961,7 @@ Associated tags
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2025, 2, 5, 13, 54, 17, 284190)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2025, 3, 26, 12, 22, 14, 483893, tzinfo=datetime.timezone.utc)`
 Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
 with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
 (In Python a datetime object is valid, too).
@@ -2935,7 +3013,7 @@ Sequence of Union of
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -3025,12 +3103,16 @@ free text description
 
 #### `training_data.cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
 A digital object identifier (DOI) is the prefered citation reference.
-See https://www.doi.org/ for details. (alternatively specify `url`)
+See https://www.doi.org/ for details.
+Note:
+    Either **doi** or **url** have to be specified.
 
 
 
 #### `training_data.cite.i.url`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
-URL to cite (preferably specify a `doi` instead)
+URL to cite (preferably specify a **doi** instead/also).
+Note:
+    Either **doi** or **url** have to be specified.
 
 
 
@@ -3045,29 +3127,6 @@ to discuss your intentions with the community.
 
 
 Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
-
-### `training_data.config`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
-A field for custom configuration that can contain any keys not present in the RDF spec.
-This means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.
-Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,
-it is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,
-for example:
-```yaml
-config:
-    bioimageio:  # here is the domain name
-        my_custom_key: 3837283
-        another_key:
-            nested: value
-    imagej:       # config specific to ImageJ
-        macro_dir: path/to/macro/file
-```
-If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.
-You may want to list linked files additionally under `attachments` to include them when packaging a resource.
-(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
-an altered rdf.yaml file with local references to the downloaded files.)
-[*Example:*](#training_dataconfig) {'bioimageio': {'my_custom_key': 3837283, 'another_key': {'nested': 'value'}}, 'imagej': {'macro_dir': 'path/to/macro/file'}}
-
-
 
 ### `training_data.git_repo`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
 A URL to the Git repository where the resource is being developed.
@@ -3085,7 +3144,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -3174,7 +3233,7 @@ The version of the resource following SemVer 2.0.
 
 Optional[_internal.version_type.Version]
 
-### `training_data.format_version`<sub> Literal[0.3.0]</sub> ≝ `0.3.0`
+### `training_data.format_version`<sub> Literal[0.3.0]</sub>
 The **format** version of this resource specification
 
 
@@ -3193,7 +3252,7 @@ Optional[Union of
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -3222,7 +3281,7 @@ badge icon
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -3238,7 +3297,40 @@ target URL
 
 </details>
 
-### `training_data.type`<sub> Literal[dataset]</sub> ≝ `dataset`
+### `training_data.config`<sub> generic.v0_3.Config</sub> ≝ `bioimageio=BioimageioConfig()`
+A field for custom configuration that can contain any keys not present in the RDF spec.
+This means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.
+Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,
+it is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,
+for example:
+```yaml
+config:
+    giraffe_neckometer:  # here is the domain name
+        length: 3837283
+        address:
+            home: zoo
+    imagej:              # config specific to ImageJ
+        macro_dir: path/to/macro/file
+```
+If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.
+You may want to list linked files additionally under `attachments` to include them when packaging a resource.
+(Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
+an altered rdf.yaml file with local references to the downloaded files.)
+
+<details><summary>generic.v0_3.Config
+
+</summary>
+
+
+**generic.v0_3.Config:**
+#### `training_data.config.bioimageio`<sub> generic.v0_3.BioimageioConfig</sub> ≝ ``
+bioimage.io internal metadata.
+
+
+
+</details>
+
+### `training_data.type`<sub> Literal[dataset]</sub>
 
 
 
@@ -3284,7 +3376,7 @@ Sequence of Union of
 - _internal.io.RelativeFilePath
 - _internal.url.HttpUrl
 
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -3352,7 +3444,7 @@ file and other attachments
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -3430,7 +3522,7 @@ An icon for illustration
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -3537,7 +3629,7 @@ version number (n-th published version, not the semantic version)
 
 
 
-### `training_data.format_version`<sub> Literal[0.2.4]</sub> ≝ `0.2.4`
+### `training_data.format_version`<sub> Literal[0.2.4]</sub>
 The format version of this resource specification
 (not the `version` of the resource description)
 When creating a new resource always use the latest micro/patch version described here.
@@ -3570,7 +3662,7 @@ badge icon
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - Url (max_length=2083 allowed_schemes=['http', 'https'])
 - None
@@ -3596,7 +3688,7 @@ The recommended documentation file name is `README.md`. An `.md` suffix is manda
 </summary>
 
 Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7fd8dda88fe0>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f03850d34c0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
@@ -3610,7 +3702,7 @@ We do not support custom license beyond the SPDX license list, if you need that 
 
 Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, str, None]
 
-### `training_data.type`<sub> Literal[dataset]</sub> ≝ `dataset`
+### `training_data.type`<sub> Literal[dataset]</sub>
 
 
 
@@ -3832,8 +3924,6 @@ environment.yaml
 0000-0001-2345-6789
 ### `weights.torchscript.parent`
 pytorch_state_dict
-### `config`
-{'bioimageio': {'my_custom_key': 3837283, 'another_key': {'nested': 'value'}}, 'imagej': {'macro_dir': 'path/to/macro/file'}}
 ### `git_repo`
 https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 ### `links`
@@ -3851,8 +3941,6 @@ https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/m
 - MIT
 - BSD-2-Clause
 
-### `training_data.config`
-{'bioimageio': {'my_custom_key': 3837283, 'another_key': {'nested': 'value'}}, 'imagej': {'macro_dir': 'path/to/macro/file'}}
 ### `training_data.git_repo`
 https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 ### `training_data.links`

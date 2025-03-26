@@ -36,9 +36,6 @@
                     <a class="variable" href="#DOI_REGEX">DOI_REGEX</a>
             </li>
             <li>
-                    <a class="variable" href="#IN_PACKAGE_MESSAGE">IN_PACKAGE_MESSAGE</a>
-            </li>
-            <li>
                     <a class="variable" href="#SHA256_HINT">SHA256_HINT</a>
             </li>
             <li>
@@ -68,7 +65,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.3.6</footer>
+            <footer>bioimageio.spec 0.5.4.0</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -104,77 +101,73 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="sa">r</span><span class="s2">&quot;^10\.[0-9]</span><span class="si">{4}</span><span class="s2">.+$&quot;</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="p">)</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="n">IN_PACKAGE_MESSAGE</span> <span class="o">=</span> <span class="s2">&quot;∈📦 &quot;</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">&quot;&quot;&quot;DEPRECATED, use ImportantFileSource to indicate that a file source should be included in a package&quot;&quot;&quot;</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="n">SHA256_HINT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;You can drag and drop your file to this</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="s2">[online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate a SHA256 in your browser.</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="s2">Or you can generate a SHA256 checksum with Python&#39;s `hashlib`,</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="s2">[here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100).&quot;&quot;&quot;</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="k">with</span> <span class="n">files</span><span class="p">(</span><span class="s2">&quot;bioimageio.spec&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;static/tag_categories.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="n">TAG_CATEGORIES</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="c1"># SI unit regex adapted from https://stackoverflow.com/a/3573731</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="n">_prefix</span> <span class="o">=</span> <span class="s2">&quot;(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y|r|q)&quot;</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="n">_unit</span> <span class="o">=</span> <span class="s2">&quot;(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|Ω|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)&quot;</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="n">_any_power</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(\^[+-]?[1-9]\d*)&quot;</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="n">_pos_power</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(\^+?[1-9]\d*)&quot;</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="n">_unit_ap</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_prefix</span><span class="si">}</span><span class="s2">?</span><span class="si">{</span><span class="n">_unit</span><span class="si">}{</span><span class="n">_any_power</span><span class="si">}</span><span class="s2">?&quot;</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="n">_unit_pp</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_prefix</span><span class="si">}</span><span class="s2">?</span><span class="si">{</span><span class="n">_unit</span><span class="si">}{</span><span class="n">_pos_power</span><span class="si">}</span><span class="s2">?&quot;</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="n">SI_UNIT_REGEX</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;^</span><span class="si">{</span><span class="n">_unit_ap</span><span class="si">}</span><span class="s2">((·</span><span class="si">{</span><span class="n">_unit_ap</span><span class="si">}</span><span class="s2">)|(/</span><span class="si">{</span><span class="n">_unit_pp</span><span class="si">}</span><span class="s2">))*$&quot;</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="n">SHA256_HINT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;You can drag and drop your file to this</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="s2">[online tool](http://emn178.github.io/online-tools/sha256_checksum.html) to generate a SHA256 in your browser.</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="s2">Or you can generate a SHA256 checksum with Python&#39;s `hashlib`,</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="s2">[here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100).&quot;&quot;&quot;</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="k">with</span> <span class="n">files</span><span class="p">(</span><span class="s2">&quot;bioimageio.spec&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;static/tag_categories.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="n">TAG_CATEGORIES</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="c1"># SI unit regex adapted from https://stackoverflow.com/a/3573731</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="n">_prefix</span> <span class="o">=</span> <span class="s2">&quot;(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y|r|q)&quot;</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="n">_unit</span> <span class="o">=</span> <span class="s2">&quot;(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|Ω|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)&quot;</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="n">_any_power</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(\^[+-]?[1-9]\d*)&quot;</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="n">_pos_power</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(\^+?[1-9]\d*)&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="n">_unit_ap</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_prefix</span><span class="si">}</span><span class="s2">?</span><span class="si">{</span><span class="n">_unit</span><span class="si">}{</span><span class="n">_any_power</span><span class="si">}</span><span class="s2">?&quot;</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="n">_unit_pp</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_prefix</span><span class="si">}</span><span class="s2">?</span><span class="si">{</span><span class="n">_unit</span><span class="si">}{</span><span class="n">_pos_power</span><span class="si">}</span><span class="s2">?&quot;</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="n">SI_UNIT_REGEX</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;^</span><span class="si">{</span><span class="n">_unit_ap</span><span class="si">}</span><span class="s2">((·</span><span class="si">{</span><span class="n">_unit_ap</span><span class="si">}</span><span class="s2">)|(/</span><span class="si">{</span><span class="n">_unit_pp</span><span class="si">}</span><span class="s2">))*$&quot;</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="k">class</span><span class="w"> </span><span class="nc">_DtypeLimit</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="nb">min</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="nb">max</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="k">class</span><span class="w"> </span><span class="nc">_DtypeLimit</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="nb">min</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="nb">max</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="c1"># numpy.dtype limits; see scripts/generate_dtype_limits.py</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="n">DTYPE_LIMITS</span> <span class="o">=</span> <span class="n">MappingProxyType</span><span class="p">(</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>    <span class="p">{</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>        <span class="s2">&quot;float32&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mf">3.4028235e38</span><span class="p">,</span> <span class="mf">3.4028235e38</span><span class="p">),</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>        <span class="s2">&quot;float64&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mf">1.7976931348623157e308</span><span class="p">,</span> <span class="mf">1.7976931348623157e308</span><span class="p">),</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>        <span class="s2">&quot;uint8&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>        <span class="s2">&quot;int8&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mi">128</span><span class="p">,</span> <span class="mi">127</span><span class="p">),</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>        <span class="s2">&quot;uint16&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">65535</span><span class="p">),</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>        <span class="s2">&quot;int16&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mi">32768</span><span class="p">,</span> <span class="mi">32767</span><span class="p">),</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="s2">&quot;uint32&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4294967295</span><span class="p">),</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="s2">&quot;int32&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mi">2147483648</span><span class="p">,</span> <span class="mi">2147483647</span><span class="p">),</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="s2">&quot;uint64&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">18446744073709551615</span><span class="p">),</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="s2">&quot;int64&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mi">9223372036854775808</span><span class="p">,</span> <span class="mi">9223372036854775807</span><span class="p">),</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="p">}</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="p">)</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="c1"># TODO: cache/store known gh users in file</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="n">KNOWN_GH_USERS</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="s2">&quot;clementcaporal&quot;</span><span class="p">,</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="s2">&quot;donglaiw&quot;</span><span class="p">,</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="s2">&quot;jansanrom&quot;</span><span class="p">,</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="s2">&quot;pedgomgal1&quot;</span><span class="p">,</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="s2">&quot;aaitorg&quot;</span><span class="p">,</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="s2">&quot;bioimageiobot&quot;</span><span class="p">,</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="s2">&quot;carlosuc3m&quot;</span><span class="p">,</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>    <span class="s2">&quot;cfusterbarcelo&quot;</span><span class="p">,</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="s2">&quot;constantinpape&quot;</span><span class="p">,</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="s2">&quot;ctr26&quot;</span><span class="p">,</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>    <span class="s2">&quot;danifranco&quot;</span><span class="p">,</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="s2">&quot;esgomezm&quot;</span><span class="p">,</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>    <span class="s2">&quot;fynnbe&quot;</span><span class="p">,</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="s2">&quot;githubuser2&quot;</span><span class="p">,</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    <span class="s2">&quot;iarganda&quot;</span><span class="p">,</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="s2">&quot;ivanhcenalmor&quot;</span><span class="p">,</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>    <span class="s2">&quot;jansanrom&quot;</span><span class="p">,</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>    <span class="s2">&quot;k-dominik&quot;</span><span class="p">,</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>    <span class="s2">&quot;lenkaback&quot;</span><span class="p">,</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>    <span class="s2">&quot;oeway&quot;</span><span class="p">,</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a><span class="p">}</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a><span class="n">N_KNOWN_GH_USERS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">KNOWN_GH_USERS</span><span class="p">)</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a><span class="n">KNOWN_INVALID_GH_USERS</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;arratemunoz&quot;</span><span class="p">,</span> <span class="s2">&quot;lmescu&quot;</span><span class="p">}</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a><span class="n">N_KNOWN_INVALID_GH_USERS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">KNOWN_INVALID_GH_USERS</span><span class="p">)</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="c1"># numpy.dtype limits; see scripts/generate_dtype_limits.py</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="n">DTYPE_LIMITS</span> <span class="o">=</span> <span class="n">MappingProxyType</span><span class="p">(</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="p">{</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="s2">&quot;float32&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mf">3.4028235e38</span><span class="p">,</span> <span class="mf">3.4028235e38</span><span class="p">),</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="s2">&quot;float64&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mf">1.7976931348623157e308</span><span class="p">,</span> <span class="mf">1.7976931348623157e308</span><span class="p">),</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>        <span class="s2">&quot;uint8&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>        <span class="s2">&quot;int8&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mi">128</span><span class="p">,</span> <span class="mi">127</span><span class="p">),</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>        <span class="s2">&quot;uint16&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">65535</span><span class="p">),</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>        <span class="s2">&quot;int16&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mi">32768</span><span class="p">,</span> <span class="mi">32767</span><span class="p">),</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>        <span class="s2">&quot;uint32&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4294967295</span><span class="p">),</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>        <span class="s2">&quot;int32&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mi">2147483648</span><span class="p">,</span> <span class="mi">2147483647</span><span class="p">),</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>        <span class="s2">&quot;uint64&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">18446744073709551615</span><span class="p">),</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>        <span class="s2">&quot;int64&quot;</span><span class="p">:</span> <span class="n">_DtypeLimit</span><span class="p">(</span><span class="o">-</span><span class="mi">9223372036854775808</span><span class="p">,</span> <span class="mi">9223372036854775807</span><span class="p">),</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>    <span class="p">}</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="p">)</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="c1"># TODO: cache/store known gh users in file</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="n">KNOWN_GH_USERS</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="s2">&quot;clementcaporal&quot;</span><span class="p">,</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="s2">&quot;donglaiw&quot;</span><span class="p">,</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>    <span class="s2">&quot;jansanrom&quot;</span><span class="p">,</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="s2">&quot;pedgomgal1&quot;</span><span class="p">,</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="s2">&quot;aaitorg&quot;</span><span class="p">,</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="s2">&quot;bioimageiobot&quot;</span><span class="p">,</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="s2">&quot;carlosuc3m&quot;</span><span class="p">,</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="s2">&quot;cfusterbarcelo&quot;</span><span class="p">,</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="s2">&quot;constantinpape&quot;</span><span class="p">,</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="s2">&quot;ctr26&quot;</span><span class="p">,</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="s2">&quot;danifranco&quot;</span><span class="p">,</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>    <span class="s2">&quot;esgomezm&quot;</span><span class="p">,</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="s2">&quot;fynnbe&quot;</span><span class="p">,</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="s2">&quot;githubuser2&quot;</span><span class="p">,</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>    <span class="s2">&quot;iarganda&quot;</span><span class="p">,</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="s2">&quot;ivanhcenalmor&quot;</span><span class="p">,</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>    <span class="s2">&quot;jansanrom&quot;</span><span class="p">,</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="s2">&quot;k-dominik&quot;</span><span class="p">,</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    <span class="s2">&quot;lenkaback&quot;</span><span class="p">,</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="s2">&quot;oeway&quot;</span><span class="p">,</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a><span class="p">}</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="n">N_KNOWN_GH_USERS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">KNOWN_GH_USERS</span><span class="p">)</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a><span class="n">KNOWN_INVALID_GH_USERS</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;arratemunoz&quot;</span><span class="p">,</span> <span class="s2">&quot;lmescu&quot;</span><span class="p">}</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a><span class="n">N_KNOWN_INVALID_GH_USERS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">KNOWN_INVALID_GH_USERS</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -189,20 +182,6 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
     <a class="headerlink" href="#DOI_REGEX"></a>
     
     
-
-                </section>
-                <section id="IN_PACKAGE_MESSAGE">
-                    <div class="attr variable">
-            <span class="name">IN_PACKAGE_MESSAGE</span>        =
-<span class="default_value">&#39;∈📦 &#39;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#IN_PACKAGE_MESSAGE"></a>
-    
-            <div class="docstring"><p>DEPRECATED, use ImportantFileSource to indicate that a file source should be included in a package</p>
-</div>
-
 
                 </section>
                 <section id="SHA256_HINT">
@@ -248,7 +227,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
                     <div class="attr variable">
             <span class="name">KNOWN_GH_USERS</span><span class="annotation">: Set[str]</span>        =
 <input id="KNOWN_GH_USERS-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="KNOWN_GH_USERS-view-value"></label><span class="default_value">{&#39;bioimageiobot&#39;, &#39;carlosuc3m&#39;, &#39;githubuser2&#39;, &#39;donglaiw&#39;, &#39;clementcaporal&#39;, &#39;aaitorg&#39;, &#39;lenkaback&#39;, &#39;k-dominik&#39;, &#39;oeway&#39;, &#39;cfusterbarcelo&#39;, &#39;constantinpape&#39;, &#39;pedgomgal1&#39;, &#39;iarganda&#39;, &#39;fynnbe&#39;, &#39;esgomezm&#39;, &#39;danifranco&#39;, &#39;jansanrom&#39;, &#39;ivanhcenalmor&#39;, &#39;ctr26&#39;}</span>
+            <label class="view-value-button pdoc-button" for="KNOWN_GH_USERS-view-value"></label><span class="default_value">{&#39;esgomezm&#39;, &#39;donglaiw&#39;, &#39;clementcaporal&#39;, &#39;cfusterbarcelo&#39;, &#39;pedgomgal1&#39;, &#39;oeway&#39;, &#39;ctr26&#39;, &#39;bioimageiobot&#39;, &#39;githubuser2&#39;, &#39;carlosuc3m&#39;, &#39;aaitorg&#39;, &#39;iarganda&#39;, &#39;jansanrom&#39;, &#39;lenkaback&#39;, &#39;fynnbe&#39;, &#39;ivanhcenalmor&#39;, &#39;constantinpape&#39;, &#39;k-dominik&#39;, &#39;danifranco&#39;}</span>
 
         
     </div>
@@ -296,7 +275,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
                 <section id="VERSION">
                     <div class="attr variable">
             <span class="name">VERSION</span><span class="annotation">: str</span>        =
-<span class="default_value">&#39;0.5.3.6&#39;</span>
+<span class="default_value">&#39;0.5.4.0&#39;</span>
 
         
     </div>
