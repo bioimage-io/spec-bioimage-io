@@ -206,11 +206,19 @@ class ValidationSummary(BaseModel, extra="allow"):
     for one specific `ResourceDescr` instance."""
 
     name: str
+    """name of the validation"""
     source_name: str
+    """source of the validated bioimageio description"""
+    id: Optional[str] = None
+    """ID of the resource being validated"""
     type: str
+    """type of the resource being validated"""
     format_version: str
-    status: Literal["passed", "failed"]
+    """format version of the resource being validated"""
+    status: Literal["passed", "valid-format", "failed"]
+    """overall status of the bioimageio validation"""
     details: NotEmpty[List[ValidationDetail]]
+    """list of validation details"""
     env: Set[InstalledPackage] = Field(
         default_factory=lambda: {
             InstalledPackage(name="bioimageio.spec", version=VERSION)
@@ -225,6 +233,8 @@ class ValidationSummary(BaseModel, extra="allow"):
     def status_icon(self):
         if self.status == "passed":
             return "✔️"
+        elif self.status == "valid-format":
+            return "🟡"
         else:
             return "❌"
 
@@ -241,14 +251,12 @@ class ValidationSummary(BaseModel, extra="allow"):
         hide_tracebacks: bool = False,
         hide_source: bool = False,
         hide_env: bool = False,
-        root_loc: Loc = (),
     ):
         """Format summary as Markdown string"""
         return self._format(
             hide_tracebacks=hide_tracebacks,
             hide_source=hide_source,
             hide_env=hide_env,
-            root_loc=root_loc,
             target="md",
         )
 
@@ -307,7 +315,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         return self.save(save_to)
 
     def save(
-        self, path: Union[Path, Sequence[Path]] = Path("bioimageio_summary_{now}")
+        self, path: Union[Path, Sequence[Path]] = Path("{id}_summary_{now}")
     ) -> List[Path]:
         """Save the validation/test summary in JSON, Markdown or HTML format.
 
@@ -338,7 +346,7 @@ class ValidationSummary(BaseModel, extra="allow"):
 
         now = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         for p in file_paths:
-            p = Path(str(p).format(now=now))  # expand {now}
+            p = Path(str(p).format(id=self.id or "bioimageio", now=now))
             if p.suffix == ".json":
                 self.save_json(p)
             elif p.suffix == ".md":
@@ -400,7 +408,6 @@ class ValidationSummary(BaseModel, extra="allow"):
         hide_tracebacks: bool = False,
         hide_source: bool = False,
         hide_env: bool = False,
-        root_loc: Loc = (),
         target: Union[rich.console.Console, Literal["html", "md"]],
     ):
         return _format_summary(
@@ -408,7 +415,6 @@ class ValidationSummary(BaseModel, extra="allow"):
             hide_tracebacks=hide_tracebacks,
             hide_source=hide_source,
             hide_env=hide_env,
-            root_loc=root_loc,
             target=target,
         )
 
@@ -419,7 +425,6 @@ def _format_summary(
     hide_tracebacks: bool,  # TODO: remove?
     hide_source: bool,  # TODO: remove?
     hide_env: bool,  # TODO: remove?
-    root_loc: Loc,  # TODO: remove?
     target: Union[rich.console.Console, Literal["html", "md"]] = "md",
 ) -> str:
     parts: List[str] = []
@@ -530,79 +535,95 @@ def _format_summary(
         else:
             return text.split("\n")
 
-    info_table = format_table(
-        [[summary.status_icon, f"{summary.name.strip('.').strip()} {summary.status}"]]
-        + ([] if hide_source else [["source", summary.source_name]])
-        + [
-            ["format version", f"{summary.type} {summary.format_version}"],
+    def get_info_table():
+        info_rows = [
+            [summary.status_icon, summary.name.strip(".").strip()],
+            ["status", summary.status],
         ]
-        + ([] if hide_env else [[e.name, e.version] for e in summary.env])
-    )
-    add_part(info_table)
+        if not hide_source:
+            info_rows.append(["source", summary.source_name])
 
-    details = [["", "Location", "Details"]]
-    last_context: Optional[ValidationContextSummary] = None
-    for d in summary.details:
-        details.append([d.status_icon, format_loc(d.loc, target), d.name])
-        if d.context is not None and d.context != last_context:
-            # only log new contexts to reduce the clutter
-            details.append(
-                [
-                    "🔍",
-                    format_ctxt_name("perform_io_checks"),
-                    str(d.context.perform_io_checks),
-                ]
-            )
-            if d.context.perform_io_checks:
-                details.append(["🔍", format_ctxt_name("root"), str(d.context.root)])
-                for kfn, sha in d.context.known_files.items():
-                    details.append(["🔍", format_ctxt_name("known_files", kfn), sha])
+        if summary.id is not None:
+            info_rows.append(["id", summary.id])
 
-            last_context = d.context
+        info_rows.append(["format version", f"{summary.type} {summary.format_version}"])
+        if not hide_env:
+            info_rows.extend([[e.name, e.version] for e in summary.env])
 
-        if d.recommended_env is not None:
-            rec_env = StringIO()
-            json_env = d.recommended_env.model_dump(mode="json", exclude_defaults=True)
-            assert is_yaml_value(json_env)
-            write_yaml(json_env, rec_env)
-            text, *additional_lines = format_text(
-                f"recommended conda env for:\n{d.name}\n"
-                + format_code(
-                    rec_env.getvalue(),
-                    lang="yaml",
-                    title="Conda Environment",
+        return format_table(info_rows)
+
+    def get_details_table():
+        details = [["", "Location", "Details"]]
+        last_context: Optional[ValidationContextSummary] = None
+        for d in summary.details:
+            details.append([d.status_icon, format_loc(d.loc, target), d.name])
+            if d.context is not None and d.context != last_context:
+                # only log new contexts to reduce the clutter
+                details.append(
+                    [
+                        "🔍",
+                        format_ctxt_name("perform_io_checks"),
+                        str(d.context.perform_io_checks),
+                    ]
                 )
-            )
-            details.append(["🐍", format_loc(d.loc, target), text])
-            details.extend([["", "", line] for line in additional_lines])
+                if d.context.perform_io_checks:
+                    details.append(
+                        ["🔍", format_ctxt_name("root"), str(d.context.root)]
+                    )
+                    for kfn, sha in d.context.known_files.items():
+                        details.append(
+                            ["🔍", format_ctxt_name("known_files", kfn), sha]
+                        )
 
-        if d.conda_compare:
-            text, *additional_lines = format_text(
-                f"conda compare ({d.name}):\n"
-                + format_code(
-                    d.conda_compare,
-                    title="Conda Environment Comparison",
-                    cell_line_limit=15,
+                last_context = d.context
+
+            if d.recommended_env is not None:
+                rec_env = StringIO()
+                json_env = d.recommended_env.model_dump(
+                    mode="json", exclude_defaults=True
                 )
-            )
-            details.append(["🐍", format_loc(d.loc, target), text])
-            details.extend([["", "", line] for line in additional_lines])
+                assert is_yaml_value(json_env)
+                write_yaml(json_env, rec_env)
+                text, *additional_lines = format_text(
+                    f"recommended conda env for:\n{d.name}\n"
+                    + format_code(
+                        rec_env.getvalue(),
+                        lang="yaml",
+                        title="Conda Environment",
+                    )
+                )
+                details.append(["🐍", format_loc(d.loc, target), text])
+                details.extend([["", "", line] for line in additional_lines])
 
-        for entry in d.errors:
-            text, *additional_lines = format_text(entry.msg)
-            details.append(["❌", format_loc(entry.loc, target), text])
-            details.extend([["", "", line] for line in additional_lines])
+            if d.conda_compare:
+                text, *additional_lines = format_text(
+                    f"conda compare ({d.name}):\n"
+                    + format_code(
+                        d.conda_compare,
+                        title="Conda Environment Comparison",
+                        cell_line_limit=15,
+                    )
+                )
+                details.append(["🐍", format_loc(d.loc, target), text])
+                details.extend([["", "", line] for line in additional_lines])
 
-            if not hide_tracebacks:
-                details.append(["", "", format_traceback(entry)])
+            for entry in d.errors:
+                text, *additional_lines = format_text(entry.msg)
+                details.append(["❌", format_loc(entry.loc, target), text])
+                details.extend([["", "", line] for line in additional_lines])
 
-        for entry in d.warnings:
-            text, *additional_lines = format_text(entry.msg)
-            details.append(["⚠", format_loc(entry.loc, target), text])
-            details.extend([["", "", line] for line in additional_lines])
+                if not hide_tracebacks:
+                    details.append(["", "", format_traceback(entry)])
 
-    details_table = format_table(details)
-    add_part(details_table)
+            for entry in d.warnings:
+                text, *additional_lines = format_text(entry.msg)
+                details.append(["⚠", format_loc(entry.loc, target), text])
+                details.extend([["", "", line] for line in additional_lines])
+
+        return format_table(details)
+
+    add_part(get_info_table())
+    add_part(get_details_table())
 
     for header, text in details_below.items():
         add_section(header)

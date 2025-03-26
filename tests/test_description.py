@@ -14,7 +14,7 @@ def test_forward_compatibility(unet2d_data: BioimageioYamlContent):
         data,
         context=ValidationContext(root=EXAMPLE_COM, perform_io_checks=False),
     )
-    assert summary.status == "passed", summary.errors
+    assert summary.status == "valid-format", summary.errors
 
     # expect warning about treating future format version as latest
     ws = summary.warnings

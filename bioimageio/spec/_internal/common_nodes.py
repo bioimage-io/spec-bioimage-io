@@ -152,9 +152,10 @@ class ResourceDescrBase(
         self._validation_summary = ValidationSummary(
             name="bioimageio format validation",
             source_name=context.source_name,
+            id=getattr(self, "id", None),
             type=self.type,
             format_version=self.format_version,
-            status="failed" if isinstance(self, InvalidDescr) else "passed",
+            status="failed" if isinstance(self, InvalidDescr) else "valid-format",
             details=[
                 ValidationDetail(
                     name=(
