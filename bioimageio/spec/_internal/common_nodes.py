@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import traceback
 from abc import ABC
 from copy import deepcopy
 from io import BytesIO
