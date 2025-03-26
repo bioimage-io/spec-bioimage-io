@@ -12,7 +12,7 @@ import pydantic
 from typing_extensions import Self
 
 from .type_guards import is_kwargs
-from .validation_context import ValidationContext, validation_context_var
+from .validation_context import ValidationContext, get_validation_context
 
 
 def _node_title_generator(node: Type[Node]) -> str:
@@ -64,7 +64,7 @@ class Node(
         __tracebackhide__ = True
 
         if context is None:
-            context = validation_context_var.get()
+            context = get_validation_context()
         elif isinstance(context, dict):
             context = ValidationContext(**context)
 

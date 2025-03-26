@@ -54,7 +54,7 @@ class ValidationContext(ValidationContextBase):
     if it matches its expected SHA256 hash value.
     """
 
-    _context_tokens: "List[Token[ValidationContext]]" = field(
+    _context_tokens: "List[Token[Optional[ValidationContext]]]" = field(
         init=False, default_factory=list
     )
 
@@ -94,11 +94,11 @@ class ValidationContext(ValidationContextBase):
         )
 
     def __enter__(self):
-        self._context_tokens.append(validation_context_var.set(self))
+        self._context_tokens.append(_validation_context_var.set(self))
         return self
 
     def __exit__(self, type, value, traceback):  # type: ignore
-        validation_context_var.reset(self._context_tokens.pop(-1))
+        _validation_context_var.reset(self._context_tokens.pop(-1))
 
     def replace(  # TODO: probably use __replace__ when py>=3.13
         self,
@@ -160,11 +160,13 @@ class ValidationContext(ValidationContextBase):
                 return str(source)
 
 
-validation_context_var: ContextVar[ValidationContext] = ContextVar(
-    "validation_context_var", default=ValidationContext()
+_validation_context_var: ContextVar[Optional[ValidationContext]] = ContextVar(
+    "validation_context_var", default=None
 )
 
 
-def get_validation_context():
-    """Get the currently active validation context"""
-    return validation_context_var.get()
+def get_validation_context(
+    default: Optional[ValidationContext] = None,
+) -> ValidationContext:
+    """Get the currently active validation context (or a default)"""
+    return _validation_context_var.get() or default or ValidationContext()

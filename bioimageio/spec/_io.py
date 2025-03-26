@@ -21,7 +21,7 @@ from ._internal.io import BioimageioYamlContent, YamlValue
 from ._internal.io_basics import Sha256
 from ._internal.io_utils import open_bioimageio_yaml, write_yaml
 from ._internal.types import FormatVersionPlaceholder
-from ._internal.validation_context import validation_context_var
+from ._internal.validation_context import get_validation_context
 from .common import PermissiveFileSource
 from .dataset import AnyDatasetDescr, DatasetDescr
 from .model import AnyModelDescr, ModelDescr
@@ -86,7 +86,7 @@ def load_description(
 
     opened = open_bioimageio_yaml(source, sha256=sha256)
 
-    context = validation_context_var.get().replace(
+    context = get_validation_context().replace(
         root=opened.original_root,
         file_name=opened.original_file_name,
         perform_io_checks=perform_io_checks,
@@ -281,7 +281,7 @@ def update_format(
     if isinstance(source, dict):
         descr = build_description(
             source,
-            context=validation_context_var.get().replace(
+            context=get_validation_context().replace(
                 root=root, perform_io_checks=perform_io_checks
             ),
             format_version=LATEST,
@@ -311,7 +311,7 @@ def update_hashes(
     else:
         root = None
 
-    context = validation_context_var.get().replace(
+    context = get_validation_context().replace(
         update_hashes=True, root=root, perform_io_checks=True
     )
     with context:

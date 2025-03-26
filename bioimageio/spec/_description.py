@@ -10,7 +10,7 @@ from ._description_impl import DISCOVER, build_description_impl, get_rd_class_im
 from ._internal.common_nodes import InvalidDescr
 from ._internal.io import BioimageioYamlContent
 from ._internal.types import FormatVersionPlaceholder
-from ._internal.validation_context import validation_context_var
+from ._internal.validation_context import get_validation_context
 from .application import (
     AnyApplicationDescr,
     ApplicationDescr,
@@ -224,7 +224,7 @@ def validate_format(
         Alternatively you can use `bioimagieo.spec.load_description` and access the
         `validation_summary` attribute of the returned object.
     """
-    with context or validation_context_var.get():
+    with context or get_validation_context():
         rd = build_description(data, format_version=format_version)
 
     assert rd.validation_summary is not None

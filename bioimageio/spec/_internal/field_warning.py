@@ -15,7 +15,7 @@ from pydantic_core.core_schema import (
 )
 from typing_extensions import Annotated, LiteralString
 
-from .validation_context import validation_context_var
+from .validation_context import get_validation_context
 from .warning_levels import WARNING, WarningSeverity
 
 if TYPE_CHECKING:
@@ -142,8 +142,8 @@ def issue_warning(
     field: Optional[str] = None,
 ):
     msg_context = {"value": value, "severity": severity, **(msg_context or {})}
-    if severity >= validation_context_var.get().warning_level:
+    if severity >= (ctxt := get_validation_context()).warning_level:
         raise PydanticCustomError("warning", msg, msg_context)
-    elif validation_context_var.get().log_warnings:
+    elif ctxt.log_warnings:
         log_msg = (field + ": " if field else "") + (msg.format(**msg_context))
         logger.opt(depth=1).log(severity, log_msg)
