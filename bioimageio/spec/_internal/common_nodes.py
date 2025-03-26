@@ -41,13 +41,8 @@ from .node import Node
 from .packaging_context import PackagingContext
 from .root_url import RootHttpUrl
 from .url import HttpUrl
-from .utils import (
-    get_format_version_tuple,
-)
-from .validation_context import (
-    ValidationContext,
-    validation_context_var,
-)
+from .utils import get_format_version_tuple
+from .validation_context import ValidationContext, get_validation_context
 from .warning_levels import ALERT, ERROR, INFO
 
 
@@ -148,7 +143,10 @@ class ResourceDescrBase(
 
     @model_validator(mode="after")
     def _set_init_validation_summary(self) -> Self:
-        context = validation_context_var.get()
+        context = get_validation_context()
+        detail_name = (
+            "Created" if isinstance(self, InvalidDescr) else "Successfully created"
+        ) + f" `{self.__class__.__name__}` object."
         self._validation_summary = ValidationSummary(
             name="bioimageio format validation",
             source_name=context.source_name,
@@ -158,11 +156,8 @@ class ResourceDescrBase(
             status="failed" if isinstance(self, InvalidDescr) else "valid-format",
             details=[
                 ValidationDetail(
-                    name=(
-                        f"Sucessfully created `{self.__class__.__name__}` object."
-                        + " Further validation is pending."
-                    ),
-                    status="passed",
+                    name=detail_name,
+                    status="failed" if isinstance(self, InvalidDescr) else "passed",
                     context=context.summary,
                 )
             ],
@@ -175,11 +170,11 @@ class ResourceDescrBase(
         return self._validation_summary
 
     _root: Union[RootHttpUrl, DirectoryPath, ZipFile] = PrivateAttr(
-        default_factory=lambda: validation_context_var.get().root
+        default_factory=lambda: get_validation_context().root
     )
 
     _file_name: Optional[FileName] = PrivateAttr(
-        default_factory=lambda: validation_context_var.get().file_name
+        default_factory=lambda: get_validation_context().file_name
     )
 
     @property
@@ -211,7 +206,7 @@ class ResourceDescrBase(
         cls, data: BioimageioYamlContent, context: Optional[ValidationContext] = None
     ) -> Union[Self, InvalidDescr]:
         """factory method to create a resource description object"""
-        context = context or validation_context_var.get()
+        context = context or get_validation_context()
         assert isinstance(data, dict)
         with context:
             rd, errors, val_warnings = cls._load_impl(deepcopy(data))
@@ -247,7 +242,7 @@ class ResourceDescrBase(
         val_errors: List[ErrorEntry] = []
         val_warnings: List[WarningEntry] = []
 
-        context = validation_context_var.get()
+        context = get_validation_context()
         try:
             rd = cls.model_validate(data)
         except pydantic.ValidationError as e:
@@ -275,7 +270,7 @@ class ResourceDescrBase(
                         msg=(
                             f"Encountered {len(val_warnings)} more severe than warning"
                             " level "
-                            f"'{WARNING_LEVEL_TO_NAME[validation_context_var.get().warning_level]}'"
+                            f"'{WARNING_LEVEL_TO_NAME[context.warning_level]}'"
                         ),
                         type="severe_warnings",
                     )

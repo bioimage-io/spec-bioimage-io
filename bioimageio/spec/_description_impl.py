@@ -5,7 +5,7 @@ from typing import Any, Callable, List, Literal, Mapping, Optional, Type, TypeVa
 from ._internal.common_nodes import InvalidDescr, ResourceDescrBase
 from ._internal.io import BioimageioYamlContent
 from ._internal.types import FormatVersionPlaceholder
-from ._internal.validation_context import ValidationContext, validation_context_var
+from ._internal.validation_context import ValidationContext, get_validation_context
 from .summary import (
     ErrorEntry,
     ValidationDetail,
@@ -55,7 +55,7 @@ def build_description_impl(
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     get_rd_class: Callable[[Any, Any], Type[ResourceDescrT]],
 ) -> Union[ResourceDescrT, InvalidDescr]:
-    context = context or validation_context_var.get()
+    context = context or get_validation_context()
     errors: List[ErrorEntry] = []
     if isinstance(content, dict):
         for minimum in ("type", "format_version"):

@@ -15,7 +15,7 @@ from ._settings import settings
 from .constants import KNOWN_GH_USERS, KNOWN_INVALID_GH_USERS
 from .field_warning import issue_warning
 from .type_guards import is_mapping, is_sequence, is_tuple
-from .validation_context import validation_context_var
+from .validation_context import get_validation_context
 
 
 def is_valid_yaml_leaf_value(value: Any) -> bool:
@@ -64,7 +64,7 @@ def validate_gh_user(username: str, hotfix_known_errorenous_names: bool = True) 
 
     if (
         username.lower() in KNOWN_GH_USERS
-        or not validation_context_var.get().perform_io_checks
+        or not get_validation_context().perform_io_checks
     ):
         return username
 

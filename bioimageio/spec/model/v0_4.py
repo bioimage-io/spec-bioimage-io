@@ -957,13 +957,10 @@ class InputTensorDescr(TensorDescrBase):
     @model_validator(mode="after")
     def validate_preprocessing_kwargs(self) -> Self:
         for p in self.preprocessing:
-            kwargs_axes = p.kwargs.get("axes", "")
-            if not isinstance(kwargs_axes, str):
-                raise ValueError(
-                    f"Expected an `axes` string, but got {type(kwargs_axes)}"
-                )
-
-            if any(a not in self.axes for a in kwargs_axes):
+            kwargs_axes = p.kwargs.get("axes")
+            if isinstance(kwargs_axes, str) and any(
+                a not in self.axes for a in kwargs_axes
+            ):
                 raise ValueError("`kwargs.axes` needs to be subset of `axes`")
 
         return self

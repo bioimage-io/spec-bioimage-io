@@ -75,7 +75,7 @@ from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
-from .._internal.validation_context import validation_context_var
+from .._internal.validation_context import get_validation_context
 from .._internal.validator_annotations import RestrictCharacters
 from .._internal.version_type import Version as Version
 from .._internal.warning_levels import INFO
@@ -217,7 +217,12 @@ class TensorId(LowerCaseIdentifier):
 
 def _normalize_axis_id(a: str):
     a = str(a)
-    return _AXIS_ID_MAP.get(a, a)
+    normalized = _AXIS_ID_MAP.get(a, a)
+    if a != normalized:
+        logger.opt(depth=3).warning(
+            "Normalized axis id from '{}' to '{}'.", a, normalized
+        )
+    return normalized
 
 
 class AxisId(LowerCaseIdentifier):
@@ -1493,10 +1498,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
 
     @model_validator(mode="after")
     def _validate_sample_tensor(self) -> Self:
-        if (
-            self.sample_tensor is None
-            or not validation_context_var.get().perform_io_checks
-        ):
+        if self.sample_tensor is None or not get_validation_context().perform_io_checks:
             return self
 
         local = download(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
@@ -2552,7 +2554,7 @@ class ModelDescr(GenericModelDescrBase):
     @field_validator("documentation", mode="after")
     @classmethod
     def _validate_documentation(cls, value: DocumentationSource) -> DocumentationSource:
-        if not validation_context_var.get().perform_io_checks:
+        if not get_validation_context().perform_io_checks:
             return value
 
         doc_path = download(value).path
@@ -2682,7 +2684,7 @@ class ModelDescr(GenericModelDescrBase):
 
     @model_validator(mode="after")
     def _validate_test_tensors(self) -> Self:
-        if not validation_context_var.get().perform_io_checks:
+        if not get_validation_context().perform_io_checks:
             return self
 
         test_output_arrays = [
@@ -2897,7 +2899,7 @@ class ModelDescr(GenericModelDescrBase):
 
     @model_validator(mode="after")
     def _add_default_cover(self) -> Self:
-        if not validation_context_var.get().perform_io_checks or self.covers:
+        if not get_validation_context().perform_io_checks or self.covers:
             return self
 
         try:

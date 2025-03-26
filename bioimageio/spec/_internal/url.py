@@ -9,7 +9,7 @@ from typing_extensions import Literal, assert_never
 
 from .field_warning import issue_warning
 from .root_url import RootHttpUrl
-from .validation_context import validation_context_var
+from .validation_context import get_validation_context
 
 
 def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.HttpUrl:
@@ -127,7 +127,7 @@ class HttpUrl(RootHttpUrl):
 
     def _after_validator(self):
         self = super()._after_validator()
-        context = validation_context_var.get()
+        context = get_validation_context()
         if (
             context.perform_io_checks
             and str(self._validated) not in context.known_files

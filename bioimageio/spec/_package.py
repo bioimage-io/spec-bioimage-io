@@ -21,7 +21,7 @@ from ._internal.io_utils import open_bioimageio_yaml, write_yaml, write_zip
 from ._internal.packaging_context import PackagingContext
 from ._internal.url import HttpUrl
 from ._internal.utils import get_os_friendly_file_name
-from ._internal.validation_context import validation_context_var
+from ._internal.validation_context import get_validation_context
 from ._internal.warning_levels import ERROR
 from ._io import load_description
 from .model.v0_4 import WeightsFormat
@@ -79,7 +79,7 @@ def _prepare_resource_package(
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
     """
-    context = validation_context_var.get()
+    context = get_validation_context()
     bioimageio_yaml_file_name = context.file_name
     if isinstance(source, ResourceDescrBase):
         descr = source
@@ -229,7 +229,7 @@ def save_bioimageio_package(
         compression=compression,
         compression_level=compression_level,
     )
-    with validation_context_var.get().replace(warning_level=ERROR):
+    with get_validation_context().replace(warning_level=ERROR):
         if isinstance((exported := load_description(output_path)), InvalidDescr):
             raise ValueError(
                 f"Exported package '{output_path}' is invalid:"
