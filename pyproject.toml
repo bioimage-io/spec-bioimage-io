@@ -56,4 +56,5 @@ exclude = [
 ]
 
 [tool.coverage.report]
+omit = ["bioimageio/spec/pretty_validation_errors.py"]
 exclude_also = ["if TYPE_CHECKING:", "assert_never\\("]
