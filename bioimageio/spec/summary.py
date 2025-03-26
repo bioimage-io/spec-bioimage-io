@@ -495,6 +495,9 @@ def _format_summary(
         cell_width_limit: int = 120,
     ):
 
+        if not code.strip():
+            return ""
+
         if target == "html":
             html_lang = f' lang="{lang}"' if lang else ""
             code = f"<pre{html_lang}>{code}</pre>"
