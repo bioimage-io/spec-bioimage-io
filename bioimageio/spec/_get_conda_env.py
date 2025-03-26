@@ -83,9 +83,18 @@ def _get_default_pytorch_env(
     if pytorch_version is None:
         pytorch_version = Version("1.10.1")
 
+    channels = ["conda-forge", "nodefaults"]
+    if pytorch_version < Version("2.5.2"):
+        channels.insert(0, "pytorch")
+
     # dependencies to install pytorch according to
     # https://pytorch.org/get-started/previous-versions/
-    v = str(pytorch_version)
+    v = pytorch_version.base_version
+    if v.count(".") == 0:
+        v += ".0.0"
+    elif v.count(".") == 1:
+        v += ".0"
+
     deps: List[Union[str, PipDeps]] = [f"pytorch=={v}"]
     if v == "1.5.1":
         deps += ["torchvision==0.6.1"]
@@ -171,10 +180,7 @@ def _get_default_pytorch_env(
     else:
         deps.append("numpy >=2,<3")
 
-    return BioimageioCondaEnv(
-        channels=["pytorch", "conda-forge", "nodefaults"],
-        dependencies=deps,
-    )
+    return BioimageioCondaEnv(channels=channels, dependencies=deps)
 
 
 def _get_default_onnx_env(*, opset_version: Optional[int]) -> BioimageioCondaEnv:
@@ -187,32 +193,12 @@ def _get_default_onnx_env(*, opset_version: Optional[int]) -> BioimageioCondaEnv
 
 
 def _get_default_tf_env(tensorflow_version: Optional[Version]) -> BioimageioCondaEnv:
-    if tensorflow_version is None:
-        tensorflow_version = Version("1.15")
+    if tensorflow_version is None or tensorflow_version.major < 2:
+        tensorflow_version = Version("2.17")
 
-    # tensorflow 1 is not available on conda, so we need to inject this as a pip dependency
-    if tensorflow_version.major == 1:
-        tensorflow_version = max(
-            tensorflow_version, Version("1.13")
-        )  # tf <1.13 not available anymore
-        deps = (
-            "pip",
-            "python=3.7.*",  # tf 1.15 not available for py>=3.8
-            PipDeps(
-                pip=[
-                    "bioimageio.core",  # get bioimageio.core (and its dependencies) via pip as well to avoid conda/pip mix
-                    f"tensorflow =={tensorflow_version}",
-                    "protobuf <4.0",  # protobuf pin: tf 1 does not pin an upper limit for protobuf, but fails to load models saved with protobuf 3 when installing protobuf 4.
-                ]
-            ),
-        )
-        return BioimageioCondaEnv(
-            dependencies=list(deps),
-        )
-    else:
-        return BioimageioCondaEnv(
-            dependencies=["bioimageio.core", f"tensorflow =={tensorflow_version}"],
-        )
+    return BioimageioCondaEnv(
+        dependencies=["bioimageio.core", f"tensorflow =={tensorflow_version}"],
+    )
 
 
 def _get_env_from_deps(

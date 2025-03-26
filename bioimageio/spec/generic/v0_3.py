@@ -3,6 +3,7 @@ from __future__ import annotations
 import string
 from functools import partial
 from typing import (
+    TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
@@ -28,8 +29,8 @@ from .._internal.io import (
     BioimageioYamlContent,
     FileDescr,
     V_suffix,
-    YamlValue,
     include_in_package_serializer,
+    is_yaml_value,
     validate_suffix,
 )
 from .._internal.io_basics import AbsoluteFilePath, Sha256
@@ -170,15 +171,23 @@ _maintainer_conv = _MaintainerConv(_Maintainer_v0_2, Maintainer)
 
 
 class CiteEntry(Node):
+    """A citation that should be referenced in work using this resource."""
+
     text: str
     """free text description"""
 
     doi: Optional[Doi] = None
     """A digital object identifier (DOI) is the prefered citation reference.
-    See https://www.doi.org/ for details. (alternatively specify `url`)"""
+    See https://www.doi.org/ for details.
+    Note:
+        Either **doi** or **url** have to be specified.
+    """
 
     url: Optional[HttpUrl] = None
-    """URL to cite (preferably specify a `doi` instead)"""
+    """URL to cite (preferably specify a **doi** instead/also).
+    Note:
+        Either **doi** or **url** have to be specified.
+    """
 
     @model_validator(mode="after")
     def _check_doi_or_url(self):
@@ -212,12 +221,45 @@ class LinkedResource(LinkedResourceBase):
     """A valid resource `id` from the official bioimage.io collection."""
 
 
+class BioimageioConfig(Node, extra="allow"):
+    """bioimage.io internal metadata."""
+
+
+class Config(Node, extra="allow"):
+    """A place to store additional metadata (often tool specific).
+
+    Such additional metadata is typically set programmatically by the respective tool
+    or by people with specific insights into the tool.
+    If you want to store additional metadata that does not match any of the other
+    fields, think of a key unlikely to collide with anyone elses use-case/tool and save
+    it here.
+
+    Please consider creating [an issue in the bioimageio.spec repository](https://github.com/bioimage-io/spec-bioimage-io/issues/new?template=Blank+issue)
+    if you are not sure if an existing field could cover your use case
+    or if you think such a field should exist.
+    """
+
+    bioimageio: BioimageioConfig = Field(default_factory=BioimageioConfig)
+    """bioimage.io internal metadata."""
+
+    @model_validator(mode="after")
+    def _validate_extra_fields(self):
+        if self.model_extra:
+            for k, v in self.model_extra.items():
+                if not isinstance(v, Node) and not is_yaml_value(v):
+                    raise ValueError(
+                        f"config.{k} is not a valid YAML value or `Node` instance"
+                    )
+
+        return self
+
+
 class GenericModelDescrBase(ResourceDescrBase):
     """Base for all resource descriptions including of model descriptions"""
 
     name: Annotated[
         Annotated[
-            str, RestrictCharacters(string.ascii_letters + string.digits + "_- ()")
+            str, RestrictCharacters(string.ascii_letters + string.digits + "_+- ()")
         ],
         MinLen(5),
         MaxLen(128),
@@ -273,39 +315,6 @@ class GenericModelDescrBase(ResourceDescrBase):
     We do not support custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
     to discuss your intentions with the community."""
-
-    config: Annotated[
-        Dict[str, YamlValue],
-        Field(
-            examples=[
-                dict(
-                    bioimageio={
-                        "my_custom_key": 3837283,
-                        "another_key": {"nested": "value"},
-                    },
-                    imagej={"macro_dir": "path/to/macro/file"},
-                )
-            ],
-        ),
-    ] = Field(default_factory=dict)
-    """A field for custom configuration that can contain any keys not present in the RDF spec.
-    This means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.
-    Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,
-    it is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,
-    for example:
-    ```yaml
-    config:
-        bioimageio:  # here is the domain name
-            my_custom_key: 3837283
-            another_key:
-                nested: value
-        imagej:       # config specific to ImageJ
-            macro_dir: path/to/macro/file
-    ```
-    If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.
-    You may want to list linked files additionally under `attachments` to include them when packaging a resource.
-    (Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
-    an altered rdf.yaml file with local references to the downloaded files.)"""
 
     git_repo: Annotated[
         Optional[HttpUrl],
@@ -402,16 +411,27 @@ class GenericModelDescrBase(ResourceDescrBase):
 class GenericDescrBase(GenericModelDescrBase):
     """Base for all resource descriptions except for the model descriptions"""
 
-    format_version: Literal["0.3.0"] = "0.3.0"
-    """The **format** version of this resource specification"""
+    implemented_format_version: ClassVar[Literal["0.3.0"]] = "0.3.0"
+    if TYPE_CHECKING:
+        format_version: Literal["0.3.0"] = "0.3.0"
+    else:
+        format_version: Literal["0.3.0"]
+        """The **format** version of this resource specification"""
 
     @model_validator(mode="before")
     @classmethod
     def _convert_from_older_format(
         cls, data: BioimageioYamlContent, /
     ) -> BioimageioYamlContent:
-        convert_from_older_format(data)
+        cls.convert_from_old_format_wo_validation(data)
         return data
+
+    @classmethod
+    def convert_from_old_format_wo_validation(cls, data: BioimageioYamlContent) -> None:
+        """Convert metadata following an older format version to this classes' format
+        without validating the result.
+        """
+        convert_from_older_format(data)
 
     documentation: Annotated[
         Optional[DocumentationSource],
@@ -427,6 +447,26 @@ class GenericDescrBase(GenericModelDescrBase):
 
     badges: List[BadgeDescr] = Field(default_factory=list)
     """badges associated with this resource"""
+
+    config: Config = Field(default_factory=Config)
+    """A field for custom configuration that can contain any keys not present in the RDF spec.
+    This means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.
+    Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,
+    it is recommended to wrap added configuration into a sub-field named with the specific domain or tool name,
+    for example:
+    ```yaml
+    config:
+        giraffe_neckometer:  # here is the domain name
+            length: 3837283
+            address:
+                home: zoo
+        imagej:              # config specific to ImageJ
+            macro_dir: path/to/macro/file
+    ```
+    If possible, please use [`snake_case`](https://en.wikipedia.org/wiki/Snake_case) for keys in `config`.
+    You may want to list linked files additionally under `attachments` to include them when packaging a resource.
+    (Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
+    an altered rdf.yaml file with local references to the downloaded files.)"""
 
 
 ResourceDescrType = TypeVar("ResourceDescrType", bound=GenericDescrBase)

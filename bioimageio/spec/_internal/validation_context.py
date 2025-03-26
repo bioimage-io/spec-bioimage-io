@@ -3,11 +3,12 @@ from __future__ import annotations
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Literal, Optional, Union
 from urllib.parse import urlsplit, urlunsplit
 from zipfile import ZipFile
 
-from pydantic import DirectoryPath
+from pydantic import ConfigDict, DirectoryPath
+from typing_extensions import Self
 
 from ._settings import settings
 from .io_basics import FileName, Sha256
@@ -16,33 +17,90 @@ from .warning_levels import WarningLevel
 
 
 @dataclass(frozen=True)
-class ValidationContext:
-    _context_tokens: "List[Token[ValidationContext]]" = field(
-        init=False, default_factory=list
-    )
-
-    root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path()
-    """url/directory serving as base to resolve any relative file paths"""
-
-    warning_level: WarningLevel = 50
-    """raise warnings of severity `s` as validation errors if `s >= warning_level`"""
-
-    log_warnings: bool = settings.log_warnings
-    """if `True` log warnings that are not raised to the console"""
-
+class ValidationContextBase:
     file_name: Optional[FileName] = None
-    """file name of the bioimageio Yaml file"""
+    """File name of the bioimageio Yaml file."""
 
     perform_io_checks: bool = settings.perform_io_checks
-    """wether or not to perform validation that requires file io,
+    """Wether or not to perform validation that requires file io,
     e.g. downloading a remote files.
 
     Existence of local absolute file paths is still being checked."""
 
     known_files: Dict[str, Sha256] = field(default_factory=dict)
-    """allows to bypass download and hashing of referenced files"""
+    """Allows to bypass download and hashing of referenced files."""
 
-    def replace(
+    update_hashes: bool = False
+    """Overwrite specified file hashes with values computed from the referenced file (instead of comparing them).
+    (Has no effect if `perform_io_checks=False`.)"""
+
+
+@dataclass(frozen=True)
+class ValidationContextSummary(ValidationContextBase):
+    """Summary of the validation context without internally used context fields."""
+
+    __pydantic_config__ = ConfigDict(extra="forbid")
+    """Pydantic config to include **ValdationContextSummary** in **ValidationDetail**."""
+
+    root: Union[RootHttpUrl, Path, Literal["in-memory"]] = Path()
+
+
+@dataclass(frozen=True)
+class ValidationContext(ValidationContextBase):
+    """A validation context used to control validation of bioimageio resources.
+
+    For example a relative file path in a bioimageio description requires the **root**
+    context to evaluate if the file is available and, if **perform_io_checks** is true,
+    if it matches its expected SHA256 hash value.
+    """
+
+    _context_tokens: "List[Token[ValidationContext]]" = field(
+        init=False, default_factory=list
+    )
+
+    root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path()
+    """Url/directory/archive serving as base to resolve any relative file paths."""
+
+    warning_level: WarningLevel = 50
+    """Treat warnings of severity `s` as validation errors if `s >= warning_level`."""
+
+    log_warnings: bool = settings.log_warnings
+    """If `True` warnings are logged to the terminal
+
+    Note: This setting does not affect warning entries
+        of a generated `bioimageio.spec.ValidationSummary`.
+    """
+
+    raise_errors: bool = False
+    """Directly raise any validation errors
+    instead of aggregating errors and returning a `bioimageio.spec.InvalidDescr`. (for debugging)"""
+
+    @property
+    def summary(self):
+        if isinstance(self.root, ZipFile):
+            if self.root.filename is None:
+                root = "in-memory"
+            else:
+                root = Path(self.root.filename)
+        else:
+            root = self.root
+
+        return ValidationContextSummary(
+            root=root,
+            file_name=self.file_name,
+            perform_io_checks=self.perform_io_checks,
+            known_files=dict(self.known_files),
+            update_hashes=self.update_hashes,
+        )
+
+    def __enter__(self):
+        self._context_tokens.append(validation_context_var.set(self))
+        return self
+
+    def __exit__(self, type, value, traceback):  # type: ignore
+        validation_context_var.reset(self._context_tokens.pop(-1))
+
+    def replace(  # TODO: probably use __replace__ when py>=3.13
         self,
         root: Optional[Union[RootHttpUrl, DirectoryPath, ZipFile]] = None,
         warning_level: Optional[WarningLevel] = None,
@@ -50,12 +108,14 @@ class ValidationContext:
         file_name: Optional[str] = None,
         perform_io_checks: Optional[bool] = None,
         known_files: Optional[Dict[str, Sha256]] = None,
-    ) -> "ValidationContext":
+        raise_errors: Optional[bool] = None,
+        update_hashes: Optional[bool] = None,
+    ) -> Self:
         if known_files is None and root is not None and self.root != root:
             # reset known files if root changes, but no new known_files are given
             known_files = {}
 
-        return ValidationContext(
+        return self.__class__(
             root=self.root if root is None else root,
             warning_level=(
                 self.warning_level if warning_level is None else warning_level
@@ -68,14 +128,11 @@ class ValidationContext:
                 else perform_io_checks
             ),
             known_files=self.known_files if known_files is None else known_files,
+            raise_errors=self.raise_errors if raise_errors is None else raise_errors,
+            update_hashes=(
+                self.update_hashes if update_hashes is None else update_hashes
+            ),
         )
-
-    def __enter__(self):
-        self._context_tokens.append(validation_context_var.set(self))
-        return self
-
-    def __exit__(self, type, value, traceback):  # type: ignore
-        validation_context_var.reset(self._context_tokens.pop(-1))
 
     @property
     def source_name(self) -> str:
@@ -106,3 +163,8 @@ class ValidationContext:
 validation_context_var: ContextVar[ValidationContext] = ContextVar(
     "validation_context_var", default=ValidationContext()
 )
+
+
+def get_validation_context():
+    """Get the currently active validation context"""
+    return validation_context_var.get()

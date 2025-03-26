@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Union
+from typing import TYPE_CHECKING, ClassVar, Literal, Optional, Union
 
 from typing_extensions import Annotated
 
@@ -37,7 +37,11 @@ NotebookSource = Union[
 class NotebookDescr(GenericDescrBase):
     """Bioimage.io description of a Jupyter Notebook."""
 
-    type: Literal["notebook"] = "notebook"
+    implemented_type: ClassVar[Literal["notebook"]] = "notebook"
+    if TYPE_CHECKING:
+        type: Literal["notebook"] = "notebook"
+    else:
+        type: Literal["notebook"]
 
     id: Optional[NotebookId] = None
     """bioimage.io-wide unique resource identifier

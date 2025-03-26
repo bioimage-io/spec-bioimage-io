@@ -1,0 +1,126 @@
+%YAML 1.2
+---
+authors:
+  - affiliation: EMBL Heidelberg
+    name: Constantin Pape;@bioimage-io
+    orcid: 0000-0001-6562-7187
+  - affiliation: EMBL Heidelberg
+    name: Fynn Beuttenmueller
+    orcid: 0000-0002-8567-6389
+cite:
+  - doi: 10.1007/978-3-319-24574-4_28
+    text: 'Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image
+      segmentation. MICCAI 2015.'
+  - text: 2018 Data Science Bowl
+    url: https://www.kaggle.com/c/data-science-bowl-2018
+covers:
+  - cover0.png
+description: A 2d U-Net trained on the nuclei broad dataset.
+documentation: README.md
+format_version: 0.5.4
+git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
+inputs:
+  - axes:
+      - type: batch
+      - channel_names:
+          - channel0
+        type: channel
+      - id: y
+        scale: 1.0
+        size: 512
+        type: space
+      - id: x
+        scale: 1.0
+        size: 512
+        type: space
+    data:
+      type: float32
+    id: raw
+    preprocessing:
+      - id: ensure_dtype
+        kwargs:
+          dtype: float32
+      - id: zero_mean_unit_variance
+        kwargs:
+          axes:
+            - y
+            - x
+          eps: 1e-06
+      - id: ensure_dtype
+        kwargs:
+          dtype: float32
+    test_tensor:
+      sha256: 92768a2e0f2643c80b57afa5494019a5aafe5b0d92fe36ae740763adf3594a57
+      source: test_input.npy
+license: MIT
+maintainers:
+  - github_user: constantinpape
+    name: Constantin Pape
+name: UNet 2D Nuclei Broad
+outputs:
+  - axes:
+      - type: batch
+      - channel_names:
+          - channel0
+        type: channel
+      - id: z
+        scale: 1.0
+        size: 1
+        type: space
+      - halo: 32
+        id: y
+        scale: 1.0
+        size:
+          axis_id: y
+          offset: 0
+          tensor_id: raw
+        type: space
+      - halo: 32
+        id: x
+        scale: 1.0
+        size:
+          axis_id: x
+          offset: 0
+          tensor_id: raw
+        type: space
+    data:
+      type: float32
+    id: probability
+    postprocessing:
+      - id: sigmoid
+      - id: ensure_dtype
+        kwargs:
+          dtype: float32
+    test_tensor:
+      sha256: 5b45b0cfb5a313d18fb218237e53c6f5f0114fa06365ea58851f01a0b9b2e301
+      source: test_output_expanded.npy
+tags:
+  - unet2d
+  - pytorch
+  - nucleus
+  - segmentation
+  - dsb2018
+timestamp: '2019-12-11T12:22:32+00:00'
+training_data:
+  id: ilastik/covid_if_training_data
+type: model
+version: 1
+weights:
+  pytorch_state_dict:
+    architecture:
+      callable: UNet2d
+      kwargs:
+        input_channels: 1
+        output_channels: 1
+      sha256: 62b976622d0f1ff898fb28577688a14a52f8389fb08943f8e003cfa4fabb56ff
+      source: unet2d_expand_output_shape.py
+    authors:
+      - affiliation: EMBL Heidelberg
+        name: Constantin Pape
+        orcid: 0000-0001-6562-7187
+    dependencies:
+      sha256: 129d589d2ec801398719b1a6d1bf20ea36b3632f14ccb56a24700df7d719fd10
+      source: environment.yaml
+    pytorch_version: '1.10'
+    sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
+    source: https://zenodo.org/records/3446812/files/unet2d_weights.torch

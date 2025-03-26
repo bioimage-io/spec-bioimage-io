@@ -29,7 +29,7 @@ try:
                 ipt = " ".join([il.strip() for il in ipt_lines])
 
                 errors.append(
-                    f"\n{format_loc(e['loc'], enclose_in='')}\n  {e['msg']} [input={ipt}]"
+                    f"\n{format_loc(e['loc'], 'plain')}\n  {e['msg']} [input={ipt}]"
                 )
 
             return (
@@ -48,7 +48,7 @@ try:
         assert isinstance(evalue, ValidationError), type(etype)
 
         stb: Union[Any, List[Union[str, Any]]]
-        stb = self.InteractiveTB.structured_traceback(  # pyright: ignore[reportUnknownVariableType]
+        stb = self.InteractiveTB.structured_traceback(
             etype, PrettyValidationError(evalue), tb, tb_offset=tb_offset
         )
 

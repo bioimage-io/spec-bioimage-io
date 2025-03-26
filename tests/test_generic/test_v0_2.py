@@ -74,6 +74,16 @@ EXAMPLE_COM = "https://example.com/"
             ),
             True,
         ),
+        (
+            Maintainer,
+            dict(
+                name="Dani",
+                email="me@example.com",
+                github_user="danifranco",
+                orcid="0000-0002-1109-110X",
+            ),
+            True,
+        ),
         (Maintainer, dict(name="without_gh"), False),
         (Maintainer, dict(github_user=5.5), False),
         (CiteEntry, dict(text="lala", url=EXAMPLE_COM), True),

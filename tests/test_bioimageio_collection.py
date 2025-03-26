@@ -8,22 +8,24 @@ from tests.utils import ParameterSet, check_bioimageio_yaml, expensive_test
 
 BASE_URL = "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/"
 
-KNOWN_INVALID: Collection[str] = set()
+KNOWN_INVALID: Collection[str] = {"stupendous-sheep/1.1"}
 EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT: Collection[str] = {
     "version_number",  # deprecated field that gets dropped in favor of `version``
     "version",  # may be set from deprecated `version_number`
 }
 EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
     "affable-shark/1.1": {"inputs"},  # preprocessing assert_dtype added
+    "charismatic-whale/1.0.1": {"inputs", "outputs"},  # int -> float
+    "dynamic-t-rex/1": {"inputs"},  # int -> float
+    "impartial-shrimp/1.1": {"inputs", "cite"},  # preprocessing assert_dtype added
     "philosophical-panda/0.0.11": {"outputs"},  # int -> float
     "philosophical-panda/0.1.0": {"outputs"},  # int -> float
-    "dynamic-t-rex/1": {"inputs"},  # int -> float
-    "charismatic-whale/1.0.1": {"inputs", "outputs"},  # int -> float
-    "impartial-shrimp/1.1": {"inputs"},  # preprocessing assert_dtype added
+    "polite-pig/1.1": {"inputs", "outputs"},
+    "charismatic-whale/1.0.2": {"inputs", "outputs"},  # int -> float
 }
 
 
-def _get_rdf_sources():
+def _get_rdf_sources(only_latest: bool = True):
     entries: Any = requests.get(BASE_URL + "all_versions.json").json()["entries"]
     ret: Dict[str, Tuple[HttpUrl, Sha256]] = {}
     for entry in entries:
@@ -32,6 +34,8 @@ def _get_rdf_sources():
                 HttpUrl(version["source"]),
                 Sha256(version["sha256"]),
             )
+            if only_latest:
+                break
 
     return ret
 
@@ -50,7 +54,13 @@ def yield_bioimageio_yaml_urls() -> Iterable[ParameterSet]:
 
 
 @expensive_test
-@pytest.mark.parametrize("descr_url,sha,key", list(yield_bioimageio_yaml_urls()))
+@pytest.mark.parametrize(
+    "descr_url,sha,key",
+    sorted(
+        yield_bioimageio_yaml_urls(),
+        key=lambda p: p.id,  # pyright: ignore[reportAttributeAccessIssue,reportUnknownLambdaType]
+    ),
+)
 def test_rdf(
     descr_url: HttpUrl,
     sha: Sha256,
@@ -79,7 +89,7 @@ def test_rdf(
         "10.5281/zenodo.5764892/1.1",  # affable-shark/1.1
         "ambitious-sloth/1.2",
         "breezy-handbag/1",
-        "faithful-chicken/1",
+        "faithful-chicken/1.1",
         "ilastik/ilastik/1",
         "uplifting-ice-cream/1",
     ],

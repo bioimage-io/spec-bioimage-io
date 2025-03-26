@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import TYPE_CHECKING, ClassVar, Literal, Optional
 
 from .._internal.common_nodes import Node
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
@@ -27,7 +27,11 @@ class DatasetDescr(GenericDescrBase):
     processing.
     """
 
-    type: Literal["dataset"] = "dataset"
+    implemented_type: ClassVar[Literal["dataset"]] = "dataset"
+    if TYPE_CHECKING:
+        type: Literal["dataset"] = "dataset"
+    else:
+        type: Literal["dataset"]
 
     id: Optional[DatasetId] = None
     """bioimage.io-wide unique resource identifier

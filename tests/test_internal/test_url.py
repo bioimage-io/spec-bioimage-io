@@ -36,7 +36,7 @@ def test_httpurl_valid(url: str):
 def test_httpurl_mock_valid(text: str, status_code: int, requests_mock: RequestsMocker):
     from bioimageio.spec._internal.url import HttpUrl
 
-    url = "https://example.com"
+    url = "https://mock_example.com"
     _ = requests_mock.get(url, text=text, status_code=status_code)
     assert HttpUrl(url).exists()
 
@@ -54,7 +54,7 @@ def test_httpurl_mock_invalid(
 ):
     from bioimageio.spec._internal.url import HttpUrl
 
-    url = "https://example.com"
+    url = "https://mock_example.com"
     _ = requests_mock.head(url, text=text, status_code=status_code)
     _ = requests_mock.get(url, text=text, status_code=status_code)
     with ValidationContext(perform_io_checks=True):
@@ -74,7 +74,7 @@ def test_httpurl_mock_invalid(
 def test_httpurl_mock_exc(exc: Type[Exception], requests_mock: RequestsMocker):
     from bioimageio.spec._internal.url import HttpUrl
 
-    url = "https://example.com"
+    url = "https://mock_example.com"
     _ = requests_mock.head(url, exc=exc)
     with ValidationContext(perform_io_checks=True):
         with pytest.raises(ValueError):

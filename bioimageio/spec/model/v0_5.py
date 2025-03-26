@@ -6,7 +6,6 @@ import string
 import warnings
 from abc import ABC
 from copy import deepcopy
-from datetime import datetime
 from itertools import chain
 from math import ceil
 from pathlib import Path, PurePosixPath
@@ -16,7 +15,6 @@ from typing import (
     Any,
     ClassVar,
     Dict,
-    FrozenSet,
     Generic,
     List,
     Literal,
@@ -38,6 +36,7 @@ from imageio.v3 import imread, imwrite  # pyright: ignore[reportUnknownVariableT
 from loguru import logger
 from numpy.typing import NDArray
 from pydantic import (
+    AfterValidator,
     Discriminator,
     Field,
     RootModel,
@@ -47,7 +46,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated, LiteralString, Self, assert_never, get_args
+from typing_extensions import Annotated, Self, assert_never, get_args
 
 from .._internal.common_nodes import (
     InvalidDescr,
@@ -63,14 +62,17 @@ from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_utils import load_array
 from .._internal.node_converter import Converter
-from .._internal.types import Datetime as Datetime
-from .._internal.types import Identifier as Identifier
 from .._internal.types import (
+    AbsoluteTolerance,
     ImportantFileSource,
     LowerCaseIdentifier,
     LowerCaseIdentifierAnno,
+    MismatchedElementsPerMillion,
+    RelativeTolerance,
     SiUnit,
 )
+from .._internal.types import Datetime as Datetime
+from .._internal.types import Identifier as Identifier
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validation_context import validation_context_var
@@ -189,6 +191,23 @@ TimeUnit = Literal[
 
 AxisType = Literal["batch", "channel", "index", "time", "space"]
 
+_AXIS_TYPE_MAP: Mapping[str, AxisType] = {
+    "b": "batch",
+    "t": "time",
+    "i": "index",
+    "c": "channel",
+    "x": "space",
+    "y": "space",
+    "z": "space",
+}
+
+_AXIS_ID_MAP = {
+    "b": "batch",
+    "t": "time",
+    "i": "index",
+    "c": "channel",
+}
+
 
 class TensorId(LowerCaseIdentifier):
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
@@ -196,14 +215,23 @@ class TensorId(LowerCaseIdentifier):
     ]
 
 
+def _normalize_axis_id(a: str):
+    a = str(a)
+    return _AXIS_ID_MAP.get(a, a)
+
+
 class AxisId(LowerCaseIdentifier):
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
-        Annotated[LowerCaseIdentifierAnno, MaxLen(16)]
+        Annotated[
+            LowerCaseIdentifierAnno,
+            MaxLen(16),
+            AfterValidator(_normalize_axis_id),
+        ]
     ]
 
 
 def _is_batch(a: str) -> bool:
-    return a == BATCH_AXIS_ID
+    return str(a) == "batch"
 
 
 def _is_not_batch(a: str) -> bool:
@@ -238,13 +266,22 @@ SAME_AS_TYPE = "<same as type>"
 
 
 ParameterizedSize_N = int
+"""
+Annotates an integer to calculate a concrete axis size from a `ParameterizedSize`.
+"""
 
 
 class ParameterizedSize(Node):
-    """Describes a range of valid tensor axis sizes as `size = min + n*step`."""
+    """Describes a range of valid tensor axis sizes as `size = min + n*step`.
+
+    - **min** and **step** are given by the model description.
+    - All blocksize paramters n = 0,1,2,... yield a valid `size`.
+    - A greater blocksize paramter n = 0,1,2,... results in a greater **size**.
+      This allows to adjust the axis size more generically.
+    """
 
     N: ClassVar[Type[int]] = ParameterizedSize_N
-    """integer to parameterize this axis"""
+    """Positive integer to parameterize this axis"""
 
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
@@ -416,8 +453,6 @@ class SizeReference(Node):
 
 
 class AxisBase(NodeWithExplicitlySetFields):
-    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"type"})
-
     id: AxisId
     """An axis id unique across all axes of one tensor."""
 
@@ -448,7 +483,12 @@ BATCH_AXIS_ID = AxisId("batch")
 
 
 class BatchAxis(AxisBase):
-    type: Literal["batch"] = "batch"
+    implemented_type: ClassVar[Literal["batch"]] = "batch"
+    if TYPE_CHECKING:
+        type: Literal["batch"] = "batch"
+    else:
+        type: Literal["batch"]
+
     id: Annotated[AxisId, Predicate(_is_batch)] = BATCH_AXIS_ID
     size: Optional[Literal[1]] = None
     """The batch size may be fixed to 1,
@@ -468,7 +508,12 @@ class BatchAxis(AxisBase):
 
 
 class ChannelAxis(AxisBase):
-    type: Literal["channel"] = "channel"
+    implemented_type: ClassVar[Literal["channel"]] = "channel"
+    if TYPE_CHECKING:
+        type: Literal["channel"] = "channel"
+    else:
+        type: Literal["channel"]
+
     id: NonBatchAxisId = AxisId("channel")
     channel_names: NotEmpty[List[Identifier]]
 
@@ -490,7 +535,12 @@ class ChannelAxis(AxisBase):
 
 
 class IndexAxisBase(AxisBase):
-    type: Literal["index"] = "index"
+    implemented_type: ClassVar[Literal["index"]] = "index"
+    if TYPE_CHECKING:
+        type: Literal["index"] = "index"
+    else:
+        type: Literal["index"]
+
     id: NonBatchAxisId = AxisId("index")
 
     @property
@@ -551,7 +601,12 @@ class IndexOutputAxis(IndexAxisBase):
 
 
 class TimeAxisBase(AxisBase):
-    type: Literal["time"] = "time"
+    implemented_type: ClassVar[Literal["time"]] = "time"
+    if TYPE_CHECKING:
+        type: Literal["time"] = "time"
+    else:
+        type: Literal["time"]
+
     id: NonBatchAxisId = AxisId("time")
     unit: Optional[TimeUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
@@ -567,7 +622,12 @@ class TimeInputAxis(TimeAxisBase, _WithInputAxisSize):
 
 
 class SpaceAxisBase(AxisBase):
-    type: Literal["space"] = "space"
+    implemented_type: ClassVar[Literal["space"]] = "space"
+    if TYPE_CHECKING:
+        type: Literal["space"] = "space"
+    else:
+        type: Literal["space"]
+
     id: Annotated[NonBatchAxisId, Field(examples=["x", "y", "z"])] = AxisId("x")
     unit: Optional[SpaceUnit] = None
     scale: Annotated[float, Gt(0)] = 1.0
@@ -581,6 +641,15 @@ class SpaceInputAxis(SpaceAxisBase, _WithInputAxisSize):
     input axis.
     """
 
+
+INPUT_AXIS_TYPES = (
+    BatchAxis,
+    ChannelAxis,
+    IndexInputAxis,
+    TimeInputAxis,
+    SpaceInputAxis,
+)
+"""intended for isinstance comparisons in py<3.10"""
 
 _InputAxisUnion = Union[
     BatchAxis, ChannelAxis, IndexInputAxis, TimeInputAxis, SpaceInputAxis
@@ -652,7 +721,22 @@ _OutputAxisUnion = Union[
 ]
 OutputAxis = Annotated[_OutputAxisUnion, Discriminator("type")]
 
+OUTPUT_AXIS_TYPES = (
+    BatchAxis,
+    ChannelAxis,
+    IndexOutputAxis,
+    TimeOutputAxis,
+    TimeOutputAxisWithHalo,
+    SpaceOutputAxis,
+    SpaceOutputAxisWithHalo,
+)
+"""intended for isinstance comparisons in py<3.10"""
+
+
 AnyAxis = Union[InputAxis, OutputAxis]
+
+ANY_AXIS_TYPES = INPUT_AXIS_TYPES + OUTPUT_AXIS_TYPES
+"""intended for isinstance comparisons in py<3.10"""
 
 TVs = Union[
     NotEmpty[List[int]],
@@ -680,7 +764,7 @@ NominalOrOrdinalDType = Literal[
 class NominalOrOrdinalDataDescr(Node):
     values: TVs
     """A fixed set of nominal or an ascending sequence of ordinal values.
-    In this case `data_type` is required to be an unsigend integer type, e.g. 'uint8'.
+    In this case `data.type` is required to be an unsigend integer type, e.g. 'uint8'.
     String `values` are interpreted as labels for tensor values 0, ..., N.
     Note: as YAML 1.2 does not natively support a "set" datatype,
     nominal values should be given as a sequence (aka list/array) as well.
@@ -769,7 +853,7 @@ class IntervalOrRatioDataDescr(Node):
         None,
     )
     """Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
-    `None` corresponds to min/max of what can be expressed by `data_type`."""
+    `None` corresponds to min/max of what can be expressed by **type**."""
     unit: Union[Literal["arbitrary unit"], SiUnit] = "arbitrary unit"
     scale: float = 1.0
     """Scale for data on an interval (or ratio) scale."""
@@ -782,9 +866,6 @@ TensorDataDescr = Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr]
 
 class ProcessingDescrBase(NodeWithExplicitlySetFields, ABC):
     """processing base class"""
-
-    # id: Literal[PreprocessingId, PostprocessingId]  # make abstract field
-    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset({"id"})
 
 
 class BinarizeKwargs(ProcessingKwargs):
@@ -828,7 +909,11 @@ class BinarizeDescr(ProcessingDescrBase):
         ... )]
     """
 
-    id: Literal["binarize"] = "binarize"
+    implemented_id: ClassVar[Literal["binarize"]] = "binarize"
+    if TYPE_CHECKING:
+        id: Literal["binarize"] = "binarize"
+    else:
+        id: Literal["binarize"]
     kwargs: Union[BinarizeKwargs, BinarizeAlongAxisKwargs]
 
 
@@ -838,7 +923,12 @@ class ClipDescr(ProcessingDescrBase):
     See `ScaleRangeDescr` for examples.
     """
 
-    id: Literal["clip"] = "clip"
+    implemented_id: ClassVar[Literal["clip"]] = "clip"
+    if TYPE_CHECKING:
+        id: Literal["clip"] = "clip"
+    else:
+        id: Literal["clip"]
+
     kwargs: ClipKwargs
 
 
@@ -903,7 +993,12 @@ class EnsureDtypeDescr(ProcessingDescrBase):
             ... ]
     """
 
-    id: Literal["ensure_dtype"] = "ensure_dtype"
+    implemented_id: ClassVar[Literal["ensure_dtype"]] = "ensure_dtype"
+    if TYPE_CHECKING:
+        id: Literal["ensure_dtype"] = "ensure_dtype"
+    else:
+        id: Literal["ensure_dtype"]
+
     kwargs: EnsureDtypeKwargs
 
 
@@ -931,7 +1026,7 @@ class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
     """Key word arguments for `ScaleLinearDescr`"""
 
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
-    """The axis of of gains/offsets values."""
+    """The axis of gain and offset values."""
 
     gain: Union[float, NotEmpty[List[float]]] = 1.0
     """multiplicative factor"""
@@ -1005,7 +1100,11 @@ class ScaleLinearDescr(ProcessingDescrBase):
 
     """
 
-    id: Literal["scale_linear"] = "scale_linear"
+    implemented_id: ClassVar[Literal["scale_linear"]] = "scale_linear"
+    if TYPE_CHECKING:
+        id: Literal["scale_linear"] = "scale_linear"
+    else:
+        id: Literal["scale_linear"]
     kwargs: Union[ScaleLinearKwargs, ScaleLinearAlongAxisKwargs]
 
 
@@ -1022,7 +1121,11 @@ class SigmoidDescr(ProcessingDescrBase):
         >>> postprocessing = [SigmoidDescr()]
     """
 
-    id: Literal["sigmoid"] = "sigmoid"
+    implemented_id: ClassVar[Literal["sigmoid"]] = "sigmoid"
+    if TYPE_CHECKING:
+        id: Literal["sigmoid"] = "sigmoid"
+    else:
+        id: Literal["sigmoid"]
 
     @property
     def kwargs(self) -> ProcessingKwargs:
@@ -1108,7 +1211,14 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
         ... )]
     """
 
-    id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
+    implemented_id: ClassVar[Literal["fixed_zero_mean_unit_variance"]] = (
+        "fixed_zero_mean_unit_variance"
+    )
+    if TYPE_CHECKING:
+        id: Literal["fixed_zero_mean_unit_variance"] = "fixed_zero_mean_unit_variance"
+    else:
+        id: Literal["fixed_zero_mean_unit_variance"]
+
     kwargs: Union[
         FixedZeroMeanUnitVarianceKwargs, FixedZeroMeanUnitVarianceAlongAxisKwargs
     ]
@@ -1144,7 +1254,14 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
         >>> preprocessing = [ZeroMeanUnitVarianceDescr()]
     """
 
-    id: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
+    implemented_id: ClassVar[Literal["zero_mean_unit_variance"]] = (
+        "zero_mean_unit_variance"
+    )
+    if TYPE_CHECKING:
+        id: Literal["zero_mean_unit_variance"] = "zero_mean_unit_variance"
+    else:
+        id: Literal["zero_mean_unit_variance"]
+
     kwargs: ZeroMeanUnitVarianceKwargs = Field(
         default_factory=ZeroMeanUnitVarianceKwargs
     )
@@ -1253,7 +1370,11 @@ class ScaleRangeDescr(ProcessingDescrBase):
 
     """
 
-    id: Literal["scale_range"] = "scale_range"
+    implemented_id: ClassVar[Literal["scale_range"]] = "scale_range"
+    if TYPE_CHECKING:
+        id: Literal["scale_range"] = "scale_range"
+    else:
+        id: Literal["scale_range"]
     kwargs: ScaleRangeKwargs
 
 
@@ -1282,7 +1403,11 @@ class ScaleMeanVarianceDescr(ProcessingDescrBase):
     `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`
     """
 
-    id: Literal["scale_mean_variance"] = "scale_mean_variance"
+    implemented_id: ClassVar[Literal["scale_mean_variance"]] = "scale_mean_variance"
+    if TYPE_CHECKING:
+        id: Literal["scale_mean_variance"] = "scale_mean_variance"
+    else:
+        id: Literal["scale_mean_variance"]
     kwargs: ScaleMeanVarianceKwargs
 
 
@@ -1655,30 +1780,13 @@ def convert_axes(
     return ret
 
 
-_AXIS_TYPE_MAP = {
-    "b": "batch",
-    "t": "time",
-    "i": "index",
-    "c": "channel",
-    "x": "space",
-    "y": "space",
-    "z": "space",
-}
-
-_AXIS_ID_MAP = {
-    "b": "batch",
-    "t": "time",
-    "i": "index",
-    "c": "channel",
-}
-
-
 def _axes_letters_to_ids(
     axes: Optional[str],
 ) -> Optional[List[AxisId]]:
     if axes is None:
         return None
-    return [AxisId(_AXIS_ID_MAP.get(a, a)) for a in map(str, axes)]
+
+    return [AxisId(a) for a in axes]
 
 
 def _get_complement_v04_axis(
@@ -1812,6 +1920,8 @@ class _InputTensorConv(
             assert not isinstance(cp, ScaleMeanVarianceDescr)
             prep.append(cp)
 
+        prep.append(EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype="float32")))
+
         return tgt(
             axes=axes,
             id=TensorId(str(src.name)),
@@ -1919,7 +2029,9 @@ TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
 
 def validate_tensors(
     tensors: Mapping[TensorId, Tuple[TensorDescr, NDArray[Any]]],
-    tensor_origin: str,  # for more precise error messages, e.g. 'test_tensor'
+    tensor_origin: Literal[
+        "test_tensor"
+    ],  # for more precise error messages, e.g. 'test_tensor'
 ):
     all_tensor_axes: Dict[TensorId, Dict[AxisId, Tuple[AnyAxis, int]]] = {}
 
@@ -1937,10 +2049,32 @@ def validate_tensors(
             }
 
     for descr, array in tensors.values():
-        if array.dtype.name != descr.dtype:
+        if descr.dtype in ("float32", "float64"):
+            invalid_test_tensor_dtype = array.dtype.name not in (
+                "float32",
+                "float64",
+                "uint8",
+                "int8",
+                "uint16",
+                "int16",
+                "uint32",
+                "int32",
+                "uint64",
+                "int64",
+            )
+        else:
+            invalid_test_tensor_dtype = array.dtype.name != descr.dtype
+
+        if invalid_test_tensor_dtype:
             raise ValueError(
                 f"{e_msg(descr)}.{tensor_origin}.dtype '{array.dtype.name}' does not"
                 + f" match described dtype '{descr.dtype}'"
+            )
+
+        if array.min() > -1e-4 and array.max() < 1e-4:
+            raise ValueError(
+                "Output values are too small for reliable testing."
+                + f" Values <-1e5 or >=1e5 must be present in {tensor_origin}"
             )
 
         for a in descr.axes:
@@ -2112,6 +2246,9 @@ class WeightsEntryDescrBase(FileDescr):
     The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
     All weight entries except one (the initial set of weights resulting from training the model),
     need to have this field."""
+
+    comment: str = ""
+    """A comment about this weights entry, for example how these weights were created."""
 
     @model_validator(mode="after")
     def check_parent_is_not_self(self) -> Self:
@@ -2326,19 +2463,70 @@ class _TensorSizes(NamedTuple):
     outputs: Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]
 
 
+class ReproducibilityTolerance(Node, extra="allow"):
+    """Describes what small numerical differences -- if any -- may be tolerated
+    in the generated output when executing in different environments.
+
+    A tensor element *output* is considered mismatched to the **test_tensor** if
+    abs(*output* - **test_tensor**) > **absolute_tolerance** + **relative_tolerance** * abs(**test_tensor**).
+    (Internally we call [numpy.testing.assert_allclose](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html).)
+
+    Motivation:
+        For testing we can request the respective deep learning frameworks to be as
+        reproducible as possible by setting seeds and chosing deterministic algorithms,
+        but differences in operating systems, available hardware and installed drivers
+        may still lead to numerical differences.
+    """
+
+    relative_tolerance: RelativeTolerance = 1e-3
+    """Maximum relative tolerance of reproduced test tensor."""
+
+    absolute_tolerance: AbsoluteTolerance = 1e-4
+    """Maximum absolute tolerance of reproduced test tensor."""
+
+    mismatched_elements_per_million: MismatchedElementsPerMillion = 0
+    """Maximum number of mismatched elements/pixels per million to tolerate."""
+
+    output_ids: Sequence[TensorId] = ()
+    """Limits the output tensor IDs these reproducibility details apply to."""
+
+    weights_formats: Sequence[WeightsFormat] = ()
+    """Limits the weights formats these details apply to."""
+
+
+class BioimageioConfig(Node, extra="allow"):
+    reproducibility_tolerance: Sequence[ReproducibilityTolerance] = ()
+    """Tolerances to allow when reproducing the model's test outputs
+    from the model's test inputs.
+    Only the first entry matching tensor id and weights format is considered.
+    """
+
+
+class Config(Node, extra="allow"):
+    bioimageio: BioimageioConfig = Field(default_factory=BioimageioConfig)
+
+
 class ModelDescr(GenericModelDescrBase):
     """Specification of the fields used in a bioimage.io-compliant RDF to describe AI models with pretrained weights.
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    format_version: Literal["0.5.3"] = "0.5.3"
-    """Version of the bioimage.io model description specification used.
-    When creating a new model always use the latest micro/patch version described here.
-    The `format_version` is important for any consumer software to understand how to parse the fields.
-    """
+    implemented_format_version: ClassVar[Literal["0.5.4"]] = "0.5.4"
+    if TYPE_CHECKING:
+        format_version: Literal["0.5.4"] = "0.5.4"
+    else:
+        format_version: Literal["0.5.4"]
+        """Version of the bioimage.io model description specification used.
+        When creating a new model always use the latest micro/patch version described here.
+        The `format_version` is important for any consumer software to understand how to parse the fields.
+        """
 
-    type: Literal["model"] = "model"
-    """Specialized resource type 'model'"""
+    implemented_type: ClassVar[Literal["model"]] = "model"
+    if TYPE_CHECKING:
+        type: Literal["model"] = "model"
+    else:
+        type: Literal["model"]
+        """Specialized resource type 'model'"""
 
     id: Optional[ModelId] = None
     """bioimage.io-wide unique resource identifier
@@ -2370,7 +2558,7 @@ class ModelDescr(GenericModelDescrBase):
         doc_path = download(value).path
         doc_content = doc_path.read_text(encoding="utf-8")
         assert isinstance(doc_content, str)
-        if not re.match("#.*[vV]alidation", doc_content):
+        if not re.search("#.*[vV]alidation", doc_content):
             issue_warning(
                 "No '# Validation' (sub)section found in {value}.",
                 value=value,
@@ -2489,7 +2677,7 @@ class ModelDescr(GenericModelDescrBase):
                 raise ValueError(
                     f"input_halo {input_halo} (output_halo {axis.halo} *"
                     + f" output_scale {axis.scale} / input_scale {ref_axis.scale})"
-                    + f" is not an even integer for {tensor_id}.{axis.id}."
+                    + f"     {tensor_id}.{axis.id}."
                 )
 
     @model_validator(mode="after")
@@ -2497,15 +2685,45 @@ class ModelDescr(GenericModelDescrBase):
         if not validation_context_var.get().perform_io_checks:
             return self
 
-        test_arrays = [
-            load_array(descr.test_tensor.download().path)
-            for descr in chain(self.inputs, self.outputs)
+        test_output_arrays = [
+            load_array(descr.test_tensor.download().path) for descr in self.outputs
         ]
+        test_input_arrays = [
+            load_array(descr.test_tensor.download().path) for descr in self.inputs
+        ]
+
         tensors = {
             descr.id: (descr, array)
-            for descr, array in zip(chain(self.inputs, self.outputs), test_arrays)
+            for descr, array in zip(
+                chain(self.inputs, self.outputs), test_input_arrays + test_output_arrays
+            )
         }
         validate_tensors(tensors, tensor_origin="test_tensor")
+
+        output_arrays = {
+            descr.id: array for descr, array in zip(self.outputs, test_output_arrays)
+        }
+        for rep_tol in self.config.bioimageio.reproducibility_tolerance:
+            if not rep_tol.absolute_tolerance:
+                continue
+
+            if rep_tol.output_ids:
+                out_arrays = {
+                    oid: a
+                    for oid, a in output_arrays.items()
+                    if oid in rep_tol.output_ids
+                }
+            else:
+                out_arrays = output_arrays
+
+            for out_id, array in out_arrays.items():
+                if rep_tol.absolute_tolerance > (max_test_value := array.max()) * 0.01:
+                    raise ValueError(
+                        "config.bioimageio.reproducibility_tolerance.absolute_tolerance="
+                        + f"{rep_tol.absolute_tolerance} > 0.01*{max_test_value}"
+                        + f" (1% of the maximum value of the test tensor '{out_id}')"
+                    )
+
         return self
 
     @model_validator(mode="after")
@@ -2542,7 +2760,7 @@ class ModelDescr(GenericModelDescrBase):
 
     name: Annotated[
         Annotated[
-            str, RestrictCharacters(string.ascii_letters + string.digits + "_- ()")
+            str, RestrictCharacters(string.ascii_letters + string.digits + "_+- ()")
         ],
         MinLen(5),
         MaxLen(128),
@@ -2644,13 +2862,12 @@ class ModelDescr(GenericModelDescrBase):
     parent: Optional[LinkedModel] = None
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
 
-    # todo: add parent self check once we have `id`
-    # @model_validator(mode="after")
-    # def validate_parent_is_not_self(self) -> Self:
-    #     if self.parent is not None and self.parent == self.id:
-    #         raise ValueError("The model may not reference itself as parent model")
+    @model_validator(mode="after")
+    def _validate_parent_is_not_self(self) -> Self:
+        if self.parent is not None and self.parent.id == self.id:
+            raise ValueError("A model description may not reference itself as parent.")
 
-    #     return self
+        return self
 
     run_mode: Annotated[
         Optional[RunMode],
@@ -2660,7 +2877,7 @@ class ModelDescr(GenericModelDescrBase):
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    timestamp: Datetime = Datetime(datetime.now())
+    timestamp: Datetime = Field(default_factory=Datetime.now)
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
     (In Python a datetime object is valid, too)."""
@@ -2675,6 +2892,8 @@ class ModelDescr(GenericModelDescrBase):
     """The weights for this model.
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
+
+    config: Config = Field(default_factory=Config)
 
     @model_validator(mode="after")
     def _add_default_cover(self) -> Self:
@@ -2913,6 +3132,14 @@ class ModelDescr(GenericModelDescrBase):
     @model_validator(mode="before")
     @classmethod
     def _convert(cls, data: Dict[str, Any]) -> Dict[str, Any]:
+        cls.convert_from_old_format_wo_validation(data)
+        return data
+
+    @classmethod
+    def convert_from_old_format_wo_validation(cls, data: Dict[str, Any]) -> None:
+        """Convert metadata following an older format version to this classes' format
+        without validating the result.
+        """
         if (
             data.get("type") == "model"
             and isinstance(fv := data.get("format_version"), str)
@@ -2920,20 +3147,35 @@ class ModelDescr(GenericModelDescrBase):
         ):
             fv_parts = fv.split(".")
             if any(not p.isdigit() for p in fv_parts):
-                return data
+                return
 
             fv_tuple = tuple(map(int, fv_parts))
 
             assert cls.implemented_format_version_tuple[0:2] == (0, 5)
             if fv_tuple[:2] in ((0, 3), (0, 4)):
                 m04 = _ModelDescr_v0_4.load(data)
-                if not isinstance(m04, InvalidDescr):
-                    return _model_conv.convert_as_dict(m04)
+                if isinstance(m04, InvalidDescr):
+                    try:
+                        updated = _model_conv.convert_as_dict(
+                            m04  # pyright: ignore[reportArgumentType]
+                        )
+                    except Exception as e:
+                        logger.error(
+                            "Failed to convert from invalid model 0.4 description."
+                            + f"\nerror: {e}"
+                            + "\nProceeding with model 0.5 validation without conversion."
+                        )
+                        updated = None
+                else:
+                    updated = _model_conv.convert_as_dict(m04)
+
+                if updated is not None:
+                    data.clear()
+                    data.update(updated)
+
             elif fv_tuple[:2] == (0, 5):
                 # bump patch version
                 data["format_version"] = cls.implemented_format_version
-
-        return data
 
 
 class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
@@ -2941,7 +3183,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
         self, src: _ModelDescr_v0_4, tgt: "type[ModelDescr] | type[dict[str, Any]]"
     ) -> "ModelDescr | dict[str, Any]":
         name = "".join(
-            c if c in string.ascii_letters + string.digits + "_- ()" else " "
+            c if c in string.ascii_letters + string.digits + "_+- ()" else " "
             for c in src.name
         )
 
@@ -2994,11 +3236,11 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             cite=[
                 {"text": c.text, "doi": c.doi, "url": c.url} for c in src.cite
             ],  # pyright: ignore[reportArgumentType]
-            config=src.config,
+            config=src.config,  # pyright: ignore[reportArgumentType]
             covers=src.covers,
             description=src.description,
             documentation=src.documentation,
-            format_version="0.5.3",
+            format_version="0.5.4",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
             id=None if src.id is None else ModelId(src.id),

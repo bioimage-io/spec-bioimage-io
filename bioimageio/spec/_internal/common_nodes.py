@@ -1,45 +1,34 @@
 from __future__ import annotations
 
-import collections.abc
-import traceback
 from abc import ABC
 from copy import deepcopy
 from io import BytesIO
 from pathlib import Path
+from types import MappingProxyType
 from typing import (
     IO,
     TYPE_CHECKING,
     Any,
     ClassVar,
     Dict,
-    FrozenSet,
     List,
+    Literal,
+    Mapping,
     Optional,
     Protocol,
     Tuple,
-    Type,
     Union,
-    get_type_hints,
 )
 from zipfile import ZipFile
 
 import pydantic
-from pydantic import (
-    DirectoryPath,
-    Field,
-    GetCoreSchemaHandler,
-    PrivateAttr,
-    StringConstraints,
-    TypeAdapter,
-    model_validator,
-)
-from pydantic_core import PydanticUndefined, core_schema
-from typing_extensions import Annotated, LiteralString, Self
+from pydantic import DirectoryPath, PrivateAttr, model_validator
+from pydantic_core import PydanticUndefined
+from typing_extensions import Self
 
 from ..summary import (
     WARNING_LEVEL_TO_NAME,
     ErrorEntry,
-    ValidationContextSummary,
     ValidationDetail,
     ValidationSummary,
     WarningEntry,
@@ -62,103 +51,36 @@ from .validation_context import (
 from .warning_levels import ALERT, ERROR, INFO
 
 
-class StringNode(collections.UserString, ABC):
-    """deprecated! don't use for new spec fields!"""
-
-    _pattern: ClassVar[str]
-    _node_class: Type[Node]
-    _node: Optional[Node] = None
-
-    def __init__(self, seq: object) -> None:
-        super().__init__(seq)
-        type_hints = {
-            fn: t
-            for fn, t in get_type_hints(self.__class__).items()
-            if not fn.startswith("_")
-        }
-        defaults = {fn: getattr(self.__class__, fn, Field()) for fn in type_hints}
-        field_definitions: Dict[str, Any] = {
-            fn: (t, defaults[fn]) for fn, t in type_hints.items()
-        }
-        self._node_class = pydantic.create_model(
-            self.__class__.__name__,
-            __base__=Node,
-            __module__=self.__module__,
-            **field_definitions,
-        )
-
-        # freeze after initialization
-        def __setattr__(self: Self, __name: str, __value: Any):  # type: ignore
-            raise AttributeError(f"{self} is immutable.")
-
-        self.__setattr__ = __setattr__  # type: ignore
-
-    @property
-    def model_fields(self):
-        return self._node_class.model_fields
-
-    def __getattr__(self, name: str):
-        if name in self._node_class.model_fields:
-            if self._node is None:
-                raise AttributeError(f"{name} only available after validation")
-
-            return getattr(self._node, name)
-
-        raise AttributeError(name)
-
-    @classmethod
-    def __get_pydantic_core_schema__(
-        cls, source: Type[Any], handler: GetCoreSchemaHandler
-    ) -> core_schema.CoreSchema:
-        assert issubclass(source, StringNode), source
-        return core_schema.no_info_after_validator_function(
-            cls._validate,
-            core_schema.str_schema(pattern=cls._pattern),
-            serialization=core_schema.plain_serializer_function_ser_schema(
-                cls._serialize,
-                info_arg=False,
-                return_schema=core_schema.str_schema(),
-            ),
-        )
-
-    @classmethod
-    def _get_data(cls, valid_string_data: str) -> Dict[str, Any]:
-        raise NotImplementedError(f"{cls.__name__}._get_data()")
-
-    @classmethod
-    def _validate(cls, value: str) -> Self:
-        constrained_str_type = Annotated[str, StringConstraints(pattern=cls._pattern)]
-        constrained_str_adapter: TypeAdapter[str] = TypeAdapter(constrained_str_type)
-        valid_string_data = constrained_str_adapter.validate_python(value)
-        data = cls._get_data(valid_string_data)
-        self = cls(valid_string_data)
-        object.__setattr__(self, "_node", self._node_class.model_validate(data))
-        return self
-
-    def _serialize(self) -> str:
-        # serialize inner node to call _package when needed
-        if self._node is not None:
-            _ = self._node.model_dump(mode="json")
-
-        return self.data
-
-
 class NodeWithExplicitlySetFields(Node):
-    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
-    """set set these fields explicitly with their default value if they are not set,
-    such that they are always included even when dumping with 'exlude_unset'"""
+    _fields_to_set_explicitly: ClassVar[Mapping[str, Any]]
+
+    @classmethod
+    def __pydantic_init_subclass__(cls, **kwargs: Any) -> None:
+        explict_fields: Dict[str, Any] = {}
+        for attr in dir(cls):
+            if attr.startswith("implemented_"):
+                field_name = attr.replace("implemented_", "")
+                if field_name not in cls.model_fields:
+                    continue
+
+                assert (
+                    cls.model_fields[field_name].get_default() is PydanticUndefined
+                ), field_name
+                default = getattr(cls, attr)
+                explict_fields[field_name] = default
+
+        cls._fields_to_set_explicitly = MappingProxyType(explict_fields)
+        return super().__pydantic_init_subclass__(**kwargs)
 
     @model_validator(mode="before")
     @classmethod
-    def set_fields_explicitly(
+    def _set_fields_explicitly(
         cls, data: Union[Any, Dict[str, Any]]
     ) -> Union[Any, Dict[str, Any]]:
         if isinstance(data, dict):
-            for name in cls.fields_to_set_explicitly:
+            for name, default in cls._fields_to_set_explicitly.items():
                 if name not in data:
-                    data[name] = cls.model_fields[name].get_default(
-                        call_default_factory=True
-                    )
+                    data[name] = default
 
         return data  # pyright: ignore[reportUnknownVariableType]
 
@@ -166,12 +88,14 @@ class NodeWithExplicitlySetFields(Node):
 if TYPE_CHECKING:
 
     class _ResourceDescrBaseAbstractFieldsProtocol(Protocol):
-        """workaround to add abstract fields to ResourceDescrBase"""
+        """workaround to add "abstract" fields to ResourceDescrBase"""
 
         # TODO: implement as proper abstract fields of ResourceDescrBase
 
         type: Any  # should be LiteralString
         format_version: Any  # should be LiteralString
+        implemented_type: ClassVar[Any]
+        implemented_format_version: ClassVar[Any]
 
 else:
 
@@ -186,11 +110,6 @@ class ResourceDescrBase(
 
     _validation_summary: Optional[ValidationSummary] = None
 
-    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset(
-        {"type", "format_version"}
-    )
-    implemented_type: ClassVar[str]
-    implemented_format_version: ClassVar[str]
     implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
 
     # @field_validator("format_version", mode="before", check_fields=False)
@@ -233,14 +152,18 @@ class ResourceDescrBase(
         self._validation_summary = ValidationSummary(
             name="bioimageio format validation",
             source_name=context.source_name,
+            id=getattr(self, "id", None),
             type=self.type,
             format_version=self.format_version,
-            status="failed" if isinstance(self, InvalidDescr) else "passed",
+            status="failed" if isinstance(self, InvalidDescr) else "valid-format",
             details=[
                 ValidationDetail(
-                    name=f"initialized {self.__class__.__name__} to describe {self.type} {self.implemented_format_version}",
+                    name=(
+                        f"Sucessfully created `{self.__class__.__name__}` object."
+                        + " Further validation is pending."
+                    ),
                     status="passed",
-                    context=None,  # context for format validation detail is identical
+                    context=context.summary,
                 )
             ],
         )
@@ -251,29 +174,29 @@ class ResourceDescrBase(
         assert self._validation_summary is not None, "access only after initialization"
         return self._validation_summary
 
-    _root: Union[RootHttpUrl, DirectoryPath, ZipPath] = PrivateAttr(
+    _root: Union[RootHttpUrl, DirectoryPath, ZipFile] = PrivateAttr(
         default_factory=lambda: validation_context_var.get().root
     )
 
+    _file_name: Optional[FileName] = PrivateAttr(
+        default_factory=lambda: validation_context_var.get().file_name
+    )
+
     @property
-    def root(self) -> Union[RootHttpUrl, DirectoryPath, ZipPath]:
+    def root(self) -> Union[RootHttpUrl, DirectoryPath, ZipFile]:
         """The URL/Path prefix to resolve any relative paths with."""
         return self._root
+
+    @property
+    def file_name(self) -> Optional[FileName]:
+        """File name of the bioimageio.yaml file the description was loaded from."""
+        return self._file_name
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any):
         super().__pydantic_init_subclass__(**kwargs)
-        if (
-            "type" in cls.model_fields
-            and cls.model_fields["type"].default is not PydanticUndefined
-        ):
-            cls.implemented_type = cls.model_fields["type"].default
-
-        if (
-            "format_version" in cls.model_fields
-            and cls.model_fields["format_version"].default is not PydanticUndefined
-        ):
-            cls.implemented_format_version = cls.model_fields["format_version"].default
+        # set classvar implemented_format_version_tuple
+        if "format_version" in cls.model_fields:
             if "." not in cls.implemented_format_version:
                 cls.implemented_format_version_tuple = (0, 0, 0)
             else:
@@ -290,11 +213,13 @@ class ResourceDescrBase(
         """factory method to create a resource description object"""
         context = context or validation_context_var.get()
         assert isinstance(data, dict)
-        with context.replace(log_warnings=False):  # don't log warnings to console
+        with context:
             rd, errors, val_warnings = cls._load_impl(deepcopy(data))
 
         if context.warning_level > INFO:
-            all_warnings_context = context.replace(warning_level=INFO)
+            all_warnings_context = context.replace(
+                warning_level=INFO, log_warnings=False
+            )
             # raise all validation warnings by reloading
             with all_warnings_context:
                 _, _, val_warnings = cls._load_impl(deepcopy(data))
@@ -308,12 +233,7 @@ class ResourceDescrBase(
                 ),
                 status="failed" if errors else "passed",
                 warnings=val_warnings,
-                context=ValidationContextSummary(
-                    perform_io_checks=context.perform_io_checks,
-                    known_files=context.known_files,
-                    root=str(context.root),
-                    warning_level=WARNING_LEVEL_TO_NAME[context.warning_level],
-                ),
+                context=context.summary,  # context for format validation detail is identical
             )
         )
 
@@ -327,6 +247,7 @@ class ResourceDescrBase(
         val_errors: List[ErrorEntry] = []
         val_warnings: List[WarningEntry] = []
 
+        context = validation_context_var.get()
         try:
             rd = cls.model_validate(data)
         except pydantic.ValidationError as e:
@@ -340,12 +261,14 @@ class ResourceDescrBase(
                             severity=severity,
                         )
                     )
+                elif context.raise_errors:
+                    raise e
                 else:
                     val_errors.append(
                         ErrorEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"])
                     )
 
-            if len(val_errors) == 0:
+            if len(val_errors) == 0:  # FIXME is this reduntant?
                 val_errors.append(
                     ErrorEntry(
                         loc=(),
@@ -358,22 +281,29 @@ class ResourceDescrBase(
                     )
                 )
         except Exception as e:
+            if context.raise_errors:
+                raise e
+
             val_errors.append(
                 ErrorEntry(
                     loc=(),
                     msg=str(e),
                     type=type(e).__name__,
-                    traceback=traceback.format_tb(e.__traceback__),
+                    with_traceback=True,
                 )
             )
 
         if rd is None:
             try:
                 rd = InvalidDescr.model_validate(data)
-            except Exception:
+            except Exception as e:
+                if context.raise_errors:
+                    raise e
                 resource_type = cls.model_fields["type"].default
                 format_version = cls.implemented_format_version
                 rd = InvalidDescr(type=resource_type, format_version=format_version)
+                if context.raise_errors:
+                    raise ValueError(rd)
 
         return rd, val_errors, val_warnings
 
@@ -434,9 +364,17 @@ class InvalidDescr(
 ):
     """A representation of an invalid resource description"""
 
-    type: Any = "unknown"
-    format_version: Any = "unknown"
-    fields_to_set_explicitly: ClassVar[FrozenSet[LiteralString]] = frozenset()
+    implemented_type: ClassVar[Literal["unknown"]] = "unknown"
+    if TYPE_CHECKING:  # see NodeWithExplicitlySetFields
+        type: Any = "unknown"
+    else:
+        type: Any
+
+    implemented_format_version: ClassVar[Literal["unknown"]] = "unknown"
+    if TYPE_CHECKING:  # see NodeWithExplicitlySetFields
+        format_version: Any = "unknown"
+    else:
+        format_version: Any
 
 
 class KwargsNode(Node):

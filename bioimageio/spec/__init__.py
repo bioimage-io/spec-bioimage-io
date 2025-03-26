@@ -25,13 +25,15 @@ from ._get_conda_env import BioimageioCondaEnv, get_conda_env
 from ._internal import settings
 from ._internal.common_nodes import InvalidDescr
 from ._internal.constants import VERSION
-from ._internal.validation_context import ValidationContext
+from ._internal.validation_context import ValidationContext, get_validation_context
 from ._io import (
     load_dataset_description,
     load_description,
     load_description_and_validate_format_only,
     load_model_description,
     save_bioimageio_yaml_only,
+    update_format,
+    update_hashes,
 )
 from ._package import (
     get_resource_package_content,
@@ -70,6 +72,7 @@ __all__ = [
     "GenericDescr",
     "get_conda_env",
     "get_resource_package_content",
+    "get_validation_context",
     "InvalidDescr",
     "LatestResourceDescr",
     "load_dataset_description",
@@ -88,6 +91,8 @@ __all__ = [
     "settings",
     "SpecificResourceDescr",
     "summary",
+    "update_format",
+    "update_hashes",
     "utils",
     "validate_format",
     "ValidationContext",

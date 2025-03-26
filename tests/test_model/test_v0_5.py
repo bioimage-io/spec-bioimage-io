@@ -233,7 +233,6 @@ def model():
             documentation=UNET2D_ROOT / "README.md",
             license=LicenseId("MIT"),
             git_repo=HttpUrl("https://github.com/bioimage-io/core-bioimage-io-python"),
-            format_version="0.5.3",
             description="description",
             authors=[
                 Author(name="Author 1", affiliation="Affiliation 1"),
@@ -371,7 +370,7 @@ def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
         model_data, context=ValidationContext(perform_io_checks=False)
     )
     summary.display()
-    assert summary.status == "passed", summary.format()
+    assert summary.status == "valid-format", summary.display()
 
 
 def test_warn_long_name(model_data: Dict[str, Any]):
@@ -382,8 +381,8 @@ def test_warn_long_name(model_data: Dict[str, Any]):
         model_data, context=ValidationContext(perform_io_checks=False)
     )
 
-    assert summary.status == "passed", summary.format()
-    assert summary.details[1].warnings[0].loc == ("name",), summary.format()
+    assert summary.status == "valid-format", summary.display()
+    assert summary.details[1].warnings[0].loc == ("name",), summary.display()
     assert summary.details[1].warnings[0].msg == "Name longer than 64 characters."
 
 
@@ -392,7 +391,7 @@ def test_model_schema_raises_invalid_input_id(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "failed", summary.format()
+    assert summary.status == "failed", summary.display()
 
 
 def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
@@ -400,7 +399,7 @@ def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "failed", summary.format()
+    assert summary.status == "failed", summary.display()
 
 
 def test_get_axis_sizes_with_surplus_n(model: ModelDescr):
@@ -440,7 +439,7 @@ def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "passed", summary.format()
+    assert summary.status == "valid-format", summary.display()
     # input_1.x -> input_1.z
     model_data["outputs"][0]["axes"][2] = {
         "type": "space",
@@ -451,7 +450,7 @@ def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "failed", summary.format()
+    assert summary.status == "failed", summary.display()
 
 
 def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
@@ -464,13 +463,13 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "passed", summary.format()
+    assert summary.status == "valid-format", summary.display()
 
     model_data["outputs"][0]["axes"][2]["halo"] = 999
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "failed", summary.format()
+    assert summary.status == "failed", summary.display()
 
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):
@@ -478,7 +477,7 @@ def test_model_has_parent_with_id(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "passed", summary.format()
+    assert summary.status == "valid-format", summary.display()
 
 
 def test_model_with_expanded_output(model_data: Dict[str, Any]):
@@ -530,7 +529,7 @@ def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "passed", summary.format()
+    assert summary.status == "valid-format", summary.display()
 
 
 def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
@@ -538,7 +537,7 @@ def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert summary.status == "failed", summary.format()
+    assert summary.status == "failed", summary.display()
 
 
 def test_empty_axis_data():
@@ -567,3 +566,14 @@ def test_validate_parameterized_size(model: ModelDescr):
     param_size = model.inputs[0].axes[3].size
     assert isinstance(param_size, ParameterizedSize), type(param_size)
     assert (actual := param_size.validate_size(512)) == 512, actual
+
+
+def test_absolute_tolerance(model_data: Dict[str, Any]):
+    model_data["config"]["bioimageio"]["reproducibility_tolerance"] = [
+        {"absolute_tolerance": 100000}
+    ]
+    with ValidationContext(perform_io_checks=False):
+        model_descr = ModelDescr.model_validate(model_data)
+
+    with pytest.raises(ValueError), ValidationContext(perform_io_checks=True):
+        _ = model_descr._validate_test_tensors()  # type: ignore[reportPrivateUsage]

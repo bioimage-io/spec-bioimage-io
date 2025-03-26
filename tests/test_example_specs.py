@@ -31,11 +31,11 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
     "models/stardist_example_model/v0_4.bioimageio.yaml": {"dependencies"},
     "models/stardist_example_model/wrong_shape_v0_4.bioimageio.yaml": {"dependencies"},
     "models/stardist_example_model/wrong_shape2_v0_4.bioimageio.yaml": {"dependencies"},
-    "models/unet2d_diff_output_shape/v0_4.bioimageio.yaml": {
-        "dependencies",
-        "weights",
-    },
-    "models/unet2d_multi_tensor/v0_4.bioimageio.yaml": {"dependencies", "weights"},
+    # "models/unet2d_diff_output_shape/bioimageio.yaml": {
+    #     "dependencies",
+    #     "weights",
+    # },
+    "models/unet2d_multi_tensor/bioimageio.yaml": {"dependencies", "weights"},
     "models/unet2d_nuclei_broad/v0_4_0.bioimageio.yaml": {
         "dependencies",
         "weights",

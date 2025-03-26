@@ -10,9 +10,19 @@ In this file we log both:
 
 This changelog includes implementation details and my reference the [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
-#### bioimageio.spec 0.5.3.7 (to be released)
+#### bioimageio.spec 0.5.4.0
 
+- [model format 0.5.4](#model-054)
+- new utlity functions `update_format`, `update_hashes`
+- environment for tensorflow 1 is now using tf 2.17 (to support py >=3.8)
 - update conda environments (remove `cpuonly` from pytorch envs)
+- bugfix: Fix wrong warning by matching a '# Validation' section within the
+    documentation (not only at the start).
+- bugfix: Include dependency file when packaging 0.4 models.
+- experimental feature for debugging: raise validation errors with `ValidationContext.raise_errors=True`
+- remove deprecated `IN_PACKAGE_MESSAGE`
+- added utitlity methods `ValidationSummary.save_markdown`, `ValidationSummary.save`, `ValidationSummary.load`
+- added `ValidationSummary.status` field to include new status `valid-format` (to distinguish if core tests have run or not)
 
 #### bioimageio.spec 0.5.3.6
 
@@ -260,6 +270,15 @@ Which fields a resource description field has and how they are to be interpreted
 Here is a list of changes for each `type` and `format_version`.
 Note that 'generic' changes apply to `type` application, dataset and notebook of the same `format_versions`.
 If the changes also apply to `type` model, the coresponding model format version is noted, e.g. [generic 0.3.1 and model 0.5.3](#generic-031-and-model-053).
+
+#### model 0.5.4
+
+- Breaking changes (that shouldn't affect any released models though)
+  - Do not allow a model to reference itself in the `parent` field
+- Non-breaking changes
+  - validate `config.bioimageio.reproducibility_tolerance` to store relative and absolute tolerances as well as a tolerance for mismatched elements.
+  - allow `+` in name
+  - new optional `comment` field for weights entries
 
 #### generic 0.3.1 and model 0.5.3
 

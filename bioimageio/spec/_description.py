@@ -1,15 +1,16 @@
-from pathlib import Path
 from types import MappingProxyType
-from typing import Any, Literal, Optional, TypeVar, Union
+from typing import Any, Literal, Optional, TypeVar, Union, overload
 
 from pydantic import Discriminator
 from typing_extensions import Annotated
 
+from bioimageio.spec._internal.validation_context import ValidationContext
+
 from ._description_impl import DISCOVER, build_description_impl, get_rd_class_impl
 from ._internal.common_nodes import InvalidDescr
-from ._internal.io import BioimageioYamlContent, BioimageioYamlSource
+from ._internal.io import BioimageioYamlContent
 from ._internal.types import FormatVersionPlaceholder
-from ._internal.validation_context import ValidationContext, validation_context_var
+from ._internal.validation_context import validation_context_var
 from .application import (
     AnyApplicationDescr,
     ApplicationDescr,
@@ -27,7 +28,7 @@ from .notebook import (
 )
 from .summary import ValidationSummary
 
-LATEST: FormatVersionPlaceholder = "latest"
+LATEST: Literal["latest"] = "latest"
 """placeholder for the latest available format version"""
 
 
@@ -62,15 +63,37 @@ ResourceDescr = Union[SpecificResourceDescr, AnyGenericDescr]
 
 
 def dump_description(
-    rd: Union[ResourceDescr, InvalidDescr], exclude_unset: bool = True
+    rd: Union[ResourceDescr, InvalidDescr],
+    /,
+    *,
+    exclude_unset: bool = True,
+    exclude_defaults: bool = False,
 ) -> BioimageioYamlContent:
-    """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML."""
-    return rd.model_dump(mode="json", exclude_unset=exclude_unset)
+    """Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML.
+
+    Args:
+        rd: bioimageio resource description
+        exclude_unset: Exclude fields that have not explicitly be set.
+        exclude_defaults: Exclude fields that have the default value (even if set explicitly).
+    """
+    return rd.model_dump(
+        mode="json", exclude_unset=exclude_unset, exclude_defaults=exclude_defaults
+    )
 
 
 RD = TypeVar("RD", bound=ResourceDescr)
 
 
+LATEST_DESCRIPTIONS_MAP = MappingProxyType(
+    {
+        None: GenericDescr,
+        "generic": GenericDescr,
+        "application": ApplicationDescr,
+        "dataset": DatasetDescr,
+        "notebook": NotebookDescr,
+        "model": ModelDescr,
+    }
+)
 DESCRIPTIONS_MAP = MappingProxyType(
     {
         None: MappingProxyType(
@@ -126,6 +149,26 @@ def _get_rd_class(typ: Any, format_version: Any):
     return get_rd_class_impl(typ, format_version, DESCRIPTIONS_MAP)
 
 
+@overload
+def build_description(
+    content: BioimageioYamlContent,
+    /,
+    *,
+    context: Optional[ValidationContext] = None,
+    format_version: Literal["latest"],
+) -> Union[LatestResourceDescr, InvalidDescr]: ...
+
+
+@overload
+def build_description(
+    content: BioimageioYamlContent,
+    /,
+    *,
+    context: Optional[ValidationContext] = None,
+    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
+) -> Union[ResourceDescr, InvalidDescr]: ...
+
+
 def build_description(
     content: BioimageioYamlContent,
     /,
@@ -164,36 +207,28 @@ def validate_format(
     format_version: Union[Literal["discover", "latest"], str] = DISCOVER,
     context: Optional[ValidationContext] = None,
 ) -> ValidationSummary:
-    """Validate a dictionary holding a boiimageio description
-    (see `bioimagieo.spec.load_description_and_validate_format_only`
-    to validate a file source).
+    """Validate a dictionary holding a bioimageio description.
+    See `bioimagieo.spec.load_description_and_validate_format_only`
+    to validate a file source.
 
     Args:
-        data: dict holding raw bioimageio.yaml content
-        format_version: format version to (update to and) use for validation
-        context: validation context, see `bioimagieo.spec.ValidationContext`
+        data: Dictionary holding the raw bioimageio.yaml content.
+        format_version: Format version to (update to and) use for validation.
+        context: Validation context, see `bioimagieo.spec.ValidationContext`
 
-    Note: Use `bioimagieo.spec.load_description_and_validate_format_only` to validate a
-        file source instead of loading the YAML content and createing the appropriate
+    Note:
+        Use `bioimagieo.spec.load_description_and_validate_format_only` to validate a
+        file source instead of loading the YAML content and creating the appropriate
         `ValidationContext`.
-        Or use `bioimagieo.spec.load_description` and access the `validation_summary`
-        attribute of the returned object.
+
+        Alternatively you can use `bioimagieo.spec.load_description` and access the
+        `validation_summary` attribute of the returned object.
     """
     with context or validation_context_var.get():
         rd = build_description(data, format_version=format_version)
 
     assert rd.validation_summary is not None
     return rd.validation_summary
-
-
-def update_format(
-    source: BioimageioYamlSource,
-    *,
-    output_path: Optional[Path] = None,
-    target_format_version: Union[Literal["latest"], str] = LATEST,
-) -> BioimageioYamlContent:
-    """update a bioimageio.yaml file without validating it"""
-    raise NotImplementedError("Oh no! This feature is not yet implemented")
 
 
 def ensure_description_is_model(
@@ -205,12 +240,12 @@ def ensure_description_is_model(
     """
     if isinstance(rd, InvalidDescr):
         rd.validation_summary.display()
-        raise ValueError("resource description is invalid")
+        raise ValueError(f"Invalid {rd.type} description")
 
     if rd.type != "model":
         rd.validation_summary.display()
         raise ValueError(
-            f"expected a model resource, but got resource type '{rd.type}'"
+            f"Expected a model resource, but got resource type '{rd.type}'"
         )
 
     assert not isinstance(
@@ -229,12 +264,12 @@ def ensure_description_is_dataset(
 ) -> AnyDatasetDescr:
     if isinstance(rd, InvalidDescr):
         rd.validation_summary.display()
-        raise ValueError("resource description is invalid")
+        raise ValueError(f"Invalid {rd.type} description.")
 
     if rd.type != "dataset":
         rd.validation_summary.display()
         raise ValueError(
-            f"expected a dataset resource, but got resource type '{rd.type}'"
+            f"Expected a dataset resource, but got resource type '{rd.type}'"
         )
 
     assert not isinstance(

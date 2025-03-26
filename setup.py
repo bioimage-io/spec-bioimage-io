@@ -33,6 +33,7 @@ _ = setup(
         "email_validator",
         "imageio",
         "loguru",
+        "markdown",
         "numpy>=1.21",
         "packaging>=17.0",
         "pooch>=1.5,<2",
@@ -51,11 +52,8 @@ _ = setup(
         "tests": (
             test_extras := [
                 "deepdiff",
-                "filelock",  # for session fixtures due to pytest-xdist
                 "lxml",
-                "psutil",  # parallel pytest with '-n auto'
                 "pytest-cov",
-                "pytest-xdist",  # parallel pytest
                 "pytest",
                 "requests-mock",
             ]
@@ -70,7 +68,7 @@ _ = setup(
                 "jupyter",
                 "pdoc",
                 "pre-commit",
-                "pyright==1.1.391",
+                "pyright==1.1.396",
                 "ruff",
             ]
         ),

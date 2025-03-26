@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import TYPE_CHECKING, ClassVar, Literal, Optional
 
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
@@ -7,7 +7,9 @@ from .._internal.url import HttpUrl as HttpUrl
 from ..generic.v0_3 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
 from ..generic.v0_3 import Author as Author
 from ..generic.v0_3 import BadgeDescr as BadgeDescr
+from ..generic.v0_3 import BioimageioConfig as BioimageioConfig
 from ..generic.v0_3 import CiteEntry as CiteEntry
+from ..generic.v0_3 import Config as Config
 from ..generic.v0_3 import DeprecatedLicenseId as DeprecatedLicenseId
 from ..generic.v0_3 import Doi as Doi
 from ..generic.v0_3 import GenericDescrBase, LinkedResourceBase
@@ -29,7 +31,11 @@ class NotebookId(ResourceId):
 class NotebookDescr(GenericDescrBase):
     """Bioimage.io description of a Jupyter notebook."""
 
-    type: Literal["notebook"] = "notebook"
+    implemented_type: ClassVar[Literal["notebook"]] = "notebook"
+    if TYPE_CHECKING:
+        type: Literal["notebook"] = "notebook"
+    else:
+        type: Literal["notebook"]
 
     id: Optional[NotebookId] = None
     """bioimage.io-wide unique resource identifier

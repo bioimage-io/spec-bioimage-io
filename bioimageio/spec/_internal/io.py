@@ -8,7 +8,6 @@ from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
-from functools import lru_cache
 from pathlib import Path, PurePath
 from tempfile import mktemp
 from typing import (
@@ -45,7 +44,6 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core import core_schema
-from tqdm import tqdm
 from typing_extensions import (
     Annotated,
     LiteralString,
@@ -74,7 +72,7 @@ from .packaging_context import packaging_context_var
 from .root_url import RootHttpUrl
 from .type_guards import is_mapping, is_sequence
 from .url import HttpUrl
-from .validation_context import validation_context_var
+from .validation_context import get_validation_context
 from .validator_annotations import AfterValidator
 
 if sys.version_info < (3, 10):
@@ -114,7 +112,7 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
             raise ValueError(f"{self.root} looks like an http url.")
 
         self._absolute = (  # pyright: ignore[reportAttributeAccessIssue]
-            self.get_absolute(validation_context_var.get().root)
+            self.get_absolute(get_validation_context().root)
         )
         super().model_post_init(__context)
 
@@ -200,7 +198,7 @@ class RelativeFilePath(
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
-            and (context := validation_context_var.get()).perform_io_checks
+            and (context := get_validation_context()).perform_io_checks
             and str(self.root) not in context.known_files
             and not absolute.is_file()
         ):
@@ -218,7 +216,7 @@ class RelativeDirectory(
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
-            and validation_context_var.get().perform_io_checks
+            and get_validation_context().perform_io_checks
             and not absolute.is_dir()
         ):
             raise ValueError(f"{absolute} does not point to an existing directory")
@@ -442,13 +440,15 @@ def identify_bioimageio_yaml_file_name(file_names: Iterable[FileName]) -> FileNa
     )
 
 
-def find_bioimageio_yaml_file_name(path: Path) -> FileName:
-    if path.is_file():
+def find_bioimageio_yaml_file_name(path: Union[Path, ZipFile]) -> FileName:
+    if isinstance(path, ZipFile):
+        file_names = path.namelist()
+    elif path.is_file():
         if not is_zipfile(path):
             return path.name
 
         with ZipFile(path, "r") as f:
-            file_names = identify_bioimageio_yaml_file_name(f.namelist())
+            file_names = f.namelist()
     else:
         file_names = [p.name for p in path.glob("*")]
 
@@ -493,7 +493,7 @@ else:
         Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]],
     )
 BioimageioYamlContent = Dict[str, YamlValue]
-BioimageioYamlSource = Union[PermissiveFileSource, BioimageioYamlContent]
+BioimageioYamlSource = Union[PermissiveFileSource, ZipFile, BioimageioYamlContent]
 
 
 def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
@@ -519,6 +519,7 @@ class OpenedBioimageioYaml:
     content: BioimageioYamlContent
     original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
     original_file_name: FileName
+    unparsed_content: str
 
 
 @dataclass
@@ -545,14 +546,23 @@ _file_source_adapter: TypeAdapter[Union[HttpUrl, RelativeFilePath, FilePath]] = 
 
 
 def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
-    if isinstance(file_source, (HttpUrl, Path)):
+    if isinstance(file_source, Path):
+        if file_source.is_dir():
+            raise FileNotFoundError(
+                f"{file_source} is a directory, but expected a file."
+            )
+        return file_source
+
+    if isinstance(file_source, HttpUrl):
         return file_source
 
     if isinstance(file_source, pydantic.AnyUrl):
         file_source = str(file_source)
 
-    with validation_context_var.get().replace(perform_io_checks=False):
+    with get_validation_context().replace(perform_io_checks=False):
         strict = _file_source_adapter.validate_python(file_source)
+        if isinstance(strict, Path) and strict.is_dir():
+            raise FileNotFoundError(f"{strict} is a directory, but expected a file.")
 
     return strict
 
@@ -661,6 +671,19 @@ def resolve(
     **kwargs: Unpack[HashKwargs],
 ) -> Union[LocalFile, FileInZip]:
     """Resolve file `source` (download if needed)"""
+
+    if isinstance(source, str):
+        source = interprete_file_source(source)
+
+    if isinstance(source, RelativeFilePath):
+        source = source.absolute()
+        if isinstance(source, ZipPath):
+            return FileInZip(source, source.root, extract_file_name(source))
+
+    if isinstance(source, pydantic.AnyUrl):
+        with get_validation_context().replace(perform_io_checks=False):
+            source = HttpUrl(source)
+
     if isinstance(source, FileDescr):
         return source.download()
     elif isinstance(source, ZipPath):
@@ -671,23 +694,17 @@ def resolve(
             zip_root,
             extract_file_name(source),
         )
+    elif isinstance(source, Path):
+        if source.is_dir():
+            raise FileNotFoundError(f"{source} is a directory, not a file")
 
-    strict_source = interprete_file_source(source)
-    if isinstance(strict_source, RelativeFilePath):
-        strict_source = strict_source.absolute()
-        if isinstance(strict_source, ZipPath):
-            return FileInZip(
-                strict_source, strict_source.root, extract_file_name(strict_source)
-            )
-
-    if isinstance(strict_source, PurePath):
-        if not strict_source.exists():
-            raise FileNotFoundError(strict_source)
-        local_source = strict_source
-        root: Union[RootHttpUrl, DirectoryPath] = strict_source.parent
-    else:
-        if strict_source.scheme not in ("http", "https"):
-            raise NotImplementedError(strict_source.scheme)
+        if not source.exists():
+            raise FileNotFoundError(source)
+        local_source = source
+        root: Union[RootHttpUrl, DirectoryPath] = source.parent
+    elif isinstance(source, HttpUrl):
+        if source.scheme not in ("http", "https"):
+            raise NotImplementedError(source.scheme)
 
         if settings.CI:
             headers = {"User-Agent": "ci"}
@@ -705,21 +722,23 @@ def resolve(
             headers=headers,
             progressbar=progressbar,  # pyright: ignore[reportArgumentType]
         )
-        fname = _get_unique_file_name(strict_source)
+        fname = _get_unique_file_name(source)
         _ls: Any = pooch.retrieve(
-            url=str(strict_source),
+            url=str(source),
             known_hash=_get_known_hash(kwargs),
             downloader=downloader,
             fname=fname,
             path=settings.cache_path,
         )
         local_source = Path(_ls).absolute()
-        root = strict_source.parent
+        root = source.parent
+    else:
+        assert_never(source)
 
     return LocalFile(
         local_source,
         root,
-        extract_file_name(strict_source),
+        extract_file_name(source),
     )
 
 
@@ -738,7 +757,7 @@ def resolve_and_extract(
 
     note: If source points to a zip file it is not extracted
     """
-    local = resolve(source, progressbar=progressbar)
+    local = resolve(source, progressbar=progressbar, **kwargs)
     if isinstance(local, LocalFile):
         return local
 
@@ -772,18 +791,24 @@ class FileDescr(Node):
     """SHA256 checksum of the source file"""
 
     @model_validator(mode="after")
-    def validate_sha256(self) -> Self:
-        context = validation_context_var.get()
-        if not context.perform_io_checks:
-            return self
-        elif (src_str := str(self.source)) in context.known_files:
+    def _validate_sha256(self) -> Self:
+        if get_validation_context().perform_io_checks:
+            self.validate_sha256()
+
+        return self
+
+    def validate_sha256(self):
+        context = get_validation_context()
+        if (src_str := str(self.source)) in context.known_files:
             actual_sha = context.known_files[src_str]
         else:
             local_source = download(self.source, sha256=self.sha256).path
             actual_sha = get_sha256(local_source)
             context.known_files[str(self.source)] = actual_sha
 
-        if self.sha256 is None:
+        if self.sha256 == actual_sha:
+            pass
+        elif self.sha256 is None or context.update_hashes:
             self.sha256 = actual_sha
         elif self.sha256 != actual_sha:
             raise ValueError(
@@ -792,7 +817,7 @@ class FileDescr(Node):
                 + "file."
             )
 
-        return self
+        return
 
     def download(self):
 
@@ -821,22 +846,16 @@ def extract_file_name(
             return url.path.split("/")[-1]
 
 
-@lru_cache
 def get_sha256(path: Union[Path, ZipPath]) -> Sha256:
     """from https://stackoverflow.com/a/44873382"""
-    desc = f"computing SHA256 of {path.name}"
     if isinstance(path, ZipPath):
         # no buffered reading available
         zf = path.root
         assert isinstance(zf, ZipFile)
-        file_size = zf.NameToInfo[path.at].file_size
-        pbar = tqdm(desc=desc, total=file_size)
         data = path.read_bytes()
         assert isinstance(data, bytes)
         h = hashlib.sha256(data)
     else:
-        file_size = path.stat().st_size
-        pbar = tqdm(desc=desc, total=file_size)
         h = hashlib.sha256()
         chunksize = 128 * 1024
         b = bytearray(chunksize)
@@ -844,10 +863,7 @@ def get_sha256(path: Union[Path, ZipPath]) -> Sha256:
         with open(path, "rb", buffering=0) as f:
             for n in iter(lambda: f.readinto(mv), 0):
                 h.update(mv[:n])
-                _ = pbar.update(n)
 
     sha = h.hexdigest()
-    pbar.set_description(desc=desc + f" (result: {sha})")
-    pbar.close()
     assert len(sha) == 64
     return Sha256(sha)

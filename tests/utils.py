@@ -29,12 +29,13 @@ from pydantic import (
     ValidationError,
     create_model,
 )
-from ruyaml import YAML
 
 from bioimageio.spec import InvalidDescr, ValidationContext, build_description
 from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.io import download
+from bioimageio.spec._internal.io_utils import read_yaml
 from bioimageio.spec._internal.root_url import RootHttpUrl
+from bioimageio.spec._internal.type_guards import is_kwargs
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
 from bioimageio.spec.common import HttpUrl, Sha256
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr02
@@ -42,9 +43,6 @@ from bioimageio.spec.generic._v0_2_converter import DOI_PREFIXES
 from bioimageio.spec.generic.v0_2 import GenericDescr as GenericDescr02
 from bioimageio.spec.model.v0_4 import ModelDescr as ModelDescr04
 from bioimageio.spec.notebook.v0_2 import NotebookDescr as NotebookDescr02
-
-yaml = YAML(typ="safe")
-
 
 unset = object()
 
@@ -156,9 +154,8 @@ def check_bioimageio_yaml(
     root = downloaded_source.original_root
     raw = downloaded_source.path.read_text(encoding="utf-8")
     assert isinstance(raw, str)
-    data: Dict[Any, Any] = yaml.load(StringIO(raw))
-
-    assert isinstance(data, dict), type(data)
+    data = read_yaml(StringIO(raw))
+    assert is_kwargs(data), type(data)
     format_version = "latest" if as_latest else "discover"
     with ValidationContext(
         root=root,
@@ -177,7 +174,7 @@ def check_bioimageio_yaml(
         assert isinstance(rd, InvalidDescr)
         return
 
-    assert summary.status == "passed", summary.format()
+    assert summary.status == "valid-format", summary.display()
     assert rd is not None
 
     json_data = rd.model_dump(mode="json")

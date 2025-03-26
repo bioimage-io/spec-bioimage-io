@@ -32,15 +32,23 @@ from .io import (
     LightHttpFileDescr,
     OpenedBioimageioYaml,
     YamlValue,
-    download,
     find_bioimageio_yaml_file_name,
     identify_bioimageio_yaml_file_name,
+    resolve,
 )
 from .io_basics import FileName, ZipPath
 from .types import FileSource, PermissiveFileSource
+from .url import HttpUrl
 from .utils import cache
+from .validation_context import ValidationContext
 
-yaml = YAML(typ="safe")
+_yaml_load = YAML(typ="safe")
+
+_yaml_dump = YAML()
+_yaml_dump.version = (1, 2)  # pyright: ignore[reportAttributeAccessIssue]
+_yaml_dump.default_flow_style = False
+_yaml_dump.indent(mapping=2, sequence=4, offset=2)
+_yaml_dump.width = 88  # pyright: ignore[reportAttributeAccessIssue]
 
 
 def read_yaml(file: Union[FilePath, ZipPath, IO[str], IO[bytes]]) -> YamlValue:
@@ -49,12 +57,12 @@ def read_yaml(file: Union[FilePath, ZipPath, IO[str], IO[bytes]]) -> YamlValue:
     else:
         data = file
 
-    content: YamlValue = yaml.load(data)
+    content: YamlValue = _yaml_load.load(data)
     return content
 
 
 def write_yaml(
-    content: YamlValue,
+    content: Union[YamlValue, BioimageioYamlContent],
     /,
     file: Union[NewPath, FilePath, IO[str], IO[bytes], ZipPath],
 ):
@@ -64,7 +72,7 @@ def write_yaml(
         cm = nullcontext(file)
 
     with cm as f:
-        yaml.dump(content, f)
+        _yaml_dump.dump(content, f)
 
 
 def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
@@ -85,9 +93,16 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
 
 def _open_bioimageio_rdf_in_zip(source: ZipFile, rdf_name: str) -> OpenedBioimageioYaml:
     with source.open(rdf_name) as f:
-        content = _sanitize_bioimageio_yaml(read_yaml(f))
+        unparsed_content = f.read().decode(encoding="utf-8")
 
-    return OpenedBioimageioYaml(content, source, source.filename or "bioimageio.zip")
+    content = _sanitize_bioimageio_yaml(read_yaml(io.StringIO(unparsed_content)))
+
+    return OpenedBioimageioYaml(
+        content,
+        source,
+        source.filename or "bioimageio.zip",
+        unparsed_content=unparsed_content,
+    )
 
 
 def _open_bioimageio_zip(source: ZipFile) -> OpenedBioimageioYaml:
@@ -104,7 +119,14 @@ def open_bioimageio_yaml(
         return _open_bioimageio_zip(source)
 
     try:
-        downloaded = download(source, **kwargs)
+        if isinstance(source, (Path, str)) and (source_dir := Path(source)).is_dir():
+            # open bioimageio yaml from a folder
+            src = source_dir / find_bioimageio_yaml_file_name(source_dir)
+        else:
+            src = source
+
+        downloaded = resolve(src, **kwargs)
+
     except Exception:
         # check if `source` is a collection id
         if (
@@ -113,6 +135,32 @@ def open_bioimageio_yaml(
             or "/" not in settings.id_map
         ):
             raise
+
+        if settings.collection_http_pattern:
+            with ValidationContext(perform_io_checks=False):
+                url = HttpUrl(
+                    settings.collection_http_pattern.format(bioimageio_id=source)
+                )
+
+            try:
+                r = requests.get(url)
+                r.raise_for_status()
+                unparsed_content = r.content.decode(encoding="utf-8")
+                content = _sanitize_bioimageio_yaml(
+                    read_yaml(io.StringIO(unparsed_content))
+                )
+            except Exception as e:
+                logger.warning("Failed to get bioimageio.yaml from {}: {}", url, e)
+            else:
+                original_file_name = (
+                    "rdf.yaml" if url.path is None else url.path.split("/")[-1]
+                )
+                return OpenedBioimageioYaml(
+                    content=content,
+                    original_root=url.parent,
+                    original_file_name=original_file_name,
+                    unparsed_content=unparsed_content,
+                )
 
         id_map = get_id_map()
         if id_map and source not in id_map:
@@ -148,6 +196,7 @@ def open_bioimageio_yaml(
         content,
         root.original_root if isinstance(root, FileInZip) else root,
         downloaded.original_file_name,
+        unparsed_content=local_source.read_text(encoding="utf-8"),
     )
 
 
@@ -232,7 +281,7 @@ def write_zip(
 
 
 def load_array(source: Union[FileSource, FileDescr, ZipPath]) -> NDArray[Any]:
-    path = download(source).path
+    path = resolve(source).path
     with path.open(mode="rb") as f:
         assert not isinstance(f, io.TextIOWrapper)
         return numpy.load(f, allow_pickle=False)
