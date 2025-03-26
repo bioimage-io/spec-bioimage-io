@@ -22,6 +22,7 @@ This changelog includes implementation details and my reference the [changes to 
 - experimental feature for debugging: raise validation errors with `ValidationContext.raise_errors=True`
 - remove deprecated `IN_PACKAGE_MESSAGE`
 - added utitlity methods `ValidationSummary.save_markdown`, `ValidationSummary.save`, `ValidationSummary.load`
+- added `ValidationSummary.status` field to include new status `valid-format` (to distinguish if core tests have run or not)
 
 #### bioimageio.spec 0.5.3.6
 
