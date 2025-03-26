@@ -217,7 +217,12 @@ class TensorId(LowerCaseIdentifier):
 
 def _normalize_axis_id(a: str):
     a = str(a)
-    return _AXIS_ID_MAP.get(a, a)
+    normalized = _AXIS_ID_MAP.get(a, a)
+    if a != normalized:
+        logger.opt(depth=3).warning(
+            "Normalized axis id from '{}' to '{}'.", a, normalized
+        )
+    return normalized
 
 
 class AxisId(LowerCaseIdentifier):
