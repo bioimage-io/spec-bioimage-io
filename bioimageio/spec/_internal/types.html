@@ -212,7 +212,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.4.0</footer>
+            <footer>bioimageio.spec 0.5.4.1</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -629,7 +629,7 @@ errors defaults to 'strict'.</p>
 </span><span id="HttpUrl-128"><a href="#HttpUrl-128"><span class="linenos">128</span></a>
 </span><span id="HttpUrl-129"><a href="#HttpUrl-129"><span class="linenos">129</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_after_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="HttpUrl-130"><a href="#HttpUrl-130"><span class="linenos">130</span></a>        <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_after_validator</span><span class="p">()</span>
-</span><span id="HttpUrl-131"><a href="#HttpUrl-131"><span class="linenos">131</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="HttpUrl-131"><a href="#HttpUrl-131"><span class="linenos">131</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
 </span><span id="HttpUrl-132"><a href="#HttpUrl-132"><span class="linenos">132</span></a>        <span class="k">if</span> <span class="p">(</span>
 </span><span id="HttpUrl-133"><a href="#HttpUrl-133"><span class="linenos">133</span></a>            <span class="n">context</span><span class="o">.</span><span class="n">perform_io_checks</span>
 </span><span id="HttpUrl-134"><a href="#HttpUrl-134"><span class="linenos">134</span></a>            <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validated</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span>

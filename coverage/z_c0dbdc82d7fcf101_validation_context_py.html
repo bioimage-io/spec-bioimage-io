@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_c0dbdc82d7fcf101_validator_annotations_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.7.1">coverage.py v7.7.1</a>,
-            created at 2025-03-26 12:21 +0000
+            created at 2025-03-26 23:37 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -136,7 +136,7 @@
     <p class="pln"><span class="n"><a id="t54" href="#t54">54</a></span><span class="t"><span class="str">    if it matches its expected SHA256 hash value.</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t55" href="#t55">55</a></span><span class="t"><span class="str">    """</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t56" href="#t56">56</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t57" href="#t57">57</a></span><span class="t">    <span class="nam">_context_tokens</span><span class="op">:</span> <span class="str">"List[Token[ValidationContext]]"</span> <span class="op">=</span> <span class="nam">field</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t57" href="#t57">57</a></span><span class="t">    <span class="nam">_context_tokens</span><span class="op">:</span> <span class="str">"List[Token[Optional[ValidationContext]]]"</span> <span class="op">=</span> <span class="nam">field</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t58" href="#t58">58</a></span><span class="t">        <span class="nam">init</span><span class="op">=</span><span class="key">False</span><span class="op">,</span> <span class="nam">default_factory</span><span class="op">=</span><span class="nam">list</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t59" href="#t59">59</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t60" href="#t60">60</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -176,11 +176,11 @@
     <p class="pln"><span class="n"><a id="t94" href="#t94">94</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t95" href="#t95">95</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t96" href="#t96">96</a></span><span class="t">    <span class="key">def</span> <span class="nam">__enter__</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t97" href="#t97">97</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">_context_tokens</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">validation_context_var</span><span class="op">.</span><span class="nam">set</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t97" href="#t97">97</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">_context_tokens</span><span class="op">.</span><span class="nam">append</span><span class="op">(</span><span class="nam">_validation_context_var</span><span class="op">.</span><span class="nam">set</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t98" href="#t98">98</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t99" href="#t99">99</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t100" href="#t100">100</a></span><span class="t">    <span class="key">def</span> <span class="nam">__exit__</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">type</span><span class="op">,</span> <span class="nam">value</span><span class="op">,</span> <span class="nam">traceback</span><span class="op">)</span><span class="op">:</span>  <span class="com"># type: ignore</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t101" href="#t101">101</a></span><span class="t">        <span class="nam">validation_context_var</span><span class="op">.</span><span class="nam">reset</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">_context_tokens</span><span class="op">.</span><span class="nam">pop</span><span class="op">(</span><span class="op">-</span><span class="num">1</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t101" href="#t101">101</a></span><span class="t">        <span class="nam">_validation_context_var</span><span class="op">.</span><span class="nam">reset</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">_context_tokens</span><span class="op">.</span><span class="nam">pop</span><span class="op">(</span><span class="op">-</span><span class="num">1</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t102" href="#t102">102</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t103" href="#t103">103</a></span><span class="t">    <span class="key">def</span> <span class="nam">replace</span><span class="op">(</span>  <span class="com"># TODO: probably use __replace__ when py>=3.13</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t104" href="#t104">104</a></span><span class="t">        <span class="nam">self</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -242,14 +242,16 @@
     <p class="run"><span class="n"><a id="t160" href="#t160">160</a></span><span class="t">                <span class="key">return</span> <span class="nam">str</span><span class="op">(</span><span class="nam">source</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t161" href="#t161">161</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t162" href="#t162">162</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t163" href="#t163">163</a></span><span class="t"><span class="nam">validation_context_var</span><span class="op">:</span> <span class="nam">ContextVar</span><span class="op">[</span><span class="nam">ValidationContext</span><span class="op">]</span> <span class="op">=</span> <span class="nam">ContextVar</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t164" href="#t164">164</a></span><span class="t">    <span class="str">"validation_context_var"</span><span class="op">,</span> <span class="nam">default</span><span class="op">=</span><span class="nam">ValidationContext</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t163" href="#t163">163</a></span><span class="t"><span class="nam">_validation_context_var</span><span class="op">:</span> <span class="nam">ContextVar</span><span class="op">[</span><span class="nam">Optional</span><span class="op">[</span><span class="nam">ValidationContext</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="nam">ContextVar</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t164" href="#t164">164</a></span><span class="t">    <span class="str">"validation_context_var"</span><span class="op">,</span> <span class="nam">default</span><span class="op">=</span><span class="key">None</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t165" href="#t165">165</a></span><span class="t"><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t166" href="#t166">166</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t167" href="#t167">167</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t168" href="#t168">168</a></span><span class="t"><span class="key">def</span> <span class="nam">get_validation_context</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t169" href="#t169">169</a></span><span class="t">    <span class="str">"""Get the currently active validation context"""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t170" href="#t170">170</a></span><span class="t">    <span class="key">return</span> <span class="nam">validation_context_var</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t168" href="#t168">168</a></span><span class="t"><span class="key">def</span> <span class="nam">get_validation_context</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t169" href="#t169">169</a></span><span class="t">    <span class="nam">default</span><span class="op">:</span> <span class="nam">Optional</span><span class="op">[</span><span class="nam">ValidationContext</span><span class="op">]</span> <span class="op">=</span> <span class="key">None</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t170" href="#t170">170</a></span><span class="t"><span class="op">)</span> <span class="op">-></span> <span class="nam">ValidationContext</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t171" href="#t171">171</a></span><span class="t">    <span class="str">"""Get the currently active validation context (or a default)"""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t172" href="#t172">172</a></span><span class="t">    <span class="key">return</span> <span class="nam">_validation_context_var</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="op">)</span> <span class="key">or</span> <span class="nam">default</span> <span class="key">or</span> <span class="nam">ValidationContext</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -259,7 +261,7 @@
             <a class="nav" href="z_c0dbdc82d7fcf101_validator_annotations_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.7.1">coverage.py v7.7.1</a>,
-            created at 2025-03-26 12:21 +0000
+            created at 2025-03-26 23:37 +0000
         </p>
     </div>
 </footer>

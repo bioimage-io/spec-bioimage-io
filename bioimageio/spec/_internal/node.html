@@ -44,7 +44,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.4.0</footer>
+            <footer>bioimageio.spec 0.5.4.1</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -77,7 +77,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.type_guards</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_kwargs</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.validation_context</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationContext</span><span class="p">,</span> <span class="n">validation_context_var</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.validation_context</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationContext</span><span class="p">,</span> <span class="n">get_validation_context</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="k">def</span><span class="w"> </span><span class="nf">_node_title_generator</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Node</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -129,7 +129,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>
 </span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>        <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>            <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>            <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
 </span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>            <span class="n">context</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
@@ -195,7 +195,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="Node-65"><a href="#Node-65"><span class="linenos">65</span></a>        <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="Node-66"><a href="#Node-66"><span class="linenos">66</span></a>
 </span><span id="Node-67"><a href="#Node-67"><span class="linenos">67</span></a>        <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Node-68"><a href="#Node-68"><span class="linenos">68</span></a>            <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="Node-68"><a href="#Node-68"><span class="linenos">68</span></a>            <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
 </span><span id="Node-69"><a href="#Node-69"><span class="linenos">69</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
 </span><span id="Node-70"><a href="#Node-70"><span class="linenos">70</span></a>            <span class="n">context</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
 </span><span id="Node-71"><a href="#Node-71"><span class="linenos">71</span></a>
@@ -249,7 +249,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="Node.model_validate-65"><a href="#Node.model_validate-65"><span class="linenos">65</span></a>        <span class="n">__tracebackhide__</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="Node.model_validate-66"><a href="#Node.model_validate-66"><span class="linenos">66</span></a>
 </span><span id="Node.model_validate-67"><a href="#Node.model_validate-67"><span class="linenos">67</span></a>        <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Node.model_validate-68"><a href="#Node.model_validate-68"><span class="linenos">68</span></a>            <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="Node.model_validate-68"><a href="#Node.model_validate-68"><span class="linenos">68</span></a>            <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
 </span><span id="Node.model_validate-69"><a href="#Node.model_validate-69"><span class="linenos">69</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
 </span><span id="Node.model_validate-70"><a href="#Node.model_validate-70"><span class="linenos">70</span></a>            <span class="n">context</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
 </span><span id="Node.model_validate-71"><a href="#Node.model_validate-71"><span class="linenos">71</span></a>

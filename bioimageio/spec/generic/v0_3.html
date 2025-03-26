@@ -290,7 +290,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.4.0</footer>
+            <footer>bioimageio.spec 0.5.4.1</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -848,7 +848,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
 
                             <div id="Author.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f6a0834afc0&gt;)]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f6c10656f20&gt;)]</span>
 
         
     </div>
@@ -938,7 +938,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../generic.
                             </div>
                             <div id="BadgeDescr.icon" class="classattr">
                                 <div class="attr variable">
-            <span class="name">icon</span><span class="annotation">: Annotated[Union[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)], <a href="#RelativeFilePath">RelativeFilePath</a>], AfterValidator(func=&lt;function wo_special_file_name at 0x7f6a08b9b100&gt;), PlainSerializer(func=&lt;function _package at 0x7f6a08b9a5c0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], <a href="#HttpUrl">HttpUrl</a>, Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)], NoneType], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://colab.research.google.com/assets/colab-badge.svg&#39;])]</span>
+            <span class="name">icon</span><span class="annotation">: Annotated[Union[Annotated[Union[Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)], <a href="#RelativeFilePath">RelativeFilePath</a>], AfterValidator(func=&lt;function wo_special_file_name at 0x7f6c10e9f060&gt;), PlainSerializer(func=&lt;function _package at 0x7f6c10e9e520&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)], <a href="#HttpUrl">HttpUrl</a>, Annotated[pydantic_core._pydantic_core.Url, UrlConstraints(max_length=2083, allowed_schemes=[&#39;http&#39;, &#39;https&#39;], host_required=None, default_host=None, default_port=None, default_path=None)], NoneType], FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://colab.research.google.com/assets/colab-badge.svg&#39;])]</span>
 
         
     </div>
@@ -1218,7 +1218,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="FileDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="#HttpUrl">HttpUrl</a>, <a href="#RelativeFilePath">RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f6a08b9b100&gt;), PlainSerializer(func=&lt;function _package at 0x7f6a08b9a5c0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="#HttpUrl">HttpUrl</a>, <a href="#RelativeFilePath">RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f6c10e9f060&gt;), PlainSerializer(func=&lt;function _package at 0x7f6c10e9e520&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -1556,7 +1556,7 @@ method.</p>
 </span><span id="HttpUrl-128"><a href="#HttpUrl-128"><span class="linenos">128</span></a>
 </span><span id="HttpUrl-129"><a href="#HttpUrl-129"><span class="linenos">129</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_after_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span id="HttpUrl-130"><a href="#HttpUrl-130"><span class="linenos">130</span></a>        <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_after_validator</span><span class="p">()</span>
-</span><span id="HttpUrl-131"><a href="#HttpUrl-131"><span class="linenos">131</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="HttpUrl-131"><a href="#HttpUrl-131"><span class="linenos">131</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
 </span><span id="HttpUrl-132"><a href="#HttpUrl-132"><span class="linenos">132</span></a>        <span class="k">if</span> <span class="p">(</span>
 </span><span id="HttpUrl-133"><a href="#HttpUrl-133"><span class="linenos">133</span></a>            <span class="n">context</span><span class="o">.</span><span class="n">perform_io_checks</span>
 </span><span id="HttpUrl-134"><a href="#HttpUrl-134"><span class="linenos">134</span></a>            <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validated</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span>
@@ -1778,7 +1778,7 @@ errors defaults to 'strict'.</p>
 
                             <div id="Maintainer.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f6a0834afc0&gt;)]]</span>
+            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, Predicate(func=&lt;function _has_no_slash at 0x7f6c10656f20&gt;)]]</span>
 
         
     </div>
@@ -2116,7 +2116,7 @@ errors defaults to 'strict'.</p>
                             </div>
                             <div id="Uploader.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7f6a085dd620&gt;)]]</span>
+            <span class="name">name</span><span class="annotation">: Optional[Annotated[str, AfterValidator(func=&lt;function _remove_slashes at 0x7f6c10de5580&gt;)]]</span>
 
         
     </div>

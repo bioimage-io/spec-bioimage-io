@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_c0dbdc82d7fcf101_gh_utils_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.7.1">coverage.py v7.7.1</a>,
-            created at 2025-03-26 12:21 +0000
+            created at 2025-03-26 23:37 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -97,7 +97,7 @@
     <p class="pln"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t"><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t"><span class="key">from</span> <span class="nam">typing_extensions</span> <span class="key">import</span> <span class="nam">Annotated</span><span class="op">,</span> <span class="nam">LiteralString</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t17" href="#t17">17</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">validation_context</span> <span class="key">import</span> <span class="nam">validation_context_var</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">validation_context</span> <span class="key">import</span> <span class="nam">get_validation_context</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">warning_levels</span> <span class="key">import</span> <span class="nam">WARNING</span><span class="op">,</span> <span class="nam">WarningSeverity</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t21" href="#t21">21</a></span><span class="t"><span class="key">if</span> <span class="nam">TYPE_CHECKING</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -224,9 +224,9 @@
     <p class="pln"><span class="n"><a id="t142" href="#t142">142</a></span><span class="t">    <span class="nam">field</span><span class="op">:</span> <span class="nam">Optional</span><span class="op">[</span><span class="nam">str</span><span class="op">]</span> <span class="op">=</span> <span class="key">None</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t143" href="#t143">143</a></span><span class="t"><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t144" href="#t144">144</a></span><span class="t">    <span class="nam">msg_context</span> <span class="op">=</span> <span class="op">{</span><span class="str">"value"</span><span class="op">:</span> <span class="nam">value</span><span class="op">,</span> <span class="str">"severity"</span><span class="op">:</span> <span class="nam">severity</span><span class="op">,</span> <span class="op">**</span><span class="op">(</span><span class="nam">msg_context</span> <span class="key">or</span> <span class="op">{</span><span class="op">}</span><span class="op">)</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t145" href="#t145">145</a></span><span class="t">    <span class="key">if</span> <span class="nam">severity</span> <span class="op">>=</span> <span class="nam">validation_context_var</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">warning_level</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t145" href="#t145">145</a></span><span class="t">    <span class="key">if</span> <span class="nam">severity</span> <span class="op">>=</span> <span class="op">(</span><span class="nam">ctxt</span> <span class="op">:=</span> <span class="nam">get_validation_context</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">.</span><span class="nam">warning_level</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t146" href="#t146">146</a></span><span class="t">        <span class="key">raise</span> <span class="nam">PydanticCustomError</span><span class="op">(</span><span class="str">"warning"</span><span class="op">,</span> <span class="nam">msg</span><span class="op">,</span> <span class="nam">msg_context</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t147" href="#t147">147</a></span><span class="t">    <span class="key">elif</span> <span class="nam">validation_context_var</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">log_warnings</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t147" href="#t147">147</a></span><span class="t">    <span class="key">elif</span> <span class="nam">ctxt</span><span class="op">.</span><span class="nam">log_warnings</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t148" href="#t148">148</a></span><span class="t">        <span class="nam">log_msg</span> <span class="op">=</span> <span class="op">(</span><span class="nam">field</span> <span class="op">+</span> <span class="str">": "</span> <span class="key">if</span> <span class="nam">field</span> <span class="key">else</span> <span class="str">""</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="nam">msg</span><span class="op">.</span><span class="nam">format</span><span class="op">(</span><span class="op">**</span><span class="nam">msg_context</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t149" href="#t149">149</a></span><span class="t">        <span class="nam">logger</span><span class="op">.</span><span class="nam">opt</span><span class="op">(</span><span class="nam">depth</span><span class="op">=</span><span class="num">1</span><span class="op">)</span><span class="op">.</span><span class="nam">log</span><span class="op">(</span><span class="nam">severity</span><span class="op">,</span> <span class="nam">log_msg</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
@@ -238,7 +238,7 @@
             <a class="nav" href="z_c0dbdc82d7fcf101_gh_utils_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.7.1">coverage.py v7.7.1</a>,
-            created at 2025-03-26 12:21 +0000
+            created at 2025-03-26 23:37 +0000
         </p>
     </div>
 </footer>

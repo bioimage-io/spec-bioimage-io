@@ -96,15 +96,12 @@
 
             </li>
             <li>
-                    <a class="variable" href="#validation_context_var">validation_context_var</a>
-            </li>
-            <li>
                     <a class="function" href="#get_validation_context">get_validation_context</a>
             </li>
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.4.0</footer>
+            <footer>bioimageio.spec 0.5.4.1</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -179,7 +176,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">    if it matches its expected SHA256 hash value.</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="n">_context_tokens</span><span class="p">:</span> <span class="s2">&quot;List[Token[ValidationContext]]&quot;</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="n">_context_tokens</span><span class="p">:</span> <span class="s2">&quot;List[Token[Optional[ValidationContext]]]&quot;</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>        <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="p">)</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
@@ -219,11 +216,11 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="p">)</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_context_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">validation_context_var</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_context_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_validation_context_var</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="k">return</span> <span class="bp">self</span>
 </span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
 </span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="n">validation_context_var</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_context_tokens</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="n">_validation_context_var</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_context_tokens</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
 </span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
 </span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">replace</span><span class="p">(</span>  <span class="c1"># TODO: probably use __replace__ when py&gt;=3.13</span>
 </span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>        <span class="bp">self</span><span class="p">,</span>
@@ -285,14 +282,16 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 </span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
 </span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="n">validation_context_var</span><span class="p">:</span> <span class="n">ContextVar</span><span class="p">[</span><span class="n">ValidationContext</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContextVar</span><span class="p">(</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="s2">&quot;validation_context_var&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ValidationContext</span><span class="p">()</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="n">_validation_context_var</span><span class="p">:</span> <span class="n">ContextVar</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">ValidationContext</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ContextVar</span><span class="p">(</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="s2">&quot;validation_context_var&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
 </span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="p">)</span>
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
 </span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_validation_context</span><span class="p">():</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the currently active validation context&quot;&quot;&quot;</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>    <span class="k">return</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_validation_context</span><span class="p">(</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>    <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ValidationContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationContext</span><span class="p">:</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the currently active validation context (or a default)&quot;&quot;&quot;</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>    <span class="k">return</span> <span class="n">_validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="ow">or</span> <span class="n">default</span> <span class="ow">or</span> <span class="n">ValidationContext</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -488,7 +487,7 @@ e.g. downloading a remote files.</p>
 </span><span id="ValidationContext-55"><a href="#ValidationContext-55"><span class="linenos"> 55</span></a><span class="sd">    if it matches its expected SHA256 hash value.</span>
 </span><span id="ValidationContext-56"><a href="#ValidationContext-56"><span class="linenos"> 56</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="ValidationContext-57"><a href="#ValidationContext-57"><span class="linenos"> 57</span></a>
-</span><span id="ValidationContext-58"><a href="#ValidationContext-58"><span class="linenos"> 58</span></a>    <span class="n">_context_tokens</span><span class="p">:</span> <span class="s2">&quot;List[Token[ValidationContext]]&quot;</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+</span><span id="ValidationContext-58"><a href="#ValidationContext-58"><span class="linenos"> 58</span></a>    <span class="n">_context_tokens</span><span class="p">:</span> <span class="s2">&quot;List[Token[Optional[ValidationContext]]]&quot;</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
 </span><span id="ValidationContext-59"><a href="#ValidationContext-59"><span class="linenos"> 59</span></a>        <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span>
 </span><span id="ValidationContext-60"><a href="#ValidationContext-60"><span class="linenos"> 60</span></a>    <span class="p">)</span>
 </span><span id="ValidationContext-61"><a href="#ValidationContext-61"><span class="linenos"> 61</span></a>
@@ -528,11 +527,11 @@ e.g. downloading a remote files.</p>
 </span><span id="ValidationContext-95"><a href="#ValidationContext-95"><span class="linenos"> 95</span></a>        <span class="p">)</span>
 </span><span id="ValidationContext-96"><a href="#ValidationContext-96"><span class="linenos"> 96</span></a>
 </span><span id="ValidationContext-97"><a href="#ValidationContext-97"><span class="linenos"> 97</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="ValidationContext-98"><a href="#ValidationContext-98"><span class="linenos"> 98</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_context_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">validation_context_var</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+</span><span id="ValidationContext-98"><a href="#ValidationContext-98"><span class="linenos"> 98</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_context_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_validation_context_var</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 </span><span id="ValidationContext-99"><a href="#ValidationContext-99"><span class="linenos"> 99</span></a>        <span class="k">return</span> <span class="bp">self</span>
 </span><span id="ValidationContext-100"><a href="#ValidationContext-100"><span class="linenos">100</span></a>
 </span><span id="ValidationContext-101"><a href="#ValidationContext-101"><span class="linenos">101</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
-</span><span id="ValidationContext-102"><a href="#ValidationContext-102"><span class="linenos">102</span></a>        <span class="n">validation_context_var</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_context_tokens</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</span><span id="ValidationContext-102"><a href="#ValidationContext-102"><span class="linenos">102</span></a>        <span class="n">_validation_context_var</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_context_tokens</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
 </span><span id="ValidationContext-103"><a href="#ValidationContext-103"><span class="linenos">103</span></a>
 </span><span id="ValidationContext-104"><a href="#ValidationContext-104"><span class="linenos">104</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">replace</span><span class="p">(</span>  <span class="c1"># TODO: probably use __replace__ when py&gt;=3.13</span>
 </span><span id="ValidationContext-105"><a href="#ValidationContext-105"><span class="linenos">105</span></a>        <span class="bp">self</span><span class="p">,</span>
@@ -809,37 +808,26 @@ instead of aggregating errors and returning a <code><a href="../../spec.html#Inv
                                 </dl>
                             </div>
                 </section>
-                <section id="validation_context_var">
-                    <div class="attr variable">
-            <span class="name">validation_context_var</span><span class="annotation">: _contextvars.ContextVar[<a href="#ValidationContext">ValidationContext</a>]</span>        =
-<input id="validation_context_var-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="validation_context_var-view-value"></label><span class="default_value">&lt;ContextVar name=&#39;validation_context_var&#39; default=ValidationContext(file_name=None, perform_io_checks=True, known_files={}, update_hashes=False, _context_tokens=[], root=PosixPath(&#39;.&#39;), warning_level=50, log_warnings=True, raise_errors=False)&gt;</span>
-
-        
-    </div>
-    <a class="headerlink" href="#validation_context_var"></a>
-    
-    
-
-                </section>
                 <section id="get_validation_context">
                             <input id="get_validation_context-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_validation_context</span><span class="signature pdoc-code condensed">(<span class="return-annotation">):</span></span>
+        <span class="name">get_validation_context</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#ValidationContext">ValidationContext</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n"><a href="#ValidationContext">ValidationContext</a></span>:</span></span>
 
                 <label class="view-source-button" for="get_validation_context-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#get_validation_context"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_validation_context-169"><a href="#get_validation_context-169"><span class="linenos">169</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_validation_context</span><span class="p">():</span>
-</span><span id="get_validation_context-170"><a href="#get_validation_context-170"><span class="linenos">170</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the currently active validation context&quot;&quot;&quot;</span>
-</span><span id="get_validation_context-171"><a href="#get_validation_context-171"><span class="linenos">171</span></a>    <span class="k">return</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_validation_context-169"><a href="#get_validation_context-169"><span class="linenos">169</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_validation_context</span><span class="p">(</span>
+</span><span id="get_validation_context-170"><a href="#get_validation_context-170"><span class="linenos">170</span></a>    <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ValidationContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="get_validation_context-171"><a href="#get_validation_context-171"><span class="linenos">171</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationContext</span><span class="p">:</span>
+</span><span id="get_validation_context-172"><a href="#get_validation_context-172"><span class="linenos">172</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the currently active validation context (or a default)&quot;&quot;&quot;</span>
+</span><span id="get_validation_context-173"><a href="#get_validation_context-173"><span class="linenos">173</span></a>    <span class="k">return</span> <span class="n">_validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="ow">or</span> <span class="n">default</span> <span class="ow">or</span> <span class="n">ValidationContext</span><span class="p">()</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Get the currently active validation context</p>
+            <div class="docstring"><p>Get the currently active validation context (or a default)</p>
 </div>
 
 

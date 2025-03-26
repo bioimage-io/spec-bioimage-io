@@ -56,7 +56,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.4.0</footer>
+            <footer>bioimageio.spec 0.5.4.1</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -92,7 +92,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">KNOWN_GH_USERS</span><span class="p">,</span> <span class="n">KNOWN_INVALID_GH_USERS</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.field_warning</span><span class="w"> </span><span class="kn">import</span> <span class="n">issue_warning</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.type_guards</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_mapping</span><span class="p">,</span> <span class="n">is_sequence</span><span class="p">,</span> <span class="n">is_tuple</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.validation_context</span><span class="w"> </span><span class="kn">import</span> <span class="n">validation_context_var</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.validation_context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_validation_context</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="k">def</span><span class="w"> </span><span class="nf">is_valid_yaml_leaf_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -141,7 +141,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
 </span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="k">if</span> <span class="p">(</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>        <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_GH_USERS</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>        <span class="ow">or</span> <span class="ow">not</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">perform_io_checks</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>        <span class="ow">or</span> <span class="ow">not</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">perform_io_checks</span>
 </span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="p">):</span>
 </span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>        <span class="k">return</span> <span class="n">username</span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
@@ -323,7 +323,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="validate_gh_user-65"><a href="#validate_gh_user-65"><span class="linenos">65</span></a>
 </span><span id="validate_gh_user-66"><a href="#validate_gh_user-66"><span class="linenos">66</span></a>    <span class="k">if</span> <span class="p">(</span>
 </span><span id="validate_gh_user-67"><a href="#validate_gh_user-67"><span class="linenos">67</span></a>        <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_GH_USERS</span>
-</span><span id="validate_gh_user-68"><a href="#validate_gh_user-68"><span class="linenos">68</span></a>        <span class="ow">or</span> <span class="ow">not</span> <span class="n">validation_context_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">perform_io_checks</span>
+</span><span id="validate_gh_user-68"><a href="#validate_gh_user-68"><span class="linenos">68</span></a>        <span class="ow">or</span> <span class="ow">not</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">perform_io_checks</span>
 </span><span id="validate_gh_user-69"><a href="#validate_gh_user-69"><span class="linenos">69</span></a>    <span class="p">):</span>
 </span><span id="validate_gh_user-70"><a href="#validate_gh_user-70"><span class="linenos">70</span></a>        <span class="k">return</span> <span class="n">username</span>
 </span><span id="validate_gh_user-71"><a href="#validate_gh_user-71"><span class="linenos">71</span></a>
