@@ -19,7 +19,7 @@ cite:
   - text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
     doi: 10.1007/978-3-319-24574-4_28
   - text: "2018 Data Science Bowl"
-    url: https://www.kaggle.com/c/data-science-bowl-2018
+    url: https://example.com  # dummy url to avoid sporadic 404 codes from https://www.kaggle.com/c/data-science-bowl-2018
 
 git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 tags: [unet2d, pytorch, nucleus, segmentation, dsb2018]
