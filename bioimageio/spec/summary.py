@@ -382,10 +382,11 @@ class ValidationSummary(BaseModel, extra="allow"):
         _ = path.write_text(html, encoding="utf-8")
         logger.info("Saved HTML formatted summary to {}", path.absolute())
 
-    def load_json(self, path: Path) -> Self:
+    @classmethod
+    def load_json(cls, path: Path) -> Self:
         """Load validation/test summary from a suitable JSON file"""
-        json_str = path.read_text(encoding="utf-8")
-        return self.model_validate_json(json_str)
+        json_str = Path(path).read_text(encoding="utf-8")
+        return cls.model_validate_json(json_str)
 
     @field_validator("env", mode="before")
     def _convert_dict(cls, value: List[Union[List[str], Dict[str, str]]]):
