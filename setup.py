@@ -52,6 +52,7 @@ _ = setup(
         "tests": (
             test_extras := [
                 "deepdiff",
+                "jsonschema",
                 "lxml",
                 "pytest-cov",
                 "pytest",
@@ -63,7 +64,6 @@ _ = setup(
             + [
                 "black",
                 # "json_schema_for_humans; python_version < 3.13",
-                "jsonschema",
                 "jupyter-black",
                 "jupyter",
                 "pdoc",

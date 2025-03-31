@@ -363,29 +363,30 @@ class ValidationSummary(BaseModel, extra="allow"):
     ):
         """Save validation/test summary as JSON file."""
         json_str = self.model_dump_json(indent=indent)
-        path.parent.mkdir(exist_ok=True)
+        path.parent.mkdir(exist_ok=True, parents=True)
         _ = path.write_text(json_str, encoding="utf-8")
         logger.info("Saved summary to {}", path.absolute())
 
     def save_markdown(self, path: Path = Path("summary.md")):
         """Save rendered validation/test summary as Markdown file."""
         formatted = self.format_md()
-        path.parent.mkdir(exist_ok=True)
+        path.parent.mkdir(exist_ok=True, parents=True)
         _ = path.write_text(formatted, encoding="utf-8")
         logger.info("Saved Markdown formatted summary to {}", path.absolute())
 
     def save_html(self, path: Path = Path("summary.html")) -> None:
         """Save rendered validation/test summary as HTML file."""
-        path.parent.mkdir(exist_ok=True)
+        path.parent.mkdir(exist_ok=True, parents=True)
 
         html = self.format_html()
         _ = path.write_text(html, encoding="utf-8")
         logger.info("Saved HTML formatted summary to {}", path.absolute())
 
-    def load_json(self, path: Path) -> Self:
+    @classmethod
+    def load_json(cls, path: Path) -> Self:
         """Load validation/test summary from a suitable JSON file"""
-        json_str = path.read_text(encoding="utf-8")
-        return self.model_validate_json(json_str)
+        json_str = Path(path).read_text(encoding="utf-8")
+        return cls.model_validate_json(json_str)
 
     @field_validator("env", mode="before")
     def _convert_dict(cls, value: List[Union[List[str], Dict[str, str]]]):
@@ -465,7 +466,7 @@ def _format_summary(
             if target == "md":
                 return f"[{header}](#{tag})"
             elif target == "html":
-                return f'<a href="{tag}">{header}</a>'
+                return f'<a href="#{tag}">{header}</a>'
             elif isinstance(target, rich.console.Console):
                 return f"{header} below"
             else:
