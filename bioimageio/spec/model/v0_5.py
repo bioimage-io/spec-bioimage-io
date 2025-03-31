@@ -3527,7 +3527,7 @@ def generate_covers(
         assert ndim == 3
 
         # transpose axis order such that longest axis comes first...
-        axis_order = list(np.argsort(list(data.shape)))
+        axis_order: List[int] = list(np.argsort(list(data.shape)))
         axis_order.reverse()
         # ... and channel axis is last
         c = [i for i in range(3) if isinstance(axes[i], ChannelAxis)][0]

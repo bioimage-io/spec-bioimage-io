@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any, ClassVar, Type
 
 import pydantic
-import zipp
+import zipp  # pyright: ignore[reportMissingTypeStubs]
 from annotated_types import Predicate
 from pydantic import RootModel, StringConstraints
 from typing_extensions import Annotated

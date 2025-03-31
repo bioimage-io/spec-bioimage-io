@@ -2,8 +2,12 @@ import shutil
 import sys
 from pathlib import Path
 
-from json_schema_for_humans.generate import generate_from_filename
-from json_schema_for_humans.generation_configuration import GenerationConfiguration
+from json_schema_for_humans.generate import (  # pyright: ignore[reportMissingTypeStubs]
+    generate_from_filename,
+)
+from json_schema_for_humans.generation_configuration import (  # pyright: ignore[reportMissingTypeStubs]
+    GenerationConfiguration,
+)
 
 if __name__ == "__main__":
     glob_pattern = "dist/bioimageio_schema_*.json"
