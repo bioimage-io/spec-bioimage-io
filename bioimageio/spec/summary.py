@@ -363,20 +363,20 @@ class ValidationSummary(BaseModel, extra="allow"):
     ):
         """Save validation/test summary as JSON file."""
         json_str = self.model_dump_json(indent=indent)
-        path.parent.mkdir(exist_ok=True)
+        path.parent.mkdir(exist_ok=True, parents=True)
         _ = path.write_text(json_str, encoding="utf-8")
         logger.info("Saved summary to {}", path.absolute())
 
     def save_markdown(self, path: Path = Path("summary.md")):
         """Save rendered validation/test summary as Markdown file."""
         formatted = self.format_md()
-        path.parent.mkdir(exist_ok=True)
+        path.parent.mkdir(exist_ok=True, parents=True)
         _ = path.write_text(formatted, encoding="utf-8")
         logger.info("Saved Markdown formatted summary to {}", path.absolute())
 
     def save_html(self, path: Path = Path("summary.html")) -> None:
         """Save rendered validation/test summary as HTML file."""
-        path.parent.mkdir(exist_ok=True)
+        path.parent.mkdir(exist_ok=True, parents=True)
 
         html = self.format_html()
         _ = path.write_text(html, encoding="utf-8")
