@@ -5,6 +5,7 @@ from io import StringIO
 from itertools import chain
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from textwrap import TextWrapper
 from types import MappingProxyType
 from typing import (
     Any,
@@ -94,7 +95,9 @@ class ErrorEntry(ValidationEntry):
                 record=True,
                 file=open(os.devnull, "wt", encoding="utf-8"),
                 color_system="truecolor",
-                width=100,
+                width=120,
+                tab_size=4,
+                soft_wrap=True,
             )
             console.print(self._traceback_rich)
             if not self.traceback_md:
@@ -271,7 +274,9 @@ class ValidationSummary(BaseModel, extra="allow"):
     # TODO: fix bug which casuses extensive white space between the info table and details table
     # (the generated markdown seems fine)
     @no_type_check
-    def display(self) -> None:
+    def display(
+        self, width: Optional[int] = None, tab_size: int = 4, soft_wrap: bool = True
+    ) -> None:
         try:  # render as HTML in Jupyter notebook
             from IPython.core.getipython import get_ipython
             from IPython.display import display_html
@@ -283,7 +288,13 @@ class ValidationSummary(BaseModel, extra="allow"):
                 return
 
         # render with rich
-        self._format(target=rich.console.Console())
+        self._format(
+            target=rich.console.Console(
+                width=width,
+                tab_size=tab_size,
+                soft_wrap=soft_wrap,
+            )
+        )
 
     def add_detail(self, detail: ValidationDetail):
         if detail.status == "failed":
@@ -592,10 +603,14 @@ def _format_summary(
                 details.extend([["", "", line] for line in additional_lines])
 
             if d.conda_compare:
+                wrapped_conda_compare = "\n".join(
+                    TextWrapper(width=116).wrap("\n".join(d.conda_compare))
+                )
+
                 text, *additional_lines = format_text(
                     f"conda compare ({d.name}):\n"
                     + format_code(
-                        d.conda_compare,
+                        wrapped_conda_compare,
                         title="Conda Environment Comparison",
                         cell_line_limit=15,
                     )
