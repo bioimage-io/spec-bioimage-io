@@ -3,7 +3,7 @@ authors:
   - name: Fynn Beuttenmüller
     github_user: fynnbe
 cite:
-  - { url: "https://example.com", text: Test }
+  - { url: 'https://example.com/', text: Test }
 covers: []
 description: Test model for scaling
 documentation: docs.md
