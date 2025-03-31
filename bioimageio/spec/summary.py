@@ -466,7 +466,7 @@ def _format_summary(
             if target == "md":
                 return f"[{header}](#{tag})"
             elif target == "html":
-                return f'<a href="{tag}">{header}</a>'
+                return f'<a href="#{tag}">{header}</a>'
             elif isinstance(target, rich.console.Console):
                 return f"{header} below"
             else:
