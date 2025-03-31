@@ -31,7 +31,7 @@ outputs:
 tags: [scaling, test]
 test_inputs: [test_input.npy]
 test_outputs: [test_output.npy]
-timestamp: "2022-10-23T00:00:00Z"
+timestamp: '2022-10-23T00:00:00Z'
 type: model
 weights:
   pytorch_state_dict:
