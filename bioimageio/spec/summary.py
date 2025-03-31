@@ -484,7 +484,7 @@ def _format_summary(
         left_out_details += 1
         return make_link(left_out_details_header)
 
-    def format_ctxt_name(*ctxt: str):
+    def format_context_name(*ctxt: str):
         return "`context:" + ".".join(ctxt) + "`"
 
     def format_code(
@@ -532,7 +532,7 @@ def _format_summary(
         else:
             assert_never(target)
 
-    def format_text(text: str):
+    def format_text(text: str):  # TODO: textwrap
         if target == "html":
             return [f"<pre>{text}</pre>"]
         else:
@@ -561,21 +561,13 @@ def _format_summary(
         for d in summary.details:
             details.append([d.status_icon, format_loc(d.loc, target), d.name])
             if d.context is not None and d.context != last_context:
-                # only log new contexts to reduce the clutter
-                details.append(
-                    [
-                        "🔍",
-                        format_ctxt_name("perform_io_checks"),
-                        str(d.context.perform_io_checks),
-                    ]
-                )
                 if d.context.perform_io_checks:
                     details.append(
-                        ["🔍", format_ctxt_name("root"), str(d.context.root)]
+                        ["🔍", format_context_name("root"), str(d.context.root)]
                     )
                     for kfn, sha in d.context.known_files.items():
                         details.append(
-                            ["🔍", format_ctxt_name("known_files", kfn), sha]
+                            ["🔍", format_context_name("known_files", kfn), sha]
                         )
 
                 last_context = d.context
