@@ -3,7 +3,7 @@ authors:
   - name: Fynn Beuttenmüller
     github_user: fynnbe
 cite:
-  - { url: "https://example.com", text: Test }
+  - { url: 'https://example.com/', text: Test }
 covers: []
 description: Test model for scaling
 documentation: docs.md
@@ -31,7 +31,7 @@ outputs:
 tags: [scaling, test]
 test_inputs: [test_input.npy]
 test_outputs: [test_output.npy]
-timestamp: "2022-10-23T00:00:00Z"
+timestamp: '2022-10-23T00:00:00Z'
 type: model
 weights:
   pytorch_state_dict:

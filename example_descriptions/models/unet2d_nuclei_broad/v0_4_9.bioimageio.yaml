@@ -3,22 +3,22 @@ format_version: 0.4.9
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
 authors:
-  - name: "Constantin Pape;@bioimage-io"
-    affiliation: "EMBL Heidelberg"
-    orcid: "0000-0001-6562-7187"
-  - name: "Fynn Beuttenmueller"
-    affiliation: "EMBL Heidelberg"
-    orcid: "0000-0002-8567-6389"
+  - name: 'Constantin Pape;@bioimage-io'
+    affiliation: 'EMBL Heidelberg'
+    orcid: '0000-0001-6562-7187'
+  - name: 'Fynn Beuttenmueller'
+    affiliation: 'EMBL Heidelberg'
+    orcid: '0000-0002-8567-6389'
 maintainers:
-  - name: "Constantin Pape"
+  - name: 'Constantin Pape'
     github_user: constantinpape
 
 # we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
 cite:
-  - text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
+  - text: 'Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015.'
     doi: 10.1007/978-3-319-24574-4_28
-  - text: "2018 Data Science Bowl"
-    url: https://example.com  # dummy url to avoid sporadic 404 codes from https://www.kaggle.com/c/data-science-bowl-2018
+  - text: '2018 Data Science Bowl'
+    url: https://example.com/ # dummy url to avoid sporadic 404 codes from https://www.kaggle.com/c/data-science-bowl-2018
 
 git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 tags: [unet2d, pytorch, nucleus, segmentation, dsb2018]
@@ -65,9 +65,9 @@ sample_outputs: [test_output.png]
 weights:
   pytorch_state_dict:
     authors:
-      - name: "Constantin Pape;@bioimage-io"
-        affiliation: "EMBL Heidelberg"
-        orcid: "0000-0001-6562-7187"
+      - name: 'Constantin Pape;@bioimage-io'
+        affiliation: 'EMBL Heidelberg'
+        orcid: '0000-0001-6562-7187'
     source: https://zenodo.org/records/3446812/files/unet2d_weights.torch
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
     architecture: unet2d.py:UNet2d

@@ -16,7 +16,7 @@ def get_ref_url(
         ...     "Binarize",
         ...     "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/proc_ops.py"
         ... )
-        'https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/proc_ops.py#L192-L223'
+        'https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/proc_ops.py#L...-L...'
 
     """
     # hotfix to handle requests not available in pyodide, see

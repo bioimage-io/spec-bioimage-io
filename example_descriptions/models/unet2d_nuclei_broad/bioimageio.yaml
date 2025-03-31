@@ -1,139 +1,135 @@
-type: model
-format_version: 0.5.4
-
+%YAML 1.2
+---
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
+covers:
+  - cover0.png
 authors:
-  - name: "Constantin Pape;@bioimage-io"
-    affiliation: "EMBL Heidelberg"
-    orcid: "0000-0001-6562-7187"
-  - name: "Fynn Beuttenmueller"
-    affiliation: "EMBL Heidelberg"
-    orcid: "0000-0002-8567-6389"
-maintainers:
-  - name: "Constantin Pape"
-    github_user: constantinpape
-  - name: "Fynn Beuttenmueller"
-    github_user: fynnbe
-
-# we allow for multiple citations. Each citation contains TEXT and a DOI and/or URL.
+  - affiliation: EMBL Heidelberg
+    orcid: 0000-0001-6562-7187
+    name: Constantin Pape;@bioimage-io
+  - affiliation: EMBL Heidelberg
+    orcid: 0000-0002-8567-6389
+    name: Fynn Beuttenmueller
 cite:
-  - text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
+  - text:
+      'Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation.
+      MICCAI 2015.'
     doi: 10.1007/978-3-319-24574-4_28
-  - text: "2018 Data Science Bowl"
-    url: https://example.com  # dummy url to avoid sporadic 404 codes from https://www.kaggle.com/c/data-science-bowl-2018
-
-git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
-tags: [unet2d, pytorch, nucleus, segmentation, dsb2018]
+  - text: 2018 Data Science Bowl
+    url: https://example.com/
 license: MIT
-
-documentation: README.md # may also be a url
-covers: [cover0.png]
-attachments: []
-timestamp: 2019-12-11T12:22:32Z # ISO 8601
-
+git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
+maintainers:
+  - name: Constantin Pape
+    github_user: constantinpape
+  - name: Fynn Beuttenmueller
+    github_user: fynnbe
+tags:
+  - unet2d
+  - pytorch
+  - nucleus
+  - segmentation
+  - dsb2018
+format_version: 0.5.4
+type: model
+documentation: README.md
 inputs:
   - id: raw
     description: raw input
     axes:
       - type: batch
-        size: 1 # due to the onnx weights
+        size: 1
       - type: channel
-        channel_names: [raw_intensity]
-      - type: space # todo: scale/unit
+        channel_names:
+          - raw_intensity
+      - size: 512
         id: y
-        size: 512
-      - type: space
-        id: x
-        size: 512
+        type: space
+      - size: 512
+        type: space
     test_tensor:
       source: test_input.npy
       sha256: 92768a2e0f2643c80b57afa5494019a5aafe5b0d92fe36ae740763adf3594a57
     sample_tensor:
       source: test_input.png
       sha256: 8771f558305dd89f4a85fe659e8ef5e116c94d64e668dc23b9282fda3fe9cce8
-    preprocessing: # list of preprocessing steps
-      - id: ensure_dtype # this would be added by default as well
+    preprocessing:
+      - id: ensure_dtype
         kwargs:
           dtype: float32
-      - id: zero_mean_unit_variance # name of preprocessing step
+      - id: zero_mean_unit_variance
         kwargs:
-          axes: [x, y]
-      - id: ensure_dtype # this would be added by default as well
+          axes:
+            - x
+            - y
+      - id: ensure_dtype
         kwargs:
           dtype: float32
-
 outputs:
   - id: probability
     description: probability in [0,1]
-    data:
-      type: float32
-      range:
-        - 0.0
-        - 1.0
     axes:
       - type: batch
       - type: channel
-        channel_names: [probability]
-      - type: space
-        id: y
+        channel_names:
+          - probability
+      - halo: 32
         size:
           tensor_id: raw
           axis_id: y
-        halo: 32
-      - type: space
+        id: y
+        type: space
+      - halo: 32
         size:
           tensor_id: raw
           axis_id: x
-        id: x
-        halo: 32
+        type: space
     test_tensor:
       source: test_output.npy
       sha256: 39925fb38bc74530902e44bf8e43a8bd0a9e3675aab758d89f47dc66cb9818ed
     sample_tensor:
       source: test_output.png
       sha256: 7bce8b53bcd0a12487a61f953aafe0f3700652848980d1083964c5bcb9555eec
+    data:
+      range:
+        - 0.0
+        - 1.0
     postprocessing:
       - id: sigmoid
       - id: ensure_dtype
         kwargs:
           dtype: float32
-
+timestamp: '2019-12-11T11:22:32+00:00'
+training_data:
+  id: ilastik/covid_if_training_data/1
 weights:
+  onnx:
+    source: weights.onnx
+    sha256: 85f5ac80fa977fea3562ef97c8c5950288be2c4f4cdb5d994807df97008ce088
+    parent: pytorch_state_dict
+    opset_version: 20
   pytorch_state_dict:
-    authors:
-      - name: "Constantin Pape;@bioimage-io"
-        affiliation: "EMBL Heidelberg"
-        orcid: "0000-0001-6562-7187"
-    sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
     source: https://zenodo.org/records/3446812/files/unet2d_weights.torch
+    sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
+    authors:
+      - affiliation: EMBL Heidelberg
+        orcid: 0000-0001-6562-7187
+        name: Constantin Pape;@bioimage-io
     architecture:
-      callable: UNet2d
       source: unet2d.py
       sha256: d00721e7d00f55222e8cbf90019dd85ce9df0ae42fd46a07f0e6ea45729b310d
-      kwargs: { input_channels: 1, output_channels: 1 }
+      callable: UNet2d
+      kwargs:
+        input_channels: 1
+        output_channels: 1
+    pytorch_version: 1.5.1
     dependencies:
       source: environment.yaml
       sha256: 129d589d2ec801398719b1a6d1bf20ea36b3632f14ccb56a24700df7d719fd10
-    pytorch_version: "1.5.1"
-  onnx:
-    opset_version: 20
-    parent: pytorch_state_dict
-    sha256: 85f5ac80fa977fea3562ef97c8c5950288be2c4f4cdb5d994807df97008ce088
-    source: weights.onnx
   torchscript:
-    comment: Converted with bioimageio.core 0.7.0 with use_tracing=False.
-    parent: pytorch_state_dict
-    pytorch_version: 2.5.1
-    sha256: a4b0659a1b48454588b12179855ad0a0c9b69ccaa89b8bb06e6271e8f60b02fe
     source: weights.pt
-
-training_data:
-  id: ilastik/covid_if_training_data/1 # note: not the real training data
-
-config:
-  bioimageio:
-    reproducibility_tolerance:
-      - relative_tolerance: 1.0e-3
-        absolute_tolerance: 0.0
-        mismatched_elements_per_million: 0
+    sha256: a4b0659a1b48454588b12179855ad0a0c9b69ccaa89b8bb06e6271e8f60b02fe
+    parent: pytorch_state_dict
+    comment: Converted with bioimageio.core 0.7.0 with use_tracing=False.
+    pytorch_version: 2.5.1
