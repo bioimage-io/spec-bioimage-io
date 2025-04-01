@@ -1,5 +1,6 @@
 import os
 import subprocess
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from io import StringIO
 from itertools import chain
@@ -27,9 +28,17 @@ import rich.console
 import rich.markdown
 import rich.traceback
 from loguru import logger
-from pydantic import BaseModel, Field, field_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    field_serializer,
+    field_validator,
+    model_validator,
+)
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import Self, assert_never
+
+from bioimageio.spec._internal.type_guards import is_dict
 
 from ._internal.constants import VERSION
 from ._internal.io import is_yaml_value
@@ -165,36 +174,56 @@ class ValidationDetail(BaseModel, extra="allow"):
 
     recommended_env: Optional[CondaEnv] = None
     """recommended conda environemnt for this validation detail"""
-    conda_compare: Optional[str] = None
+
+    saved_conda_compare: Optional[str] = None
     """output of `conda compare <recommended env>`"""
 
-    def model_post_init(self, __context: Any):
-        """create `conda_compare` default value if needed"""
-        super().model_post_init(__context)
-        if self.recommended_env is None or self.conda_compare is not None:
-            return
+    @field_serializer("saved_conda_compare")
+    def _save_conda_compare(self, value: Optional[str]):
+        return self.conda_compare
 
-        dumped_env = self.recommended_env.model_dump(mode="json")
-        if not is_yaml_value(dumped_env):
-            self.conda_compare = "Failed to dump recommended env to valid yaml"
-            return
+    @model_validator(mode="before")
+    def _load_legacy(cls, data: Any):
+        if is_dict(data):
+            field_name = "conda_compare"
+            if (
+                field_name in data
+                and (saved_field_name := f"saved_{field_name}") not in data
+            ):
+                data[saved_field_name] = data.pop(field_name)
 
-        with TemporaryDirectory() as d:
-            path = Path(d) / "env.yaml"
-            with path.open("w", encoding="utf-8") as f:
-                write_yaml(dumped_env, f)
+        return data
 
-            compare_proc = subprocess.run(
-                ["conda", "compare", str(path)],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                shell=True,
-                text=True,
-            )
-            self.conda_compare = (
-                compare_proc.stdout
-                or f"`conda compare` exited with {compare_proc.returncode}"
-            )
+    @property
+    def conda_compare(self) -> Optional[str]:
+        if self.recommended_env is None:
+            return None
+
+        if self.saved_conda_compare is None:
+            dumped_env = self.recommended_env.model_dump(mode="json")
+            if is_yaml_value(dumped_env):
+                with TemporaryDirectory() as d:
+                    path = Path(d) / "env.yaml"
+                    with path.open("w", encoding="utf-8") as f:
+                        write_yaml(dumped_env, f)
+
+                    compare_proc = subprocess.run(
+                        ["conda", "compare", str(path)],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.STDOUT,
+                        shell=True,
+                        text=True,
+                    )
+                    self.saved_conda_compare = (
+                        compare_proc.stdout
+                        or f"`conda compare` exited with {compare_proc.returncode}"
+                    )
+            else:
+                self.saved_conda_compare = (
+                    "Failed to dump recommended env to valid yaml"
+                )
+
+        return self.saved_conda_compare
 
     @property
     def status_icon(self):
@@ -229,8 +258,27 @@ class ValidationSummary(BaseModel, extra="allow"):
     )
     """list of selected, relevant package versions"""
 
-    conda_list: Optional[Sequence[InstalledPackage]] = None
-    """parsed output of conda list"""
+    saved_conda_list: Optional[str] = None
+
+    @field_serializer("saved_conda_list")
+    def _save_conda_list(self, value: Optional[str]):
+        return self.conda_list
+
+    @property
+    def conda_list(self):
+        if self.saved_conda_list is None:
+            p = subprocess.run(
+                ["conda", "list"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                shell=True,
+                text=True,
+            )
+            self.saved_conda_list = (
+                p.stdout or f"`conda list` exited with {p.returncode}"
+            )
+
+        return self.saved_conda_list
 
     @property
     def status_icon(self):
@@ -251,22 +299,26 @@ class ValidationSummary(BaseModel, extra="allow"):
 
     def format(
         self,
-        hide_tracebacks: bool = False,
-        hide_source: bool = False,
-        hide_env: bool = False,
+        *,
+        width: Optional[int] = None,
+        include_conda_list: bool = False,
     ):
         """Format summary as Markdown string"""
         return self._format(
-            hide_tracebacks=hide_tracebacks,
-            hide_source=hide_source,
-            hide_env=hide_env,
-            target="md",
+            width=width, target="md", include_conda_list=include_conda_list
         )
 
     format_md = format
 
-    def format_html(self):
-        md_with_html = self._format(target="html")
+    def format_html(
+        self,
+        *,
+        width: Optional[int] = None,
+        include_conda_list: bool = False,
+    ):
+        md_with_html = self._format(
+            target="html", width=width, include_conda_list=include_conda_list
+        )
         return markdown.markdown(
             md_with_html, extensions=["tables", "fenced_code", "nl2br"]
         )
@@ -275,7 +327,12 @@ class ValidationSummary(BaseModel, extra="allow"):
     # (the generated markdown seems fine)
     @no_type_check
     def display(
-        self, width: Optional[int] = None, tab_size: int = 4, soft_wrap: bool = True
+        self,
+        *,
+        width: Optional[int] = None,
+        include_conda_list: bool = False,
+        tab_size: int = 4,
+        soft_wrap: bool = True,
     ) -> None:
         try:  # render as HTML in Jupyter notebook
             from IPython.core.getipython import get_ipython
@@ -284,7 +341,12 @@ class ValidationSummary(BaseModel, extra="allow"):
             pass
         else:
             if get_ipython() is not None:
-                _ = display_html(self.format_html(), raw=True)
+                _ = display_html(
+                    self.format_html(
+                        width=width, include_conda_list=include_conda_list
+                    ),
+                    raw=True,
+                )
                 return
 
         # render with rich
@@ -293,7 +355,9 @@ class ValidationSummary(BaseModel, extra="allow"):
                 width=width,
                 tab_size=tab_size,
                 soft_wrap=soft_wrap,
-            )
+            ),
+            width=width,
+            include_conda_list=include_conda_list,
         )
 
     def add_detail(self, detail: ValidationDetail):
@@ -417,27 +481,27 @@ class ValidationSummary(BaseModel, extra="allow"):
     def _format(
         self,
         *,
-        hide_tracebacks: bool = False,
-        hide_source: bool = False,
-        hide_env: bool = False,
         target: Union[rich.console.Console, Literal["html", "md"]],
+        width: Optional[int],
+        include_conda_list: bool,
     ):
         return _format_summary(
             self,
-            hide_tracebacks=hide_tracebacks,
-            hide_source=hide_source,
-            hide_env=hide_env,
             target=target,
+            width=width or 100,
+            include_conda_list=include_conda_list,
         )
 
 
 def _format_summary(
     summary: ValidationSummary,
     *,
-    hide_tracebacks: bool,  # TODO: remove?
-    hide_source: bool,  # TODO: remove?
-    hide_env: bool,  # TODO: remove?
+    hide_tracebacks: bool = False,  # TODO: remove?
+    hide_source: bool = False,  # TODO: remove?
+    hide_env: bool = False,  # TODO: remove?
     target: Union[rich.console.Console, Literal["html", "md"]] = "md",
+    include_conda_list: bool,
+    width: int,
 ) -> str:
     parts: List[str] = []
     format_table = _format_html_table if target == "html" else _format_md_table
@@ -499,16 +563,24 @@ def _format_summary(
     def format_context_name(*ctxt: str):
         return "`context:" + ".".join(ctxt) + "`"
 
+    @dataclass
+    class CodeCell:
+        text: str
+
+    @dataclass
+    class CodeRef:
+        text: str
+
     def format_code(
         code: str,
         lang: str = "",
         title: str = "Details",
         cell_line_limit: int = 15,
         cell_width_limit: int = 120,
-    ):
+    ) -> Union[CodeRef, CodeCell]:
 
         if not code.strip():
-            return ""
+            return CodeCell("")
 
         if target == "html":
             html_lang = f' lang="{lang}"' if lang else ""
@@ -523,9 +595,9 @@ def _format_summary(
 
         if put_below:
             link = add_as_details_below(title, code)
-            return f"See {link}."
+            return CodeRef(f"See {link}.")
         else:
-            return code
+            return CodeCell(code)
 
     def format_traceback(entry: ErrorEntry):
         if isinstance(target, rich.console.Console):
@@ -535,7 +607,7 @@ def _format_summary(
                 link = add_as_details_below(
                     "Traceback", (entry.traceback_md, entry.traceback_rich)
                 )
-                return f"See {link}."
+                return CodeRef(f"See {link}.")
 
         if target == "md":
             return format_code(entry.traceback_md, title="Traceback")
@@ -544,7 +616,7 @@ def _format_summary(
         else:
             assert_never(target)
 
-    def format_text(text: str):  # TODO: textwrap
+    def format_text(text: str):
         if target == "html":
             return [f"<pre>{text}</pre>"]
         else:
@@ -565,10 +637,35 @@ def _format_summary(
         if not hide_env:
             info_rows.extend([[e.name, e.version] for e in summary.env])
 
+        if include_conda_list:
+            info_rows.append(
+                ["conda list", format_code(summary.conda_list, title="Conda List").text]
+            )
         return format_table(info_rows)
 
     def get_details_table():
         details = [["", "Location", "Details"]]
+
+        def append_detail(
+            status: str, loc: Loc, text: str, code: Union[CodeRef, CodeCell, None]
+        ):
+
+            text_lines = format_text(text)
+            status_lines = [""] * len(text_lines)
+            loc_lines = [""] * len(text_lines)
+            status_lines[0] = status
+            loc_lines[0] = format_loc(loc, target)
+            for s_line, loc_line, text_line in zip(status_lines, loc_lines, text_lines):
+                details.append([s_line, loc_line, text_line])
+
+            if code is not None:
+                details.append(["", "", code.text])
+
+            text, *additional_lines = format_text(text)
+
+            details.append([status, format_loc(loc, target), text])
+            details.extend([["", "", line] for line in additional_lines])
+
         last_context: Optional[ValidationContextSummary] = None
         for d in summary.details:
             details.append([d.status_icon, format_loc(d.loc, target), d.name])
@@ -591,45 +688,41 @@ def _format_summary(
                 )
                 assert is_yaml_value(json_env)
                 write_yaml(json_env, rec_env)
-                text, *additional_lines = format_text(
-                    f"recommended conda env for:\n{d.name}\n"
-                    + format_code(
+                append_detail(
+                    "",
+                    d.loc,
+                    f"recommended conda environment ({d.name})",
+                    format_code(
                         rec_env.getvalue(),
                         lang="yaml",
-                        title="Conda Environment",
-                    )
+                        title="Recommended Conda Environment",
+                    ),
                 )
-                details.append(["🐍", format_loc(d.loc, target), text])
-                details.extend([["", "", line] for line in additional_lines])
 
             if d.conda_compare:
                 wrapped_conda_compare = "\n".join(
-                    TextWrapper(width=116).wrap("\n".join(d.conda_compare))
+                    TextWrapper(width=width - 4).wrap("\n".join(d.conda_compare))
                 )
-
-                text, *additional_lines = format_text(
-                    f"conda compare ({d.name}):\n"
-                    + format_code(
+                append_detail(
+                    "",
+                    d.loc,
+                    f"conda compare ({d.name})",
+                    format_code(
                         wrapped_conda_compare,
                         title="Conda Environment Comparison",
                         cell_line_limit=15,
-                    )
+                    ),
                 )
-                details.append(["🐍", format_loc(d.loc, target), text])
-                details.extend([["", "", line] for line in additional_lines])
-
             for entry in d.errors:
-                text, *additional_lines = format_text(entry.msg)
-                details.append(["❌", format_loc(entry.loc, target), text])
-                details.extend([["", "", line] for line in additional_lines])
-
-                if not hide_tracebacks:
-                    details.append(["", "", format_traceback(entry)])
+                append_detail(
+                    "❌",
+                    entry.loc,
+                    entry.msg,
+                    None if hide_tracebacks else format_traceback(entry),
+                )
 
             for entry in d.warnings:
-                text, *additional_lines = format_text(entry.msg)
-                details.append(["⚠", format_loc(entry.loc, target), text])
-                details.extend([["", "", line] for line in additional_lines])
+                append_detail("⚠", entry.loc, entry.msg, None)
 
         return format_table(details)
 
