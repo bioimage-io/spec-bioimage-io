@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import collections.abc
 import hashlib
+import io
 import sys
 import warnings
+import zipfile
 from abc import abstractmethod
 from contextlib import nullcontext
 from dataclasses import dataclass
@@ -31,6 +34,7 @@ from zipfile import ZipFile, is_zipfile
 
 import pooch  # pyright: ignore [reportMissingTypeStubs]
 import pydantic
+import requests
 from pydantic import (
     AnyUrl,
     DirectoryPath,
@@ -532,7 +536,7 @@ class LocalFile:
 @dataclass
 class FileInZip:
     path: ZipPath
-    original_root: ZipFile
+    original_root: Union[RootHttpUrl, ZipFile]
     original_file_name: FileName
 
 
@@ -700,8 +704,12 @@ def resolve(
 
         if not source.exists():
             raise FileNotFoundError(source)
-        local_source = source
-        root: Union[RootHttpUrl, DirectoryPath] = source.parent
+
+        return LocalFile(
+            source,
+            source.parent,
+            extract_file_name(source),
+        )
     elif isinstance(source, HttpUrl):
         if source.scheme not in ("http", "https"):
             raise NotImplementedError(source.scheme)
@@ -718,28 +726,53 @@ def resolve(
         if settings.user_agent is not None:
             headers["User-Agent"] = settings.user_agent
 
-        downloader = pooch.HTTPDownloader(
-            headers=headers,
-            progressbar=progressbar,  # pyright: ignore[reportArgumentType]
-        )
-        fname = _get_unique_file_name(source)
-        _ls: Any = pooch.retrieve(
-            url=str(source),
-            known_hash=_get_known_hash(kwargs),
-            downloader=downloader,
-            fname=fname,
-            path=settings.cache_path,
-        )
-        local_source = Path(_ls).absolute()
-        root = source.parent
+        if settings.cache_path and not get_validation_context().disable_cache:
+            downloader = pooch.HTTPDownloader(
+                headers=headers,
+                progressbar=progressbar,  # pyright: ignore[reportArgumentType]
+            )
+            fname = _get_unique_file_name(source)
+            _ls: Any = pooch.retrieve(
+                url=str(source),
+                known_hash=_get_known_hash(kwargs),
+                downloader=downloader,
+                fname=fname,
+                path=settings.cache_path,
+            )
+            local_source = Path(_ls).absolute()
+            return LocalFile(
+                local_source,
+                source.parent,
+                extract_file_name(source),
+            )
+        else:
+            # cacheless download to memory using an in memory zip file
+            r = requests.get(str(source))
+            r.raise_for_status()
+            if not isinstance(r.content, bytes):
+                raise TypeError(
+                    f"Request content of {source} has unexpected type {type(r.content)}."
+                )
+
+            zf = zipfile.ZipFile(io.BytesIO(), "w")
+            fn = extract_file_name(source)
+            # alternative implementation; TODO: remove commented code
+            # zf.writestr(fn, r.content)
+            # zp = ZipPath(zf) / fn
+            # assert zp.exists(), f"failed to write {fn} to in-memory zip file"
+            zp = ZipPath(zf, fn)
+            with zp.open("wb") as z:
+                assert not isinstance(z, io.TextIOWrapper)
+                _ = z.write(r.content)
+
+            return FileInZip(
+                path=zp,
+                original_root=source.parent,
+                original_file_name=fn,
+            )
+
     else:
         assert_never(source)
-
-    return LocalFile(
-        local_source,
-        root,
-        extract_file_name(source),
-    )
 
 
 download = resolve
@@ -800,11 +833,18 @@ class FileDescr(Node):
     def validate_sha256(self):
         context = get_validation_context()
         if (src_str := str(self.source)) in context.known_files:
-            actual_sha = context.known_files[src_str]
+            if isinstance(context.known_files, collections.abc.Mapping):
+                actual_sha = context.known_files[src_str]
+            else:
+                return
         else:
             local_source = download(self.source, sha256=self.sha256).path
-            actual_sha = get_sha256(local_source)
-            context.known_files[str(self.source)] = actual_sha
+            if isinstance(context.known_files, collections.abc.Mapping):
+                actual_sha = get_sha256(local_source)
+                context.known_files[src_str] = actual_sha
+            else:
+                context.known_files.add(src_str)
+                return
 
         if self.sha256 == actual_sha:
             pass
@@ -816,8 +856,6 @@ class FileDescr(Node):
                 + f"{actual_sha}. Update expected `sha256` or point to the matching "
                 + "file."
             )
-
-        return
 
     def download(self):
 

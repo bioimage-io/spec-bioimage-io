@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from contextvars import ContextVar, Token
+from copy import copy
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Literal, Optional, Union
+from typing import Dict, List, Literal, Optional, Set, Union
 from urllib.parse import urlsplit, urlunsplit
 from zipfile import ZipFile
 
@@ -27,7 +28,7 @@ class ValidationContextBase:
 
     Existence of local absolute file paths is still being checked."""
 
-    known_files: Dict[str, Sha256] = field(default_factory=dict)
+    known_files: Union[Set[str], Dict[str, Sha256]] = field(default_factory=dict)
     """Allows to bypass download and hashing of referenced files."""
 
     update_hashes: bool = False
@@ -57,6 +58,10 @@ class ValidationContext(ValidationContextBase):
     _context_tokens: "List[Token[Optional[ValidationContext]]]" = field(
         init=False, default_factory=list
     )
+
+    disable_cache: bool = False
+    """Disable caching downloads to `settings.cache_path`
+    and (re)download them to memory instead."""
 
     root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path()
     """Url/directory/archive serving as base to resolve any relative file paths."""
@@ -89,7 +94,7 @@ class ValidationContext(ValidationContextBase):
             root=root,
             file_name=self.file_name,
             perform_io_checks=self.perform_io_checks,
-            known_files=dict(self.known_files),
+            known_files=copy(self.known_files),
             update_hashes=self.update_hashes,
         )
 
@@ -107,7 +112,7 @@ class ValidationContext(ValidationContextBase):
         log_warnings: Optional[bool] = None,
         file_name: Optional[str] = None,
         perform_io_checks: Optional[bool] = None,
-        known_files: Optional[Dict[str, Sha256]] = None,
+        known_files: Optional[Union[Set[str], Dict[str, Sha256]]] = None,
         raise_errors: Optional[bool] = None,
         update_hashes: Optional[bool] = None,
     ) -> Self:

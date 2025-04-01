@@ -284,10 +284,10 @@ def load_array(source: Union[FileSource, FileDescr, ZipPath]) -> NDArray[Any]:
     path = resolve(source).path
     with path.open(mode="rb") as f:
         assert not isinstance(f, io.TextIOWrapper)
-        return numpy.load(f, allow_pickle=False)
+        return numpy.load(f, allow_pickle=settings.allow_pickle)
 
 
 def save_array(path: Union[Path, ZipPath], array: NDArray[Any]) -> None:
     with path.open(mode="wb") as f:
         assert not isinstance(f, io.TextIOWrapper)
-        return numpy.save(f, array, allow_pickle=False)
+        return numpy.save(f, array, allow_pickle=settings.allow_pickle)

@@ -14,6 +14,9 @@ class Settings(BaseSettings, extra="ignore"):
         env_prefix="BIOIMAGEIO_", env_file=".env", env_file_encoding="utf-8"
     )
 
+    allow_pickle: bool = False
+    """Sets the `allow_pickle` argument for `numpy.load()`/`numpy.save()`"""
+
     cache_path: Path = pooch.os_cache("bioimageio")
     """bioimageio cache location"""
 

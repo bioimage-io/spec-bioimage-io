@@ -560,9 +560,6 @@ def _format_summary(
         left_out_details += 1
         return make_link(left_out_details_header)
 
-    def format_context_name(*ctxt: str):
-        return "`context:" + ".".join(ctxt) + "`"
-
     @dataclass
     class CodeCell:
         text: str
@@ -666,20 +663,19 @@ def _format_summary(
             details.append([status, format_loc(loc, target), text])
             details.extend([["", "", line] for line in additional_lines])
 
-        last_context: Optional[ValidationContextSummary] = None
         for d in summary.details:
             details.append([d.status_icon, format_loc(d.loc, target), d.name])
-            if d.context is not None and d.context != last_context:
-                if d.context.perform_io_checks:
-                    details.append(
-                        ["🔍", format_context_name("root"), str(d.context.root)]
-                    )
-                    for kfn, sha in d.context.known_files.items():
-                        details.append(
-                            ["🔍", format_context_name("known_files", kfn), sha]
-                        )
 
-                last_context = d.context
+            for entry in d.errors:
+                append_detail(
+                    "❌",
+                    entry.loc,
+                    entry.msg,
+                    None if hide_tracebacks else format_traceback(entry),
+                )
+
+            for entry in d.warnings:
+                append_detail("⚠", entry.loc, entry.msg, None)
 
             if d.recommended_env is not None:
                 rec_env = StringIO()
@@ -710,19 +706,8 @@ def _format_summary(
                     format_code(
                         wrapped_conda_compare,
                         title="Conda Environment Comparison",
-                        cell_line_limit=15,
                     ),
                 )
-            for entry in d.errors:
-                append_detail(
-                    "❌",
-                    entry.loc,
-                    entry.msg,
-                    None if hide_tracebacks else format_traceback(entry),
-                )
-
-            for entry in d.warnings:
-                append_detail("⚠", entry.loc, entry.msg, None)
 
         return format_table(details)
 

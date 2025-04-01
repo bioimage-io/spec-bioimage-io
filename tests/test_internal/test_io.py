@@ -3,6 +3,7 @@ from typing import Any
 
 import pytest
 from pydantic import ValidationError
+from requests_mock import Mocker as RequestsMocker
 
 from bioimageio.spec import ValidationContext
 from bioimageio.spec.common import RelativeFilePath
@@ -102,3 +103,18 @@ def test_known_files(tmp_path: Path):
             source=file_name, sha256=sha  # pyright: ignore[reportArgumentType]
         )
         assert file_descr.sha256 == sha
+
+
+def test_disable_cache(requests_mock: RequestsMocker):
+    from bioimageio.spec._internal.io import FileInZip, resolve
+    from bioimageio.spec._internal.url import RootHttpUrl
+
+    url = "https://mock_example.com/my_file.txt"
+    _ = requests_mock.get(url, text="example content", status_code=200)
+
+    with ValidationContext(disable_cache=True):
+        downloaded = resolve(url)
+
+    assert isinstance(downloaded, FileInZip)
+    assert isinstance(downloaded.original_root, RootHttpUrl)
+    assert downloaded.original_file_name == "my_file.txt"
