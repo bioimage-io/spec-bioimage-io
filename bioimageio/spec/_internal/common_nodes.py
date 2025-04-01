@@ -147,7 +147,7 @@ class ResourceDescrBase(
         context = get_validation_context()
         detail_name = (
             "Created" if isinstance(self, InvalidDescr) else "Successfully created"
-        ) + f" `{self.__class__.__name__}` object."
+        ) + f" `{self.__class__.__name__}` instance."
         self._validation_summary = ValidationSummary(
             name="bioimageio format validation",
             source_name=context.source_name,
