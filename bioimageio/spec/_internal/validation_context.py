@@ -58,6 +58,10 @@ class ValidationContext(ValidationContextBase):
         init=False, default_factory=list
     )
 
+    disable_cache: bool = False
+    """Disable caching downloads to `settings.cache_path`
+    and (re)download them to memory instead."""
+
     root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path()
     """Url/directory/archive serving as base to resolve any relative file paths."""
 
