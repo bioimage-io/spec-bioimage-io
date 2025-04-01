@@ -21,6 +21,8 @@ from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import Field, RootModel, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
+from bioimageio.spec._internal.type_guards import is_dict
+
 from .._internal.common_nodes import Node, ResourceDescrBase
 from .._internal.constants import TAG_CATEGORIES
 from .._internal.field_validation import validate_gh_user
@@ -200,15 +202,13 @@ class CiteEntry(Node):
 class LinkedResourceBase(Node):
 
     @model_validator(mode="before")
-    def _remove_version_number(  # pyright: ignore[reportUnknownParameterType]
-        cls, value: Union[Any, Dict[Any, Any]]
-    ):
-        if isinstance(value, dict):
-            vn: Any = value.pop("version_number", None)
+    def _remove_version_number(cls, value: Any):
+        if is_dict(value):
+            vn = value.pop("version_number", None)
             if vn is not None and value.get("version") is None:
                 value["version"] = vn
 
-        return value  # pyright: ignore[reportUnknownVariableType]
+        return value
 
     version: Optional[Version] = None
     """The version of the linked resource following SemVer 2.0."""
@@ -397,15 +397,13 @@ class GenericModelDescrBase(ResourceDescrBase):
     """The version of the resource following SemVer 2.0."""
 
     @model_validator(mode="before")
-    def _remove_version_number(  # pyright: ignore[reportUnknownParameterType]
-        cls, value: Union[Any, Dict[Any, Any]]
-    ):
-        if isinstance(value, dict):
-            vn: Any = value.pop("version_number", None)
+    def _remove_version_number(cls, value: Any):
+        if is_dict(value):
+            vn = value.pop("version_number", None)
             if vn is not None and value.get("version") is None:
                 value["version"] = vn
 
-        return value  # pyright: ignore[reportUnknownVariableType]
+        return value
 
 
 class GenericDescrBase(GenericModelDescrBase):

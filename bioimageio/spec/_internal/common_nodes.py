@@ -26,6 +26,8 @@ from pydantic import DirectoryPath, PrivateAttr, model_validator
 from pydantic_core import PydanticUndefined
 from typing_extensions import Self
 
+from bioimageio.spec._internal.type_guards import is_dict
+
 from ..summary import (
     WARNING_LEVEL_TO_NAME,
     ErrorEntry,
@@ -114,19 +116,18 @@ class ResourceDescrBase(
     #   field 'format_version' of Model 'CollectionDescr')
     @model_validator(mode="before")
     @classmethod
-    def _ignore_future_patch(cls, data: Union[Dict[Any, Any], Any], /) -> Any:
+    def _ignore_future_patch(cls, data: Any, /) -> Any:
         if (
             cls.implemented_format_version == "unknown"
-            or not isinstance(data, dict)
+            or not is_dict(data)
             or "format_version" not in data
         ):
-            return data  # pyright: ignore[reportUnknownVariableType]
+            return data
 
-        value: Any = data["format_version"]
+        value = data["format_version"]
         fv = get_format_version_tuple(value)
         if fv is None:
-            return data  # pyright: ignore[reportUnknownVariableType]
-
+            return data
         if (
             fv[0] == cls.implemented_format_version_tuple[0]
             and fv[1:] > cls.implemented_format_version_tuple[1:]
@@ -139,7 +140,7 @@ class ResourceDescrBase(
             )
             data["format_version"] = cls.implemented_format_version
 
-        return data  # pyright: ignore[reportUnknownVariableType]
+        return data
 
     @model_validator(mode="after")
     def _set_init_validation_summary(self) -> Self:

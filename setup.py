@@ -51,6 +51,7 @@ _ = setup(
     extras_require={
         "tests": (
             test_extras := [
+                "black",
                 "deepdiff",
                 "jsonschema",
                 "lxml",
@@ -62,13 +63,12 @@ _ = setup(
         "dev": (
             test_extras
             + [
-                "black",
                 # "json_schema_for_humans; python_version < 3.13",
                 "jupyter-black",
                 "jupyter",
                 "pdoc",
                 "pre-commit",
-                "pyright==1.1.396",
+                "pyright==1.1.398",
                 "ruff",
             ]
         ),

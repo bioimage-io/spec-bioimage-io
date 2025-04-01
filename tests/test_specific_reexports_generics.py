@@ -34,6 +34,7 @@ IGNORE_MEMBERS = {
     "include_in_package_serializer",
     "INFO",
     "InPackageIfLocalFileSource",
+    "is_dict",
     "is_sequence",
     "is_yaml_value",
     "issue_warning",
