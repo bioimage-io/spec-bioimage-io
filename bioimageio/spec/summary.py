@@ -519,7 +519,7 @@ def _format_summary(
             )
         else:
             put_below = True
-            code = f"\n```{lang}\n{code}```\n"
+            code = f"\n```{lang}\n{code}\n```\n"
 
         if put_below:
             link = add_as_details_below(title, code)
