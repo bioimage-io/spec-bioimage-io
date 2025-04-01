@@ -357,7 +357,7 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.common    </h1>
 
                             <div id="FileDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="#HttpUrl">HttpUrl</a>, <a href="#RelativeFilePath">RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7ff7c7c8b4c0&gt;), PlainSerializer(func=&lt;function _package at 0x7ff7ca4d9440&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Union[<a href="#HttpUrl">HttpUrl</a>, <a href="#RelativeFilePath">RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f2b139828e0&gt;), PlainSerializer(func=&lt;function _package at 0x7f2b139a4ae0&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]</span>
 
         
     </div>
@@ -607,24 +607,24 @@ bioimageio<wbr>.<a href="./../spec.html">spec</a><wbr>.common    </h1>
 
     </div>
     <a class="headerlink" href="#InvalidDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="InvalidDescr-356"><a href="#InvalidDescr-356"><span class="linenos">356</span></a><span class="k">class</span><span class="w"> </span><span class="nc">InvalidDescr</span><span class="p">(</span>
-</span><span id="InvalidDescr-357"><a href="#InvalidDescr-357"><span class="linenos">357</span></a>    <span class="n">ResourceDescrBase</span><span class="p">,</span>
-</span><span id="InvalidDescr-358"><a href="#InvalidDescr-358"><span class="linenos">358</span></a>    <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span>
-</span><span id="InvalidDescr-359"><a href="#InvalidDescr-359"><span class="linenos">359</span></a>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;An invalid resource description&quot;</span><span class="p">,</span>
-</span><span id="InvalidDescr-360"><a href="#InvalidDescr-360"><span class="linenos">360</span></a><span class="p">):</span>
-</span><span id="InvalidDescr-361"><a href="#InvalidDescr-361"><span class="linenos">361</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A representation of an invalid resource description&quot;&quot;&quot;</span>
-</span><span id="InvalidDescr-362"><a href="#InvalidDescr-362"><span class="linenos">362</span></a>
-</span><span id="InvalidDescr-363"><a href="#InvalidDescr-363"><span class="linenos">363</span></a>    <span class="n">implemented_type</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;unknown&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
-</span><span id="InvalidDescr-364"><a href="#InvalidDescr-364"><span class="linenos">364</span></a>    <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># see NodeWithExplicitlySetFields</span>
-</span><span id="InvalidDescr-365"><a href="#InvalidDescr-365"><span class="linenos">365</span></a>        <span class="nb">type</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
-</span><span id="InvalidDescr-366"><a href="#InvalidDescr-366"><span class="linenos">366</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="InvalidDescr-367"><a href="#InvalidDescr-367"><span class="linenos">367</span></a>        <span class="nb">type</span><span class="p">:</span> <span class="n">Any</span>
-</span><span id="InvalidDescr-368"><a href="#InvalidDescr-368"><span class="linenos">368</span></a>
-</span><span id="InvalidDescr-369"><a href="#InvalidDescr-369"><span class="linenos">369</span></a>    <span class="n">implemented_format_version</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;unknown&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
-</span><span id="InvalidDescr-370"><a href="#InvalidDescr-370"><span class="linenos">370</span></a>    <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># see NodeWithExplicitlySetFields</span>
-</span><span id="InvalidDescr-371"><a href="#InvalidDescr-371"><span class="linenos">371</span></a>        <span class="n">format_version</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
-</span><span id="InvalidDescr-372"><a href="#InvalidDescr-372"><span class="linenos">372</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="InvalidDescr-373"><a href="#InvalidDescr-373"><span class="linenos">373</span></a>        <span class="n">format_version</span><span class="p">:</span> <span class="n">Any</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="InvalidDescr-357"><a href="#InvalidDescr-357"><span class="linenos">357</span></a><span class="k">class</span><span class="w"> </span><span class="nc">InvalidDescr</span><span class="p">(</span>
+</span><span id="InvalidDescr-358"><a href="#InvalidDescr-358"><span class="linenos">358</span></a>    <span class="n">ResourceDescrBase</span><span class="p">,</span>
+</span><span id="InvalidDescr-359"><a href="#InvalidDescr-359"><span class="linenos">359</span></a>    <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span>
+</span><span id="InvalidDescr-360"><a href="#InvalidDescr-360"><span class="linenos">360</span></a>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;An invalid resource description&quot;</span><span class="p">,</span>
+</span><span id="InvalidDescr-361"><a href="#InvalidDescr-361"><span class="linenos">361</span></a><span class="p">):</span>
+</span><span id="InvalidDescr-362"><a href="#InvalidDescr-362"><span class="linenos">362</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A representation of an invalid resource description&quot;&quot;&quot;</span>
+</span><span id="InvalidDescr-363"><a href="#InvalidDescr-363"><span class="linenos">363</span></a>
+</span><span id="InvalidDescr-364"><a href="#InvalidDescr-364"><span class="linenos">364</span></a>    <span class="n">implemented_type</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;unknown&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+</span><span id="InvalidDescr-365"><a href="#InvalidDescr-365"><span class="linenos">365</span></a>    <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># see NodeWithExplicitlySetFields</span>
+</span><span id="InvalidDescr-366"><a href="#InvalidDescr-366"><span class="linenos">366</span></a>        <span class="nb">type</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+</span><span id="InvalidDescr-367"><a href="#InvalidDescr-367"><span class="linenos">367</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="InvalidDescr-368"><a href="#InvalidDescr-368"><span class="linenos">368</span></a>        <span class="nb">type</span><span class="p">:</span> <span class="n">Any</span>
+</span><span id="InvalidDescr-369"><a href="#InvalidDescr-369"><span class="linenos">369</span></a>
+</span><span id="InvalidDescr-370"><a href="#InvalidDescr-370"><span class="linenos">370</span></a>    <span class="n">implemented_format_version</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;unknown&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+</span><span id="InvalidDescr-371"><a href="#InvalidDescr-371"><span class="linenos">371</span></a>    <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># see NodeWithExplicitlySetFields</span>
+</span><span id="InvalidDescr-372"><a href="#InvalidDescr-372"><span class="linenos">372</span></a>        <span class="n">format_version</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+</span><span id="InvalidDescr-373"><a href="#InvalidDescr-373"><span class="linenos">373</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="InvalidDescr-374"><a href="#InvalidDescr-374"><span class="linenos">374</span></a>        <span class="n">format_version</span><span class="p">:</span> <span class="n">Any</span>
 </span></pre></div>
 
 
