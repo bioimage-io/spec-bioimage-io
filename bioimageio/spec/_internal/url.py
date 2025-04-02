@@ -23,6 +23,14 @@ def _validate_url_impl(
 ) -> pydantic.HttpUrl:
 
     url = str(url)
+    context = get_validation_context()
+    if url in context.known_files:
+        with context.replace(perform_io_checks=False):
+            return (  # pyright: ignore[reportUnknownVariableType]
+                # TODO: remove pyright ignore for pydantic > 2.9
+                pydantic.HttpUrl(url)  # pyright: ignore[reportCallIssue]
+            )
+
     val_url = url
 
     if url.startswith("http://example.com") or url.startswith("https://example.com"):
@@ -113,6 +121,7 @@ def _validate_url_impl(
         else:
             assert_never(request_mode)
 
+    context.known_files[url] = None
     return (  # pyright: ignore[reportUnknownVariableType]
         # TODO: remove pyright ignore for pydantic > 2.9
         pydantic.HttpUrl(url)  # pyright: ignore[reportCallIssue]
@@ -128,10 +137,7 @@ class HttpUrl(RootHttpUrl):
     def _after_validator(self):
         self = super()._after_validator()
         context = get_validation_context()
-        if (
-            context.perform_io_checks
-            and str(self._validated) not in context.known_files
-        ):
+        if context.perform_io_checks:
             self._validated = _validate_url(self._validated)
             self._exists = True
 

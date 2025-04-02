@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Literal, Optional, Set, TextIO, Union, cast, overload
+from typing import Dict, Literal, Optional, TextIO, Union, cast, overload
 from zipfile import ZipFile
 
 from loguru import logger
@@ -35,7 +35,7 @@ def load_description(
     *,
     format_version: Literal["latest"],
     perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Union[Set[str], Dict[str, Sha256]]] = None,
+    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
     sha256: Optional[Sha256] = None,
 ) -> Union[LatestResourceDescr, InvalidDescr]: ...
 
@@ -47,7 +47,7 @@ def load_description(
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Union[Set[str], Dict[str, Sha256]]] = None,
+    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
     sha256: Optional[Sha256] = None,
 ) -> Union[ResourceDescr, InvalidDescr]: ...
 
@@ -58,7 +58,7 @@ def load_description(
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Union[Set[str], Dict[str, Sha256]]] = None,
+    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
     sha256: Optional[Sha256] = None,
 ) -> Union[ResourceDescr, InvalidDescr]:
     """load a bioimage.io resource description
@@ -73,6 +73,8 @@ def load_description(
                            absolute file paths is still being checked.
         known_files: Allows to bypass download and hashing of referenced files
                      (even if perform_io_checks is True).
+                     Checked files will be added to this dictionary
+                     with their SHA-256 value.
         sha256: Optional SHA-256 value of **source**
 
     Returns:
@@ -107,7 +109,7 @@ def load_model_description(
     *,
     format_version: Literal["latest"],
     perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Union[Set[str], Dict[str, Sha256]]] = None,
+    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
     sha256: Optional[Sha256] = None,
 ) -> ModelDescr: ...
 
@@ -119,7 +121,7 @@ def load_model_description(
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Union[Set[str], Dict[str, Sha256]]] = None,
+    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
     sha256: Optional[Sha256] = None,
 ) -> AnyModelDescr: ...
 
@@ -130,7 +132,7 @@ def load_model_description(
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Union[Set[str], Dict[str, Sha256]]] = None,
+    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
     sha256: Optional[Sha256] = None,
 ) -> AnyModelDescr:
     """same as `load_description`, but addtionally ensures that the loaded
@@ -156,7 +158,7 @@ def load_dataset_description(
     *,
     format_version: Literal["latest"],
     perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Union[Set[str], Dict[str, Sha256]]] = None,
+    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
     sha256: Optional[Sha256] = None,
 ) -> DatasetDescr: ...
 
@@ -168,7 +170,7 @@ def load_dataset_description(
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Union[Set[str], Dict[str, Sha256]]] = None,
+    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
     sha256: Optional[Sha256] = None,
 ) -> AnyDatasetDescr: ...
 
@@ -179,7 +181,7 @@ def load_dataset_description(
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Union[Set[str], Dict[str, Sha256]]] = None,
+    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
     sha256: Optional[Sha256] = None,
 ) -> AnyDatasetDescr:
     """same as `load_description`, but addtionally ensures that the loaded
@@ -231,7 +233,7 @@ def load_description_and_validate_format_only(
     *,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
     perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Union[Set[str], Dict[str, Sha256]]] = None,
+    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
     sha256: Optional[Sha256] = None,
 ) -> ValidationSummary:
     """same as `load_description`, but only return the validation summary.

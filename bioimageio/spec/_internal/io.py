@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import collections.abc
 import hashlib
 import io
 import sys
@@ -833,20 +832,15 @@ class FileDescr(Node):
     def validate_sha256(self):
         context = get_validation_context()
         if (src_str := str(self.source)) in context.known_files:
-            if isinstance(context.known_files, collections.abc.Mapping):
-                actual_sha = context.known_files[src_str]
-            else:
-                return
+            actual_sha = context.known_files[src_str]
         else:
             local_source = download(self.source, sha256=self.sha256).path
-            if isinstance(context.known_files, collections.abc.Mapping):
-                actual_sha = get_sha256(local_source)
-                context.known_files[src_str] = actual_sha
-            else:
-                context.known_files.add(src_str)
-                return
+            actual_sha = get_sha256(local_source)
+            context.known_files[src_str] = actual_sha
 
-        if self.sha256 == actual_sha:
+        if actual_sha is None:
+            return
+        elif self.sha256 == actual_sha:
             pass
         elif self.sha256 is None or context.update_hashes:
             self.sha256 = actual_sha

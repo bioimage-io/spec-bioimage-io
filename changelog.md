@@ -16,7 +16,7 @@ This changelog includes implementation details and my reference the [changes to 
 - new validation context `disable_cache` (equivalent to an empty `cache_path` in `settings`)
   circumvents caching to disk and keeps downloads in memory only
 - new setting `allow_pickle` to control `numpy.load`/`numpy.save` behavior
-- allow the `ValidationContext`'s `known_files` to be a set of file names to only check for file existence without comparing file hashes.
+- allow the `ValidationContext`'s `known_files` to include `None` values (isntead of known SHA values) to only check for file existence without comparing file hashes.
 
 #### bioimageio.spec 0.5.4.1
 

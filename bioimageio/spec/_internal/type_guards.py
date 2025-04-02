@@ -1,5 +1,5 @@
 import collections.abc
-from typing import Any, Dict, List, Mapping, Sequence, Tuple
+from typing import Any, Dict, List, Mapping, Sequence, Set, Tuple
 
 import numpy as np
 from numpy.typing import NDArray
@@ -9,6 +9,11 @@ from typing_extensions import TypeGuard
 def is_dict(v: Any) -> TypeGuard[Dict[Any, Any]]:
     """to avoid Dict[Unknown, Unknown]"""
     return isinstance(v, dict)
+
+
+def is_set(v: Any) -> TypeGuard[Set[Any]]:
+    """to avoid Set[Unknown]"""
+    return isinstance(v, set)
 
 
 def is_kwargs(v: Any) -> TypeGuard[Dict[str, Any]]:

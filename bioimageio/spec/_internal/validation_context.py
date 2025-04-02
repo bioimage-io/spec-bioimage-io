@@ -4,7 +4,7 @@ from contextvars import ContextVar, Token
 from copy import copy
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Literal, Optional, Set, Union
+from typing import Dict, List, Literal, Optional, Union
 from urllib.parse import urlsplit, urlunsplit
 from zipfile import ZipFile
 
@@ -28,7 +28,7 @@ class ValidationContextBase:
 
     Existence of local absolute file paths is still being checked."""
 
-    known_files: Union[Set[str], Dict[str, Sha256]] = field(default_factory=dict)
+    known_files: Dict[str, Optional[Sha256]] = field(default_factory=dict)
     """Allows to bypass download and hashing of referenced files."""
 
     update_hashes: bool = False
@@ -112,7 +112,7 @@ class ValidationContext(ValidationContextBase):
         log_warnings: Optional[bool] = None,
         file_name: Optional[str] = None,
         perform_io_checks: Optional[bool] = None,
-        known_files: Optional[Union[Set[str], Dict[str, Sha256]]] = None,
+        known_files: Optional[Dict[str, Optional[Sha256]]] = None,
         raise_errors: Optional[bool] = None,
         update_hashes: Optional[bool] = None,
     ) -> Self:
