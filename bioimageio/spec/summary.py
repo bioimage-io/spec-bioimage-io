@@ -697,7 +697,7 @@ def _format_summary(
 
             if d.conda_compare:
                 wrapped_conda_compare = "\n".join(
-                    TextWrapper(width=width - 4).wrap("\n".join(d.conda_compare))
+                    TextWrapper(width=width - 4).wrap(d.conda_compare)
                 )
                 append_detail(
                     "",
