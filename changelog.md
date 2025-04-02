@@ -10,6 +10,14 @@ In this file we log both:
 
 This changelog includes implementation details and my reference the [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+#### bioimageio.spec 0.5.4.2
+
+- improved validation summary formatting
+- new validation context `disable_cache` (equivalent to an empty `cache_path` in `settings`)
+  circumvents caching to disk and keeps downloads in memory only
+- new setting `allow_pickle` to control `numpy.load`/`numpy.save` behavior
+- allow the `ValidationContext`'s `known_files` to include `None` values (isntead of known SHA values) to only check for file existence without comparing file hashes.
+
 #### bioimageio.spec 0.5.4.1
 
 (patch to 0.5.4.0)

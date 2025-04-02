@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import collections.abc
 import hashlib
 import io
 import sys
@@ -48,6 +47,7 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core import core_schema
+from tqdm import tqdm
 from typing_extensions import (
     Annotated,
     LiteralString,
@@ -726,10 +726,16 @@ def resolve(
         if settings.user_agent is not None:
             headers["User-Agent"] = settings.user_agent
 
-        if settings.cache_path and not get_validation_context().disable_cache:
+        chunk_size = 1024
+        if (
+            settings.cache_path
+            and not get_validation_context().disable_cache
+            and any(v is not None for v in kwargs.values())
+        ):
             downloader = pooch.HTTPDownloader(
                 headers=headers,
                 progressbar=progressbar,  # pyright: ignore[reportArgumentType]
+                chunk_size=chunk_size,
             )
             fname = _get_unique_file_name(source)
             _ls: Any = pooch.retrieve(
@@ -747,23 +753,47 @@ def resolve(
             )
         else:
             # cacheless download to memory using an in memory zip file
-            r = requests.get(str(source))
+            r = requests.get(str(source), stream=True)
             r.raise_for_status()
-            if not isinstance(r.content, bytes):
-                raise TypeError(
-                    f"Request content of {source} has unexpected type {type(r.content)}."
-                )
 
             zf = zipfile.ZipFile(io.BytesIO(), "w")
             fn = extract_file_name(source)
-            # alternative implementation; TODO: remove commented code
-            # zf.writestr(fn, r.content)
-            # zp = ZipPath(zf) / fn
-            # assert zp.exists(), f"failed to write {fn} to in-memory zip file"
+            total = int(r.headers.get("content-length", 0))
+
+            if isinstance(progressbar, bool):
+                if progressbar:
+                    use_ascii = bool(sys.platform == "win32")
+                    pbar = tqdm(
+                        total=total,
+                        ncols=79,
+                        ascii=use_ascii,
+                        unit="B",
+                        unit_scale=True,
+                        leave=True,
+                    )
+                    pbar = tqdm(desc=f"Downloading {fn}")
+                else:
+                    pbar = None
+            else:
+                pbar = progressbar
+
             zp = ZipPath(zf, fn)
             with zp.open("wb") as z:
                 assert not isinstance(z, io.TextIOWrapper)
-                _ = z.write(r.content)
+                for chunk in r.iter_content(chunk_size=chunk_size):
+                    n = z.write(chunk)
+                    if pbar is not None:
+                        _ = pbar.update(n)
+
+            # Make sure the progress bar gets filled even if the actual number
+            # is chunks is smaller than expected. This happens when streaming
+            # text files that are compressed by the server when sending (gzip).
+            # Binary files don't experience this.
+            # (adapted from pooch.HttpDownloader)
+            if pbar is not None:
+                pbar.reset()
+                _ = pbar.update(total)
+                pbar.close()
 
             return FileInZip(
                 path=zp,
@@ -833,20 +863,15 @@ class FileDescr(Node):
     def validate_sha256(self):
         context = get_validation_context()
         if (src_str := str(self.source)) in context.known_files:
-            if isinstance(context.known_files, collections.abc.Mapping):
-                actual_sha = context.known_files[src_str]
-            else:
-                return
+            actual_sha = context.known_files[src_str]
         else:
             local_source = download(self.source, sha256=self.sha256).path
-            if isinstance(context.known_files, collections.abc.Mapping):
-                actual_sha = get_sha256(local_source)
-                context.known_files[src_str] = actual_sha
-            else:
-                context.known_files.add(src_str)
-                return
+            actual_sha = get_sha256(local_source)
+            context.known_files[src_str] = actual_sha
 
-        if self.sha256 == actual_sha:
+        if actual_sha is None:
+            return
+        elif self.sha256 == actual_sha:
             pass
         elif self.sha256 is None or context.update_hashes:
             self.sha256 = actual_sha

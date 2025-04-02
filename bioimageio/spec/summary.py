@@ -658,11 +658,6 @@ def _format_summary(
             if code is not None:
                 details.append(["", "", code.text])
 
-            text, *additional_lines = format_text(text)
-
-            details.append([status, format_loc(loc, target), text])
-            details.extend([["", "", line] for line in additional_lines])
-
         for d in summary.details:
             details.append([d.status_icon, format_loc(d.loc, target), d.name])
 
