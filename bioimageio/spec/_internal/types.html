@@ -212,7 +212,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.4.1</footer>
+            <footer>bioimageio.spec 0.5.4.2</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -621,36 +621,33 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#HttpUrl"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="HttpUrl-123"><a href="#HttpUrl-123"><span class="linenos">123</span></a><span class="k">class</span><span class="w"> </span><span class="nc">HttpUrl</span><span class="p">(</span><span class="n">RootHttpUrl</span><span class="p">):</span>
-</span><span id="HttpUrl-124"><a href="#HttpUrl-124"><span class="linenos">124</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A URL with the HTTP or HTTPS scheme.&quot;&quot;&quot;</span>
-</span><span id="HttpUrl-125"><a href="#HttpUrl-125"><span class="linenos">125</span></a>
-</span><span id="HttpUrl-126"><a href="#HttpUrl-126"><span class="linenos">126</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span><span class="n">pydantic</span><span class="o">.</span><span class="n">HttpUrl</span><span class="p">]</span>
-</span><span id="HttpUrl-127"><a href="#HttpUrl-127"><span class="linenos">127</span></a>    <span class="n">_exists</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="HttpUrl-128"><a href="#HttpUrl-128"><span class="linenos">128</span></a>
-</span><span id="HttpUrl-129"><a href="#HttpUrl-129"><span class="linenos">129</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_after_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="HttpUrl-130"><a href="#HttpUrl-130"><span class="linenos">130</span></a>        <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_after_validator</span><span class="p">()</span>
-</span><span id="HttpUrl-131"><a href="#HttpUrl-131"><span class="linenos">131</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
-</span><span id="HttpUrl-132"><a href="#HttpUrl-132"><span class="linenos">132</span></a>        <span class="k">if</span> <span class="p">(</span>
-</span><span id="HttpUrl-133"><a href="#HttpUrl-133"><span class="linenos">133</span></a>            <span class="n">context</span><span class="o">.</span><span class="n">perform_io_checks</span>
-</span><span id="HttpUrl-134"><a href="#HttpUrl-134"><span class="linenos">134</span></a>            <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validated</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">known_files</span>
-</span><span id="HttpUrl-135"><a href="#HttpUrl-135"><span class="linenos">135</span></a>        <span class="p">):</span>
-</span><span id="HttpUrl-136"><a href="#HttpUrl-136"><span class="linenos">136</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_validated</span> <span class="o">=</span> <span class="n">_validate_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validated</span><span class="p">)</span>
-</span><span id="HttpUrl-137"><a href="#HttpUrl-137"><span class="linenos">137</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="HttpUrl-138"><a href="#HttpUrl-138"><span class="linenos">138</span></a>
-</span><span id="HttpUrl-139"><a href="#HttpUrl-139"><span class="linenos">139</span></a>        <span class="k">return</span> <span class="bp">self</span>
-</span><span id="HttpUrl-140"><a href="#HttpUrl-140"><span class="linenos">140</span></a>
-</span><span id="HttpUrl-141"><a href="#HttpUrl-141"><span class="linenos">141</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="HttpUrl-142"><a href="#HttpUrl-142"><span class="linenos">142</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;True if URL is available&quot;&quot;&quot;</span>
-</span><span id="HttpUrl-143"><a href="#HttpUrl-143"><span class="linenos">143</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="HttpUrl-144"><a href="#HttpUrl-144"><span class="linenos">144</span></a>            <span class="k">try</span><span class="p">:</span>
-</span><span id="HttpUrl-145"><a href="#HttpUrl-145"><span class="linenos">145</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_validated</span> <span class="o">=</span> <span class="n">_validate_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validated</span><span class="p">)</span>
-</span><span id="HttpUrl-146"><a href="#HttpUrl-146"><span class="linenos">146</span></a>            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="HttpUrl-147"><a href="#HttpUrl-147"><span class="linenos">147</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-</span><span id="HttpUrl-148"><a href="#HttpUrl-148"><span class="linenos">148</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="HttpUrl-149"><a href="#HttpUrl-149"><span class="linenos">149</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="HttpUrl-150"><a href="#HttpUrl-150"><span class="linenos">150</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="HttpUrl-151"><a href="#HttpUrl-151"><span class="linenos">151</span></a>
-</span><span id="HttpUrl-152"><a href="#HttpUrl-152"><span class="linenos">152</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="HttpUrl-132"><a href="#HttpUrl-132"><span class="linenos">132</span></a><span class="k">class</span><span class="w"> </span><span class="nc">HttpUrl</span><span class="p">(</span><span class="n">RootHttpUrl</span><span class="p">):</span>
+</span><span id="HttpUrl-133"><a href="#HttpUrl-133"><span class="linenos">133</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A URL with the HTTP or HTTPS scheme.&quot;&quot;&quot;</span>
+</span><span id="HttpUrl-134"><a href="#HttpUrl-134"><span class="linenos">134</span></a>
+</span><span id="HttpUrl-135"><a href="#HttpUrl-135"><span class="linenos">135</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span><span class="n">pydantic</span><span class="o">.</span><span class="n">HttpUrl</span><span class="p">]</span>
+</span><span id="HttpUrl-136"><a href="#HttpUrl-136"><span class="linenos">136</span></a>    <span class="n">_exists</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="HttpUrl-137"><a href="#HttpUrl-137"><span class="linenos">137</span></a>
+</span><span id="HttpUrl-138"><a href="#HttpUrl-138"><span class="linenos">138</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_after_validator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="HttpUrl-139"><a href="#HttpUrl-139"><span class="linenos">139</span></a>        <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_after_validator</span><span class="p">()</span>
+</span><span id="HttpUrl-140"><a href="#HttpUrl-140"><span class="linenos">140</span></a>        <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
+</span><span id="HttpUrl-141"><a href="#HttpUrl-141"><span class="linenos">141</span></a>        <span class="k">if</span> <span class="n">context</span><span class="o">.</span><span class="n">perform_io_checks</span><span class="p">:</span>
+</span><span id="HttpUrl-142"><a href="#HttpUrl-142"><span class="linenos">142</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_validated</span> <span class="o">=</span> <span class="n">_validate_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validated</span><span class="p">)</span>
+</span><span id="HttpUrl-143"><a href="#HttpUrl-143"><span class="linenos">143</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="HttpUrl-144"><a href="#HttpUrl-144"><span class="linenos">144</span></a>
+</span><span id="HttpUrl-145"><a href="#HttpUrl-145"><span class="linenos">145</span></a>        <span class="k">return</span> <span class="bp">self</span>
+</span><span id="HttpUrl-146"><a href="#HttpUrl-146"><span class="linenos">146</span></a>
+</span><span id="HttpUrl-147"><a href="#HttpUrl-147"><span class="linenos">147</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="HttpUrl-148"><a href="#HttpUrl-148"><span class="linenos">148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;True if URL is available&quot;&quot;&quot;</span>
+</span><span id="HttpUrl-149"><a href="#HttpUrl-149"><span class="linenos">149</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="HttpUrl-150"><a href="#HttpUrl-150"><span class="linenos">150</span></a>            <span class="k">try</span><span class="p">:</span>
+</span><span id="HttpUrl-151"><a href="#HttpUrl-151"><span class="linenos">151</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_validated</span> <span class="o">=</span> <span class="n">_validate_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validated</span><span class="p">)</span>
+</span><span id="HttpUrl-152"><a href="#HttpUrl-152"><span class="linenos">152</span></a>            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="HttpUrl-153"><a href="#HttpUrl-153"><span class="linenos">153</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span><span id="HttpUrl-154"><a href="#HttpUrl-154"><span class="linenos">154</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="HttpUrl-155"><a href="#HttpUrl-155"><span class="linenos">155</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="HttpUrl-156"><a href="#HttpUrl-156"><span class="linenos">156</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="HttpUrl-157"><a href="#HttpUrl-157"><span class="linenos">157</span></a>
+</span><span id="HttpUrl-158"><a href="#HttpUrl-158"><span class="linenos">158</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span>
 </span></pre></div>
 
 
@@ -684,18 +681,18 @@ errors defaults to 'strict'.</p>
 
     </div>
     <a class="headerlink" href="#HttpUrl.exists"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="HttpUrl.exists-141"><a href="#HttpUrl.exists-141"><span class="linenos">141</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="HttpUrl.exists-142"><a href="#HttpUrl.exists-142"><span class="linenos">142</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;True if URL is available&quot;&quot;&quot;</span>
-</span><span id="HttpUrl.exists-143"><a href="#HttpUrl.exists-143"><span class="linenos">143</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="HttpUrl.exists-144"><a href="#HttpUrl.exists-144"><span class="linenos">144</span></a>            <span class="k">try</span><span class="p">:</span>
-</span><span id="HttpUrl.exists-145"><a href="#HttpUrl.exists-145"><span class="linenos">145</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_validated</span> <span class="o">=</span> <span class="n">_validate_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validated</span><span class="p">)</span>
-</span><span id="HttpUrl.exists-146"><a href="#HttpUrl.exists-146"><span class="linenos">146</span></a>            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="HttpUrl.exists-147"><a href="#HttpUrl.exists-147"><span class="linenos">147</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-</span><span id="HttpUrl.exists-148"><a href="#HttpUrl.exists-148"><span class="linenos">148</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="HttpUrl.exists-149"><a href="#HttpUrl.exists-149"><span class="linenos">149</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="HttpUrl.exists-150"><a href="#HttpUrl.exists-150"><span class="linenos">150</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="HttpUrl.exists-151"><a href="#HttpUrl.exists-151"><span class="linenos">151</span></a>
-</span><span id="HttpUrl.exists-152"><a href="#HttpUrl.exists-152"><span class="linenos">152</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="HttpUrl.exists-147"><a href="#HttpUrl.exists-147"><span class="linenos">147</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="HttpUrl.exists-148"><a href="#HttpUrl.exists-148"><span class="linenos">148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;True if URL is available&quot;&quot;&quot;</span>
+</span><span id="HttpUrl.exists-149"><a href="#HttpUrl.exists-149"><span class="linenos">149</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="HttpUrl.exists-150"><a href="#HttpUrl.exists-150"><span class="linenos">150</span></a>            <span class="k">try</span><span class="p">:</span>
+</span><span id="HttpUrl.exists-151"><a href="#HttpUrl.exists-151"><span class="linenos">151</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_validated</span> <span class="o">=</span> <span class="n">_validate_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_validated</span><span class="p">)</span>
+</span><span id="HttpUrl.exists-152"><a href="#HttpUrl.exists-152"><span class="linenos">152</span></a>            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="HttpUrl.exists-153"><a href="#HttpUrl.exists-153"><span class="linenos">153</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span><span id="HttpUrl.exists-154"><a href="#HttpUrl.exists-154"><span class="linenos">154</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="HttpUrl.exists-155"><a href="#HttpUrl.exists-155"><span class="linenos">155</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="HttpUrl.exists-156"><a href="#HttpUrl.exists-156"><span class="linenos">156</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="HttpUrl.exists-157"><a href="#HttpUrl.exists-157"><span class="linenos">157</span></a>
+</span><span id="HttpUrl.exists-158"><a href="#HttpUrl.exists-158"><span class="linenos">158</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span>
 </span></pre></div>
 
 
