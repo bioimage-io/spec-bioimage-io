@@ -118,3 +118,20 @@ def test_disable_cache(requests_mock: RequestsMocker):
     assert isinstance(downloaded, FileInZip)
     assert isinstance(downloaded.original_root, RootHttpUrl)
     assert downloaded.original_file_name == "my_file.txt"
+
+
+def test_download_wo_cache_for_unknown_sha(requests_mock: RequestsMocker):
+    from bioimageio.spec._internal.io import FileInZip, resolve
+    from bioimageio.spec._internal.url import RootHttpUrl
+
+    url = "https://mock_example.com/files/my_bioimageio.yaml"
+    _ = requests_mock.get(url, text="example content", status_code=200)
+
+    with ValidationContext(disable_cache=False):
+        downloaded = resolve(url)
+
+    assert len(requests_mock.request_history) == 1
+    assert isinstance(downloaded, FileInZip)
+    assert isinstance(downloaded.original_root, RootHttpUrl)
+    assert downloaded.original_root == RootHttpUrl("https://mock_example.com/files")
+    assert downloaded.original_file_name == "my_bioimageio.yaml"

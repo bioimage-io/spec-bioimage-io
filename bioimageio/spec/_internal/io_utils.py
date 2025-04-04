@@ -9,6 +9,7 @@ from typing import (
     Any,
     Dict,
     Mapping,
+    Optional,
     Union,
     cast,
 )
@@ -27,18 +28,18 @@ from .io import (
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
     FileDescr,
-    FileInZip,
     HashKwargs,
     LightHttpFileDescr,
     OpenedBioimageioYaml,
     YamlValue,
+    extract_file_name,
     find_bioimageio_yaml_file_name,
     identify_bioimageio_yaml_file_name,
     resolve,
 )
-from .io_basics import FileName, ZipPath
+from .io_basics import AbsoluteDirectory, FileName, ZipPath
 from .types import FileSource, PermissiveFileSource
-from .url import HttpUrl
+from .url import HttpUrl, RootHttpUrl
 from .utils import cache
 from .validation_context import ValidationContext
 
@@ -91,32 +92,39 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
     return cast(BioimageioYamlContent, content)
 
 
-def _open_bioimageio_rdf_in_zip(source: ZipFile, rdf_name: str) -> OpenedBioimageioYaml:
-    with source.open(rdf_name) as f:
+def _open_bioimageio_rdf_in_zip(
+    path: ZipPath,
+    original_root: Optional[Union[AbsoluteDirectory, RootHttpUrl, ZipFile]],
+) -> OpenedBioimageioYaml:
+    with path.open("rb") as f:
+        assert not isinstance(f, io.TextIOWrapper)
         unparsed_content = f.read().decode(encoding="utf-8")
 
     content = _sanitize_bioimageio_yaml(read_yaml(io.StringIO(unparsed_content)))
 
     return OpenedBioimageioYaml(
         content,
-        source,
-        source.filename or "bioimageio.zip",
+        path.root if original_root is None else original_root,
+        extract_file_name(path),
         unparsed_content=unparsed_content,
     )
 
 
-def _open_bioimageio_zip(source: ZipFile) -> OpenedBioimageioYaml:
+def _open_bioimageio_zip(
+    source: ZipFile,
+    original_root: Optional[Union[AbsoluteDirectory, RootHttpUrl, ZipFile]],
+) -> OpenedBioimageioYaml:
     rdf_name = identify_bioimageio_yaml_file_name(
         [info.filename for info in source.filelist]
     )
-    return _open_bioimageio_rdf_in_zip(source, rdf_name)
+    return _open_bioimageio_rdf_in_zip(ZipPath(source, rdf_name), original_root)
 
 
 def open_bioimageio_yaml(
     source: Union[PermissiveFileSource, ZipFile], /, **kwargs: Unpack[HashKwargs]
 ) -> OpenedBioimageioYaml:
     if isinstance(source, ZipFile):
-        return _open_bioimageio_zip(source)
+        return _open_bioimageio_zip(source, None)
 
     try:
         if isinstance(source, (Path, str)) and (source_dir := Path(source)).is_dir():
@@ -179,24 +187,19 @@ def open_bioimageio_yaml(
         logger.info("loading {} from {}", source, entry.source)
         downloaded = entry.download()
 
-    local_source = downloaded.path
-    if isinstance(local_source, ZipPath):
-        return _open_bioimageio_rdf_in_zip(local_source.root, local_source.name)
-    elif is_zipfile(local_source):
-        return _open_bioimageio_zip(ZipFile(local_source))
+    if isinstance(downloaded.path, ZipPath):
+        return _open_bioimageio_rdf_in_zip(downloaded.path, downloaded.original_root)
+    elif is_zipfile(downloaded.path):
+        return _open_bioimageio_zip(ZipFile(downloaded.path), downloaded.original_root)
 
-    if local_source.is_dir():
-        root = local_source
-        local_source = local_source / find_bioimageio_yaml_file_name(local_source)
-    else:
-        root = downloaded.original_root
+    assert not downloaded.path.is_dir(), "expected a file, not a directory"
 
-    content = _sanitize_bioimageio_yaml(read_yaml(local_source))
+    content = _sanitize_bioimageio_yaml(read_yaml(downloaded.path))
     return OpenedBioimageioYaml(
         content,
-        root.original_root if isinstance(root, FileInZip) else root,
+        downloaded.original_root,
         downloaded.original_file_name,
-        unparsed_content=local_source.read_text(encoding="utf-8"),
+        unparsed_content=downloaded.path.read_text(encoding="utf-8"),
     )
 
 
