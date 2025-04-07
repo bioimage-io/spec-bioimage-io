@@ -3,14 +3,15 @@
         "modality": [
             "electron-microscopy",
             "cryo-electron-microscopy",
+            "light-field-microscopy",
+            "light-microscopy",
             "fluorescence-light-microscopy",
             "transmission-light-microscopy",
             "super-resolution-microscopy",
             "x-ray-microscopy",
             "force-microscopy",
             "high-content-imaging",
-            "whole-slide-imaging",
-            "other"
+            "whole-slide-imaging"
         ],
         "dims": [
             "2d",
@@ -30,26 +31,6 @@
             "brain",
             "whole-organism"
         ],
-        "framework": [
-            "tensorflow",
-            "pytorch",
-            "tensorflow.js"
-        ],
-        "software": [
-            "ilastik",
-            "imagej",
-            "fiji",
-            "imjoy",
-            "deepimagej",
-            "n2v"
-        ],
-        "network": [
-            "unet",
-            "densenet",
-            "resnet",
-            "inception",
-            "shufflenet"
-        ],
         "task": [
             "semantic-segmentation",
             "instance-segmentation",
@@ -58,7 +39,14 @@
             "denoising",
             "image-restoration",
             "image-reconstruction",
-            "in-silico-labeling"
+            "in-silico-labeling",
+            "super-resolution"
         ]
+    },
+    "dataset": {
+        "modality": ["<TODO: same as for 'model'>"]
+    },
+    "notebook": {
+        "task": ["<TODO: same as for 'model'>"]
     }
 }
