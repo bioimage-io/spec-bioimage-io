@@ -1,17 +1,15 @@
 from __future__ import annotations
 
 import hashlib
-import io
 import sys
 import warnings
-import zipfile
 from abc import abstractmethod
 from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import date as _date
 from datetime import datetime as _datetime
 from pathlib import Path, PurePath
-from tempfile import mktemp
+from tempfile import SpooledTemporaryFile, mktemp
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -19,6 +17,7 @@ from typing import (
     Generic,
     Iterable,
     List,
+    Mapping,
     Optional,
     Protocol,
     Sequence,
@@ -456,7 +455,9 @@ def find_bioimageio_yaml_file_name(path: Union[Path, ZipFile]) -> FileName:
     else:
         file_names = [p.name for p in path.glob("*")]
 
-    return identify_bioimageio_yaml_file_name(file_names)
+    return identify_bioimageio_yaml_file_name(
+        file_names
+    )  # TODO: try/except with better error message for dir
 
 
 def ensure_has_valid_bioimageio_yaml_name(src: FileSource) -> FileSource:
@@ -524,6 +525,13 @@ class OpenedBioimageioYaml:
     original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
     original_file_name: FileName
     unparsed_content: str
+
+
+# @dataclass
+# class TempFile:
+#     path: BinaryIO
+#     original_root: Union[RootHttpUrl, ZipFile]
+#     original_file_name: FileName
 
 
 @dataclass
@@ -711,98 +719,136 @@ def resolve(
             extract_file_name(source),
         )
     elif isinstance(source, HttpUrl):
-        if source.scheme not in ("http", "https"):
-            raise NotImplementedError(source.scheme)
-
-        if settings.CI:
-            headers = {"User-Agent": "ci"}
-            if progressbar is None:
-                progressbar = False
-        else:
-            headers = {}
-            if progressbar is None:
-                progressbar = True
-
-        if settings.user_agent is not None:
-            headers["User-Agent"] = settings.user_agent
-
-        chunk_size = 1024
-        if (
-            settings.cache_path
-            and not get_validation_context().disable_cache
-            and any(v is not None for v in kwargs.values())
-        ):
-            downloader = pooch.HTTPDownloader(
-                headers=headers,
-                progressbar=progressbar,  # pyright: ignore[reportArgumentType]
-                chunk_size=chunk_size,
-            )
-            fname = _get_unique_file_name(source)
-            _ls: Any = pooch.retrieve(
-                url=str(source),
-                known_hash=_get_known_hash(kwargs),
-                downloader=downloader,
-                fname=fname,
-                path=settings.cache_path,
-            )
-            local_source = Path(_ls).absolute()
-            return LocalFile(
-                local_source,
-                source.parent,
-                extract_file_name(source),
-            )
-        else:
-            # cacheless download to memory using an in memory zip file
-            r = requests.get(str(source), stream=True)
-            r.raise_for_status()
-
-            zf = zipfile.ZipFile(io.BytesIO(), "w")
-            fn = extract_file_name(source)
-            total = int(r.headers.get("content-length", 0))
-
-            if isinstance(progressbar, bool):
-                if progressbar:
-                    use_ascii = bool(sys.platform == "win32")
-                    pbar = tqdm(
-                        total=total,
-                        ncols=79,
-                        ascii=use_ascii,
-                        unit="B",
-                        unit_scale=True,
-                        leave=True,
-                    )
-                    pbar = tqdm(desc=f"Downloading {fn}")
-                else:
-                    pbar = None
-            else:
-                pbar = progressbar
-
-            zp = ZipPath(zf, fn)
-            with zp.open("wb") as z:
-                assert not isinstance(z, io.TextIOWrapper)
-                for chunk in r.iter_content(chunk_size=chunk_size):
-                    n = z.write(chunk)
-                    if pbar is not None:
-                        _ = pbar.update(n)
-
-            # Make sure the progress bar gets filled even if the actual number
-            # is chunks is smaller than expected. This happens when streaming
-            # text files that are compressed by the server when sending (gzip).
-            # Binary files don't experience this.
-            # (adapted from pooch.HttpDownloader)
-            if pbar is not None:
-                pbar.reset()
-                _ = pbar.update(total)
-                pbar.close()
-
-            return FileInZip(
-                path=zp,
-                original_root=source.parent,
-                original_file_name=fn,
-            )
-
+        return _download_url(source, progressbar=progressbar, **kwargs)
     else:
         assert_never(source)
+
+
+def _download_url(
+    source: HttpUrl,
+    /,
+    progressbar: Union[Progressbar, bool, None] = None,
+    **kwargs: Unpack[HashKwargs],
+) -> Union[LocalFile, FileInZip]:
+    if source.scheme not in ("http", "https"):
+        raise NotImplementedError(source.scheme)
+
+    if settings.CI:
+        headers = {"User-Agent": "ci"}
+        if progressbar is None:
+            progressbar = False
+    else:
+        headers = {}
+        if progressbar is None:
+            progressbar = True
+
+    if settings.user_agent is not None:
+        headers["User-Agent"] = settings.user_agent
+
+    chunk_size = 2048
+    if (
+        settings.cache_path
+        and not get_validation_context().disable_cache
+        and any(v is not None for v in kwargs.values())
+    ):
+        return _cached_download(
+            source,
+            chunk_size=chunk_size,
+            headers=headers,
+            progressbar=progressbar,
+            **kwargs,
+        )
+
+    else:
+        return _uncached_download(
+            source, chunk_size=chunk_size, headers=headers, progressbar=progressbar
+        )
+
+
+def _cached_download(
+    source: HttpUrl,
+    *,
+    chunk_size: int,
+    headers: Mapping[str, str],
+    progressbar: Union[Progressbar, bool, None],
+    **kwargs: Unpack[HashKwargs],
+):
+    downloader = pooch.HTTPDownloader(
+        headers=headers,
+        progressbar=progressbar,  # pyright: ignore[reportArgumentType]
+        chunk_size=chunk_size,
+    )
+    fname = _get_unique_file_name(source)
+    _ls: Any = pooch.retrieve(
+        url=str(source),
+        known_hash=_get_known_hash(kwargs),
+        downloader=downloader,
+        fname=fname,
+        path=settings.cache_path,
+    )
+    local_file_path = Path(_ls).absolute()
+    return LocalFile(
+        path=local_file_path,
+        original_root=source.parent,
+        original_file_name=extract_file_name(source),
+    )
+
+
+def _uncached_download(
+    source: HttpUrl,
+    *,
+    chunk_size: int,
+    headers: Mapping[str, str],
+    progressbar: Union[Progressbar, bool, None],
+):
+    file_name = extract_file_name(source)
+
+    r = requests.get(str(source), stream=True, headers=headers)
+    r.raise_for_status()
+    total = int(r.headers.get("content-length", 0))
+    # setup progressbar
+    if isinstance(progressbar, bool):
+        if progressbar:
+            use_ascii = bool(sys.platform == "win32")
+            pbar = tqdm(
+                total=total,
+                ncols=79,
+                ascii=use_ascii,
+                unit="B",
+                unit_scale=True,
+                leave=True,
+            )
+            pbar = tqdm(desc=f"Downloading {file_name}")
+        else:
+            pbar = None
+    else:
+        pbar = progressbar
+
+    tmp_file = SpooledTemporaryFile(int(1e7))
+    with ZipFile(tmp_file, "w") as zf:
+        zf.filename = "<in-memory>"
+        dest = ZipPath(zf, file_name)
+        with dest.open("wb") as f:
+            for chunk in r.iter_content(chunk_size=chunk_size):
+                n = f.write(chunk)
+                if pbar is not None:
+                    _ = pbar.update(n)
+
+    # Make sure the progress bar gets filled even if the actual number
+    # is chunks is smaller than expected. This happens when streaming
+    # text files that are compressed by the server when sending (gzip).
+    # Binary files don't experience this.
+    # (adapted from pooch.HttpDownloader)
+    if pbar is not None:
+        pbar.reset()
+        _ = pbar.update(total)
+        pbar.close()
+
+    return FileInZip(
+        path=dest,
+        original_root=source.parent,
+        original_file_name=file_name,
+    )
 
 
 download = resolve

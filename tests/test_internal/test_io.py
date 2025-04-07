@@ -1,5 +1,7 @@
+import io
 from pathlib import Path, PurePath
 from typing import Any
+from zipfile import ZipFile
 
 import pytest
 from pydantic import ValidationError
@@ -120,7 +122,7 @@ def test_disable_cache(requests_mock: RequestsMocker):
     assert downloaded.original_file_name == "my_file.txt"
 
 
-def test_download_wo_cache_for_unknown_sha(requests_mock: RequestsMocker):
+def test_download_wo_cache(requests_mock: RequestsMocker):
     from bioimageio.spec._internal.io import FileInZip, resolve
     from bioimageio.spec._internal.url import RootHttpUrl
 
@@ -132,6 +134,31 @@ def test_download_wo_cache_for_unknown_sha(requests_mock: RequestsMocker):
 
     assert len(requests_mock.request_history) == 1
     assert isinstance(downloaded, FileInZip)
-    assert isinstance(downloaded.original_root, RootHttpUrl)
     assert downloaded.original_root == RootHttpUrl("https://mock_example.com/files")
     assert downloaded.original_file_name == "my_bioimageio.yaml"
+    assert downloaded.path.read_text(encoding="utf-8") == "example content"
+
+
+def test_download_zip_wo_cache(requests_mock: RequestsMocker):
+    from bioimageio.spec._internal.io import FileInZip, resolve
+
+    remote_data = io.BytesIO()
+    with ZipFile(remote_data, mode="w") as remote_zip:
+        remote_zip.writestr("bioimageio.yaml", "ref: my_file.txt")
+        remote_zip.writestr("my_file.txt", "example content")
+
+    remote_content = remote_data.getvalue()
+    url = "https://mock_example.com/files/my.zip"
+    _ = requests_mock.get(url, content=remote_content, status_code=200)
+
+    with ValidationContext(disable_cache=False):
+        downloaded = resolve(url)
+
+    assert len(requests_mock.request_history) == 1
+    assert isinstance(downloaded, FileInZip)
+    assert downloaded.original_file_name == "my.zip"
+
+    # resolve subpath within downloaded zip
+    subpath = downloaded.path / "my_file.txt"
+    assert subpath.exists()
+    assert subpath.read_text(encoding="utf-8") == "example content"
