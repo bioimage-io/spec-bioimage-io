@@ -817,15 +817,15 @@ def _uncached_download(
     else:
         pbar = progressbar
 
-    tmp_file = SpooledTemporaryFile(int(1e7))
-    with ZipFile(tmp_file, "w") as zf:
-        zf.filename = "<in-memory>"
-        dest = ZipPath(zf, file_name)
-        with dest.open("wb") as f:
-            for chunk in r.iter_content(chunk_size=chunk_size):
-                n = f.write(chunk)
-                if pbar is not None:
-                    _ = pbar.update(n)
+    tmp_file = SpooledTemporaryFile(settings.memory_limit_per_uncached_file)
+    zf = ZipFile(tmp_file, "w")
+    zf.filename = "<in-memory>"
+    dest = ZipPath(zf, file_name)
+    with dest.open("wb") as f:
+        for chunk in r.iter_content(chunk_size=chunk_size):
+            n = f.write(chunk)
+            if pbar is not None:
+                _ = pbar.update(n)
 
     # Make sure the progress bar gets filled even if the actual number
     # is chunks is smaller than expected. This happens when streaming

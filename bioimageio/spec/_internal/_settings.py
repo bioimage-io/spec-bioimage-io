@@ -41,19 +41,29 @@ class Settings(BaseSettings, extra="ignore"):
     )
     """URL to bioimageio id_map_draft.json to resolve draft IDs ending with '/draft'."""
 
-    resolve_draft: bool = True
-    """Flag to resolve draft resource versions following the pattern
-    <resource id>/draft.
-    Note that anyone may stage a new draft and that such a draft version
-    may not have been reviewed yet.
-    Set this flag to False to avoid this potential security risk
-    and disallow loading draft versions."""
-
     perform_io_checks: bool = True
     """Wether or not to perform validation that requires file io,
     e.g. downloading a remote files.
 
     Existence of any local absolute file paths is still being checked."""
+
+    resolve_draft: bool = True
+    """Flag to resolve draft resource versions following the pattern
+    <resource id>/draft.
+
+    Note that anyone may stage a new draft and that such a draft version
+    may not have been reviewed yet.
+    Set this flag to False to avoid this potential security risk
+    and disallow loading draft versions."""
+
+    memory_limit_per_uncached_file: int = 1024**2
+    """Maximum size per uncached file in bytes to keep in memory.
+
+    Uncached files larger than this size will be written to a temporary file.
+
+    Note that file downloads with a known SHA-256 hash will be cached to **cache_path**
+    regardless of size, unless `ValidationContext.disable_cache` is true.
+    """
 
     log_warnings: bool = True
     """Log validation warnings to console."""
