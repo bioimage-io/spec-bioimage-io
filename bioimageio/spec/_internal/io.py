@@ -5,7 +5,7 @@ import sys
 import warnings
 from abc import abstractmethod
 from contextlib import nullcontext
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date as _date
 from datetime import datetime as _datetime
 from pathlib import Path, PurePath
@@ -521,17 +521,10 @@ def is_yaml_value(value: Any) -> TypeGuard[YamlValue]:
 
 @dataclass
 class OpenedBioimageioYaml:
-    content: BioimageioYamlContent
+    content: BioimageioYamlContent = field(repr=False)
     original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
     original_file_name: FileName
-    unparsed_content: str
-
-
-# @dataclass
-# class TempFile:
-#     path: BinaryIO
-#     original_root: Union[RootHttpUrl, ZipFile]
-#     original_file_name: FileName
+    unparsed_content: str = field(repr=False)
 
 
 @dataclass
