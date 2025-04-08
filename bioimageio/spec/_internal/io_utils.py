@@ -9,7 +9,6 @@ from typing import (
     Any,
     Dict,
     Mapping,
-    Optional,
     Union,
     cast,
 )
@@ -94,7 +93,7 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
 
 def _open_bioimageio_rdf_in_zip(
     path: ZipPath,
-    original_root: Optional[Union[AbsoluteDirectory, RootHttpUrl, ZipFile]],
+    original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile],
 ) -> OpenedBioimageioYaml:
     with path.open("rb") as f:
         assert not isinstance(f, io.TextIOWrapper)
@@ -104,7 +103,7 @@ def _open_bioimageio_rdf_in_zip(
 
     return OpenedBioimageioYaml(
         content,
-        path.root if original_root is None else original_root,
+        original_root,
         extract_file_name(path),
         unparsed_content=unparsed_content,
     )
@@ -112,19 +111,18 @@ def _open_bioimageio_rdf_in_zip(
 
 def _open_bioimageio_zip(
     source: ZipFile,
-    original_root: Optional[Union[AbsoluteDirectory, RootHttpUrl, ZipFile]],
 ) -> OpenedBioimageioYaml:
     rdf_name = identify_bioimageio_yaml_file_name(
         [info.filename for info in source.filelist]
     )
-    return _open_bioimageio_rdf_in_zip(ZipPath(source, rdf_name), original_root)
+    return _open_bioimageio_rdf_in_zip(ZipPath(source, rdf_name), source)
 
 
 def open_bioimageio_yaml(
     source: Union[PermissiveFileSource, ZipFile], /, **kwargs: Unpack[HashKwargs]
 ) -> OpenedBioimageioYaml:
     if isinstance(source, ZipFile):
-        return _open_bioimageio_zip(source, None)
+        return _open_bioimageio_zip(source)
 
     try:
         if isinstance(source, (Path, str)) and (source_dir := Path(source)).is_dir():
@@ -190,7 +188,7 @@ def open_bioimageio_yaml(
     if isinstance(downloaded.path, ZipPath):
         return _open_bioimageio_rdf_in_zip(downloaded.path, downloaded.original_root)
     elif is_zipfile(downloaded.path):
-        return _open_bioimageio_zip(ZipFile(downloaded.path), downloaded.original_root)
+        return _open_bioimageio_zip(ZipFile(downloaded.path))
 
     assert not downloaded.path.is_dir(), "expected a file, not a directory"
 
