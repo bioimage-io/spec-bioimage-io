@@ -4,7 +4,7 @@ from contextvars import ContextVar, Token
 from copy import copy
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Literal, Optional, Union
+from typing import Callable, Dict, List, Literal, Optional, Union
 from urllib.parse import urlsplit, urlunsplit
 from zipfile import ZipFile
 
@@ -13,6 +13,7 @@ from typing_extensions import Self
 
 from ._settings import settings
 from .io_basics import FileName, Sha256
+from .progress import Progressbar
 from .root_url import RootHttpUrl
 from .warning_levels import WarningLevel
 
@@ -75,6 +76,11 @@ class ValidationContext(ValidationContextBase):
     Note: This setting does not affect warning entries
         of a generated `bioimageio.spec.ValidationSummary`.
     """
+
+    progressbar_factory: Optional[Callable[[], Progressbar]] = None
+    """Callable to return a tqdm-like progressbar.
+
+    Currently this is only used for file downloads."""
 
     raise_errors: bool = False
     """Directly raise any validation errors

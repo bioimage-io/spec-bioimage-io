@@ -13,14 +13,16 @@ from tempfile import SpooledTemporaryFile, mktemp
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     Dict,
     Generic,
     Iterable,
     List,
+    Literal,
     Mapping,
     Optional,
-    Protocol,
     Sequence,
+    Set,
     Tuple,
     Type,
     TypedDict,
@@ -46,6 +48,7 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core import core_schema
+from rich.progress import Progress
 from tqdm import tqdm
 from typing_extensions import (
     Annotated,
@@ -72,6 +75,7 @@ from .io_basics import (
 )
 from .node import Node
 from .packaging_context import packaging_context_var
+from .progress import Progressbar
 from .root_url import RootHttpUrl
 from .type_guards import is_mapping, is_sequence
 from .url import HttpUrl
@@ -593,17 +597,6 @@ def _get_unique_file_name(url: Union[HttpUrl, pydantic.HttpUrl]):
     return unique_name
 
 
-class Progressbar(Protocol):
-    count: int
-    total: int
-
-    def update(self, i: int): ...
-
-    def reset(self): ...
-
-    def close(self): ...
-
-
 def extract(
     source: Union[FilePath, ZipFile, ZipPath],
     folder: Optional[DirectoryPath] = None,
@@ -672,7 +665,7 @@ def extract(
 def resolve(
     source: Union[PermissiveFileSource, FileDescr, ZipPath],
     /,
-    progressbar: Union[Progressbar, bool, None] = None,
+    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
     **kwargs: Unpack[HashKwargs],
 ) -> Union[LocalFile, FileInZip]:
     """Resolve file `source` (download if needed)"""
@@ -720,11 +713,14 @@ def resolve(
 def _download_url(
     source: HttpUrl,
     /,
-    progressbar: Union[Progressbar, bool, None] = None,
+    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
     **kwargs: Unpack[HashKwargs],
 ) -> Union[LocalFile, FileInZip]:
     if source.scheme not in ("http", "https"):
         raise NotImplementedError(source.scheme)
+
+    if callable(progressbar):
+        progressbar = progressbar()
 
     if settings.CI:
         headers = {"User-Agent": "ci"}
@@ -734,6 +730,21 @@ def _download_url(
         headers = {}
         if progressbar is None:
             progressbar = True
+
+    if isinstance(progressbar, bool):
+        # setup progressbar
+        if progressbar:
+            use_ascii = bool(sys.platform == "win32")
+            progressbar = tqdm(
+                ncols=79,
+                ascii=use_ascii,
+                unit="B",
+                unit_scale=True,
+                leave=True,
+            )
+
+    if progressbar:
+        progressbar.set_description(f"Downloading {extract_file_name(source)}")
 
     if settings.user_agent is not None:
         headers["User-Agent"] = settings.user_agent
@@ -763,7 +774,7 @@ def _cached_download(
     *,
     chunk_size: int,
     headers: Mapping[str, str],
-    progressbar: Union[Progressbar, bool, None],
+    progressbar: Union[Progressbar, bool],
     **kwargs: Unpack[HashKwargs],
 ):
     downloader = pooch.HTTPDownloader(
@@ -792,30 +803,26 @@ def _uncached_download(
     *,
     chunk_size: int,
     headers: Mapping[str, str],
-    progressbar: Union[Progressbar, bool, None],
+    progressbar: Union[Progressbar, Literal[False]],
 ):
     file_name = extract_file_name(source)
 
     r = requests.get(str(source), stream=True, headers=headers)
     r.raise_for_status()
-    total = int(r.headers.get("content-length", 0))
-    # setup progressbar
-    if isinstance(progressbar, bool):
-        if progressbar:
-            use_ascii = bool(sys.platform == "win32")
-            pbar = tqdm(
-                total=total,
-                ncols=79,
-                ascii=use_ascii,
-                unit="B",
-                unit_scale=True,
-                leave=True,
-            )
-            pbar = tqdm(desc=f"Downloading {file_name}")
+
+    # set progressbar.total
+    total = r.headers.get("content-length")
+    if total is not None and not isinstance(total, int):
+        try:
+            total = int(total)
+        except Exception:
+            total = None
+
+    if progressbar:
+        if total is None:
+            progressbar.total = 0
         else:
-            pbar = None
-    else:
-        pbar = progressbar
+            progressbar.total = total
 
     tmp_file = SpooledTemporaryFile(settings.memory_limit_per_uncached_file)
     zf = ZipFile(tmp_file, "w")
@@ -824,18 +831,20 @@ def _uncached_download(
     with dest.open("wb") as f:
         for chunk in r.iter_content(chunk_size=chunk_size):
             n = f.write(chunk)
-            if pbar is not None:
-                _ = pbar.update(n)
+            if progressbar:
+                _ = progressbar.update(n)
 
     # Make sure the progress bar gets filled even if the actual number
     # is chunks is smaller than expected. This happens when streaming
     # text files that are compressed by the server when sending (gzip).
     # Binary files don't experience this.
     # (adapted from pooch.HttpDownloader)
-    if pbar is not None:
-        pbar.reset()
-        _ = pbar.update(total)
-        pbar.close()
+    if progressbar:
+        progressbar.reset()
+        if total is not None:
+            _ = progressbar.update(total)
+
+        progressbar.close()
 
     return FileInZip(
         path=dest,
@@ -881,8 +890,12 @@ class LightHttpFileDescr(Node):
     sha256: Sha256
     """SHA256 checksum of the source file"""
 
-    def download(self):
-        return download(self.source, sha256=self.sha256)
+    def download(
+        self,
+        *,
+        progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+    ):
+        return download(self.source, sha256=self.sha256, progressbar=progressbar)
 
 
 class FileDescr(Node):
@@ -921,7 +934,9 @@ class FileDescr(Node):
                 + "file."
             )
 
-    def download(self):
+    def download(
+        self, *, progressbar: Union[Progressbar, Callable[[], Progressbar], bool] = True
+    ):
 
         return download(self.source, sha256=self.sha256)
 
