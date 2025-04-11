@@ -6,6 +6,7 @@ from tempfile import NamedTemporaryFile, mkdtemp
 from typing import IO, Dict, Literal, Optional, Sequence, Union
 from zipfile import ZIP_DEFLATED
 
+from loguru import logger
 from pydantic import DirectoryPath, FilePath, NewPath
 
 from ._description import InvalidDescr, ResourceDescr, build_description
@@ -197,6 +198,7 @@ def save_bioimageio_package(
             ]
         ]
     ] = None,
+    allow_invalid: bool = False,
 ) -> FilePath:
     """Package a bioimageio resource as a zip file.
 
@@ -231,10 +233,12 @@ def save_bioimageio_package(
     )
     with get_validation_context().replace(warning_level=ERROR):
         if isinstance((exported := load_description(output_path)), InvalidDescr):
-            raise ValueError(
-                f"Exported package '{output_path}' is invalid:"
-                + f" {exported.validation_summary}"
-            )
+            exported.validation_summary.display()
+            msg = f"Exported package at '{output_path}' is invalid."
+            if allow_invalid:
+                logger.error(msg)
+            else:
+                raise ValueError(msg)
 
     return output_path
 

@@ -9,7 +9,6 @@ from typing import Any, Callable, Dict, Tuple, Union
 from urllib.parse import urljoin
 
 import requests
-from lxml import etree
 from pydantic import DirectoryPath, FilePath, HttpUrl
 from ruyaml import YAML
 
@@ -47,6 +46,8 @@ class dotdict(dict):  # pylint: disable=invalid-name
 
 def parse_imjoy_plugin(source, overwrite_config=None):
     """Parse ImJoy plugin file and return a dict with all the fields."""
+    from lxml import etree
+
     root = etree.HTML("<html>" + source + "</html>")
     plugin_comp = dotdict()
     for tag_type in tag_types:

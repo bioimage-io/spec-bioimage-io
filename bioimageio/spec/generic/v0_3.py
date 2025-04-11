@@ -253,6 +253,14 @@ class Config(Node, extra="allow"):
 
         return self
 
+    def __getitem__(self, key: str) -> Any:
+        """Allows to access the config as a dictionary."""
+        return getattr(self, key)
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        """Allows to set the config as a dictionary."""
+        setattr(self, key, value)
+
 
 class GenericModelDescrBase(ResourceDescrBase):
     """Base for all resource descriptions including of model descriptions"""
@@ -478,8 +486,13 @@ class GenericDescr(GenericDescrBase, extra="ignore"):
     Use this generic resource description, if none of the known specific types matches your resource.
     """
 
-    type: Annotated[str, LowerCase] = Field("generic", frozen=True)
-    """The resource type assigns a broad category to the resource."""
+    implemented_type: ClassVar[Literal["generic"]] = "generic"
+    if TYPE_CHECKING:
+        type: Annotated[str, LowerCase] = "generic"
+        """The resource type assigns a broad category to the resource."""
+    else:
+        type: Annotated[str, LowerCase]
+        """The resource type assigns a broad category to the resource."""
 
     id: Optional[
         Annotated[ResourceId, Field(examples=["affable-shark", "ambitious-sloth"])]

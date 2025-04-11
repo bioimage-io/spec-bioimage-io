@@ -1,3 +1,6 @@
+"""use these type guards with caution!
+They widen the type to T[Any], which is not always correct."""
+
 import collections.abc
 from typing import Any, Dict, List, Mapping, Sequence, Set, Tuple
 

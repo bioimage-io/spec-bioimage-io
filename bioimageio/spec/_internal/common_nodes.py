@@ -36,7 +36,13 @@ from ..summary import (
     WarningEntry,
 )
 from .field_warning import issue_warning
-from .io import BioimageioYamlContent
+from .io import (
+    BioimageioYamlContent,
+    FileDescr,
+    YamlValue,
+    extract_file_descrs,
+    populate_cache,
+)
 from .io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName, ZipPath
 from .io_utils import write_content_to_zip
 from .node import Node
@@ -208,7 +214,11 @@ class ResourceDescrBase(
     ) -> Union[Self, InvalidDescr]:
         """factory method to create a resource description object"""
         context = context or get_validation_context()
-        assert isinstance(data, dict)
+        if context.perform_io_checks:
+            # download all cachable files
+            file_descrs = extract_file_descrs(data)
+            populate_cache(file_descrs)
+
         with context:
             rd, errors, val_warnings = cls._load_impl(deepcopy(data))
 

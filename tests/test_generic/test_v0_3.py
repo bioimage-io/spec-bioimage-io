@@ -203,3 +203,31 @@ def test_with_suffix(src: Union[Path, HttpUrl], adapter: TypeAdapter[Any]):
         assert json_obj == str(src)
     else:
         assert_never(src)
+
+
+def test_config_as_dict():
+    from bioimageio.spec.generic.v0_3 import (
+        Author,
+        CiteEntry,
+        Config,
+        GenericDescr,
+        HttpUrl,
+        LicenseId,
+    )
+
+    for my_config in (
+        Config(my_config={"my_key": "my_val"}),  # pyright: ignore[reportCallIssue]
+        {"my_config": {"my_key": "my_val"}},
+    ):
+        descr = GenericDescr(
+            name="my name",
+            type="my_type",
+            description="my description",
+            authors=[Author(name="tester")],
+            license=LicenseId("MIT"),
+            cite=[CiteEntry(text="lala", url=HttpUrl("https://example.com"))],
+            config=my_config,  # pyright: ignore[reportArgumentType]
+        )
+        assert descr.config["my_config"]["my_key"] == "my_val"
+        descr.config["my_config"] = {"my_key": "my_val2"}
+        assert descr.config["my_config"]["my_key"] == "my_val2"

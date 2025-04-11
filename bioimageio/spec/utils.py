@@ -17,6 +17,7 @@ __all__ = [
     "ensure_description_is_dataset",
     "ensure_description_is_model",
     "extract_file_name",
+    "get_file_name",
     "get_sha256",
     "get_spdx_licenses",
     "identify_bioimageio_yaml_file_name",
@@ -27,6 +28,8 @@ __all__ = [
     "SpdxLicenses",
     "write_yaml",
 ]
+
+get_file_name = extract_file_name
 
 
 class SpdxLicenseEntry(TypedDict):
