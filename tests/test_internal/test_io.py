@@ -8,6 +8,7 @@ from pydantic import ValidationError
 from requests_mock import Mocker as RequestsMocker
 
 from bioimageio.spec import ValidationContext
+from bioimageio.spec._internal.io_basics import ZipPath
 from bioimageio.spec.common import RelativeFilePath
 
 
@@ -159,6 +160,13 @@ def test_download_zip_wo_cache(requests_mock: RequestsMocker):
     assert downloaded.original_file_name == "my.zip"
 
     # resolve subpath within downloaded zip
-    subpath = downloaded.path / "my_file.txt"
-    assert subpath.exists()
-    assert subpath.read_text(encoding="utf-8") == "example content"
+    # directly opening the zip file unfortunately does not work
+    # with ZipFile(downloaded.path, mode="r") as zf:
+    #     subpath = ZipPath(zf, "my_file.txt")
+    with downloaded.path.open("rb") as f:
+        assert not isinstance(f, io.TextIOWrapper)
+        with ZipFile(f, mode="r") as zf:
+            subpath = ZipPath(zf, "my_file.txt")
+
+            assert subpath.exists()
+            assert subpath.read_text(encoding="utf-8") == "example content"

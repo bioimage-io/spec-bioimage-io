@@ -969,3 +969,55 @@ def get_sha256(path: Union[Path, ZipPath]) -> Sha256:
     sha = h.hexdigest()
     assert len(sha) == 64
     return Sha256(sha)
+
+
+def extract_file_descrs(data: YamlValue):
+    collected: List[FileDescr] = []
+    with get_validation_context().replace(perform_io_checks=False, log_warnings=False):
+        _extract_file_descrs_impl(data, collected)
+
+    return collected
+
+
+def _extract_file_descrs_impl(data: YamlValue, collected: List[FileDescr]):
+    if isinstance(data, dict):
+        if "source" in data and "sha256" in data:
+            try:
+                fd = FileDescr.model_validate(
+                    dict(source=data["source"], sha256=data["sha256"])
+                )
+            except Exception:
+                pass
+            else:
+                collected.append(fd)
+
+        for v in data.values():
+            _extract_file_descrs_impl(v, collected)
+    elif isinstance(data, list):
+        for v in data:
+            _extract_file_descrs_impl(v, collected)
+
+
+def populate_cache(sources: Sequence[Union[FileDescr, LightHttpFileDescr]]):
+    unique: Set[str] = set()
+    for src in sources:
+        if src.sha256 is None:
+            continue  # not caching without known SHA
+
+        if isinstance(src.source, (HttpUrl, pydantic.AnyUrl)):
+            url = str(src.source)
+        elif isinstance(src.source, RelativeFilePath):
+            if isinstance(absolute := src.source.absolute(), HttpUrl):
+                url = str(absolute)
+            else:
+                continue  # not caching local paths
+        elif isinstance(src.source, Path):
+            continue  # not caching local paths
+        else:
+            assert_never(src.source)
+
+        if url in unique:
+            continue  # skip duplicate URLs
+
+        unique.add(url)
+        _ = src.download()
