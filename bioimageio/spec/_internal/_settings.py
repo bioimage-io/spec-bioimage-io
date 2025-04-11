@@ -1,8 +1,9 @@
+import os
 from pathlib import Path
 from typing import Optional, Union
 
 import pooch  # pyright: ignore [reportMissingTypeStubs]
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Annotated
 
@@ -19,6 +20,11 @@ class Settings(BaseSettings, extra="ignore"):
 
     cache_path: Path = pooch.os_cache("bioimageio")
     """bioimageio cache location"""
+
+    @field_validator("cache_path", mode="after")
+    @classmethod
+    def _expand_user(cls, value: Path):
+        return Path(os.path.expanduser(str(value)))
 
     collection_http_pattern: str = (
         "https://hypha.aicell.io/bioimage-io/artifacts/{bioimageio_id}/files/rdf.yaml"
