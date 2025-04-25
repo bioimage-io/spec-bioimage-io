@@ -14,6 +14,7 @@ from ._internal.common_nodes import ResourceDescrBase
 from ._internal.io import (
     BioimageioYamlContent,
     BioimageioYamlSource,
+    FileDescr,
     download,
     ensure_is_valid_bioimageio_yaml_name,
 )
@@ -28,6 +29,7 @@ from ._io import load_description
 from .model.v0_4 import WeightsFormat
 
 
+# TODO: deprecate in favor of get_package_content
 def get_resource_package_content(
     rd: ResourceDescr,
     /,
@@ -35,6 +37,23 @@ def get_resource_package_content(
     bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
 ) -> Dict[FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]]:
+    return {
+        k: v if isinstance(v, dict) else download(v.source).path
+        for k, v in get_package_content(
+            rd,
+            bioimageio_yaml_file_name=bioimageio_yaml_file_name,
+            weights_priority_order=weights_priority_order,
+        ).items()
+    }
+
+
+def get_package_content(
+    rd: ResourceDescr,
+    /,
+    *,
+    bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
+    weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
+) -> Dict[FileName, Union[FileDescr, BioimageioYamlContent]]:
     """
     Args:
         rd: resource description
@@ -51,7 +70,7 @@ def get_resource_package_content(
     bioimageio_yaml_file_name = ensure_is_valid_bioimageio_yaml_name(
         bioimageio_yaml_file_name
     )
-    content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath, ZipPath]] = {}
+    content: Dict[FileName, FileDescr] = {}
     with PackagingContext(
         bioimageio_yaml_file_name=bioimageio_yaml_file_name,
         file_sources=content,

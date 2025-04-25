@@ -27,6 +27,7 @@ from pydantic_core import PydanticUndefined
 from typing_extensions import Self
 
 from bioimageio.spec._internal.type_guards import is_dict
+from bioimageio.spec._package import get_resource_package_content
 
 from ..summary import (
     WARNING_LEVEL_TO_NAME,
@@ -215,9 +216,8 @@ class ResourceDescrBase(
         """factory method to create a resource description object"""
         context = context or get_validation_context()
         if context.perform_io_checks:
-            # download all cachable files
             file_descrs = extract_file_descrs(data)
-            populate_cache(file_descrs)
+            populate_cache(file_descrs)  # TODO: add progress bar
 
         with context:
             rd, errors, val_warnings = cls._load_impl(deepcopy(data))
@@ -345,11 +345,9 @@ class ResourceDescrBase(
 
     def get_package_content(
         self,
-    ) -> Dict[
-        FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]
-    ]:
+    ) -> Dict[FileName, Union[FileDescr, BioimageioYamlContent]]:
         """Returns package content without creating the package."""
-        content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath, ZipPath]] = {}
+        content: Dict[FileName, FileDescr] = {}
         with PackagingContext(
             bioimageio_yaml_file_name=BIOIMAGEIO_YAML,
             file_sources=content,

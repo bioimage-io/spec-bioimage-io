@@ -325,99 +325,6 @@ def wo_special_file_name(src: FileSource) -> FileSource:
     return src
 
 
-def _package(value: FileSource, info: SerializationInfo) -> Union[str, Path, FileName]:
-    if (packaging_context := packaging_context_var.get()) is None:
-        # convert to standard python obj
-        # note: pydantic keeps returning Rootmodels (here `HttpUrl`) as-is, but if
-        #   this function returns one RootModel, paths are "further serialized" by
-        #   returning the 'root' attribute, which is incorrect.
-        #   see https://github.com/pydantic/pydantic/issues/8963
-        #   TODO: follow up on https://github.com/pydantic/pydantic/issues/8963
-        if isinstance(value, Path):
-            unpackaged = value
-        elif isinstance(value, HttpUrl):
-            unpackaged = value
-        elif isinstance(value, RelativeFilePath):
-            unpackaged = Path(value.path)
-        elif isinstance(value, AnyUrl):
-            unpackaged = str(value)
-        else:
-            assert_never(value)
-
-        if info.mode_is_json():
-            # convert to json value  # TODO: remove and let pydantic do this?
-            if isinstance(unpackaged, Path):
-                unpackaged = str(unpackaged)
-            elif isinstance(unpackaged, str):
-                pass
-            else:
-                assert_never(unpackaged)
-        else:
-            warnings.warn(
-                "dumping with mode='python' is currently not fully supported for "
-                + "fields that are included when packaging; returned objects are "
-                + "standard python objects"
-            )
-
-        return unpackaged  # return unpackaged file source
-
-    # package the file source:
-    # add it to the current package's file sources and return its collision free file name
-    if isinstance(value, RelativeFilePath):
-        src = value.absolute()
-    elif isinstance(value, pydantic.AnyUrl):
-        src = HttpUrl(str(value))
-    elif isinstance(value, HttpUrl):
-        src = value
-    elif isinstance(value, Path):
-        src = value.resolve()
-    else:
-        assert_never(value)
-
-    fname = extract_file_name(src)
-    if fname == packaging_context.bioimageio_yaml_file_name:
-        raise ValueError(
-            f"Reserved file name '{packaging_context.bioimageio_yaml_file_name}' "
-            + "not allowed for a file to be packaged"
-        )
-
-    fsrcs = packaging_context.file_sources
-    assert not any(
-        fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES
-    ), fname
-    if fname in fsrcs and fsrcs[fname] != src:
-        for i in range(2, 20):
-            fn, *ext = fname.split(".")
-            alternative_file_name = ".".join([f"{fn}_{i}", *ext])
-            if (
-                alternative_file_name not in fsrcs
-                or fsrcs[alternative_file_name] == src
-            ):
-                fname = alternative_file_name
-                break
-        else:
-            raise ValueError(f"Too many file name clashes for {fname}")
-
-    fsrcs[fname] = src
-    return fname
-
-
-include_in_package_serializer = PlainSerializer(_package, when_used="unless-none")
-ImportantFileSource = Annotated[
-    FileSource,
-    AfterValidator(wo_special_file_name),
-    include_in_package_serializer,
-]
-InPackageIfLocalFileSource = Union[
-    Annotated[
-        Union[FilePath, RelativeFilePath],
-        AfterValidator(wo_special_file_name),
-        include_in_package_serializer,
-    ],
-    Union[HttpUrl, pydantic.HttpUrl],
-]
-
-
 def has_valid_bioimageio_yaml_name(src: FileSource) -> bool:
     return is_valid_bioimageio_yaml_name(extract_file_name(src))
 
@@ -583,7 +490,7 @@ def _get_known_hash(hash_kwargs: HashKwargs):
         return None
 
 
-def _get_unique_file_name(url: Union[HttpUrl, pydantic.HttpUrl]):
+def _get_cache_file_path(url: Union[HttpUrl, pydantic.HttpUrl]):
     """
     Create a unique file name based on the given URL;
     adapted from pooch.utils.unique_file_name
@@ -750,11 +657,10 @@ def _download_url(
         headers["User-Agent"] = settings.user_agent
 
     chunk_size = 2048
-    if (
-        settings.cache_path
-        and not get_validation_context().disable_cache
-        and any(v is not None for v in kwargs.values())
-    ):
+    if settings.cache_path and not get_validation_context().disable_cache and kwargs:
+
+        fname = _get_cache_file_path(source)
+
         return _cached_download(
             source,
             chunk_size=chunk_size,
@@ -782,13 +688,10 @@ def _cached_download(
         progressbar=progressbar,  # pyright: ignore[reportArgumentType]
         chunk_size=chunk_size,
     )
-    fname = _get_unique_file_name(source)
     _ls: Any = pooch.retrieve(
         url=str(source),
         known_hash=_get_known_hash(kwargs),
         downloader=downloader,
-        fname=fname,
-        path=settings.cache_path,
     )
     local_file_path = Path(_ls).absolute()
     return LocalFile(
@@ -899,8 +802,8 @@ class LightHttpFileDescr(Node):
 
 
 class FileDescr(Node):
-    source: ImportantFileSource
-    """∈📦 file source"""
+    source: FileSource
+    """file source"""
 
     sha256: Optional[Sha256] = None
     """SHA256 checksum of the source file"""
@@ -939,6 +842,100 @@ class FileDescr(Node):
     ):
 
         return download(self.source, sha256=self.sha256)
+
+
+class NonBioimageioYamlFileDescr(FileDescr):
+    source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
+
+
+def _package_serializer(
+    source: FileSource, info: SerializationInfo
+) -> Union[str, Path, FileName]:
+    return _package(source, info, None)
+
+
+def _package(
+    source: FileSource, info: SerializationInfo, sha256: Optional[Sha256]
+) -> Union[str, Path, FileName]:
+    if (packaging_context := packaging_context_var.get()) is None:
+        # convert to standard python obj
+        # note: pydantic keeps returning Rootmodels (here `HttpUrl`) as-is, but if
+        #   this function returns one RootModel, paths are "further serialized" by
+        #   returning the 'root' attribute, which is incorrect.
+        #   see https://github.com/pydantic/pydantic/issues/8963
+        #   TODO: follow up on https://github.com/pydantic/pydantic/issues/8963
+        if isinstance(source, Path):
+            unpackaged = source
+        elif isinstance(source, HttpUrl):
+            unpackaged = source
+        elif isinstance(source, RelativeFilePath):
+            unpackaged = Path(source.path)
+        elif isinstance(source, AnyUrl):
+            unpackaged = str(source)
+        else:
+            assert_never(source)
+
+        if info.mode_is_json():
+            # convert to json value  # TODO: remove and let pydantic do this?
+            if isinstance(unpackaged, (Path, HttpUrl)):
+                unpackaged = str(unpackaged)
+            elif isinstance(unpackaged, str):
+                pass
+            else:
+                assert_never(unpackaged)
+        else:
+            warnings.warn(
+                "dumping with mode='python' is currently not fully supported for "
+                + "fields that are included when packaging; returned objects are "
+                + "standard python objects"
+            )
+
+        return unpackaged  # return unpackaged file source
+
+    fname = extract_file_name(source)
+    if fname == packaging_context.bioimageio_yaml_file_name:
+        raise ValueError(
+            f"Reserved file name '{packaging_context.bioimageio_yaml_file_name}' "
+            + "not allowed for a file to be packaged"
+        )
+
+    fsrcs = packaging_context.file_sources
+    assert not any(
+        fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES
+    ), fname
+    if fname in fsrcs and fsrcs[fname].source != source:
+        for i in range(2, 20):
+            fn, *ext = fname.split(".")
+            alternative_file_name = ".".join([f"{fn}_{i}", *ext])
+            if (
+                alternative_file_name not in fsrcs
+                or fsrcs[alternative_file_name].source == source
+            ):
+                fname = alternative_file_name
+                break
+        else:
+            raise ValueError(f"Too many file name clashes for {fname}")
+
+    fsrcs[fname] = FileDescr(source=source, sha256=sha256)
+    return fname
+
+
+include_in_package_serializer = PlainSerializer(
+    _package_serializer, when_used="unless-none"
+)
+ImportantFileSource = Annotated[
+    FileSource,
+    AfterValidator(wo_special_file_name),
+    include_in_package_serializer,
+]
+InPackageIfLocalFileSource = Union[
+    Annotated[
+        Union[FilePath, RelativeFilePath],
+        AfterValidator(wo_special_file_name),
+        include_in_package_serializer,
+    ],
+    Union[HttpUrl, pydantic.HttpUrl],
+]
 
 
 def extract_file_name(

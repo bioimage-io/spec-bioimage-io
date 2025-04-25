@@ -41,7 +41,6 @@ from .._internal.type_guards import is_sequence
 from .._internal.types import (
     DeprecatedLicenseId,
     FileSource,
-    ImportantFileSource,
     LicenseId,
     NotEmpty,
 )
@@ -98,7 +97,7 @@ CoverImageSource = Annotated[
 class AttachmentsDescr(Node):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
-    files: List[ImportantFileSource] = Field(default_factory=list)
+    files: List[FileSource] = Field(default_factory=list)
     """∈📦 File attachments"""
 
 
@@ -305,9 +304,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[
-        Annotated[str, Len(min_length=1, max_length=2)], ImportantFileSource, None
-    ] = None
+    icon: Union[Annotated[str, Len(min_length=1, max_length=2)], FileSource, None] = (
+        None
+    )
     """An icon for illustration"""
 
     links: Annotated[
@@ -393,7 +392,7 @@ class GenericDescrBase(GenericModelDescrBase):
     """badges associated with this resource"""
 
     documentation: Annotated[
-        Optional[ImportantFileSource],
+        Optional[FileSource],
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",

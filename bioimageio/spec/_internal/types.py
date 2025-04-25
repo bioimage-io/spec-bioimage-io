@@ -10,7 +10,7 @@ from pydantic import PlainSerializer, RootModel, StringConstraints
 from typing_extensions import Annotated, Literal
 
 from .constants import DOI_REGEX, SI_UNIT_REGEX
-from .io import FileSource, ImportantFileSource, PermissiveFileSource, RelativeFilePath
+from .io import FileSource, PermissiveFileSource, RelativeFilePath
 from .io_basics import AbsoluteDirectory, AbsoluteFilePath, FileName, FilePath, Sha256
 from .license_id import DeprecatedLicenseId, LicenseId
 from .url import HttpUrl
@@ -31,7 +31,6 @@ __all__ = [
     "FileSource",
     "HttpUrl",
     "Identifier",
-    "ImportantFileSource",
     "LicenseId",
     "LowerCaseIdentifier",
     "NotEmpty",
