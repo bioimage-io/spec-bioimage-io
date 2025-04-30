@@ -569,12 +569,12 @@ def extract(
             return folder
 
 
-def resolve(
+def open(
     source: Union[PermissiveFileSource, FileDescr, ZipPath],
     /,
     progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
     **kwargs: Unpack[HashKwargs],
-) -> Union[LocalFile, FileInZip]:
+) -> BinaryIO:
     """Resolve file `source` (download if needed)"""
 
     if isinstance(source, str):
@@ -756,7 +756,7 @@ def _uncached_download(
     )
 
 
-download = resolve
+download = open
 
 
 def resolve_and_extract(
@@ -771,7 +771,7 @@ def resolve_and_extract(
 
     note: If source points to a zip file it is not extracted
     """
-    local = resolve(source, progressbar=progressbar, **kwargs)
+    local = open(source, progressbar=progressbar, **kwargs)
     if isinstance(local, LocalFile):
         return local
 
