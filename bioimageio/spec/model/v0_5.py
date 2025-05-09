@@ -970,19 +970,19 @@ class EnsureDtypeDescr(ProcessingDescrBase):
             inputs:
             - data:
                 type: float32  # described bioimage.io model is compatible with any float32 input tensor
-            preprocessing:
-            - id: scale_range
-                kwargs:
-                axes: ['y', 'x']
-                max_percentile: 99.8
-                min_percentile: 5.0
-            - id: clip
-                kwargs:
-                min: 0.0
-                max: 1.0
-            - id: ensure_dtype
-                kwargs:
-                dtype: uint8
+              preprocessing:
+              - id: scale_range
+                  kwargs:
+                  axes: ['y', 'x']
+                  max_percentile: 99.8
+                  min_percentile: 5.0
+              - id: clip
+                  kwargs:
+                  min: 0.0
+                  max: 1.0
+              - id: ensure_dtype  # the neural network of the model requires uint8
+                  kwargs:
+                  dtype: uint8
             ```
         - in Python:
             >>> preprocessing = [
