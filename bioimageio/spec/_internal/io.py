@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import sys
 import warnings
 from abc import abstractmethod
@@ -8,8 +9,10 @@ from contextlib import nullcontext
 from dataclasses import dataclass, field
 from datetime import date as _date
 from datetime import datetime as _datetime
+from functools import partial
+from io import TextIOWrapper
 from pathlib import Path, PurePath
-from tempfile import SpooledTemporaryFile, mktemp
+from tempfile import mktemp
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -18,9 +21,8 @@ from typing import (
     Generic,
     Iterable,
     List,
-    Literal,
-    Mapping,
     Optional,
+    Protocol,
     Sequence,
     Set,
     Tuple,
@@ -28,13 +30,15 @@ from typing import (
     TypedDict,
     TypeVar,
     Union,
+    runtime_checkable,
 )
 from urllib.parse import urlparse, urlsplit, urlunsplit
 from zipfile import ZipFile, is_zipfile
 
-import pooch  # pyright: ignore [reportMissingTypeStubs]
+import httpx
 import pydantic
-import requests
+from genericache import NoopCache
+from genericache.digest import ContentDigest
 from pydantic import (
     AnyUrl,
     DirectoryPath,
@@ -48,7 +52,6 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core import core_schema
-from rich.progress import Progress
 from tqdm import tqdm
 from typing_extensions import (
     Annotated,
@@ -483,27 +486,6 @@ def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
     return strict
 
 
-def _get_known_hash(hash_kwargs: HashKwargs):
-    if "sha256" in hash_kwargs and hash_kwargs["sha256"] is not None:
-        return f"sha256:{hash_kwargs['sha256']}"
-    else:
-        return None
-
-
-def _get_cache_file_path(url: Union[HttpUrl, pydantic.HttpUrl]):
-    """
-    Create a unique file name based on the given URL;
-    adapted from pooch.utils.unique_file_name
-    """
-    md5 = hashlib.md5(str(url).encode()).hexdigest()
-    fname = extract_file_name(url)
-    # Crop the start of the file name to fit 255 characters including the hash
-    # and the :
-    fname = fname[-(255 - len(md5) - 1) :]
-    unique_name = f"{md5}-{fname}"
-    return unique_name
-
-
 def extract(
     source: Union[FilePath, ZipFile, ZipPath],
     folder: Optional[DirectoryPath] = None,
@@ -569,36 +551,88 @@ def extract(
             return folder
 
 
+class BytesReaderP(Protocol):
+    def read(self, size: int = -1, /) -> bytes: ...
+
+    @property
+    def closed(self) -> bool: ...
+
+    def readable(self) -> bool: ...
+
+    def seek(self, offset: int, whence: int = os.SEEK_SET, /) -> int: ...
+
+    def seekable(self) -> bool: ...
+
+    def tell(self) -> int: ...
+
+
+@runtime_checkable
+class BytesReaderIntoP(BytesReaderP, Protocol):
+    def readinto(self, b: Union[bytearray, memoryview]) -> int: ...
+
+
+class BytesReader(BytesReaderP):
+    def __init__(
+        self, reader: Union[BytesReaderP, BytesReaderIntoP], sha256: Optional[Sha256]
+    ) -> None:
+        self._reader = reader
+        self._sha256 = sha256
+        super().__init__()
+
+    @property
+    def sha256(self) -> Sha256:
+        if self._sha256 is None:
+            self._sha256 = get_sha256(self._reader)
+
+        return self._sha256
+
+    def read(self, size: int = -1, /) -> bytes:
+        return self._reader.read(size)
+
+    def readable(self) -> bool:
+        return True
+
+    def seek(self, offset: int, whence: int = os.SEEK_SET, /) -> int:
+        return self._reader.seek(offset, whence)
+
+    def seekable(self) -> bool:
+        return True
+
+    def tell(self) -> int:
+        return self._reader.tell()
+
+    @property
+    def closed(self) -> bool:
+        return self._reader.closed
+
+
 def open(
     source: Union[PermissiveFileSource, FileDescr, ZipPath],
     /,
     progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
     **kwargs: Unpack[HashKwargs],
-) -> BinaryIO:
-    """Resolve file `source` (download if needed)"""
+) -> BytesReader:
+    """Open a file `source` (download if needed)"""
+    if isinstance(source, FileDescr):
+        if "sha256" not in kwargs:
+            kwargs["sha256"] = source.sha256
 
-    if isinstance(source, str):
+        source = source.source
+    elif isinstance(source, str):
         source = interprete_file_source(source)
 
     if isinstance(source, RelativeFilePath):
         source = source.absolute()
-        if isinstance(source, ZipPath):
-            return FileInZip(source, source.root, extract_file_name(source))
-
-    if isinstance(source, pydantic.AnyUrl):
+    elif isinstance(source, pydantic.AnyUrl):
         with get_validation_context().replace(perform_io_checks=False):
             source = HttpUrl(source)
 
-    if isinstance(source, FileDescr):
-        return source.download()
-    elif isinstance(source, ZipPath):
-        zip_root = source.root
-        assert isinstance(zip_root, ZipFile)
-        return FileInZip(
-            source,
-            zip_root,
-            extract_file_name(source),
-        )
+    if isinstance(source, HttpUrl):
+        return _open_url(source, progressbar=progressbar, **kwargs)
+
+    if isinstance(source, ZipPath):
+        f = source.open(mode="rb")
+        assert not isinstance(f, TextIOWrapper)
     elif isinstance(source, Path):
         if source.is_dir():
             raise FileNotFoundError(f"{source} is a directory, not a file")
@@ -606,23 +640,51 @@ def open(
         if not source.exists():
             raise FileNotFoundError(source)
 
-        return LocalFile(
-            source,
-            source.parent,
-            extract_file_name(source),
-        )
-    elif isinstance(source, HttpUrl):
-        return _download_url(source, progressbar=progressbar, **kwargs)
+        f = source.open("rb")
     else:
         assert_never(source)
 
+    expected_sha = kwargs.get("sha256")
+    if expected_sha is None:
+        sha = None
+    else:
+        sha = get_sha256(f)
+        if sha != expected_sha:
+            raise ValueError(
+                f"SHA256 mismatch for {source}. Expected {expected_sha}, got {sha}."
+            )
 
-def _download_url(
+    return BytesReader(f, sha256=sha)
+
+
+download = open
+
+
+def _open_url(
     source: HttpUrl,
     /,
     progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
     **kwargs: Unpack[HashKwargs],
-) -> Union[LocalFile, FileInZip]:
+) -> BytesReader:
+    cache = (
+        NoopCache[RootHttpUrl]()
+        if get_validation_context().disable_cache
+        else settings.disk_cache
+    )
+    sha = kwargs.get("sha256")
+    digest = None if sha is None else ContentDigest.parse(hexdigest=sha)
+    return cache.fetch(
+        source,
+        fetcher=partial(_fetch_url, progressbar=progressbar),
+        force_refetch=digest,
+    )
+
+
+def _fetch_url(
+    source: HttpUrl,
+    *,
+    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+):
     if source.scheme not in ("http", "https"):
         raise NotImplementedError(source.scheme)
 
@@ -656,62 +718,8 @@ def _download_url(
     if settings.user_agent is not None:
         headers["User-Agent"] = settings.user_agent
 
-    chunk_size = 2048
-    if settings.cache_path and not get_validation_context().disable_cache and kwargs:
-
-        fname = _get_cache_file_path(source)
-
-        return _cached_download(
-            source,
-            chunk_size=chunk_size,
-            headers=headers,
-            progressbar=progressbar,
-            **kwargs,
-        )
-
-    else:
-        return _uncached_download(
-            source, chunk_size=chunk_size, headers=headers, progressbar=progressbar
-        )
-
-
-def _cached_download(
-    source: HttpUrl,
-    *,
-    chunk_size: int,
-    headers: Mapping[str, str],
-    progressbar: Union[Progressbar, bool],
-    **kwargs: Unpack[HashKwargs],
-):
-    downloader = pooch.HTTPDownloader(
-        headers=headers,
-        progressbar=progressbar,  # pyright: ignore[reportArgumentType]
-        chunk_size=chunk_size,
-    )
-    _ls: Any = pooch.retrieve(
-        url=str(source),
-        known_hash=_get_known_hash(kwargs),
-        downloader=downloader,
-    )
-    local_file_path = Path(_ls).absolute()
-    return LocalFile(
-        path=local_file_path,
-        original_root=source.parent,
-        original_file_name=extract_file_name(source),
-    )
-
-
-def _uncached_download(
-    source: HttpUrl,
-    *,
-    chunk_size: int,
-    headers: Mapping[str, str],
-    progressbar: Union[Progressbar, Literal[False]],
-):
-    file_name = extract_file_name(source)
-
-    r = requests.get(str(source), stream=True, headers=headers)
-    r.raise_for_status()
+    r = httpx.get(str(source), follow_redirects=True, headers=headers)
+    _ = r.raise_for_status()
 
     # set progressbar.total
     total = r.headers.get("content-length")
@@ -727,61 +735,25 @@ def _uncached_download(
         else:
             progressbar.total = total
 
-    tmp_file = SpooledTemporaryFile(settings.memory_limit_per_uncached_file)
-    zf = ZipFile(tmp_file, "w")
-    zf.filename = "<in-memory>"
-    dest = ZipPath(zf, file_name)
-    with dest.open("wb") as f:
-        for chunk in r.iter_content(chunk_size=chunk_size):
-            n = f.write(chunk)
+    def iter_content():
+        for chunk in r.iter_bytes(chunk_size=4096):
+            yield chunk
             if progressbar:
-                _ = progressbar.update(n)
+                _ = progressbar.update(len(chunk))
 
-    # Make sure the progress bar gets filled even if the actual number
-    # is chunks is smaller than expected. This happens when streaming
-    # text files that are compressed by the server when sending (gzip).
-    # Binary files don't experience this.
-    # (adapted from pooch.HttpDownloader)
-    if progressbar:
-        progressbar.reset()
-        if total is not None:
-            _ = progressbar.update(total)
+        # Make sure the progress bar gets filled even if the actual number
+        # is chunks is smaller than expected. This happens when streaming
+        # text files that are compressed by the server when sending (gzip).
+        # Binary files don't experience this.
+        # (adapted from pooch.HttpDownloader)
+        if progressbar:
+            progressbar.reset()
+            if total is not None:
+                _ = progressbar.update(total)
 
-        progressbar.close()
+            progressbar.close()
 
-    return FileInZip(
-        path=dest,
-        original_root=source.parent,
-        original_file_name=file_name,
-    )
-
-
-download = open
-
-
-def resolve_and_extract(
-    source: Union[PermissiveFileSource, FileDescr, ZipPath],
-    /,
-    progressbar: Union[Progressbar, bool, None] = None,
-    **kwargs: Unpack[HashKwargs],
-) -> LocalFile:
-    """Resolve `source` within current ValidationContext,
-    download if needed and
-    extract file if within zip archive.
-
-    note: If source points to a zip file it is not extracted
-    """
-    local = open(source, progressbar=progressbar, **kwargs)
-    if isinstance(local, LocalFile):
-        return local
-
-    folder = extract(local.path)
-
-    return LocalFile(
-        folder / local.path.at,
-        original_root=local.original_root,
-        original_file_name=local.original_file_name,
-    )
+    return iter_content()
 
 
 class LightHttpFileDescr(Node):
@@ -793,12 +765,16 @@ class LightHttpFileDescr(Node):
     sha256: Sha256
     """SHA256 checksum of the source file"""
 
-    def download(
+    def open(
         self,
         *,
         progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
-    ):
-        return download(self.source, sha256=self.sha256, progressbar=progressbar)
+    ) -> BytesReader:
+        """open the file source (download if needed)"""
+        return open(self.source, sha256=self.sha256, progressbar=progressbar)
+
+    download = open
+    """alias for open() method"""
 
 
 class FileDescr(Node):
@@ -820,8 +796,8 @@ class FileDescr(Node):
         if (src_str := str(self.source)) in context.known_files:
             actual_sha = context.known_files[src_str]
         else:
-            local_source = download(self.source, sha256=self.sha256).path
-            actual_sha = get_sha256(local_source)
+            reader = open(self.source, sha256=self.sha256)
+            actual_sha = reader.sha256
             context.known_files[src_str] = actual_sha
 
         if actual_sha is None:
@@ -837,11 +813,14 @@ class FileDescr(Node):
                 + "file."
             )
 
-    def download(
+    def open(
         self, *, progressbar: Union[Progressbar, Callable[[], Progressbar], bool] = True
     ):
+        """open the file source (download if needed)"""
+        return open(self.source, progressbar=progressbar, sha256=self.sha256)
 
-        return download(self.source, sha256=self.sha256)
+    download = open
+    """alias for open() method"""
 
 
 class NonBioimageioYamlFileDescr(FileDescr):
@@ -960,26 +939,19 @@ def extract_file_name(
             return url.path.split("/")[-1]
 
 
-def get_sha256(path: Union[Path, ZipPath]) -> Sha256:
-    """from https://stackoverflow.com/a/44873382"""
-    if isinstance(path, ZipPath):
-        # no buffered reading available
-        zf = path.root
-        assert isinstance(zf, ZipFile)
-        data = path.read_bytes()
-        assert isinstance(data, bytes)
-        h = hashlib.sha256(data)
-    else:
-        h = hashlib.sha256()
-        chunksize = 128 * 1024
+def get_sha256(reader: Union[BytesReaderP, BytesReaderIntoP]) -> Sha256:
+    chunksize = 128 * 1024
+    h = hashlib.sha256()
+    if isinstance(reader, BytesReaderIntoP):
         b = bytearray(chunksize)
         mv = memoryview(b)
-        with open(path, "rb", buffering=0) as f:
-            for n in iter(lambda: f.readinto(mv), 0):
-                h.update(mv[:n])
+        for n in iter(lambda: reader.readinto(mv), 0):
+            h.update(mv[:n])
+    else:
+        for chunk in iter(partial(reader.read, chunksize), b""):
+            h.update(chunk)
 
     sha = h.hexdigest()
-    assert len(sha) == 64
     return Sha256(sha)
 
 

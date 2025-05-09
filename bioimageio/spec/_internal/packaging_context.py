@@ -5,8 +5,7 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Literal, Optional, Sequence, Union
 
 from .io import FileDescr
-from .io_basics import AbsoluteFilePath, FileName, ZipPath
-from .url import HttpUrl
+from .io_basics import FileName
 
 
 @dataclass(frozen=True)

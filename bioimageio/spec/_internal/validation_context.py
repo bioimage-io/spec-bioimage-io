@@ -8,6 +8,7 @@ from typing import Callable, Dict, List, Literal, Optional, Union
 from urllib.parse import urlsplit, urlunsplit
 from zipfile import ZipFile
 
+from genericache import DiskCache, MemoryCache, NoopCache
 from pydantic import ConfigDict, DirectoryPath
 from typing_extensions import Self
 
@@ -60,6 +61,7 @@ class ValidationContext(ValidationContextBase):
         init=False, default_factory=list
     )
 
+    cache: Union[DiskCache, MemoryCache, NoopCache] = field(default=settings.disk_cache)
     disable_cache: bool = False
     """Disable caching downloads to `settings.cache_path`
     and (re)download them to memory instead."""
