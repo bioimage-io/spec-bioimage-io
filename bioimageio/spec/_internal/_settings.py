@@ -1,11 +1,16 @@
 import os
+from functools import cached_property
 from pathlib import Path
 from typing import Optional, Union
 
 import pooch  # pyright: ignore [reportMissingTypeStubs]
+from genericache import DiskCache
+from genericache.digest import UrlDigest
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Annotated
+
+from .root_url import RootHttpUrl
 
 
 class Settings(BaseSettings, extra="ignore"):
@@ -62,15 +67,6 @@ class Settings(BaseSettings, extra="ignore"):
     Set this flag to False to avoid this potential security risk
     and disallow loading draft versions."""
 
-    memory_limit_per_uncached_file: int = 1024**2
-    """Maximum size per uncached file in bytes to keep in memory.
-
-    Uncached files larger than this size will be written to a temporary file.
-
-    Note that file downloads with a known SHA-256 hash will be cached to **cache_path**
-    regardless of size, unless `ValidationContext.disable_cache` is true.
-    """
-
     log_warnings: bool = True
     """Log validation warnings to console."""
 
@@ -92,6 +88,15 @@ class Settings(BaseSettings, extra="ignore"):
             return None
         else:
             return (self.github_username, self.github_token)
+
+    @cached_property
+    def disk_cache(self):
+        cache = DiskCache[RootHttpUrl].create(
+            url_type=RootHttpUrl,
+            cache_dir=self.cache_path,
+            url_hasher=UrlDigest.from_str,
+        )
+        return cache
 
 
 settings = Settings()
