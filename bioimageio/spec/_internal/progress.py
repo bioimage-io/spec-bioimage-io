@@ -14,7 +14,7 @@ class Progressbar(Protocol):
 
     def close(self): ...
 
-    def set_description(self, description: str, /): ...
+    def set_description(self, description: str, /, refresh: bool = True): ...
 
 
 class RichTaskBar:
@@ -33,11 +33,14 @@ class RichTaskBar:
     def close(self):
         self.parent.remove_task(self.task_id)
 
+    def set_description(self, description: str, /, refresh: bool = True):
+        self.parent.update(self.task_id, description=description, refresh=refresh)
+
 
 class RichOverallProgress:
     def __init__(self):
         super().__init__()
         self.progress = Progress()
 
-    def __call__(self, description: str, *, total: Optional[int] = None):
+    def __call__(self, description: str = "", *, total: Optional[int] = None):
         return RichTaskBar(description, parent=self.progress, total=total)
