@@ -19,13 +19,13 @@ def get_ref_url(
         'https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/proc_ops.py#L...-L...'
 
     """
-    # hotfix to handle requests not available in pyodide, see
+    # hotfix to handle httpx not available in pyodide, see
     # https://github.com/bioimage-io/bioimage.io/issues/216#issuecomment-1012422194
     try:
-        import requests  # not available in pyodide
+        import httpx  # not available in pyodide
     except Exception:
         warnings.warn(
-            f"Could not reslove {github_file_url} because requests library is not"
+            f"Could not reslove {github_file_url} because httpx library is not"
             + " available."
         )
         return "URL NOT RESOLVED"
@@ -36,8 +36,8 @@ def get_ref_url(
         "github.com", "raw.githubusercontent.com"
     ).replace("/blob/", "/")
     try:
-        code = requests.get(raw_github_file_url, timeout=5).text
-    except requests.RequestException as e:
+        code = httpx.get(raw_github_file_url, timeout=5).text
+    except Exception as e:
         warnings.warn(
             f"Could not resolve {github_file_url} due to {e}. Please check your"
             + " internet connection."

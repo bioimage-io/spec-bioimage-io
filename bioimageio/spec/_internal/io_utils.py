@@ -16,8 +16,8 @@ from typing import (
 )
 from zipfile import ZipFile, is_zipfile
 
+import httpx
 import numpy
-import requests
 from loguru import logger
 from numpy.typing import NDArray
 from pydantic import FilePath, NewPath, RootModel
@@ -164,8 +164,8 @@ def open_bioimageio_yaml(
                 )
 
             try:
-                r = requests.get(url)
-                r.raise_for_status()
+                r = httpx.get(url)
+                _ = r.raise_for_status()
                 unparsed_content = r.content.decode(encoding="utf-8")
                 content = _sanitize_bioimageio_yaml(
                     read_yaml(io.StringIO(unparsed_content))
@@ -230,7 +230,7 @@ def _get_id_map_impl(url: str) -> Dict[str, LightHttpFileDescr]:
     if not isinstance(url, str) or "/" not in url:
         logger.opt(depth=1).error("invalid id map url: {}", url)
     try:
-        id_map_raw: Any = requests.get(url, timeout=10).json()
+        id_map_raw: Any = httpx.get(url, timeout=10).json()
     except Exception as e:
         logger.opt(depth=1).error("failed to get {}: {}", url, e)
         return {}

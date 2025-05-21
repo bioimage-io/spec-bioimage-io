@@ -13,6 +13,8 @@ This changelog includes implementation details and my reference the [changes to 
 #### bioimageio.spec 0.5.4.3 (to be released)
 
 - fix root determination of cacheless downloads of non-zip files
+- use httpx instead of requests
+- improved caching with genericache (thanks @Tomaz-Vieira !)
 
 #### bioimageio.spec 0.5.4.2
 

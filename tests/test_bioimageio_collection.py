@@ -1,7 +1,7 @@
 from typing import Any, Collection, Dict, Iterable, Mapping, Tuple
 
+import httpx
 import pytest
-import requests
 
 from bioimageio.spec.common import HttpUrl, Sha256
 from tests.utils import ParameterSet, check_bioimageio_yaml, expensive_test
@@ -26,7 +26,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
 
 
 def _get_rdf_sources(only_latest: bool = True):
-    entries: Any = requests.get(BASE_URL + "all_versions.json").json()["entries"]
+    entries: Any = httpx.get(BASE_URL + "all_versions.json").json()["entries"]
     ret: Dict[str, Tuple[HttpUrl, Sha256]] = {}
     for entry in entries:
         for version in entry["versions"]:

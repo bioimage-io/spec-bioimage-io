@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Tuple, Union
 from urllib.parse import urljoin
 
-import requests
+import httpx
 from pydantic import DirectoryPath, FilePath, HttpUrl
 from ruyaml import YAML
 
@@ -180,7 +180,7 @@ def convert_config_to_rdf(plugin_config, source_url=None) -> dict:
 
 def get_plugin_as_rdf(source_url: str) -> Dict[Any, Any]:
     """Get imjoy plugin config in RDF format."""
-    req = requests.get(source_url, timeout=5)
+    req = httpx.get(source_url, timeout=5)
     source = req.text
     plugin_config = parse_imjoy_plugin(source)
     rdf = convert_config_to_rdf(plugin_config, source_url)

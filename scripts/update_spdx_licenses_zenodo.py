@@ -4,7 +4,7 @@ import json
 import sys
 from pathlib import Path
 
-import requests
+import httpx
 from loguru import logger
 from tqdm import tqdm
 
@@ -32,7 +32,7 @@ def main(recheck: bool = False):
                 "https://zenodo.org/api/vocabularies/licenses/"
                 + lic["licenseId"].lower()
             )
-            r = requests.get(url, timeout=5)
+            r = httpx.get(url, timeout=5)
 
             if 200 <= r.status_code < 300:
                 known = True
@@ -40,7 +40,7 @@ def main(recheck: bool = False):
                 known = False
             elif 500 <= r.status_code < 600:
                 logger.warning(
-                    f"Zenodo server error {r.status_code, r.reason} for {url}"
+                    f"Zenodo server error {r.status_code, r.reason_phrase} for {url}"
                 )
                 known = None
             else:

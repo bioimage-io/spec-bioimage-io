@@ -54,7 +54,7 @@ IGNORE_MEMBERS = {
     "partial",
     "PermissiveFileSource",
     "Predicate",
-    "requests",
+    "httpx",
     "RestrictCharacters",
     "RootModel",
     "S",

@@ -3,9 +3,10 @@ from pathlib import Path, PurePath
 from typing import Any
 from zipfile import ZipFile
 
+import httpx
 import pytest
 from pydantic import ValidationError
-from requests_mock import Mocker as RequestsMocker
+from respx import MockRouter
 
 from bioimageio.spec import ValidationContext
 from bioimageio.spec._internal.io_basics import ZipPath
@@ -108,25 +109,27 @@ def test_known_files(tmp_path: Path):
         assert file_descr.sha256 == sha
 
 
-def test_disable_cache(requests_mock: RequestsMocker):
+def test_disable_cache(respx_mock: MockRouter):
     from bioimageio.spec._internal.io import get_reader
     from bioimageio.spec._internal.url import RootHttpUrl
 
     url = "https://mock_example.com/files/my_bioimageio.yaml"
-    matcher = requests_mock.get(url, text="example content", status_code=200)
+    route = respx_mock.get(url).mock(
+        httpx.Response(text="example content", status_code=200)
+    )
 
     with ValidationContext(disable_cache=True):
         reader = get_reader(url)
-        assert len(matcher.request_history) == 1
+        assert len(route.calls) == 1
         reader = get_reader(url)  # second call to check cache
-        assert len(matcher.request_history) == 2
+        assert len(route.calls) == 2
 
     assert reader.original_root == RootHttpUrl("https://mock_example.com/files")
     assert reader.original_file_name == "my_bioimageio.yaml"
     assert reader.read().decode(encoding="utf-8") == "example content"
 
 
-def test_download_zip_wo_cache(requests_mock: RequestsMocker):
+def test_download_zip_wo_cache(respx_mock: MockRouter):
     from bioimageio.spec._internal.io import get_reader
 
     remote_data = io.BytesIO()
@@ -137,12 +140,14 @@ def test_download_zip_wo_cache(requests_mock: RequestsMocker):
 
     remote_content = remote_data.getvalue()
     url = "https://mock_example.com/files/my.zip"
-    _ = requests_mock.get(url, content=remote_content, status_code=200)
+    route = respx_mock.get(url).mock(
+        httpx.Response(content=remote_content, status_code=200)
+    )
 
     with ValidationContext(disable_cache=False):
         reader = get_reader(url)
 
-    assert len(requests_mock.request_history) == 1
+    assert len(route.calls) == 1
     assert reader.original_file_name == "my.zip"
 
     # resolve subpath within downloaded zip

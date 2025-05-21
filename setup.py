@@ -41,7 +41,7 @@ _ = setup(
         "pydantic-settings>=2.5,<3",
         "pydantic>=2.7.0,<2.10",  # TODO: check and update pin after https://github.com/pydantic/pydantic/pull/11008 is released
         "python-dateutil",
-        "requests",
+        "httpx",
         "rich",
         "ruyaml",
         "tifffile>=2020.7.4",
@@ -58,7 +58,7 @@ _ = setup(
                 "lxml",
                 "pytest-cov",
                 "pytest",
-                "requests-mock",
+                "respx",
             ]
         ),
         "dev": (
