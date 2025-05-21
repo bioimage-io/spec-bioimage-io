@@ -109,64 +109,49 @@ def test_known_files(tmp_path: Path):
 
 
 def test_disable_cache(requests_mock: RequestsMocker):
-    from bioimageio.spec._internal.io import FileInZip, resolve
-    from bioimageio.spec._internal.url import RootHttpUrl
-
-    url = "https://mock_example.com/my_file.txt"
-    _ = requests_mock.get(url, text="example content", status_code=200)
-
-    with ValidationContext(disable_cache=True):
-        downloaded = resolve(url)
-
-    assert isinstance(downloaded, FileInZip)
-    assert isinstance(downloaded.original_root, RootHttpUrl)
-    assert downloaded.original_file_name == "my_file.txt"
-
-
-def test_download_wo_cache(requests_mock: RequestsMocker):
-    from bioimageio.spec._internal.io import FileInZip, resolve
+    from bioimageio.spec._internal.io import get_reader
     from bioimageio.spec._internal.url import RootHttpUrl
 
     url = "https://mock_example.com/files/my_bioimageio.yaml"
-    _ = requests_mock.get(url, text="example content", status_code=200)
+    matcher = requests_mock.get(url, text="example content", status_code=200)
 
-    with ValidationContext(disable_cache=False):
-        downloaded = resolve(url)
+    with ValidationContext(disable_cache=True):
+        reader = get_reader(url)
+        assert len(matcher.request_history) == 1
+        reader = get_reader(url)  # second call to check cache
+        assert len(matcher.request_history) == 2
 
-    assert len(requests_mock.request_history) == 1
-    assert isinstance(downloaded, FileInZip)
-    assert downloaded.original_root == RootHttpUrl("https://mock_example.com/files")
-    assert downloaded.original_file_name == "my_bioimageio.yaml"
-    assert downloaded.path.read_text(encoding="utf-8") == "example content"
+    assert reader.original_root == RootHttpUrl("https://mock_example.com/files")
+    assert reader.original_file_name == "my_bioimageio.yaml"
+    assert reader.read().decode(encoding="utf-8") == "example content"
 
 
 def test_download_zip_wo_cache(requests_mock: RequestsMocker):
-    from bioimageio.spec._internal.io import FileInZip, resolve
+    from bioimageio.spec._internal.io import get_reader
 
     remote_data = io.BytesIO()
+    content = {"bioimageio.yaml": "ref: my_file.txt", "my_file.txt": "example content"}
     with ZipFile(remote_data, mode="w") as remote_zip:
-        remote_zip.writestr("bioimageio.yaml", "ref: my_file.txt")
-        remote_zip.writestr("my_file.txt", "example content")
+        for k, v in content.items():
+            remote_zip.writestr(k, v)
 
     remote_content = remote_data.getvalue()
     url = "https://mock_example.com/files/my.zip"
     _ = requests_mock.get(url, content=remote_content, status_code=200)
 
     with ValidationContext(disable_cache=False):
-        downloaded = resolve(url)
+        reader = get_reader(url)
 
     assert len(requests_mock.request_history) == 1
-    assert isinstance(downloaded, FileInZip)
-    assert downloaded.original_file_name == "my.zip"
+    assert reader.original_file_name == "my.zip"
 
     # resolve subpath within downloaded zip
-    # directly opening the zip file unfortunately does not work
-    # with ZipFile(downloaded.path, mode="r") as zf:
-    #     subpath = ZipPath(zf, "my_file.txt")
-    with downloaded.path.open("rb") as f:
-        assert not isinstance(f, io.TextIOWrapper)
-        with ZipFile(f, mode="r") as zf:
-            subpath = ZipPath(zf, "my_file.txt")
+    with ZipFile(reader, mode="r") as zf:
+        for k, v in content.items():
+            assert k in zf.namelist()
+            assert zf.read(k).decode(encoding="utf-8") == v
 
+            # check alternative access
+            subpath = ZipPath(zf, k)
             assert subpath.exists()
-            assert subpath.read_text(encoding="utf-8") == "example content"
+            assert subpath.read_text(encoding="utf-8") == v

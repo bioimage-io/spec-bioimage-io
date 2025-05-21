@@ -98,8 +98,8 @@ class Example:
             return Example(value=yaml_value)
         try:
             # FIXME: stricter typing here?
-            val_type: Any = type(val)
-            adapter: Any = pydantic.TypeAdapter(val_type)
+            val_type = cast(Type[Any], type(val))
+            adapter = pydantic.TypeAdapter(val_type)
             dumped_value = json.loads(adapter.dump_json(val))
             return Example(value=dumped_value)
         except Exception as e:

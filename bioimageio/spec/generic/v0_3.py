@@ -31,11 +31,11 @@ from .._internal.io import (
     BioimageioYamlContent,
     FileDescr,
     V_suffix,
-    include_in_package_serializer,
     is_yaml_value,
     validate_suffix,
 )
 from .._internal.io_basics import AbsoluteFilePath, Sha256
+from .._internal.io_packaging import include_in_package_serializer
 from .._internal.license_id import DeprecatedLicenseId, LicenseId
 from .._internal.node_converter import Converter
 from .._internal.types import ImportantFileSource, NotEmpty, RelativeFilePath

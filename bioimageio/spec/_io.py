@@ -1,3 +1,4 @@
+import collections.abc
 from pathlib import Path
 from typing import Dict, Literal, Optional, TextIO, Union, cast, overload
 from zipfile import ZipFile
@@ -280,7 +281,7 @@ def update_format(
     else:
         root = None
 
-    if isinstance(source, dict):
+    if isinstance(source, collections.abc.Mapping):
         descr = build_description(
             source,
             context=get_validation_context().replace(
@@ -317,7 +318,7 @@ def update_hashes(
         update_hashes=True, root=root, perform_io_checks=True
     )
     with context:
-        if isinstance(source, dict):
+        if isinstance(source, collections.abc.Mapping):
             return build_description(source)
         else:
             return load_description(source, perform_io_checks=True)

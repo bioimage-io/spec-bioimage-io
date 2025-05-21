@@ -32,8 +32,7 @@ from pydantic import (
 
 from bioimageio.spec import InvalidDescr, ValidationContext, build_description
 from bioimageio.spec._internal.common_nodes import Node
-from bioimageio.spec._internal.io import download
-from bioimageio.spec._internal.io_utils import read_yaml
+from bioimageio.spec._internal.io_utils import open_bioimageio_yaml, read_yaml
 from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.type_guards import is_kwargs
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
@@ -150,16 +149,16 @@ def check_bioimageio_yaml(
     bioimageio_json_schema: Optional[Mapping[Any, Any]],
     perform_io_checks: bool = True,
 ) -> None:
-    downloaded_source = download(source, sha256=sha)
-    root = downloaded_source.original_root
-    raw = downloaded_source.path.read_text(encoding="utf-8")
+    opened_yaml = open_bioimageio_yaml(source, sha256=sha)
+    root = opened_yaml.original_root
+    raw = opened_yaml.unparsed_content
     assert isinstance(raw, str)
     data = read_yaml(StringIO(raw))
     assert is_kwargs(data), type(data)
     format_version = "latest" if as_latest else "discover"
     with ValidationContext(
         root=root,
-        file_name=downloaded_source.original_file_name,
+        file_name=opened_yaml.original_file_name,
         perform_io_checks=perform_io_checks,
     ):
         rd = build_description(deepcopy(data), format_version=format_version)
@@ -182,11 +181,8 @@ def check_bioimageio_yaml(
     if bioimageio_json_schema is not None:
         try:
             jsonschema.validate(json_data, bioimageio_json_schema)
-        except jsonschema.ValidationError:
-            # TODO: improve error message/log
-            raise ValueError(
-                f"jsonschema validation error for {downloaded_source.path}"
-            )
+        except jsonschema.ValidationError as e:
+            raise ValueError(f"jsonschema validation error for {source}") from e
 
     if as_latest:
         return

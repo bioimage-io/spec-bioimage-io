@@ -57,7 +57,7 @@ from .._internal.constants import DTYPE_LIMITS
 from .._internal.field_warning import issue_warning, warn
 from .._internal.io import BioimageioYamlContent as BioimageioYamlContent
 from .._internal.io import FileDescr as FileDescr
-from .._internal.io import WithSuffix, YamlValue, download
+from .._internal.io import WithSuffix, YamlValue, get_reader
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_utils import load_array
@@ -1501,10 +1501,10 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
         if self.sample_tensor is None or not get_validation_context().perform_io_checks:
             return self
 
-        local = download(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
-        tensor: NDArray[Any] = imread(
-            local.path.read_bytes(),
-            extension=PurePosixPath(local.original_file_name).suffix,
+        reader = get_reader(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
+        tensor: NDArray[Any] = imread(  # pyright: ignore[reportUnknownVariableType]
+            reader.read(),
+            extension=PurePosixPath(reader.original_file_name).suffix,
         )
         n_dims = len(tensor.squeeze().shape)
         n_dims_min = n_dims_max = len(self.axes)
@@ -2557,9 +2557,8 @@ class ModelDescr(GenericModelDescrBase):
         if not get_validation_context().perform_io_checks:
             return value
 
-        doc_path = download(value).path
-        doc_content = doc_path.read_text(encoding="utf-8")
-        assert isinstance(doc_content, str)
+        doc_reader = get_reader(value)
+        doc_content = doc_reader.read().decode(encoding="utf-8")
         if not re.search("#.*[vV]alidation", doc_content):
             issue_warning(
                 "No '# Validation' (sub)section found in {value}.",
@@ -2687,12 +2686,8 @@ class ModelDescr(GenericModelDescrBase):
         if not get_validation_context().perform_io_checks:
             return self
 
-        test_output_arrays = [
-            load_array(descr.test_tensor.download().path) for descr in self.outputs
-        ]
-        test_input_arrays = [
-            load_array(descr.test_tensor.download().path) for descr in self.inputs
-        ]
+        test_output_arrays = [load_array(descr.test_tensor) for descr in self.outputs]
+        test_input_arrays = [load_array(descr.test_tensor) for descr in self.inputs]
 
         tensors = {
             descr.id: (descr, array)
@@ -2904,8 +2899,8 @@ class ModelDescr(GenericModelDescrBase):
 
         try:
             generated_covers = generate_covers(
-                [(t, load_array(t.test_tensor.download().path)) for t in self.inputs],
-                [(t, load_array(t.test_tensor.download().path)) for t in self.outputs],
+                [(t, load_array(t.test_tensor)) for t in self.inputs],
+                [(t, load_array(t.test_tensor)) for t in self.outputs],
             )
         except Exception as e:
             issue_warning(
@@ -2920,12 +2915,12 @@ class ModelDescr(GenericModelDescrBase):
         return self
 
     def get_input_test_arrays(self) -> List[NDArray[Any]]:
-        data = [load_array(ipt.test_tensor.download().path) for ipt in self.inputs]
+        data = [load_array(ipt.test_tensor) for ipt in self.inputs]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 
     def get_output_test_arrays(self) -> List[NDArray[Any]]:
-        data = [load_array(out.test_tensor.download().path) for out in self.outputs]
+        data = [load_array(out.test_tensor) for out in self.outputs]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 

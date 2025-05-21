@@ -67,7 +67,7 @@ def test_save_bioimageio_package_as_folder(unet2d_path: Path, tmp_path: Path):
     doc = model.documentation
     assert isinstance(doc, v0_5.RelativeFilePath)
     new_doc = f"copy_{doc}"
-    shutil.move(str(package_folder / str(doc)), str(package_folder / new_doc))
+    _ = shutil.move(str(package_folder / str(doc)), str(package_folder / new_doc))
     model.documentation = package_folder / new_doc
 
     # export altered package

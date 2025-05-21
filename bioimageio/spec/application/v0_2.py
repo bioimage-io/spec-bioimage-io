@@ -5,6 +5,7 @@ from typing_extensions import Annotated
 
 from .._internal.common_nodes import Node
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.types import ImportantFileSource as ImportantFileSource
 from .._internal.url import HttpUrl as HttpUrl
 from ..generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
 from ..generic.v0_2 import AttachmentsDescr as AttachmentsDescr

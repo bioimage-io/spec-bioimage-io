@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC
-from copy import deepcopy
 from io import BytesIO
 from pathlib import Path
 from types import MappingProxyType
@@ -26,9 +25,6 @@ from pydantic import DirectoryPath, PrivateAttr, model_validator
 from pydantic_core import PydanticUndefined
 from typing_extensions import Self
 
-from bioimageio.spec._internal.type_guards import is_dict
-from bioimageio.spec._package import get_resource_package_content
-
 from ..summary import (
     WARNING_LEVEL_TO_NAME,
     ErrorEntry,
@@ -39,17 +35,18 @@ from ..summary import (
 from .field_warning import issue_warning
 from .io import (
     BioimageioYamlContent,
+    BioimageioYamlContentView,
     FileDescr,
-    YamlValue,
+    deepcopy_yaml_value,
     extract_file_descrs,
     populate_cache,
 )
-from .io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName, ZipPath
+from .io_basics import BIOIMAGEIO_YAML, FileName
 from .io_utils import write_content_to_zip
 from .node import Node
 from .packaging_context import PackagingContext
 from .root_url import RootHttpUrl
-from .url import HttpUrl
+from .type_guards import is_dict
 from .utils import get_format_version_tuple
 from .validation_context import ValidationContext, get_validation_context
 from .warning_levels import ALERT, ERROR, INFO
@@ -211,16 +208,18 @@ class ResourceDescrBase(
 
     @classmethod
     def load(
-        cls, data: BioimageioYamlContent, context: Optional[ValidationContext] = None
+        cls,
+        data: BioimageioYamlContentView,
+        context: Optional[ValidationContext] = None,
     ) -> Union[Self, InvalidDescr]:
         """factory method to create a resource description object"""
         context = context or get_validation_context()
         if context.perform_io_checks:
-            file_descrs = extract_file_descrs(data)
+            file_descrs = extract_file_descrs({k: v for k, v in data.items()})
             populate_cache(file_descrs)  # TODO: add progress bar
 
         with context:
-            rd, errors, val_warnings = cls._load_impl(deepcopy(data))
+            rd, errors, val_warnings = cls._load_impl(deepcopy_yaml_value(data))
 
         if context.warning_level > INFO:
             all_warnings_context = context.replace(
@@ -228,7 +227,7 @@ class ResourceDescrBase(
             )
             # raise all validation warnings by reloading
             with all_warnings_context:
-                _, _, val_warnings = cls._load_impl(deepcopy(data))
+                _, _, val_warnings = cls._load_impl(deepcopy_yaml_value(data))
 
         rd.validation_summary.add_detail(
             ValidationDetail(

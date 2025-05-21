@@ -3,12 +3,11 @@ from typing import List, Literal, Optional, Union
 from typing_extensions import assert_never
 
 from ._internal.gh_utils import set_github_warning
-from ._internal.io_utils import ZipPath, read_yaml
-from .common import RelativeFilePath
+from ._internal.io import get_reader
+from ._internal.io_utils import read_yaml
 from .conda_env import BioimageioCondaEnv, PipDeps
 from .model import v0_4, v0_5
 from .model.v0_5 import Version
-from .utils import download
 
 SupportedWeightsEntry = Union[
     v0_4.KerasHdf5WeightsDescr,
@@ -205,9 +204,9 @@ def _get_env_from_deps(
     deps: Union[v0_4.Dependencies, v0_5.EnvironmentFileDescr],
 ) -> BioimageioCondaEnv:
     if isinstance(deps, v0_4.Dependencies):
+        deps_reader = get_reader(deps.file)
         if deps.manager == "pip":
-            pip_deps_str = download(deps.file).path.read_text(encoding="utf-8")
-            assert isinstance(pip_deps_str, str)
+            pip_deps_str = deps_reader.read_text()
             pip_deps = [d.strip() for d in pip_deps_str.split("\n")]
             if "bioimageio.core" not in pip_deps:
                 pip_deps.append("bioimageio.core")
@@ -215,22 +214,13 @@ def _get_env_from_deps(
             return BioimageioCondaEnv(
                 dependencies=[PipDeps(pip=pip_deps)],
             )
-        elif deps.manager not in ("conda", "mamba"):
-            raise ValueError(f"Dependency manager {deps.manager} not supported")
+        elif deps.manager in ("conda", "mamba"):
+            return BioimageioCondaEnv.model_validate(read_yaml(deps_reader))
         else:
-            deps_source = (
-                deps.file.absolute()
-                if isinstance(deps.file, RelativeFilePath)
-                else deps.file
-            )
-            if isinstance(deps_source, ZipPath):
-                local = deps_source
-            else:
-                local = download(deps_source).path
+            raise ValueError(f"Dependency manager {deps.manager} not supported")
 
-            return BioimageioCondaEnv.model_validate(read_yaml(local))
     elif isinstance(deps, v0_5.EnvironmentFileDescr):
-        local = download(deps.source).path
-        return BioimageioCondaEnv.model_validate(read_yaml(local))
+        deps_reader = deps.get_reader()
+        return BioimageioCondaEnv.model_validate(read_yaml(deps_reader))
     else:
         assert_never(deps)

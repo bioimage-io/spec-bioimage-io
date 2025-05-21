@@ -1,7 +1,4 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from bioimageio.spec._internal.progress import Progressbar
+from bioimageio.spec._internal.progress import Progressbar
 
 
 def _test_progress_impl(pbar: Progressbar):

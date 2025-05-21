@@ -12,6 +12,7 @@ from typing_extensions import Annotated, Literal
 from .constants import DOI_REGEX, SI_UNIT_REGEX
 from .io import FileSource, PermissiveFileSource, RelativeFilePath
 from .io_basics import AbsoluteDirectory, AbsoluteFilePath, FileName, FilePath, Sha256
+from .io_packaging import ImportantFileSource
 from .license_id import DeprecatedLicenseId, LicenseId
 from .url import HttpUrl
 from .validated_string import ValidatedString
@@ -31,6 +32,7 @@ __all__ = [
     "FileSource",
     "HttpUrl",
     "Identifier",
+    "ImportantFileSource",
     "LicenseId",
     "LowerCaseIdentifier",
     "NotEmpty",

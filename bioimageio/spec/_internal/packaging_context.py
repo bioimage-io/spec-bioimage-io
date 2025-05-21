@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
-from typing import Dict, List, Literal, Optional, Sequence, Union
+from typing import Callable, Dict, List, Literal, Optional, Sequence, Union, cast
 
 from .io import FileDescr
 from .io_basics import FileName
@@ -11,7 +11,10 @@ from .io_basics import FileName
 @dataclass(frozen=True)
 class PackagingContext:
     _context_tokens: "List[Token[Optional[PackagingContext]]]" = field(
-        init=False, default_factory=list
+        init=False,
+        default_factory=cast(
+            "Callable[[], List[Token[Optional[PackagingContext]]]]", list
+        ),
     )
 
     bioimageio_yaml_file_name: FileName

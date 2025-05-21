@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import collections.abc
 from typing import (
     Any,
-    Dict,
+    Mapping,
     Optional,
     Type,
     Union,
@@ -41,11 +42,11 @@ class Node(
     @classmethod
     def model_validate(
         cls,
-        obj: Union[Any, Dict[str, Any]],
+        obj: Union[Any, Mapping[str, Any]],
         *,
         strict: Optional[bool] = None,
         from_attributes: Optional[bool] = None,
-        context: Union[ValidationContext, Dict[str, Any], None] = None,
+        context: Union[ValidationContext, Mapping[str, Any], None] = None,
     ) -> Self:
         """Validate a pydantic model instance.
 
@@ -65,10 +66,10 @@ class Node(
 
         if context is None:
             context = get_validation_context()
-        elif isinstance(context, dict):
+        elif isinstance(context, collections.abc.Mapping):
             context = ValidationContext(**context)
 
-        assert not isinstance(obj, dict) or is_kwargs(obj), obj
+        assert not isinstance(obj, collections.abc.Mapping) or is_kwargs(obj), obj
 
         with context:
             # use validation context as context manager for equal behavior of __init__ and model_validate

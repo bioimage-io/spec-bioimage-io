@@ -42,15 +42,11 @@ from .._internal.common_nodes import (
 from .._internal.constants import SHA256_HINT
 from .._internal.field_validation import validate_unique_entries
 from .._internal.field_warning import issue_warning, warn
-from .._internal.io import (
-    BioimageioYamlContent,
-    WithSuffix,
-    download,
-    include_in_package_serializer,
-)
+from .._internal.io import BioimageioYamlContent, WithSuffix
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
+from .._internal.io_packaging import include_in_package_serializer
 from .._internal.io_utils import load_array
 from .._internal.packaging_context import packaging_context_var
 from .._internal.types import Datetime as Datetime
@@ -1336,11 +1332,11 @@ class ModelDescr(GenericModelDescrBase):
         return data
 
     def get_input_test_arrays(self) -> List[NDArray[Any]]:
-        data = [load_array(download(ipt).path) for ipt in self.test_inputs]
+        data = [load_array(ipt) for ipt in self.test_inputs]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 
     def get_output_test_arrays(self) -> List[NDArray[Any]]:
-        data = [load_array(download(out).path) for out in self.test_outputs]
+        data = [load_array(out) for out in self.test_outputs]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data

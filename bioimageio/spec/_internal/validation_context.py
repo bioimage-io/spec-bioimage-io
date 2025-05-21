@@ -4,7 +4,7 @@ from contextvars import ContextVar, Token
 from copy import copy
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Dict, List, Literal, Optional, Union
+from typing import Callable, Dict, List, Literal, Optional, Union, cast
 from urllib.parse import urlsplit, urlunsplit
 from zipfile import ZipFile
 
@@ -30,7 +30,9 @@ class ValidationContextBase:
 
     Existence of local absolute file paths is still being checked."""
 
-    known_files: Dict[str, Optional[Sha256]] = field(default_factory=dict)
+    known_files: Dict[str, Optional[Sha256]] = field(
+        default_factory=cast(Callable[[], Dict[str, Optional[Sha256]]], dict)
+    )
     """Allows to bypass download and hashing of referenced files."""
 
     update_hashes: bool = False
@@ -58,10 +60,15 @@ class ValidationContext(ValidationContextBase):
     """
 
     _context_tokens: "List[Token[Optional[ValidationContext]]]" = field(
-        init=False, default_factory=list
+        init=False,
+        default_factory=cast(
+            "Callable[[], List[Token[Optional[ValidationContext]]]]", list
+        ),
     )
 
-    cache: Union[DiskCache, MemoryCache, NoopCache] = field(default=settings.disk_cache)
+    cache: Union[
+        DiskCache[RootHttpUrl], MemoryCache[RootHttpUrl], NoopCache[RootHttpUrl]
+    ] = field(default=settings.disk_cache)
     disable_cache: bool = False
     """Disable caching downloads to `settings.cache_path`
     and (re)download them to memory instead."""

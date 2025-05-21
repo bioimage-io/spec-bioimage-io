@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import collections.abc
 import hashlib
 import sys
 import warnings
@@ -20,6 +21,7 @@ from typing import (
     Generic,
     Iterable,
     List,
+    Mapping,
     Optional,
     Sequence,
     Set,
@@ -28,6 +30,7 @@ from typing import (
     TypedDict,
     TypeVar,
     Union,
+    overload,
 )
 from urllib.parse import urlparse, urlsplit, urlunsplit
 from zipfile import ZipFile, is_zipfile
@@ -41,10 +44,8 @@ from pydantic import (
     DirectoryPath,
     Field,
     GetCoreSchemaHandler,
-    PlainSerializer,
     PrivateAttr,
     RootModel,
-    SerializationInfo,
     TypeAdapter,
     model_validator,
 )
@@ -76,10 +77,9 @@ from .io_basics import (
     get_sha256,
 )
 from .node import Node
-from .packaging_context import packaging_context_var
 from .progress import Progressbar
 from .root_url import RootHttpUrl
-from .type_guards import is_mapping, is_sequence
+from .type_guards import is_dict, is_list, is_mapping, is_sequence
 from .url import HttpUrl
 from .validation_context import get_validation_context
 from .validator_annotations import AfterValidator
@@ -402,6 +402,9 @@ YamlKey = Union[  # YAML Arrays are cast to tuples if used as key in mappings
 ]
 if TYPE_CHECKING:
     YamlValue = Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]]
+    YamlValueView = Union[
+        YamlLeafValue, Sequence["YamlValueView"], Mapping[YamlKey, "YamlValueView"]
+    ]
 else:
     # for pydantic validation we need to use `TypeAliasType`,
     # see https://docs.pydantic.dev/latest/concepts/types/#named-recursive-types
@@ -410,8 +413,39 @@ else:
         "YamlValue",
         Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]],
     )
+    YamlValueView = _TypeAliasType(
+        "YamlValueView",
+        Union[
+            YamlLeafValue,
+            Sequence["YamlValueView"],
+            Mapping[YamlKey, "YamlValueView"],
+        ],
+    )
+
 BioimageioYamlContent = Dict[str, YamlValue]
-BioimageioYamlSource = Union[PermissiveFileSource, ZipFile, BioimageioYamlContent]
+BioimageioYamlContentView = Mapping[str, YamlValueView]
+BioimageioYamlSource = Union[
+    PermissiveFileSource, ZipFile, BioimageioYamlContent, BioimageioYamlContentView
+]
+
+
+@overload
+def deepcopy_yaml_value(value: BioimageioYamlContentView) -> BioimageioYamlContent: ...
+
+
+@overload
+def deepcopy_yaml_value(value: YamlValueView) -> YamlValue: ...
+
+
+def deepcopy_yaml_value(
+    value: Union[BioimageioYamlContentView, YamlValueView],
+) -> Union[BioimageioYamlContent, YamlValue]:
+    if isinstance(value, collections.abc.Mapping):
+        return {key: deepcopy_yaml_value(val) for key, val in value.items()}
+    elif isinstance(value, collections.abc.Sequence):
+        return [deepcopy_yaml_value(val) for val in value]
+    else:
+        return value
 
 
 def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
@@ -419,17 +453,34 @@ def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
 
 
 def is_yaml_list(value: Any) -> TypeGuard[List[YamlValue]]:
+    return is_list(value) and all(is_yaml_value(item) for item in value)
+
+
+def is_yaml_sequence(value: Any) -> TypeGuard[List[YamlValueView]]:
     return is_sequence(value) and all(is_yaml_value(item) for item in value)
 
 
-def is_yaml_mapping(value: Any) -> TypeGuard[BioimageioYamlContent]:
-    return is_mapping(value) and all(
+def is_yaml_dict(value: Any) -> TypeGuard[BioimageioYamlContent]:
+    return is_dict(value) and all(
         isinstance(key, str) and is_yaml_value(val) for key, val in value.items()
     )
 
 
+def is_yaml_mapping(value: Any) -> TypeGuard[BioimageioYamlContentView]:
+    return is_mapping(value) and all(
+        isinstance(key, str) and is_yaml_value_read_only(val)
+        for key, val in value.items()
+    )
+
+
 def is_yaml_value(value: Any) -> TypeGuard[YamlValue]:
-    return is_yaml_leaf_value(value) or is_yaml_list(value) or is_yaml_mapping(value)
+    return is_yaml_leaf_value(value) or is_yaml_list(value) or is_yaml_dict(value)
+
+
+def is_yaml_value_read_only(value: Any) -> TypeGuard[YamlValueView]:
+    return (
+        is_yaml_leaf_value(value) or is_yaml_sequence(value) or is_yaml_mapping(value)
+    )
 
 
 @dataclass
@@ -577,6 +628,7 @@ def get_reader(
     if isinstance(source, ZipPath):
         f = source.open(mode="rb")
         assert not isinstance(f, TextIOWrapper)
+        root = source.root
     elif isinstance(source, Path):
         if source.is_dir():
             raise FileNotFoundError(f"{source} is a directory, not a file")
@@ -585,6 +637,7 @@ def get_reader(
             raise FileNotFoundError(source)
 
         f = source.open("rb")
+        root = source.parent
     else:
         assert_never(source)
 
@@ -599,7 +652,11 @@ def get_reader(
             )
 
     return BytesReader(
-        f, sha256=sha, suffix=source.suffix, original_file_name=source.name
+        f,
+        sha256=sha,
+        suffix=source.suffix,
+        original_file_name=source.name,
+        original_root=root,
     )
 
 
@@ -634,6 +691,7 @@ def _open_url(
         suffix=source_path.suffix,
         sha256=sha,
         original_file_name=source_path.name,
+        original_root=source.parent,
     )
 
 
@@ -669,7 +727,7 @@ def _fetch_url(
                 leave=True,
             )
 
-    if progressbar:
+    if progressbar is not False:
         progressbar.set_description(f"Downloading {extract_file_name(source)}")
 
     if settings.user_agent is not None:
@@ -784,96 +842,6 @@ class NonBioimageioYamlFileDescr(FileDescr):
     source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
 
 
-def _package_serializer(
-    source: FileSource, info: SerializationInfo
-) -> Union[str, Path, FileName]:
-    return _package(source, info, None)
-
-
-def _package(
-    source: FileSource, info: SerializationInfo, sha256: Optional[Sha256]
-) -> Union[str, Path, FileName]:
-    if (packaging_context := packaging_context_var.get()) is None:
-        # convert to standard python obj
-        # note: pydantic keeps returning Rootmodels (here `HttpUrl`) as-is, but if
-        #   this function returns one RootModel, paths are "further serialized" by
-        #   returning the 'root' attribute, which is incorrect.
-        #   see https://github.com/pydantic/pydantic/issues/8963
-        #   TODO: follow up on https://github.com/pydantic/pydantic/issues/8963
-        if isinstance(source, Path):
-            unpackaged = source
-        elif isinstance(source, HttpUrl):
-            unpackaged = source
-        elif isinstance(source, RelativeFilePath):
-            unpackaged = Path(source.path)
-        elif isinstance(source, AnyUrl):
-            unpackaged = str(source)
-        else:
-            assert_never(source)
-
-        if info.mode_is_json():
-            # convert to json value  # TODO: remove and let pydantic do this?
-            if isinstance(unpackaged, (Path, HttpUrl)):
-                unpackaged = str(unpackaged)
-            elif isinstance(unpackaged, str):
-                pass
-            else:
-                assert_never(unpackaged)
-        else:
-            warnings.warn(
-                "dumping with mode='python' is currently not fully supported for "
-                + "fields that are included when packaging; returned objects are "
-                + "standard python objects"
-            )
-
-        return unpackaged  # return unpackaged file source
-
-    fname = extract_file_name(source)
-    if fname == packaging_context.bioimageio_yaml_file_name:
-        raise ValueError(
-            f"Reserved file name '{packaging_context.bioimageio_yaml_file_name}' "
-            + "not allowed for a file to be packaged"
-        )
-
-    fsrcs = packaging_context.file_sources
-    assert not any(
-        fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES
-    ), fname
-    if fname in fsrcs and fsrcs[fname].source != source:
-        for i in range(2, 20):
-            fn, *ext = fname.split(".")
-            alternative_file_name = ".".join([f"{fn}_{i}", *ext])
-            if (
-                alternative_file_name not in fsrcs
-                or fsrcs[alternative_file_name].source == source
-            ):
-                fname = alternative_file_name
-                break
-        else:
-            raise ValueError(f"Too many file name clashes for {fname}")
-
-    fsrcs[fname] = FileDescr(source=source, sha256=sha256)
-    return fname
-
-
-include_in_package_serializer = PlainSerializer(
-    _package_serializer, when_used="unless-none"
-)
-ImportantFileSource = Annotated[
-    FileSource,
-    AfterValidator(wo_special_file_name),
-    include_in_package_serializer,
-]
-InPackageIfLocalFileSource = Union[
-    Annotated[
-        Union[FilePath, RelativeFilePath],
-        AfterValidator(wo_special_file_name),
-        include_in_package_serializer,
-    ],
-    Union[HttpUrl, pydantic.HttpUrl],
-]
-
-
 def extract_file_name(
     src: Union[pydantic.HttpUrl, RootHttpUrl, PurePath, RelativeFilePath, ZipPath],
 ) -> FileName:
@@ -896,7 +864,7 @@ def extract_file_name(
             return url.path.split("/")[-1]
 
 
-def extract_file_descrs(data: YamlValue):
+def extract_file_descrs(data: YamlValueView):
     collected: List[FileDescr] = []
     with get_validation_context().replace(perform_io_checks=False, log_warnings=False):
         _extract_file_descrs_impl(data, collected)
@@ -904,8 +872,8 @@ def extract_file_descrs(data: YamlValue):
     return collected
 
 
-def _extract_file_descrs_impl(data: YamlValue, collected: List[FileDescr]):
-    if isinstance(data, dict):
+def _extract_file_descrs_impl(data: YamlValueView, collected: List[FileDescr]):
+    if isinstance(data, collections.abc.Mapping):
         if "source" in data and "sha256" in data:
             try:
                 fd = FileDescr.model_validate(
@@ -918,7 +886,7 @@ def _extract_file_descrs_impl(data: YamlValue, collected: List[FileDescr]):
 
         for v in data.values():
             _extract_file_descrs_impl(v, collected)
-    elif isinstance(data, list):
+    elif isinstance(data, collections.abc.Sequence):
         for v in data:
             _extract_file_descrs_impl(v, collected)
 

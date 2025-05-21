@@ -1,4 +1,6 @@
+import collections.abc
 import io
+import shutil
 import zipfile
 from contextlib import nullcontext
 from difflib import get_close_matches
@@ -26,6 +28,7 @@ from ._settings import settings
 from .io import (
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
+    BioimageioYamlContentView,
     BytesReader,
     FileDescr,
     HashKwargs,
@@ -67,7 +70,7 @@ def read_yaml(
 
 
 def write_yaml(
-    content: Union[YamlValue, BioimageioYamlContent],
+    content: Union[YamlValue, BioimageioYamlContentView],
     /,
     file: Union[NewPath, FilePath, IO[str], IO[bytes], ZipPath],
 ):
@@ -90,7 +93,7 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
         if not isinstance(key, str):
             raise ValueError(
                 f"Expected all keys (field names) in a {BIOIMAGEIO_YAML} "
-                + f"need to be strings (got '{key}' of type {type(key)})."
+                + f"to be strings (got '{key}' of type {type(key)})."
             )
 
     return cast(BioimageioYamlContent, content)
@@ -254,7 +257,12 @@ def get_id_map() -> Mapping[str, LightHttpFileDescr]:
 
 
 def write_content_to_zip(
-    content: Mapping[FileName, Union[str, FilePath, ZipPath, Dict[Any, Any]]],
+    content: Mapping[
+        FileName,
+        Union[
+            str, FilePath, ZipPath, BioimageioYamlContentView, FileDescr, BytesReader
+        ],
+    ],
     zip: zipfile.ZipFile,
 ):
     """write strings as text, dictionaries as yaml and files to a ZipFile
@@ -264,22 +272,28 @@ def write_content_to_zip(
         zip: ZipFile
     """
     for arc_name, file in content.items():
-        if isinstance(file, dict):
+        if isinstance(file, collections.abc.Mapping):
             buf = io.StringIO()
             write_yaml(file, buf)
             file = buf.getvalue()
 
         if isinstance(file, str):
             zip.writestr(arc_name, file.encode("utf-8"))
-        elif isinstance(file, ZipPath):
-            zip.writestr(arc_name, file.read_bytes())
         else:
-            zip.write(file, arcname=arc_name)
+            if isinstance(file, BytesReader):
+                reader = file
+            else:
+                reader = get_reader(file)
+
+            with zip.open(arc_name, "w") as dest:
+                shutil.copyfileobj(reader, dest, 1024 * 8)
 
 
 def write_zip(
     path: Union[FilePath, IO[bytes]],
-    content: Mapping[FileName, Union[str, FilePath, ZipPath, Dict[Any, Any]]],
+    content: Mapping[
+        FileName, Union[str, FilePath, ZipPath, BioimageioYamlContentView, BytesReader]
+    ],
     *,
     compression: int,
     compression_level: int,
