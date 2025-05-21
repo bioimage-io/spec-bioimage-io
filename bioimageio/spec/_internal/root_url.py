@@ -10,7 +10,7 @@ from .validated_string import ValidatedString
 
 
 class RootHttpUrl(ValidatedString):
-    """A 'URL folder', possibly an invalid HTTP URL"""
+    """An untested HTTP URL, possibly a 'URL folder' or an invalid HTTP URL"""
 
     root_model: ClassVar[Type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
     _validated: pydantic.HttpUrl

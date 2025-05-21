@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import os
 import sys
 import warnings
 from abc import abstractmethod
@@ -11,7 +10,7 @@ from datetime import date as _date
 from datetime import datetime as _datetime
 from functools import partial
 from io import TextIOWrapper
-from pathlib import Path, PurePath
+from pathlib import Path, PurePath, PurePosixPath
 from tempfile import mktemp
 from typing import (
     TYPE_CHECKING,
@@ -22,7 +21,6 @@ from typing import (
     Iterable,
     List,
     Optional,
-    Protocol,
     Sequence,
     Set,
     Tuple,
@@ -30,7 +28,6 @@ from typing import (
     TypedDict,
     TypeVar,
     Union,
-    runtime_checkable,
 )
 from urllib.parse import urlparse, urlsplit, urlunsplit
 from zipfile import ZipFile, is_zipfile
@@ -38,7 +35,7 @@ from zipfile import ZipFile, is_zipfile
 import httpx
 import pydantic
 from genericache import NoopCache
-from genericache.digest import ContentDigest
+from genericache.digest import ContentDigest, UrlDigest
 from pydantic import (
     AnyUrl,
     DirectoryPath,
@@ -71,10 +68,12 @@ from .io_basics import (
     BIOIMAGEIO_YAML,
     AbsoluteDirectory,
     AbsoluteFilePath,
+    BytesReader,
     FileName,
     FilePath,
     Sha256,
     ZipPath,
+    get_sha256,
 )
 from .node import Node
 from .packaging_context import packaging_context_var
@@ -551,62 +550,7 @@ def extract(
             return folder
 
 
-class BytesReaderP(Protocol):
-    def read(self, size: int = -1, /) -> bytes: ...
-
-    @property
-    def closed(self) -> bool: ...
-
-    def readable(self) -> bool: ...
-
-    def seek(self, offset: int, whence: int = os.SEEK_SET, /) -> int: ...
-
-    def seekable(self) -> bool: ...
-
-    def tell(self) -> int: ...
-
-
-@runtime_checkable
-class BytesReaderIntoP(BytesReaderP, Protocol):
-    def readinto(self, b: Union[bytearray, memoryview]) -> int: ...
-
-
-class BytesReader(BytesReaderP):
-    def __init__(
-        self, reader: Union[BytesReaderP, BytesReaderIntoP], sha256: Optional[Sha256]
-    ) -> None:
-        self._reader = reader
-        self._sha256 = sha256
-        super().__init__()
-
-    @property
-    def sha256(self) -> Sha256:
-        if self._sha256 is None:
-            self._sha256 = get_sha256(self._reader)
-
-        return self._sha256
-
-    def read(self, size: int = -1, /) -> bytes:
-        return self._reader.read(size)
-
-    def readable(self) -> bool:
-        return True
-
-    def seek(self, offset: int, whence: int = os.SEEK_SET, /) -> int:
-        return self._reader.seek(offset, whence)
-
-    def seekable(self) -> bool:
-        return True
-
-    def tell(self) -> int:
-        return self._reader.tell()
-
-    @property
-    def closed(self) -> bool:
-        return self._reader.closed
-
-
-def open(
+def get_reader(
     source: Union[PermissiveFileSource, FileDescr, ZipPath],
     /,
     progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
@@ -654,10 +598,12 @@ def open(
                 f"SHA256 mismatch for {source}. Expected {expected_sha}, got {sha}."
             )
 
-    return BytesReader(f, sha256=sha)
+    return BytesReader(
+        f, sha256=sha, suffix=source.suffix, original_file_name=source.name
+    )
 
 
-download = open
+download = get_reader
 
 
 def _open_url(
@@ -667,21 +613,32 @@ def _open_url(
     **kwargs: Unpack[HashKwargs],
 ) -> BytesReader:
     cache = (
-        NoopCache[RootHttpUrl]()
+        NoopCache[RootHttpUrl](url_hasher=UrlDigest.from_str)
         if get_validation_context().disable_cache
         else settings.disk_cache
     )
     sha = kwargs.get("sha256")
-    digest = None if sha is None else ContentDigest.parse(hexdigest=sha)
-    return cache.fetch(
-        source,
-        fetcher=partial(_fetch_url, progressbar=progressbar),
-        force_refetch=digest,
+    digest = False if sha is None else ContentDigest.parse(hexdigest=sha)
+    source_path = PurePosixPath(
+        source.path
+        or sha
+        or hashlib.sha256(str(source).encode(encoding="utf-8")).hexdigest()
+    )
+
+    return BytesReader(
+        cache.fetch(
+            source,
+            fetcher=partial(_fetch_url, progressbar=progressbar),
+            force_refetch=digest,
+        ),
+        suffix=source_path.suffix,
+        sha256=sha,
+        original_file_name=source_path.name,
     )
 
 
 def _fetch_url(
-    source: HttpUrl,
+    source: RootHttpUrl,
     *,
     progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
 ):
@@ -765,16 +722,16 @@ class LightHttpFileDescr(Node):
     sha256: Sha256
     """SHA256 checksum of the source file"""
 
-    def open(
+    def get_reader(
         self,
         *,
         progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
     ) -> BytesReader:
         """open the file source (download if needed)"""
-        return open(self.source, sha256=self.sha256, progressbar=progressbar)
+        return get_reader(self.source, sha256=self.sha256, progressbar=progressbar)
 
-    download = open
-    """alias for open() method"""
+    download = get_reader
+    """alias for get_reader() method"""
 
 
 class FileDescr(Node):
@@ -796,7 +753,7 @@ class FileDescr(Node):
         if (src_str := str(self.source)) in context.known_files:
             actual_sha = context.known_files[src_str]
         else:
-            reader = open(self.source, sha256=self.sha256)
+            reader = get_reader(self.source, sha256=self.sha256)
             actual_sha = reader.sha256
             context.known_files[src_str] = actual_sha
 
@@ -813,14 +770,14 @@ class FileDescr(Node):
                 + "file."
             )
 
-    def open(
+    def get_reader(
         self, *, progressbar: Union[Progressbar, Callable[[], Progressbar], bool] = True
     ):
         """open the file source (download if needed)"""
-        return open(self.source, progressbar=progressbar, sha256=self.sha256)
+        return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
 
-    download = open
-    """alias for open() method"""
+    download = get_reader
+    """alias for get_reader() method"""
 
 
 class NonBioimageioYamlFileDescr(FileDescr):
@@ -918,7 +875,7 @@ InPackageIfLocalFileSource = Union[
 
 
 def extract_file_name(
-    src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath, ZipPath],
+    src: Union[pydantic.HttpUrl, RootHttpUrl, PurePath, RelativeFilePath, ZipPath],
 ) -> FileName:
     if isinstance(src, ZipPath):
         return src.name or src.root.filename or "bioimageio.zip"
@@ -937,22 +894,6 @@ def extract_file_name(
             return url.path.split("/")[-2]
         else:
             return url.path.split("/")[-1]
-
-
-def get_sha256(reader: Union[BytesReaderP, BytesReaderIntoP]) -> Sha256:
-    chunksize = 128 * 1024
-    h = hashlib.sha256()
-    if isinstance(reader, BytesReaderIntoP):
-        b = bytearray(chunksize)
-        mv = memoryview(b)
-        for n in iter(lambda: reader.readinto(mv), 0):
-            h.update(mv[:n])
-    else:
-        for chunk in iter(partial(reader.read, chunksize), b""):
-            h.update(chunk)
-
-    sha = h.hexdigest()
-    return Sha256(sha)
 
 
 def extract_file_descrs(data: YamlValue):

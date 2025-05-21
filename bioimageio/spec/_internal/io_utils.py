@@ -26,15 +26,18 @@ from ._settings import settings
 from .io import (
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
+    BytesReader,
     FileDescr,
     HashKwargs,
     LightHttpFileDescr,
     OpenedBioimageioYaml,
+    RelativeFilePath,
     YamlValue,
     extract_file_name,
     find_bioimageio_yaml_file_name,
+    get_reader,
     identify_bioimageio_yaml_file_name,
-    resolve,
+    interprete_file_source,
 )
 from .io_basics import AbsoluteDirectory, FileName, ZipPath
 from .types import FileSource, PermissiveFileSource
@@ -51,7 +54,9 @@ _yaml_dump.indent(mapping=2, sequence=4, offset=2)
 _yaml_dump.width = 88  # pyright: ignore[reportAttributeAccessIssue]
 
 
-def read_yaml(file: Union[FilePath, ZipPath, IO[str], IO[bytes]]) -> YamlValue:
+def read_yaml(
+    file: Union[FilePath, ZipPath, IO[str], IO[bytes], BytesReader],
+) -> YamlValue:
     if isinstance(file, (ZipPath, Path)):
         data = file.read_text(encoding="utf-8")
     else:
@@ -119,19 +124,26 @@ def _open_bioimageio_zip(
 
 
 def open_bioimageio_yaml(
-    source: Union[PermissiveFileSource, ZipFile], /, **kwargs: Unpack[HashKwargs]
+    source: Union[PermissiveFileSource, ZipFile, ZipPath],
+    /,
+    **kwargs: Unpack[HashKwargs],
 ) -> OpenedBioimageioYaml:
+    if isinstance(source, RelativeFilePath):
+        source = source.absolute()
+
     if isinstance(source, ZipFile):
         return _open_bioimageio_zip(source)
+    elif isinstance(source, ZipPath):
+        return _open_bioimageio_rdf_in_zip(source, source.root)
 
     try:
         if isinstance(source, (Path, str)) and (source_dir := Path(source)).is_dir():
             # open bioimageio yaml from a folder
             src = source_dir / find_bioimageio_yaml_file_name(source_dir)
         else:
-            src = source
+            src = interprete_file_source(source)
 
-        downloaded = resolve(src, **kwargs)
+        reader = get_reader(src, **kwargs)
 
     except Exception:
         # check if `source` is a collection id
@@ -183,21 +195,28 @@ def open_bioimageio_yaml(
 
         entry = id_map[source]
         logger.info("loading {} from {}", source, entry.source)
-        downloaded = entry.download()
+        reader = entry.get_reader()
+        with ValidationContext(perform_io_checks=False):
+            src = HttpUrl(entry.source)
 
-    if isinstance(downloaded.path, ZipPath):
-        return _open_bioimageio_rdf_in_zip(downloaded.path, downloaded.original_root)
-    elif is_zipfile(downloaded.path):
-        return _open_bioimageio_zip(ZipFile(downloaded.path))
+    if is_zipfile(reader):
+        return _open_bioimageio_zip(ZipFile(reader))
 
-    assert not downloaded.path.is_dir(), "expected a file, not a directory"
+    content = _sanitize_bioimageio_yaml(read_yaml(reader))
 
-    content = _sanitize_bioimageio_yaml(read_yaml(downloaded.path))
+    if isinstance(src, RelativeFilePath):
+        src = src.absolute()
+
+    if isinstance(src, ZipPath):
+        root = src.root
+    else:
+        root = src.parent
+
     return OpenedBioimageioYaml(
         content,
-        downloaded.original_root,
-        downloaded.original_file_name,
-        unparsed_content=downloaded.path.read_text(encoding="utf-8"),
+        original_root=root,
+        original_file_name=extract_file_name(src),
+        unparsed_content=reader.read().decode(encoding="utf-8"),
     )
 
 
@@ -282,10 +301,8 @@ def write_zip(
 
 
 def load_array(source: Union[FileSource, FileDescr, ZipPath]) -> NDArray[Any]:
-    path = resolve(source).path
-    with path.open(mode="rb") as f:
-        assert not isinstance(f, io.TextIOWrapper)
-        return numpy.load(f, allow_pickle=settings.allow_pickle)
+    reader = get_reader(source)
+    return numpy.load(reader, allow_pickle=settings.allow_pickle)
 
 
 def save_array(path: Union[Path, ZipPath], array: NDArray[Any]) -> None:
