@@ -1617,7 +1617,9 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     optional: bool = False
     """indicates that this tensor may be `None`"""
 
-    preprocessing: List[PreprocessingDescr] = Field(default_factory=list)
+    preprocessing: List[PreprocessingDescr] =(  # pyright: ignore[reportUnknownVariableType]
+        Field(default_factory=list))
+
     """Description of how this input should be preprocessed.
 
     notes:
@@ -1944,7 +1946,8 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     """Output tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
-    postprocessing: List[PostprocessingDescr] = Field(default_factory=list)
+    postprocessing: List[PostprocessingDescr] = (  # pyright: ignore[reportUnknownVariableType]
+        Field(default_factory=list))
     """Description of how this output should be postprocessed.
 
     note: `postprocessing` always ends with an 'ensure_dtype' operation.
@@ -2852,7 +2855,10 @@ class ModelDescr(GenericModelDescrBase):
 
         return outputs
 
-    packaged_by: List[Author] = Field(default_factory=list)
+    packaged_by: List[Author] = (  # pyright: ignore[reportUnknownVariableType]
+         Field(
+        default_factory=list
+    )  )
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
 

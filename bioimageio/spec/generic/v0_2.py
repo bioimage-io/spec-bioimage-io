@@ -95,7 +95,10 @@ CoverImageSource = Annotated[
 class AttachmentsDescr(Node):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
-    files: List[FileSource] = Field(default_factory=list)
+
+    files: List[FileSource] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """∈📦 File attachments"""
 
 
@@ -206,7 +209,7 @@ class GenericModelDescrBase(ResourceDescrBase):
 
     description: str
 
-    covers: Annotated[
+    covers: Annotated[  # pyright: ignore[reportUnknownVariableType]
         List[CoverImageSource],
         Field(
             examples=["cover.png"],
@@ -226,7 +229,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = None
     """UTF-8 emoji for display alongside the `id`."""
 
-    authors: List[Author] = Field(default_factory=list)
+    authors: List[Author] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """The authors are the creators of the RDF and the primary points of contact."""
 
     @field_validator("authors", mode="before")
@@ -244,7 +249,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     attachments: Optional[AttachmentsDescr] = None
     """file and other attachments"""
 
-    cite: List[CiteEntry] = Field(default_factory=list)
+    cite: List[CiteEntry] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """citations"""
 
     @field_validator("cite", mode="after")
@@ -324,7 +331,10 @@ class GenericModelDescrBase(ResourceDescrBase):
     uploader: Optional[Uploader] = None
     """The person who uploaded the model (e.g. to bioimage.io)"""
 
-    maintainers: List[Maintainer] = Field(default_factory=list)
+    # TODO: (py>3.8) remove pyright ignore
+    maintainers: List[Maintainer] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """Maintainers of this resource.
     If not specified `authors` are maintainers and at least some of them should specify their `github_user` name"""
 
@@ -386,7 +396,9 @@ class GenericDescrBase(GenericModelDescrBase):
         _convert_from_older_format(data)
         return data
 
-    badges: List[BadgeDescr] = Field(default_factory=list)
+    badges: List[BadgeDescr] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """badges associated with this resource"""
 
     documentation: Annotated[

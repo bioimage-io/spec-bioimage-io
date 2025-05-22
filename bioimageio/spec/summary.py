@@ -168,8 +168,12 @@ class ValidationDetail(BaseModel, extra="allow"):
     status: Literal["passed", "failed"]
     loc: Loc = ()
     """location in the RDF that this detail applies to"""
-    errors: List[ErrorEntry] = Field(default_factory=list)
-    warnings: List[WarningEntry] = Field(default_factory=list)
+    errors: List[ErrorEntry] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
+    warnings: List[WarningEntry] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     context: Optional[ValidationContextSummary] = None
 
     recommended_env: Optional[CondaEnv] = None

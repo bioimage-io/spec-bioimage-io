@@ -32,7 +32,10 @@ class CondaEnv(BaseModel):
 
     name: Optional[str] = None
     channels: List[str] = Field(default_factory=list)
-    dependencies: List[Union[str, PipDeps]] = Field(default_factory=list)
+    dependencies: List[Union[str, PipDeps]] = ( # pyright: ignore[reportUnknownVariableType]
+        Field(
+        default_factory=list
+    )  )
 
     @field_validator("name", mode="after")
     def _ensure_valid_conda_env_name(cls, value: Optional[str]) -> Optional[str]:

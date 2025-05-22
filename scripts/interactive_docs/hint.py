@@ -939,7 +939,9 @@ class ModelHint(Hint):
             field_info = self.model.model_fields[field_name]
             field_default = field_info.default
             if field_info.default_factory is not None:
-                field_default = field_info.default_factory()
+                field_default = (
+                    field_info.default_factory()  # pyright: ignore[reportCallIssue]
+                )
             if not isinstance(field_default, PydanticUndefinedType):
                 field_default = Example.try_from_value(field_default)
                 assert not isinstance(field_default, Exception)

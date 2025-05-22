@@ -440,7 +440,9 @@ def deepcopy_yaml_value(value: YamlValueView) -> YamlValue: ...
 def deepcopy_yaml_value(
     value: Union[BioimageioYamlContentView, YamlValueView],
 ) -> Union[BioimageioYamlContent, YamlValue]:
-    if isinstance(value, collections.abc.Mapping):
+    if isinstance(value, str):
+        return value
+    elif isinstance(value, collections.abc.Mapping):
         return {key: deepcopy_yaml_value(val) for key, val in value.items()}
     elif isinstance(value, collections.abc.Sequence):
         return [deepcopy_yaml_value(val) for val in value]
@@ -744,7 +746,7 @@ def _fetch_url(
         except Exception:
             total = None
 
-    if progressbar:
+    if progressbar is not False:
         if total is None:
             progressbar.total = 0
         else:
@@ -753,7 +755,7 @@ def _fetch_url(
     def iter_content():
         for chunk in r.iter_bytes(chunk_size=4096):
             yield chunk
-            if progressbar:
+            if progressbar is not False:
                 _ = progressbar.update(len(chunk))
 
         # Make sure the progress bar gets filled even if the actual number
@@ -761,7 +763,7 @@ def _fetch_url(
         # text files that are compressed by the server when sending (gzip).
         # Binary files don't experience this.
         # (adapted from pooch.HttpDownloader)
-        if progressbar:
+        if progressbar is not False:
             progressbar.reset()
             if total is not None:
                 _ = progressbar.update(total)
@@ -886,7 +888,7 @@ def _extract_file_descrs_impl(data: YamlValueView, collected: List[FileDescr]):
 
         for v in data.values():
             _extract_file_descrs_impl(v, collected)
-    elif isinstance(data, collections.abc.Sequence):
+    elif not isinstance(data, str) and isinstance(data, collections.abc.Sequence):
         for v in data:
             _extract_file_descrs_impl(v, collected)
 

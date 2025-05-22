@@ -31,7 +31,9 @@ class ValidationContextBase:
     Existence of local absolute file paths is still being checked."""
 
     known_files: Dict[str, Optional[Sha256]] = field(
-        default_factory=cast(Callable[[], Dict[str, Optional[Sha256]]], dict)
+        default_factory=cast(  # TODO: (py>3.8) use dict[str, Optional[Sha256]]
+            Callable[[], Dict[str, Optional[Sha256]]], dict
+        )
     )
     """Allows to bypass download and hashing of referenced files."""
 

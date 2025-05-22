@@ -14,7 +14,7 @@ class ValidatedString(str):
     """the pydantic root model to validate the string"""
     # TODO: should we use a TypeAdapter instead?
     # TODO: with future py version:  RootModel[Any] -> RootModel[str | "literal string type"]
-    _validated: Any  # pyright: ignore[reportUninitializedInstanceVariable]  # initalized in __new__
+    _validated: Any  # initalized in __new__
 
     def __new__(cls, object: object):
         _validated = cls.root_model.model_validate(object).root

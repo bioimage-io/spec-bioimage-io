@@ -385,10 +385,10 @@ class KwargsNode(Node):
         return self[item] if item in self else default
 
     def __getitem__(self, item: str) -> Any:
-        if item in self.model_fields:
+        if item in self.__class__.model_fields:
             return getattr(self, item)
         else:
             raise KeyError(item)
 
     def __contains__(self, item: str) -> int:
-        return item in self.model_fields
+        return item in self.__class__.model_fields

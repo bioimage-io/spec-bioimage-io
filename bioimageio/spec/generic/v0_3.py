@@ -282,7 +282,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     ]
     """A string containing a brief description."""
 
-    covers: Annotated[
+    covers: Annotated[  # pyright: ignore[reportUnknownVariableType]
         List[CoverImageSource],
         Field(
             examples=[],
@@ -303,7 +303,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     authors: NotEmpty[List[Author]]
     """The authors are the creators of this resource description and the primary points of contact."""
 
-    attachments: List[FileDescr] = Field(default_factory=list)
+    attachments: List[FileDescr] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """file attachments"""
 
     cite: NotEmpty[List[CiteEntry]]
@@ -356,7 +358,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     uploader: Optional[Uploader] = None
     """The person who uploaded the model (e.g. to bioimage.io)"""
 
-    maintainers: List[Maintainer] = Field(default_factory=list)
+    maintainers: List[Maintainer] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """Maintainers of this resource.
     If not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name"""
 
@@ -451,7 +455,9 @@ class GenericDescrBase(GenericModelDescrBase):
     """∈📦 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
-    badges: List[BadgeDescr] = Field(default_factory=list)
+    badges: List[BadgeDescr] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """badges associated with this resource"""
 
     config: Config = Field(default_factory=Config)

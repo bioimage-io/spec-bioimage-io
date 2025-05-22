@@ -23,7 +23,6 @@ K = TypeVar("K")
 V = TypeVar("V")
 NestedDict = Dict[K, "NestedDict[K, V] | V"]
 
-
 if sys.version_info < (3, 9):
     from functools import lru_cache as cache
 

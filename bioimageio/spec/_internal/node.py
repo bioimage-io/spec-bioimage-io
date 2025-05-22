@@ -47,6 +47,8 @@ class Node(
         strict: Optional[bool] = None,
         from_attributes: Optional[bool] = None,
         context: Union[ValidationContext, Mapping[str, Any], None] = None,
+        by_alias: bool | None = None,
+        by_name: bool | None = None,
     ) -> Self:
         """Validate a pydantic model instance.
 

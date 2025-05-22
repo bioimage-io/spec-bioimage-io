@@ -4,6 +4,7 @@ import collections.abc
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     ClassVar,
     Dict,
     List,
@@ -13,6 +14,7 @@ from typing import (
     Tuple,
     Type,
     Union,
+    cast,
 )
 
 import numpy as np
@@ -923,7 +925,11 @@ class InputTensorDescr(TensorDescrBase):
     ]
     """Specification of input tensor shape."""
 
-    preprocessing: List[PreprocessingDescr] = Field(default_factory=list)
+    preprocessing: List[PreprocessingDescr] = Field(
+        default_factory=cast(  # TODO: (py>3.8) use list[PreprocessingDesr]
+            Callable[[], List[PreprocessingDescr]], list
+        )
+    )
     """Description of how this input should be preprocessed."""
 
     @model_validator(mode="after")
@@ -988,7 +994,10 @@ class OutputTensorDescr(TensorDescrBase):
     The `halo` is to be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`.
     To document a `halo` that is already cropped by the model `shape.offset` has to be used instead."""
 
-    postprocessing: List[PostprocessingDescr] = Field(default_factory=list)
+    postprocessing: List[PostprocessingDescr] = ( # pyright: ignore[reportUnknownVariableType]
+        Field(
+        default_factory=list
+    ) )
     """Description of how this output should be postprocessed."""
 
     @model_validator(mode="after")
@@ -1268,7 +1277,9 @@ class ModelDescr(GenericModelDescrBase):
 
         return self
 
-    packaged_by: List[Author] = Field(default_factory=list)
+    packaged_by: List[Author] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
 
@@ -1289,12 +1300,18 @@ class ModelDescr(GenericModelDescrBase):
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    sample_inputs: List[ImportantFileSource] = Field(default_factory=list)
+    sample_inputs: List[ImportantFileSource] = ( # pyright: ignore[reportUnknownVariableType]
+        Field(
+        default_factory=list
+    ) )
     """URLs/relative paths to sample inputs to illustrate possible inputs for the model,
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
-    sample_outputs: List[ImportantFileSource] = Field(default_factory=list)
+    sample_outputs: List[ImportantFileSource] = ( # pyright: ignore[reportUnknownVariableType]
+        Field(
+        default_factory=list
+    )  )
     """URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
     test_inputs: NotEmpty[

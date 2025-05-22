@@ -26,17 +26,12 @@ def _validate_url_impl(
     context = get_validation_context()
     if url in context.known_files:
         with context.replace(perform_io_checks=False):
-            return (  # pyright: ignore[reportUnknownVariableType]
-                # TODO: remove pyright ignore for pydantic > 2.9
-                pydantic.HttpUrl(url)  # pyright: ignore[reportCallIssue]
-            )
+            return pydantic.HttpUrl(url)
 
     val_url = url
 
     if url.startswith("http://example.com") or url.startswith("https://example.com"):
-        return pydantic.HttpUrl(  # pyright: ignore[reportUnknownVariableType,reportCallIssue]
-            url
-        )
+        return pydantic.HttpUrl(url)
 
     if url.startswith("https://colab.research.google.com/github/"):
         # get requests for colab returns 200 even if the source notebook does not exists.
@@ -117,10 +112,7 @@ def _validate_url_impl(
             assert_never(request_mode)
 
     context.known_files[url] = None
-    return (  # pyright: ignore[reportUnknownVariableType]
-        # TODO: remove pyright ignore for pydantic > 2.9
-        pydantic.HttpUrl(url)  # pyright: ignore[reportCallIssue]
-    )
+    return pydantic.HttpUrl(url)
 
 
 class HttpUrl(RootHttpUrl):
