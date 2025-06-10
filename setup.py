@@ -39,7 +39,7 @@ _ = setup(
         "packaging>=17.0",
         "pooch>=1.5,<2",
         "pydantic-settings>=2.5,<3",
-        "pydantic=>2.10.3,<2.12",
+        "pydantic>=2.10.3,<2.12",
         "python-dateutil",
         "httpx",
         "rich",
