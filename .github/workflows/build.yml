@@ -12,7 +12,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11","3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11","3.12", "3.13"]
+        pydantic-version: ["2.10", "2.11"]
         include:
           - python-version: "3.12"
             is-dev-version: true
@@ -26,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -e .[dev]
+          pip install pydantic==${{matrix.pydantic-version }} -e .[dev]
       - name: Get Date
         id: get-date
         run: |
