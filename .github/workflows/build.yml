@@ -42,9 +42,6 @@ jobs:
         run: python scripts/generate_version_submodule_imports.py check
       - run: black --check .
         if: matrix.is-dev-version
-      - name: install additinal deps for a full pyright check
-        run: pip install json_schema_for_humans
-        if: matrix.is-dev-version
       - run: ruff check
         if: matrix.is-dev-version
       - name: Run Pyright
@@ -112,7 +109,6 @@ jobs:
         run: python -m interactive_docs
       - name: Generate JSON schemas
         run: python scripts/generate_json_schemas.py
-      - run: pip install json_schema_for_humans
       - name: Generate JSON schema documentation
         run: python scripts/generate_json_schema_documentation.py
       - name: Generate developer docs
