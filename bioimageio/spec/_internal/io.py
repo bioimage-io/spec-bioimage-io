@@ -799,7 +799,7 @@ class FileDescr(Node):
     """file source"""
 
     sha256: Optional[Sha256] = None
-    """SHA256 checksum of the source file"""
+    """SHA256 hash value of the source file"""
 
     @model_validator(mode="after")
     def _validate_sha256(self) -> Self:
@@ -808,13 +808,19 @@ class FileDescr(Node):
 
         return self
 
-    def validate_sha256(self):
+    def validate_sha256(self, force_recompute: bool = False) -> None:
+        """validate the sha256 hash value of the source file"""
         context = get_validation_context()
-        if (src_str := str(self.source)) in context.known_files:
+        src_str = str(self.source)
+        if not force_recompute and src_str in context.known_files:
             actual_sha = context.known_files[src_str]
         else:
             reader = get_reader(self.source, sha256=self.sha256)
-            actual_sha = reader.sha256
+            if force_recompute:
+                actual_sha = get_sha256(reader)
+            else:
+                actual_sha = reader.sha256
+
             context.known_files[src_str] = actual_sha
 
         if actual_sha is None:
