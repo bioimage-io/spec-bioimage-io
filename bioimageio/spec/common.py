@@ -10,6 +10,7 @@ from ._internal.io import (
 from ._internal.io_basics import (
     AbsoluteDirectory,
     AbsoluteFilePath,
+    BytesReader,
     FileName,
     Sha256,
     ZipPath,
@@ -28,6 +29,7 @@ __all__ = [
     "AbsoluteFilePath",
     "BioimageioYamlContent",
     "BioimageioYamlSource",
+    "BytesReader",
     "FileDescr",
     "FileName",
     "FilePath",
