@@ -90,7 +90,10 @@ class BytesReader(BytesReaderP):
     @property
     def sha256(self) -> Sha256:
         if self._sha256 is None:
+            pos = self._reader.tell()
+            _ = self._reader.seek(0)
             self._sha256 = get_sha256(self._reader)
+            _ = self._reader.seek(pos)
 
         return self._sha256
 

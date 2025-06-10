@@ -648,6 +648,7 @@ def get_reader(
         sha = None
     else:
         sha = get_sha256(f)
+        _ = f.seek(0)
         if sha != expected_sha:
             raise ValueError(
                 f"SHA256 mismatch for {source}. Expected {expected_sha}, got {sha}."
