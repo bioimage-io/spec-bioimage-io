@@ -58,7 +58,7 @@ _yaml_dump.width = 88  # pyright: ignore[reportAttributeAccessIssue]
 
 
 def read_yaml(
-    file: Union[FilePath, ZipPath, IO[str], IO[bytes], BytesReader],
+    file: Union[FilePath, ZipPath, IO[str], IO[bytes], BytesReader, str],
 ) -> YamlValue:
     if isinstance(file, (ZipPath, Path)):
         data = file.read_text(encoding="utf-8")
@@ -167,9 +167,7 @@ def open_bioimageio_yaml(
                 r = httpx.get(url)
                 _ = r.raise_for_status()
                 unparsed_content = r.content.decode(encoding="utf-8")
-                content = _sanitize_bioimageio_yaml(
-                    read_yaml(io.StringIO(unparsed_content))
-                )
+                content = _sanitize_bioimageio_yaml(read_yaml(unparsed_content))
             except Exception as e:
                 logger.warning("Failed to get bioimageio.yaml from {}: {}", url, e)
             else:
@@ -205,7 +203,8 @@ def open_bioimageio_yaml(
     if reader.is_zipfile:
         return _open_bioimageio_zip(ZipFile(reader))
 
-    content = _sanitize_bioimageio_yaml(read_yaml(reader))
+    unparsed_content = reader.read().decode(encoding="utf-8")
+    content = _sanitize_bioimageio_yaml(read_yaml(unparsed_content))
 
     if isinstance(src, RelativeFilePath):
         src = src.absolute()
@@ -219,7 +218,7 @@ def open_bioimageio_yaml(
         content,
         original_root=root,
         original_file_name=extract_file_name(src),
-        unparsed_content=reader.read().decode(encoding="utf-8"),
+        unparsed_content=unparsed_content,
     )
 
 
