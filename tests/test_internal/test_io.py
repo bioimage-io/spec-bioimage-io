@@ -144,7 +144,7 @@ def test_download_zip_wo_cache(respx_mock: MockRouter):
         httpx.Response(content=remote_content, status_code=200)
     )
 
-    with ValidationContext(disable_cache=False):
+    with ValidationContext(disable_cache=True):
         reader = get_reader(url)
 
     assert len(route.calls) == 1

@@ -1,5 +1,6 @@
 import hashlib
 import os
+import zipfile
 from contextlib import nullcontext
 from functools import partial
 from pathlib import Path
@@ -74,18 +75,31 @@ Suffix = str
 class BytesReader(BytesReaderP):
     def __init__(
         self,
+        /,
         reader: Union[BytesReaderP, BytesReaderIntoP],
+        *,
         sha256: Optional[Sha256],
         suffix: Suffix,
         original_file_name: FileName,
         original_root: Union[RootHttpUrl, AbsoluteDirectory, ZipFile],
+        is_zipfile: Optional[bool],
     ) -> None:
         self._reader = reader
         self._sha256 = sha256
         self._suffix = suffix
         self._original_file_name = original_file_name
         self._original_root = original_root
+        self._is_zipfile = is_zipfile
         super().__init__()
+
+    @property
+    def is_zipfile(self) -> bool:
+        if self._is_zipfile is None:
+            pos = self.tell()
+            self._is_zipfile = zipfile.is_zipfile(self)
+            _ = self.seek(pos)
+
+        return self._is_zipfile
 
     @property
     def sha256(self) -> Sha256:

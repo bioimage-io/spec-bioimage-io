@@ -4,6 +4,7 @@ import collections.abc
 import hashlib
 import sys
 import warnings
+import zipfile
 from abc import abstractmethod
 from contextlib import nullcontext
 from dataclasses import dataclass, field
@@ -33,7 +34,7 @@ from typing import (
     overload,
 )
 from urllib.parse import urlparse, urlsplit, urlunsplit
-from zipfile import ZipFile, is_zipfile
+from zipfile import ZipFile
 
 import httpx
 import pydantic
@@ -360,7 +361,7 @@ def find_bioimageio_yaml_file_name(path: Union[Path, ZipFile]) -> FileName:
     if isinstance(path, ZipFile):
         file_names = path.namelist()
     elif path.is_file():
-        if not is_zipfile(path):
+        if not zipfile.is_zipfile(path):
             return path.name
 
         with ZipFile(path, "r") as f:
@@ -660,6 +661,7 @@ def get_reader(
         suffix=source.suffix,
         original_file_name=source.name,
         original_root=root,
+        is_zipfile=None,
     )
 
 
@@ -695,6 +697,7 @@ def _open_url(
         sha256=sha,
         original_file_name=source_path.name,
         original_root=source.parent,
+        is_zipfile=None,
     )
 
 

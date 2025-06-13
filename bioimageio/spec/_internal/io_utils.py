@@ -14,7 +14,7 @@ from typing import (
     Union,
     cast,
 )
-from zipfile import ZipFile, is_zipfile
+from zipfile import ZipFile
 
 import httpx
 import numpy
@@ -202,7 +202,7 @@ def open_bioimageio_yaml(
         with ValidationContext(perform_io_checks=False):
             src = HttpUrl(entry.source)
 
-    if is_zipfile(reader):
+    if reader.is_zipfile:
         return _open_bioimageio_zip(ZipFile(reader))
 
     content = _sanitize_bioimageio_yaml(read_yaml(reader))
