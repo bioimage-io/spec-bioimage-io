@@ -289,10 +289,15 @@ class ResourceDescrBase(
             if context.raise_errors:
                 raise e
 
+            try:
+                msg = str(e)
+            except Exception:
+                msg = e.__class__.__name__ + " encountered"
+
             val_errors.append(
                 ErrorEntry(
                     loc=(),
-                    msg=str(e),
+                    msg=msg,
                     type=type(e).__name__,
                     with_traceback=True,
                 )
