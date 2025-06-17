@@ -16,10 +16,11 @@ from ._settings import settings
 from .io_basics import FileName, Sha256
 from .progress import Progressbar
 from .root_url import RootHttpUrl
+from .utils import SLOTS
 from .warning_levels import WarningLevel
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **SLOTS)
 class ValidationContextBase:
     file_name: Optional[FileName] = None
     """File name of the bioimageio Yaml file."""

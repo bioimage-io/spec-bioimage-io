@@ -1,18 +1,12 @@
-import sys
 from dataclasses import dataclass
-from typing import Any, Dict, Type
+from typing import Any, Type
 
 import annotated_types
 from pydantic import GetCoreSchemaHandler, functional_validators
 from pydantic_core import CoreSchema
 from pydantic_core.core_schema import no_info_after_validator_function
 
-if sys.version_info < (3, 10):
-    SLOTS: Dict[str, bool] = {}
-    KW_ONLY: Dict[str, bool] = {}
-else:
-    SLOTS = {"slots": True}
-    KW_ONLY = {"kw_only": True}
+from .utils import SLOTS
 
 
 # TODO: make sure we use this one everywhere and not the vanilla pydantic one

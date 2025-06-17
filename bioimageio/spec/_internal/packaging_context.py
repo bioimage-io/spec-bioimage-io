@@ -6,9 +6,10 @@ from typing import Callable, Dict, List, Literal, Optional, Sequence, Union, cas
 
 from .io import FileDescr
 from .io_basics import FileName
+from .utils import SLOTS
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **SLOTS)
 class PackagingContext:
     _context_tokens: "List[Token[Optional[PackagingContext]]]" = field(
         init=False,

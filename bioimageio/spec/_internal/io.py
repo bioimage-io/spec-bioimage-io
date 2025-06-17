@@ -83,14 +83,9 @@ from .progress import Progressbar
 from .root_url import RootHttpUrl
 from .type_guards import is_dict, is_list, is_mapping, is_sequence
 from .url import HttpUrl
+from .utils import SLOTS
 from .validation_context import get_validation_context
 from .validator_annotations import AfterValidator
-
-if sys.version_info < (3, 10):
-    SLOTS: Dict[str, bool] = {}
-else:
-    SLOTS = {"slots": True}
-
 
 AbsolutePathT = TypeVar(
     "AbsolutePathT",
@@ -481,7 +476,7 @@ def is_yaml_value_read_only(value: Any) -> TypeGuard[YamlValueView]:
     )
 
 
-@dataclass
+@dataclass(frozen=True, **SLOTS)
 class OpenedBioimageioYaml:
     content: BioimageioYamlContent = field(repr=False)
     original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
@@ -489,14 +484,14 @@ class OpenedBioimageioYaml:
     unparsed_content: str = field(repr=False)
 
 
-@dataclass
+@dataclass(frozen=True, **SLOTS)
 class LocalFile:
     path: FilePath
     original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
     original_file_name: FileName
 
 
-@dataclass
+@dataclass(frozen=True, **SLOTS)
 class FileInZip:
     path: ZipPath
     original_root: Union[RootHttpUrl, ZipFile]
