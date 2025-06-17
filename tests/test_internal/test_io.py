@@ -1,11 +1,11 @@
 import io
 from pathlib import Path, PurePath
-from typing import Any
+from typing import Annotated, Any, Union
 from zipfile import ZipFile
 
 import httpx
 import pytest
-from pydantic import ValidationError
+from pydantic import Field, ValidationError
 from respx import MockRouter
 
 from bioimageio.spec import ValidationContext
@@ -160,3 +160,87 @@ def test_download_zip_wo_cache(respx_mock: MockRouter):
             subpath = ZipPath(zf, k)
             assert subpath.exists()
             assert subpath.read_text(encoding="utf-8") == v
+
+
+def test_serialize_file_descr():
+    from bioimageio.spec._internal.io import FileDescr
+
+    path = Path(__file__).absolute()
+    path_str = str(path)
+    file_descr = FileDescr(source=path)
+
+    data = file_descr.model_dump(mode="json")
+
+    assert data["source"] == path_str
+
+
+def test_serialize_absolute_file_path():
+    from pydantic import FilePath, RootModel
+
+    path = Path(__file__).absolute()
+    path_str = str(path)
+    file_path = RootModel[FilePath](path)
+
+    data = file_path.model_dump(mode="json")
+
+    assert data == path_str
+
+
+def test_fail_relative_file_path_from_absolute():
+    from bioimageio.spec._internal.io import RelativeFilePath
+
+    path = Path(__file__).absolute()
+    with pytest.raises(ValueError):
+        _ = RelativeFilePath(path)
+
+
+def test_relative_directory():
+    from pydantic import RootModel
+
+    from bioimageio.spec._internal.io import RelativeDirectory
+
+    path = Path(__file__).parent.relative_to(Path().absolute())
+    rel_dir = RelativeDirectory(path)
+
+    assert (
+        RootModel[RelativeDirectory](rel_dir).model_dump(mode="python")
+        == path.as_posix()
+    )
+    assert (
+        RootModel[RelativeDirectory](rel_dir).model_dump(mode="json") == path.as_posix()
+    )
+
+    with pytest.raises(ValueError):
+        _ = RelativeDirectory(path.absolute())
+
+
+def test_serialize_relative_file_path_from_left_to_right_union():
+    from pydantic import FilePath, RootModel
+
+    from bioimageio.spec._internal.io import RelativeFilePath
+
+    path = Path(__file__).absolute()
+    path_str = str(path)
+    file_path = RootModel[
+        Annotated[Union[RelativeFilePath, FilePath], Field(union_mode="left_to_right")]
+    ](path)
+    assert isinstance(file_path, RootModel)
+    assert not isinstance(file_path.root, RelativeFilePath)
+
+    data = file_path.model_dump(mode="json")
+
+    assert data == path_str
+
+
+def test_serialize_relative_file_path_from_union():
+    from pydantic import FilePath, RootModel
+
+    from bioimageio.spec._internal.io import RelativeFilePath
+
+    path = Path(__file__).absolute()
+    path_str = str(path)
+    file_path = RootModel[Union[RelativeFilePath, FilePath]](path)
+
+    data = file_path.model_dump(mode="json")
+
+    assert data == path_str

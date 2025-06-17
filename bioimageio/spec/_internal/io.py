@@ -48,6 +48,7 @@ from pydantic import (
     PrivateAttr,
     RootModel,
     TypeAdapter,
+    model_serializer,
     model_validator,
 )
 from pydantic_core import core_schema
@@ -141,6 +142,10 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
 
     def __repr__(self) -> str:
         return f"RelativePath('{self}')"
+
+    @model_serializer()
+    def format(self) -> str:
+        return str(self)
 
     @abstractmethod
     def get_absolute(
