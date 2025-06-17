@@ -1,3 +1,4 @@
+import warnings
 from pprint import pformat
 from types import TracebackType
 from typing import Any, List, Type, Union
@@ -68,7 +69,7 @@ try:
 
         self._showtraceback(etype, PrettyValidationError(evalue), stb)  # type: ignore
 
-    def enable_pretty_validation_errors_in_ipynb():
+    def _enable_pretty_validation_errors_in_ipynb():
         """A modestly hacky way to display prettified validaiton error messages and traceback
         in interactive Python notebooks"""
         ipy = get_ipython()
@@ -76,6 +77,21 @@ try:
             ipy.set_custom_exc((ValidationError,), _custom_exception_handler)
 
 except ImportError:
+    pass
+else:
+    try:
+        _enable_pretty_validation_errors_in_ipynb()
+    except Exception as e:
+        warnings.warn(
+            "Failed to enable pretty validation errors in ipython: " + str(e),
+            stacklevel=2,
+        )
 
-    def enable_pretty_validation_errors_in_ipynb():
-        return
+
+def enable_pretty_validation_errors_in_ipynb():
+    """DEPRECATED; this is enabled by default at import time."""
+    warnings.warn(
+        "deprecated, this is enabled by default at import time.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
