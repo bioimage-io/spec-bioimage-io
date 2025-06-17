@@ -127,16 +127,6 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
         )
         super().model_post_init(__context)
 
-    # @property
-    # def __members(self):
-    #     return (self.path,)
-
-    # def __eq__(self, __value: object) -> bool:
-    #     return type(__value) is type(self) and self.__members == __value.__members
-
-    # def __hash__(self) -> int:
-    #     return hash(self.__members)
-
     def __str__(self) -> str:
         return self.root.as_posix()
 
