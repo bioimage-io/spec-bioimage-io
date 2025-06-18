@@ -15,6 +15,7 @@ This changelog includes implementation details and my reference the [changes to 
 - fix root determination of cacheless downloads of non-zip files
 - use httpx instead of requests
 - improved caching with genericache (thanks @Tomaz-Vieira !)
+- enable pretty validation errors in ipython at import time (deprecates `enable_pretty_validation_errors_in_ipynb()`)
 
 #### bioimageio.spec 0.5.4.2
 

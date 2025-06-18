@@ -85,12 +85,32 @@ from .type_guards import is_dict, is_list, is_mapping, is_sequence
 from .url import HttpUrl
 from .utils import SLOTS
 from .validation_context import get_validation_context
-from .validator_annotations import AfterValidator
 
 AbsolutePathT = TypeVar(
     "AbsolutePathT",
     bound=Union[HttpUrl, AbsoluteDirectory, AbsoluteFilePath, ZipPath],
 )
+
+
+class LightHttpFileDescr(Node):
+    """http source with sha256 value (minimal validation)"""
+
+    source: pydantic.HttpUrl
+    """file source"""
+
+    sha256: Sha256
+    """SHA256 checksum of the source file"""
+
+    def get_reader(
+        self,
+        *,
+        progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+    ) -> BytesReader:
+        """open the file source (download if needed)"""
+        return get_reader(self.source, sha256=self.sha256, progressbar=progressbar)
+
+    download = get_reader
+    """alias for get_reader() method"""
 
 
 class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True):
@@ -230,61 +250,64 @@ FileSource = Annotated[
 ]
 PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl]
 
-V_suffix = TypeVar("V_suffix", bound=FileSource)
+
+class FileDescr(Node):
+    """A file description"""
+
+    source: FileSource
+    """File source"""
+
+    sha256: Optional[Sha256] = None
+    """SHA256 hash value of the **source** file."""
+
+    @model_validator(mode="after")
+    def _validate_sha256(self) -> Self:
+        if get_validation_context().perform_io_checks:
+            self.validate_sha256()
+
+        return self
+
+    def validate_sha256(self, force_recompute: bool = False) -> None:
+        """validate the sha256 hash value of the **source** file"""
+        context = get_validation_context()
+        src_str = str(self.source)
+        if not force_recompute and src_str in context.known_files:
+            actual_sha = context.known_files[src_str]
+        else:
+            reader = get_reader(self.source, sha256=self.sha256)
+            if force_recompute:
+                actual_sha = get_sha256(reader)
+            else:
+                actual_sha = reader.sha256
+
+            context.known_files[src_str] = actual_sha
+
+        if actual_sha is None:
+            return
+        elif self.sha256 == actual_sha:
+            pass
+        elif self.sha256 is None or context.update_hashes:
+            self.sha256 = actual_sha
+        elif self.sha256 != actual_sha:
+            raise ValueError(
+                f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got "
+                + f"{actual_sha}. Update expected `sha256` or point to the matching "
+                + "file."
+            )
+
+    def get_reader(
+        self, *, progressbar: Union[Progressbar, Callable[[], Progressbar], bool] = True
+    ):
+        """open the file source (download if needed)"""
+        return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
+
+    download = get_reader
+    """alias for get_reader() method"""
+
+
 path_or_url_adapter: "TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]]" = (
     TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl])
 )
-
-
-def validate_suffix(
-    value: V_suffix, suffix: Union[str, Sequence[str]], case_sensitive: bool
-) -> V_suffix:
-    """check final suffix"""
-    if isinstance(suffix, str):
-        suffixes = [suffix]
-    else:
-        suffixes = suffix
-
-    assert len(suffixes) > 0, "no suffix given"
-    assert all(
-        suff.startswith(".") for suff in suffixes
-    ), "expected suffixes to start with '.'"
-    o_value = value
-    strict = interprete_file_source(value)
-
-    if isinstance(strict, (HttpUrl, AnyUrl)):
-        if strict.path is None or "." not in (path := strict.path):
-            actual_suffix = ""
-        elif (
-            strict.host == "zenodo.org"
-            and path.startswith("/api/records/")
-            and path.endswith("/content")
-        ):
-            actual_suffix = "." + path[: -len("/content")].split(".")[-1]
-        else:
-            actual_suffix = "." + path.split(".")[-1]
-
-    elif isinstance(strict, PurePath):
-        actual_suffix = strict.suffixes[-1]
-    elif isinstance(strict, RelativeFilePath):
-        actual_suffix = strict.path.suffixes[-1]
-    else:
-        assert_never(strict)
-
-    if (
-        case_sensitive
-        and actual_suffix not in suffixes
-        or not case_sensitive
-        and actual_suffix.lower() not in [s.lower() for s in suffixes]
-    ):
-        if len(suffixes) == 1:
-            raise ValueError(f"Expected suffix {suffixes[0]}, but got {actual_suffix}")
-        else:
-            raise ValueError(
-                f"Expected a suffix from {suffixes}, but got {actual_suffix}"
-            )
-
-    return o_value
 
 
 @dataclass(frozen=True, **SLOTS)
@@ -304,11 +327,13 @@ class WithSuffix:
             schema,
         )
 
-    def validate(self, value: FileSource) -> FileSource:
+    def validate(
+        self, value: Union[FileSource, FileDescr]
+    ) -> Union[FileSource, FileDescr]:
         return validate_suffix(value, self.suffix, case_sensitive=self.case_sensitive)
 
 
-def wo_special_file_name(src: FileSource) -> FileSource:
+def wo_special_file_name(src: F) -> F:
     if has_valid_bioimageio_yaml_name(src):
         raise ValueError(
             f"'{src}' not allowed here as its filename is reserved to identify"
@@ -318,7 +343,7 @@ def wo_special_file_name(src: FileSource) -> FileSource:
     return src
 
 
-def has_valid_bioimageio_yaml_name(src: FileSource) -> bool:
+def has_valid_bioimageio_yaml_name(src: Union[FileSource, FileDescr]) -> bool:
     return is_valid_bioimageio_yaml_name(extract_file_name(src))
 
 
@@ -767,86 +792,14 @@ def _fetch_url(
     return iter_content()
 
 
-class LightHttpFileDescr(Node):
-    """http source with sha256 value (minimal validation)"""
-
-    source: pydantic.HttpUrl
-    """file source"""
-
-    sha256: Sha256
-    """SHA256 checksum of the source file"""
-
-    def get_reader(
-        self,
-        *,
-        progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
-    ) -> BytesReader:
-        """open the file source (download if needed)"""
-        return get_reader(self.source, sha256=self.sha256, progressbar=progressbar)
-
-    download = get_reader
-    """alias for get_reader() method"""
-
-
-class FileDescr(Node):
-    source: FileSource
-    """file source"""
-
-    sha256: Optional[Sha256] = None
-    """SHA256 hash value of the source file"""
-
-    @model_validator(mode="after")
-    def _validate_sha256(self) -> Self:
-        if get_validation_context().perform_io_checks:
-            self.validate_sha256()
-
-        return self
-
-    def validate_sha256(self, force_recompute: bool = False) -> None:
-        """validate the sha256 hash value of the source file"""
-        context = get_validation_context()
-        src_str = str(self.source)
-        if not force_recompute and src_str in context.known_files:
-            actual_sha = context.known_files[src_str]
-        else:
-            reader = get_reader(self.source, sha256=self.sha256)
-            if force_recompute:
-                actual_sha = get_sha256(reader)
-            else:
-                actual_sha = reader.sha256
-
-            context.known_files[src_str] = actual_sha
-
-        if actual_sha is None:
-            return
-        elif self.sha256 == actual_sha:
-            pass
-        elif self.sha256 is None or context.update_hashes:
-            self.sha256 = actual_sha
-        elif self.sha256 != actual_sha:
-            raise ValueError(
-                f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got "
-                + f"{actual_sha}. Update expected `sha256` or point to the matching "
-                + "file."
-            )
-
-    def get_reader(
-        self, *, progressbar: Union[Progressbar, Callable[[], Progressbar], bool] = True
-    ):
-        """open the file source (download if needed)"""
-        return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
-
-    download = get_reader
-    """alias for get_reader() method"""
-
-
-class NonBioimageioYamlFileDescr(FileDescr):
-    source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
-
-
 def extract_file_name(
-    src: Union[pydantic.HttpUrl, RootHttpUrl, PurePath, RelativeFilePath, ZipPath],
+    src: Union[
+        pydantic.HttpUrl, RootHttpUrl, PurePath, RelativeFilePath, ZipPath, FileDescr
+    ],
 ) -> FileName:
+    if isinstance(src, FileDescr):
+        src = src.source
+
     if isinstance(src, ZipPath):
         return src.name or src.root.filename or "bioimageio.zip"
     elif isinstance(src, RelativeFilePath):
@@ -891,6 +844,63 @@ def _extract_file_descrs_impl(data: YamlValueView, collected: List[FileDescr]):
     elif not isinstance(data, str) and isinstance(data, collections.abc.Sequence):
         for v in data:
             _extract_file_descrs_impl(v, collected)
+
+
+F = TypeVar("F", bound=Union[FileSource, FileDescr])
+
+
+def validate_suffix(
+    value: F, suffix: Union[str, Sequence[str]], case_sensitive: bool
+) -> F:
+    """check final suffix"""
+    if isinstance(suffix, str):
+        suffixes = [suffix]
+    else:
+        suffixes = suffix
+
+    assert len(suffixes) > 0, "no suffix given"
+    assert all(
+        suff.startswith(".") for suff in suffixes
+    ), "expected suffixes to start with '.'"
+    o_value = value
+    if isinstance(value, FileDescr):
+        strict = value.source
+    else:
+        strict = interprete_file_source(value)
+
+    if isinstance(strict, (HttpUrl, AnyUrl)):
+        if strict.path is None or "." not in (path := strict.path):
+            actual_suffix = ""
+        elif (
+            strict.host == "zenodo.org"
+            and path.startswith("/api/records/")
+            and path.endswith("/content")
+        ):
+            actual_suffix = "." + path[: -len("/content")].split(".")[-1]
+        else:
+            actual_suffix = "." + path.split(".")[-1]
+
+    elif isinstance(strict, PurePath):
+        actual_suffix = strict.suffixes[-1]
+    elif isinstance(strict, RelativeFilePath):
+        actual_suffix = strict.path.suffixes[-1]
+    else:
+        assert_never(strict)
+
+    if (
+        case_sensitive
+        and actual_suffix not in suffixes
+        or not case_sensitive
+        and actual_suffix.lower() not in [s.lower() for s in suffixes]
+    ):
+        if len(suffixes) == 1:
+            raise ValueError(f"Expected suffix {suffixes[0]}, but got {actual_suffix}")
+        else:
+            raise ValueError(
+                f"Expected a suffix from {suffixes}, but got {actual_suffix}"
+            )
+
+    return o_value
 
 
 def populate_cache(sources: Sequence[Union[FileDescr, LightHttpFileDescr]]):

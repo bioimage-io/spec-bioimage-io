@@ -13,6 +13,7 @@ from tempfile import mkdtemp
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     ClassVar,
     Dict,
     Generic,
@@ -40,10 +41,13 @@ from pydantic import (
     Discriminator,
     Field,
     RootModel,
+    SerializationInfo,
+    SerializerFunctionWrapHandler,
     Tag,
     ValidationInfo,
     WrapSerializer,
     field_validator,
+    model_serializer,
     model_validator,
 )
 from typing_extensions import Annotated, Self, assert_never, get_args
@@ -57,23 +61,33 @@ from .._internal.constants import DTYPE_LIMITS
 from .._internal.field_warning import issue_warning, warn
 from .._internal.io import BioimageioYamlContent as BioimageioYamlContent
 from .._internal.io import FileDescr as FileDescr
-from .._internal.io import WithSuffix, YamlValue, get_reader
+from .._internal.io import (
+    FileSource,
+    WithSuffix,
+    YamlValue,
+    get_reader,
+    wo_special_file_name,
+)
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
+from .._internal.io_packaging import (
+    FileDescr_,
+    FileSource_,
+    package_file_descr_serializer,
+)
 from .._internal.io_utils import load_array
 from .._internal.node_converter import Converter
 from .._internal.types import (
     AbsoluteTolerance,
-    ImportantFileSource,
     LowerCaseIdentifier,
     LowerCaseIdentifierAnno,
     MismatchedElementsPerMillion,
     RelativeTolerance,
-    SiUnit,
 )
 from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
 from .._internal.types import NotEmpty as NotEmpty
+from .._internal.types import SiUnit as SiUnit
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.validation_context import get_validation_context
 from .._internal.validator_annotations import RestrictCharacters
@@ -92,14 +106,14 @@ from ..generic.v0_3 import Author as Author
 from ..generic.v0_3 import BadgeDescr as BadgeDescr
 from ..generic.v0_3 import CiteEntry as CiteEntry
 from ..generic.v0_3 import DeprecatedLicenseId as DeprecatedLicenseId
+from ..generic.v0_3 import Doi as Doi
 from ..generic.v0_3 import (
-    DocumentationSource,
+    FileSource_documentation,
     GenericModelDescrBase,
     LinkedResourceBase,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
-from ..generic.v0_3 import Doi as Doi
 from ..generic.v0_3 import LicenseId as LicenseId
 from ..generic.v0_3 import LinkedResource as LinkedResource
 from ..generic.v0_3 import Maintainer as Maintainer
@@ -1480,14 +1494,14 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
 
         return axes
 
-    test_tensor: FileDescr
+    test_tensor: FileDescr_
     """An example tensor to use for testing.
     Using the model with the test input tensors is expected to yield the test output tensors.
     Each test tensor has be a an ndarray in the
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The file extension must be '.npy'."""
 
-    sample_tensor: Optional[FileDescr] = None
+    sample_tensor: Optional[FileDescr_] = None
     """A sample tensor to illustrate a possible input/output for the model,
     The sample image primarily serves to inform a human user about an example use case
     and is typically stored as .hdf5, .png or .tiff.
@@ -1617,8 +1631,9 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     optional: bool = False
     """indicates that this tensor may be `None`"""
 
-    preprocessing: List[PreprocessingDescr] =(  # pyright: ignore[reportUnknownVariableType]
-        Field(default_factory=list))
+    preprocessing: List[PreprocessingDescr] = Field(
+        default_factory=cast(Callable[[], List[PreprocessingDescr]], list)
+    )
 
     """Description of how this input should be preprocessed.
 
@@ -1898,8 +1913,8 @@ class _InputTensorConv(
     Converter[
         _InputTensorDescr_v0_4,
         InputTensorDescr,
-        ImportantFileSource,
-        Optional[ImportantFileSource],
+        FileSource_,
+        Optional[FileSource_],
         Mapping[_TensorName_v0_4, Mapping[str, int]],
     ]
 ):
@@ -1907,8 +1922,8 @@ class _InputTensorConv(
         self,
         src: _InputTensorDescr_v0_4,
         tgt: "type[InputTensorDescr] | type[dict[str, Any]]",
-        test_tensor: ImportantFileSource,
-        sample_tensor: Optional[ImportantFileSource],
+        test_tensor: FileSource_,
+        sample_tensor: Optional[FileSource_],
         size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
     ) -> "InputTensorDescr | dict[str, Any]":
         axes: List[InputAxis] = convert_axes(  # pyright: ignore[reportAssignmentType]
@@ -1946,8 +1961,9 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     """Output tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
-    postprocessing: List[PostprocessingDescr] = (  # pyright: ignore[reportUnknownVariableType]
-        Field(default_factory=list))
+    postprocessing: List[PostprocessingDescr] = Field(
+        default_factory=cast(Callable[[], List[PostprocessingDescr]], list)
+    )
     """Description of how this output should be postprocessed.
 
     note: `postprocessing` always ends with an 'ensure_dtype' operation.
@@ -1989,8 +2005,8 @@ class _OutputTensorConv(
     Converter[
         _OutputTensorDescr_v0_4,
         OutputTensorDescr,
-        ImportantFileSource,
-        Optional[ImportantFileSource],
+        FileSource_,
+        Optional[FileSource_],
         Mapping[_TensorName_v0_4, Mapping[str, int]],
     ]
 ):
@@ -1998,8 +2014,8 @@ class _OutputTensorConv(
         self,
         src: _OutputTensorDescr_v0_4,
         tgt: "type[OutputTensorDescr] | type[dict[str, Any]]",
-        test_tensor: ImportantFileSource,
-        sample_tensor: Optional[ImportantFileSource],
+        test_tensor: FileSource_,
+        sample_tensor: Optional[FileSource_],
         size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
     ) -> "OutputTensorDescr | dict[str, Any]":
         # TODO: split convert_axes into convert_output_axes and convert_input_axes
@@ -2133,26 +2149,20 @@ def validate_tensors(
                 assert_never(a.size)
 
 
-class EnvironmentFileDescr(FileDescr):
-    source: Annotated[
-        ImportantFileSource,
-        WithSuffix((".yaml", ".yml"), case_sensitive=True),
-        Field(
-            examples=["environment.yaml"],
-        ),
-    ]
-    """∈📦 Conda environment file.
-    Allows to specify custom dependencies, see conda docs:
-    - [Exporting an environment file across platforms](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#exporting-an-environment-file-across-platforms)
-    - [Creating an environment file manually](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually)
-    """
+FileDescr_dependencies = Annotated[
+    FileDescr_,
+    WithSuffix((".yaml", ".yml"), case_sensitive=True),
+    Field(examples=[dict(source="environment.yaml")]),
+]
 
 
 class _ArchitectureCallableDescr(Node):
     callable: Annotated[Identifier, Field(examples=["MyNetworkClass", "get_my_model"])]
     """Identifier of the callable that returns a torch.nn.Module instance."""
 
-    kwargs: Dict[str, YamlValue] = Field(default_factory=dict)
+    kwargs: Dict[str, YamlValue] = Field(
+        default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
+    )
     """key word arguments for the `callable`"""
 
 
@@ -2196,7 +2206,7 @@ class _ArchFileConv(
             callable_ = str(src)
         return tgt(
             callable=Identifier(callable_),
-            source=cast(ImportantFileSource, source),
+            source=cast(FileSource_, source),
             sha256=sha256,
             kwargs=kwargs,
         )
@@ -2232,8 +2242,8 @@ class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
-    source: ImportantFileSource
-    """∈📦 The weights file."""
+    source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
+    """Source of the weights file."""
 
     authors: Optional[List[Author]] = None
     """Authors
@@ -2256,11 +2266,15 @@ class WeightsEntryDescrBase(FileDescr):
     """A comment about this weights entry, for example how these weights were created."""
 
     @model_validator(mode="after")
-    def check_parent_is_not_self(self) -> Self:
+    def _validate(self) -> Self:
         if self.type == self.parent:
             raise ValueError("Weights entry can't be it's own parent.")
 
         return self
+
+    @model_serializer(mode="wrap", when_used="unless-none")
+    def _serialize(self, nxt: SerializerFunctionWrapHandler, info: SerializationInfo):
+        return package_file_descr_serializer(self, nxt, info)
 
 
 class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
@@ -2285,10 +2299,14 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     """Version of the PyTorch library used.
     If `architecture.depencencies` is specified it has to include pytorch and any version pinning has to be compatible.
     """
-    dependencies: Optional[EnvironmentFileDescr] = None
-    """Custom depencies beyond pytorch.
+    dependencies: Optional[FileDescr_dependencies] = None
+    """Custom depencies beyond pytorch described in a Conda environment file.
+    Allows to specify custom dependencies, see conda docs:
+    - [Exporting an environment file across platforms](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#exporting-an-environment-file-across-platforms)
+    - [Creating an environment file manually](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually)
+
     The conda environment file should include pytorch and any version pinning has to be compatible with
-    `pytorch_version`.
+    **pytorch_version**.
     """
 
 
@@ -2298,8 +2316,8 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     tensorflow_version: Version
     """Version of the TensorFlow library used."""
 
-    source: ImportantFileSource
-    """∈📦 The multi-file weights.
+    source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
+    """The multi-file weights.
     All required files/folders should be a zip archive."""
 
 
@@ -2309,12 +2327,12 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     tensorflow_version: Version
     """Version of the TensorFlow library used."""
 
-    dependencies: Optional[EnvironmentFileDescr] = None
+    dependencies: Optional[FileDescr_dependencies] = None
     """Custom dependencies beyond tensorflow.
-    Should include tensorflow and any version pinning has to be compatible with `tensorflow_version`."""
+    Should include tensorflow and any version pinning has to be compatible with **tensorflow_version**."""
 
-    source: ImportantFileSource
-    """∈📦 The multi-file weights.
+    source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
+    """The multi-file weights.
     All required files/folders should be a zip archive."""
 
 
@@ -2540,23 +2558,17 @@ class ModelDescr(GenericModelDescrBase):
     authors: NotEmpty[List[Author]]
     """The authors are the creators of the model RDF and the primary points of contact."""
 
-    documentation: Annotated[
-        DocumentationSource,
-        Field(
-            examples=[
-                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
-                "README.md",
-            ],
-        ),
-    ]
-    """∈📦 URL or relative path to a markdown file with additional documentation.
+    documentation: FileSource_documentation
+    """URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
     The documentation should include a '#[#] Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
     @field_validator("documentation", mode="after")
     @classmethod
-    def _validate_documentation(cls, value: DocumentationSource) -> DocumentationSource:
+    def _validate_documentation(
+        cls, value: FileSource_documentation
+    ) -> FileSource_documentation:
         if not get_validation_context().perform_io_checks:
             return value
 
@@ -2855,10 +2867,9 @@ class ModelDescr(GenericModelDescrBase):
 
         return outputs
 
-    packaged_by: List[Author] = (  # pyright: ignore[reportUnknownVariableType]
-         Field(
-        default_factory=list
-    )  )
+    packaged_by: List[Author] = Field(
+        default_factory=cast(Callable[[], List[Author]], list)
+    )
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
 
@@ -3344,9 +3355,9 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
                     dependencies=(
                         None
                         if w.dependencies is None
-                        else (EnvironmentFileDescr if TYPE_CHECKING else dict)(
+                        else (FileDescr if TYPE_CHECKING else dict)(
                             source=cast(
-                                ImportantFileSource,
+                                FileSource,
                                 str(deps := w.dependencies)[
                                     (
                                         len("conda:")
@@ -3376,9 +3387,9 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
                     dependencies=(
                         None
                         if w.dependencies is None
-                        else (EnvironmentFileDescr if TYPE_CHECKING else dict)(
+                        else (FileDescr if TYPE_CHECKING else dict)(
                             source=cast(
-                                ImportantFileSource,
+                                FileSource,
                                 (
                                     str(w.dependencies)[len("conda:") :]
                                     if str(w.dependencies).startswith("conda:")

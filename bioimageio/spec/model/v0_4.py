@@ -48,12 +48,12 @@ from .._internal.io import BioimageioYamlContent, WithSuffix
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
-from .._internal.io_packaging import include_in_package_serializer
+from .._internal.io_packaging import include_in_package
 from .._internal.io_utils import load_array
 from .._internal.packaging_context import packaging_context_var
 from .._internal.types import Datetime as Datetime
+from .._internal.types import FileSource_, LowerCaseIdentifier
 from .._internal.types import Identifier as Identifier
-from .._internal.types import ImportantFileSource, LowerCaseIdentifier
 from .._internal.types import LicenseId as LicenseId
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.url import HttpUrl as HttpUrl
@@ -159,7 +159,7 @@ class CallableFromFileNode(Node):
     source_file: Annotated[
         Union[RelativeFilePath, HttpUrl],
         Field(union_mode="left_to_right"),
-        include_in_package_serializer,
+        include_in_package,
     ]
     """The Python source file that implements **callable_name**."""
     callable_name: Identifier
@@ -200,7 +200,7 @@ class DependenciesNode(Node):
     manager: Annotated[NotEmpty[str], Field(examples=["conda", "maven", "pip"])]
     """Dependency manager"""
 
-    file: ImportantFileSource
+    file: FileSource_
     """Dependency file"""
 
 
@@ -326,7 +326,7 @@ class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
-    source: ImportantFileSource
+    source: FileSource_
     """The weights file."""
 
     attachments: Annotated[
@@ -457,7 +457,9 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
 
         return self
 
-    kwargs: Dict[str, Any] = Field(default_factory=dict)
+    kwargs: Dict[str, Any] = Field(
+        default_factory=cast(Callable[[], Dict[str, Any]], dict)
+    )
     """key word arguments for the `architecture` callable"""
 
     pytorch_version: Optional[Version] = None
@@ -518,7 +520,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
             )
         return value
 
-    source: ImportantFileSource
+    source: FileSource_
     """The multi-file weights.
     All required files/folders should be a zip archive."""
 
@@ -994,10 +996,9 @@ class OutputTensorDescr(TensorDescrBase):
     The `halo` is to be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`.
     To document a `halo` that is already cropped by the model `shape.offset` has to be used instead."""
 
-    postprocessing: List[PostprocessingDescr] = ( # pyright: ignore[reportUnknownVariableType]
-        Field(
-        default_factory=list
-    ) )
+    postprocessing: List[PostprocessingDescr] = Field(
+        default_factory=cast(Callable[[], List[PostprocessingDescr]], list)
+    )
     """Description of how this output should be postprocessed."""
 
     @model_validator(mode="after")
@@ -1031,7 +1032,9 @@ class RunMode(Node):
     ]
     """Run mode name"""
 
-    kwargs: Dict[str, Any] = Field(default_factory=dict)
+    kwargs: Dict[str, Any] = Field(
+        default_factory=cast(Callable[[], Dict[str, Any]], dict)
+    )
     """Run mode specific key word arguments"""
 
 
@@ -1105,7 +1108,7 @@ class ModelDescr(GenericModelDescrBase):
     """The authors are the creators of the model RDF and the primary points of contact."""
 
     documentation: Annotated[
-        ImportantFileSource,
+        FileSource_,
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
@@ -1277,8 +1280,8 @@ class ModelDescr(GenericModelDescrBase):
 
         return self
 
-    packaged_by: List[Author] = Field(  # pyright: ignore[reportUnknownVariableType]
-        default_factory=list
+    packaged_by: List[Author] = Field(
+        default_factory=cast(Callable[[], List[Author]], list)
     )
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
@@ -1300,22 +1303,20 @@ class ModelDescr(GenericModelDescrBase):
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    sample_inputs: List[ImportantFileSource] = ( # pyright: ignore[reportUnknownVariableType]
-        Field(
-        default_factory=list
-    ) )
+    sample_inputs: List[FileSource_] = Field(
+        default_factory=cast(Callable[[], List[FileSource_]], list)
+    )
     """URLs/relative paths to sample inputs to illustrate possible inputs for the model,
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
-    sample_outputs: List[ImportantFileSource] = ( # pyright: ignore[reportUnknownVariableType]
-        Field(
-        default_factory=list
-    )  )
+    sample_outputs: List[FileSource_] = Field(
+        default_factory=cast(Callable[[], List[FileSource_]], list)
+    )
     """URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
     test_inputs: NotEmpty[
-        List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]
+        List[Annotated[FileSource_, WithSuffix(".npy", case_sensitive=True)]]
     ]
     """Test input tensors compatible with the `inputs` description for a **single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
@@ -1324,7 +1325,7 @@ class ModelDescr(GenericModelDescrBase):
     The extension must be '.npy'."""
 
     test_outputs: NotEmpty[
-        List[Annotated[ImportantFileSource, WithSuffix(".npy", case_sensitive=True)]]
+        List[Annotated[FileSource_, WithSuffix(".npy", case_sensitive=True)]]
     ]
     """Analog to `test_inputs`."""
 

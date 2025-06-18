@@ -12,7 +12,7 @@ from typing_extensions import Annotated, Literal
 from .constants import DOI_REGEX, SI_UNIT_REGEX
 from .io import FileSource, PermissiveFileSource, RelativeFilePath
 from .io_basics import AbsoluteDirectory, AbsoluteFilePath, FileName, FilePath, Sha256
-from .io_packaging import ImportantFileSource
+from .io_packaging import FileSource_
 from .license_id import DeprecatedLicenseId, LicenseId
 from .url import HttpUrl
 from .validated_string import ValidatedString
@@ -30,9 +30,10 @@ __all__ = [
     "FileName",
     "FilePath",
     "FileSource",
+    "FileSource_",
+    "ImportantFileSource",
     "HttpUrl",
     "Identifier",
-    "ImportantFileSource",
     "LicenseId",
     "LowerCaseIdentifier",
     "NotEmpty",
@@ -45,6 +46,9 @@ __all__ = [
 ]
 S = TypeVar("S", bound=Sequence[Any])
 NotEmpty = Annotated[S, annotated_types.MinLen(1)]
+
+ImportantFileSource = FileSource_
+"""DEPRECATED alias, use `FileSource` instead"""
 
 
 def _validate_identifier(s: str) -> str:

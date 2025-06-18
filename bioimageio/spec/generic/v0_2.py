@@ -2,6 +2,7 @@ import string
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     ClassVar,
     Dict,
     List,
@@ -12,13 +13,16 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    cast,
 )
 
 import annotated_types
+import pydantic
 from annotated_types import Len, LowerCase, MaxLen
 from pydantic import (
     EmailStr,
     Field,
+    FilePath,
     RootModel,
     ValidationInfo,
     field_validator,
@@ -29,12 +33,14 @@ from typing_extensions import Annotated, Self, assert_never
 from .._internal.common_nodes import Node, ResourceDescrBase
 from .._internal.constants import TAG_CATEGORIES
 from .._internal.field_warning import as_warning, issue_warning, warn
-from .._internal.io import BioimageioYamlContent, WithSuffix, YamlValue
-from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
-from .._internal.io_packaging import (
-    InPackageIfLocalFileSource,
-    include_in_package_serializer,
+from .._internal.io import (
+    BioimageioYamlContent,
+    WithSuffix,
+    YamlValue,
+    wo_special_file_name,
 )
+from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.io_packaging import FileSource_, include_in_package
 from .._internal.type_guards import is_sequence
 from .._internal.types import (
     DeprecatedLicenseId,
@@ -83,12 +89,10 @@ VALID_COVER_IMAGE_EXTENSIONS = (
     ".tiff",
 )
 
-_WithImageSuffix = WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)
-CoverImageSource = Annotated[
-    Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
-    Field(union_mode="left_to_right"),
-    _WithImageSuffix,
-    include_in_package_serializer,
+
+FileSource_cover = Annotated[
+    FileSource_,
+    WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False),
 ]
 
 
@@ -96,10 +100,10 @@ class AttachmentsDescr(Node):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
 
-    files: List[FileSource] = Field(  # pyright: ignore[reportUnknownVariableType]
-        default_factory=list
+    files: List[FileSource_] = Field(
+        default_factory=cast(Callable[[], List[FileSource_]], list)
     )
-    """∈📦 File attachments"""
+    """File attachments"""
 
 
 def _remove_slashes(s: str):
@@ -145,10 +149,19 @@ class BadgeDescr(Node):
     """badge label to display on hover"""
 
     icon: Annotated[
-        Optional[InPackageIfLocalFileSource],
+        Optional[
+            Union[
+                Annotated[
+                    Union[FilePath, RelativeFilePath],
+                    AfterValidator(wo_special_file_name),
+                    include_in_package,
+                ],
+                Union[HttpUrl, pydantic.HttpUrl],
+            ]
+        ],
         Field(examples=["https://colab.research.google.com/assets/colab-badge.svg"]),
     ] = None
-    """badge icon"""
+    """badge icon (included in bioimage.io package if not a URL)"""
 
     url: Annotated[
         HttpUrl,
@@ -209,20 +222,16 @@ class GenericModelDescrBase(ResourceDescrBase):
 
     description: str
 
-    covers: Annotated[  # pyright: ignore[reportUnknownVariableType]
-        List[CoverImageSource],
-        Field(
-            examples=["cover.png"],
-            description=(
-                "Cover images. Please use an image smaller than 500KB and an aspect"
-                " ratio width to height of 2:1.\nThe supported image formats are:"
-                f" {VALID_COVER_IMAGE_EXTENSIONS}"
-            ),
+    covers: List[FileSource_cover] = Field(
+        default_factory=cast(Callable[[], List[FileSource_cover]], list),
+        examples=[["cover.png"]],
+        description=(
+            "Cover images. Please use an image smaller than 500KB and an aspect"
+            " ratio width to height of 2:1.\nThe supported image formats are:"
+            f" {VALID_COVER_IMAGE_EXTENSIONS}"
         ),
-    ] = Field(
-        default_factory=list,
     )
-    """∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
+    """Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
 
     id_emoji: Optional[
         Annotated[str, Len(min_length=1, max_length=1), Field(examples=["🦈", "🦥"])]
@@ -410,7 +419,7 @@ class GenericDescrBase(GenericModelDescrBase):
             ],
         ),
     ] = None
-    """∈📦 URL or relative path to a markdown file with additional documentation.
+    """URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
     license: Annotated[

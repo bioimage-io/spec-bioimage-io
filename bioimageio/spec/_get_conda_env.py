@@ -3,7 +3,7 @@ from typing import List, Literal, Optional, Union
 from typing_extensions import assert_never
 
 from ._internal.gh_utils import set_github_warning
-from ._internal.io import get_reader
+from ._internal.io import FileDescr, get_reader
 from ._internal.io_utils import read_yaml
 from .conda_env import BioimageioCondaEnv, PipDeps
 from .model import v0_4, v0_5
@@ -201,7 +201,7 @@ def _get_default_tf_env(tensorflow_version: Optional[Version]) -> BioimageioCond
 
 
 def _get_env_from_deps(
-    deps: Union[v0_4.Dependencies, v0_5.EnvironmentFileDescr],
+    deps: Union[v0_4.Dependencies, FileDescr],
 ) -> BioimageioCondaEnv:
     if isinstance(deps, v0_4.Dependencies):
         deps_reader = get_reader(deps.file)
@@ -219,7 +219,7 @@ def _get_env_from_deps(
         else:
             raise ValueError(f"Dependency manager {deps.manager} not supported")
 
-    elif isinstance(deps, v0_5.EnvironmentFileDescr):
+    elif isinstance(deps, FileDescr):
         deps_reader = deps.get_reader()
         return BioimageioCondaEnv.model_validate(read_yaml(deps_reader))
     else:

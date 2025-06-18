@@ -22,7 +22,6 @@ IGNORE_MEMBERS = {
     "CoverImageSource",
     "DeprecatedLicenseId",
     "Dict",
-    "DocumentationSource",
     "EmailStr",
     "field_validator",
     "Field",
@@ -30,10 +29,8 @@ IGNORE_MEMBERS = {
     "Ge",
     "get_args",
     "get_validation_context",
-    "ImportantFileSource",
     "include_in_package_serializer",
     "INFO",
-    "InPackageIfLocalFileSource",
     "is_dict",
     "is_sequence",
     "is_yaml_value",
@@ -85,7 +82,10 @@ def get_members(m: ModuleType):
     return {
         k: getattr(m, k)
         for k in dir(m)
-        if not k.startswith("_") and k not in IGNORE_MEMBERS
+        if not k.startswith("_")
+        and k not in IGNORE_MEMBERS
+        and not k.startswith("FileSource_")  # Annotated[FileSource, ...]
+        and not k.startswith("FileDescr_")  # Annotated[FileDescr, ...]
     }
 
 

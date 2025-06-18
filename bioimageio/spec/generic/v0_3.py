@@ -5,6 +5,7 @@ from functools import partial
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     ClassVar,
     Dict,
     List,
@@ -14,6 +15,7 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    cast,
 )
 
 import annotated_types
@@ -30,19 +32,17 @@ from .._internal.field_warning import as_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
     FileDescr,
-    V_suffix,
+    WithSuffix,
     is_yaml_value,
-    validate_suffix,
 )
-from .._internal.io_basics import AbsoluteFilePath, Sha256
-from .._internal.io_packaging import include_in_package_serializer
+from .._internal.io_basics import Sha256
+from .._internal.io_packaging import FileDescr_
 from .._internal.license_id import DeprecatedLicenseId, LicenseId
 from .._internal.node_converter import Converter
-from .._internal.types import ImportantFileSource, NotEmpty, RelativeFilePath
+from .._internal.types import FileSource_, NotEmpty, RelativeFilePath
 from .._internal.url import HttpUrl
 from .._internal.validated_string import ValidatedString
 from .._internal.validator_annotations import (
-    AfterValidator,
     Predicate,
     RestrictCharacters,
 )
@@ -50,7 +50,7 @@ from .._internal.version_type import Version
 from .._internal.warning_levels import ALERT, INFO
 from ._v0_3_converter import convert_from_older_format
 from .v0_2 import Author as _Author_v0_2
-from .v0_2 import BadgeDescr, CoverImageSource, Doi, OrcidId, Uploader
+from .v0_2 import BadgeDescr, Doi, FileSource_cover, OrcidId, Uploader
 from .v0_2 import Maintainer as _Maintainer_v0_2
 
 __all__ = [
@@ -101,18 +101,6 @@ class ResourceId(ValidatedString):
             ),
         ]
     ]
-
-
-def _validate_md_suffix(value: V_suffix) -> V_suffix:
-    return validate_suffix(value, suffix=".md", case_sensitive=True)
-
-
-DocumentationSource = Annotated[
-    Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
-    Field(union_mode="left_to_right"),
-    AfterValidator(_validate_md_suffix),
-    include_in_package_serializer,
-]
 
 
 def _has_no_slash(s: str) -> bool:
@@ -282,18 +270,16 @@ class GenericModelDescrBase(ResourceDescrBase):
     ]
     """A string containing a brief description."""
 
-    covers: Annotated[  # pyright: ignore[reportUnknownVariableType]
-        List[CoverImageSource],
-        Field(
-            examples=[],
-            description=(
-                "Cover images. Please use an image smaller than 500KB and an aspect"
-                " ratio width to height of 2:1 or 1:1.\nThe supported image formats"
-                f" are: {VALID_COVER_IMAGE_EXTENSIONS}"
-            ),
+    covers: List[FileSource_cover] = Field(
+        default_factory=cast(Callable[[], List[FileSource_cover]], list),
+        description=(
+            "Cover images. Please use an image smaller than 500KB and an aspect"
+            " ratio width to height of 2:1 or 1:1.\nThe supported image formats"
+            f" are: {VALID_COVER_IMAGE_EXTENSIONS}"
         ),
-    ] = Field(default_factory=list)
-    """∈📦 Cover images."""
+        examples=[["cover.png"]],
+    )
+    """Cover images."""
 
     id_emoji: Optional[
         Annotated[str, Len(min_length=1, max_length=2), Field(examples=["🦈", "🦥"])]
@@ -303,8 +289,8 @@ class GenericModelDescrBase(ResourceDescrBase):
     authors: NotEmpty[List[Author]]
     """The authors are the creators of this resource description and the primary points of contact."""
 
-    attachments: List[FileDescr] = Field(  # pyright: ignore[reportUnknownVariableType]
-        default_factory=list
+    attachments: List[FileDescr_] = Field(
+        default_factory=cast(Callable[[], List[FileDescr_]], list)
     )
     """file attachments"""
 
@@ -336,9 +322,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[
-        Annotated[str, Len(min_length=1, max_length=2)], ImportantFileSource, None
-    ] = None
+    icon: Union[Annotated[str, Len(min_length=1, max_length=2)], FileSource_, None] = (
+        None
+    )
     """An icon for illustration, e.g. on bioimage.io"""
 
     links: Annotated[
@@ -418,6 +404,18 @@ class GenericModelDescrBase(ResourceDescrBase):
         return value
 
 
+FileSource_documentation = Annotated[
+    FileSource_,
+    WithSuffix(".md", case_sensitive=True),
+    Field(
+        examples=[
+            "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
+            "README.md",
+        ],
+    ),
+]
+
+
 class GenericDescrBase(GenericModelDescrBase):
     """Base for all resource descriptions except for the model descriptions"""
 
@@ -443,16 +441,8 @@ class GenericDescrBase(GenericModelDescrBase):
         """
         convert_from_older_format(data)
 
-    documentation: Annotated[
-        Optional[DocumentationSource],
-        Field(
-            examples=[
-                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
-                "README.md",
-            ],
-        ),
-    ] = None
-    """∈📦 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.
+    documentation: Optional[FileSource_documentation] = None
+    """URL or relative path to a markdown file encoded in UTF-8 with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
     badges: List[BadgeDescr] = Field(  # pyright: ignore[reportUnknownVariableType]

@@ -7,11 +7,12 @@ from typing import (
     Union,
 )
 
-import pydantic
 from pydantic import (
     AnyUrl,
     PlainSerializer,
     SerializationInfo,
+    SerializerFunctionWrapHandler,
+    WrapSerializer,
 )
 from typing_extensions import (
     Annotated,
@@ -28,7 +29,6 @@ from .io import (
 from .io_basics import (
     ALL_BIOIMAGEIO_YAML_NAMES,
     FileName,
-    FilePath,
     Sha256,
 )
 from .packaging_context import packaging_context_var
@@ -40,6 +40,15 @@ def _package_serializer(
     source: FileSource, info: SerializationInfo
 ) -> Union[str, Path, FileName]:
     return _package(source, info, None)
+
+
+def package_file_descr_serializer(
+    value: FileDescr, handler: SerializerFunctionWrapHandler, info: SerializationInfo
+):
+    _ = _package(value.source, info, sha256=value.sha256)
+    return handler(
+        value, info  # pyright: ignore[reportArgumentType]  # taken from pydantic docs
+    )
 
 
 def _package(
@@ -108,21 +117,23 @@ def _package(
     return fname
 
 
-include_in_package_serializer = PlainSerializer(
-    _package_serializer, when_used="unless-none"
+include_in_package = PlainSerializer(_package_serializer, when_used="unless-none")
+"""DEPRECATED serializer for `source` fields without corresponding `sha256` field."""
+
+include_when_packaging = WrapSerializer(
+    package_file_descr_serializer, when_used="unless-none"
 )
+"""Pydantic serializer that marks the annotated `FileDescr` to be included when packaging
+(saving a bioimageio zip package)."""
 
-
-ImportantFileSource = Annotated[
+FileSource_ = Annotated[
     FileSource,
     AfterValidator(wo_special_file_name),
-    include_in_package_serializer,
+    include_in_package,
 ]
-InPackageIfLocalFileSource = Union[
-    Annotated[
-        Union[FilePath, RelativeFilePath],
-        AfterValidator(wo_special_file_name),
-        include_in_package_serializer,
-    ],
-    Union[HttpUrl, pydantic.HttpUrl],
+"""A file source that is included when packaging the resource."""
+
+FileDescr_ = Annotated[
+    FileDescr, AfterValidator(wo_special_file_name), include_when_packaging
 ]
+"""A `FileDescr` whose **source** is included when packaging the resource."""
