@@ -21,7 +21,7 @@ class Settings(BaseSettings, extra="ignore"):
     )
 
     allow_pickle: bool = False
-    """Sets the `allow_pickle` argument for `numpy.load()`/`numpy.save()`"""
+    """Sets the `allow_pickle` argument for `numpy.load()`"""
 
     cache_path: Path = pooch.os_cache("bioimageio")
     """bioimageio cache location"""

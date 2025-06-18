@@ -315,10 +315,13 @@ def write_zip(
 
 def load_array(source: Union[FileSource, FileDescr, ZipPath]) -> NDArray[Any]:
     reader = get_reader(source)
+    if settings.allow_pickle:
+        logger.warning("Loading numpy array with `allow_pickle=True`.")
+
     return numpy.load(reader, allow_pickle=settings.allow_pickle)
 
 
 def save_array(path: Union[Path, ZipPath], array: NDArray[Any]) -> None:
     with path.open(mode="wb") as f:
         assert not isinstance(f, io.TextIOWrapper)
-        return numpy.save(f, array, allow_pickle=settings.allow_pickle)
+        return numpy.save(f, array, allow_pickle=False)
