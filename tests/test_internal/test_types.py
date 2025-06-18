@@ -46,11 +46,12 @@ IGNORE_TYPES_MEMBERS = {
     "ClassVar",
     "datetime",
     "field_validation",
+    "FileDescr_",  # an annoated union
     "FilePath",
+    "FileSource_",  # an annoated union
     "FileSource",
     "FormatVersionPlaceholder",  # a literal
-    "FileSource_",  # an annoated union
-    "FileDescr_",  # an annoated union
+    "ImportantFileSource",  # an annoated union
     "iskeyword",
     "isoparse",
     "Literal",

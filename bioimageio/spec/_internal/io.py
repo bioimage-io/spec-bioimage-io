@@ -644,6 +644,9 @@ def get_reader(
         return _open_url(source, progressbar=progressbar, **kwargs)
 
     if isinstance(source, ZipPath):
+        if not source.exists():
+            raise FileNotFoundError(source)
+
         f = source.open(mode="rb")
         assert not isinstance(f, TextIOWrapper)
         root = source.root

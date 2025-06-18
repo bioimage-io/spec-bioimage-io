@@ -2167,18 +2167,17 @@ class _ArchitectureCallableDescr(Node):
 
 
 class ArchitectureFromFileDescr(_ArchitectureCallableDescr, FileDescr):
-    pass
+    source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
+    """Architecture source file"""
+
+    @model_serializer(mode="wrap", when_used="unless-none")
+    def _serialize(self, nxt: SerializerFunctionWrapHandler, info: SerializationInfo):
+        return package_file_descr_serializer(self, nxt, info)
 
 
 class ArchitectureFromLibraryDescr(_ArchitectureCallableDescr):
     import_from: str
     """Where to import the callable from, i.e. `from <import_from> import <callable>`"""
-
-
-ArchitectureDescr = Annotated[
-    Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr],
-    Field(union_mode="left_to_right"),
-]
 
 
 class _ArchFileConv(
@@ -2294,7 +2293,7 @@ class OnnxWeightsDescr(WeightsEntryDescrBase):
 class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     type = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
-    architecture: ArchitectureDescr
+    architecture: Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr]
     pytorch_version: Version
     """Version of the PyTorch library used.
     If `architecture.depencencies` is specified it has to include pytorch and any version pinning has to be compatible.
