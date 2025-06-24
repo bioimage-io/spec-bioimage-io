@@ -149,9 +149,6 @@ class ResourceDescrBase(
     @model_validator(mode="after")
     def _set_init_validation_summary(self) -> Self:
         context = get_validation_context()
-        detail_name = (
-            "Created" if isinstance(self, InvalidDescr) else "Successfully created"
-        ) + f" `{self.__class__.__name__}` instance."
         self._validation_summary = ValidationSummary(
             name="bioimageio format validation",
             source_name=context.source_name,
@@ -159,13 +156,17 @@ class ResourceDescrBase(
             type=self.type,
             format_version=self.format_version,
             status="failed" if isinstance(self, InvalidDescr) else "valid-format",
-            details=[
-                ValidationDetail(
-                    name=detail_name,
-                    status="failed" if isinstance(self, InvalidDescr) else "passed",
-                    context=context.summary,
-                )
-            ],
+            details=(
+                []
+                if isinstance(self, InvalidDescr)
+                else [
+                    ValidationDetail(
+                        name=f"Successfully created `{self.__class__.__name__}` instance.",
+                        status="passed",
+                        context=context.summary,
+                    )
+                ]
+            ),
         )
         return self
 

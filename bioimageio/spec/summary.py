@@ -43,7 +43,6 @@ from bioimageio.spec._internal.type_guards import is_dict
 from ._internal.constants import VERSION
 from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml
-from ._internal.types import NotEmpty
 from ._internal.validation_context import ValidationContextSummary
 from ._internal.warning_levels import (
     ALERT,
@@ -253,7 +252,7 @@ class ValidationSummary(BaseModel, extra="allow"):
     """format version of the resource being validated"""
     status: Literal["passed", "valid-format", "failed"]
     """overall status of the bioimageio validation"""
-    details: NotEmpty[List[ValidationDetail]]
+    details: List[ValidationDetail]
     """list of validation details"""
     env: Set[InstalledPackage] = Field(
         default_factory=lambda: {
