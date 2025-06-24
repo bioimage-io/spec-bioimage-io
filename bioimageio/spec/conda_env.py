@@ -63,6 +63,14 @@ class CondaEnv(BaseModel):
             elif d.startswith(package):
                 return d[len(package) :]
 
+    def get_pip_deps(self) -> List[str]:
+        """Get the pip dependencies of this conda env."""
+        for dep in self.dependencies:
+            if isinstance(dep, PipDeps):
+                return dep.pip
+
+        return []
+
 
 class BioimageioCondaEnv(CondaEnv):
     """A special `CondaEnv` that
