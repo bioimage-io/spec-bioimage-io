@@ -58,6 +58,7 @@ _ = setup(
                 "lxml",
                 "pytest-cov",
                 "pytest",
+                "python-dotenv",
                 "respx",
             ]
         ),

@@ -14,10 +14,11 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT: Collection[str] = {
     "version",  # may be set from deprecated `version_number`
 }
 EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
-    "affable-shark/1.1": {"inputs"},  # preprocessing assert_dtype added
+    "affable-shark/1.1": {"inputs"},  # preprocessing ensure_dtype added
+    "affable-shark/1.2": {"inputs"},  # preprocessing ensure_dtype added
     "charismatic-whale/1.0.1": {"inputs", "outputs"},  # int -> float
     "dynamic-t-rex/1": {"inputs"},  # int -> float
-    "impartial-shrimp/1.1": {"inputs", "cite"},  # preprocessing assert_dtype added
+    "impartial-shrimp/1.1": {"inputs", "cite"},  # preprocessing ensure_dtype added
     "philosophical-panda/0.0.11": {"outputs"},  # int -> float
     "philosophical-panda/0.1.0": {"outputs"},  # int -> float
     "polite-pig/1.1": {"inputs", "outputs"},
@@ -86,7 +87,6 @@ def test_rdf(
 @pytest.mark.parametrize(
     "rdf_id",
     [
-        "10.5281/zenodo.5764892/1.1",  # affable-shark/1.1
         "ambitious-sloth/1.2",
         "breezy-handbag/1",
         "faithful-chicken/1.1",

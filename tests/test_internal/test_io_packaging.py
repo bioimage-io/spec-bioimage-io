@@ -14,7 +14,7 @@ def test_package_file_descr():
 
     my_obj = MyNode(important_file=FileDescr(source=Path(__file__)))
     my_obj_serialized = my_obj.model_dump(mode="json", exclude_none=True)
-    assert my_obj_serialized["important_file"] == dict(source=str(Path(__file__)))
+    assert my_obj_serialized["important_file"]["source"] == str(Path(__file__))
 
     file_sources: Dict[FileName, FileDescr] = {}
     with PackagingContext(

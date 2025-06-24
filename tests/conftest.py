@@ -5,6 +5,7 @@ from types import MappingProxyType
 from typing import Any, Dict, Union
 
 import pytest
+from dotenv import load_dotenv
 
 from bioimageio.spec._internal.constants import (
     KNOWN_GH_USERS,
@@ -19,6 +20,8 @@ try:
     from filelock import FileLock
 except ImportError:
     FileLock = None
+
+_ = load_dotenv()
 
 EXAMPLE_DESCRIPTIONS = Path(__file__).parent / "../example_descriptions/"
 UNET2D_ROOT = EXAMPLE_DESCRIPTIONS / "models/unet2d_nuclei_broad"
