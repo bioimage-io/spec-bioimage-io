@@ -7,6 +7,7 @@ from loguru import logger
 from pydantic import RootModel
 from typing_extensions import Literal, assert_never
 
+from . import warning_levels
 from .field_warning import issue_warning
 from .root_url import RootHttpUrl
 from .validation_context import get_validation_context
@@ -101,13 +102,21 @@ def _validate_url_impl(
             issue_warning(
                 "{status_code}: {reason} {value}",
                 value=url,
+                severity=warning_levels.INFO,
                 msg_context={
                     "status_code": status_code,
                     "reason": reason,
                 },
             )
         elif request_mode == "get":
-            raise ValueError(f"{status_code}: {reason} {url}")
+            issue_warning(
+                "{status_code}: {reason} ({value})",
+                value=url,
+                msg_context={
+                    "status_code": status_code,
+                    "reason": reason,
+                },
+            )
         else:
             assert_never(request_mode)
 
