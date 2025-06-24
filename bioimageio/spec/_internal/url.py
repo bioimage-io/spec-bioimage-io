@@ -89,6 +89,7 @@ def _validate_url_impl(
                 "URL redirected ({status_code}): consider updating {value} with new"
                 + " location: {location}",
                 value=url,
+                severity=warning_levels.INFO,
                 msg_context={
                     "status_code": status_code,
                     "location": location,
@@ -134,8 +135,7 @@ class HttpUrl(RootHttpUrl):
         self = super()._after_validator()
         context = get_validation_context()
         if context.perform_io_checks:
-            self._validated = _validate_url(self._validated)
-            self._exists = True
+            _ = self.exists()
 
         return self
 
@@ -143,7 +143,10 @@ class HttpUrl(RootHttpUrl):
         """True if URL is available"""
         if self._exists is None:
             try:
-                self._validated = _validate_url(self._validated)
+                with get_validation_context().replace(
+                    warning_level=warning_levels.WARNING
+                ):
+                    self._validated = _validate_url(self._validated)
             except Exception as e:
                 logger.info(e)
                 self._exists = False

@@ -50,12 +50,15 @@ def test_httpurl_mock_valid(text: str, status_code: int, respx_mock: MockRouter)
     ],
 )
 def test_httpurl_mock_invalid(text: str, status_code: int, respx_mock: MockRouter):
+    from bioimageio.spec._internal import warning_levels
     from bioimageio.spec._internal.url import HttpUrl
 
     url = "https://mock_example.com"
     _ = respx_mock.head(url).mock(httpx.Response(status_code=status_code))
     _ = respx_mock.get(url).mock(httpx.Response(text=text, status_code=status_code))
-    with ValidationContext(perform_io_checks=True):
+    with ValidationContext(
+        perform_io_checks=True, warning_level=warning_levels.WARNING
+    ):
         with pytest.raises(ValueError):
             _ = HttpUrl(url)
 
@@ -93,7 +96,7 @@ def test_httpurl_nonexisting(url: str, io_check: bool):
     from bioimageio.spec._internal.url import HttpUrl
 
     with ValidationContext(perform_io_checks=io_check):
-        assert HttpUrl(url).exists(), url
+        assert not HttpUrl(url).exists(), url
 
 
 @pytest.mark.parametrize(
