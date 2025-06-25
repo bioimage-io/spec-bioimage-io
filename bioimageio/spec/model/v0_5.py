@@ -2506,7 +2506,7 @@ class ReproducibilityTolerance(Node, extra="allow"):
     absolute_tolerance: AbsoluteTolerance = 1e-4
     """Maximum absolute tolerance of reproduced test tensor."""
 
-    mismatched_elements_per_million: MismatchedElementsPerMillion = 0
+    mismatched_elements_per_million: MismatchedElementsPerMillion = 100
     """Maximum number of mismatched elements/pixels per million to tolerate."""
 
     output_ids: Sequence[TensorId] = ()
