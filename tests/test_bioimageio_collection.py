@@ -8,7 +8,10 @@ from tests.utils import ParameterSet, check_bioimageio_yaml, expensive_test
 
 BASE_URL = "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/"
 
-KNOWN_INVALID: Collection[str] = {"stupendous-sheep/1.1"}
+KNOWN_INVALID: Mapping[str, str] = {
+    "stupendous-sheep/1.1": "requires relativ import of attachment",
+    "whimsical-helmet/2.1.2": "invalid id",
+}
 EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT: Collection[str] = {
     "version_number",  # deprecated field that gets dropped in favor of `version``
     "version",  # may be set from deprecated `version_number`
@@ -69,7 +72,7 @@ def test_rdf(
     bioimageio_json_schema: Mapping[Any, Any],
 ):
     if key in KNOWN_INVALID:
-        pytest.skip("known failure")
+        pytest.skip(KNOWN_INVALID[key])
 
     check_bioimageio_yaml(
         descr_url,
@@ -89,7 +92,7 @@ def test_rdf(
     [
         "ambitious-sloth/1.2",
         "breezy-handbag/1",
-        "faithful-chicken/1.1",
+        "faithful-chicken/1.2",
         "ilastik/ilastik/1",
         "uplifting-ice-cream/1",
     ],

@@ -26,8 +26,7 @@ def _validate_url_impl(
     url = str(url)
     context = get_validation_context()
     if url in context.known_files:
-        with context.replace(perform_io_checks=False):
-            return pydantic.HttpUrl(url)
+        return pydantic.HttpUrl(url)
 
     val_url = url
 
@@ -45,6 +44,7 @@ def _validate_url_impl(
         issue_warning(
             "colab urls currently pass even if the notebook url was not found. Cannot fully validate {value}",
             value=url,
+            severity=warning_levels.INFO,
         )
 
     try:
@@ -99,20 +99,15 @@ def _validate_url_impl(
             return _validate_url_impl(url, request_mode="get_stream", timeout=timeout)
         elif request_mode == "get_stream":
             return _validate_url_impl(url, request_mode="get", timeout=timeout)
-        elif status_code == 405:
-            issue_warning(
-                "{status_code}: {reason} {value}",
-                value=url,
-                severity=warning_levels.INFO,
-                msg_context={
-                    "status_code": status_code,
-                    "reason": reason,
-                },
-            )
         elif request_mode == "get":
             issue_warning(
                 "{status_code}: {reason} ({value})",
                 value=url,
+                severity=(
+                    warning_levels.INFO
+                    if status_code == 405  # may be returned due to a captcha
+                    else warning_levels.WARNING
+                ),
                 msg_context={
                     "status_code": status_code,
                     "reason": reason,
@@ -142,13 +137,14 @@ class HttpUrl(RootHttpUrl):
     def exists(self):
         """True if URL is available"""
         if self._exists is None:
+            ctxt = get_validation_context()
             try:
-                with get_validation_context().replace(
-                    warning_level=warning_levels.WARNING
-                ):
+                with ctxt.replace(warning_level=warning_levels.WARNING):
                     self._validated = _validate_url(self._validated)
             except Exception as e:
-                logger.info(e)
+                if ctxt.log_warnings:
+                    logger.info(e)
+
                 self._exists = False
             else:
                 self._exists = True
