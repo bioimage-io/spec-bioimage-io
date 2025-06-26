@@ -68,7 +68,6 @@ from .._internal.io import (
     get_reader,
     wo_special_file_name,
 )
-from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_packaging import (
     FileDescr_,

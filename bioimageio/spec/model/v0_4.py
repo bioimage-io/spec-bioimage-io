@@ -46,7 +46,6 @@ from .._internal.field_validation import validate_unique_entries
 from .._internal.field_warning import issue_warning, warn
 from .._internal.io import BioimageioYamlContent, WithSuffix
 from .._internal.io import FileDescr as FileDescr
-from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_packaging import include_in_package
 from .._internal.io_utils import load_array

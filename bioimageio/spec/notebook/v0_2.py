@@ -4,7 +4,7 @@ from typing_extensions import Annotated
 
 from .._internal.common_nodes import Node
 from .._internal.io import WithSuffix
-from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.types import FilePath
 from .._internal.url import HttpUrl
 from ..generic.v0_2 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
 from ..generic.v0_2 import AttachmentsDescr as AttachmentsDescr
@@ -29,7 +29,7 @@ class NotebookId(ResourceId):
 _WithNotebookSuffix = WithSuffix(".ipynb", case_sensitive=True)
 NotebookSource = Union[
     Annotated[HttpUrl, _WithNotebookSuffix],
-    Annotated[AbsoluteFilePath, _WithNotebookSuffix],
+    Annotated[FilePath, _WithNotebookSuffix],
     Annotated[RelativeFilePath, _WithNotebookSuffix],
 ]
 

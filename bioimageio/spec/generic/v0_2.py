@@ -22,7 +22,6 @@ from annotated_types import Len, LowerCase, MaxLen
 from pydantic import (
     EmailStr,
     Field,
-    FilePath,
     RootModel,
     ValidationInfo,
     field_validator,
@@ -39,11 +38,11 @@ from .._internal.io import (
     YamlValue,
     wo_special_file_name,
 )
-from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_packaging import FileSource_, include_in_package
 from .._internal.type_guards import is_sequence
 from .._internal.types import (
     DeprecatedLicenseId,
+    FilePath,
     FileSource,
     LicenseId,
     NotEmpty,
