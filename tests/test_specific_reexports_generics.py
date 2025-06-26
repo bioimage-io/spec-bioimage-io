@@ -1,5 +1,5 @@
 from types import ModuleType
-from typing import Any, Dict
+from typing import Any, Dict, Mapping
 
 import pytest
 
@@ -15,6 +15,8 @@ IGNORE_MEMBERS = {
     "as_warning",
     "assert_never",
     "BioimageioYamlContent",
+    "Callable",
+    "cast",
     "ClassVar",
     "collections",
     "convert_from_older_format",
@@ -25,19 +27,27 @@ IGNORE_MEMBERS = {
     "EmailStr",
     "field_validator",
     "Field",
+    "FilePath",
     "FileSource",
     "Ge",
+    "GenericDescr",
+    "GenericDescrBase",
+    "GenericModelDescrBase",
     "get_args",
     "get_validation_context",
+    "httpx",
     "include_in_package_serializer",
+    "include_in_package",
     "INFO",
     "is_dict",
     "is_sequence",
     "is_yaml_value",
     "issue_warning",
+    "KNOWN_SPECIFIC_RESOURCE_TYPES",
     "Len",
     "LicenseId",
     "LICENSES",
+    "LinkedResourceBase",
     "List",
     "LowerCase",
     "Mapping",
@@ -51,7 +61,9 @@ IGNORE_MEMBERS = {
     "partial",
     "PermissiveFileSource",
     "Predicate",
-    "httpx",
+    "pydantic",
+    "ResourceDescrBase",
+    "ResourceDescrType",
     "RestrictCharacters",
     "RootModel",
     "S",
@@ -74,11 +86,12 @@ IGNORE_MEMBERS = {
     "ValidationInfo",
     "warn",
     "WithSuffix",
+    "wo_special_file_name",
     "YamlValue",
 }
 
 
-def get_members(m: ModuleType):
+def get_members(m: ModuleType) -> Mapping[str, Any]:
     return {
         k: getattr(m, k)
         for k in dir(m)
@@ -89,22 +102,8 @@ def get_members(m: ModuleType):
     }
 
 
-GENERIC_ONLY_MEMBERS = {
-    "GenericDescr",
-    "GenericDescrBase",
-    "GenericModelDescrBase",
-    "KNOWN_SPECIFIC_RESOURCE_TYPES",
-    "LinkedResourceBase",
-    "ResourceDescrBase",
-    "ResourceDescrType",
-}
-
-GENERIC_v0_2_MEMBERS = {
-    k: v for k, v in get_members(generic.v0_2).items() if k not in GENERIC_ONLY_MEMBERS
-}
-GENERIC_v0_3_MEMBERS = {
-    k: v for k, v in get_members(generic.v0_3).items() if k not in GENERIC_ONLY_MEMBERS
-}
+GENERIC_v0_2_MEMBERS = get_members(generic.v0_2)
+GENERIC_v0_3_MEMBERS = get_members(generic.v0_3)
 
 
 @pytest.mark.parametrize(
