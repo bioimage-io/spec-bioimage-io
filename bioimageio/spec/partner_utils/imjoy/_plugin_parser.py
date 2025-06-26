@@ -1,3 +1,4 @@
+# pragma: no cover
 # type: ignore
 """ImJoy plugin parser module."""
 import copy
