@@ -4,9 +4,8 @@ from pydantic import Field
 from typing_extensions import Annotated
 
 from .._internal.io import FileDescr as FileDescr
-from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
-from .._internal.types import ImportantFileSource
+from .._internal.types import FileSource_
 from .._internal.url import HttpUrl as HttpUrl
 from ..generic.v0_3 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
 from ..generic.v0_3 import Author as Author
@@ -47,7 +46,7 @@ class ApplicationDescr(GenericDescrBase):
     """The description from which this one is derived"""
 
     source: Annotated[
-        Optional[ImportantFileSource],
+        Optional[FileSource_],
         Field(description="URL or path to the source of the application"),
     ] = None
     """The primary source of the application"""

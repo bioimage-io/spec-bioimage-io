@@ -31,10 +31,13 @@ def test_package(unet2d_path: Path):
 
 
 def test_save_bioimageio_package(unet2d_path: Path):
-    from bioimageio.spec import save_bioimageio_package
+    from bioimageio.spec import load_model_description, save_bioimageio_package
 
     package_path = save_bioimageio_package(unet2d_path)
     assert package_path.exists()
+
+    model = load_model_description(package_path)
+    assert isinstance(model, v0_5.ModelDescr)
 
 
 def test_save_bioimageio_package_to_stream(unet2d_path: Path):
@@ -67,7 +70,7 @@ def test_save_bioimageio_package_as_folder(unet2d_path: Path, tmp_path: Path):
     doc = model.documentation
     assert isinstance(doc, v0_5.RelativeFilePath)
     new_doc = f"copy_{doc}"
-    shutil.move(str(package_folder / str(doc)), str(package_folder / new_doc))
+    _ = shutil.move(str(package_folder / str(doc)), str(package_folder / new_doc))
     model.documentation = package_folder / new_doc
 
     # export altered package

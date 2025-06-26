@@ -1,23 +1,27 @@
 from typing import Any, Collection, Dict, Iterable, Mapping, Tuple
 
+import httpx
 import pytest
-import requests
 
 from bioimageio.spec.common import HttpUrl, Sha256
 from tests.utils import ParameterSet, check_bioimageio_yaml, expensive_test
 
 BASE_URL = "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/"
 
-KNOWN_INVALID: Collection[str] = {"stupendous-sheep/1.1"}
+KNOWN_INVALID: Mapping[str, str] = {
+    "stupendous-sheep/1.1": "requires relativ import of attachment",
+    "whimsical-helmet/2.1.2": "invalid id",
+}
 EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT: Collection[str] = {
     "version_number",  # deprecated field that gets dropped in favor of `version``
     "version",  # may be set from deprecated `version_number`
 }
 EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
-    "affable-shark/1.1": {"inputs"},  # preprocessing assert_dtype added
+    "affable-shark/1.1": {"inputs"},  # preprocessing ensure_dtype added
+    "affable-shark/1.2": {"inputs"},  # preprocessing ensure_dtype added
     "charismatic-whale/1.0.1": {"inputs", "outputs"},  # int -> float
     "dynamic-t-rex/1": {"inputs"},  # int -> float
-    "impartial-shrimp/1.1": {"inputs", "cite"},  # preprocessing assert_dtype added
+    "impartial-shrimp/1.1": {"inputs", "cite"},  # preprocessing ensure_dtype added
     "philosophical-panda/0.0.11": {"outputs"},  # int -> float
     "philosophical-panda/0.1.0": {"outputs"},  # int -> float
     "polite-pig/1.1": {"inputs", "outputs"},
@@ -26,7 +30,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
 
 
 def _get_rdf_sources(only_latest: bool = True):
-    entries: Any = requests.get(BASE_URL + "all_versions.json").json()["entries"]
+    entries: Any = httpx.get(BASE_URL + "all_versions.json").json()["entries"]
     ret: Dict[str, Tuple[HttpUrl, Sha256]] = {}
     for entry in entries:
         for version in entry["versions"]:
@@ -68,7 +72,7 @@ def test_rdf(
     bioimageio_json_schema: Mapping[Any, Any],
 ):
     if key in KNOWN_INVALID:
-        pytest.skip("known failure")
+        pytest.skip(KNOWN_INVALID[key])
 
     check_bioimageio_yaml(
         descr_url,
@@ -86,10 +90,9 @@ def test_rdf(
 @pytest.mark.parametrize(
     "rdf_id",
     [
-        "10.5281/zenodo.5764892/1.1",  # affable-shark/1.1
         "ambitious-sloth/1.2",
         "breezy-handbag/1",
-        "faithful-chicken/1.1",
+        "faithful-chicken/1.2",
         "ilastik/ilastik/1",
         "uplifting-ice-cream/1",
     ],

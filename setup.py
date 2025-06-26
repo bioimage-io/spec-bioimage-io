@@ -31,6 +31,7 @@ _ = setup(
     install_requires=[
         "annotated-types>=0.5.0,<1",
         "email_validator",
+        "genericache==0.4.1",
         "imageio",
         "loguru",
         "markdown",
@@ -38,9 +39,9 @@ _ = setup(
         "packaging>=17.0",
         "pooch>=1.5,<2",
         "pydantic-settings>=2.5,<3",
-        "pydantic>=2.7.0,<2.10",  # TODO: check and update pin after https://github.com/pydantic/pydantic/pull/11008 is released
+        "pydantic>=2.10.3,<2.12",
         "python-dateutil",
-        "requests",
+        "httpx",
         "rich",
         "ruyaml",
         "tifffile>=2020.7.4",
@@ -57,18 +58,19 @@ _ = setup(
                 "lxml",
                 "pytest-cov",
                 "pytest",
-                "requests-mock",
+                "python-dotenv",
+                "respx",
             ]
         ),
         "dev": (
             test_extras
             + [
-                # "json_schema_for_humans; python_version < 3.13",
+                "json_schema_for_humans",
                 "jupyter-black",
                 "jupyter",
                 "pdoc",
                 "pre-commit",
-                "pyright==1.1.398",
+                "pyright==1.1.402",
                 "ruff",
             ]
         ),

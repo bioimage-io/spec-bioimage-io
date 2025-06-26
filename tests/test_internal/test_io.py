@@ -1,11 +1,15 @@
+import io
 from pathlib import Path, PurePath
-from typing import Any
+from typing import Annotated, Any, Union
+from zipfile import ZipFile
 
+import httpx
 import pytest
-from pydantic import ValidationError
-from requests_mock import Mocker as RequestsMocker
+from pydantic import Field, ValidationError
+from respx import MockRouter
 
 from bioimageio.spec import ValidationContext
+from bioimageio.spec._internal.io_basics import ZipPath
 from bioimageio.spec.common import RelativeFilePath
 
 
@@ -105,16 +109,138 @@ def test_known_files(tmp_path: Path):
         assert file_descr.sha256 == sha
 
 
-def test_disable_cache(requests_mock: RequestsMocker):
-    from bioimageio.spec._internal.io import FileInZip, resolve
+def test_disable_cache(respx_mock: MockRouter):
+    from bioimageio.spec._internal.io import get_reader
     from bioimageio.spec._internal.url import RootHttpUrl
 
-    url = "https://mock_example.com/my_file.txt"
-    _ = requests_mock.get(url, text="example content", status_code=200)
+    url = "https://mock_example.com/files/my_bioimageio.yaml"
+    route = respx_mock.get(url).mock(
+        httpx.Response(text="example content", status_code=200)
+    )
 
     with ValidationContext(disable_cache=True):
-        downloaded = resolve(url)
+        reader = get_reader(url)
+        assert len(route.calls) == 1
+        reader = get_reader(url)  # second call to check cache
+        assert len(route.calls) == 2
 
-    assert isinstance(downloaded, FileInZip)
-    assert isinstance(downloaded.original_root, RootHttpUrl)
-    assert downloaded.original_file_name == "my_file.txt"
+    assert reader.original_root == RootHttpUrl("https://mock_example.com/files")
+    assert reader.original_file_name == "my_bioimageio.yaml"
+    assert reader.read().decode(encoding="utf-8") == "example content"
+
+
+def test_download_zip_wo_cache(respx_mock: MockRouter):
+    from bioimageio.spec._internal.io import get_reader
+
+    remote_data = io.BytesIO()
+    content = {"bioimageio.yaml": "ref: my_file.txt", "my_file.txt": "example content"}
+    with ZipFile(remote_data, mode="w") as remote_zip:
+        for k, v in content.items():
+            remote_zip.writestr(k, v)
+
+    remote_content = remote_data.getvalue()
+    url = "https://mock_example.com/files/my.zip"
+    route = respx_mock.get(url).mock(
+        httpx.Response(content=remote_content, status_code=200)
+    )
+
+    with ValidationContext(disable_cache=True):
+        reader = get_reader(url)
+
+    assert len(route.calls) == 1
+    assert reader.original_file_name == "my.zip"
+
+    # resolve subpath within downloaded zip
+    with ZipFile(reader, mode="r") as zf:
+        for k, v in content.items():
+            assert k in zf.namelist()
+            assert zf.read(k).decode(encoding="utf-8") == v
+
+            # check alternative access
+            subpath = ZipPath(zf, k)
+            assert subpath.exists()
+            assert subpath.read_text(encoding="utf-8") == v
+
+
+def test_serialize_file_descr():
+    from bioimageio.spec._internal.io import FileDescr
+
+    path = Path(__file__).absolute()
+    path_str = str(path)
+    file_descr = FileDescr(source=path)
+
+    data = file_descr.model_dump(mode="json")
+
+    assert data["source"] == path_str
+
+
+def test_serialize_absolute_file_path():
+    from pydantic import FilePath, RootModel
+
+    path = Path(__file__).absolute()
+    path_str = str(path)
+    file_path = RootModel[FilePath](path)
+
+    data = file_path.model_dump(mode="json")
+
+    assert data == path_str
+
+
+def test_fail_relative_file_path_from_absolute():
+    from bioimageio.spec._internal.io import RelativeFilePath
+
+    path = Path(__file__).absolute()
+    with pytest.raises(ValueError):
+        _ = RelativeFilePath(path)
+
+
+def test_relative_directory():
+    from pydantic import RootModel
+
+    from bioimageio.spec._internal.io import RelativeDirectory
+
+    path = Path(__file__).parent.relative_to(Path().absolute())
+    rel_dir = RelativeDirectory(path)
+
+    assert (
+        RootModel[RelativeDirectory](rel_dir).model_dump(mode="python")
+        == path.as_posix()
+    )
+    assert (
+        RootModel[RelativeDirectory](rel_dir).model_dump(mode="json") == path.as_posix()
+    )
+
+    with pytest.raises(ValueError):
+        _ = RelativeDirectory(path.absolute())
+
+
+def test_serialize_relative_file_path_from_left_to_right_union():
+    from pydantic import FilePath, RootModel
+
+    from bioimageio.spec._internal.io import RelativeFilePath
+
+    path = Path(__file__).absolute()
+    path_str = str(path)
+    file_path = RootModel[
+        Annotated[Union[RelativeFilePath, FilePath], Field(union_mode="left_to_right")]
+    ](path)
+    assert isinstance(file_path, RootModel)
+    assert not isinstance(file_path.root, RelativeFilePath)
+
+    data = file_path.model_dump(mode="json")
+
+    assert data == path_str
+
+
+def test_serialize_relative_file_path_from_union():
+    from pydantic import FilePath, RootModel
+
+    from bioimageio.spec._internal.io import RelativeFilePath
+
+    path = Path(__file__).absolute()
+    path_str = str(path)
+    file_path = RootModel[Union[RelativeFilePath, FilePath]](path)
+
+    data = file_path.model_dump(mode="json")
+
+    assert data == path_str

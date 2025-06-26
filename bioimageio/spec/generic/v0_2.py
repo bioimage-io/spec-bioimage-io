@@ -2,6 +2,7 @@ import string
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     ClassVar,
     Dict,
     List,
@@ -12,9 +13,11 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    cast,
 )
 
 import annotated_types
+import pydantic
 from annotated_types import Len, LowerCase, MaxLen
 from pydantic import (
     EmailStr,
@@ -31,17 +34,16 @@ from .._internal.constants import TAG_CATEGORIES
 from .._internal.field_warning import as_warning, issue_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
-    InPackageIfLocalFileSource,
     WithSuffix,
     YamlValue,
-    include_in_package_serializer,
+    wo_special_file_name,
 )
-from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
+from .._internal.io_packaging import FileSource_, include_in_package
 from .._internal.type_guards import is_sequence
 from .._internal.types import (
     DeprecatedLicenseId,
+    FilePath,
     FileSource,
-    ImportantFileSource,
     LicenseId,
     NotEmpty,
 )
@@ -86,20 +88,21 @@ VALID_COVER_IMAGE_EXTENSIONS = (
     ".tiff",
 )
 
-_WithImageSuffix = WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False)
-CoverImageSource = Annotated[
-    Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
-    Field(union_mode="left_to_right"),
-    _WithImageSuffix,
-    include_in_package_serializer,
+
+FileSource_cover = Annotated[
+    FileSource_,
+    WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False),
 ]
 
 
 class AttachmentsDescr(Node):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
-    files: List[ImportantFileSource] = Field(default_factory=list)
-    """∈📦 File attachments"""
+
+    files: List[FileSource_] = Field(
+        default_factory=cast(Callable[[], List[FileSource_]], list)
+    )
+    """File attachments"""
 
 
 def _remove_slashes(s: str):
@@ -145,10 +148,19 @@ class BadgeDescr(Node):
     """badge label to display on hover"""
 
     icon: Annotated[
-        Optional[InPackageIfLocalFileSource],
+        Optional[
+            Union[
+                Annotated[
+                    Union[FilePath, RelativeFilePath],
+                    AfterValidator(wo_special_file_name),
+                    include_in_package,
+                ],
+                Union[HttpUrl, pydantic.HttpUrl],
+            ]
+        ],
         Field(examples=["https://colab.research.google.com/assets/colab-badge.svg"]),
     ] = None
-    """badge icon"""
+    """badge icon (included in bioimage.io package if not a URL)"""
 
     url: Annotated[
         HttpUrl,
@@ -209,27 +221,25 @@ class GenericModelDescrBase(ResourceDescrBase):
 
     description: str
 
-    covers: Annotated[
-        List[CoverImageSource],
-        Field(
-            examples=["cover.png"],
-            description=(
-                "Cover images. Please use an image smaller than 500KB and an aspect"
-                " ratio width to height of 2:1.\nThe supported image formats are:"
-                f" {VALID_COVER_IMAGE_EXTENSIONS}"
-            ),
+    covers: List[FileSource_cover] = Field(
+        default_factory=cast(Callable[[], List[FileSource_cover]], list),
+        examples=[["cover.png"]],
+        description=(
+            "Cover images. Please use an image smaller than 500KB and an aspect"
+            " ratio width to height of 2:1.\nThe supported image formats are:"
+            f" {VALID_COVER_IMAGE_EXTENSIONS}"
         ),
-    ] = Field(
-        default_factory=list,
     )
-    """∈📦 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
+    """Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
 
     id_emoji: Optional[
         Annotated[str, Len(min_length=1, max_length=1), Field(examples=["🦈", "🦥"])]
     ] = None
     """UTF-8 emoji for display alongside the `id`."""
 
-    authors: List[Author] = Field(default_factory=list)
+    authors: List[Author] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """The authors are the creators of the RDF and the primary points of contact."""
 
     @field_validator("authors", mode="before")
@@ -247,7 +257,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     attachments: Optional[AttachmentsDescr] = None
     """file and other attachments"""
 
-    cite: List[CiteEntry] = Field(default_factory=list)
+    cite: List[CiteEntry] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """citations"""
 
     @field_validator("cite", mode="after")
@@ -305,9 +317,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[
-        Annotated[str, Len(min_length=1, max_length=2)], ImportantFileSource, None
-    ] = None
+    icon: Union[Annotated[str, Len(min_length=1, max_length=2)], FileSource, None] = (
+        None
+    )
     """An icon for illustration"""
 
     links: Annotated[
@@ -327,7 +339,10 @@ class GenericModelDescrBase(ResourceDescrBase):
     uploader: Optional[Uploader] = None
     """The person who uploaded the model (e.g. to bioimage.io)"""
 
-    maintainers: List[Maintainer] = Field(default_factory=list)
+    # TODO: (py>3.8) remove pyright ignore
+    maintainers: List[Maintainer] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """Maintainers of this resource.
     If not specified `authors` are maintainers and at least some of them should specify their `github_user` name"""
 
@@ -389,11 +404,13 @@ class GenericDescrBase(GenericModelDescrBase):
         _convert_from_older_format(data)
         return data
 
-    badges: List[BadgeDescr] = Field(default_factory=list)
+    badges: List[BadgeDescr] = Field(  # pyright: ignore[reportUnknownVariableType]
+        default_factory=list
+    )
     """badges associated with this resource"""
 
     documentation: Annotated[
-        Optional[ImportantFileSource],
+        Optional[FileSource],
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
@@ -401,7 +418,7 @@ class GenericDescrBase(GenericModelDescrBase):
             ],
         ),
     ] = None
-    """∈📦 URL or relative path to a markdown file with additional documentation.
+    """URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
     license: Annotated[

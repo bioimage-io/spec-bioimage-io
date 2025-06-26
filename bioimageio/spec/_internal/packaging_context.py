@@ -2,21 +2,25 @@ from __future__ import annotations
 
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
-from typing import Dict, List, Literal, Optional, Sequence, Union
+from typing import Callable, Dict, List, Literal, Optional, Sequence, Union, cast
 
-from .io_basics import AbsoluteFilePath, FileName, ZipPath
-from .url import HttpUrl
+from .io import FileDescr
+from .io_basics import FileName
+from .utils import SLOTS
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, **SLOTS)
 class PackagingContext:
     _context_tokens: "List[Token[Optional[PackagingContext]]]" = field(
-        init=False, default_factory=list
+        init=False,
+        default_factory=cast(
+            "Callable[[], List[Token[Optional[PackagingContext]]]]", list
+        ),
     )
 
     bioimageio_yaml_file_name: FileName
 
-    file_sources: Dict[FileName, Union[AbsoluteFilePath, HttpUrl, ZipPath]]
+    file_sources: Dict[FileName, FileDescr]
     """File sources to include in the packaged resource"""
 
     weights_priority_order: Optional[Sequence[str]] = None
@@ -26,9 +30,7 @@ class PackagingContext:
         self,
         *,
         bioimageio_yaml_file_name: Optional[FileName] = None,
-        file_sources: Optional[
-            Dict[FileName, Union[AbsoluteFilePath, HttpUrl, ZipPath]]
-        ] = None,
+        file_sources: Optional[Dict[FileName, FileDescr]] = None,
         weights_priority_order: Union[
             Optional[Sequence[str]], Literal["unchanged"]
         ] = "unchanged",

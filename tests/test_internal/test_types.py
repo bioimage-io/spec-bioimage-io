@@ -18,7 +18,7 @@ TYPE_ARGS = {
     types.Doi: "10.5281/zenodo.5764892",
     types.Identifier: "id",
     types.IdentifierAnno: "id",
-    types.ImportantFileSource: "README.md",
+    types.FileSource_: "README.md",
     types.LicenseId: "MIT",
     types.LowerCaseIdentifier: "id",
     types.LowerCaseIdentifierAnno: "id",
@@ -46,7 +46,9 @@ IGNORE_TYPES_MEMBERS = {
     "ClassVar",
     "datetime",
     "field_validation",
+    "FileDescr_",  # an annoated union
     "FilePath",
+    "FileSource_",  # an annoated union
     "FileSource",
     "FormatVersionPlaceholder",  # a literal
     "ImportantFileSource",  # an annoated union

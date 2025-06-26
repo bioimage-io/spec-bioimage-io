@@ -1,49 +1,54 @@
 from __future__ import annotations
 
+import collections.abc
 import hashlib
-import io
 import sys
 import warnings
 import zipfile
 from abc import abstractmethod
 from contextlib import nullcontext
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date as _date
 from datetime import datetime as _datetime
-from pathlib import Path, PurePath
+from functools import partial
+from io import TextIOWrapper
+from pathlib import Path, PurePath, PurePosixPath
 from tempfile import mktemp
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     Dict,
     Generic,
     Iterable,
     List,
+    Mapping,
     Optional,
-    Protocol,
     Sequence,
+    Set,
     Tuple,
     Type,
     TypedDict,
     TypeVar,
     Union,
+    overload,
 )
 from urllib.parse import urlparse, urlsplit, urlunsplit
-from zipfile import ZipFile, is_zipfile
+from zipfile import ZipFile
 
-import pooch  # pyright: ignore [reportMissingTypeStubs]
+import httpx
 import pydantic
-import requests
+from genericache import NoopCache
+from genericache.digest import ContentDigest, UrlDigest
 from pydantic import (
     AnyUrl,
     DirectoryPath,
     Field,
     GetCoreSchemaHandler,
-    PlainSerializer,
     PrivateAttr,
     RootModel,
-    SerializationInfo,
     TypeAdapter,
+    model_serializer,
     model_validator,
 )
 from pydantic_core import core_schema
@@ -66,29 +71,46 @@ from .io_basics import (
     BIOIMAGEIO_YAML,
     AbsoluteDirectory,
     AbsoluteFilePath,
+    BytesReader,
     FileName,
     FilePath,
     Sha256,
     ZipPath,
+    get_sha256,
 )
 from .node import Node
-from .packaging_context import packaging_context_var
+from .progress import Progressbar
 from .root_url import RootHttpUrl
-from .type_guards import is_mapping, is_sequence
+from .type_guards import is_dict, is_list, is_mapping, is_sequence
 from .url import HttpUrl
+from .utils import SLOTS
 from .validation_context import get_validation_context
-from .validator_annotations import AfterValidator
-
-if sys.version_info < (3, 10):
-    SLOTS: Dict[str, bool] = {}
-else:
-    SLOTS = {"slots": True}
-
 
 AbsolutePathT = TypeVar(
     "AbsolutePathT",
     bound=Union[HttpUrl, AbsoluteDirectory, AbsoluteFilePath, ZipPath],
 )
+
+
+class LightHttpFileDescr(Node):
+    """http source with sha256 value (minimal validation)"""
+
+    source: pydantic.HttpUrl
+    """file source"""
+
+    sha256: Sha256
+    """SHA256 checksum of the source file"""
+
+    def get_reader(
+        self,
+        *,
+        progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+    ) -> BytesReader:
+        """open the file source (download if needed)"""
+        return get_reader(self.source, sha256=self.sha256, progressbar=progressbar)
+
+    download = get_reader
+    """alias for get_reader() method"""
 
 
 class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True):
@@ -120,21 +142,15 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
         )
         super().model_post_init(__context)
 
-    # @property
-    # def __members(self):
-    #     return (self.path,)
-
-    # def __eq__(self, __value: object) -> bool:
-    #     return type(__value) is type(self) and self.__members == __value.__members
-
-    # def __hash__(self) -> int:
-    #     return hash(self.__members)
-
     def __str__(self) -> str:
         return self.root.as_posix()
 
     def __repr__(self) -> str:
         return f"RelativePath('{self}')"
+
+    @model_serializer()
+    def format(self) -> str:
+        return str(self)
 
     @abstractmethod
     def get_absolute(
@@ -234,61 +250,64 @@ FileSource = Annotated[
 ]
 PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl]
 
-V_suffix = TypeVar("V_suffix", bound=FileSource)
+
+class FileDescr(Node):
+    """A file description"""
+
+    source: FileSource
+    """File source"""
+
+    sha256: Optional[Sha256] = None
+    """SHA256 hash value of the **source** file."""
+
+    @model_validator(mode="after")
+    def _validate_sha256(self) -> Self:
+        if get_validation_context().perform_io_checks:
+            self.validate_sha256()
+
+        return self
+
+    def validate_sha256(self, force_recompute: bool = False) -> None:
+        """validate the sha256 hash value of the **source** file"""
+        context = get_validation_context()
+        src_str = str(self.source)
+        if not force_recompute and src_str in context.known_files:
+            actual_sha = context.known_files[src_str]
+        else:
+            reader = get_reader(self.source, sha256=self.sha256)
+            if force_recompute:
+                actual_sha = get_sha256(reader)
+            else:
+                actual_sha = reader.sha256
+
+            context.known_files[src_str] = actual_sha
+
+        if actual_sha is None:
+            return
+        elif self.sha256 == actual_sha:
+            pass
+        elif self.sha256 is None or context.update_hashes:
+            self.sha256 = actual_sha
+        elif self.sha256 != actual_sha:
+            raise ValueError(
+                f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got "
+                + f"{actual_sha}. Update expected `sha256` or point to the matching "
+                + "file."
+            )
+
+    def get_reader(
+        self, *, progressbar: Union[Progressbar, Callable[[], Progressbar], bool] = True
+    ):
+        """open the file source (download if needed)"""
+        return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
+
+    download = get_reader
+    """alias for get_reader() method"""
+
+
 path_or_url_adapter: "TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]]" = (
     TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl])
 )
-
-
-def validate_suffix(
-    value: V_suffix, suffix: Union[str, Sequence[str]], case_sensitive: bool
-) -> V_suffix:
-    """check final suffix"""
-    if isinstance(suffix, str):
-        suffixes = [suffix]
-    else:
-        suffixes = suffix
-
-    assert len(suffixes) > 0, "no suffix given"
-    assert all(
-        suff.startswith(".") for suff in suffixes
-    ), "expected suffixes to start with '.'"
-    o_value = value
-    strict = interprete_file_source(value)
-
-    if isinstance(strict, (HttpUrl, AnyUrl)):
-        if strict.path is None or "." not in (path := strict.path):
-            actual_suffix = ""
-        elif (
-            strict.host == "zenodo.org"
-            and path.startswith("/api/records/")
-            and path.endswith("/content")
-        ):
-            actual_suffix = "." + path[: -len("/content")].split(".")[-1]
-        else:
-            actual_suffix = "." + path.split(".")[-1]
-
-    elif isinstance(strict, PurePath):
-        actual_suffix = strict.suffixes[-1]
-    elif isinstance(strict, RelativeFilePath):
-        actual_suffix = strict.path.suffixes[-1]
-    else:
-        assert_never(strict)
-
-    if (
-        case_sensitive
-        and actual_suffix not in suffixes
-        or not case_sensitive
-        and actual_suffix.lower() not in [s.lower() for s in suffixes]
-    ):
-        if len(suffixes) == 1:
-            raise ValueError(f"Expected suffix {suffixes[0]}, but got {actual_suffix}")
-        else:
-            raise ValueError(
-                f"Expected a suffix from {suffixes}, but got {actual_suffix}"
-            )
-
-    return o_value
 
 
 @dataclass(frozen=True, **SLOTS)
@@ -308,11 +327,13 @@ class WithSuffix:
             schema,
         )
 
-    def validate(self, value: FileSource) -> FileSource:
+    def validate(
+        self, value: Union[FileSource, FileDescr]
+    ) -> Union[FileSource, FileDescr]:
         return validate_suffix(value, self.suffix, case_sensitive=self.case_sensitive)
 
 
-def wo_special_file_name(src: FileSource) -> FileSource:
+def wo_special_file_name(src: F) -> F:
     if has_valid_bioimageio_yaml_name(src):
         raise ValueError(
             f"'{src}' not allowed here as its filename is reserved to identify"
@@ -322,100 +343,7 @@ def wo_special_file_name(src: FileSource) -> FileSource:
     return src
 
 
-def _package(value: FileSource, info: SerializationInfo) -> Union[str, Path, FileName]:
-    if (packaging_context := packaging_context_var.get()) is None:
-        # convert to standard python obj
-        # note: pydantic keeps returning Rootmodels (here `HttpUrl`) as-is, but if
-        #   this function returns one RootModel, paths are "further serialized" by
-        #   returning the 'root' attribute, which is incorrect.
-        #   see https://github.com/pydantic/pydantic/issues/8963
-        #   TODO: follow up on https://github.com/pydantic/pydantic/issues/8963
-        if isinstance(value, Path):
-            unpackaged = value
-        elif isinstance(value, HttpUrl):
-            unpackaged = value
-        elif isinstance(value, RelativeFilePath):
-            unpackaged = Path(value.path)
-        elif isinstance(value, AnyUrl):
-            unpackaged = str(value)
-        else:
-            assert_never(value)
-
-        if info.mode_is_json():
-            # convert to json value  # TODO: remove and let pydantic do this?
-            if isinstance(unpackaged, Path):
-                unpackaged = str(unpackaged)
-            elif isinstance(unpackaged, str):
-                pass
-            else:
-                assert_never(unpackaged)
-        else:
-            warnings.warn(
-                "dumping with mode='python' is currently not fully supported for "
-                + "fields that are included when packaging; returned objects are "
-                + "standard python objects"
-            )
-
-        return unpackaged  # return unpackaged file source
-
-    # package the file source:
-    # add it to the current package's file sources and return its collision free file name
-    if isinstance(value, RelativeFilePath):
-        src = value.absolute()
-    elif isinstance(value, pydantic.AnyUrl):
-        src = HttpUrl(str(value))
-    elif isinstance(value, HttpUrl):
-        src = value
-    elif isinstance(value, Path):
-        src = value.resolve()
-    else:
-        assert_never(value)
-
-    fname = extract_file_name(src)
-    if fname == packaging_context.bioimageio_yaml_file_name:
-        raise ValueError(
-            f"Reserved file name '{packaging_context.bioimageio_yaml_file_name}' "
-            + "not allowed for a file to be packaged"
-        )
-
-    fsrcs = packaging_context.file_sources
-    assert not any(
-        fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES
-    ), fname
-    if fname in fsrcs and fsrcs[fname] != src:
-        for i in range(2, 20):
-            fn, *ext = fname.split(".")
-            alternative_file_name = ".".join([f"{fn}_{i}", *ext])
-            if (
-                alternative_file_name not in fsrcs
-                or fsrcs[alternative_file_name] == src
-            ):
-                fname = alternative_file_name
-                break
-        else:
-            raise ValueError(f"Too many file name clashes for {fname}")
-
-    fsrcs[fname] = src
-    return fname
-
-
-include_in_package_serializer = PlainSerializer(_package, when_used="unless-none")
-ImportantFileSource = Annotated[
-    FileSource,
-    AfterValidator(wo_special_file_name),
-    include_in_package_serializer,
-]
-InPackageIfLocalFileSource = Union[
-    Annotated[
-        Union[FilePath, RelativeFilePath],
-        AfterValidator(wo_special_file_name),
-        include_in_package_serializer,
-    ],
-    Union[HttpUrl, pydantic.HttpUrl],
-]
-
-
-def has_valid_bioimageio_yaml_name(src: FileSource) -> bool:
+def has_valid_bioimageio_yaml_name(src: Union[FileSource, FileDescr]) -> bool:
     return is_valid_bioimageio_yaml_name(extract_file_name(src))
 
 
@@ -448,7 +376,7 @@ def find_bioimageio_yaml_file_name(path: Union[Path, ZipFile]) -> FileName:
     if isinstance(path, ZipFile):
         file_names = path.namelist()
     elif path.is_file():
-        if not is_zipfile(path):
+        if not zipfile.is_zipfile(path):
             return path.name
 
         with ZipFile(path, "r") as f:
@@ -456,7 +384,9 @@ def find_bioimageio_yaml_file_name(path: Union[Path, ZipFile]) -> FileName:
     else:
         file_names = [p.name for p in path.glob("*")]
 
-    return identify_bioimageio_yaml_file_name(file_names)
+    return identify_bioimageio_yaml_file_name(
+        file_names
+    )  # TODO: try/except with better error message for dir
 
 
 def ensure_has_valid_bioimageio_yaml_name(src: FileSource) -> FileSource:
@@ -488,6 +418,9 @@ YamlKey = Union[  # YAML Arrays are cast to tuples if used as key in mappings
 ]
 if TYPE_CHECKING:
     YamlValue = Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]]
+    YamlValueView = Union[
+        YamlLeafValue, Sequence["YamlValueView"], Mapping[YamlKey, "YamlValueView"]
+    ]
 else:
     # for pydantic validation we need to use `TypeAliasType`,
     # see https://docs.pydantic.dev/latest/concepts/types/#named-recursive-types
@@ -496,8 +429,41 @@ else:
         "YamlValue",
         Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]],
     )
+    YamlValueView = _TypeAliasType(
+        "YamlValueView",
+        Union[
+            YamlLeafValue,
+            Sequence["YamlValueView"],
+            Mapping[YamlKey, "YamlValueView"],
+        ],
+    )
+
 BioimageioYamlContent = Dict[str, YamlValue]
-BioimageioYamlSource = Union[PermissiveFileSource, ZipFile, BioimageioYamlContent]
+BioimageioYamlContentView = Mapping[str, YamlValueView]
+BioimageioYamlSource = Union[
+    PermissiveFileSource, ZipFile, BioimageioYamlContent, BioimageioYamlContentView
+]
+
+
+@overload
+def deepcopy_yaml_value(value: BioimageioYamlContentView) -> BioimageioYamlContent: ...
+
+
+@overload
+def deepcopy_yaml_value(value: YamlValueView) -> YamlValue: ...
+
+
+def deepcopy_yaml_value(
+    value: Union[BioimageioYamlContentView, YamlValueView],
+) -> Union[BioimageioYamlContent, YamlValue]:
+    if isinstance(value, str):
+        return value
+    elif isinstance(value, collections.abc.Mapping):
+        return {key: deepcopy_yaml_value(val) for key, val in value.items()}
+    elif isinstance(value, collections.abc.Sequence):
+        return [deepcopy_yaml_value(val) for val in value]
+    else:
+        return value
 
 
 def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
@@ -505,35 +471,52 @@ def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
 
 
 def is_yaml_list(value: Any) -> TypeGuard[List[YamlValue]]:
+    return is_list(value) and all(is_yaml_value(item) for item in value)
+
+
+def is_yaml_sequence(value: Any) -> TypeGuard[List[YamlValueView]]:
     return is_sequence(value) and all(is_yaml_value(item) for item in value)
 
 
-def is_yaml_mapping(value: Any) -> TypeGuard[BioimageioYamlContent]:
-    return is_mapping(value) and all(
+def is_yaml_dict(value: Any) -> TypeGuard[BioimageioYamlContent]:
+    return is_dict(value) and all(
         isinstance(key, str) and is_yaml_value(val) for key, val in value.items()
     )
 
 
+def is_yaml_mapping(value: Any) -> TypeGuard[BioimageioYamlContentView]:
+    return is_mapping(value) and all(
+        isinstance(key, str) and is_yaml_value_read_only(val)
+        for key, val in value.items()
+    )
+
+
 def is_yaml_value(value: Any) -> TypeGuard[YamlValue]:
-    return is_yaml_leaf_value(value) or is_yaml_list(value) or is_yaml_mapping(value)
+    return is_yaml_leaf_value(value) or is_yaml_list(value) or is_yaml_dict(value)
 
 
-@dataclass
+def is_yaml_value_read_only(value: Any) -> TypeGuard[YamlValueView]:
+    return (
+        is_yaml_leaf_value(value) or is_yaml_sequence(value) or is_yaml_mapping(value)
+    )
+
+
+@dataclass(frozen=True, **SLOTS)
 class OpenedBioimageioYaml:
-    content: BioimageioYamlContent
+    content: BioimageioYamlContent = field(repr=False)
     original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
     original_file_name: FileName
-    unparsed_content: str
+    unparsed_content: str = field(repr=False)
 
 
-@dataclass
+@dataclass(frozen=True, **SLOTS)
 class LocalFile:
     path: FilePath
     original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
     original_file_name: FileName
 
 
-@dataclass
+@dataclass(frozen=True, **SLOTS)
 class FileInZip:
     path: ZipPath
     original_root: Union[RootHttpUrl, ZipFile]
@@ -569,38 +552,6 @@ def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
             raise FileNotFoundError(f"{strict} is a directory, but expected a file.")
 
     return strict
-
-
-def _get_known_hash(hash_kwargs: HashKwargs):
-    if "sha256" in hash_kwargs and hash_kwargs["sha256"] is not None:
-        return f"sha256:{hash_kwargs['sha256']}"
-    else:
-        return None
-
-
-def _get_unique_file_name(url: Union[HttpUrl, pydantic.HttpUrl]):
-    """
-    Create a unique file name based on the given URL;
-    adapted from pooch.utils.unique_file_name
-    """
-    md5 = hashlib.md5(str(url).encode()).hexdigest()
-    fname = extract_file_name(url)
-    # Crop the start of the file name to fit 255 characters including the hash
-    # and the :
-    fname = fname[-(255 - len(md5) - 1) :]
-    unique_name = f"{md5}-{fname}"
-    return unique_name
-
-
-class Progressbar(Protocol):
-    count: int
-    total: int
-
-    def update(self, i: int): ...
-
-    def reset(self): ...
-
-    def close(self): ...
 
 
 def extract(
@@ -668,36 +619,37 @@ def extract(
             return folder
 
 
-def resolve(
+def get_reader(
     source: Union[PermissiveFileSource, FileDescr, ZipPath],
     /,
-    progressbar: Union[Progressbar, bool, None] = None,
+    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
     **kwargs: Unpack[HashKwargs],
-) -> Union[LocalFile, FileInZip]:
-    """Resolve file `source` (download if needed)"""
+) -> BytesReader:
+    """Open a file `source` (download if needed)"""
+    if isinstance(source, FileDescr):
+        if "sha256" not in kwargs:
+            kwargs["sha256"] = source.sha256
 
-    if isinstance(source, str):
+        source = source.source
+    elif isinstance(source, str):
         source = interprete_file_source(source)
 
     if isinstance(source, RelativeFilePath):
         source = source.absolute()
-        if isinstance(source, ZipPath):
-            return FileInZip(source, source.root, extract_file_name(source))
-
-    if isinstance(source, pydantic.AnyUrl):
+    elif isinstance(source, pydantic.AnyUrl):
         with get_validation_context().replace(perform_io_checks=False):
             source = HttpUrl(source)
 
-    if isinstance(source, FileDescr):
-        return source.download()
-    elif isinstance(source, ZipPath):
-        zip_root = source.root
-        assert isinstance(zip_root, ZipFile)
-        return FileInZip(
-            source,
-            zip_root,
-            extract_file_name(source),
-        )
+    if isinstance(source, HttpUrl):
+        return _open_url(source, progressbar=progressbar, **kwargs)
+
+    if isinstance(source, ZipPath):
+        if not source.exists():
+            raise FileNotFoundError(source)
+
+        f = source.open(mode="rb")
+        assert not isinstance(f, TextIOWrapper)
+        root = source.root
     elif isinstance(source, Path):
         if source.is_dir():
             raise FileNotFoundError(f"{source} is a directory, not a file")
@@ -705,191 +657,152 @@ def resolve(
         if not source.exists():
             raise FileNotFoundError(source)
 
-        return LocalFile(
-            source,
-            source.parent,
-            extract_file_name(source),
-        )
-    elif isinstance(source, HttpUrl):
-        if source.scheme not in ("http", "https"):
-            raise NotImplementedError(source.scheme)
-
-        if settings.CI:
-            headers = {"User-Agent": "ci"}
-            if progressbar is None:
-                progressbar = False
-        else:
-            headers = {}
-            if progressbar is None:
-                progressbar = True
-
-        if settings.user_agent is not None:
-            headers["User-Agent"] = settings.user_agent
-
-        chunk_size = 1024
-        if (
-            settings.cache_path
-            and not get_validation_context().disable_cache
-            and any(v is not None for v in kwargs.values())
-        ):
-            downloader = pooch.HTTPDownloader(
-                headers=headers,
-                progressbar=progressbar,  # pyright: ignore[reportArgumentType]
-                chunk_size=chunk_size,
-            )
-            fname = _get_unique_file_name(source)
-            _ls: Any = pooch.retrieve(
-                url=str(source),
-                known_hash=_get_known_hash(kwargs),
-                downloader=downloader,
-                fname=fname,
-                path=settings.cache_path,
-            )
-            local_source = Path(_ls).absolute()
-            return LocalFile(
-                local_source,
-                source.parent,
-                extract_file_name(source),
-            )
-        else:
-            # cacheless download to memory using an in memory zip file
-            r = requests.get(str(source), stream=True)
-            r.raise_for_status()
-
-            zf = zipfile.ZipFile(io.BytesIO(), "w")
-            fn = extract_file_name(source)
-            total = int(r.headers.get("content-length", 0))
-
-            if isinstance(progressbar, bool):
-                if progressbar:
-                    use_ascii = bool(sys.platform == "win32")
-                    pbar = tqdm(
-                        total=total,
-                        ncols=79,
-                        ascii=use_ascii,
-                        unit="B",
-                        unit_scale=True,
-                        leave=True,
-                    )
-                    pbar = tqdm(desc=f"Downloading {fn}")
-                else:
-                    pbar = None
-            else:
-                pbar = progressbar
-
-            zp = ZipPath(zf, fn)
-            with zp.open("wb") as z:
-                assert not isinstance(z, io.TextIOWrapper)
-                for chunk in r.iter_content(chunk_size=chunk_size):
-                    n = z.write(chunk)
-                    if pbar is not None:
-                        _ = pbar.update(n)
-
-            # Make sure the progress bar gets filled even if the actual number
-            # is chunks is smaller than expected. This happens when streaming
-            # text files that are compressed by the server when sending (gzip).
-            # Binary files don't experience this.
-            # (adapted from pooch.HttpDownloader)
-            if pbar is not None:
-                pbar.reset()
-                _ = pbar.update(total)
-                pbar.close()
-
-            return FileInZip(
-                path=zp,
-                original_root=source.parent,
-                original_file_name=fn,
-            )
-
+        f = source.open("rb")
+        root = source.parent
     else:
         assert_never(source)
 
+    expected_sha = kwargs.get("sha256")
+    if expected_sha is None:
+        sha = None
+    else:
+        sha = get_sha256(f)
+        _ = f.seek(0)
+        if sha != expected_sha:
+            raise ValueError(
+                f"SHA256 mismatch for {source}. Expected {expected_sha}, got {sha}."
+            )
 
-download = resolve
-
-
-def resolve_and_extract(
-    source: Union[PermissiveFileSource, FileDescr, ZipPath],
-    /,
-    progressbar: Union[Progressbar, bool, None] = None,
-    **kwargs: Unpack[HashKwargs],
-) -> LocalFile:
-    """Resolve `source` within current ValidationContext,
-    download if needed and
-    extract file if within zip archive.
-
-    note: If source points to a zip file it is not extracted
-    """
-    local = resolve(source, progressbar=progressbar, **kwargs)
-    if isinstance(local, LocalFile):
-        return local
-
-    folder = extract(local.path)
-
-    return LocalFile(
-        folder / local.path.at,
-        original_root=local.original_root,
-        original_file_name=local.original_file_name,
+    return BytesReader(
+        f,
+        sha256=sha,
+        suffix=source.suffix,
+        original_file_name=source.name,
+        original_root=root,
+        is_zipfile=None,
     )
 
 
-class LightHttpFileDescr(Node):
-    """http source with sha256 value (minimal validation)"""
-
-    source: pydantic.HttpUrl
-    """file source"""
-
-    sha256: Sha256
-    """SHA256 checksum of the source file"""
-
-    def download(self):
-        return download(self.source, sha256=self.sha256)
+download = get_reader
 
 
-class FileDescr(Node):
-    source: ImportantFileSource
-    """∈📦 file source"""
+def _open_url(
+    source: HttpUrl,
+    /,
+    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+    **kwargs: Unpack[HashKwargs],
+) -> BytesReader:
+    cache = (
+        NoopCache[RootHttpUrl](url_hasher=UrlDigest.from_str)
+        if get_validation_context().disable_cache
+        else settings.disk_cache
+    )
+    sha = kwargs.get("sha256")
+    digest = False if sha is None else ContentDigest.parse(hexdigest=sha)
+    source_path = PurePosixPath(
+        source.path
+        or sha
+        or hashlib.sha256(str(source).encode(encoding="utf-8")).hexdigest()
+    )
 
-    sha256: Optional[Sha256] = None
-    """SHA256 checksum of the source file"""
+    return BytesReader(
+        cache.fetch(
+            source,
+            fetcher=partial(_fetch_url, progressbar=progressbar),
+            force_refetch=digest,
+        ),
+        suffix=source_path.suffix,
+        sha256=sha,
+        original_file_name=source_path.name,
+        original_root=source.parent,
+        is_zipfile=None,
+    )
 
-    @model_validator(mode="after")
-    def _validate_sha256(self) -> Self:
-        if get_validation_context().perform_io_checks:
-            self.validate_sha256()
 
-        return self
+def _fetch_url(
+    source: RootHttpUrl,
+    *,
+    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+):
+    if source.scheme not in ("http", "https"):
+        raise NotImplementedError(source.scheme)
 
-    def validate_sha256(self):
-        context = get_validation_context()
-        if (src_str := str(self.source)) in context.known_files:
-            actual_sha = context.known_files[src_str]
-        else:
-            local_source = download(self.source, sha256=self.sha256).path
-            actual_sha = get_sha256(local_source)
-            context.known_files[src_str] = actual_sha
+    if callable(progressbar):
+        progressbar = progressbar()
 
-        if actual_sha is None:
-            return
-        elif self.sha256 == actual_sha:
-            pass
-        elif self.sha256 is None or context.update_hashes:
-            self.sha256 = actual_sha
-        elif self.sha256 != actual_sha:
-            raise ValueError(
-                f"Sha256 mismatch for {self.source}. Expected {self.sha256}, got "
-                + f"{actual_sha}. Update expected `sha256` or point to the matching "
-                + "file."
+    if settings.CI:
+        headers = {"User-Agent": "ci"}
+        if progressbar is None:
+            progressbar = False
+    else:
+        headers = {}
+        if progressbar is None:
+            progressbar = True
+
+    if isinstance(progressbar, bool):
+        # setup progressbar
+        if progressbar:
+            use_ascii = bool(sys.platform == "win32")
+            progressbar = tqdm(
+                ncols=79,
+                ascii=use_ascii,
+                unit="B",
+                unit_scale=True,
+                leave=True,
             )
 
-    def download(self):
+    if progressbar is not False:
+        progressbar.set_description(f"Downloading {extract_file_name(source)}")
 
-        return download(self.source, sha256=self.sha256)
+    if settings.user_agent is not None:
+        headers["User-Agent"] = settings.user_agent
+
+    r = httpx.get(str(source), follow_redirects=True, headers=headers)
+    _ = r.raise_for_status()
+
+    # set progressbar.total
+    total = r.headers.get("content-length")
+    if total is not None and not isinstance(total, int):
+        try:
+            total = int(total)
+        except Exception:
+            total = None
+
+    if progressbar is not False:
+        if total is None:
+            progressbar.total = 0
+        else:
+            progressbar.total = total
+
+    def iter_content():
+        for chunk in r.iter_bytes(chunk_size=4096):
+            yield chunk
+            if progressbar is not False:
+                _ = progressbar.update(len(chunk))
+
+        # Make sure the progress bar gets filled even if the actual number
+        # is chunks is smaller than expected. This happens when streaming
+        # text files that are compressed by the server when sending (gzip).
+        # Binary files don't experience this.
+        # (adapted from pooch.HttpDownloader)
+        if progressbar is not False:
+            progressbar.reset()
+            if total is not None:
+                _ = progressbar.update(total)
+
+            progressbar.close()
+
+    return iter_content()
 
 
 def extract_file_name(
-    src: Union[pydantic.HttpUrl, HttpUrl, PurePath, RelativeFilePath, ZipPath],
+    src: Union[
+        pydantic.HttpUrl, RootHttpUrl, PurePath, RelativeFilePath, ZipPath, FileDescr
+    ],
 ) -> FileName:
+    if isinstance(src, FileDescr):
+        src = src.source
+
     if isinstance(src, ZipPath):
         return src.name or src.root.filename or "bioimageio.zip"
     elif isinstance(src, RelativeFilePath):
@@ -909,24 +822,117 @@ def extract_file_name(
             return url.path.split("/")[-1]
 
 
-def get_sha256(path: Union[Path, ZipPath]) -> Sha256:
-    """from https://stackoverflow.com/a/44873382"""
-    if isinstance(path, ZipPath):
-        # no buffered reading available
-        zf = path.root
-        assert isinstance(zf, ZipFile)
-        data = path.read_bytes()
-        assert isinstance(data, bytes)
-        h = hashlib.sha256(data)
-    else:
-        h = hashlib.sha256()
-        chunksize = 128 * 1024
-        b = bytearray(chunksize)
-        mv = memoryview(b)
-        with open(path, "rb", buffering=0) as f:
-            for n in iter(lambda: f.readinto(mv), 0):
-                h.update(mv[:n])
+def extract_file_descrs(data: YamlValueView):
+    collected: List[FileDescr] = []
+    with get_validation_context().replace(perform_io_checks=False, log_warnings=False):
+        _extract_file_descrs_impl(data, collected)
 
-    sha = h.hexdigest()
-    assert len(sha) == 64
-    return Sha256(sha)
+    return collected
+
+
+def _extract_file_descrs_impl(data: YamlValueView, collected: List[FileDescr]):
+    if isinstance(data, collections.abc.Mapping):
+        if "source" in data and "sha256" in data:
+            try:
+                fd = FileDescr.model_validate(
+                    dict(source=data["source"], sha256=data["sha256"])
+                )
+            except Exception:
+                pass
+            else:
+                collected.append(fd)
+
+        for v in data.values():
+            _extract_file_descrs_impl(v, collected)
+    elif not isinstance(data, str) and isinstance(data, collections.abc.Sequence):
+        for v in data:
+            _extract_file_descrs_impl(v, collected)
+
+
+F = TypeVar("F", bound=Union[FileSource, FileDescr])
+
+
+def validate_suffix(
+    value: F, suffix: Union[str, Sequence[str]], case_sensitive: bool
+) -> F:
+    """check final suffix"""
+    if isinstance(suffix, str):
+        suffixes = [suffix]
+    else:
+        suffixes = suffix
+
+    assert len(suffixes) > 0, "no suffix given"
+    assert all(
+        suff.startswith(".") for suff in suffixes
+    ), "expected suffixes to start with '.'"
+    o_value = value
+    if isinstance(value, FileDescr):
+        strict = value.source
+    else:
+        strict = interprete_file_source(value)
+
+    if isinstance(strict, (HttpUrl, AnyUrl)):
+        if strict.path is None or "." not in (path := strict.path):
+            actual_suffixes = []
+        else:
+            if (
+                strict.host == "zenodo.org"
+                and path.startswith("/api/records/")
+                and path.endswith("/content")
+            ):
+                # Zenodo API URLs have a "/content" suffix that should be ignored
+                path = path[: -len("/content")]
+
+            actual_suffixes = [f".{path.split('.')[-1]}"]
+
+    elif isinstance(strict, PurePath):
+        actual_suffixes = strict.suffixes
+    elif isinstance(strict, RelativeFilePath):
+        actual_suffixes = strict.path.suffixes
+    else:
+        assert_never(strict)
+
+    if actual_suffixes:
+        actual_suffix = actual_suffixes[-1]
+    else:
+        actual_suffix = "no suffix"
+
+    if (
+        case_sensitive
+        and actual_suffix not in suffixes
+        or not case_sensitive
+        and actual_suffix.lower() not in [s.lower() for s in suffixes]
+    ):
+        if len(suffixes) == 1:
+            raise ValueError(f"Expected suffix {suffixes[0]}, but got {actual_suffix}")
+        else:
+            raise ValueError(
+                f"Expected a suffix from {suffixes}, but got {actual_suffix}"
+            )
+
+    return o_value
+
+
+def populate_cache(sources: Sequence[Union[FileDescr, LightHttpFileDescr]]):
+    unique: Set[str] = set()
+    for src in sources:
+        if src.sha256 is None:
+            continue  # not caching without known SHA
+
+        if isinstance(src.source, (HttpUrl, pydantic.AnyUrl)):
+            url = str(src.source)
+        elif isinstance(src.source, RelativeFilePath):
+            if isinstance(absolute := src.source.absolute(), HttpUrl):
+                url = str(absolute)
+            else:
+                continue  # not caching local paths
+        elif isinstance(src.source, Path):
+            continue  # not caching local paths
+        else:
+            assert_never(src.source)
+
+        if url in unique:
+            continue  # skip duplicate URLs
+
+        unique.add(url)
+        _ = src.download()

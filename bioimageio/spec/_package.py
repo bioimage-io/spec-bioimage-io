@@ -6,6 +6,7 @@ from tempfile import NamedTemporaryFile, mkdtemp
 from typing import IO, Dict, Literal, Optional, Sequence, Union
 from zipfile import ZIP_DEFLATED
 
+from loguru import logger
 from pydantic import DirectoryPath, FilePath, NewPath
 
 from ._description import InvalidDescr, ResourceDescr, build_description
@@ -13,10 +14,17 @@ from ._internal.common_nodes import ResourceDescrBase
 from ._internal.io import (
     BioimageioYamlContent,
     BioimageioYamlSource,
-    download,
+    FileDescr,
+    RelativeFilePath,
     ensure_is_valid_bioimageio_yaml_name,
 )
-from ._internal.io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName, ZipPath
+from ._internal.io_basics import (
+    BIOIMAGEIO_YAML,
+    AbsoluteFilePath,
+    BytesReader,
+    FileName,
+    ZipPath,
+)
 from ._internal.io_utils import open_bioimageio_yaml, write_yaml, write_zip
 from ._internal.packaging_context import PackagingContext
 from ._internal.url import HttpUrl
@@ -27,6 +35,7 @@ from ._io import load_description
 from .model.v0_4 import WeightsFormat
 
 
+# TODO: deprecate in favor of get_package_content
 def get_resource_package_content(
     rd: ResourceDescr,
     /,
@@ -34,6 +43,33 @@ def get_resource_package_content(
     bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
 ) -> Dict[FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]]:
+    ret: Dict[
+        FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]
+    ] = {}
+    for k, v in get_package_content(
+        rd,
+        bioimageio_yaml_file_name=bioimageio_yaml_file_name,
+        weights_priority_order=weights_priority_order,
+    ).items():
+        if isinstance(v, FileDescr):
+            if isinstance(v.source, (Path, RelativeFilePath)):
+                ret[k] = v.source.absolute()
+            else:
+                ret[k] = v.source
+
+        else:
+            ret[k] = v
+
+    return ret
+
+
+def get_package_content(
+    rd: ResourceDescr,
+    /,
+    *,
+    bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
+    weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
+) -> Dict[FileName, Union[FileDescr, BioimageioYamlContent]]:
     """
     Args:
         rd: resource description
@@ -50,7 +86,7 @@ def get_resource_package_content(
     bioimageio_yaml_file_name = ensure_is_valid_bioimageio_yaml_name(
         bioimageio_yaml_file_name
     )
-    content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath, ZipPath]] = {}
+    content: Dict[FileName, FileDescr] = {}
     with PackagingContext(
         bioimageio_yaml_file_name=bioimageio_yaml_file_name,
         file_sources=content,
@@ -70,7 +106,7 @@ def _prepare_resource_package(
     /,
     *,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,
-) -> Dict[FileName, Union[FilePath, BioimageioYamlContent, ZipPath]]:
+) -> Dict[FileName, Union[BioimageioYamlContent, BytesReader]]:
     """Prepare to package a resource description; downloads all required files.
 
     Args:
@@ -83,7 +119,7 @@ def _prepare_resource_package(
     bioimageio_yaml_file_name = context.file_name
     if isinstance(source, ResourceDescrBase):
         descr = source
-    elif isinstance(source, dict):
+    elif isinstance(source, collections.abc.Mapping):
         descr = build_description(source)
     else:
         opened = open_bioimageio_yaml(source)
@@ -98,22 +134,16 @@ def _prepare_resource_package(
         raise ValueError(f"{source} is invalid: {descr.validation_summary}")
 
     with context:
-        package_content = get_resource_package_content(
+        package_content = get_package_content(
             descr,
             bioimageio_yaml_file_name=bioimageio_yaml_file_name or BIOIMAGEIO_YAML,
             weights_priority_order=weights_priority_order,
         )
 
-    local_package_content: Dict[
-        FileName, Union[FilePath, BioimageioYamlContent, ZipPath]
-    ] = {}
-    for k, v in package_content.items():
-        if not isinstance(v, (collections.abc.Mapping, ZipPath)):
-            v = download(v).path
-
-        local_package_content[k] = v
-
-    return local_package_content
+    return {
+        k: v if isinstance(v, collections.abc.Mapping) else v.get_reader()
+        for k, v in package_content.items()
+    }
 
 
 def save_bioimageio_package_as_folder(
@@ -158,22 +188,9 @@ def save_bioimageio_package_as_folder(
     for name, src in package_content.items():
         if isinstance(src, collections.abc.Mapping):
             write_yaml(src, output_path / name)
-        elif isinstance(src, ZipPath):
-            extracted = Path(src.root.extract(src.name, output_path))
-            if extracted.name != src.name:
-                try:
-                    shutil.move(str(extracted), output_path / src.name)
-                except Exception as e:
-                    raise RuntimeError(
-                        f"Failed to rename extracted file '{extracted.name}'"
-                        + f" to '{src.name}'."
-                        + f" (extracted from '{src.name}' in '{src.root.filename}')"
-                    ) from e
         else:
-            try:
-                shutil.copy(src, output_path / name)
-            except shutil.SameFileError:
-                pass
+            with (output_path / name).open("wb") as dest:
+                _ = shutil.copyfileobj(src, dest)
 
     return output_path
 
@@ -197,6 +214,7 @@ def save_bioimageio_package(
             ]
         ]
     ] = None,
+    allow_invalid: bool = False,
 ) -> FilePath:
     """Package a bioimageio resource as a zip file.
 
@@ -231,10 +249,12 @@ def save_bioimageio_package(
     )
     with get_validation_context().replace(warning_level=ERROR):
         if isinstance((exported := load_description(output_path)), InvalidDescr):
-            raise ValueError(
-                f"Exported package '{output_path}' is invalid:"
-                + f" {exported.validation_summary}"
-            )
+            exported.validation_summary.display()
+            msg = f"Exported package at '{output_path}' is invalid."
+            if allow_invalid:
+                logger.error(msg)
+            else:
+                raise ValueError(msg)
 
     return output_path
 

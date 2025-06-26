@@ -1,12 +1,13 @@
+from contextlib import nullcontext
 from typing import Any, ClassVar, Optional, Type, Union
 
+import httpx
 import pydantic
-import requests
-import requests.exceptions
 from loguru import logger
 from pydantic import RootModel
 from typing_extensions import Literal, assert_never
 
+from . import warning_levels
 from .field_warning import issue_warning
 from .root_url import RootHttpUrl
 from .validation_context import get_validation_context
@@ -25,18 +26,12 @@ def _validate_url_impl(
     url = str(url)
     context = get_validation_context()
     if url in context.known_files:
-        with context.replace(perform_io_checks=False):
-            return (  # pyright: ignore[reportUnknownVariableType]
-                # TODO: remove pyright ignore for pydantic > 2.9
-                pydantic.HttpUrl(url)  # pyright: ignore[reportCallIssue]
-            )
+        return pydantic.HttpUrl(url)
 
     val_url = url
 
     if url.startswith("http://example.com") or url.startswith("https://example.com"):
-        return pydantic.HttpUrl(  # pyright: ignore[reportUnknownVariableType,reportCallIssue]
-            url
-        )
+        return pydantic.HttpUrl(url)
 
     if url.startswith("https://colab.research.google.com/github/"):
         # get requests for colab returns 200 even if the source notebook does not exists.
@@ -49,38 +44,34 @@ def _validate_url_impl(
         issue_warning(
             "colab urls currently pass even if the notebook url was not found. Cannot fully validate {value}",
             value=url,
+            severity=warning_levels.INFO,
         )
 
     try:
-        if request_mode == "head":
-            response = requests.head(val_url, timeout=timeout)
+        if request_mode in ("head", "get"):
+            request_ctxt = nullcontext(
+                httpx.request(request_mode.upper(), val_url, timeout=timeout)
+            )
         elif request_mode == "get_stream":
-            response = requests.get(val_url, stream=True, timeout=timeout)
-        elif request_mode == "get":
-            response = requests.get(val_url, stream=False, timeout=timeout)
+            request_ctxt = httpx.stream("GET", val_url, timeout=timeout)
         else:
             assert_never(request_mode)
+
+        with request_ctxt as r:
+            status_code = r.status_code
+            reason = r.reason_phrase
+            location = r.headers.get("location")
+
     except (
-        requests.exceptions.ChunkedEncodingError,
-        requests.exceptions.ContentDecodingError,
-        requests.exceptions.InvalidHeader,
-        requests.exceptions.InvalidJSONError,
-        requests.exceptions.InvalidSchema,
-        requests.exceptions.InvalidURL,
-        requests.exceptions.MissingSchema,
-        requests.exceptions.StreamConsumedError,
-        requests.exceptions.TooManyRedirects,
-        requests.exceptions.UnrewindableBodyError,
-        requests.exceptions.URLRequired,
+        httpx.InvalidURL,
+        httpx.TooManyRedirects,
     ) as e:
-        raise ValueError(
-            f"Invalid URL '{url}': {e}\nrequest: {e.request}\nresponse: {e.response}"
-        )
-    except requests.RequestException as e:
+        raise ValueError(f"Invalid URL '{url}': {e}")
+    except httpx.RequestError as e:
         issue_warning(
-            "Failed to validate URL '{value}': {error}\nrequest: {request}\nresponse: {response}",
+            "Failed to validate URL '{value}': {error}\nrequest: {request}",
             value=url,
-            msg_context={"error": str(e), "response": e.response, "request": e.request},
+            msg_context={"error": str(e), "request": e.request},
         )
     except Exception as e:
         issue_warning(
@@ -89,43 +80,44 @@ def _validate_url_impl(
             msg_context={"error": str(e)},
         )
     else:
-        if response.status_code == 200:  # ok
+        if status_code == 200:  # ok
             pass
-        elif response.status_code in (302, 303):  # found
+        elif status_code in (302, 303):  # found
             pass
-        elif response.status_code in (301, 308):
+        elif status_code in (301, 308):
             issue_warning(
                 "URL redirected ({status_code}): consider updating {value} with new"
                 + " location: {location}",
                 value=url,
+                severity=warning_levels.INFO,
                 msg_context={
-                    "status_code": response.status_code,
-                    "location": response.headers.get("location"),
+                    "status_code": status_code,
+                    "location": location,
                 },
             )
         elif request_mode == "head":
             return _validate_url_impl(url, request_mode="get_stream", timeout=timeout)
         elif request_mode == "get_stream":
             return _validate_url_impl(url, request_mode="get", timeout=timeout)
-        elif response.status_code == 405:
+        elif request_mode == "get":
             issue_warning(
-                "{status_code}: {reason} {value}",
+                "{status_code}: {reason} ({value})",
                 value=url,
+                severity=(
+                    warning_levels.INFO
+                    if status_code == 405  # may be returned due to a captcha
+                    else warning_levels.WARNING
+                ),
                 msg_context={
-                    "status_code": response.status_code,
-                    "reason": response.reason,
+                    "status_code": status_code,
+                    "reason": reason,
                 },
             )
-        elif request_mode == "get":
-            raise ValueError(f"{response.status_code}: {response.reason} {url}")
         else:
             assert_never(request_mode)
 
     context.known_files[url] = None
-    return (  # pyright: ignore[reportUnknownVariableType]
-        # TODO: remove pyright ignore for pydantic > 2.9
-        pydantic.HttpUrl(url)  # pyright: ignore[reportCallIssue]
-    )
+    return pydantic.HttpUrl(url)
 
 
 class HttpUrl(RootHttpUrl):
@@ -138,18 +130,21 @@ class HttpUrl(RootHttpUrl):
         self = super()._after_validator()
         context = get_validation_context()
         if context.perform_io_checks:
-            self._validated = _validate_url(self._validated)
-            self._exists = True
+            _ = self.exists()
 
         return self
 
     def exists(self):
         """True if URL is available"""
         if self._exists is None:
+            ctxt = get_validation_context()
             try:
-                self._validated = _validate_url(self._validated)
+                with ctxt.replace(warning_level=warning_levels.WARNING):
+                    self._validated = _validate_url(self._validated)
             except Exception as e:
-                logger.info(e)
+                if ctxt.log_warnings:
+                    logger.info(e)
+
                 self._exists = False
             else:
                 self._exists = True

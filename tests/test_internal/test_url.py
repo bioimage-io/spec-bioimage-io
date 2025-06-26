@@ -1,8 +1,8 @@
 from typing import Type
 
+import httpx
 import pytest
-import requests.exceptions
-from requests_mock import Mocker as RequestsMocker
+from respx import MockRouter
 
 from bioimageio.spec._internal.validation_context import ValidationContext
 
@@ -33,11 +33,12 @@ def test_httpurl_valid(url: str):
         ("let's ignore this I guess??", 405),
     ],
 )
-def test_httpurl_mock_valid(text: str, status_code: int, requests_mock: RequestsMocker):
+def test_httpurl_mock_valid(text: str, status_code: int, respx_mock: MockRouter):
     from bioimageio.spec._internal.url import HttpUrl
 
     url = "https://mock_example.com"
-    _ = requests_mock.get(url, text=text, status_code=status_code)
+    _ = respx_mock.get(url).mock(httpx.Response(text=text, status_code=status_code))
+    _ = respx_mock.head(url).mock(httpx.Response(status_code=405))
     assert HttpUrl(url).exists()
 
 
@@ -49,17 +50,12 @@ def test_httpurl_mock_valid(text: str, status_code: int, requests_mock: Requests
         ("just wrong", 199),
     ],
 )
-def test_httpurl_mock_invalid(
-    text: str, status_code: int, requests_mock: RequestsMocker
-):
+def test_httpurl_mock_invalid(text: str, status_code: int, respx_mock: MockRouter):
     from bioimageio.spec._internal.url import HttpUrl
 
     url = "https://mock_example.com"
-    _ = requests_mock.head(url, text=text, status_code=status_code)
-    _ = requests_mock.get(url, text=text, status_code=status_code)
-    with ValidationContext(perform_io_checks=True):
-        with pytest.raises(ValueError):
-            _ = HttpUrl(url)
+    _ = respx_mock.head(url).mock(httpx.Response(status_code=status_code))
+    _ = respx_mock.get(url).mock(httpx.Response(text=text, status_code=status_code))
 
     with ValidationContext(perform_io_checks=False):
         assert not HttpUrl(url).exists()
@@ -68,17 +64,14 @@ def test_httpurl_mock_invalid(
 @pytest.mark.parametrize(
     "exc",
     [
-        requests.exceptions.InvalidURL,
+        httpx.InvalidURL,
     ],
 )
-def test_httpurl_mock_exc(exc: Type[Exception], requests_mock: RequestsMocker):
+def test_httpurl_mock_exc(exc: Type[Exception], respx_mock: MockRouter):
     from bioimageio.spec._internal.url import HttpUrl
 
     url = "https://mock_example.com"
-    _ = requests_mock.head(url, exc=exc)
-    with ValidationContext(perform_io_checks=True):
-        with pytest.raises(ValueError):
-            _ = HttpUrl(url)
+    _ = respx_mock.head(url).mock(side_effect=exc("Invalid URL"))
 
     with ValidationContext(perform_io_checks=False):
         assert not HttpUrl(url).exists()
@@ -95,7 +88,7 @@ def test_httpurl_nonexisting(url: str, io_check: bool):
     from bioimageio.spec._internal.url import HttpUrl
 
     with ValidationContext(perform_io_checks=io_check):
-        assert HttpUrl(url).exists(), url
+        assert not HttpUrl(url).exists(), url
 
 
 @pytest.mark.parametrize(

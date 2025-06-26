@@ -1,5 +1,4 @@
 import dataclasses
-import sys
 from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, get_args
 
 import pydantic.functional_validators
@@ -15,16 +14,12 @@ from pydantic_core.core_schema import (
 )
 from typing_extensions import Annotated, LiteralString
 
+from .utils import SLOTS
 from .validation_context import get_validation_context
 from .warning_levels import WARNING, WarningSeverity
 
 if TYPE_CHECKING:
     from pydantic.functional_validators import _V2Validator  # type: ignore
-
-if sys.version_info < (3, 10):
-    SLOTS: Dict[str, Any] = {}
-else:
-    SLOTS = {"slots": True}
 
 
 ValidatorFunction = Union[NoInfoValidatorFunction, WithInfoValidatorFunction]

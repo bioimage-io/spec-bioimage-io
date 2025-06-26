@@ -5,6 +5,7 @@ from ._description import ensure_description_is_dataset, ensure_description_is_m
 from ._internal.io import (
     download,
     extract_file_name,
+    get_reader,
     get_sha256,
     identify_bioimageio_yaml_file_name,
     is_valid_bioimageio_yaml_name,
@@ -17,6 +18,8 @@ __all__ = [
     "ensure_description_is_dataset",
     "ensure_description_is_model",
     "extract_file_name",
+    "get_file_name",
+    "get_reader",
     "get_sha256",
     "get_spdx_licenses",
     "identify_bioimageio_yaml_file_name",
@@ -27,6 +30,8 @@ __all__ = [
     "SpdxLicenses",
     "write_yaml",
 ]
+
+get_file_name = extract_file_name
 
 
 class SpdxLicenseEntry(TypedDict):

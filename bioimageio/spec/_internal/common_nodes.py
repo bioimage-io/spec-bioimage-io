@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC
-from copy import deepcopy
 from io import BytesIO
 from pathlib import Path
 from types import MappingProxyType
@@ -26,8 +25,6 @@ from pydantic import DirectoryPath, PrivateAttr, model_validator
 from pydantic_core import PydanticUndefined
 from typing_extensions import Self
 
-from bioimageio.spec._internal.type_guards import is_dict
-
 from ..summary import (
     WARNING_LEVEL_TO_NAME,
     ErrorEntry,
@@ -36,13 +33,20 @@ from ..summary import (
     WarningEntry,
 )
 from .field_warning import issue_warning
-from .io import BioimageioYamlContent
-from .io_basics import BIOIMAGEIO_YAML, AbsoluteFilePath, FileName, ZipPath
+from .io import (
+    BioimageioYamlContent,
+    BioimageioYamlContentView,
+    FileDescr,
+    deepcopy_yaml_value,
+    extract_file_descrs,
+    populate_cache,
+)
+from .io_basics import BIOIMAGEIO_YAML, FileName
 from .io_utils import write_content_to_zip
 from .node import Node
 from .packaging_context import PackagingContext
 from .root_url import RootHttpUrl
-from .url import HttpUrl
+from .type_guards import is_dict
 from .utils import get_format_version_tuple
 from .validation_context import ValidationContext, get_validation_context
 from .warning_levels import ALERT, ERROR, INFO
@@ -145,9 +149,6 @@ class ResourceDescrBase(
     @model_validator(mode="after")
     def _set_init_validation_summary(self) -> Self:
         context = get_validation_context()
-        detail_name = (
-            "Created" if isinstance(self, InvalidDescr) else "Successfully created"
-        ) + f" `{self.__class__.__name__}` instance."
         self._validation_summary = ValidationSummary(
             name="bioimageio format validation",
             source_name=context.source_name,
@@ -155,13 +156,17 @@ class ResourceDescrBase(
             type=self.type,
             format_version=self.format_version,
             status="failed" if isinstance(self, InvalidDescr) else "valid-format",
-            details=[
-                ValidationDetail(
-                    name=detail_name,
-                    status="failed" if isinstance(self, InvalidDescr) else "passed",
-                    context=context.summary,
-                )
-            ],
+            details=(
+                []
+                if isinstance(self, InvalidDescr)
+                else [
+                    ValidationDetail(
+                        name=f"Successfully created `{self.__class__.__name__}` instance.",
+                        status="passed",
+                        context=context.summary,
+                    )
+                ]
+            ),
         )
         return self
 
@@ -204,13 +209,18 @@ class ResourceDescrBase(
 
     @classmethod
     def load(
-        cls, data: BioimageioYamlContent, context: Optional[ValidationContext] = None
+        cls,
+        data: BioimageioYamlContentView,
+        context: Optional[ValidationContext] = None,
     ) -> Union[Self, InvalidDescr]:
         """factory method to create a resource description object"""
         context = context or get_validation_context()
-        assert isinstance(data, dict)
+        if context.perform_io_checks:
+            file_descrs = extract_file_descrs({k: v for k, v in data.items()})
+            populate_cache(file_descrs)  # TODO: add progress bar
+
         with context:
-            rd, errors, val_warnings = cls._load_impl(deepcopy(data))
+            rd, errors, val_warnings = cls._load_impl(deepcopy_yaml_value(data))
 
         if context.warning_level > INFO:
             all_warnings_context = context.replace(
@@ -218,7 +228,7 @@ class ResourceDescrBase(
             )
             # raise all validation warnings by reloading
             with all_warnings_context:
-                _, _, val_warnings = cls._load_impl(deepcopy(data))
+                _, _, val_warnings = cls._load_impl(deepcopy_yaml_value(data))
 
         rd.validation_summary.add_detail(
             ValidationDetail(
@@ -280,10 +290,15 @@ class ResourceDescrBase(
             if context.raise_errors:
                 raise e
 
+            try:
+                msg = str(e)
+            except Exception:
+                msg = e.__class__.__name__ + " encountered"
+
             val_errors.append(
                 ErrorEntry(
                     loc=(),
-                    msg=str(e),
+                    msg=msg,
                     type=type(e).__name__,
                     with_traceback=True,
                 )
@@ -335,11 +350,9 @@ class ResourceDescrBase(
 
     def get_package_content(
         self,
-    ) -> Dict[
-        FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]
-    ]:
+    ) -> Dict[FileName, Union[FileDescr, BioimageioYamlContent]]:
         """Returns package content without creating the package."""
-        content: Dict[FileName, Union[HttpUrl, AbsoluteFilePath, ZipPath]] = {}
+        content: Dict[FileName, FileDescr] = {}
         with PackagingContext(
             bioimageio_yaml_file_name=BIOIMAGEIO_YAML,
             file_sources=content,
@@ -378,10 +391,10 @@ class KwargsNode(Node):
         return self[item] if item in self else default
 
     def __getitem__(self, item: str) -> Any:
-        if item in self.model_fields:
+        if item in self.__class__.model_fields:
             return getattr(self, item)
         else:
             raise KeyError(item)
 
     def __contains__(self, item: str) -> int:
-        return item in self.model_fields
+        return item in self.__class__.model_fields

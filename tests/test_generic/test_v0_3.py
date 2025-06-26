@@ -20,7 +20,7 @@ from bioimageio.spec._internal.io_basics import AbsoluteFilePath
 from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec._internal.warning_levels import WARNING
-from bioimageio.spec.generic.v0_3 import DocumentationSource, GenericDescr
+from bioimageio.spec.generic.v0_3 import FileSource_documentation, GenericDescr
 from tests.conftest import UNET2D_ROOT
 from tests.utils import check_node
 
@@ -103,10 +103,10 @@ def test_generic_invalid(kwargs: Dict[str, Any], context: ValidationContext):
 
 # @pytest.mark.parametrize("src", [UNET2D_ROOT / "README.md", text_md_url])
 def test_documentation_source():
-    from bioimageio.spec.generic.v0_3 import DocumentationSource
+    from bioimageio.spec.generic.v0_3 import FileSource_documentation
 
     doc_src = "https://example.com/away.md"
-    adapter: TypeAdapter[Any] = TypeAdapter(DocumentationSource)
+    adapter: TypeAdapter[Any] = TypeAdapter(FileSource_documentation)
     with ValidationContext(perform_io_checks=False):
         valid = adapter.validate_python(doc_src)
 
@@ -114,11 +114,11 @@ def test_documentation_source():
 
 
 def test_documentation_source_abs_path():
-    from bioimageio.spec.generic.v0_3 import DocumentationSource
+    from bioimageio.spec.generic.v0_3 import FileSource_documentation
 
     doc_src = UNET2D_ROOT / "README.md"
     assert doc_src.exists(), doc_src
-    adapter: TypeAdapter[Any] = TypeAdapter(DocumentationSource)
+    adapter: TypeAdapter[Any] = TypeAdapter(FileSource_documentation)
 
     valid = adapter.validate_python(doc_src)
     assert str(valid) == str(doc_src)
@@ -155,8 +155,10 @@ _type_adapters_for_path: Sequence[TypeAdapter[Any]] = (
             WithSuffix(".md", case_sensitive=True),
         ]
     ),
-    TypeAdapter(DocumentationSource),
-    TypeAdapter(Annotated[DocumentationSource, WithSuffix(".md", case_sensitive=True)]),
+    TypeAdapter(FileSource_documentation),
+    TypeAdapter(
+        Annotated[FileSource_documentation, WithSuffix(".md", case_sensitive=True)]
+    ),
 )
 
 _type_adapters_for_url: Sequence[TypeAdapter[Any]] = (
@@ -170,8 +172,10 @@ _type_adapters_for_url: Sequence[TypeAdapter[Any]] = (
             WithSuffix(".md", case_sensitive=True),
         ]
     ),
-    TypeAdapter(DocumentationSource),
-    TypeAdapter(Annotated[DocumentationSource, WithSuffix(".md", case_sensitive=True)]),
+    TypeAdapter(FileSource_documentation),
+    TypeAdapter(
+        Annotated[FileSource_documentation, WithSuffix(".md", case_sensitive=True)]
+    ),
 )
 
 
@@ -203,3 +207,31 @@ def test_with_suffix(src: Union[Path, HttpUrl], adapter: TypeAdapter[Any]):
         assert json_obj == str(src)
     else:
         assert_never(src)
+
+
+def test_config_as_dict():
+    from bioimageio.spec.generic.v0_3 import (
+        Author,
+        CiteEntry,
+        Config,
+        GenericDescr,
+        HttpUrl,
+        LicenseId,
+    )
+
+    for my_config in (
+        Config(my_config={"my_key": "my_val"}),  # pyright: ignore[reportCallIssue]
+        {"my_config": {"my_key": "my_val"}},
+    ):
+        descr = GenericDescr(
+            name="my name",
+            type="my_type",
+            description="my description",
+            authors=[Author(name="tester")],
+            license=LicenseId("MIT"),
+            cite=[CiteEntry(text="lala", url=HttpUrl("https://example.com"))],
+            config=my_config,  # pyright: ignore[reportArgumentType]
+        )
+        assert descr.config["my_config"]["my_key"] == "my_val"
+        descr.config["my_config"] = {"my_key": "my_val2"}
+        assert descr.config["my_config"]["my_key"] == "my_val2"

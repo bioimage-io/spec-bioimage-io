@@ -1,3 +1,4 @@
+# pragma: no cover
 # type: ignore
 """ImJoy plugin parser module."""
 import copy
@@ -8,8 +9,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Tuple, Union
 from urllib.parse import urljoin
 
-import requests
-from lxml import etree
+import httpx
 from pydantic import DirectoryPath, FilePath, HttpUrl
 from ruyaml import YAML
 
@@ -47,6 +47,8 @@ class dotdict(dict):  # pylint: disable=invalid-name
 
 def parse_imjoy_plugin(source, overwrite_config=None):
     """Parse ImJoy plugin file and return a dict with all the fields."""
+    from lxml import etree
+
     root = etree.HTML("<html>" + source + "</html>")
     plugin_comp = dotdict()
     for tag_type in tag_types:
@@ -179,7 +181,7 @@ def convert_config_to_rdf(plugin_config, source_url=None) -> dict:
 
 def get_plugin_as_rdf(source_url: str) -> Dict[Any, Any]:
     """Get imjoy plugin config in RDF format."""
-    req = requests.get(source_url, timeout=5)
+    req = httpx.get(source_url, timeout=5)
     source = req.text
     plugin_config = parse_imjoy_plugin(source)
     rdf = convert_config_to_rdf(plugin_config, source_url)

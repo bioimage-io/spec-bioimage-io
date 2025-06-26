@@ -98,8 +98,8 @@ class Example:
             return Example(value=yaml_value)
         try:
             # FIXME: stricter typing here?
-            val_type: Any = type(val)
-            adapter: Any = pydantic.TypeAdapter(val_type)
+            val_type = cast(Type[Any], type(val))
+            adapter = pydantic.TypeAdapter(val_type)
             dumped_value = json.loads(adapter.dump_json(val))
             return Example(value=dumped_value)
         except Exception as e:
@@ -939,7 +939,9 @@ class ModelHint(Hint):
             field_info = self.model.model_fields[field_name]
             field_default = field_info.default
             if field_info.default_factory is not None:
-                field_default = field_info.default_factory()
+                field_default = (
+                    field_info.default_factory()  # pyright: ignore[reportCallIssue]
+                )
             if not isinstance(field_default, PydanticUndefinedType):
                 field_default = Example.try_from_value(field_default)
                 assert not isinstance(field_default, Exception)

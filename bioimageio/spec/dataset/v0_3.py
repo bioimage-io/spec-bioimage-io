@@ -4,7 +4,6 @@ from pydantic import model_validator
 
 from .._internal.common_nodes import InvalidDescr
 from .._internal.io import FileDescr as FileDescr
-from .._internal.io_basics import AbsoluteFilePath as AbsoluteFilePath
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.url import HttpUrl as HttpUrl
 from ..generic.v0_3 import VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS
@@ -14,14 +13,13 @@ from ..generic.v0_3 import BioimageioConfig as BioimageioConfig
 from ..generic.v0_3 import CiteEntry as CiteEntry
 from ..generic.v0_3 import Config as Config
 from ..generic.v0_3 import DeprecatedLicenseId as DeprecatedLicenseId
+from ..generic.v0_3 import Doi as Doi
 from ..generic.v0_3 import (
-    DocumentationSource,
     GenericDescrBase,
     LinkedResourceBase,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
     _maintainer_conv,  # pyright: ignore[reportPrivateUsage]
 )
-from ..generic.v0_3 import Doi as Doi
 from ..generic.v0_3 import LicenseId as LicenseId
 from ..generic.v0_3 import LinkedResource as LinkedResource
 from ..generic.v0_3 import Maintainer as Maintainer
@@ -88,7 +86,7 @@ class DatasetDescr(GenericDescrBase):
                     config=old.config,  # pyright: ignore[reportArgumentType]
                     covers=old.covers,
                     description=old.description,
-                    documentation=cast(DocumentationSource, old.documentation),
+                    documentation=old.documentation,
                     format_version="0.3.0",
                     git_repo=old.git_repo,  # pyright: ignore[reportArgumentType]
                     icon=old.icon,

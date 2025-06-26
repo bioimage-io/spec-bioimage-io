@@ -501,7 +501,7 @@ def export_module_documentations(folder: Path, module: ModuleType):
 
     assert latest is not None
     assert rd_class is not None
-    shutil.copy(
+    _ = shutil.copy(
         str(latest), folder / get_documentation_file_name(rd_class, latest=True)
     )
     print(f" copied {latest} as latest")

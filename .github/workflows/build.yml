@@ -12,7 +12,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11","3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11","3.12", "3.13"]
+        pydantic-version: ["2.10.3", "2.11.0"]
         include:
           - python-version: "3.12"
             is-dev-version: true
@@ -26,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -e .[dev]
+          pip install pydantic~=${{matrix.pydantic-version }} -e .[dev]
       - name: Get Date
         id: get-date
         run: |
@@ -41,20 +42,18 @@ jobs:
         run: python scripts/generate_version_submodule_imports.py check
       - run: black --check .
         if: matrix.is-dev-version
-      - name: install additinal deps for a full pyright check
-        run: pip install json_schema_for_humans
-        if: matrix.is-dev-version
       - run: ruff check
         if: matrix.is-dev-version
-      - run: pyright --version
+      - name: Run Pyright
         if: matrix.is-dev-version
-      - run: pyright -p pyproject.toml --pythonversion ${{ matrix.python-version }}
-        if: matrix.is-dev-version
-      - run: pytest
+        run: |
+          pyright --version
+          pyright -p pyproject.toml --pythonversion ${{ matrix.python-version }}
+      - run: pytest --cov bioimageio --cov-report xml --cov-append --capture no
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
           RUN_EXPENSIVE_TESTS: ${{ matrix.run-expensive-tests && 'true' || 'false' }}
-      - run: pytest --cov-append scripts  # also test docstrings in scripts for dev-version
+      - run: pytest --cov bioimageio --cov-report xml --cov-append --capture no scripts  # also test docstrings in scripts for dev-version
         if: ${{matrix.is-dev-version}}
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
@@ -110,7 +109,6 @@ jobs:
         run: python -m interactive_docs
       - name: Generate JSON schemas
         run: python scripts/generate_json_schemas.py
-      - run: pip install json_schema_for_humans
       - name: Generate JSON schema documentation
         run: python scripts/generate_json_schema_documentation.py
       - name: Generate developer docs

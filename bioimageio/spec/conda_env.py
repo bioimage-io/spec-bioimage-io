@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, List, Optional, Union
+from typing import Any, Callable, List, Optional, Union, cast
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -32,7 +32,9 @@ class CondaEnv(BaseModel):
 
     name: Optional[str] = None
     channels: List[str] = Field(default_factory=list)
-    dependencies: List[Union[str, PipDeps]] = Field(default_factory=list)
+    dependencies: List[Union[str, PipDeps]] = Field(
+        default_factory=cast(Callable[[], List[Union[str, PipDeps]]], list)
+    )
 
     @field_validator("name", mode="after")
     def _ensure_valid_conda_env_name(cls, value: Optional[str]) -> Optional[str]:
@@ -60,6 +62,14 @@ class CondaEnv(BaseModel):
                         return p[len(package) :]
             elif d.startswith(package):
                 return d[len(package) :]
+
+    def get_pip_deps(self) -> List[str]:
+        """Get the pip dependencies of this conda env."""
+        for dep in self.dependencies:
+            if isinstance(dep, PipDeps):
+                return dep.pip
+
+        return []
 
 
 class BioimageioCondaEnv(CondaEnv):

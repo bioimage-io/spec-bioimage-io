@@ -19,12 +19,17 @@ from typing import (
 from ruyaml import Optional
 from typing_extensions import ParamSpec
 
+if sys.version_info < (3, 10):  # pragma: no cover
+    SLOTS: Dict[str, bool] = {}
+else:
+    SLOTS = {"slots": True}
+
+
 K = TypeVar("K")
 V = TypeVar("V")
 NestedDict = Dict[K, "NestedDict[K, V] | V"]
 
-
-if sys.version_info < (3, 9):
+if sys.version_info < (3, 9):  # pragma: no cover
     from functools import lru_cache as cache
 
     def files(package_name: str):

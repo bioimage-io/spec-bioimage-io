@@ -9,7 +9,7 @@ from typing import (
     Union,
 )
 
-import requests
+import httpx
 
 from ._settings import settings
 from .constants import KNOWN_GH_USERS, KNOWN_INVALID_GH_USERS
@@ -72,18 +72,18 @@ def validate_gh_user(username: str, hotfix_known_errorenous_names: bool = True) 
         raise ValueError(f"Known invalid GitHub user '{username}'")
 
     try:
-        r = requests.get(
+        r = httpx.get(
             f"https://api.github.com/users/{username}",
             auth=settings.github_auth,
             timeout=3,
         )
-    except requests.exceptions.Timeout:
+    except httpx.TimeoutException:
         issue_warning(
             "Could not verify GitHub user '{value}' due to connection timeout",
             value=username,
         )
     else:
-        if r.status_code == 403 and r.reason == "rate limit exceeded":
+        if r.status_code == 403 and r.reason_phrase == "rate limit exceeded":
             issue_warning(
                 "Could not verify GitHub user '{value}' due to GitHub API rate limit",
                 value=username,

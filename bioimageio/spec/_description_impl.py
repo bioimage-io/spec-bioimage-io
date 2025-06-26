@@ -1,9 +1,10 @@
 """implementation details for building a bioimage.io resource description"""
 
+import collections.abc
 from typing import Any, Callable, List, Literal, Mapping, Optional, Type, TypeVar, Union
 
 from ._internal.common_nodes import InvalidDescr, ResourceDescrBase
-from ._internal.io import BioimageioYamlContent
+from ._internal.io import BioimageioYamlContentView
 from ._internal.types import FormatVersionPlaceholder
 from ._internal.validation_context import ValidationContext, get_validation_context
 from .summary import (
@@ -48,7 +49,7 @@ def get_rd_class_impl(
 
 
 def build_description_impl(
-    content: BioimageioYamlContent,
+    content: BioimageioYamlContentView,
     /,
     *,
     context: Optional[ValidationContext] = None,
@@ -57,7 +58,7 @@ def build_description_impl(
 ) -> Union[ResourceDescrT, InvalidDescr]:
     context = context or get_validation_context()
     errors: List[ErrorEntry] = []
-    if isinstance(content, dict):
+    if isinstance(content, collections.abc.Mapping):
         for minimum in ("type", "format_version"):
             if minimum not in content:
                 errors.append(
