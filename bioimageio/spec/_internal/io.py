@@ -873,22 +873,29 @@ def validate_suffix(
 
     if isinstance(strict, (HttpUrl, AnyUrl)):
         if strict.path is None or "." not in (path := strict.path):
-            actual_suffix = ""
-        elif (
-            strict.host == "zenodo.org"
-            and path.startswith("/api/records/")
-            and path.endswith("/content")
-        ):
-            actual_suffix = "." + path[: -len("/content")].split(".")[-1]
+            actual_suffixes = []
         else:
-            actual_suffix = "." + path.split(".")[-1]
+            if (
+                strict.host == "zenodo.org"
+                and path.startswith("/api/records/")
+                and path.endswith("/content")
+            ):
+                # Zenodo API URLs have a "/content" suffix that should be ignored
+                path = path[: -len("/content")]
+
+            actual_suffixes = [f".{path.split('.')[-1]}"]
 
     elif isinstance(strict, PurePath):
-        actual_suffix = strict.suffixes[-1]
+        actual_suffixes = strict.suffixes
     elif isinstance(strict, RelativeFilePath):
-        actual_suffix = strict.path.suffixes[-1]
+        actual_suffixes = strict.path.suffixes
     else:
         assert_never(strict)
+
+    if actual_suffixes:
+        actual_suffix = actual_suffixes[-1]
+    else:
+        actual_suffix = "no suffix"
 
     if (
         case_sensitive
