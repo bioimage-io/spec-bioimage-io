@@ -16,6 +16,7 @@ jobs:
         pydantic-version: ["2.10.3", "2.11.0"]
         include:
           - python-version: "3.12"
+            pydantic-version: "2.11.0"
             is-dev-version: true
             run-expensive-tests: true
     steps:
