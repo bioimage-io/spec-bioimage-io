@@ -238,89 +238,6 @@ WeightsFormat = Literal[
 ]
 
 
-class WeightsDescr(Node):
-    keras_hdf5: Optional[KerasHdf5WeightsDescr] = None
-    onnx: Optional[OnnxWeightsDescr] = None
-    pytorch_state_dict: Optional[PytorchStateDictWeightsDescr] = None
-    tensorflow_js: Optional[TensorflowJsWeightsDescr] = None
-    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeightsDescr] = (
-        None
-    )
-    torchscript: Optional[TorchscriptWeightsDescr] = None
-
-    @model_validator(mode="after")
-    def check_one_entry(self) -> Self:
-        if all(
-            entry is None
-            for entry in [
-                self.keras_hdf5,
-                self.onnx,
-                self.pytorch_state_dict,
-                self.tensorflow_js,
-                self.tensorflow_saved_model_bundle,
-                self.torchscript,
-            ]
-        ):
-            raise ValueError("Missing weights entry")
-
-        return self
-
-    def __getitem__(
-        self,
-        key: WeightsFormat,
-    ):
-        if key == "keras_hdf5":
-            ret = self.keras_hdf5
-        elif key == "onnx":
-            ret = self.onnx
-        elif key == "pytorch_state_dict":
-            ret = self.pytorch_state_dict
-        elif key == "tensorflow_js":
-            ret = self.tensorflow_js
-        elif key == "tensorflow_saved_model_bundle":
-            ret = self.tensorflow_saved_model_bundle
-        elif key == "torchscript":
-            ret = self.torchscript
-        else:
-            raise KeyError(key)
-
-        if ret is None:
-            raise KeyError(key)
-
-        return ret
-
-    @property
-    def available_formats(self):
-        return {
-            **({} if self.keras_hdf5 is None else {"keras_hdf5": self.keras_hdf5}),
-            **({} if self.onnx is None else {"onnx": self.onnx}),
-            **(
-                {}
-                if self.pytorch_state_dict is None
-                else {"pytorch_state_dict": self.pytorch_state_dict}
-            ),
-            **(
-                {}
-                if self.tensorflow_js is None
-                else {"tensorflow_js": self.tensorflow_js}
-            ),
-            **(
-                {}
-                if self.tensorflow_saved_model_bundle is None
-                else {
-                    "tensorflow_saved_model_bundle": self.tensorflow_saved_model_bundle
-                }
-            ),
-            **({} if self.torchscript is None else {"torchscript": self.torchscript}),
-        }
-
-    @property
-    def missing_formats(self):
-        return {
-            wf for wf in get_args(WeightsFormat) if wf not in self.available_formats
-        }
-
-
 class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
@@ -542,6 +459,89 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
                 field="tensorflow_version",
             )
         return value
+
+
+class WeightsDescr(Node):
+    keras_hdf5: Optional[KerasHdf5WeightsDescr] = None
+    onnx: Optional[OnnxWeightsDescr] = None
+    pytorch_state_dict: Optional[PytorchStateDictWeightsDescr] = None
+    tensorflow_js: Optional[TensorflowJsWeightsDescr] = None
+    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeightsDescr] = (
+        None
+    )
+    torchscript: Optional[TorchscriptWeightsDescr] = None
+
+    @model_validator(mode="after")
+    def check_one_entry(self) -> Self:
+        if all(
+            entry is None
+            for entry in [
+                self.keras_hdf5,
+                self.onnx,
+                self.pytorch_state_dict,
+                self.tensorflow_js,
+                self.tensorflow_saved_model_bundle,
+                self.torchscript,
+            ]
+        ):
+            raise ValueError("Missing weights entry")
+
+        return self
+
+    def __getitem__(
+        self,
+        key: WeightsFormat,
+    ):
+        if key == "keras_hdf5":
+            ret = self.keras_hdf5
+        elif key == "onnx":
+            ret = self.onnx
+        elif key == "pytorch_state_dict":
+            ret = self.pytorch_state_dict
+        elif key == "tensorflow_js":
+            ret = self.tensorflow_js
+        elif key == "tensorflow_saved_model_bundle":
+            ret = self.tensorflow_saved_model_bundle
+        elif key == "torchscript":
+            ret = self.torchscript
+        else:
+            raise KeyError(key)
+
+        if ret is None:
+            raise KeyError(key)
+
+        return ret
+
+    @property
+    def available_formats(self):
+        return {
+            **({} if self.keras_hdf5 is None else {"keras_hdf5": self.keras_hdf5}),
+            **({} if self.onnx is None else {"onnx": self.onnx}),
+            **(
+                {}
+                if self.pytorch_state_dict is None
+                else {"pytorch_state_dict": self.pytorch_state_dict}
+            ),
+            **(
+                {}
+                if self.tensorflow_js is None
+                else {"tensorflow_js": self.tensorflow_js}
+            ),
+            **(
+                {}
+                if self.tensorflow_saved_model_bundle is None
+                else {
+                    "tensorflow_saved_model_bundle": self.tensorflow_saved_model_bundle
+                }
+            ),
+            **({} if self.torchscript is None else {"torchscript": self.torchscript}),
+        }
+
+    @property
+    def missing_formats(self):
+        return {
+            wf for wf in get_args(WeightsFormat) if wf not in self.available_formats
+        }
 
 
 class ParameterizedInputShape(Node):
