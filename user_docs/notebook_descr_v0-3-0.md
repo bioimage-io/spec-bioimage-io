@@ -124,29 +124,31 @@ The Jupyter notebook
 
 Union of
 - _internal.url.HttpUrl (WithSuffix(suffix='.ipynb', case_sensitive=True))
-- Path (PathType(path_type='file'); Predicate(is_absolute); ; WithSuffix(suffix='.ipynb', case_sensitive=True))
+- Path (PathType(path_type='file'); ; WithSuffix(suffix='.ipynb', case_sensitive=True))
 - _internal.io.RelativeFilePath (WithSuffix(suffix='.ipynb', case_sensitive=True))
 
 
 </details>
 
-## `attachments`<sub> Sequence[_internal.io.FileDescr]</sub> ≝ `[]`
+## `attachments`<sub> Sequence</sub> ≝ `[]`
 file attachments
 
-<details><summary>Sequence[_internal.io.FileDescr]
+<details><summary>Sequence[_internal.io.FileDescr*]
 
 </summary>
 
+Sequence of _internal.io.FileDescr
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4b0d12a5c0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 **_internal.io.FileDescr:**
 ### `attachments.i.source`<sub> Union</sub>
-∈📦 file source
+File source
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
 ### `attachments.i.sha256`<sub> Optional</sub> ≝ `None`
-SHA256 checksum of the source file
+SHA256 hash value of the **source** file.
 
 
 Optional[_internal.io_basics.Sha256]
@@ -169,18 +171,18 @@ badge label to display on hover
 
 
 ### `badges.i.icon`<sub> Union</sub> ≝ `None`
-badge icon
+badge icon (included in bioimage.io package if not a URL)
 [*Example:*](#badgesiicon) 'https://colab.research.google.com/assets/colab-badge.svg'
 
-<details><summary>Union[Union[Path*, _internal.io.RelativeFilePath]*, _internal.url.HttpUrl, Url*, None]
+<details><summary>Union[Union[Path*, _internal.io.RelativeFilePath]*, _internal.url.HttpUrl, pydantic.networks.HttpUrl, None]
 
 </summary>
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f956afe6660>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package_serializer at 0x7f4b0d12a660>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
-- Url (max_length=2083 allowed_schemes=['http', 'https'])
+- pydantic.networks.HttpUrl
 - None
 
 
@@ -230,35 +232,27 @@ bioimage.io internal metadata.
 ## `covers`<sub> Sequence</sub> ≝ `[]`
 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
+[*Example:*](#covers) ['cover.png']
 
-<details><summary>Sequence[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl]*]
+<details><summary>Sequence[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
 
 </summary>
 
-Sequence of Union of
-- Path (PathType(path_type='file'); Predicate(is_absolute); )
-- _internal.io.RelativeFilePath
-- _internal.url.HttpUrl
-
-(union_mode='left_to_right'; WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False); PlainSerializer(func=<function _package at 0x7f956afe6660>, return_type=PydanticUndefined, when_used='unless-none'))
+Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package_serializer at 0x7f4b0d12a660>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
 
 </details>
 
 ## `documentation`<sub> Optional</sub> ≝ `None`
-∈📦 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.
+URL or relative path to a markdown file encoded in UTF-8 with additional documentation.
 The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
-[*Examples:*](#documentation) ['https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md', '…']
 
-<details><summary>Optional[Union[Path*, _internal.io.RelativeFilePath, _internal.url.HttpUrl]*]
+<details><summary>Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
 
 </summary>
 
-Optional[Union of
-- Path (PathType(path_type='file'); Predicate(is_absolute); )
-- _internal.io.RelativeFilePath
-- _internal.url.HttpUrl
-
-(union_mode='left_to_right'; AfterValidator(_validate_md_suffix); PlainSerializer(func=<function _package at 0x7f956afe6660>, return_type=PydanticUndefined, when_used='unless-none'))]
+Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package_serializer at 0x7f4b0d12a660>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
 
 </details>
 
@@ -278,7 +272,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package at 0x7f956afe6660>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package_serializer at 0x7f4b0d12a660>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -398,10 +392,8 @@ Open in Colab
 https://colab.research.google.com/assets/colab-badge.svg
 ### `badges.i.url`
 https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb
-### `documentation`
-- https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md
-- README.md
-
+### `covers`
+['cover.png']
 ### `git_repo`
 https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 ### `links`

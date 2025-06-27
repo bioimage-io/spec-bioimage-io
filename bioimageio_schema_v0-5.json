@@ -22,7 +22,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 file source",
+                    "description": "Architecture source file",
                     "title": "Source"
                 },
                 "sha256": {
@@ -39,7 +39,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "callable": {
@@ -106,7 +106,7 @@
             "additionalProperties": true,
             "properties": {
                 "files": {
-                    "description": "\u2208\ud83d\udce6 File attachments",
+                    "description": "File attachments",
                     "items": {
                         "anyOf": [
                             {
@@ -175,7 +175,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "badge icon",
+                    "description": "badge icon (included in bioimage.io package if not a URL)",
                     "examples": [
                         "https://colab.research.google.com/assets/colab-badge.svg"
                     ],
@@ -218,9 +218,6 @@
                 },
                 "type": {
                     "const": "batch",
-                    "enum": [
-                        "batch"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -228,9 +225,6 @@
                     "anyOf": [
                         {
                             "const": 1,
-                            "enum": [
-                                1
-                            ],
                             "type": "integer"
                         },
                         {
@@ -297,9 +291,6 @@
                 },
                 "type": {
                     "const": "channel",
-                    "enum": [
-                        "channel"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -377,13 +368,10 @@
         },
         "EnsureDtypeDescr": {
             "additionalProperties": false,
-            "description": "Cast the tensor data type to `EnsureDtypeKwargs.dtype` (if not matching).\n\nThis can for example be used to ensure the inner neural network model gets a\ndifferent input tensor data type than the fully described bioimage.io model does.\n\nExamples:\n    The described bioimage.io model (incl. preprocessing) accepts any\n    float32-compatible tensor, normalizes it with percentiles and clipping and then\n    casts it to uint8, which is what the neural network in this example expects.\n    - in YAML\n        ```yaml\n        inputs:\n        - data:\n            type: float32  # described bioimage.io model is compatible with any float32 input tensor\n        preprocessing:\n        - id: scale_range\n            kwargs:\n            axes: ['y', 'x']\n            max_percentile: 99.8\n            min_percentile: 5.0\n        - id: clip\n            kwargs:\n            min: 0.0\n            max: 1.0\n        - id: ensure_dtype\n            kwargs:\n            dtype: uint8\n        ```\n    - in Python:\n        >>> preprocessing = [\n        ...     ScaleRangeDescr(\n        ...         kwargs=ScaleRangeKwargs(\n        ...           axes= (AxisId('y'), AxisId('x')),\n        ...           max_percentile= 99.8,\n        ...           min_percentile= 5.0,\n        ...         )\n        ...     ),\n        ...     ClipDescr(kwargs=ClipKwargs(min=0.0, max=1.0)),\n        ...     EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype=\"uint8\")),\n        ... ]",
+            "description": "Cast the tensor data type to `EnsureDtypeKwargs.dtype` (if not matching).\n\nThis can for example be used to ensure the inner neural network model gets a\ndifferent input tensor data type than the fully described bioimage.io model does.\n\nExamples:\n    The described bioimage.io model (incl. preprocessing) accepts any\n    float32-compatible tensor, normalizes it with percentiles and clipping and then\n    casts it to uint8, which is what the neural network in this example expects.\n    - in YAML\n        ```yaml\n        inputs:\n        - data:\n            type: float32  # described bioimage.io model is compatible with any float32 input tensor\n          preprocessing:\n          - id: scale_range\n              kwargs:\n              axes: ['y', 'x']\n              max_percentile: 99.8\n              min_percentile: 5.0\n          - id: clip\n              kwargs:\n              min: 0.0\n              max: 1.0\n          - id: ensure_dtype  # the neural network of the model requires uint8\n              kwargs:\n              dtype: uint8\n        ```\n    - in Python:\n        >>> preprocessing = [\n        ...     ScaleRangeDescr(\n        ...         kwargs=ScaleRangeKwargs(\n        ...           axes= (AxisId('y'), AxisId('x')),\n        ...           max_percentile= 99.8,\n        ...           min_percentile= 5.0,\n        ...         )\n        ...     ),\n        ...     ClipDescr(kwargs=ClipKwargs(min=0.0, max=1.0)),\n        ...     EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype=\"uint8\")),\n        ... ]",
             "properties": {
                 "id": {
                     "const": "ensure_dtype",
-                    "enum": [
-                        "ensure_dtype"
-                    ],
                     "title": "Id",
                     "type": "string"
                 },
@@ -426,60 +414,9 @@
             "title": "model.v0_5.EnsureDtypeKwargs",
             "type": "object"
         },
-        "EnvironmentFileDescr": {
-            "additionalProperties": false,
-            "properties": {
-                "source": {
-                    "anyOf": [
-                        {
-                            "description": "A URL with the HTTP or HTTPS scheme.",
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "title": "HttpUrl",
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "file-path",
-                            "title": "FilePath",
-                            "type": "string"
-                        }
-                    ],
-                    "description": "\u2208\ud83d\udce6 Conda environment file.\nAllows to specify custom dependencies, see conda docs:\n- [Exporting an environment file across platforms](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#exporting-an-environment-file-across-platforms)\n- [Creating an environment file manually](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually)",
-                    "examples": [
-                        "environment.yaml"
-                    ],
-                    "title": "Source"
-                },
-                "sha256": {
-                    "anyOf": [
-                        {
-                            "description": "A SHA-256 hash value",
-                            "maxLength": 64,
-                            "minLength": 64,
-                            "title": "Sha256",
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "SHA256 checksum of the source file",
-                    "title": "Sha256"
-                }
-            },
-            "required": [
-                "source"
-            ],
-            "title": "model.v0_5.EnvironmentFileDescr",
-            "type": "object"
-        },
         "FileDescr": {
             "additionalProperties": false,
+            "description": "A file description",
             "properties": {
                 "source": {
                     "anyOf": [
@@ -500,7 +437,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 file source",
+                    "description": "File source",
                     "title": "Source"
                 },
                 "sha256": {
@@ -517,7 +454,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 }
             },
@@ -576,9 +513,6 @@
             "properties": {
                 "id": {
                     "const": "fixed_zero_mean_unit_variance",
-                    "enum": [
-                        "fixed_zero_mean_unit_variance"
-                    ],
                     "title": "Id",
                     "type": "string"
                 },
@@ -722,9 +656,6 @@
                 },
                 "type": {
                     "const": "index",
-                    "enum": [
-                        "index"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -760,9 +691,6 @@
                 },
                 "type": {
                     "const": "index",
-                    "enum": [
-                        "index"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -861,9 +789,6 @@
                     "anyOf": [
                         {
                             "const": "arbitrary unit",
-                            "enum": [
-                                "arbitrary unit"
-                            ],
                             "type": "string"
                         },
                         {
@@ -966,9 +891,6 @@
                     "anyOf": [
                         {
                             "const": "arbitrary unit",
-                            "enum": [
-                                "arbitrary unit"
-                            ],
                             "type": "string"
                         },
                         {
@@ -1058,21 +980,21 @@
                     "default": 0.001,
                     "description": "Maximum relative tolerance of reproduced test tensor.",
                     "maximum": 0.01,
-                    "minimum": 0.0,
+                    "minimum": 0,
                     "title": "Relative Tolerance",
                     "type": "number"
                 },
                 "absolute_tolerance": {
                     "default": 0.0001,
                     "description": "Maximum absolute tolerance of reproduced test tensor.",
-                    "minimum": 0.0,
+                    "minimum": 0,
                     "title": "Absolute Tolerance",
                     "type": "number"
                 },
                 "mismatched_elements_per_million": {
-                    "default": 0,
+                    "default": 100,
                     "description": "Maximum number of mismatched elements/pixels per million to tolerate.",
-                    "maximum": 100,
+                    "maximum": 1000,
                     "minimum": 0,
                     "title": "Mismatched Elements Per Million",
                     "type": "integer"
@@ -1117,9 +1039,6 @@
                     "anyOf": [
                         {
                             "const": "deepimagej",
-                            "enum": [
-                                "deepimagej"
-                            ],
                             "type": "string"
                         },
                         {
@@ -1130,6 +1049,7 @@
                     "title": "Name"
                 },
                 "kwargs": {
+                    "additionalProperties": true,
                     "description": "Run mode specific key word arguments",
                     "title": "Kwargs",
                     "type": "object"
@@ -1278,9 +1198,6 @@
                 },
                 "type": {
                     "const": "space",
-                    "enum": [
-                        "space"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -1326,7 +1243,7 @@
                 },
                 "scale": {
                     "default": 1.0,
-                    "exclusiveMinimum": 0.0,
+                    "exclusiveMinimum": 0,
                     "title": "Scale",
                     "type": "number"
                 },
@@ -1388,9 +1305,6 @@
                 },
                 "type": {
                     "const": "space",
-                    "enum": [
-                        "space"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -1436,7 +1350,7 @@
                 },
                 "scale": {
                     "default": 1.0,
-                    "exclusiveMinimum": 0.0,
+                    "exclusiveMinimum": 0,
                     "title": "Scale",
                     "type": "number"
                 }
@@ -1489,9 +1403,6 @@
                 },
                 "type": {
                     "const": "space",
-                    "enum": [
-                        "space"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -1537,7 +1448,7 @@
                 },
                 "scale": {
                     "default": 1.0,
-                    "exclusiveMinimum": 0.0,
+                    "exclusiveMinimum": 0,
                     "title": "Scale",
                     "type": "number"
                 }
@@ -1596,9 +1507,6 @@
                 },
                 "type": {
                     "const": "time",
-                    "enum": [
-                        "time"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -1641,7 +1549,7 @@
                 },
                 "scale": {
                     "default": 1.0,
-                    "exclusiveMinimum": 0.0,
+                    "exclusiveMinimum": 0,
                     "title": "Scale",
                     "type": "number"
                 },
@@ -1698,9 +1606,6 @@
                 },
                 "type": {
                     "const": "time",
-                    "enum": [
-                        "time"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -1743,7 +1648,7 @@
                 },
                 "scale": {
                     "default": 1.0,
-                    "exclusiveMinimum": 0.0,
+                    "exclusiveMinimum": 0,
                     "title": "Scale",
                     "type": "number"
                 }
@@ -1791,9 +1696,6 @@
                 },
                 "type": {
                     "const": "time",
-                    "enum": [
-                        "time"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -1836,7 +1738,7 @@
                 },
                 "scale": {
                     "default": 1.0,
-                    "exclusiveMinimum": 0.0,
+                    "exclusiveMinimum": 0,
                     "title": "Scale",
                     "type": "number"
                 }
@@ -1949,24 +1851,26 @@
                 "covers": {
                     "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')",
                     "examples": [
-                        "cover.png"
+                        [
+                            "cover.png"
+                        ]
                     ],
                     "items": {
                         "anyOf": [
-                            {
-                                "format": "file-path",
-                                "title": "AbsoluteFilePath",
-                                "type": "string"
-                            },
-                            {
-                                "$ref": "#/$defs/RelativeFilePath"
-                            },
                             {
                                 "description": "A URL with the HTTP or HTTPS scheme.",
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
                                 "title": "HttpUrl",
+                                "type": "string"
+                            },
+                            {
+                                "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "format": "file-path",
+                                "title": "FilePath",
                                 "type": "string"
                             }
                         ]
@@ -2213,9 +2117,6 @@
                 "format_version": {
                     "const": "0.2.4",
                     "description": "The format version of this resource specification\n(not the `version` of the resource description)\nWhen creating a new resource always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
-                    "enum": [
-                        "0.2.4"
-                    ],
                     "title": "Format Version",
                     "type": "string"
                 },
@@ -2250,7 +2151,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
+                    "description": "URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -2926,9 +2827,6 @@
                 },
                 "type": {
                     "const": "application",
-                    "enum": [
-                        "application"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -3002,23 +2900,27 @@
                 },
                 "covers": {
                     "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
-                    "examples": [],
+                    "examples": [
+                        [
+                            "cover.png"
+                        ]
+                    ],
                     "items": {
                         "anyOf": [
-                            {
-                                "format": "file-path",
-                                "title": "AbsoluteFilePath",
-                                "type": "string"
-                            },
-                            {
-                                "$ref": "#/$defs/RelativeFilePath"
-                            },
                             {
                                 "description": "A URL with the HTTP or HTTPS scheme.",
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
                                 "title": "HttpUrl",
+                                "type": "string"
+                            },
+                            {
+                                "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "format": "file-path",
+                                "title": "FilePath",
                                 "type": "string"
                             }
                         ]
@@ -3850,40 +3752,41 @@
                 "format_version": {
                     "const": "0.3.0",
                     "description": "The **format** version of this resource specification",
-                    "enum": [
-                        "0.3.0"
-                    ],
                     "title": "Format Version",
                     "type": "string"
                 },
                 "documentation": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "title": "AbsoluteFilePath",
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "description": "A URL with the HTTP or HTTPS scheme.",
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "title": "HttpUrl",
-                            "type": "string"
+                            "anyOf": [
+                                {
+                                    "description": "A URL with the HTTP or HTTPS scheme.",
+                                    "format": "uri",
+                                    "maxLength": 2083,
+                                    "minLength": 1,
+                                    "title": "HttpUrl",
+                                    "type": "string"
+                                },
+                                {
+                                    "$ref": "#/$defs/RelativeFilePath"
+                                },
+                                {
+                                    "format": "file-path",
+                                    "title": "FilePath",
+                                    "type": "string"
+                                }
+                            ],
+                            "examples": [
+                                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
+                                "README.md"
+                            ]
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
-                    "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
-                        "README.md"
-                    ],
+                    "description": "URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "title": "Documentation"
                 },
                 "badges": {
@@ -3900,9 +3803,6 @@
                 },
                 "type": {
                     "const": "application",
-                    "enum": [
-                        "application"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -3992,24 +3892,26 @@
                 "covers": {
                     "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')",
                     "examples": [
-                        "cover.png"
+                        [
+                            "cover.png"
+                        ]
                     ],
                     "items": {
                         "anyOf": [
-                            {
-                                "format": "file-path",
-                                "title": "AbsoluteFilePath",
-                                "type": "string"
-                            },
-                            {
-                                "$ref": "#/$defs/RelativeFilePath"
-                            },
                             {
                                 "description": "A URL with the HTTP or HTTPS scheme.",
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
                                 "title": "HttpUrl",
+                                "type": "string"
+                            },
+                            {
+                                "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "format": "file-path",
+                                "title": "FilePath",
                                 "type": "string"
                             }
                         ]
@@ -4256,9 +4158,6 @@
                 "format_version": {
                     "const": "0.2.4",
                     "description": "The format version of this resource specification\n(not the `version` of the resource description)\nWhen creating a new resource always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
-                    "enum": [
-                        "0.2.4"
-                    ],
                     "title": "Format Version",
                     "type": "string"
                 },
@@ -4293,7 +4192,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
+                    "description": "URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -4969,9 +4868,6 @@
                 },
                 "type": {
                     "const": "dataset",
-                    "enum": [
-                        "dataset"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -5067,23 +4963,27 @@
                 },
                 "covers": {
                     "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
-                    "examples": [],
+                    "examples": [
+                        [
+                            "cover.png"
+                        ]
+                    ],
                     "items": {
                         "anyOf": [
-                            {
-                                "format": "file-path",
-                                "title": "AbsoluteFilePath",
-                                "type": "string"
-                            },
-                            {
-                                "$ref": "#/$defs/RelativeFilePath"
-                            },
                             {
                                 "description": "A URL with the HTTP or HTTPS scheme.",
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
                                 "title": "HttpUrl",
+                                "type": "string"
+                            },
+                            {
+                                "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "format": "file-path",
+                                "title": "FilePath",
                                 "type": "string"
                             }
                         ]
@@ -5915,40 +5815,41 @@
                 "format_version": {
                     "const": "0.3.0",
                     "description": "The **format** version of this resource specification",
-                    "enum": [
-                        "0.3.0"
-                    ],
                     "title": "Format Version",
                     "type": "string"
                 },
                 "documentation": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "title": "AbsoluteFilePath",
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "description": "A URL with the HTTP or HTTPS scheme.",
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "title": "HttpUrl",
-                            "type": "string"
+                            "anyOf": [
+                                {
+                                    "description": "A URL with the HTTP or HTTPS scheme.",
+                                    "format": "uri",
+                                    "maxLength": 2083,
+                                    "minLength": 1,
+                                    "title": "HttpUrl",
+                                    "type": "string"
+                                },
+                                {
+                                    "$ref": "#/$defs/RelativeFilePath"
+                                },
+                                {
+                                    "format": "file-path",
+                                    "title": "FilePath",
+                                    "type": "string"
+                                }
+                            ],
+                            "examples": [
+                                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
+                                "README.md"
+                            ]
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
-                    "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
-                        "README.md"
-                    ],
+                    "description": "URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "title": "Documentation"
                 },
                 "badges": {
@@ -5965,9 +5866,6 @@
                 },
                 "type": {
                     "const": "dataset",
-                    "enum": [
-                        "dataset"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -6463,9 +6361,6 @@
             "properties": {
                 "name": {
                     "const": "binarize",
-                    "enum": [
-                        "binarize"
-                    ],
                     "title": "Name",
                     "type": "string"
                 },
@@ -6502,9 +6397,6 @@
             "properties": {
                 "name": {
                     "const": "clip",
-                    "enum": [
-                        "clip"
-                    ],
                     "title": "Name",
                     "type": "string"
                 },
@@ -6695,7 +6587,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "attachments": {
@@ -6840,24 +6732,26 @@
                 "covers": {
                     "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')",
                     "examples": [
-                        "cover.png"
+                        [
+                            "cover.png"
+                        ]
                     ],
                     "items": {
                         "anyOf": [
-                            {
-                                "format": "file-path",
-                                "title": "AbsoluteFilePath",
-                                "type": "string"
-                            },
-                            {
-                                "$ref": "#/$defs/RelativeFilePath"
-                            },
                             {
                                 "description": "A URL with the HTTP or HTTPS scheme.",
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
                                 "title": "HttpUrl",
+                                "type": "string"
+                            },
+                            {
+                                "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "format": "file-path",
+                                "title": "FilePath",
                                 "type": "string"
                             }
                         ]
@@ -7105,18 +6999,12 @@
                 "format_version": {
                     "const": "0.4.10",
                     "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
-                    "enum": [
-                        "0.4.10"
-                    ],
                     "title": "Format Version",
                     "type": "string"
                 },
                 "type": {
                     "const": "model",
                     "description": "Specialized resource type 'model'",
-                    "enum": [
-                        "model"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -7940,8 +7828,7 @@
                     "type": "array"
                 },
                 "timestamp": {
-                    "$ref": "#/$defs/Datetime",
-                    "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."
+                    "$ref": "#/$defs/Datetime"
                 },
                 "training_data": {
                     "anyOf": [
@@ -8021,7 +7908,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "attachments": {
@@ -8299,7 +8186,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "attachments": {
@@ -8412,6 +8299,7 @@
                     "title": "Architecture Sha256"
                 },
                 "kwargs": {
+                    "additionalProperties": true,
                     "description": "key word arguments for the `architecture` callable",
                     "title": "Kwargs",
                     "type": "object"
@@ -8442,9 +8330,6 @@
             "properties": {
                 "name": {
                     "const": "scale_linear",
-                    "enum": [
-                        "scale_linear"
-                    ],
                     "title": "Name",
                     "type": "string"
                 },
@@ -8521,9 +8406,6 @@
             "properties": {
                 "name": {
                     "const": "scale_mean_variance",
-                    "enum": [
-                        "scale_mean_variance"
-                    ],
                     "title": "Name",
                     "type": "string"
                 },
@@ -8576,7 +8458,7 @@
                 "eps": {
                     "default": 1e-06,
                     "description": "Epsilon for numeric stability:\n\"`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.",
-                    "exclusiveMinimum": 0.0,
+                    "exclusiveMinimum": 0,
                     "maximum": 0.1,
                     "title": "Eps",
                     "type": "number"
@@ -8595,9 +8477,6 @@
             "properties": {
                 "name": {
                     "const": "scale_range",
-                    "enum": [
-                        "scale_range"
-                    ],
                     "title": "Name",
                     "type": "string"
                 },
@@ -8666,7 +8545,7 @@
                 "eps": {
                     "default": 1e-06,
                     "description": "Epsilon for numeric stability.\n`out = (tensor - v_lower) / (v_upper - v_lower + eps)`;\nwith `v_lower,v_upper` values at the respective percentiles.",
-                    "exclusiveMinimum": 0.0,
+                    "exclusiveMinimum": 0,
                     "maximum": 0.1,
                     "title": "Eps",
                     "type": "number"
@@ -8700,9 +8579,6 @@
             "properties": {
                 "name": {
                     "const": "sigmoid",
-                    "enum": [
-                        "sigmoid"
-                    ],
                     "title": "Name",
                     "type": "string"
                 }
@@ -8752,7 +8628,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "attachments": {
@@ -8885,7 +8761,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "attachments": {
@@ -9018,7 +8894,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "attachments": {
@@ -9191,9 +9067,6 @@
             "properties": {
                 "name": {
                     "const": "zero_mean_unit_variance",
-                    "enum": [
-                        "zero_mean_unit_variance"
-                    ],
                     "title": "Name",
                     "type": "string"
                 },
@@ -9288,7 +9161,7 @@
                 "eps": {
                     "default": 1e-06,
                     "description": "epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.",
-                    "exclusiveMinimum": 0.0,
+                    "exclusiveMinimum": 0,
                     "maximum": 0.1,
                     "title": "Eps",
                     "type": "number"
@@ -9306,9 +9179,6 @@
             "properties": {
                 "id": {
                     "const": "binarize",
-                    "enum": [
-                        "binarize"
-                    ],
                     "title": "Id",
                     "type": "string"
                 },
@@ -9369,9 +9239,6 @@
             "properties": {
                 "id": {
                     "const": "clip",
-                    "enum": [
-                        "clip"
-                    ],
                     "title": "Id",
                     "type": "string"
                 },
@@ -9583,7 +9450,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 The weights file.",
+                    "description": "Source of the weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -9600,7 +9467,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "authors": {
@@ -9709,23 +9576,27 @@
                 },
                 "covers": {
                     "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
-                    "examples": [],
+                    "examples": [
+                        [
+                            "cover.png"
+                        ]
+                    ],
                     "items": {
                         "anyOf": [
-                            {
-                                "format": "file-path",
-                                "title": "AbsoluteFilePath",
-                                "type": "string"
-                            },
-                            {
-                                "$ref": "#/$defs/RelativeFilePath"
-                            },
                             {
                                 "description": "A URL with the HTTP or HTTPS scheme.",
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
                                 "title": "HttpUrl",
+                                "type": "string"
+                            },
+                            {
+                                "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "format": "file-path",
+                                "title": "FilePath",
                                 "type": "string"
                             }
                         ]
@@ -10557,18 +10428,12 @@
                 "format_version": {
                     "const": "0.5.4",
                     "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
-                    "enum": [
-                        "0.5.4"
-                    ],
                     "title": "Format Version",
                     "type": "string"
                 },
                 "type": {
                     "const": "model",
                     "description": "Specialized resource type 'model'",
-                    "enum": [
-                        "model"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -10590,23 +10455,23 @@
                 "documentation": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "title": "AbsoluteFilePath",
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
                             "description": "A URL with the HTTP or HTTPS scheme.",
                             "format": "uri",
                             "maxLength": 2083,
                             "minLength": 1,
                             "title": "HttpUrl",
                             "type": "string"
+                        },
+                        {
+                            "$ref": "#/$defs/RelativeFilePath"
+                        },
+                        {
+                            "format": "file-path",
+                            "title": "FilePath",
+                            "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.\nThe documentation should include a '#[#] Validation' (sub)section\nwith details on how to quantitatively validate the model on unseen data.",
+                    "description": "URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.\nThe documentation should include a '#[#] Validation' (sub)section\nwith details on how to quantitatively validate the model on unseen data.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -10732,7 +10597,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 The weights file.",
+                    "description": "Source of the weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -10749,7 +10614,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "authors": {
@@ -11029,7 +10894,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 The weights file.",
+                    "description": "Source of the weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -11046,7 +10911,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "authors": {
@@ -11113,14 +10978,19 @@
                 "dependencies": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/EnvironmentFileDescr"
+                            "$ref": "#/$defs/FileDescr",
+                            "examples": [
+                                {
+                                    "source": "environment.yaml"
+                                }
+                            ]
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "Custom depencies beyond pytorch.\nThe conda environment file should include pytorch and any version pinning has to be compatible with\n`pytorch_version`."
+                    "description": "Custom depencies beyond pytorch described in a Conda environment file.\nAllows to specify custom dependencies, see conda docs:\n- [Exporting an environment file across platforms](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#exporting-an-environment-file-across-platforms)\n- [Creating an environment file manually](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually)\n\nThe conda environment file should include pytorch and any version pinning has to be compatible with\n**pytorch_version**."
                 }
             },
             "required": [
@@ -11137,9 +11007,6 @@
             "properties": {
                 "id": {
                     "const": "scale_linear",
-                    "enum": [
-                        "scale_linear"
-                    ],
                     "title": "Id",
                     "type": "string"
                 },
@@ -11188,9 +11055,6 @@
             "properties": {
                 "id": {
                     "const": "scale_mean_variance",
-                    "enum": [
-                        "scale_mean_variance"
-                    ],
                     "title": "Id",
                     "type": "string"
                 },
@@ -11245,7 +11109,7 @@
                 "eps": {
                     "default": 1e-06,
                     "description": "Epsilon for numeric stability:\n`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`",
-                    "exclusiveMinimum": 0.0,
+                    "exclusiveMinimum": 0,
                     "maximum": 0.1,
                     "title": "Eps",
                     "type": "number"
@@ -11263,9 +11127,6 @@
             "properties": {
                 "id": {
                     "const": "scale_range",
-                    "enum": [
-                        "scale_range"
-                    ],
                     "title": "Id",
                     "type": "string"
                 },
@@ -11313,23 +11174,23 @@
                 "min_percentile": {
                     "default": 0.0,
                     "description": "The lower percentile used to determine the value to align with zero.",
-                    "exclusiveMaximum": 100.0,
-                    "minimum": 0.0,
+                    "exclusiveMaximum": 100,
+                    "minimum": 0,
                     "title": "Min Percentile",
                     "type": "number"
                 },
                 "max_percentile": {
                     "default": 100.0,
                     "description": "The upper percentile used to determine the value to align with one.\nHas to be bigger than `min_percentile`.\nThe range is 1 to 100 instead of 0 to 100 to avoid mistakenly\naccepting percentiles specified in the range 0.0 to 1.0.",
-                    "exclusiveMinimum": 1.0,
-                    "maximum": 100.0,
+                    "exclusiveMinimum": 1,
+                    "maximum": 100,
                     "title": "Max Percentile",
                     "type": "number"
                 },
                 "eps": {
                     "default": 1e-06,
                     "description": "Epsilon for numeric stability.\n`out = (tensor - v_lower) / (v_upper - v_lower + eps)`;\nwith `v_lower,v_upper` values at the respective percentiles.",
-                    "exclusiveMinimum": 0.0,
+                    "exclusiveMinimum": 0,
                     "maximum": 0.1,
                     "title": "Eps",
                     "type": "number"
@@ -11360,9 +11221,6 @@
             "properties": {
                 "id": {
                     "const": "sigmoid",
-                    "enum": [
-                        "sigmoid"
-                    ],
                     "title": "Id",
                     "type": "string"
                 }
@@ -11395,7 +11253,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 The multi-file weights.\nAll required files/folders should be a zip archive.",
+                    "description": "The multi-file weights.\nAll required files/folders should be a zip archive.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -11412,7 +11270,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "authors": {
@@ -11495,7 +11353,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 The multi-file weights.\nAll required files/folders should be a zip archive.",
+                    "description": "The multi-file weights.\nAll required files/folders should be a zip archive.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -11512,7 +11370,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "authors": {
@@ -11568,14 +11426,19 @@
                 "dependencies": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/EnvironmentFileDescr"
+                            "$ref": "#/$defs/FileDescr",
+                            "examples": [
+                                {
+                                    "source": "environment.yaml"
+                                }
+                            ]
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "Custom dependencies beyond tensorflow.\nShould include tensorflow and any version pinning has to be compatible with `tensorflow_version`."
+                    "description": "Custom dependencies beyond tensorflow.\nShould include tensorflow and any version pinning has to be compatible with **tensorflow_version**."
                 }
             },
             "required": [
@@ -11607,7 +11470,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "\u2208\ud83d\udce6 The weights file.",
+                    "description": "Source of the weights file.",
                     "title": "Source"
                 },
                 "sha256": {
@@ -11624,7 +11487,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "SHA256 checksum of the source file",
+                    "description": "SHA256 hash value of the **source** file.",
                     "title": "Sha256"
                 },
                 "authors": {
@@ -11764,9 +11627,6 @@
             "properties": {
                 "id": {
                     "const": "zero_mean_unit_variance",
-                    "enum": [
-                        "zero_mean_unit_variance"
-                    ],
                     "title": "Id",
                     "type": "string"
                 },
@@ -11813,7 +11673,7 @@
                 "eps": {
                     "default": 1e-06,
                     "description": "epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.",
-                    "exclusiveMinimum": 0.0,
+                    "exclusiveMinimum": 0,
                     "maximum": 0.1,
                     "title": "Eps",
                     "type": "number"
@@ -11839,24 +11699,26 @@
                 "covers": {
                     "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')",
                     "examples": [
-                        "cover.png"
+                        [
+                            "cover.png"
+                        ]
                     ],
                     "items": {
                         "anyOf": [
-                            {
-                                "format": "file-path",
-                                "title": "AbsoluteFilePath",
-                                "type": "string"
-                            },
-                            {
-                                "$ref": "#/$defs/RelativeFilePath"
-                            },
                             {
                                 "description": "A URL with the HTTP or HTTPS scheme.",
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
                                 "title": "HttpUrl",
+                                "type": "string"
+                            },
+                            {
+                                "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "format": "file-path",
+                                "title": "FilePath",
                                 "type": "string"
                             }
                         ]
@@ -12103,9 +11965,6 @@
                 "format_version": {
                     "const": "0.2.4",
                     "description": "The format version of this resource specification\n(not the `version` of the resource description)\nWhen creating a new resource always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
-                    "enum": [
-                        "0.2.4"
-                    ],
                     "title": "Format Version",
                     "type": "string"
                 },
@@ -12140,7 +11999,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
+                    "description": "URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "examples": [
                         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
                         "README.md"
@@ -12816,9 +12675,6 @@
                 },
                 "type": {
                     "const": "notebook",
-                    "enum": [
-                        "notebook"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -12849,6 +12705,7 @@
                         },
                         {
                             "format": "file-path",
+                            "title": "FilePath",
                             "type": "string"
                         },
                         {
@@ -12888,23 +12745,27 @@
                 },
                 "covers": {
                     "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
-                    "examples": [],
+                    "examples": [
+                        [
+                            "cover.png"
+                        ]
+                    ],
                     "items": {
                         "anyOf": [
-                            {
-                                "format": "file-path",
-                                "title": "AbsoluteFilePath",
-                                "type": "string"
-                            },
-                            {
-                                "$ref": "#/$defs/RelativeFilePath"
-                            },
                             {
                                 "description": "A URL with the HTTP or HTTPS scheme.",
                                 "format": "uri",
                                 "maxLength": 2083,
                                 "minLength": 1,
                                 "title": "HttpUrl",
+                                "type": "string"
+                            },
+                            {
+                                "$ref": "#/$defs/RelativeFilePath"
+                            },
+                            {
+                                "format": "file-path",
+                                "title": "FilePath",
                                 "type": "string"
                             }
                         ]
@@ -13736,40 +13597,41 @@
                 "format_version": {
                     "const": "0.3.0",
                     "description": "The **format** version of this resource specification",
-                    "enum": [
-                        "0.3.0"
-                    ],
                     "title": "Format Version",
                     "type": "string"
                 },
                 "documentation": {
                     "anyOf": [
                         {
-                            "format": "file-path",
-                            "title": "AbsoluteFilePath",
-                            "type": "string"
-                        },
-                        {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "description": "A URL with the HTTP or HTTPS scheme.",
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "title": "HttpUrl",
-                            "type": "string"
+                            "anyOf": [
+                                {
+                                    "description": "A URL with the HTTP or HTTPS scheme.",
+                                    "format": "uri",
+                                    "maxLength": 2083,
+                                    "minLength": 1,
+                                    "title": "HttpUrl",
+                                    "type": "string"
+                                },
+                                {
+                                    "$ref": "#/$defs/RelativeFilePath"
+                                },
+                                {
+                                    "format": "file-path",
+                                    "title": "FilePath",
+                                    "type": "string"
+                                }
+                            ],
+                            "examples": [
+                                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
+                                "README.md"
+                            ]
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "\u2208\ud83d\udce6 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
-                    "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
-                        "README.md"
-                    ],
+                    "description": "URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
                     "title": "Documentation"
                 },
                 "badges": {
@@ -13786,9 +13648,6 @@
                 },
                 "type": {
                     "const": "notebook",
-                    "enum": [
-                        "notebook"
-                    ],
                     "title": "Type",
                     "type": "string"
                 },
@@ -13834,6 +13693,7 @@
                         },
                         {
                             "format": "file-path",
+                            "title": "FilePath",
                             "type": "string"
                         },
                         {

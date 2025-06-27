@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="pdoc 15.0.1"/>
+    <meta name="generator" content="pdoc 15.0.4"/>
     <title>bioimageio.spec._internal.io_basics API documentation</title>
             <link rel="icon" href="https://bioimage.io/static/img/bioimage-io-icon-small.svg"/>
 
@@ -11,7 +11,7 @@
     <style>/*! syntax-highlighting.css */pre{line-height:125%;}span.linenos{color:inherit; background-color:transparent; padding-left:5px; padding-right:20px;}.pdoc-code .hll{background-color:#ffffcc}.pdoc-code{background:#f8f8f8;}.pdoc-code .c{color:#3D7B7B; font-style:italic}.pdoc-code .err{border:1px solid #FF0000}.pdoc-code .k{color:#008000; font-weight:bold}.pdoc-code .o{color:#666666}.pdoc-code .ch{color:#3D7B7B; font-style:italic}.pdoc-code .cm{color:#3D7B7B; font-style:italic}.pdoc-code .cp{color:#9C6500}.pdoc-code .cpf{color:#3D7B7B; font-style:italic}.pdoc-code .c1{color:#3D7B7B; font-style:italic}.pdoc-code .cs{color:#3D7B7B; font-style:italic}.pdoc-code .gd{color:#A00000}.pdoc-code .ge{font-style:italic}.pdoc-code .gr{color:#E40000}.pdoc-code .gh{color:#000080; font-weight:bold}.pdoc-code .gi{color:#008400}.pdoc-code .go{color:#717171}.pdoc-code .gp{color:#000080; font-weight:bold}.pdoc-code .gs{font-weight:bold}.pdoc-code .gu{color:#800080; font-weight:bold}.pdoc-code .gt{color:#0044DD}.pdoc-code .kc{color:#008000; font-weight:bold}.pdoc-code .kd{color:#008000; font-weight:bold}.pdoc-code .kn{color:#008000; font-weight:bold}.pdoc-code .kp{color:#008000}.pdoc-code .kr{color:#008000; font-weight:bold}.pdoc-code .kt{color:#B00040}.pdoc-code .m{color:#666666}.pdoc-code .s{color:#BA2121}.pdoc-code .na{color:#687822}.pdoc-code .nb{color:#008000}.pdoc-code .nc{color:#0000FF; font-weight:bold}.pdoc-code .no{color:#880000}.pdoc-code .nd{color:#AA22FF}.pdoc-code .ni{color:#717171; font-weight:bold}.pdoc-code .ne{color:#CB3F38; font-weight:bold}.pdoc-code .nf{color:#0000FF}.pdoc-code .nl{color:#767600}.pdoc-code .nn{color:#0000FF; font-weight:bold}.pdoc-code .nt{color:#008000; font-weight:bold}.pdoc-code .nv{color:#19177C}.pdoc-code .ow{color:#AA22FF; font-weight:bold}.pdoc-code .w{color:#bbbbbb}.pdoc-code .mb{color:#666666}.pdoc-code .mf{color:#666666}.pdoc-code .mh{color:#666666}.pdoc-code .mi{color:#666666}.pdoc-code .mo{color:#666666}.pdoc-code .sa{color:#BA2121}.pdoc-code .sb{color:#BA2121}.pdoc-code .sc{color:#BA2121}.pdoc-code .dl{color:#BA2121}.pdoc-code .sd{color:#BA2121; font-style:italic}.pdoc-code .s2{color:#BA2121}.pdoc-code .se{color:#AA5D1F; font-weight:bold}.pdoc-code .sh{color:#BA2121}.pdoc-code .si{color:#A45A77; font-weight:bold}.pdoc-code .sx{color:#008000}.pdoc-code .sr{color:#A45A77}.pdoc-code .s1{color:#BA2121}.pdoc-code .ss{color:#19177C}.pdoc-code .bp{color:#008000}.pdoc-code .fm{color:#0000FF}.pdoc-code .vc{color:#19177C}.pdoc-code .vg{color:#19177C}.pdoc-code .vi{color:#19177C}.pdoc-code .vm{color:#19177C}.pdoc-code .il{color:#666666}</style>
     <style>/*! theme.css */:root{--pdoc-background:#fff;}.pdoc{--text:#212529;--muted:#6c757d;--link:#3660a5;--link-hover:#1659c5;--code:#f8f8f8;--active:#fff598;--accent:#eee;--accent2:#c1c1c1;--nav-hover:rgba(255, 255, 255, 0.5);--name:#0066BB;--def:#008800;--annotation:#007020;}</style>
     <style>/*! layout.css */html, body{width:100%;height:100%;}html, main{scroll-behavior:smooth;}body{background-color:var(--pdoc-background);}@media (max-width:769px){#navtoggle{cursor:pointer;position:absolute;width:50px;height:40px;top:1rem;right:1rem;border-color:var(--text);color:var(--text);display:flex;opacity:0.8;z-index:999;}#navtoggle:hover{opacity:1;}#togglestate + div{display:none;}#togglestate:checked + div{display:inherit;}main, header{padding:2rem 3vw;}header + main{margin-top:-3rem;}.git-button{display:none !important;}nav input[type="search"]{max-width:77%;}nav input[type="search"]:first-child{margin-top:-6px;}nav input[type="search"]:valid ~ *{display:none !important;}}@media (min-width:770px){:root{--sidebar-width:clamp(12.5rem, 28vw, 22rem);}nav{position:fixed;overflow:auto;height:100vh;width:var(--sidebar-width);}main, header{padding:3rem 2rem 3rem calc(var(--sidebar-width) + 3rem);width:calc(54rem + var(--sidebar-width));max-width:100%;}header + main{margin-top:-4rem;}#navtoggle{display:none;}}#togglestate{position:absolute;height:0;opacity:0;}nav.pdoc{--pad:clamp(0.5rem, 2vw, 1.75rem);--indent:1.5rem;background-color:var(--accent);border-right:1px solid var(--accent2);box-shadow:0 0 20px rgba(50, 50, 50, .2) inset;padding:0 0 0 var(--pad);overflow-wrap:anywhere;scrollbar-width:thin; scrollbar-color:var(--accent2) transparent; z-index:1}nav.pdoc::-webkit-scrollbar{width:.4rem; }nav.pdoc::-webkit-scrollbar-thumb{background-color:var(--accent2); }nav.pdoc > div{padding:var(--pad) 0;}nav.pdoc .module-list-button{display:inline-flex;align-items:center;color:var(--text);border-color:var(--muted);margin-bottom:1rem;}nav.pdoc .module-list-button:hover{border-color:var(--text);}nav.pdoc input[type=search]{display:block;outline-offset:0;width:calc(100% - var(--pad));}nav.pdoc .logo{max-width:calc(100% - var(--pad));max-height:35vh;display:block;margin:0 auto 1rem;transform:translate(calc(-.5 * var(--pad)), 0);}nav.pdoc ul{list-style:none;padding-left:0;}nav.pdoc > div > ul{margin-left:calc(0px - var(--pad));}nav.pdoc li a{padding:.2rem 0 .2rem calc(var(--pad) + var(--indent));}nav.pdoc > div > ul > li > a{padding-left:var(--pad);}nav.pdoc li{transition:all 100ms;}nav.pdoc li:hover{background-color:var(--nav-hover);}nav.pdoc a, nav.pdoc a:hover{color:var(--text);}nav.pdoc a{display:block;}nav.pdoc > h2:first-of-type{margin-top:1.5rem;}nav.pdoc .class:before{content:"class ";color:var(--muted);}nav.pdoc .function:after{content:"()";color:var(--muted);}nav.pdoc footer:before{content:"";display:block;width:calc(100% - var(--pad));border-top:solid var(--accent2) 1px;margin-top:1.5rem;padding-top:.5rem;}nav.pdoc footer{font-size:small;}</style>
-    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{cursor:pointer;display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .alert{padding:1rem 1rem 1rem calc(1.5rem + 24px);border:1px solid transparent;border-radius:.25rem;background-repeat:no-repeat;background-position:.75rem center;margin-bottom:1rem;}.pdoc .alert > em{display:none;}.pdoc .alert > *:last-child{margin-bottom:0;}.pdoc .alert.note {color:#084298;background-color:#cfe2ff;border-color:#b6d4fe;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23084298%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2016A8%208%200%201%200%208%200a8%208%200%200%200%200%2016zm.93-9.412-1%204.705c-.07.34.029.533.304.533.194%200%20.487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703%200-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381%202.29-.287zM8%205.5a1%201%200%201%201%200-2%201%201%200%200%201%200%202z%22/%3E%3C/svg%3E");}.pdoc .alert.warning{color:#664d03;background-color:#fff3cd;border-color:#ffecb5;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23664d03%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8.982%201.566a1.13%201.13%200%200%200-1.96%200L.165%2013.233c-.457.778.091%201.767.98%201.767h13.713c.889%200%201.438-.99.98-1.767L8.982%201.566zM8%205c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%205.995A.905.905%200%200%201%208%205zm.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2z%22/%3E%3C/svg%3E");}.pdoc .alert.danger{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5.52.359A.5.5%200%200%201%206%200h4a.5.5%200%200%201%20.474.658L8.694%206H12.5a.5.5%200%200%201%20.395.807l-7%209a.5.5%200%200%201-.873-.454L6.823%209.5H3.5a.5.5%200%200%201-.48-.641l2.5-8.5z%22/%3E%3C/svg%3E");}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc > section:not(.module-info) h1{font-size:1.5rem;font-weight:500;}.pdoc > section:not(.module-info) h2{font-size:1.4rem;font-weight:500;}.pdoc > section:not(.module-info) h3{font-size:1.3rem;font-weight:500;}.pdoc > section:not(.module-info) h4{font-size:1.2rem;}.pdoc > section:not(.module-info) h5{font-size:1.1rem;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--accent);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc > section:not(.module-info){margin-bottom:1.5rem;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.view-source-toggle-state,.view-source-toggle-state ~ .pdoc-code{display:none;}.view-source-toggle-state:checked ~ .pdoc-code{display:block;}.view-source-button{display:inline-block;float:right;font-size:.75rem;line-height:1.5rem;color:var(--muted);padding:0 .4rem 0 1.3rem;cursor:pointer;text-indent:-2px;}.view-source-button > span{visibility:hidden;}.module-info .view-source-button{float:none;display:flex;justify-content:flex-end;margin:-1.2rem .4rem -.2rem 0;}.view-source-button::before{position:absolute;content:"View Source";display:list-item;list-style-type:disclosure-closed;}.view-source-toggle-state:checked ~ .attr .view-source-button::before,.view-source-toggle-state:checked ~ .view-source-button::before{list-style-type:disclosure-open;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc section:not(.module-info) .docstring{margin-left:clamp(0rem, 5vw - 2rem, 1rem);}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target,.pdoc .pdoc-code > pre > span:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc .pdoc-code > pre > span:target{display:block;}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc *{scroll-margin:2rem;}.pdoc .pdoc-code .linenos{user-select:none;}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc section, .pdoc .classattr{position:relative;}.pdoc .headerlink{--width:clamp(1rem, 3vw, 2rem);position:absolute;top:0;left:calc(0rem - var(--width));transition:all 100ms ease-in-out;opacity:0;}.pdoc .headerlink::before{content:"#";display:block;text-align:center;width:var(--width);height:2.3rem;line-height:2.3rem;font-size:1.5rem;}.pdoc .attr:hover ~ .headerlink,.pdoc *:target > .headerlink,.pdoc .headerlink:hover{opacity:1;}.pdoc .attr{display:block;margin:.5rem 0 .5rem;padding:.4rem .4rem .4rem 1rem;background-color:var(--accent);overflow-x:auto;}.pdoc .classattr{margin-left:2rem;}.pdoc .decorator-deprecated{color:#842029;}.pdoc .decorator-deprecated ~ span{filter:grayscale(1) opacity(0.8);}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{background-color:transparent;}.pdoc .param, .pdoc .return-annotation{white-space:pre;}.pdoc .signature.multiline .param{display:block;}.pdoc .signature.condensed .param{display:inline-block;}.pdoc .annotation{color:var(--annotation);}.pdoc .view-value-toggle-state,.pdoc .view-value-toggle-state ~ .default_value{display:none;}.pdoc .view-value-toggle-state:checked ~ .default_value{display:inherit;}.pdoc .view-value-button{font-size:.5rem;vertical-align:middle;border-style:dashed;margin-top:-0.1rem;}.pdoc .view-value-button:hover{background:white;}.pdoc .view-value-button::before{content:"show";text-align:center;width:2.2em;display:inline-block;}.pdoc .view-value-toggle-state:checked ~ .view-value-button::before{content:"hide";}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
+    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{cursor:pointer;display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .alert{padding:1rem 1rem 1rem calc(1.5rem + 24px);border:1px solid transparent;border-radius:.25rem;background-repeat:no-repeat;background-position:.75rem center;margin-bottom:1rem;}.pdoc .alert > em{display:none;}.pdoc .alert > *:last-child{margin-bottom:0;}.pdoc .alert.note{color:#084298;background-color:#cfe2ff;border-color:#b6d4fe;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23084298%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2016A8%208%200%201%200%208%200a8%208%200%200%200%200%2016zm.93-9.412-1%204.705c-.07.34.029.533.304.533.194%200%20.487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703%200-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381%202.29-.287zM8%205.5a1%201%200%201%201%200-2%201%201%200%200%201%200%202z%22/%3E%3C/svg%3E");}.pdoc .alert.tip{color:#0a3622;background-color:#d1e7dd;border-color:#a3cfbb;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%230a3622%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2%206a6%206%200%201%201%2010.174%204.31c-.203.196-.359.4-.453.619l-.762%201.769A.5.5%200%200%201%2010.5%2013a.5.5%200%200%201%200%201%20.5.5%200%200%201%200%201l-.224.447a1%201%200%200%201-.894.553H6.618a1%201%200%200%201-.894-.553L5.5%2015a.5.5%200%200%201%200-1%20.5.5%200%200%201%200-1%20.5.5%200%200%201-.46-.302l-.761-1.77a2%202%200%200%200-.453-.618A5.98%205.98%200%200%201%202%206m6-5a5%205%200%200%200-3.479%208.592c.263.254.514.564.676.941L5.83%2012h4.342l.632-1.467c.162-.377.413-.687.676-.941A5%205%200%200%200%208%201%22/%3E%3C/svg%3E");}.pdoc .alert.important{color:#055160;background-color:#cff4fc;border-color:#9eeaf9;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23055160%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2%200a2%202%200%200%200-2%202v12a2%202%200%200%200%202%202h12a2%202%200%200%200%202-2V2a2%202%200%200%200-2-2zm6%204c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%204.995A.905.905%200%200%201%208%204m.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2%22/%3E%3C/svg%3E");}.pdoc .alert.warning{color:#664d03;background-color:#fff3cd;border-color:#ffecb5;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23664d03%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8.982%201.566a1.13%201.13%200%200%200-1.96%200L.165%2013.233c-.457.778.091%201.767.98%201.767h13.713c.889%200%201.438-.99.98-1.767L8.982%201.566zM8%205c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%205.995A.905.905%200%200%201%208%205zm.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2z%22/%3E%3C/svg%3E");}.pdoc .alert.caution{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M11.46.146A.5.5%200%200%200%2011.107%200H4.893a.5.5%200%200%200-.353.146L.146%204.54A.5.5%200%200%200%200%204.893v6.214a.5.5%200%200%200%20.146.353l4.394%204.394a.5.5%200%200%200%20.353.146h6.214a.5.5%200%200%200%20.353-.146l4.394-4.394a.5.5%200%200%200%20.146-.353V4.893a.5.5%200%200%200-.146-.353zM8%204c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%204.995A.905.905%200%200%201%208%204m.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2%22/%3E%3C/svg%3E");}.pdoc .alert.danger{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5.52.359A.5.5%200%200%201%206%200h4a.5.5%200%200%201%20.474.658L8.694%206H12.5a.5.5%200%200%201%20.395.807l-7%209a.5.5%200%200%201-.873-.454L6.823%209.5H3.5a.5.5%200%200%201-.48-.641l2.5-8.5z%22/%3E%3C/svg%3E");}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc > section:not(.module-info) h1{font-size:1.5rem;font-weight:500;}.pdoc > section:not(.module-info) h2{font-size:1.4rem;font-weight:500;}.pdoc > section:not(.module-info) h3{font-size:1.3rem;font-weight:500;}.pdoc > section:not(.module-info) h4{font-size:1.2rem;}.pdoc > section:not(.module-info) h5{font-size:1.1rem;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--accent);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc > section:not(.module-info){margin-bottom:1.5rem;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.view-source-toggle-state,.view-source-toggle-state ~ .pdoc-code{display:none;}.view-source-toggle-state:checked ~ .pdoc-code{display:block;}.view-source-button{display:inline-block;float:right;font-size:.75rem;line-height:1.5rem;color:var(--muted);padding:0 .4rem 0 1.3rem;cursor:pointer;text-indent:-2px;}.view-source-button > span{visibility:hidden;}.module-info .view-source-button{float:none;display:flex;justify-content:flex-end;margin:-1.2rem .4rem -.2rem 0;}.view-source-button::before{position:absolute;content:"View Source";display:list-item;list-style-type:disclosure-closed;}.view-source-toggle-state:checked ~ .attr .view-source-button::before,.view-source-toggle-state:checked ~ .view-source-button::before{list-style-type:disclosure-open;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc section:not(.module-info) .docstring{margin-left:clamp(0rem, 5vw - 2rem, 1rem);}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target,.pdoc .pdoc-code > pre > span:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc .pdoc-code > pre > span:target{display:block;}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc *{scroll-margin:2rem;}.pdoc .pdoc-code .linenos{user-select:none;}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc section, .pdoc .classattr{position:relative;}.pdoc .headerlink{--width:clamp(1rem, 3vw, 2rem);position:absolute;top:0;left:calc(0rem - var(--width));transition:all 100ms ease-in-out;opacity:0;}.pdoc .headerlink::before{content:"#";display:block;text-align:center;width:var(--width);height:2.3rem;line-height:2.3rem;font-size:1.5rem;}.pdoc .attr:hover ~ .headerlink,.pdoc *:target > .headerlink,.pdoc .headerlink:hover{opacity:1;}.pdoc .attr{display:block;margin:.5rem 0 .5rem;padding:.4rem .4rem .4rem 1rem;background-color:var(--accent);overflow-x:auto;}.pdoc .classattr{margin-left:2rem;}.pdoc .decorator-deprecated{color:#842029;}.pdoc .decorator-deprecated ~ span{filter:grayscale(1) opacity(0.8);}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{background-color:transparent;}.pdoc .param, .pdoc .return-annotation{white-space:pre;}.pdoc .signature.multiline .param{display:block;}.pdoc .signature.condensed .param{display:inline-block;}.pdoc .annotation{color:var(--annotation);}.pdoc .view-value-toggle-state,.pdoc .view-value-toggle-state ~ .default_value{display:none;}.pdoc .view-value-toggle-state:checked ~ .default_value{display:inherit;}.pdoc .view-value-button{font-size:.5rem;vertical-align:middle;border-style:dashed;margin-top:-0.1rem;}.pdoc .view-value-button:hover{background:white;}.pdoc .view-value-button::before{content:"show";text-align:center;width:2.2em;display:inline-block;}.pdoc .view-value-toggle-state:checked ~ .view-value-button::before{content:"hide";}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:35px;vertical-align:middle;width:70px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
     <style>/*! custom.css */</style></head>
 <body>
     <nav class="pdoc">
@@ -65,10 +65,97 @@
                 </ul>
 
             </li>
+            <li>
+                    <a class="class" href="#BytesReaderP">BytesReaderP</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#BytesReaderP.__init__">BytesReaderP</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BytesReaderP.read">read</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#BytesReaderP.closed">closed</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BytesReaderP.readable">readable</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BytesReaderP.seek">seek</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BytesReaderP.seekable">seekable</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BytesReaderP.tell">tell</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#BytesReaderIntoP">BytesReaderIntoP</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#BytesReaderIntoP.readinto">readinto</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="variable" href="#Suffix">Suffix</a>
+            </li>
+            <li>
+                    <a class="class" href="#BytesReader">BytesReader</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#BytesReader.__init__">BytesReader</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#BytesReader.is_zipfile">is_zipfile</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#BytesReader.sha256">sha256</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#BytesReader.suffix">suffix</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#BytesReader.original_file_name">original_file_name</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#BytesReader.original_root">original_root</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BytesReader.read">read</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BytesReader.read_text">read_text</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BytesReader.readable">readable</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BytesReader.seek">seek</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BytesReader.seekable">seekable</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BytesReader.tell">tell</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#BytesReader.closed">closed</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="function" href="#get_sha256">get_sha256</a>
+            </li>
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.4.2</footer>
+            <footer>bioimageio.spec 0.5.4.3</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -87,48 +174,175 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
                         <label class="view-source-button" for="mod-io_basics-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Type</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pydantic</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">zipp</span>  <span class="c1"># pyright: ignore[reportMissingTypeStubs]</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">annotated_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Predicate</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">RootModel</span><span class="p">,</span> <span class="n">StringConstraints</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.validated_string</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidatedString</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="n">FileName</span> <span class="o">=</span> <span class="nb">str</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="n">FilePath</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">pydantic</span><span class="o">.</span><span class="n">FilePath</span><span class="p">,</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;FilePath&quot;</span><span class="p">)]</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="n">AbsoluteDirectory</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="n">pydantic</span><span class="o">.</span><span class="n">DirectoryPath</span><span class="p">,</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="n">Predicate</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">),</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="n">pydantic</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;AbsoluteDirectory&quot;</span><span class="p">),</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="p">]</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="n">AbsoluteFilePath</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">pydantic</span><span class="o">.</span><span class="n">FilePath</span><span class="p">,</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">Predicate</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">),</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="n">pydantic</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;AbsoluteFilePath&quot;</span><span class="p">),</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="p">]</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="n">BIOIMAGEIO_YAML</span> <span class="o">=</span> <span class="s2">&quot;rdf.yaml&quot;</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;bioimageio.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;model.yaml&quot;</span><span class="p">)</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="n">ALL_BIOIMAGEIO_YAML_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="n">BIOIMAGEIO_YAML</span><span class="p">,)</span> <span class="o">+</span> <span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="n">ZipPath</span> <span class="o">=</span> <span class="n">zipp</span><span class="o">.</span><span class="n">Path</span>  <span class="c1"># not zipfile.Path due to https://bugs.python.org/issue40564</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Sha256</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A SHA-256 hash value&quot;&quot;&quot;</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>        <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>            <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>            <span class="n">StringConstraints</span><span class="p">(</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>                <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">64</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>            <span class="p">),</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="p">]</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="p">]</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">nullcontext</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">runtime_checkable</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">zipfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZipFile</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">pydantic</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">zipp</span>  <span class="c1"># pyright: ignore[reportMissingTypeStubs]</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">annotated_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Predicate</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">RootModel</span><span class="p">,</span> <span class="n">StringConstraints</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.root_url</span><span class="w"> </span><span class="kn">import</span> <span class="n">RootHttpUrl</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.validated_string</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidatedString</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="n">FileName</span> <span class="o">=</span> <span class="nb">str</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="n">FilePath</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">pydantic</span><span class="o">.</span><span class="n">FilePath</span><span class="p">,</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;FilePath&quot;</span><span class="p">)]</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="n">AbsoluteDirectory</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="n">pydantic</span><span class="o">.</span><span class="n">DirectoryPath</span><span class="p">,</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">Predicate</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">),</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="n">pydantic</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;AbsoluteDirectory&quot;</span><span class="p">),</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="p">]</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="n">AbsoluteFilePath</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="n">pydantic</span><span class="o">.</span><span class="n">FilePath</span><span class="p">,</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>    <span class="n">Predicate</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">),</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="n">pydantic</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;AbsoluteFilePath&quot;</span><span class="p">),</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="p">]</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="n">BIOIMAGEIO_YAML</span> <span class="o">=</span> <span class="s2">&quot;rdf.yaml&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;bioimageio.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;model.yaml&quot;</span><span class="p">)</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="n">ALL_BIOIMAGEIO_YAML_NAMES</span> <span class="o">=</span> <span class="p">(</span><span class="n">BIOIMAGEIO_YAML</span><span class="p">,)</span> <span class="o">+</span> <span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="n">ZipPath</span> <span class="o">=</span> <span class="n">zipp</span><span class="o">.</span><span class="n">Path</span>  <span class="c1"># not zipfile.Path due to https://bugs.python.org/issue40564</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Sha256</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A SHA-256 hash value&quot;&quot;&quot;</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>        <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>            <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>            <span class="n">StringConstraints</span><span class="p">(</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>                <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">64</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>            <span class="p">),</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>        <span class="p">]</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="p">]</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BytesReaderP</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="nd">@property</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">closed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">readable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">whence</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_SET</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seekable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="nd">@runtime_checkable</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BytesReaderIntoP</span><span class="p">(</span><span class="n">BytesReaderP</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">):</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">readinto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytearray</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="n">Suffix</span> <span class="o">=</span> <span class="nb">str</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BytesReader</span><span class="p">(</span><span class="n">BytesReaderP</span><span class="p">):</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>        <span class="o">/</span><span class="p">,</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>        <span class="n">reader</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BytesReaderP</span><span class="p">,</span> <span class="n">BytesReaderIntoP</span><span class="p">],</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>        <span class="o">*</span><span class="p">,</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>        <span class="n">sha256</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sha256</span><span class="p">],</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>        <span class="n">suffix</span><span class="p">:</span> <span class="n">Suffix</span><span class="p">,</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>        <span class="n">original_file_name</span><span class="p">:</span> <span class="n">FileName</span><span class="p">,</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>        <span class="n">original_root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RootHttpUrl</span><span class="p">,</span> <span class="n">AbsoluteDirectory</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">],</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="n">is_zipfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">reader</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_sha256</span> <span class="o">=</span> <span class="n">sha256</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_suffix</span> <span class="o">=</span> <span class="n">suffix</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_original_file_name</span> <span class="o">=</span> <span class="n">original_file_name</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_original_root</span> <span class="o">=</span> <span class="n">original_root</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_is_zipfile</span> <span class="o">=</span> <span class="n">is_zipfile</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="nd">@property</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_zipfile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_zipfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>            <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_is_zipfile</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">is_zipfile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_zipfile</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>    <span class="nd">@property</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sha256</span><span class="p">:</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sha256</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>            <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_sha256</span> <span class="o">=</span> <span class="n">get_sha256</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="p">)</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sha256</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>    <span class="nd">@property</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Suffix</span><span class="p">:</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_suffix</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="nd">@property</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">original_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileName</span><span class="p">:</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_file_name</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="nd">@property</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">original_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RootHttpUrl</span><span class="p">,</span> <span class="n">AbsoluteDirectory</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">]:</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_root</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">readable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">whence</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_SET</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">whence</span><span class="p">)</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seekable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>    <span class="nd">@property</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">closed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">closed</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_sha256</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BytesReaderP</span><span class="p">,</span> <span class="n">BytesReaderIntoP</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Sha256</span><span class="p">:</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="n">chunksize</span> <span class="o">=</span> <span class="mi">128</span> <span class="o">*</span> <span class="mi">1024</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">BytesReaderIntoP</span><span class="p">):</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>        <span class="n">b</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">chunksize</span><span class="p">)</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>        <span class="n">mv</span> <span class="o">=</span> <span class="nb">memoryview</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">readinto</span><span class="p">(</span><span class="n">mv</span><span class="p">),</span> <span class="mi">0</span><span class="p">):</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>            <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mv</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>            <span class="n">read_ctxt</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>            <span class="n">read_ctxt</span> <span class="o">=</span> <span class="n">nullcontext</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>        <span class="k">with</span> <span class="n">read_ctxt</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">read</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">),</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>                <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>    <span class="k">return</span> <span class="n">Sha256</span><span class="p">(</span><span class="n">sha</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -243,17 +457,17 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
     </div>
     <a class="headerlink" href="#Sha256"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Sha256-33"><a href="#Sha256-33"><span class="linenos">33</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Sha256</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
-</span><span id="Sha256-34"><a href="#Sha256-34"><span class="linenos">34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A SHA-256 hash value&quot;&quot;&quot;</span>
-</span><span id="Sha256-35"><a href="#Sha256-35"><span class="linenos">35</span></a>
-</span><span id="Sha256-36"><a href="#Sha256-36"><span class="linenos">36</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
-</span><span id="Sha256-37"><a href="#Sha256-37"><span class="linenos">37</span></a>        <span class="n">Annotated</span><span class="p">[</span>
-</span><span id="Sha256-38"><a href="#Sha256-38"><span class="linenos">38</span></a>            <span class="nb">str</span><span class="p">,</span>
-</span><span id="Sha256-39"><a href="#Sha256-39"><span class="linenos">39</span></a>            <span class="n">StringConstraints</span><span class="p">(</span>
-</span><span id="Sha256-40"><a href="#Sha256-40"><span class="linenos">40</span></a>                <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">64</span>
-</span><span id="Sha256-41"><a href="#Sha256-41"><span class="linenos">41</span></a>            <span class="p">),</span>
-</span><span id="Sha256-42"><a href="#Sha256-42"><span class="linenos">42</span></a>        <span class="p">]</span>
-</span><span id="Sha256-43"><a href="#Sha256-43"><span class="linenos">43</span></a>    <span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Sha256-40"><a href="#Sha256-40"><span class="linenos">40</span></a><span class="k">class</span><span class="w"> </span><span class="nc">Sha256</span><span class="p">(</span><span class="n">ValidatedString</span><span class="p">):</span>
+</span><span id="Sha256-41"><a href="#Sha256-41"><span class="linenos">41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A SHA-256 hash value&quot;&quot;&quot;</span>
+</span><span id="Sha256-42"><a href="#Sha256-42"><span class="linenos">42</span></a>
+</span><span id="Sha256-43"><a href="#Sha256-43"><span class="linenos">43</span></a>    <span class="n">root_model</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RootModel</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">RootModel</span><span class="p">[</span>
+</span><span id="Sha256-44"><a href="#Sha256-44"><span class="linenos">44</span></a>        <span class="n">Annotated</span><span class="p">[</span>
+</span><span id="Sha256-45"><a href="#Sha256-45"><span class="linenos">45</span></a>            <span class="nb">str</span><span class="p">,</span>
+</span><span id="Sha256-46"><a href="#Sha256-46"><span class="linenos">46</span></a>            <span class="n">StringConstraints</span><span class="p">(</span>
+</span><span id="Sha256-47"><a href="#Sha256-47"><span class="linenos">47</span></a>                <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">to_lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">64</span>
+</span><span id="Sha256-48"><a href="#Sha256-48"><span class="linenos">48</span></a>            <span class="p">),</span>
+</span><span id="Sha256-49"><a href="#Sha256-49"><span class="linenos">49</span></a>        <span class="p">]</span>
+</span><span id="Sha256-50"><a href="#Sha256-50"><span class="linenos">50</span></a>    <span class="p">]</span>
 </span></pre></div>
 
 
@@ -275,6 +489,748 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 
 
                             </div>
+                </section>
+                <section id="BytesReaderP">
+                            <input id="BytesReaderP-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">BytesReaderP</span><wbr>(<span class="base">typing.Protocol</span>):
+
+                <label class="view-source-button" for="BytesReaderP-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReaderP"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReaderP-53"><a href="#BytesReaderP-53"><span class="linenos">53</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BytesReaderP</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="BytesReaderP-54"><a href="#BytesReaderP-54"><span class="linenos">54</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="BytesReaderP-55"><a href="#BytesReaderP-55"><span class="linenos">55</span></a>
+</span><span id="BytesReaderP-56"><a href="#BytesReaderP-56"><span class="linenos">56</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReaderP-57"><a href="#BytesReaderP-57"><span class="linenos">57</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">closed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="BytesReaderP-58"><a href="#BytesReaderP-58"><span class="linenos">58</span></a>
+</span><span id="BytesReaderP-59"><a href="#BytesReaderP-59"><span class="linenos">59</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">readable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="BytesReaderP-60"><a href="#BytesReaderP-60"><span class="linenos">60</span></a>
+</span><span id="BytesReaderP-61"><a href="#BytesReaderP-61"><span class="linenos">61</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">whence</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_SET</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="BytesReaderP-62"><a href="#BytesReaderP-62"><span class="linenos">62</span></a>
+</span><span id="BytesReaderP-63"><a href="#BytesReaderP-63"><span class="linenos">63</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seekable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="BytesReaderP-64"><a href="#BytesReaderP-64"><span class="linenos">64</span></a>
+</span><span id="BytesReaderP-65"><a href="#BytesReaderP-65"><span class="linenos">65</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Base class for protocol classes.</p>
+
+<p>Protocol classes are defined as::</p>
+
+<pre><code>class Proto(Protocol):
+    def meth(self) -&gt; int:
+        ...
+</code></pre>
+
+<p>Such classes are primarily used with static type checkers that recognize
+structural subtyping (static duck-typing).</p>
+
+<p>For example::</p>
+
+<pre><code>class C:
+    def meth(self) -&gt; int:
+        return 0
+
+def func(x: Proto) -&gt; int:
+    return x.meth()
+
+func(C())  # Passes static type check
+</code></pre>
+
+<p>See PEP 544 for details. Protocol classes decorated with
+@typing.runtime_checkable act as simple-minded runtime protocols that check
+only the presence of given attributes, ignoring their type signatures.
+Protocol classes can be generic, they are defined as::</p>
+
+<pre><code>class GenProto[T](Protocol):
+    def meth(self) -&gt; T:
+        ...
+</code></pre>
+</div>
+
+
+                            <div id="BytesReaderP.__init__" class="classattr">
+                                        <input id="BytesReaderP.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">BytesReaderP</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">args</span>, </span><span class="param"><span class="o">**</span><span class="n">kwargs</span></span>)</span>
+
+                <label class="view-source-button" for="BytesReaderP.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReaderP.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReaderP.__init__-1771"><a href="#BytesReaderP.__init__-1771"><span class="linenos">1771</span></a><span class="k">def</span><span class="w"> </span><span class="nf">_no_init_or_replace_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="BytesReaderP.__init__-1772"><a href="#BytesReaderP.__init__-1772"><span class="linenos">1772</span></a>    <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="BytesReaderP.__init__-1773"><a href="#BytesReaderP.__init__-1773"><span class="linenos">1773</span></a>
+</span><span id="BytesReaderP.__init__-1774"><a href="#BytesReaderP.__init__-1774"><span class="linenos">1774</span></a>    <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_is_protocol</span><span class="p">:</span>
+</span><span id="BytesReaderP.__init__-1775"><a href="#BytesReaderP.__init__-1775"><span class="linenos">1775</span></a>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Protocols cannot be instantiated&#39;</span><span class="p">)</span>
+</span><span id="BytesReaderP.__init__-1776"><a href="#BytesReaderP.__init__-1776"><span class="linenos">1776</span></a>
+</span><span id="BytesReaderP.__init__-1777"><a href="#BytesReaderP.__init__-1777"><span class="linenos">1777</span></a>    <span class="c1"># Already using a custom `__init__`. No need to calculate correct</span>
+</span><span id="BytesReaderP.__init__-1778"><a href="#BytesReaderP.__init__-1778"><span class="linenos">1778</span></a>    <span class="c1"># `__init__` to call. This can lead to RecursionError. See bpo-45121.</span>
+</span><span id="BytesReaderP.__init__-1779"><a href="#BytesReaderP.__init__-1779"><span class="linenos">1779</span></a>    <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_no_init_or_replace_init</span><span class="p">:</span>
+</span><span id="BytesReaderP.__init__-1780"><a href="#BytesReaderP.__init__-1780"><span class="linenos">1780</span></a>        <span class="k">return</span>
+</span><span id="BytesReaderP.__init__-1781"><a href="#BytesReaderP.__init__-1781"><span class="linenos">1781</span></a>
+</span><span id="BytesReaderP.__init__-1782"><a href="#BytesReaderP.__init__-1782"><span class="linenos">1782</span></a>    <span class="c1"># Initially, `__init__` of a protocol subclass is set to `_no_init_or_replace_init`.</span>
+</span><span id="BytesReaderP.__init__-1783"><a href="#BytesReaderP.__init__-1783"><span class="linenos">1783</span></a>    <span class="c1"># The first instantiation of the subclass will call `_no_init_or_replace_init` which</span>
+</span><span id="BytesReaderP.__init__-1784"><a href="#BytesReaderP.__init__-1784"><span class="linenos">1784</span></a>    <span class="c1"># searches for a proper new `__init__` in the MRO. The new `__init__`</span>
+</span><span id="BytesReaderP.__init__-1785"><a href="#BytesReaderP.__init__-1785"><span class="linenos">1785</span></a>    <span class="c1"># replaces the subclass&#39; old `__init__` (ie `_no_init_or_replace_init`). Subsequent</span>
+</span><span id="BytesReaderP.__init__-1786"><a href="#BytesReaderP.__init__-1786"><span class="linenos">1786</span></a>    <span class="c1"># instantiation of the protocol subclass will thus use the new</span>
+</span><span id="BytesReaderP.__init__-1787"><a href="#BytesReaderP.__init__-1787"><span class="linenos">1787</span></a>    <span class="c1"># `__init__` and no longer call `_no_init_or_replace_init`.</span>
+</span><span id="BytesReaderP.__init__-1788"><a href="#BytesReaderP.__init__-1788"><span class="linenos">1788</span></a>    <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">:</span>
+</span><span id="BytesReaderP.__init__-1789"><a href="#BytesReaderP.__init__-1789"><span class="linenos">1789</span></a>        <span class="n">init</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="n">_no_init_or_replace_init</span><span class="p">)</span>
+</span><span id="BytesReaderP.__init__-1790"><a href="#BytesReaderP.__init__-1790"><span class="linenos">1790</span></a>        <span class="k">if</span> <span class="n">init</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_no_init_or_replace_init</span><span class="p">:</span>
+</span><span id="BytesReaderP.__init__-1791"><a href="#BytesReaderP.__init__-1791"><span class="linenos">1791</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="n">init</span>
+</span><span id="BytesReaderP.__init__-1792"><a href="#BytesReaderP.__init__-1792"><span class="linenos">1792</span></a>            <span class="k">break</span>
+</span><span id="BytesReaderP.__init__-1793"><a href="#BytesReaderP.__init__-1793"><span class="linenos">1793</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="BytesReaderP.__init__-1794"><a href="#BytesReaderP.__init__-1794"><span class="linenos">1794</span></a>        <span class="c1"># should not happen</span>
+</span><span id="BytesReaderP.__init__-1795"><a href="#BytesReaderP.__init__-1795"><span class="linenos">1795</span></a>        <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__init__</span>
+</span><span id="BytesReaderP.__init__-1796"><a href="#BytesReaderP.__init__-1796"><span class="linenos">1796</span></a>
+</span><span id="BytesReaderP.__init__-1797"><a href="#BytesReaderP.__init__-1797"><span class="linenos">1797</span></a>    <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReaderP.read" class="classattr">
+                                        <input id="BytesReaderP.read-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">read</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>, </span><span class="param"><span class="o">/</span></span><span class="return-annotation">) -> <span class="nb">bytes</span>:</span></span>
+
+                <label class="view-source-button" for="BytesReaderP.read-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReaderP.read"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReaderP.read-54"><a href="#BytesReaderP.read-54"><span class="linenos">54</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span> <span class="o">...</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReaderP.closed" class="classattr">
+                                        <input id="BytesReaderP.closed-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">closed</span><span class="annotation">: bool</span>
+
+                <label class="view-source-button" for="BytesReaderP.closed-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReaderP.closed"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReaderP.closed-56"><a href="#BytesReaderP.closed-56"><span class="linenos">56</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReaderP.closed-57"><a href="#BytesReaderP.closed-57"><span class="linenos">57</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">closed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReaderP.readable" class="classattr">
+                                        <input id="BytesReaderP.readable-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">readable</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+                <label class="view-source-button" for="BytesReaderP.readable-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReaderP.readable"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReaderP.readable-59"><a href="#BytesReaderP.readable-59"><span class="linenos">59</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">readable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReaderP.seek" class="classattr">
+                                        <input id="BytesReaderP.seek-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">seek</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">offset</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">whence</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>, </span><span class="param"><span class="o">/</span></span><span class="return-annotation">) -> <span class="nb">int</span>:</span></span>
+
+                <label class="view-source-button" for="BytesReaderP.seek-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReaderP.seek"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReaderP.seek-61"><a href="#BytesReaderP.seek-61"><span class="linenos">61</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">whence</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_SET</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReaderP.seekable" class="classattr">
+                                        <input id="BytesReaderP.seekable-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">seekable</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+                <label class="view-source-button" for="BytesReaderP.seekable-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReaderP.seekable"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReaderP.seekable-63"><a href="#BytesReaderP.seekable-63"><span class="linenos">63</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seekable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReaderP.tell" class="classattr">
+                                        <input id="BytesReaderP.tell-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">tell</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">int</span>:</span></span>
+
+                <label class="view-source-button" for="BytesReaderP.tell-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReaderP.tell"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReaderP.tell-65"><a href="#BytesReaderP.tell-65"><span class="linenos">65</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="BytesReaderIntoP">
+                            <input id="BytesReaderIntoP-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+                    <div class="decorator decorator-runtime_checkable">@runtime_checkable</div>
+
+    <span class="def">class</span>
+    <span class="name">BytesReaderIntoP</span><wbr>(<span class="base"><a href="#BytesReaderP">BytesReaderP</a></span>, <span class="base">typing.Protocol</span>):
+
+                <label class="view-source-button" for="BytesReaderIntoP-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReaderIntoP"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReaderIntoP-68"><a href="#BytesReaderIntoP-68"><span class="linenos">68</span></a><span class="nd">@runtime_checkable</span>
+</span><span id="BytesReaderIntoP-69"><a href="#BytesReaderIntoP-69"><span class="linenos">69</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BytesReaderIntoP</span><span class="p">(</span><span class="n">BytesReaderP</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">):</span>
+</span><span id="BytesReaderIntoP-70"><a href="#BytesReaderIntoP-70"><span class="linenos">70</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">readinto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytearray</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Base class for protocol classes.</p>
+
+<p>Protocol classes are defined as::</p>
+
+<pre><code>class Proto(Protocol):
+    def meth(self) -&gt; int:
+        ...
+</code></pre>
+
+<p>Such classes are primarily used with static type checkers that recognize
+structural subtyping (static duck-typing).</p>
+
+<p>For example::</p>
+
+<pre><code>class C:
+    def meth(self) -&gt; int:
+        return 0
+
+def func(x: Proto) -&gt; int:
+    return x.meth()
+
+func(C())  # Passes static type check
+</code></pre>
+
+<p>See PEP 544 for details. Protocol classes decorated with
+@typing.runtime_checkable act as simple-minded runtime protocols that check
+only the presence of given attributes, ignoring their type signatures.
+Protocol classes can be generic, they are defined as::</p>
+
+<pre><code>class GenProto[T](Protocol):
+    def meth(self) -&gt; T:
+        ...
+</code></pre>
+</div>
+
+
+                            <div id="BytesReaderIntoP.readinto" class="classattr">
+                                        <input id="BytesReaderIntoP.readinto-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">readinto</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">b</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytearray</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="nb">int</span>:</span></span>
+
+                <label class="view-source-button" for="BytesReaderIntoP.readinto-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReaderIntoP.readinto"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReaderIntoP.readinto-70"><a href="#BytesReaderIntoP.readinto-70"><span class="linenos">70</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">readinto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytearray</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="#BytesReaderP">BytesReaderP</a></dt>
+                                <dd id="BytesReaderIntoP.__init__" class="function"><a href="#BytesReaderP.__init__">BytesReaderP</a></dd>
+                <dd id="BytesReaderIntoP.read" class="function"><a href="#BytesReaderP.read">read</a></dd>
+                <dd id="BytesReaderIntoP.closed" class="variable"><a href="#BytesReaderP.closed">closed</a></dd>
+                <dd id="BytesReaderIntoP.readable" class="function"><a href="#BytesReaderP.readable">readable</a></dd>
+                <dd id="BytesReaderIntoP.seek" class="function"><a href="#BytesReaderP.seek">seek</a></dd>
+                <dd id="BytesReaderIntoP.seekable" class="function"><a href="#BytesReaderP.seekable">seekable</a></dd>
+                <dd id="BytesReaderIntoP.tell" class="function"><a href="#BytesReaderP.tell">tell</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="Suffix">
+                    <div class="attr variable">
+            <span class="name">Suffix</span>        =
+<span class="default_value">&lt;class &#39;str&#39;&gt;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#Suffix"></a>
+    
+    
+
+                </section>
+                <section id="BytesReader">
+                            <input id="BytesReader-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">BytesReader</span><wbr>(<span class="base"><a href="#BytesReaderP">BytesReaderP</a></span>):
+
+                <label class="view-source-button" for="BytesReader-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader-76"><a href="#BytesReader-76"><span class="linenos"> 76</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BytesReader</span><span class="p">(</span><span class="n">BytesReaderP</span><span class="p">):</span>
+</span><span id="BytesReader-77"><a href="#BytesReader-77"><span class="linenos"> 77</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="BytesReader-78"><a href="#BytesReader-78"><span class="linenos"> 78</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="BytesReader-79"><a href="#BytesReader-79"><span class="linenos"> 79</span></a>        <span class="o">/</span><span class="p">,</span>
+</span><span id="BytesReader-80"><a href="#BytesReader-80"><span class="linenos"> 80</span></a>        <span class="n">reader</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BytesReaderP</span><span class="p">,</span> <span class="n">BytesReaderIntoP</span><span class="p">],</span>
+</span><span id="BytesReader-81"><a href="#BytesReader-81"><span class="linenos"> 81</span></a>        <span class="o">*</span><span class="p">,</span>
+</span><span id="BytesReader-82"><a href="#BytesReader-82"><span class="linenos"> 82</span></a>        <span class="n">sha256</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sha256</span><span class="p">],</span>
+</span><span id="BytesReader-83"><a href="#BytesReader-83"><span class="linenos"> 83</span></a>        <span class="n">suffix</span><span class="p">:</span> <span class="n">Suffix</span><span class="p">,</span>
+</span><span id="BytesReader-84"><a href="#BytesReader-84"><span class="linenos"> 84</span></a>        <span class="n">original_file_name</span><span class="p">:</span> <span class="n">FileName</span><span class="p">,</span>
+</span><span id="BytesReader-85"><a href="#BytesReader-85"><span class="linenos"> 85</span></a>        <span class="n">original_root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RootHttpUrl</span><span class="p">,</span> <span class="n">AbsoluteDirectory</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">],</span>
+</span><span id="BytesReader-86"><a href="#BytesReader-86"><span class="linenos"> 86</span></a>        <span class="n">is_zipfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span>
+</span><span id="BytesReader-87"><a href="#BytesReader-87"><span class="linenos"> 87</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BytesReader-88"><a href="#BytesReader-88"><span class="linenos"> 88</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">reader</span>
+</span><span id="BytesReader-89"><a href="#BytesReader-89"><span class="linenos"> 89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_sha256</span> <span class="o">=</span> <span class="n">sha256</span>
+</span><span id="BytesReader-90"><a href="#BytesReader-90"><span class="linenos"> 90</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_suffix</span> <span class="o">=</span> <span class="n">suffix</span>
+</span><span id="BytesReader-91"><a href="#BytesReader-91"><span class="linenos"> 91</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_original_file_name</span> <span class="o">=</span> <span class="n">original_file_name</span>
+</span><span id="BytesReader-92"><a href="#BytesReader-92"><span class="linenos"> 92</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_original_root</span> <span class="o">=</span> <span class="n">original_root</span>
+</span><span id="BytesReader-93"><a href="#BytesReader-93"><span class="linenos"> 93</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_is_zipfile</span> <span class="o">=</span> <span class="n">is_zipfile</span>
+</span><span id="BytesReader-94"><a href="#BytesReader-94"><span class="linenos"> 94</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="BytesReader-95"><a href="#BytesReader-95"><span class="linenos"> 95</span></a>
+</span><span id="BytesReader-96"><a href="#BytesReader-96"><span class="linenos"> 96</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReader-97"><a href="#BytesReader-97"><span class="linenos"> 97</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_zipfile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="BytesReader-98"><a href="#BytesReader-98"><span class="linenos"> 98</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_zipfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BytesReader-99"><a href="#BytesReader-99"><span class="linenos"> 99</span></a>            <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span><span id="BytesReader-100"><a href="#BytesReader-100"><span class="linenos">100</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_is_zipfile</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">is_zipfile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="BytesReader-101"><a href="#BytesReader-101"><span class="linenos">101</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+</span><span id="BytesReader-102"><a href="#BytesReader-102"><span class="linenos">102</span></a>
+</span><span id="BytesReader-103"><a href="#BytesReader-103"><span class="linenos">103</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_zipfile</span>
+</span><span id="BytesReader-104"><a href="#BytesReader-104"><span class="linenos">104</span></a>
+</span><span id="BytesReader-105"><a href="#BytesReader-105"><span class="linenos">105</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReader-106"><a href="#BytesReader-106"><span class="linenos">106</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sha256</span><span class="p">:</span>
+</span><span id="BytesReader-107"><a href="#BytesReader-107"><span class="linenos">107</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sha256</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BytesReader-108"><a href="#BytesReader-108"><span class="linenos">108</span></a>            <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span><span id="BytesReader-109"><a href="#BytesReader-109"><span class="linenos">109</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="BytesReader-110"><a href="#BytesReader-110"><span class="linenos">110</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_sha256</span> <span class="o">=</span> <span class="n">get_sha256</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="p">)</span>
+</span><span id="BytesReader-111"><a href="#BytesReader-111"><span class="linenos">111</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+</span><span id="BytesReader-112"><a href="#BytesReader-112"><span class="linenos">112</span></a>
+</span><span id="BytesReader-113"><a href="#BytesReader-113"><span class="linenos">113</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sha256</span>
+</span><span id="BytesReader-114"><a href="#BytesReader-114"><span class="linenos">114</span></a>
+</span><span id="BytesReader-115"><a href="#BytesReader-115"><span class="linenos">115</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReader-116"><a href="#BytesReader-116"><span class="linenos">116</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Suffix</span><span class="p">:</span>
+</span><span id="BytesReader-117"><a href="#BytesReader-117"><span class="linenos">117</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_suffix</span>
+</span><span id="BytesReader-118"><a href="#BytesReader-118"><span class="linenos">118</span></a>
+</span><span id="BytesReader-119"><a href="#BytesReader-119"><span class="linenos">119</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReader-120"><a href="#BytesReader-120"><span class="linenos">120</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">original_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileName</span><span class="p">:</span>
+</span><span id="BytesReader-121"><a href="#BytesReader-121"><span class="linenos">121</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_file_name</span>
+</span><span id="BytesReader-122"><a href="#BytesReader-122"><span class="linenos">122</span></a>
+</span><span id="BytesReader-123"><a href="#BytesReader-123"><span class="linenos">123</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReader-124"><a href="#BytesReader-124"><span class="linenos">124</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">original_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RootHttpUrl</span><span class="p">,</span> <span class="n">AbsoluteDirectory</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">]:</span>
+</span><span id="BytesReader-125"><a href="#BytesReader-125"><span class="linenos">125</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_root</span>
+</span><span id="BytesReader-126"><a href="#BytesReader-126"><span class="linenos">126</span></a>
+</span><span id="BytesReader-127"><a href="#BytesReader-127"><span class="linenos">127</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+</span><span id="BytesReader-128"><a href="#BytesReader-128"><span class="linenos">128</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+</span><span id="BytesReader-129"><a href="#BytesReader-129"><span class="linenos">129</span></a>
+</span><span id="BytesReader-130"><a href="#BytesReader-130"><span class="linenos">130</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="BytesReader-131"><a href="#BytesReader-131"><span class="linenos">131</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+</span><span id="BytesReader-132"><a href="#BytesReader-132"><span class="linenos">132</span></a>
+</span><span id="BytesReader-133"><a href="#BytesReader-133"><span class="linenos">133</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">readable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="BytesReader-134"><a href="#BytesReader-134"><span class="linenos">134</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="BytesReader-135"><a href="#BytesReader-135"><span class="linenos">135</span></a>
+</span><span id="BytesReader-136"><a href="#BytesReader-136"><span class="linenos">136</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">whence</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_SET</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="BytesReader-137"><a href="#BytesReader-137"><span class="linenos">137</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">whence</span><span class="p">)</span>
+</span><span id="BytesReader-138"><a href="#BytesReader-138"><span class="linenos">138</span></a>
+</span><span id="BytesReader-139"><a href="#BytesReader-139"><span class="linenos">139</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seekable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="BytesReader-140"><a href="#BytesReader-140"><span class="linenos">140</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="BytesReader-141"><a href="#BytesReader-141"><span class="linenos">141</span></a>
+</span><span id="BytesReader-142"><a href="#BytesReader-142"><span class="linenos">142</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="BytesReader-143"><a href="#BytesReader-143"><span class="linenos">143</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span><span id="BytesReader-144"><a href="#BytesReader-144"><span class="linenos">144</span></a>
+</span><span id="BytesReader-145"><a href="#BytesReader-145"><span class="linenos">145</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReader-146"><a href="#BytesReader-146"><span class="linenos">146</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">closed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="BytesReader-147"><a href="#BytesReader-147"><span class="linenos">147</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">closed</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Base class for protocol classes.</p>
+
+<p>Protocol classes are defined as::</p>
+
+<pre><code>class Proto(Protocol):
+    def meth(self) -&gt; int:
+        ...
+</code></pre>
+
+<p>Such classes are primarily used with static type checkers that recognize
+structural subtyping (static duck-typing).</p>
+
+<p>For example::</p>
+
+<pre><code>class C:
+    def meth(self) -&gt; int:
+        return 0
+
+def func(x: Proto) -&gt; int:
+    return x.meth()
+
+func(C())  # Passes static type check
+</code></pre>
+
+<p>See PEP 544 for details. Protocol classes decorated with
+@typing.runtime_checkable act as simple-minded runtime protocols that check
+only the presence of given attributes, ignoring their type signatures.
+Protocol classes can be generic, they are defined as::</p>
+
+<pre><code>class GenProto[T](Protocol):
+    def meth(self) -&gt; T:
+        ...
+</code></pre>
+</div>
+
+
+                            <div id="BytesReader.__init__" class="classattr">
+                                        <input id="BytesReader.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">BytesReader</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">reader</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n"><a href="#BytesReaderP">BytesReaderP</a></span><span class="p">,</span> <span class="n"><a href="#BytesReaderIntoP">BytesReaderIntoP</a></span><span class="p">]</span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">sha256</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="#Sha256">Sha256</a></span><span class="p">]</span>,</span><span class="param">	<span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">original_file_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">original_root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n"><a href="root_url.html#RootHttpUrl">bioimageio.spec._internal.root_url.RootHttpUrl</a></span><span class="p">,</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">PathType</span><span class="p">(</span><span class="n">path_type</span><span class="o">=</span><span class="s1">&#39;dir&#39;</span><span class="p">),</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">is_absolute</span><span class="p">),</span> <span class="n">FieldInfo</span><span class="p">(</span><span class="n">annotation</span><span class="o">=</span><span class="n">NoneType</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;AbsoluteDirectory&#39;</span><span class="p">)],</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">]</span>,</span><span class="param">	<span class="n">is_zipfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span></span>)</span>
+
+                <label class="view-source-button" for="BytesReader.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.__init__-77"><a href="#BytesReader.__init__-77"><span class="linenos">77</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="BytesReader.__init__-78"><a href="#BytesReader.__init__-78"><span class="linenos">78</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="BytesReader.__init__-79"><a href="#BytesReader.__init__-79"><span class="linenos">79</span></a>        <span class="o">/</span><span class="p">,</span>
+</span><span id="BytesReader.__init__-80"><a href="#BytesReader.__init__-80"><span class="linenos">80</span></a>        <span class="n">reader</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BytesReaderP</span><span class="p">,</span> <span class="n">BytesReaderIntoP</span><span class="p">],</span>
+</span><span id="BytesReader.__init__-81"><a href="#BytesReader.__init__-81"><span class="linenos">81</span></a>        <span class="o">*</span><span class="p">,</span>
+</span><span id="BytesReader.__init__-82"><a href="#BytesReader.__init__-82"><span class="linenos">82</span></a>        <span class="n">sha256</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sha256</span><span class="p">],</span>
+</span><span id="BytesReader.__init__-83"><a href="#BytesReader.__init__-83"><span class="linenos">83</span></a>        <span class="n">suffix</span><span class="p">:</span> <span class="n">Suffix</span><span class="p">,</span>
+</span><span id="BytesReader.__init__-84"><a href="#BytesReader.__init__-84"><span class="linenos">84</span></a>        <span class="n">original_file_name</span><span class="p">:</span> <span class="n">FileName</span><span class="p">,</span>
+</span><span id="BytesReader.__init__-85"><a href="#BytesReader.__init__-85"><span class="linenos">85</span></a>        <span class="n">original_root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RootHttpUrl</span><span class="p">,</span> <span class="n">AbsoluteDirectory</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">],</span>
+</span><span id="BytesReader.__init__-86"><a href="#BytesReader.__init__-86"><span class="linenos">86</span></a>        <span class="n">is_zipfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span>
+</span><span id="BytesReader.__init__-87"><a href="#BytesReader.__init__-87"><span class="linenos">87</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BytesReader.__init__-88"><a href="#BytesReader.__init__-88"><span class="linenos">88</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">reader</span>
+</span><span id="BytesReader.__init__-89"><a href="#BytesReader.__init__-89"><span class="linenos">89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_sha256</span> <span class="o">=</span> <span class="n">sha256</span>
+</span><span id="BytesReader.__init__-90"><a href="#BytesReader.__init__-90"><span class="linenos">90</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_suffix</span> <span class="o">=</span> <span class="n">suffix</span>
+</span><span id="BytesReader.__init__-91"><a href="#BytesReader.__init__-91"><span class="linenos">91</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_original_file_name</span> <span class="o">=</span> <span class="n">original_file_name</span>
+</span><span id="BytesReader.__init__-92"><a href="#BytesReader.__init__-92"><span class="linenos">92</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_original_root</span> <span class="o">=</span> <span class="n">original_root</span>
+</span><span id="BytesReader.__init__-93"><a href="#BytesReader.__init__-93"><span class="linenos">93</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_is_zipfile</span> <span class="o">=</span> <span class="n">is_zipfile</span>
+</span><span id="BytesReader.__init__-94"><a href="#BytesReader.__init__-94"><span class="linenos">94</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReader.is_zipfile" class="classattr">
+                                        <input id="BytesReader.is_zipfile-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">is_zipfile</span><span class="annotation">: bool</span>
+
+                <label class="view-source-button" for="BytesReader.is_zipfile-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.is_zipfile"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.is_zipfile-96"><a href="#BytesReader.is_zipfile-96"><span class="linenos"> 96</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReader.is_zipfile-97"><a href="#BytesReader.is_zipfile-97"><span class="linenos"> 97</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_zipfile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="BytesReader.is_zipfile-98"><a href="#BytesReader.is_zipfile-98"><span class="linenos"> 98</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_zipfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BytesReader.is_zipfile-99"><a href="#BytesReader.is_zipfile-99"><span class="linenos"> 99</span></a>            <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span><span id="BytesReader.is_zipfile-100"><a href="#BytesReader.is_zipfile-100"><span class="linenos">100</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_is_zipfile</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">is_zipfile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="BytesReader.is_zipfile-101"><a href="#BytesReader.is_zipfile-101"><span class="linenos">101</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+</span><span id="BytesReader.is_zipfile-102"><a href="#BytesReader.is_zipfile-102"><span class="linenos">102</span></a>
+</span><span id="BytesReader.is_zipfile-103"><a href="#BytesReader.is_zipfile-103"><span class="linenos">103</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_zipfile</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReader.sha256" class="classattr">
+                                        <input id="BytesReader.sha256-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">sha256</span><span class="annotation">: <a href="#Sha256">Sha256</a></span>
+
+                <label class="view-source-button" for="BytesReader.sha256-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.sha256"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.sha256-105"><a href="#BytesReader.sha256-105"><span class="linenos">105</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReader.sha256-106"><a href="#BytesReader.sha256-106"><span class="linenos">106</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sha256</span><span class="p">:</span>
+</span><span id="BytesReader.sha256-107"><a href="#BytesReader.sha256-107"><span class="linenos">107</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sha256</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BytesReader.sha256-108"><a href="#BytesReader.sha256-108"><span class="linenos">108</span></a>            <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span><span id="BytesReader.sha256-109"><a href="#BytesReader.sha256-109"><span class="linenos">109</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="BytesReader.sha256-110"><a href="#BytesReader.sha256-110"><span class="linenos">110</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_sha256</span> <span class="o">=</span> <span class="n">get_sha256</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="p">)</span>
+</span><span id="BytesReader.sha256-111"><a href="#BytesReader.sha256-111"><span class="linenos">111</span></a>            <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+</span><span id="BytesReader.sha256-112"><a href="#BytesReader.sha256-112"><span class="linenos">112</span></a>
+</span><span id="BytesReader.sha256-113"><a href="#BytesReader.sha256-113"><span class="linenos">113</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sha256</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReader.suffix" class="classattr">
+                                        <input id="BytesReader.suffix-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">suffix</span><span class="annotation">: str</span>
+
+                <label class="view-source-button" for="BytesReader.suffix-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.suffix"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.suffix-115"><a href="#BytesReader.suffix-115"><span class="linenos">115</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReader.suffix-116"><a href="#BytesReader.suffix-116"><span class="linenos">116</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Suffix</span><span class="p">:</span>
+</span><span id="BytesReader.suffix-117"><a href="#BytesReader.suffix-117"><span class="linenos">117</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_suffix</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReader.original_file_name" class="classattr">
+                                        <input id="BytesReader.original_file_name-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">original_file_name</span><span class="annotation">: str</span>
+
+                <label class="view-source-button" for="BytesReader.original_file_name-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.original_file_name"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.original_file_name-119"><a href="#BytesReader.original_file_name-119"><span class="linenos">119</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReader.original_file_name-120"><a href="#BytesReader.original_file_name-120"><span class="linenos">120</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">original_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileName</span><span class="p">:</span>
+</span><span id="BytesReader.original_file_name-121"><a href="#BytesReader.original_file_name-121"><span class="linenos">121</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_file_name</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReader.original_root" class="classattr">
+                                        <input id="BytesReader.original_root-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">original_root</span><span class="annotation">: Union[<a href="root_url.html#RootHttpUrl">bioimageio.spec._internal.root_url.RootHttpUrl</a>, Annotated[pathlib.Path, PathType(path_type=&#39;dir&#39;), Predicate(is_absolute), FieldInfo(annotation=NoneType, required=True, title=&#39;AbsoluteDirectory&#39;)], zipfile.ZipFile]</span>
+
+                <label class="view-source-button" for="BytesReader.original_root-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.original_root"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.original_root-123"><a href="#BytesReader.original_root-123"><span class="linenos">123</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReader.original_root-124"><a href="#BytesReader.original_root-124"><span class="linenos">124</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">original_root</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RootHttpUrl</span><span class="p">,</span> <span class="n">AbsoluteDirectory</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">]:</span>
+</span><span id="BytesReader.original_root-125"><a href="#BytesReader.original_root-125"><span class="linenos">125</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_original_root</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReader.read" class="classattr">
+                                        <input id="BytesReader.read-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">read</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>, </span><span class="param"><span class="o">/</span></span><span class="return-annotation">) -> <span class="nb">bytes</span>:</span></span>
+
+                <label class="view-source-button" for="BytesReader.read-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.read"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.read-127"><a href="#BytesReader.read-127"><span class="linenos">127</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+</span><span id="BytesReader.read-128"><a href="#BytesReader.read-128"><span class="linenos">128</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReader.read_text" class="classattr">
+                                        <input id="BytesReader.read_text-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">read_text</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+                <label class="view-source-button" for="BytesReader.read_text-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.read_text"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.read_text-130"><a href="#BytesReader.read_text-130"><span class="linenos">130</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="BytesReader.read_text-131"><a href="#BytesReader.read_text-131"><span class="linenos">131</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReader.readable" class="classattr">
+                                        <input id="BytesReader.readable-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">readable</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+                <label class="view-source-button" for="BytesReader.readable-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.readable"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.readable-133"><a href="#BytesReader.readable-133"><span class="linenos">133</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">readable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="BytesReader.readable-134"><a href="#BytesReader.readable-134"><span class="linenos">134</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReader.seek" class="classattr">
+                                        <input id="BytesReader.seek-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">seek</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">offset</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">whence</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>, </span><span class="param"><span class="o">/</span></span><span class="return-annotation">) -> <span class="nb">int</span>:</span></span>
+
+                <label class="view-source-button" for="BytesReader.seek-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.seek"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.seek-136"><a href="#BytesReader.seek-136"><span class="linenos">136</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">whence</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">SEEK_SET</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="BytesReader.seek-137"><a href="#BytesReader.seek-137"><span class="linenos">137</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">whence</span><span class="p">)</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReader.seekable" class="classattr">
+                                        <input id="BytesReader.seekable-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">seekable</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+
+                <label class="view-source-button" for="BytesReader.seekable-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.seekable"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.seekable-139"><a href="#BytesReader.seekable-139"><span class="linenos">139</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seekable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="BytesReader.seekable-140"><a href="#BytesReader.seekable-140"><span class="linenos">140</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReader.tell" class="classattr">
+                                        <input id="BytesReader.tell-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">tell</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">int</span>:</span></span>
+
+                <label class="view-source-button" for="BytesReader.tell-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.tell"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.tell-142"><a href="#BytesReader.tell-142"><span class="linenos">142</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">tell</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="BytesReader.tell-143"><a href="#BytesReader.tell-143"><span class="linenos">143</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BytesReader.closed" class="classattr">
+                                        <input id="BytesReader.closed-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">closed</span><span class="annotation">: bool</span>
+
+                <label class="view-source-button" for="BytesReader.closed-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BytesReader.closed"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BytesReader.closed-145"><a href="#BytesReader.closed-145"><span class="linenos">145</span></a>    <span class="nd">@property</span>
+</span><span id="BytesReader.closed-146"><a href="#BytesReader.closed-146"><span class="linenos">146</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">closed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="BytesReader.closed-147"><a href="#BytesReader.closed-147"><span class="linenos">147</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">closed</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="get_sha256">
+                            <input id="get_sha256-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_sha256</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n"><a href="#BytesReaderP">BytesReaderP</a></span><span class="p">,</span> <span class="n"><a href="#BytesReaderIntoP">BytesReaderIntoP</a></span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n"><a href="#Sha256">Sha256</a></span>:</span></span>
+
+                <label class="view-source-button" for="get_sha256-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#get_sha256"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_sha256-150"><a href="#get_sha256-150"><span class="linenos">150</span></a><span class="k">def</span><span class="w"> </span><span class="nf">get_sha256</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BytesReaderP</span><span class="p">,</span> <span class="n">BytesReaderIntoP</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Sha256</span><span class="p">:</span>
+</span><span id="get_sha256-151"><a href="#get_sha256-151"><span class="linenos">151</span></a>    <span class="n">chunksize</span> <span class="o">=</span> <span class="mi">128</span> <span class="o">*</span> <span class="mi">1024</span>
+</span><span id="get_sha256-152"><a href="#get_sha256-152"><span class="linenos">152</span></a>    <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+</span><span id="get_sha256-153"><a href="#get_sha256-153"><span class="linenos">153</span></a>
+</span><span id="get_sha256-154"><a href="#get_sha256-154"><span class="linenos">154</span></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">BytesReaderIntoP</span><span class="p">):</span>
+</span><span id="get_sha256-155"><a href="#get_sha256-155"><span class="linenos">155</span></a>        <span class="n">b</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">chunksize</span><span class="p">)</span>
+</span><span id="get_sha256-156"><a href="#get_sha256-156"><span class="linenos">156</span></a>        <span class="n">mv</span> <span class="o">=</span> <span class="nb">memoryview</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+</span><span id="get_sha256-157"><a href="#get_sha256-157"><span class="linenos">157</span></a>        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">readinto</span><span class="p">(</span><span class="n">mv</span><span class="p">),</span> <span class="mi">0</span><span class="p">):</span>
+</span><span id="get_sha256-158"><a href="#get_sha256-158"><span class="linenos">158</span></a>            <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mv</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
+</span><span id="get_sha256-159"><a href="#get_sha256-159"><span class="linenos">159</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="get_sha256-160"><a href="#get_sha256-160"><span class="linenos">160</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+</span><span id="get_sha256-161"><a href="#get_sha256-161"><span class="linenos">161</span></a>            <span class="n">read_ctxt</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+</span><span id="get_sha256-162"><a href="#get_sha256-162"><span class="linenos">162</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="get_sha256-163"><a href="#get_sha256-163"><span class="linenos">163</span></a>            <span class="n">read_ctxt</span> <span class="o">=</span> <span class="n">nullcontext</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+</span><span id="get_sha256-164"><a href="#get_sha256-164"><span class="linenos">164</span></a>
+</span><span id="get_sha256-165"><a href="#get_sha256-165"><span class="linenos">165</span></a>        <span class="k">with</span> <span class="n">read_ctxt</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
+</span><span id="get_sha256-166"><a href="#get_sha256-166"><span class="linenos">166</span></a>            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">read</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">),</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+</span><span id="get_sha256-167"><a href="#get_sha256-167"><span class="linenos">167</span></a>                <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+</span><span id="get_sha256-168"><a href="#get_sha256-168"><span class="linenos">168</span></a>
+</span><span id="get_sha256-169"><a href="#get_sha256-169"><span class="linenos">169</span></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span><span id="get_sha256-170"><a href="#get_sha256-170"><span class="linenos">170</span></a>    <span class="k">return</span> <span class="n">Sha256</span><span class="p">(</span><span class="n">sha</span><span class="p">)</span>
+</span></pre></div>
+
+
+    
+
                 </section>
     </main>
 <script>
