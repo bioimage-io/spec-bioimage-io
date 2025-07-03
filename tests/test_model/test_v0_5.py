@@ -129,7 +129,7 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
         {
             "id": "input_1",
             "description": "Input 1",
-            "data": {"type": "float32"},
+            "data": {"type": "float32", "range": ["-inf", float("inf")]},
             "axes": [
                 dict(type="space", id="x", size=10),
                 dict(type="space", id="y", size=11),
@@ -146,7 +146,7 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
                 }
             ],
             "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
-        },
+        }
     ],
 )
 def test_input_tensor(kwargs: Dict[str, Any]):
