@@ -27,15 +27,16 @@ def _node_title_generator(node: Type[Node]) -> str:
 
 class Node(
     pydantic.BaseModel,
+    allow_inf_nan=False,
     extra="forbid",
     frozen=False,
+    model_title_generator=_node_title_generator,
     populate_by_name=True,
     revalidate_instances="never",
+    use_attribute_docstrings=True,
     validate_assignment=True,
     validate_default=False,
     validate_return=True,  # TODO: check if False here would bring a speedup and can still be safe
-    use_attribute_docstrings=True,
-    model_title_generator=_node_title_generator,
 ):
     """"""  # empty docstring to remove all pydantic docstrings from the pdoc spec docs
 

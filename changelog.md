@@ -10,6 +10,10 @@ In this file we log both:
 
 This changelog includes implementation details and my reference the [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+#### bioimageio.spec (next release)
+
+- infinity and not-a-number values are no longer allowed (when used in a tensor description under data.range they are replaced with `None`)
+
 #### bioimageio.spec 0.5.4.3
 
 - fix root determination of cacheless downloads of non-zip files

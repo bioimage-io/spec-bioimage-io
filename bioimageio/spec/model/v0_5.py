@@ -76,6 +76,7 @@ from .._internal.io_packaging import (
 )
 from .._internal.io_utils import load_array
 from .._internal.node_converter import Converter
+from .._internal.type_guards import is_dict, is_sequence
 from .._internal.types import (
     AbsoluteTolerance,
     LowerCaseIdentifier,
@@ -877,6 +878,27 @@ class IntervalOrRatioDataDescr(Node):
     """Scale for data on an interval (or ratio) scale."""
     offset: Optional[float] = None
     """Offset for data on a ratio scale."""
+
+    @model_validator(mode="before")
+    def _replace_inf(cls, data: Any):
+        if is_dict(data):
+            if "range" in data and is_sequence(data["range"]):
+                forbidden = (
+                    "inf",
+                    "-inf",
+                    ".inf",
+                    "-.inf",
+                    float("inf"),
+                    float("-inf"),
+                )
+                if any(v in forbidden for v in data["range"]):
+                    issue_warning("replaced 'inf' value", value=data["range"])
+
+                data["range"] = tuple(
+                    (None if v in forbidden else v) for v in data["range"]
+                )
+
+        return data
 
 
 TensorDataDescr = Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr]

@@ -20,7 +20,7 @@ import httpx
 import numpy
 from loguru import logger
 from numpy.typing import NDArray
-from pydantic import FilePath, NewPath, RootModel
+from pydantic import BaseModel, FilePath, NewPath, RootModel
 from ruyaml import YAML
 from typing_extensions import Unpack
 
@@ -70,7 +70,7 @@ def read_yaml(
 
 
 def write_yaml(
-    content: Union[YamlValue, BioimageioYamlContentView],
+    content: Union[YamlValue, BioimageioYamlContentView, BaseModel],
     /,
     file: Union[NewPath, FilePath, IO[str], IO[bytes], ZipPath],
 ):
@@ -78,6 +78,9 @@ def write_yaml(
         cm = file.open("w", encoding="utf-8")
     else:
         cm = nullcontext(file)
+
+    if isinstance(content, BaseModel):
+        content = content.model_dump(mode="json")
 
     with cm as f:
         _yaml_dump.dump(content, f)
