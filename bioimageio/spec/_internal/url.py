@@ -17,6 +17,10 @@ def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.HttpUrl:
     return _validate_url_impl(url, request_mode="head")
 
 
+_KNOWN_VALID_URLS = ("https://zenodo.org/records/3446812/files/unet2d_weights.torch",)
+"""known valid urls to bypass validation for to avoid sporadic 503 errors in tests etc."""
+
+
 def _validate_url_impl(
     url: Union[str, pydantic.HttpUrl],
     request_mode: Literal["head", "get_stream", "get"],
@@ -30,7 +34,11 @@ def _validate_url_impl(
 
     val_url = url
 
-    if url.startswith("http://example.com") or url.startswith("https://example.com"):
+    if (
+        url.startswith("http://example.com")
+        or url.startswith("https://example.com")
+        or url in _KNOWN_VALID_URLS
+    ):
         return pydantic.HttpUrl(url)
 
     if url.startswith("https://colab.research.google.com/github/"):
