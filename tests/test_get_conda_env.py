@@ -121,7 +121,8 @@ def test_get_default_pytorch_env():
     ]
     for p in ["torchvision", "torchaudio"]:
         versions[p] = [
-            env._get_version(p) for env in envs  # pyright: ignore[reportPrivateUsage]
+            env._get_version_pin(p)  # pyright: ignore[reportPrivateUsage]
+            for env in envs
         ]
 
     def assert_lt(p: str, i: int):
