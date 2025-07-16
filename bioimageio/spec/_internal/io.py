@@ -705,18 +705,23 @@ def _open_url(
         or hashlib.sha256(str(source).encode(encoding="utf-8")).hexdigest()
     )
 
-    return BytesReader(
-        cache.fetch(
+    try:
+        reader = cache.fetch(
             source,
             fetcher=partial(_fetch_url, progressbar=progressbar),
             force_refetch=digest,
-        ),
-        suffix=source_path.suffix,
-        sha256=sha,
-        original_file_name=source_path.name,
-        original_root=source.parent,
-        is_zipfile=None,
-    )
+        )
+    except Exception as e:
+        raise ValueError(f"Failed to fetch {source}.") from e
+    else:
+        return BytesReader(
+            reader,
+            suffix=source_path.suffix,
+            sha256=sha,
+            original_file_name=source_path.name,
+            original_root=source.parent,
+            is_zipfile=None,
+        )
 
 
 def _fetch_url(
