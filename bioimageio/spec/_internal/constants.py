@@ -56,7 +56,7 @@ DTYPE_LIMITS = MappingProxyType(
     }
 )
 
-# TODO: cache/store known gh users in file
+# TODO: cache/store known GitHub users in file
 KNOWN_GITHUB_USERS: Set[str] = {
     "aaitorg",
     "anwai98",
