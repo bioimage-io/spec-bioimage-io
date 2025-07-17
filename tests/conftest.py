@@ -8,10 +8,10 @@ import pytest
 from dotenv import load_dotenv
 
 from bioimageio.spec._internal.constants import (
-    KNOWN_GH_USERS,
-    KNOWN_INVALID_GH_USERS,
-    N_KNOWN_GH_USERS,
-    N_KNOWN_INVALID_GH_USERS,
+    KNOWN_GITHUB_USERS,
+    KNOWN_INVALID_GITHUB_USERS,
+    N_KNOWN_GITHUB_USERS,
+    N_KNOWN_INVALID_GITHUB_USERS,
 )
 from bioimageio.spec._internal.io_utils import read_yaml
 from bioimageio.spec._internal.type_guards import is_dict, is_kwargs
@@ -81,10 +81,10 @@ def unet2d_data(unet2d_path: Path):
 
 
 def pytest_sessionfinish(session: Any, exitstatus: Any):
-    if len(KNOWN_GH_USERS) > N_KNOWN_GH_USERS:
+    if len(KNOWN_GITHUB_USERS) > N_KNOWN_GITHUB_USERS:
         print("updated known gh users:")
-        pprint(KNOWN_GH_USERS)
+        pprint(KNOWN_GITHUB_USERS)
 
-    if len(KNOWN_INVALID_GH_USERS) > N_KNOWN_INVALID_GH_USERS:
+    if len(KNOWN_INVALID_GITHUB_USERS) > N_KNOWN_INVALID_GITHUB_USERS:
         print("updated known invalid gh users:")
-        pprint(KNOWN_INVALID_GH_USERS)
+        pprint(KNOWN_INVALID_GITHUB_USERS)

@@ -80,7 +80,7 @@ IGNORE_MEMBERS = {
     "v0_3",
     "v0_4",
     "v0_5",
-    "validate_gh_user",
+    "validate_github_user",
     "validate_suffix",
     "ValidatedString",
     "ValidationInfo",
