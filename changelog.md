@@ -13,6 +13,7 @@ This changelog includes implementation details and my reference the [changes to 
 #### bioimageio.spec (next release)
 
 - infinity and not-a-number values are no longer allowed (when used in a tensor description under data.range they are replaced with `None`)
+- stricter validation of integers; float values no longer allowed for input/output fields `size.offset`, `size.min`, `size.max`
 
 #### bioimageio.spec 0.5.4.3
 

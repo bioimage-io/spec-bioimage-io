@@ -43,6 +43,7 @@ from pydantic import (
     RootModel,
     SerializationInfo,
     SerializerFunctionWrapHandler,
+    StrictInt,
     Tag,
     ValidationInfo,
     WrapSerializer,
@@ -382,7 +383,7 @@ class SizeReference(Node):
     axis_id: AxisId
     """axis id of the reference axis"""
 
-    offset: int = 0
+    offset: StrictInt = 0
 
     def get_size(
         self,
@@ -2488,8 +2489,8 @@ class LinkedModel(LinkedResourceBase):
 
 
 class _DataDepSize(NamedTuple):
-    min: int
-    max: Optional[int]
+    min: StrictInt
+    max: Optional[StrictInt]
 
 
 class _AxisSizes(NamedTuple):
