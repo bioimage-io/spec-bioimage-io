@@ -260,7 +260,7 @@ class ResourceDescrBase(
                 if is_dict(v):
                     yield from extract_flat_keys(v, key=f"{key}.{k}" if key else k)
 
-                yield k
+                yield f"{key}.{k}" if key else k
 
         given_keys = set(extract_flat_keys(given))
         full_keys = set(extract_flat_keys(full))
