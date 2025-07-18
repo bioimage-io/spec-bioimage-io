@@ -51,12 +51,12 @@
                     <a class="function" href="#validate_unique_entries">validate_unique_entries</a>
             </li>
             <li>
-                    <a class="function" href="#validate_gh_user">validate_gh_user</a>
+                    <a class="function" href="#validate_github_user">validate_github_user</a>
             </li>
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.4.3</footer>
+            <footer>bioimageio.spec 0.5.4.4</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -89,7 +89,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">import</span><span class="w"> </span><span class="nn">httpx</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">KNOWN_GH_USERS</span><span class="p">,</span> <span class="n">KNOWN_INVALID_GH_USERS</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">KNOWN_GITHUB_USERS</span><span class="p">,</span> <span class="n">KNOWN_INVALID_GITHUB_USERS</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.field_warning</span><span class="w"> </span><span class="kn">import</span> <span class="n">issue_warning</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.type_guards</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_mapping</span><span class="p">,</span> <span class="n">is_sequence</span><span class="p">,</span> <span class="n">is_tuple</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.validation_context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_validation_context</span>
@@ -134,44 +134,46 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="k">return</span> <span class="n">seq</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>
 </span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="k">def</span><span class="w"> </span><span class="nf">validate_gh_user</span><span class="p">(</span><span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="k">if</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="k">if</span> <span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;Constantin Pape&quot;</span><span class="p">:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>            <span class="k">return</span> <span class="s2">&quot;constantinpape&quot;</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="k">if</span> <span class="p">(</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>        <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_GH_USERS</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>        <span class="ow">or</span> <span class="ow">not</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">perform_io_checks</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="p">):</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>        <span class="k">return</span> <span class="n">username</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="k">if</span> <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_INVALID_GH_USERS</span><span class="p">:</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Known invalid GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="k">try</span><span class="p">:</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>        <span class="n">r</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>            <span class="sa">f</span><span class="s2">&quot;https://api.github.com/users/</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>            <span class="n">auth</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">github_auth</span><span class="p">,</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>            <span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>        <span class="p">)</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="k">except</span> <span class="n">httpx</span><span class="o">.</span><span class="n">TimeoutException</span><span class="p">:</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>        <span class="n">issue_warning</span><span class="p">(</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>            <span class="s2">&quot;Could not verify GitHub user &#39;</span><span class="si">{value}</span><span class="s2">&#39; due to connection timeout&quot;</span><span class="p">,</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>            <span class="n">value</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>        <span class="p">)</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">403</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reason_phrase</span> <span class="o">==</span> <span class="s2">&quot;rate limit exceeded&quot;</span><span class="p">:</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>            <span class="n">issue_warning</span><span class="p">(</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>                <span class="s2">&quot;Could not verify GitHub user &#39;</span><span class="si">{value}</span><span class="s2">&#39; due to GitHub API rate limit&quot;</span><span class="p">,</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>                <span class="n">value</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>            <span class="p">)</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>        <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>            <span class="n">KNOWN_INVALID_GH_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos">94</span></a>
-</span><span id="L-95"><a href="#L-95"><span class="linenos">95</span></a>        <span class="n">KNOWN_GH_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="k">def</span><span class="w"> </span><span class="nf">validate_github_user</span><span class="p">(</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>    <span class="k">if</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="k">if</span> <span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;Constantin Pape&quot;</span><span class="p">:</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>            <span class="k">return</span> <span class="s2">&quot;constantinpape&quot;</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="k">if</span> <span class="p">(</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>        <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_GITHUB_USERS</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>        <span class="ow">or</span> <span class="ow">not</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">perform_io_checks</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="p">):</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>        <span class="k">return</span> <span class="n">username</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="k">if</span> <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_INVALID_GITHUB_USERS</span><span class="p">:</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Known invalid GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>        <span class="n">r</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>            <span class="sa">f</span><span class="s2">&quot;https://api.github.com/users/</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>            <span class="n">auth</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">github_auth</span><span class="p">,</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>            <span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>        <span class="p">)</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>    <span class="k">except</span> <span class="n">httpx</span><span class="o">.</span><span class="n">TimeoutException</span><span class="p">:</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>        <span class="n">issue_warning</span><span class="p">(</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>            <span class="s2">&quot;Could not verify GitHub user &#39;</span><span class="si">{value}</span><span class="s2">&#39; due to connection timeout&quot;</span><span class="p">,</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>            <span class="n">value</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>        <span class="p">)</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">403</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reason_phrase</span> <span class="o">==</span> <span class="s2">&quot;rate limit exceeded&quot;</span><span class="p">:</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>            <span class="n">issue_warning</span><span class="p">(</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>                <span class="s2">&quot;Could not verify GitHub user &#39;</span><span class="si">{value}</span><span class="s2">&#39; due to GitHub API rate limit&quot;</span><span class="p">,</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>                <span class="n">value</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>            <span class="p">)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a>        <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos">94</span></a>            <span class="n">KNOWN_INVALID_GITHUB_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos">95</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos">96</span></a>
-</span><span id="L-97"><a href="#L-97"><span class="linenos">97</span></a>    <span class="k">return</span> <span class="n">username</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos">97</span></a>        <span class="n">KNOWN_GITHUB_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos">98</span></a>
+</span><span id="L-99"><a href="#L-99"><span class="linenos">99</span></a>    <span class="k">return</span> <span class="n">username</span>
 </span></pre></div>
 
 
@@ -305,55 +307,57 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
     
 
                 </section>
-                <section id="validate_gh_user">
-                            <input id="validate_gh_user-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="validate_github_user">
+                            <input id="validate_github_user-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">validate_gh_user</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">username</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">hotfix_known_errorenous_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">validate_github_user</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">username</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">hotfix_known_errorenous_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
-                <label class="view-source-button" for="validate_gh_user-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="validate_github_user-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#validate_gh_user"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="validate_gh_user-61"><a href="#validate_gh_user-61"><span class="linenos">61</span></a><span class="k">def</span><span class="w"> </span><span class="nf">validate_gh_user</span><span class="p">(</span><span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="validate_gh_user-62"><a href="#validate_gh_user-62"><span class="linenos">62</span></a>    <span class="k">if</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span>
-</span><span id="validate_gh_user-63"><a href="#validate_gh_user-63"><span class="linenos">63</span></a>        <span class="k">if</span> <span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;Constantin Pape&quot;</span><span class="p">:</span>
-</span><span id="validate_gh_user-64"><a href="#validate_gh_user-64"><span class="linenos">64</span></a>            <span class="k">return</span> <span class="s2">&quot;constantinpape&quot;</span>
-</span><span id="validate_gh_user-65"><a href="#validate_gh_user-65"><span class="linenos">65</span></a>
-</span><span id="validate_gh_user-66"><a href="#validate_gh_user-66"><span class="linenos">66</span></a>    <span class="k">if</span> <span class="p">(</span>
-</span><span id="validate_gh_user-67"><a href="#validate_gh_user-67"><span class="linenos">67</span></a>        <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_GH_USERS</span>
-</span><span id="validate_gh_user-68"><a href="#validate_gh_user-68"><span class="linenos">68</span></a>        <span class="ow">or</span> <span class="ow">not</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">perform_io_checks</span>
-</span><span id="validate_gh_user-69"><a href="#validate_gh_user-69"><span class="linenos">69</span></a>    <span class="p">):</span>
-</span><span id="validate_gh_user-70"><a href="#validate_gh_user-70"><span class="linenos">70</span></a>        <span class="k">return</span> <span class="n">username</span>
-</span><span id="validate_gh_user-71"><a href="#validate_gh_user-71"><span class="linenos">71</span></a>
-</span><span id="validate_gh_user-72"><a href="#validate_gh_user-72"><span class="linenos">72</span></a>    <span class="k">if</span> <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_INVALID_GH_USERS</span><span class="p">:</span>
-</span><span id="validate_gh_user-73"><a href="#validate_gh_user-73"><span class="linenos">73</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Known invalid GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="validate_gh_user-74"><a href="#validate_gh_user-74"><span class="linenos">74</span></a>
-</span><span id="validate_gh_user-75"><a href="#validate_gh_user-75"><span class="linenos">75</span></a>    <span class="k">try</span><span class="p">:</span>
-</span><span id="validate_gh_user-76"><a href="#validate_gh_user-76"><span class="linenos">76</span></a>        <span class="n">r</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-</span><span id="validate_gh_user-77"><a href="#validate_gh_user-77"><span class="linenos">77</span></a>            <span class="sa">f</span><span class="s2">&quot;https://api.github.com/users/</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="validate_gh_user-78"><a href="#validate_gh_user-78"><span class="linenos">78</span></a>            <span class="n">auth</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">github_auth</span><span class="p">,</span>
-</span><span id="validate_gh_user-79"><a href="#validate_gh_user-79"><span class="linenos">79</span></a>            <span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-</span><span id="validate_gh_user-80"><a href="#validate_gh_user-80"><span class="linenos">80</span></a>        <span class="p">)</span>
-</span><span id="validate_gh_user-81"><a href="#validate_gh_user-81"><span class="linenos">81</span></a>    <span class="k">except</span> <span class="n">httpx</span><span class="o">.</span><span class="n">TimeoutException</span><span class="p">:</span>
-</span><span id="validate_gh_user-82"><a href="#validate_gh_user-82"><span class="linenos">82</span></a>        <span class="n">issue_warning</span><span class="p">(</span>
-</span><span id="validate_gh_user-83"><a href="#validate_gh_user-83"><span class="linenos">83</span></a>            <span class="s2">&quot;Could not verify GitHub user &#39;</span><span class="si">{value}</span><span class="s2">&#39; due to connection timeout&quot;</span><span class="p">,</span>
-</span><span id="validate_gh_user-84"><a href="#validate_gh_user-84"><span class="linenos">84</span></a>            <span class="n">value</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
-</span><span id="validate_gh_user-85"><a href="#validate_gh_user-85"><span class="linenos">85</span></a>        <span class="p">)</span>
-</span><span id="validate_gh_user-86"><a href="#validate_gh_user-86"><span class="linenos">86</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="validate_gh_user-87"><a href="#validate_gh_user-87"><span class="linenos">87</span></a>        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">403</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reason_phrase</span> <span class="o">==</span> <span class="s2">&quot;rate limit exceeded&quot;</span><span class="p">:</span>
-</span><span id="validate_gh_user-88"><a href="#validate_gh_user-88"><span class="linenos">88</span></a>            <span class="n">issue_warning</span><span class="p">(</span>
-</span><span id="validate_gh_user-89"><a href="#validate_gh_user-89"><span class="linenos">89</span></a>                <span class="s2">&quot;Could not verify GitHub user &#39;</span><span class="si">{value}</span><span class="s2">&#39; due to GitHub API rate limit&quot;</span><span class="p">,</span>
-</span><span id="validate_gh_user-90"><a href="#validate_gh_user-90"><span class="linenos">90</span></a>                <span class="n">value</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
-</span><span id="validate_gh_user-91"><a href="#validate_gh_user-91"><span class="linenos">91</span></a>            <span class="p">)</span>
-</span><span id="validate_gh_user-92"><a href="#validate_gh_user-92"><span class="linenos">92</span></a>        <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-</span><span id="validate_gh_user-93"><a href="#validate_gh_user-93"><span class="linenos">93</span></a>            <span class="n">KNOWN_INVALID_GH_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-</span><span id="validate_gh_user-94"><a href="#validate_gh_user-94"><span class="linenos">94</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="validate_gh_user-95"><a href="#validate_gh_user-95"><span class="linenos">95</span></a>
-</span><span id="validate_gh_user-96"><a href="#validate_gh_user-96"><span class="linenos">96</span></a>        <span class="n">KNOWN_GH_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-</span><span id="validate_gh_user-97"><a href="#validate_gh_user-97"><span class="linenos">97</span></a>
-</span><span id="validate_gh_user-98"><a href="#validate_gh_user-98"><span class="linenos">98</span></a>    <span class="k">return</span> <span class="n">username</span>
+    <a class="headerlink" href="#validate_github_user"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="validate_github_user-61"><a href="#validate_github_user-61"><span class="linenos"> 61</span></a><span class="k">def</span><span class="w"> </span><span class="nf">validate_github_user</span><span class="p">(</span>
+</span><span id="validate_github_user-62"><a href="#validate_github_user-62"><span class="linenos"> 62</span></a>    <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="validate_github_user-63"><a href="#validate_github_user-63"><span class="linenos"> 63</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="validate_github_user-64"><a href="#validate_github_user-64"><span class="linenos"> 64</span></a>    <span class="k">if</span> <span class="n">hotfix_known_errorenous_names</span><span class="p">:</span>
+</span><span id="validate_github_user-65"><a href="#validate_github_user-65"><span class="linenos"> 65</span></a>        <span class="k">if</span> <span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;Constantin Pape&quot;</span><span class="p">:</span>
+</span><span id="validate_github_user-66"><a href="#validate_github_user-66"><span class="linenos"> 66</span></a>            <span class="k">return</span> <span class="s2">&quot;constantinpape&quot;</span>
+</span><span id="validate_github_user-67"><a href="#validate_github_user-67"><span class="linenos"> 67</span></a>
+</span><span id="validate_github_user-68"><a href="#validate_github_user-68"><span class="linenos"> 68</span></a>    <span class="k">if</span> <span class="p">(</span>
+</span><span id="validate_github_user-69"><a href="#validate_github_user-69"><span class="linenos"> 69</span></a>        <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_GITHUB_USERS</span>
+</span><span id="validate_github_user-70"><a href="#validate_github_user-70"><span class="linenos"> 70</span></a>        <span class="ow">or</span> <span class="ow">not</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">perform_io_checks</span>
+</span><span id="validate_github_user-71"><a href="#validate_github_user-71"><span class="linenos"> 71</span></a>    <span class="p">):</span>
+</span><span id="validate_github_user-72"><a href="#validate_github_user-72"><span class="linenos"> 72</span></a>        <span class="k">return</span> <span class="n">username</span>
+</span><span id="validate_github_user-73"><a href="#validate_github_user-73"><span class="linenos"> 73</span></a>
+</span><span id="validate_github_user-74"><a href="#validate_github_user-74"><span class="linenos"> 74</span></a>    <span class="k">if</span> <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">KNOWN_INVALID_GITHUB_USERS</span><span class="p">:</span>
+</span><span id="validate_github_user-75"><a href="#validate_github_user-75"><span class="linenos"> 75</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Known invalid GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="validate_github_user-76"><a href="#validate_github_user-76"><span class="linenos"> 76</span></a>
+</span><span id="validate_github_user-77"><a href="#validate_github_user-77"><span class="linenos"> 77</span></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="validate_github_user-78"><a href="#validate_github_user-78"><span class="linenos"> 78</span></a>        <span class="n">r</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+</span><span id="validate_github_user-79"><a href="#validate_github_user-79"><span class="linenos"> 79</span></a>            <span class="sa">f</span><span class="s2">&quot;https://api.github.com/users/</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="validate_github_user-80"><a href="#validate_github_user-80"><span class="linenos"> 80</span></a>            <span class="n">auth</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">github_auth</span><span class="p">,</span>
+</span><span id="validate_github_user-81"><a href="#validate_github_user-81"><span class="linenos"> 81</span></a>            <span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+</span><span id="validate_github_user-82"><a href="#validate_github_user-82"><span class="linenos"> 82</span></a>        <span class="p">)</span>
+</span><span id="validate_github_user-83"><a href="#validate_github_user-83"><span class="linenos"> 83</span></a>    <span class="k">except</span> <span class="n">httpx</span><span class="o">.</span><span class="n">TimeoutException</span><span class="p">:</span>
+</span><span id="validate_github_user-84"><a href="#validate_github_user-84"><span class="linenos"> 84</span></a>        <span class="n">issue_warning</span><span class="p">(</span>
+</span><span id="validate_github_user-85"><a href="#validate_github_user-85"><span class="linenos"> 85</span></a>            <span class="s2">&quot;Could not verify GitHub user &#39;</span><span class="si">{value}</span><span class="s2">&#39; due to connection timeout&quot;</span><span class="p">,</span>
+</span><span id="validate_github_user-86"><a href="#validate_github_user-86"><span class="linenos"> 86</span></a>            <span class="n">value</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
+</span><span id="validate_github_user-87"><a href="#validate_github_user-87"><span class="linenos"> 87</span></a>        <span class="p">)</span>
+</span><span id="validate_github_user-88"><a href="#validate_github_user-88"><span class="linenos"> 88</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="validate_github_user-89"><a href="#validate_github_user-89"><span class="linenos"> 89</span></a>        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">403</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">reason_phrase</span> <span class="o">==</span> <span class="s2">&quot;rate limit exceeded&quot;</span><span class="p">:</span>
+</span><span id="validate_github_user-90"><a href="#validate_github_user-90"><span class="linenos"> 90</span></a>            <span class="n">issue_warning</span><span class="p">(</span>
+</span><span id="validate_github_user-91"><a href="#validate_github_user-91"><span class="linenos"> 91</span></a>                <span class="s2">&quot;Could not verify GitHub user &#39;</span><span class="si">{value}</span><span class="s2">&#39; due to GitHub API rate limit&quot;</span><span class="p">,</span>
+</span><span id="validate_github_user-92"><a href="#validate_github_user-92"><span class="linenos"> 92</span></a>                <span class="n">value</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
+</span><span id="validate_github_user-93"><a href="#validate_github_user-93"><span class="linenos"> 93</span></a>            <span class="p">)</span>
+</span><span id="validate_github_user-94"><a href="#validate_github_user-94"><span class="linenos"> 94</span></a>        <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+</span><span id="validate_github_user-95"><a href="#validate_github_user-95"><span class="linenos"> 95</span></a>            <span class="n">KNOWN_INVALID_GITHUB_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+</span><span id="validate_github_user-96"><a href="#validate_github_user-96"><span class="linenos"> 96</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find GitHub user &#39;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="validate_github_user-97"><a href="#validate_github_user-97"><span class="linenos"> 97</span></a>
+</span><span id="validate_github_user-98"><a href="#validate_github_user-98"><span class="linenos"> 98</span></a>        <span class="n">KNOWN_GITHUB_USERS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+</span><span id="validate_github_user-99"><a href="#validate_github_user-99"><span class="linenos"> 99</span></a>
+</span><span id="validate_github_user-100"><a href="#validate_github_user-100"><span class="linenos">100</span></a>    <span class="k">return</span> <span class="n">username</span>
 </span></pre></div>
 
 

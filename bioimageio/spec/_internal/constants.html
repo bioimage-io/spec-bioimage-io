@@ -45,16 +45,16 @@
                     <a class="variable" href="#DTYPE_LIMITS">DTYPE_LIMITS</a>
             </li>
             <li>
-                    <a class="variable" href="#KNOWN_GH_USERS">KNOWN_GH_USERS</a>
+                    <a class="variable" href="#KNOWN_GITHUB_USERS">KNOWN_GITHUB_USERS</a>
             </li>
             <li>
-                    <a class="variable" href="#N_KNOWN_GH_USERS">N_KNOWN_GH_USERS</a>
+                    <a class="variable" href="#N_KNOWN_GITHUB_USERS">N_KNOWN_GITHUB_USERS</a>
             </li>
             <li>
-                    <a class="variable" href="#KNOWN_INVALID_GH_USERS">KNOWN_INVALID_GH_USERS</a>
+                    <a class="variable" href="#KNOWN_INVALID_GITHUB_USERS">KNOWN_INVALID_GITHUB_USERS</a>
             </li>
             <li>
-                    <a class="variable" href="#N_KNOWN_INVALID_GH_USERS">N_KNOWN_INVALID_GH_USERS</a>
+                    <a class="variable" href="#N_KNOWN_INVALID_GITHUB_USERS">N_KNOWN_INVALID_GITHUB_USERS</a>
             </li>
             <li>
                     <a class="variable" href="#VERSION">VERSION</a>
@@ -65,7 +65,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.4.3</footer>
+            <footer>bioimageio.spec 0.5.4.4</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -142,32 +142,34 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
 </span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>    <span class="p">}</span>
 </span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="p">)</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="c1"># TODO: cache/store known gh users in file</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="n">KNOWN_GH_USERS</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="s2">&quot;clementcaporal&quot;</span><span class="p">,</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="s2">&quot;donglaiw&quot;</span><span class="p">,</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>    <span class="s2">&quot;jansanrom&quot;</span><span class="p">,</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="s2">&quot;pedgomgal1&quot;</span><span class="p">,</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="s2">&quot;aaitorg&quot;</span><span class="p">,</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="s2">&quot;bioimageiobot&quot;</span><span class="p">,</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="s2">&quot;carlosuc3m&quot;</span><span class="p">,</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="s2">&quot;cfusterbarcelo&quot;</span><span class="p">,</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="s2">&quot;constantinpape&quot;</span><span class="p">,</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="s2">&quot;ctr26&quot;</span><span class="p">,</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="s2">&quot;danifranco&quot;</span><span class="p">,</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>    <span class="s2">&quot;esgomezm&quot;</span><span class="p">,</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="s2">&quot;fynnbe&quot;</span><span class="p">,</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="s2">&quot;githubuser2&quot;</span><span class="p">,</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>    <span class="s2">&quot;iarganda&quot;</span><span class="p">,</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="c1"># TODO: cache/store known GitHub users in file</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="n">KNOWN_GITHUB_USERS</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="s2">&quot;aaitorg&quot;</span><span class="p">,</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="s2">&quot;anwai98&quot;</span><span class="p">,</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>    <span class="s2">&quot;bioimageiobot&quot;</span><span class="p">,</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="s2">&quot;carlosuc3m&quot;</span><span class="p">,</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="s2">&quot;cfusterbarcelo&quot;</span><span class="p">,</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="s2">&quot;clementcaporal&quot;</span><span class="p">,</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="s2">&quot;constantinpape&quot;</span><span class="p">,</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="s2">&quot;ctr26&quot;</span><span class="p">,</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="s2">&quot;danifranco&quot;</span><span class="p">,</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="s2">&quot;donglaiw&quot;</span><span class="p">,</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="s2">&quot;esgomezm&quot;</span><span class="p">,</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>    <span class="s2">&quot;fynnbe&quot;</span><span class="p">,</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="s2">&quot;githubuser2&quot;</span><span class="p">,</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="s2">&quot;iarganda&quot;</span><span class="p">,</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>    <span class="s2">&quot;ilastik&quot;</span><span class="p">,</span>
 </span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>    <span class="s2">&quot;ivanhcenalmor&quot;</span><span class="p">,</span>
 </span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>    <span class="s2">&quot;jansanrom&quot;</span><span class="p">,</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>    <span class="s2">&quot;k-dominik&quot;</span><span class="p">,</span>
 </span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>    <span class="s2">&quot;lenkaback&quot;</span><span class="p">,</span>
 </span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="s2">&quot;oeway&quot;</span><span class="p">,</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a><span class="p">}</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="n">N_KNOWN_GH_USERS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">KNOWN_GH_USERS</span><span class="p">)</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a><span class="n">KNOWN_INVALID_GH_USERS</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;arratemunoz&quot;</span><span class="p">,</span> <span class="s2">&quot;lmescu&quot;</span><span class="p">}</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a><span class="n">N_KNOWN_INVALID_GH_USERS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">KNOWN_INVALID_GH_USERS</span><span class="p">)</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>    <span class="s2">&quot;pedgomgal1&quot;</span><span class="p">,</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="p">}</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a><span class="n">N_KNOWN_GITHUB_USERS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">KNOWN_GITHUB_USERS</span><span class="p">)</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a><span class="n">KNOWN_INVALID_GITHUB_USERS</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;arratemunoz&quot;</span><span class="p">,</span> <span class="s2">&quot;lmescu&quot;</span><span class="p">}</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a><span class="n">N_KNOWN_INVALID_GITHUB_USERS</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">KNOWN_INVALID_GITHUB_USERS</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -223,51 +225,51 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
     
 
                 </section>
-                <section id="KNOWN_GH_USERS">
+                <section id="KNOWN_GITHUB_USERS">
                     <div class="attr variable">
-            <span class="name">KNOWN_GH_USERS</span><span class="annotation">: Set[str]</span>        =
-<input id="KNOWN_GH_USERS-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="KNOWN_GH_USERS-view-value"></label><span class="default_value">{&#39;bioimageiobot&#39;, &#39;lenkaback&#39;, &#39;ctr26&#39;, &#39;githubuser2&#39;, &#39;cfusterbarcelo&#39;, &#39;carlosuc3m&#39;, &#39;aaitorg&#39;, &#39;k-dominik&#39;, &#39;constantinpape&#39;, &#39;jansanrom&#39;, &#39;oeway&#39;, &#39;pedgomgal1&#39;, &#39;ivanhcenalmor&#39;, &#39;donglaiw&#39;, &#39;fynnbe&#39;, &#39;iarganda&#39;, &#39;danifranco&#39;, &#39;clementcaporal&#39;, &#39;esgomezm&#39;}</span>
+            <span class="name">KNOWN_GITHUB_USERS</span><span class="annotation">: Set[str]</span>        =
+<input id="KNOWN_GITHUB_USERS-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="KNOWN_GITHUB_USERS-view-value"></label><span class="default_value">{&#39;clementcaporal&#39;, &#39;esgomezm&#39;, &#39;ilastik&#39;, &#39;carlosuc3m&#39;, &#39;ivanhcenalmor&#39;, &#39;anwai98&#39;, &#39;k-dominik&#39;, &#39;ctr26&#39;, &#39;githubuser2&#39;, &#39;jansanrom&#39;, &#39;bioimageiobot&#39;, &#39;donglaiw&#39;, &#39;cfusterbarcelo&#39;, &#39;fynnbe&#39;, &#39;iarganda&#39;, &#39;oeway&#39;, &#39;danifranco&#39;, &#39;pedgomgal1&#39;, &#39;constantinpape&#39;, &#39;aaitorg&#39;, &#39;lenkaback&#39;}</span>
 
         
     </div>
-    <a class="headerlink" href="#KNOWN_GH_USERS"></a>
+    <a class="headerlink" href="#KNOWN_GITHUB_USERS"></a>
     
     
 
                 </section>
-                <section id="N_KNOWN_GH_USERS">
+                <section id="N_KNOWN_GITHUB_USERS">
                     <div class="attr variable">
-            <span class="name">N_KNOWN_GH_USERS</span>        =
-<span class="default_value">19</span>
+            <span class="name">N_KNOWN_GITHUB_USERS</span>        =
+<span class="default_value">21</span>
 
         
     </div>
-    <a class="headerlink" href="#N_KNOWN_GH_USERS"></a>
+    <a class="headerlink" href="#N_KNOWN_GITHUB_USERS"></a>
     
     
 
                 </section>
-                <section id="KNOWN_INVALID_GH_USERS">
+                <section id="KNOWN_INVALID_GITHUB_USERS">
                     <div class="attr variable">
-            <span class="name">KNOWN_INVALID_GH_USERS</span><span class="annotation">: Set[str]</span>        =
-<span class="default_value">{&#39;arratemunoz&#39;, &#39;lmescu&#39;}</span>
+            <span class="name">KNOWN_INVALID_GITHUB_USERS</span><span class="annotation">: Set[str]</span>        =
+<span class="default_value">{&#39;lmescu&#39;, &#39;arratemunoz&#39;}</span>
 
         
     </div>
-    <a class="headerlink" href="#KNOWN_INVALID_GH_USERS"></a>
+    <a class="headerlink" href="#KNOWN_INVALID_GITHUB_USERS"></a>
     
     
 
                 </section>
-                <section id="N_KNOWN_INVALID_GH_USERS">
+                <section id="N_KNOWN_INVALID_GITHUB_USERS">
                     <div class="attr variable">
-            <span class="name">N_KNOWN_INVALID_GH_USERS</span>        =
+            <span class="name">N_KNOWN_INVALID_GITHUB_USERS</span>        =
 <span class="default_value">2</span>
 
         
     </div>
-    <a class="headerlink" href="#N_KNOWN_INVALID_GH_USERS"></a>
+    <a class="headerlink" href="#N_KNOWN_INVALID_GITHUB_USERS"></a>
     
     
 
@@ -275,7 +277,7 @@ bioimageio<wbr>.<a href="./../../spec.html">spec</a><wbr>.<a href="./../_interna
                 <section id="VERSION">
                     <div class="attr variable">
             <span class="name">VERSION</span><span class="annotation">: str</span>        =
-<span class="default_value">&#39;0.5.4.3&#39;</span>
+<span class="default_value">&#39;0.5.4.4&#39;</span>
 
         
     </div>
