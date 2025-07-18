@@ -11,6 +11,7 @@ BASE_URL = "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/"
 KNOWN_INVALID: Mapping[str, str] = {
     "stupendous-sheep/1.1": "requires relativ import of attachment",
     "whimsical-helmet/2.1.2": "invalid id",
+    "modest-spider/0.1.1": "non-batch id 'b'",
 }
 EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT: Collection[str] = {
     "version_number",  # deprecated field that gets dropped in favor of `version``

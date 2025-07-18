@@ -23,6 +23,7 @@ from typing import (
     no_type_check,
 )
 
+import annotated_types
 import markdown
 import rich.console
 import rich.markdown
@@ -36,7 +37,7 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core.core_schema import ErrorType
-from typing_extensions import Self, assert_never
+from typing_extensions import Annotated, Self, assert_never
 
 from bioimageio.spec._internal.type_guards import is_dict
 
@@ -241,25 +242,32 @@ class ValidationSummary(BaseModel, extra="allow"):
     for one specific `ResourceDescr` instance."""
 
     name: str
-    """name of the validation"""
+    """Name of the validation"""
     source_name: str
-    """source of the validated bioimageio description"""
+    """Source of the validated bioimageio description"""
     id: Optional[str] = None
     """ID of the resource being validated"""
     type: str
-    """type of the resource being validated"""
+    """Type of the resource being validated"""
     format_version: str
-    """format version of the resource being validated"""
+    """Format version of the resource being validated"""
     status: Literal["passed", "valid-format", "failed"]
     """overall status of the bioimageio validation"""
+    metadata_completeness: Annotated[float, annotated_types.Interval(ge=0, le=1)] = 0.0
+    """Estimate of completeness of the metadata in the resource description.
+
+    Note: This completeness estimate may change with subsequent releases
+        and should be considered bioimageio.spec version specific.
+    """
+
     details: List[ValidationDetail]
-    """list of validation details"""
+    """List of validation details"""
     env: Set[InstalledPackage] = Field(
         default_factory=lambda: {
             InstalledPackage(name="bioimageio.spec", version=VERSION)
         }
     )
-    """list of selected, relevant package versions"""
+    """List of selected, relevant package versions"""
 
     saved_conda_list: Optional[str] = None
 

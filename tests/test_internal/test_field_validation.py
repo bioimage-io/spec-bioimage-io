@@ -29,14 +29,14 @@ def test_validate_unique_entries():
     assert ret == ["a", "b"]
 
 
-def test_validate_gh_user():
-    from bioimageio.spec._internal.field_validation import validate_gh_user
+def test_validate_github_user():
+    from bioimageio.spec._internal.field_validation import validate_github_user
 
     with pytest.raises(ValueError), ValidationContext(perform_io_checks=True):
-        _ = validate_gh_user("arratemunoz")
+        _ = validate_github_user("arratemunoz")
 
-    cpape = validate_gh_user("Constantin Pape", hotfix_known_errorenous_names=True)
+    cpape = validate_github_user("Constantin Pape", hotfix_known_errorenous_names=True)
     assert cpape == "constantinpape"
 
-    fynnbe = validate_gh_user("fynnbe")
+    fynnbe = validate_github_user("fynnbe")
     assert fynnbe == "fynnbe"

@@ -9,7 +9,8 @@ from pydantic import Field, ValidationError
 from respx import MockRouter
 
 from bioimageio.spec import ValidationContext
-from bioimageio.spec._internal.io_basics import ZipPath
+from bioimageio.spec._internal.io_basics import Sha256, ZipPath
+from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec.common import RelativeFilePath
 
 
@@ -244,3 +245,15 @@ def test_serialize_relative_file_path_from_union():
     data = file_path.model_dump(mode="json")
 
     assert data == path_str
+
+
+def test_open_url_with_wrong_sha():
+    from bioimageio.spec._internal.io import (
+        _open_url,  # pyright: ignore[reportPrivateUsage]
+    )
+
+    url = "https://example.com/file.txt"
+    sha = Sha256("0" * 64)  # invalid sha256 for testing
+
+    with pytest.raises(ValueError, match=f"Failed to fetch {url}."):
+        _ = _open_url(HttpUrl(url), sha256=sha)

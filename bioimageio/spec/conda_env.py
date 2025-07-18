@@ -50,8 +50,8 @@ class CondaEnv(BaseModel):
     def wo_name(self):
         return self.model_construct(**{k: v for k, v in self if k != "name"})
 
-    def _get_version(self, package: str):
-        """Helper to return any verison pin for **package**
+    def _get_version_pin(self, package: str):
+        """Helper to return any version pin for **package**
 
         TODO: improve: interprete version pin and return structured information.
         """
@@ -62,6 +62,10 @@ class CondaEnv(BaseModel):
                         return p[len(package) :]
             elif d.startswith(package):
                 return d[len(package) :]
+            elif "::" in d and (d_wo_channel := d.split("::", 1)[-1]).startswith(
+                package
+            ):
+                return d_wo_channel[len(package) :]
 
     def get_pip_deps(self) -> List[str]:
         """Get the pip dependencies of this conda env."""

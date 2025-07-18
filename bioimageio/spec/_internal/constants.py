@@ -56,29 +56,31 @@ DTYPE_LIMITS = MappingProxyType(
     }
 )
 
-# TODO: cache/store known gh users in file
-KNOWN_GH_USERS: Set[str] = {
-    "clementcaporal",
-    "donglaiw",
-    "jansanrom",
-    "pedgomgal1",
+# TODO: cache/store known GitHub users in file
+KNOWN_GITHUB_USERS: Set[str] = {
     "aaitorg",
+    "anwai98",
     "bioimageiobot",
     "carlosuc3m",
     "cfusterbarcelo",
+    "clementcaporal",
     "constantinpape",
     "ctr26",
     "danifranco",
+    "donglaiw",
     "esgomezm",
     "fynnbe",
     "githubuser2",
     "iarganda",
+    "ilastik",
     "ivanhcenalmor",
     "jansanrom",
     "k-dominik",
     "lenkaback",
     "oeway",
+    "pedgomgal1",
 }
-N_KNOWN_GH_USERS = len(KNOWN_GH_USERS)
-KNOWN_INVALID_GH_USERS: Set[str] = {"arratemunoz", "lmescu"}
-N_KNOWN_INVALID_GH_USERS = len(KNOWN_INVALID_GH_USERS)
+
+N_KNOWN_GITHUB_USERS = len(KNOWN_GITHUB_USERS)
+KNOWN_INVALID_GITHUB_USERS: Set[str] = {"arratemunoz", "lmescu"}
+N_KNOWN_INVALID_GITHUB_USERS = len(KNOWN_INVALID_GITHUB_USERS)

@@ -27,7 +27,7 @@ from bioimageio.spec._internal.type_guards import is_dict
 
 from .._internal.common_nodes import Node, ResourceDescrBase
 from .._internal.constants import TAG_CATEGORIES
-from .._internal.field_validation import validate_gh_user
+from .._internal.field_validation import validate_github_user
 from .._internal.field_warning import as_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
@@ -112,11 +112,11 @@ class Author(_Author_v0_2):
     github_user: Optional[str] = None
 
     @field_validator("github_user", mode="after")
-    def _validate_gh_user(cls, value: Optional[str]):
+    def _validate_github_user(cls, value: Optional[str]):
         if value is None:
             return None
         else:
-            return validate_gh_user(value)
+            return validate_github_user(value)
 
 
 class _AuthorConv(Converter[_Author_v0_2, Author]):
@@ -140,8 +140,8 @@ class Maintainer(_Maintainer_v0_2):
     github_user: str
 
     @field_validator("github_user", mode="after")
-    def validate_gh_user(cls, value: str):
-        return validate_gh_user(value)
+    def validate_github_user(cls, value: str):
+        return validate_github_user(value)
 
 
 class _MaintainerConv(Converter[_Maintainer_v0_2, Maintainer]):

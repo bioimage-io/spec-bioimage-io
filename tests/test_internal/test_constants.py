@@ -28,11 +28,13 @@ def test_warning_levels():
     assert INFO == logging.INFO
 
 
-def test_known_gh_users_are_lowercase():
+def test_known_github_users_are_lowercase():
     from bioimageio.spec._internal.constants import (
-        KNOWN_GH_USERS,
-        KNOWN_INVALID_GH_USERS,
+        KNOWN_GITHUB_USERS,
+        KNOWN_INVALID_GITHUB_USERS,
     )
 
-    assert KNOWN_GH_USERS == {user.lower() for user in KNOWN_GH_USERS}
-    assert KNOWN_INVALID_GH_USERS == {user.lower() for user in KNOWN_INVALID_GH_USERS}
+    assert KNOWN_GITHUB_USERS == {user.lower() for user in KNOWN_GITHUB_USERS}
+    assert KNOWN_INVALID_GITHUB_USERS == {
+        user.lower() for user in KNOWN_INVALID_GITHUB_USERS
+    }

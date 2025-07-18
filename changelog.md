@@ -10,9 +10,10 @@ In this file we log both:
 
 This changelog includes implementation details and my reference the [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
-#### bioimageio.spec (next release)
+#### bioimageio.spec 0.5.4.4
 
 - infinity and not-a-number values are no longer allowed (when used in a tensor description under data.range they are replaced with `None`)
+- stricter validation of integers; float values no longer allowed for input/output fields `size.offset`, `size.min`, `size.max`
 
 #### bioimageio.spec 0.5.4.3
 

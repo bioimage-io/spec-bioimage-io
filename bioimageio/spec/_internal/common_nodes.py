@@ -10,6 +10,7 @@ from typing import (
     Any,
     ClassVar,
     Dict,
+    Iterable,
     List,
     Literal,
     Mapping,
@@ -149,6 +150,7 @@ class ResourceDescrBase(
     @model_validator(mode="after")
     def _set_init_validation_summary(self) -> Self:
         context = get_validation_context()
+
         self._validation_summary = ValidationSummary(
             name="bioimageio format validation",
             source_name=context.source_name,
@@ -156,6 +158,7 @@ class ResourceDescrBase(
             type=self.type,
             format_version=self.format_version,
             status="failed" if isinstance(self, InvalidDescr) else "valid-format",
+            metadata_completeness=self._get_metadata_completeness(),
             details=(
                 []
                 if isinstance(self, InvalidDescr)
@@ -244,6 +247,25 @@ class ResourceDescrBase(
         )
 
         return rd
+
+    def _get_metadata_completeness(self) -> float:
+        if isinstance(self, InvalidDescr):
+            return 0.0
+
+        given = self.model_dump(mode="json", exclude_unset=True, exclude_defaults=False)
+        full = self.model_dump(mode="json", exclude_unset=False, exclude_defaults=False)
+
+        def extract_flat_keys(d: Dict[Any, Any], key: str = "") -> Iterable[str]:
+            for k, v in d.items():
+                if is_dict(v):
+                    yield from extract_flat_keys(v, key=f"{key}.{k}" if key else k)
+
+                yield f"{key}.{k}" if key else k
+
+        given_keys = set(extract_flat_keys(given))
+        full_keys = set(extract_flat_keys(full))
+        assert len(full_keys) >= len(given_keys)
+        return len(given_keys) / len(full_keys) if full_keys else 0.0
 
     @classmethod
     def _load_impl(

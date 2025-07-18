@@ -12,7 +12,7 @@ from typing import (
 import httpx
 
 from ._settings import settings
-from .constants import KNOWN_GH_USERS, KNOWN_INVALID_GH_USERS
+from .constants import KNOWN_GITHUB_USERS, KNOWN_INVALID_GITHUB_USERS
 from .field_warning import issue_warning
 from .type_guards import is_mapping, is_sequence, is_tuple
 from .validation_context import get_validation_context
@@ -57,18 +57,20 @@ def validate_unique_entries(seq: Sequence[Hashable]):
     return seq
 
 
-def validate_gh_user(username: str, hotfix_known_errorenous_names: bool = True) -> str:
+def validate_github_user(
+    username: str, hotfix_known_errorenous_names: bool = True
+) -> str:
     if hotfix_known_errorenous_names:
         if username == "Constantin Pape":
             return "constantinpape"
 
     if (
-        username.lower() in KNOWN_GH_USERS
+        username.lower() in KNOWN_GITHUB_USERS
         or not get_validation_context().perform_io_checks
     ):
         return username
 
-    if username.lower() in KNOWN_INVALID_GH_USERS:
+    if username.lower() in KNOWN_INVALID_GITHUB_USERS:
         raise ValueError(f"Known invalid GitHub user '{username}'")
 
     try:
@@ -89,9 +91,9 @@ def validate_gh_user(username: str, hotfix_known_errorenous_names: bool = True) 
                 value=username,
             )
         elif r.status_code != 200:
-            KNOWN_INVALID_GH_USERS.add(username.lower())
+            KNOWN_INVALID_GITHUB_USERS.add(username.lower())
             raise ValueError(f"Could not find GitHub user '{username}'")
 
-        KNOWN_GH_USERS.add(username.lower())
+        KNOWN_GITHUB_USERS.add(username.lower())
 
     return username
