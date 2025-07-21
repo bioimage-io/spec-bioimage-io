@@ -227,7 +227,7 @@ class ResourceDescrBase(
 
         if context.warning_level > INFO:
             all_warnings_context = context.replace(
-                warning_level=INFO, log_warnings=False
+                warning_level=INFO, log_warnings=False, raise_errors=False
             )
             # raise all validation warnings by reloading
             with all_warnings_context:
