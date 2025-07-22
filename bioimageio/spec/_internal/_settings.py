@@ -42,6 +42,21 @@ class Settings(BaseSettings, extra="ignore"):
     - If this endpoints fails, we fall back to **id_map**.
     """
 
+    hypha_upload: str = (
+        "https://hypha.aicell.io/public/services/artifact-manager/create"
+    )
+    """URL to the upload endpoint for bioimageio resources."""
+
+    hypha_upload_token: Optional[str] = None
+    """Hypha API token to use for uploads.
+
+    By setting this token you agree to our terms of service at https://bioimage.io/#/toc.
+
+    How to obtain a token:
+        1. Login to https://bioimage.io
+        2. Generate a new token at https://bioimage.io/#/api?tab=hypha-rpc
+    """
+
     id_map: str = (
         "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map.json"
     )
