@@ -3680,6 +3680,12 @@ def generate_covers(
 
         return out
 
+    if not inputs:
+        raise ValueError("Missing test input tensor for cover generation.")
+
+    if not outputs:
+        raise ValueError("Missing test output tensor for cover generation.")
+
     ipt_descr, ipt = inputs[0]
     out_descr, out = outputs[0]
 
