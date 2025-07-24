@@ -261,6 +261,16 @@ def _is_not_batch(a: str) -> bool:
 
 NonBatchAxisId = Annotated[AxisId, Predicate(_is_not_batch)]
 
+PreprocessingId = Literal[
+    "binarize",
+    "clip",
+    "ensure_dtype",
+    "fixed_zero_mean_unit_variance",
+    "scale_linear",
+    "scale_range",
+    "sigmoid",
+    "softmax",
+]
 PostprocessingId = Literal[
     "binarize",
     "clip",
@@ -270,16 +280,8 @@ PostprocessingId = Literal[
     "scale_mean_variance",
     "scale_range",
     "sigmoid",
+    "softmax",
     "zero_mean_unit_variance",
-]
-PreprocessingId = Literal[
-    "binarize",
-    "clip",
-    "ensure_dtype",
-    "scale_linear",
-    "sigmoid",
-    "zero_mean_unit_variance",
-    "scale_range",
 ]
 
 
@@ -1177,6 +1179,42 @@ class SigmoidDescr(ProcessingDescrBase):
         return ProcessingKwargs()
 
 
+class SoftmaxKwargs(ProcessingKwargs):
+    """key word arguments for `SoftmaxDescr`"""
+
+    axis: Annotated[NonBatchAxisId, Field(examples=["channel"])] = AxisId("channel")
+    """The axis to apply the softmax function along.
+    Note:
+        Defaults to 'channel' axis
+        (which may not exist, in which case
+        a different axis id has to be specified).
+    """
+
+
+class SoftmaxDescr(ProcessingDescrBase):
+    """The softmax function.
+
+    Examples:
+    - in YAML
+        ```yaml
+        postprocessing:
+          - id: softmax
+            kwargs:
+              axis: channel
+        ```
+    - in Python:
+        >>> postprocessing = [SoftmaxDescr(SoftmaxKwargs(axis=AxisId("channel")))]
+    """
+
+    implemented_id: ClassVar[Literal["softmax"]] = "softmax"
+    if TYPE_CHECKING:
+        id: Literal["softmax"] = "softmax"
+    else:
+        id: Literal["softmax"]
+
+    kwargs: SoftmaxKwargs = Field(default_factory=SoftmaxKwargs)
+
+
 class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     """key word arguments for `FixedZeroMeanUnitVarianceDescr`"""
 
@@ -1460,11 +1498,12 @@ PreprocessingDescr = Annotated[
         BinarizeDescr,
         ClipDescr,
         EnsureDtypeDescr,
-        ScaleLinearDescr,
-        SigmoidDescr,
         FixedZeroMeanUnitVarianceDescr,
-        ZeroMeanUnitVarianceDescr,
+        ScaleLinearDescr,
         ScaleRangeDescr,
+        SigmoidDescr,
+        SoftmaxDescr,
+        ZeroMeanUnitVarianceDescr,
     ],
     Discriminator("id"),
 ]
@@ -1473,12 +1512,13 @@ PostprocessingDescr = Annotated[
         BinarizeDescr,
         ClipDescr,
         EnsureDtypeDescr,
-        ScaleLinearDescr,
-        SigmoidDescr,
         FixedZeroMeanUnitVarianceDescr,
-        ZeroMeanUnitVarianceDescr,
-        ScaleRangeDescr,
+        ScaleLinearDescr,
         ScaleMeanVarianceDescr,
+        ScaleRangeDescr,
+        SigmoidDescr,
+        SoftmaxDescr,
+        ZeroMeanUnitVarianceDescr,
     ],
     Discriminator("id"),
 ]
