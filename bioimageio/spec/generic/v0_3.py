@@ -403,6 +403,9 @@ class GenericModelDescrBase(ResourceDescrBase):
 
         return value
 
+    version_comment: Optional[Annotated[str, MaxLen(512)]] = None
+    """A comment on the version of the resource."""
+
 
 FileSource_documentation = Annotated[
     FileSource_,
