@@ -306,6 +306,7 @@ note: not yet released
 - Non-breaking changes:
   - New optional `version_comment` field
   - Many FAIR fields are optional now to make it easier to tinker with resources not ready for publishing yet.
+  - new softmax pre-/postprocessing
 
 #### model 0.5.4
 
