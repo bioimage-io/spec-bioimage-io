@@ -463,7 +463,7 @@ class GenericDescrBase(GenericModelDescrBase):
     )
     """badges associated with this resource"""
 
-    config: Config = Field(default_factory=Config)
+    config: Config = Field(default_factory=Config.model_construct)
     """A field for custom configuration that can contain any keys not present in the RDF spec.
     This means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.
     Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,

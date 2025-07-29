@@ -1,7 +1,10 @@
 from datetime import datetime
+from typing import ClassVar, Literal, Optional
 
 import pytest
+from pydantic import Field
 
+from bioimageio.spec._internal.node import Node
 from bioimageio.spec._internal.validation_context import ValidationContext
 
 
@@ -40,3 +43,29 @@ def test_validate_github_user():
 
     fynnbe = validate_github_user("fynnbe")
     assert fynnbe == "fynnbe"
+
+
+def test_FAIR():
+    from bioimageio.spec._internal.common_nodes import ResourceDescrBase
+    from bioimageio.spec._internal.types import FAIR
+
+    class Nested(Node):
+        c_opt1: FAIR[str] = ""  # empty string is not FAIR (warning 3)
+
+    class MyDescr(ResourceDescrBase):
+        implemented_type: ClassVar[Literal["test"]] = "test"
+        implemented_format_version: ClassVar[Literal["1.0.0"]] = "1.0.0"
+        type: Literal["test"]
+        format_version: Literal["1.0.0"]
+
+        a_opt1: FAIR[int] = 0  # actual int value is considered FAIR
+        a_opt2: FAIR[Optional[str]] = None  # None is not FAIR (warning 1)
+        a_opt3: FAIR[str] = ""  # empty string is not FAIR (warning 2)
+        nested: Nested = Field(default_factory=Nested.model_construct)
+
+    my_descr = MyDescr.load({})
+    assert (
+        len(my_descr.validation_summary.warnings) == 3
+    ), my_descr.validation_summary.display() or [
+        e.msg for e in my_descr.validation_summary.errors
+    ]

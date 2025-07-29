@@ -1212,7 +1212,7 @@ class SoftmaxDescr(ProcessingDescrBase):
     else:
         id: Literal["softmax"]
 
-    kwargs: SoftmaxKwargs = Field(default_factory=SoftmaxKwargs)
+    kwargs: SoftmaxKwargs = Field(default_factory=SoftmaxKwargs.model_construct)
 
 
 class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
@@ -1345,7 +1345,7 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
         id: Literal["zero_mean_unit_variance"]
 
     kwargs: ZeroMeanUnitVarianceKwargs = Field(
-        default_factory=ZeroMeanUnitVarianceKwargs
+        default_factory=ZeroMeanUnitVarianceKwargs.model_construct
     )
 
 
@@ -1457,7 +1457,7 @@ class ScaleRangeDescr(ProcessingDescrBase):
         id: Literal["scale_range"] = "scale_range"
     else:
         id: Literal["scale_range"]
-    kwargs: ScaleRangeKwargs
+    kwargs: ScaleRangeKwargs = Field(default_factory=ScaleRangeKwargs.model_construct)
 
 
 class ScaleMeanVarianceKwargs(ProcessingKwargs):
@@ -2597,7 +2597,9 @@ class BioimageioConfig(Node, extra="allow"):
 
 
 class Config(Node, extra="allow"):
-    bioimageio: BioimageioConfig = Field(default_factory=BioimageioConfig)
+    bioimageio: BioimageioConfig = Field(
+        default_factory=BioimageioConfig.model_construct
+    )
 
 
 class ModelDescr(GenericModelDescrBase):
@@ -2988,7 +2990,7 @@ class ModelDescr(GenericModelDescrBase):
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
 
-    config: Config = Field(default_factory=Config)
+    config: Config = Field(default_factory=Config.model_construct)
 
     @model_validator(mode="after")
     def _add_default_cover(self) -> Self:

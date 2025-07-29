@@ -72,9 +72,11 @@ def as_warning(
         except (AssertionError, ValueError) as e:
             issue_warning(
                 msg or ",".join(e.args),
-                value=value,
-                severity=severity,
+                field=info.field_name,
+                log_depth=2,
                 msg_context=msg_context,
+                severity=severity,
+                value=value,
             )
 
         return value
@@ -135,10 +137,12 @@ def issue_warning(
     severity: WarningSeverity = WARNING,
     msg_context: Optional[Dict[str, Any]] = None,
     field: Optional[str] = None,
+    log_depth: int = 1,
 ):
     msg_context = {"value": value, "severity": severity, **(msg_context or {})}
+
     if severity >= (ctxt := get_validation_context()).warning_level:
         raise PydanticCustomError("warning", msg, msg_context)
     elif ctxt.log_warnings:
         log_msg = (field + ": " if field else "") + (msg.format(**msg_context))
-        logger.opt(depth=1).log(severity, log_msg)
+        logger.opt(depth=log_depth).log(severity, log_msg)

@@ -222,7 +222,7 @@ class ResourceDescrBase(
             file_descrs = extract_file_descrs({k: v for k, v in data.items()})
             populate_cache(file_descrs)  # TODO: add progress bar
 
-        with context:
+        with context.replace(log_warnings=context.warning_level <= INFO):
             rd, errors, val_warnings = cls._load_impl(deepcopy_yaml_value(data))
 
         if context.warning_level > INFO:
