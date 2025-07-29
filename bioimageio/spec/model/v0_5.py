@@ -2853,9 +2853,8 @@ class ModelDescr(GenericModelDescrBase):
     # def validate_inputs(self, input_tensors: Mapping[TensorId, NDArray[Any]]) -> Mapping[TensorId, NDArray[Any]]:
 
     name: Annotated[
-        Annotated[
-            str, RestrictCharacters(string.ascii_letters + string.digits + "_+- ()")
-        ],
+        str,
+        RestrictCharacters(string.ascii_letters + string.digits + "_+- ()"),
         MinLen(5),
         MaxLen(128),
         warn(MaxLen(64), "Name longer than 64 characters.", INFO),
