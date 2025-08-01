@@ -18,14 +18,15 @@ from ._internal.common_nodes import ResourceDescrBase
 from ._internal.io import BioimageioYamlContent, get_reader
 from ._internal.io_basics import BIOIMAGEIO_YAML
 from ._internal.io_utils import write_yaml
+from ._internal.validation_context import get_validation_context
 from ._package import get_resource_package_content
-from .common import PermissiveFileSource
+from .common import HttpUrl, PermissiveFileSource
 
 
 def upload(
     source: Union[PermissiveFileSource, ZipFile, ResourceDescr, BioimageioYamlContent],
     /,
-) -> Union[ResourceDescr, InvalidDescr]:
+) -> HttpUrl:
     """Upload a new resource description (version) to the hypha server to be shared at bioimage.io.
     To edit an existing resource **version**, please login to https://bioimage.io and use the web interface.
 
@@ -33,7 +34,8 @@ def upload(
         source: The resource description to upload.
 
     Returns:
-        The uploaded resource description.
+        A URL to the uploaded resource description.
+        Note: It might take some time until the resource is processed and available for download from the returned URL.
     """
 
     if settings.hypha_upload_token is None:
@@ -152,7 +154,10 @@ How to obtain a token:
     logger.info(
         "Updated status of {}/{} to 'request-review'", artifact_id, artifact_version
     )
-
-    return load_description(
-        f"https://hypha.aicell.io/bioimage-io/artifacts/{artifact_id}/files/rdf.yaml?version={artifact_version}"
+    logger.warning(
+        "Upload successfull. Please note that the uploaded resource might not be available for download immediately."
     )
+    with get_validation_context().replace(perform_io_checks=False):
+        return HttpUrl(
+            f"https://hypha.aicell.io/bioimage-io/artifacts/{artifact_id}/files/rdf.yaml?version={artifact_version}"
+        )
