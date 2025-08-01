@@ -334,9 +334,6 @@ class ValidationSummary(BaseModel, extra="allow"):
             md_with_html, extensions=["tables", "fenced_code", "nl2br"]
         )
 
-    # TODO: fix bug which casuses extensive white space between the info table and details table
-    # (the generated markdown seems fine)
-    @no_type_check
     def display(
         self,
         *,
@@ -347,7 +344,9 @@ class ValidationSummary(BaseModel, extra="allow"):
     ) -> None:
         try:  # render as HTML in Jupyter notebook
             from IPython.core.getipython import get_ipython
-            from IPython.display import display_html
+            from IPython.display import (
+                display_html,  # pyright: ignore[reportUnknownVariableType]
+            )
         except ImportError:
             pass
         else:
@@ -361,7 +360,7 @@ class ValidationSummary(BaseModel, extra="allow"):
                 return
 
         # render with rich
-        self._format(
+        _ = self._format(
             target=rich.console.Console(
                 width=width,
                 tab_size=tab_size,
