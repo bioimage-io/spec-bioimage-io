@@ -1,3 +1,5 @@
+import collections.abc
+import io
 from typing import Union
 from zipfile import ZipFile
 
@@ -15,6 +17,7 @@ from ._internal._settings import settings
 from ._internal.common_nodes import ResourceDescrBase
 from ._internal.io import BioimageioYamlContent, get_reader
 from ._internal.io_basics import BIOIMAGEIO_YAML
+from ._internal.io_utils import write_yaml
 from ._package import get_resource_package_content
 from .common import PermissiveFileSource
 
@@ -56,24 +59,36 @@ How to obtain a token:
     if isinstance(descr, InvalidDescr):
         raise ValueError("Uploading invalid resource descriptions is not allowed.")
 
+    if descr.type != "model":
+        raise NotImplementedError(
+            f"For now, only model resources can be uploaded (got type={descr.type})."
+        )
+
+    if descr.id is not None:
+        raise ValueError(
+            "You cannot upload a resource with an id. Please remove the id from the description and make sure to upload a new non-existing resource. To edit an existing resource, please use the web interface at https://bioimage.io."
+        )
+
     content = get_resource_package_content(descr)
 
-    manifest = content.pop(BIOIMAGEIO_YAML)
-    assert isinstance(manifest, dict)
+    metadata = content[BIOIMAGEIO_YAML]
+    assert isinstance(metadata, dict)
+    manifest = dict(metadata)
+
+    # only admins can upload a resource with a version
+    artifact_version = "stage"  # if descr.version is None else str(descr.version)
 
     # Create new model
     r = httpx.post(
         settings.hypha_upload,
         json={
             "parent_id": "bioimage-io/bioimage.io",
-            "alias": descr.id,
+            "alias": (
+                descr.id or "{animal_adjective}-{animal}"
+            ),  # TODO: adapt for non-model uploads,
             "type": descr.type,
             "manifest": manifest,
-            "version": (
-                artifact_version := (
-                    "stage" if descr.version is None else str(descr.version)
-                )
-            ),
+            "version": artifact_version,
         },
         headers=(
             headers := {
@@ -86,29 +101,38 @@ How to obtain a token:
     response = r.json()
     artifact_id = response.get("id")
     if artifact_id is None:
+        try:
+            logger.error("Response detail: {}", "".join(response["detail"]))
+        except Exception:
+            logger.error("Response: {}", response)
+
         raise RuntimeError(f"Upload did not return resource id: {response}")
     else:
         logger.info("Uploaded resource description {}", artifact_id)
 
     for file_name, file_source in content.items():
-        assert not isinstance(file_source, dict)
         # Get upload URL for a file
         response = httpx.post(
             settings.hypha_upload.replace("/create", "/put_file"),
             json={
                 "artifact_id": artifact_id,
-                "version": artifact_version,  # TODO: is version valid here?
                 "file_path": file_name,
             },
             headers=headers,
         )
-        upload_url = response.json()
+        upload_url = response.raise_for_status().json()
 
         # Upload file to the provided URL
-        reader = get_reader(file_source)
+        if isinstance(file_source, collections.abc.Mapping):
+            buf = io.BytesIO()
+            write_yaml(file_source, buf)
+            files = {file_name: buf}
+        else:
+            files = {file_name: get_reader(file_source)}
+
         response = httpx.put(
             upload_url,
-            files={file_name: reader},  # pyright: ignore[reportArgumentType]
+            files=files,  # pyright: ignore[reportArgumentType]
             # TODO: follow up on https://github.com/encode/httpx/discussions/3611
             headers={"Content-Type": ""},  # Important for S3 uploads
         )
@@ -129,4 +153,6 @@ How to obtain a token:
         "Updated status of {}/{} to 'request-review'", artifact_id, artifact_version
     )
 
-    return load_description(f"{artifact_id}/{artifact_version}")
+    return load_description(
+        f"https://hypha.aicell.io/bioimage-io/artifacts/{artifact_id}/files/rdf.yaml?version={artifact_version}"
+    )
