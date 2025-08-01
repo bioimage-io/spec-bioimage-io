@@ -37,7 +37,10 @@ TYPE_ARGS = {
 }
 
 IGNORE_TYPES_MEMBERS = {
+    "A",
     "AfterValidator",
+    "AfterWarner",
+    "ALERT",
     "annotated_types",
     "Annotated",
     "annotations",
@@ -45,6 +48,7 @@ IGNORE_TYPES_MEMBERS = {
     "BeforeValidator",
     "ClassVar",
     "datetime",
+    "FAIR",
     "field_validation",
     "FileDescr_",  # an annoated union
     "FilePath",
@@ -52,6 +56,7 @@ IGNORE_TYPES_MEMBERS = {
     "FileSource",
     "FormatVersionPlaceholder",  # a literal
     "ImportantFileSource",  # an annoated union
+    "is_sequence",
     "iskeyword",
     "isoparse",
     "Literal",
