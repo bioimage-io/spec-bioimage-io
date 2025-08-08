@@ -10,6 +10,13 @@ In this file we log both:
 
 This changelog includes implementation details and my reference the [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+#### bioimageio.spec 0.5.5.0
+
+note: Not yet released
+
+- added programmatic `uplaod` (alpha stage)
+- [generic format 0.3.2 and model format 0.5.5](#generic-032-and-model-055)
+
 #### bioimageio.spec 0.5.4.4
 
 - infinity and not-a-number values are no longer allowed (when used in a tensor description under data.range they are replaced with `None`)
@@ -294,6 +301,15 @@ Which fields a resource description field has and how they are to be interpreted
 Here is a list of changes for each `type` and `format_version`.
 Note that 'generic' changes apply to `type` application, dataset and notebook of the same `format_versions`.
 If the changes also apply to `type` model, the coresponding model format version is noted, e.g. [generic 0.3.1 and model 0.5.3](#generic-031-and-model-053).
+
+#### generic 0.3.2 and model 0.5.5
+
+note: not yet released
+
+- Non-breaking changes:
+  - New optional `version_comment` field
+  - Many FAIR fields are optional now to make it easier to tinker with resources not ready for publishing yet.
+  - new softmax pre-/postprocessing
 
 #### model 0.5.4
 

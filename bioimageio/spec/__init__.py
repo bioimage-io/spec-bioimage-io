@@ -41,6 +41,7 @@ from ._package import (
     save_bioimageio_package_as_folder,
     save_bioimageio_package_to_stream,
 )
+from ._upload import upload
 from .application import AnyApplicationDescr, ApplicationDescr
 from .dataset import AnyDatasetDescr, DatasetDescr
 from .generic import AnyGenericDescr, GenericDescr
@@ -93,6 +94,7 @@ __all__ = [
     "summary",
     "update_format",
     "update_hashes",
+    "upload",
     "utils",
     "validate_format",
     "ValidationContext",

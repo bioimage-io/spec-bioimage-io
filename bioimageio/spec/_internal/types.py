@@ -10,14 +10,17 @@ from pydantic import PlainSerializer, RootModel, StringConstraints
 from typing_extensions import Annotated, Literal
 
 from .constants import DOI_REGEX, SI_UNIT_REGEX
+from .field_warning import AfterWarner
 from .io import FileSource, PermissiveFileSource, RelativeFilePath
 from .io_basics import AbsoluteDirectory, AbsoluteFilePath, FileName, FilePath, Sha256
 from .io_packaging import FileSource_
 from .license_id import DeprecatedLicenseId, LicenseId
+from .type_guards import is_sequence
 from .url import HttpUrl
 from .validated_string import ValidatedString
 from .validator_annotations import AfterValidator, BeforeValidator
 from .version_type import Version
+from .warning_levels import ALERT
 
 UTC = timezone.utc
 
@@ -45,7 +48,22 @@ __all__ = [
     "Version",
 ]
 S = TypeVar("S", bound=Sequence[Any])
+A = TypeVar("A", bound=Any)
 NotEmpty = Annotated[S, annotated_types.MinLen(1)]
+
+
+def _validate_fair(value: Any) -> Any:
+    """Raise trivial values."""
+    if value is None or (is_sequence(value) and not value):
+        raise ValueError("Needs to be filled for FAIR compliance")
+
+    return value
+
+
+FAIR = Annotated[
+    A,
+    AfterWarner(_validate_fair, severity=ALERT),
+]
 
 ImportantFileSource = FileSource_
 """DEPRECATED alias, use `FileSource` instead"""

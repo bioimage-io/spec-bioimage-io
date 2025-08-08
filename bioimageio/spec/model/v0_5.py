@@ -79,6 +79,7 @@ from .._internal.io_utils import load_array
 from .._internal.node_converter import Converter
 from .._internal.type_guards import is_dict, is_sequence
 from .._internal.types import (
+    FAIR,
     AbsoluteTolerance,
     LowerCaseIdentifier,
     LowerCaseIdentifierAnno,
@@ -260,6 +261,16 @@ def _is_not_batch(a: str) -> bool:
 
 NonBatchAxisId = Annotated[AxisId, Predicate(_is_not_batch)]
 
+PreprocessingId = Literal[
+    "binarize",
+    "clip",
+    "ensure_dtype",
+    "fixed_zero_mean_unit_variance",
+    "scale_linear",
+    "scale_range",
+    "sigmoid",
+    "softmax",
+]
 PostprocessingId = Literal[
     "binarize",
     "clip",
@@ -269,16 +280,8 @@ PostprocessingId = Literal[
     "scale_mean_variance",
     "scale_range",
     "sigmoid",
+    "softmax",
     "zero_mean_unit_variance",
-]
-PreprocessingId = Literal[
-    "binarize",
-    "clip",
-    "ensure_dtype",
-    "scale_linear",
-    "sigmoid",
-    "zero_mean_unit_variance",
-    "scale_range",
 ]
 
 
@@ -477,6 +480,7 @@ class AxisBase(NodeWithExplicitlySetFields):
     """An axis id unique across all axes of one tensor."""
 
     description: Annotated[str, MaxLen(128)] = ""
+    """A short description of this axis beyond its type and id."""
 
 
 class WithHalo(Node):
@@ -535,6 +539,7 @@ class ChannelAxis(AxisBase):
         type: Literal["channel"]
 
     id: NonBatchAxisId = AxisId("channel")
+
     channel_names: NotEmpty[List[Identifier]]
 
     @property
@@ -862,7 +867,7 @@ IntervalOrRatioDType = Literal[
 
 
 class IntervalOrRatioDataDescr(Node):
-    type: Annotated[  # todo: rename to dtype
+    type: Annotated[  # TODO: rename to dtype
         IntervalOrRatioDType,
         Field(
             examples=["float32", "float64", "uint8", "uint16"],
@@ -1150,7 +1155,7 @@ class ScaleLinearDescr(ProcessingDescrBase):
 
 
 class SigmoidDescr(ProcessingDescrBase):
-    """The logistic sigmoid funciton, a.k.a. expit function.
+    """The logistic sigmoid function, a.k.a. expit function.
 
     Examples:
     - in YAML
@@ -1172,6 +1177,42 @@ class SigmoidDescr(ProcessingDescrBase):
     def kwargs(self) -> ProcessingKwargs:
         """empty kwargs"""
         return ProcessingKwargs()
+
+
+class SoftmaxKwargs(ProcessingKwargs):
+    """key word arguments for `SoftmaxDescr`"""
+
+    axis: Annotated[NonBatchAxisId, Field(examples=["channel"])] = AxisId("channel")
+    """The axis to apply the softmax function along.
+    Note:
+        Defaults to 'channel' axis
+        (which may not exist, in which case
+        a different axis id has to be specified).
+    """
+
+
+class SoftmaxDescr(ProcessingDescrBase):
+    """The softmax function.
+
+    Examples:
+    - in YAML
+        ```yaml
+        postprocessing:
+          - id: softmax
+            kwargs:
+              axis: channel
+        ```
+    - in Python:
+        >>> postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId("channel")))]
+    """
+
+    implemented_id: ClassVar[Literal["softmax"]] = "softmax"
+    if TYPE_CHECKING:
+        id: Literal["softmax"] = "softmax"
+    else:
+        id: Literal["softmax"]
+
+    kwargs: SoftmaxKwargs = Field(default_factory=SoftmaxKwargs.model_construct)
 
 
 class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
@@ -1304,7 +1345,7 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
         id: Literal["zero_mean_unit_variance"]
 
     kwargs: ZeroMeanUnitVarianceKwargs = Field(
-        default_factory=ZeroMeanUnitVarianceKwargs
+        default_factory=ZeroMeanUnitVarianceKwargs.model_construct
     )
 
 
@@ -1416,7 +1457,7 @@ class ScaleRangeDescr(ProcessingDescrBase):
         id: Literal["scale_range"] = "scale_range"
     else:
         id: Literal["scale_range"]
-    kwargs: ScaleRangeKwargs
+    kwargs: ScaleRangeKwargs = Field(default_factory=ScaleRangeKwargs.model_construct)
 
 
 class ScaleMeanVarianceKwargs(ProcessingKwargs):
@@ -1457,11 +1498,12 @@ PreprocessingDescr = Annotated[
         BinarizeDescr,
         ClipDescr,
         EnsureDtypeDescr,
-        ScaleLinearDescr,
-        SigmoidDescr,
         FixedZeroMeanUnitVarianceDescr,
-        ZeroMeanUnitVarianceDescr,
+        ScaleLinearDescr,
         ScaleRangeDescr,
+        SigmoidDescr,
+        SoftmaxDescr,
+        ZeroMeanUnitVarianceDescr,
     ],
     Discriminator("id"),
 ]
@@ -1470,12 +1512,13 @@ PostprocessingDescr = Annotated[
         BinarizeDescr,
         ClipDescr,
         EnsureDtypeDescr,
-        ScaleLinearDescr,
-        SigmoidDescr,
         FixedZeroMeanUnitVarianceDescr,
-        ZeroMeanUnitVarianceDescr,
-        ScaleRangeDescr,
+        ScaleLinearDescr,
         ScaleMeanVarianceDescr,
+        ScaleRangeDescr,
+        SigmoidDescr,
+        SoftmaxDescr,
+        ZeroMeanUnitVarianceDescr,
     ],
     Discriminator("id"),
 ]
@@ -1516,14 +1559,14 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
 
         return axes
 
-    test_tensor: FileDescr_
+    test_tensor: FAIR[Optional[FileDescr_]] = None
     """An example tensor to use for testing.
     Using the model with the test input tensors is expected to yield the test output tensors.
     Each test tensor has be a an ndarray in the
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The file extension must be '.npy'."""
 
-    sample_tensor: Optional[FileDescr_] = None
+    sample_tensor: FAIR[Optional[FileDescr_]] = None
     """A sample tensor to illustrate a possible input/output for the model,
     The sample image primarily serves to inform a human user about an example use case
     and is typically stored as .hdf5, .png or .tiff.
@@ -2071,27 +2114,31 @@ TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
 
 
 def validate_tensors(
-    tensors: Mapping[TensorId, Tuple[TensorDescr, NDArray[Any]]],
+    tensors: Mapping[TensorId, Tuple[TensorDescr, Optional[NDArray[Any]]]],
     tensor_origin: Literal[
         "test_tensor"
     ],  # for more precise error messages, e.g. 'test_tensor'
 ):
-    all_tensor_axes: Dict[TensorId, Dict[AxisId, Tuple[AnyAxis, int]]] = {}
+    all_tensor_axes: Dict[TensorId, Dict[AxisId, Tuple[AnyAxis, Optional[int]]]] = {}
 
     def e_msg(d: TensorDescr):
         return f"{'inputs' if isinstance(d, InputTensorDescr) else 'outputs'}[{d.id}]"
 
     for descr, array in tensors.values():
-        try:
-            axis_sizes = descr.get_axis_sizes_for_array(array)
-        except ValueError as e:
-            raise ValueError(f"{e_msg(descr)} {e}")
+        if array is None:
+            axis_sizes = {a.id: None for a in descr.axes}
         else:
-            all_tensor_axes[descr.id] = {
-                a.id: (a, axis_sizes[a.id]) for a in descr.axes
-            }
+            try:
+                axis_sizes = descr.get_axis_sizes_for_array(array)
+            except ValueError as e:
+                raise ValueError(f"{e_msg(descr)} {e}")
+
+        all_tensor_axes[descr.id] = {a.id: (a, axis_sizes[a.id]) for a in descr.axes}
 
     for descr, array in tensors.values():
+        if array is None:
+            continue
+
         if descr.dtype in ("float32", "float64"):
             invalid_test_tensor_dtype = array.dtype.name not in (
                 "float32",
@@ -2122,6 +2169,9 @@ def validate_tensors(
 
         for a in descr.axes:
             actual_size = all_tensor_axes[descr.id][a.id][1]
+            if actual_size is None:
+                continue
+
             if a.size is None:
                 continue
 
@@ -2547,7 +2597,9 @@ class BioimageioConfig(Node, extra="allow"):
 
 
 class Config(Node, extra="allow"):
-    bioimageio: BioimageioConfig = Field(default_factory=BioimageioConfig)
+    bioimageio: BioimageioConfig = Field(
+        default_factory=BioimageioConfig.model_construct
+    )
 
 
 class ModelDescr(GenericModelDescrBase):
@@ -2576,10 +2628,12 @@ class ModelDescr(GenericModelDescrBase):
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 
-    authors: NotEmpty[List[Author]]
+    authors: FAIR[List[Author]] = Field(
+        default_factory=cast(Callable[[], List[Author]], list)
+    )
     """The authors are the creators of the model RDF and the primary points of contact."""
 
-    documentation: FileSource_documentation
+    documentation: FAIR[Optional[FileSource_documentation]] = None
     """URL or relative path to a markdown file with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
     The documentation should include a '#[#] Validation' (sub)section
@@ -2588,9 +2642,9 @@ class ModelDescr(GenericModelDescrBase):
     @field_validator("documentation", mode="after")
     @classmethod
     def _validate_documentation(
-        cls, value: FileSource_documentation
-    ) -> FileSource_documentation:
-        if not get_validation_context().perform_io_checks:
+        cls, value: Optional[FileSource_documentation]
+    ) -> Optional[FileSource_documentation]:
+        if not get_validation_context().perform_io_checks or value is None:
             return value
 
         doc_reader = get_reader(value)
@@ -2722,8 +2776,14 @@ class ModelDescr(GenericModelDescrBase):
         if not get_validation_context().perform_io_checks:
             return self
 
-        test_output_arrays = [load_array(descr.test_tensor) for descr in self.outputs]
-        test_input_arrays = [load_array(descr.test_tensor) for descr in self.inputs]
+        test_output_arrays = [
+            None if descr.test_tensor is None else load_array(descr.test_tensor)
+            for descr in self.outputs
+        ]
+        test_input_arrays = [
+            None if descr.test_tensor is None else load_array(descr.test_tensor)
+            for descr in self.inputs
+        ]
 
         tensors = {
             descr.id: (descr, array)
@@ -2750,6 +2810,9 @@ class ModelDescr(GenericModelDescrBase):
                 out_arrays = output_arrays
 
             for out_id, array in out_arrays.items():
+                if array is None:
+                    continue
+
                 if rep_tol.absolute_tolerance > (max_test_value := array.max()) * 0.01:
                     raise ValueError(
                         "config.bioimageio.reproducibility_tolerance.absolute_tolerance="
@@ -2792,9 +2855,8 @@ class ModelDescr(GenericModelDescrBase):
     # def validate_inputs(self, input_tensors: Mapping[TensorId, NDArray[Any]]) -> Mapping[TensorId, NDArray[Any]]:
 
     name: Annotated[
-        Annotated[
-            str, RestrictCharacters(string.ascii_letters + string.digits + "_+- ()")
-        ],
+        str,
+        RestrictCharacters(string.ascii_letters + string.digits + "_+- ()"),
         MinLen(5),
         MaxLen(128),
         warn(MaxLen(64), "Name longer than 64 characters.", INFO),
@@ -2928,7 +2990,7 @@ class ModelDescr(GenericModelDescrBase):
     Weights can be given for different formats, but should otherwise be equivalent.
     The available weight formats determine which consumers can use this model."""
 
-    config: Config = Field(default_factory=Config)
+    config: Config = Field(default_factory=Config.model_construct)
 
     @model_validator(mode="after")
     def _add_default_cover(self) -> Self:
@@ -2937,8 +2999,16 @@ class ModelDescr(GenericModelDescrBase):
 
         try:
             generated_covers = generate_covers(
-                [(t, load_array(t.test_tensor)) for t in self.inputs],
-                [(t, load_array(t.test_tensor)) for t in self.outputs],
+                [
+                    (t, load_array(t.test_tensor))
+                    for t in self.inputs
+                    if t.test_tensor is not None
+                ],
+                [
+                    (t, load_array(t.test_tensor))
+                    for t in self.outputs
+                    if t.test_tensor is not None
+                ],
             )
         except Exception as e:
             issue_warning(
@@ -2953,12 +3023,24 @@ class ModelDescr(GenericModelDescrBase):
         return self
 
     def get_input_test_arrays(self) -> List[NDArray[Any]]:
-        data = [load_array(ipt.test_tensor) for ipt in self.inputs]
-        assert all(isinstance(d, np.ndarray) for d in data)
-        return data
+        return self._get_test_arrays(self.inputs)
 
     def get_output_test_arrays(self) -> List[NDArray[Any]]:
-        data = [load_array(out.test_tensor) for out in self.outputs]
+        return self._get_test_arrays(self.outputs)
+
+    @staticmethod
+    def _get_test_arrays(
+        io_descr: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]],
+    ):
+        ts: List[FileDescr] = []
+        for d in io_descr:
+            if d.test_tensor is None:
+                raise ValueError(
+                    f"Failed to get test arrays: description of '{d.id}' is missing a `test_tensor`."
+                )
+            ts.append(d.test_tensor)
+
+        data = [load_array(t) for t in ts]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 
@@ -3597,6 +3679,12 @@ def generate_covers(
             out[..., c] = outc
 
         return out
+
+    if not inputs:
+        raise ValueError("Missing test input tensor for cover generation.")
+
+    if not outputs:
+        raise ValueError("Missing test output tensor for cover generation.")
 
     ipt_descr, ipt = inputs[0]
     out_descr, out = outputs[0]

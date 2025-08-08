@@ -32,11 +32,11 @@ class Node(
     frozen=False,
     model_title_generator=_node_title_generator,
     populate_by_name=True,
-    revalidate_instances="never",
+    revalidate_instances="always",
     use_attribute_docstrings=True,
     validate_assignment=True,
-    validate_default=False,
-    validate_return=True,  # TODO: check if False here would bring a speedup and can still be safe
+    validate_default=True,
+    validate_return=True,
 ):
     """"""  # empty docstring to remove all pydantic docstrings from the pdoc spec docs
 

@@ -25,6 +25,7 @@ IGNORE_MEMBERS = {
     "DeprecatedLicenseId",
     "Dict",
     "EmailStr",
+    "FAIR",
     "field_validator",
     "Field",
     "FilePath",

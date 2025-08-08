@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import string
-from functools import partial
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -23,12 +22,10 @@ from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import Field, RootModel, ValidationInfo, field_validator, model_validator
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.type_guards import is_dict
-
 from .._internal.common_nodes import Node, ResourceDescrBase
 from .._internal.constants import TAG_CATEGORIES
 from .._internal.field_validation import validate_github_user
-from .._internal.field_warning import as_warning, warn
+from .._internal.field_warning import as_warning, issue_warning, warn
 from .._internal.io import (
     BioimageioYamlContent,
     FileDescr,
@@ -39,7 +36,8 @@ from .._internal.io_basics import Sha256
 from .._internal.io_packaging import FileDescr_
 from .._internal.license_id import DeprecatedLicenseId, LicenseId
 from .._internal.node_converter import Converter
-from .._internal.types import FileSource_, NotEmpty, RelativeFilePath
+from .._internal.type_guards import is_dict
+from .._internal.types import FAIR, FileSource_, NotEmpty, RelativeFilePath
 from .._internal.url import HttpUrl
 from .._internal.validated_string import ValidatedString
 from .._internal.validator_annotations import (
@@ -261,13 +259,16 @@ class GenericModelDescrBase(ResourceDescrBase):
         MaxLen(128),
         warn(MaxLen(64), "Name longer than 64 characters.", INFO),
     ]
-    name: Annotated[NotEmpty[str], MaxLen(128)]
     """A human-friendly name of the resource description.
     May only contains letters, digits, underscore, minus, parentheses and spaces."""
 
-    description: Annotated[
-        str, MaxLen(1024), warn(MaxLen(512), "Description longer than 512 characters.")
-    ]
+    description: FAIR[
+        Annotated[
+            str,
+            MaxLen(1024),
+            warn(MaxLen(512), "Description longer than 512 characters."),
+        ]
+    ] = ""
     """A string containing a brief description."""
 
     covers: List[FileSource_cover] = Field(
@@ -286,7 +287,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = None
     """UTF-8 emoji for display alongside the `id`."""
 
-    authors: NotEmpty[List[Author]]
+    authors: FAIR[List[Author]] = Field(
+        default_factory=cast(Callable[[], List[Author]], list)
+    )
     """The authors are the creators of this resource description and the primary points of contact."""
 
     attachments: List[FileDescr_] = Field(
@@ -294,19 +297,24 @@ class GenericModelDescrBase(ResourceDescrBase):
     )
     """file attachments"""
 
-    cite: NotEmpty[List[CiteEntry]]
+    cite: FAIR[List[CiteEntry]] = Field(
+        default_factory=cast(Callable[[], List[CiteEntry]], list)
+    )
     """citations"""
 
-    license: Annotated[
+    license: FAIR[
         Annotated[
-            Union[LicenseId, DeprecatedLicenseId], Field(union_mode="left_to_right")
-        ],
-        warn(
-            LicenseId,
-            "{value} is deprecated, see https://spdx.org/licenses/{value}.html",
-        ),
-        Field(examples=["CC0-1.0", "MIT", "BSD-2-Clause"]),
-    ]
+            Annotated[
+                Union[LicenseId, DeprecatedLicenseId, None],
+                Field(union_mode="left_to_right"),
+            ],
+            warn(
+                Optional[LicenseId],
+                "{value} is deprecated, see https://spdx.org/licenses/{value}.html",
+            ),
+            Field(examples=["CC0-1.0", "MIT", "BSD-2-Clause"]),
+        ]
+    ] = None
     """A [SPDX license identifier](https://spdx.org/licenses/).
     We do not support custom license beyond the SPDX license list, if you need that please
     [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
@@ -344,31 +352,33 @@ class GenericModelDescrBase(ResourceDescrBase):
     uploader: Optional[Uploader] = None
     """The person who uploaded the model (e.g. to bioimage.io)"""
 
-    maintainers: List[Maintainer] = Field(  # pyright: ignore[reportUnknownVariableType]
-        default_factory=list
+    maintainers: List[Maintainer] = Field(
+        default_factory=cast(Callable[[], List[Maintainer]], list)
     )
     """Maintainers of this resource.
     If not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name"""
 
-    @partial(as_warning, severity=ALERT)
-    @field_validator("maintainers", mode="after")
-    @classmethod
-    def check_maintainers_exist(
-        cls, maintainers: List[Maintainer], info: ValidationInfo
-    ) -> List[Maintainer]:
-        if not maintainers and "authors" in info.data:
-            authors: List[Author] = info.data["authors"]
-            if all(a.github_user is None for a in authors):
-                raise ValueError(
+    @model_validator(mode="after")
+    def _check_maintainers_exist(self):
+        if not self.maintainers and self.authors:
+            if all(a.github_user is None for a in self.authors):
+                issue_warning(
                     "Missing `maintainers` or any author in `authors` with a specified"
-                    + " `github_user` name."
+                    + " `github_user` name.",
+                    value=self.authors,
+                    field="authors",
+                    severity=ALERT,
                 )
 
-        return maintainers
+        return self
 
-    tags: Annotated[
-        List[str],
-        Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")]),
+    tags: FAIR[
+        Annotated[
+            List[str],
+            Field(
+                examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")]
+            ),
+        ]
     ] = Field(default_factory=list)
     """Associated tags"""
 
@@ -402,6 +412,9 @@ class GenericModelDescrBase(ResourceDescrBase):
                 value["version"] = vn
 
         return value
+
+    version_comment: Optional[Annotated[str, MaxLen(512)]] = None
+    """A comment on the version of the resource."""
 
 
 FileSource_documentation = Annotated[
@@ -441,7 +454,7 @@ class GenericDescrBase(GenericModelDescrBase):
         """
         convert_from_older_format(data)
 
-    documentation: Optional[FileSource_documentation] = None
+    documentation: FAIR[Optional[FileSource_documentation]] = None
     """URL or relative path to a markdown file encoded in UTF-8 with additional documentation.
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
@@ -450,7 +463,7 @@ class GenericDescrBase(GenericModelDescrBase):
     )
     """badges associated with this resource"""
 
-    config: Config = Field(default_factory=Config)
+    config: Config = Field(default_factory=Config.model_construct)
     """A field for custom configuration that can contain any keys not present in the RDF spec.
     This means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.
     Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,
