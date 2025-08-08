@@ -81,13 +81,13 @@ def test_generic_valid(kwargs: Dict[str, Any]):
                 format_version=GenericDescr.implemented_format_version,
                 version="0.1.0",
                 type="my_type",
-                name="their name",
+                # name="their name",  # missing name
             ),
             ValidationContext(perform_io_checks=False),
         ),
         (
             dict(
-                format_version=GenericDescr.implemented_format_version,
+                format_version="9.9.9",  # unknown format version
                 version="0.1.0",
                 type="my_type",
                 name="its name",

@@ -20,7 +20,6 @@ from typing import (
     Set,
     Tuple,
     Union,
-    no_type_check,
 )
 
 import annotated_types
