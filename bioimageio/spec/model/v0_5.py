@@ -1203,7 +1203,7 @@ class SoftmaxDescr(ProcessingDescrBase):
               axis: channel
         ```
     - in Python:
-        >>> postprocessing = [SoftmaxDescr(SoftmaxKwargs(axis=AxisId("channel")))]
+        >>> postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId("channel")))]
     """
 
     implemented_id: ClassVar[Literal["softmax"]] = "softmax"

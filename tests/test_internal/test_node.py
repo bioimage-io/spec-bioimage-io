@@ -58,12 +58,12 @@ def test_warn(kwargs: Dict[str, Any], context: ValidationContext, valid: bool):
         (
             NESTED_NODE_DUMMY_INPUT,
             {WARNING_LEVEL_CONTEXT_KEY: WARNING},
-            True,  # no reevaluation of node instance
+            False,  # reevaluation of node instance
         ),
         (
             NESTED_NODE_DUMMY_INPUT,
             {WARNING_LEVEL_CONTEXT_KEY: INFO},
-            True,  # no reevaluation of node instance
+            False,  # reevaluation of node instance
         ),
     ],
 )
