@@ -12,6 +12,9 @@ This changelog includes implementation details and my reference the [changes to 
 
 #### bioimageio.spec 0.5.5.0
 
+note: Not yet released
+
+- added programmatic `uplaod` (alpha stage)
 - [generic format 0.3.2 and model format 0.5.5](#generic-032-and-model-055)
 
 #### bioimageio.spec 0.5.4.4

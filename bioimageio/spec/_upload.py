@@ -23,12 +23,15 @@ from ._package import get_resource_package_content
 from .common import HttpUrl, PermissiveFileSource
 
 
+# TODO: remove alpha stage warning
 def upload(
     source: Union[PermissiveFileSource, ZipFile, ResourceDescr, BioimageioYamlContent],
     /,
 ) -> HttpUrl:
     """Upload a new resource description (version) to the hypha server to be shared at bioimage.io.
     To edit an existing resource **version**, please login to https://bioimage.io and use the web interface.
+
+    WARNING: This upload function is in alpha stage and might change in the future.
 
     Args:
         source: The resource description to upload.
