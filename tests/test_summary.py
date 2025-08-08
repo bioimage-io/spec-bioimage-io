@@ -6,7 +6,7 @@ def test_save_markdown(tmp_path: Path):
 
     summary = ValidationSummary(
         type="model",
-        format_version="0.5.4",
+        format_version="0.5.5",
         name="test",
         source_name="source",
         status="passed",
