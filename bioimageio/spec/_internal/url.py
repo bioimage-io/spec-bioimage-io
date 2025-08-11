@@ -58,10 +58,17 @@ def _validate_url_impl(
     try:
         if request_mode in ("head", "get"):
             request_ctxt = nullcontext(
-                httpx.request(request_mode.upper(), val_url, timeout=timeout)
+                httpx.request(
+                    request_mode.upper(),
+                    val_url,
+                    timeout=timeout,
+                    follow_redirects=True,
+                )
             )
         elif request_mode == "get_stream":
-            request_ctxt = httpx.stream("GET", val_url, timeout=timeout)
+            request_ctxt = httpx.stream(
+                "GET", val_url, timeout=timeout, follow_redirects=True
+            )
         else:
             assert_never(request_mode)
 

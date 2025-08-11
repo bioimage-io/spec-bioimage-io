@@ -32,7 +32,7 @@ def main(recheck: bool = False):
                 "https://zenodo.org/api/vocabularies/licenses/"
                 + lic["licenseId"].lower()
             )
-            r = httpx.get(url, timeout=5)
+            r = httpx.get(url, timeout=5, follow_redirects=True)
 
             if 200 <= r.status_code < 300:
                 known = True

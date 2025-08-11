@@ -167,7 +167,7 @@ def open_bioimageio_yaml(
                 )
 
             try:
-                r = httpx.get(url)
+                r = httpx.get(url, follow_redirects=True)
                 _ = r.raise_for_status()
                 unparsed_content = r.content.decode(encoding="utf-8")
                 content = _sanitize_bioimageio_yaml(read_yaml(unparsed_content))
@@ -232,7 +232,7 @@ def _get_id_map_impl(url: str) -> Dict[str, LightHttpFileDescr]:
     if not isinstance(url, str) or "/" not in url:
         logger.opt(depth=1).error("invalid id map url: {}", url)
     try:
-        id_map_raw: Any = httpx.get(url, timeout=10).json()
+        id_map_raw: Any = httpx.get(url, timeout=10, follow_redirects=True).json()
     except Exception as e:
         logger.opt(depth=1).error("failed to get {}: {}", url, e)
         return {}

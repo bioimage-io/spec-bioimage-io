@@ -124,6 +124,7 @@ How to obtain a token:
                 "file_path": file_name,
             },
             headers=headers,
+            follow_redirects=True,
         )
         upload_url = response.raise_for_status().json()
 
@@ -140,6 +141,7 @@ How to obtain a token:
             files=files,  # pyright: ignore[reportArgumentType]
             # TODO: follow up on https://github.com/encode/httpx/discussions/3611
             headers={"Content-Type": ""},  # Important for S3 uploads
+            follow_redirects=True,
         )
         logger.info("Uploaded '{}' successfully", file_name)
 
@@ -153,6 +155,7 @@ How to obtain a token:
             "manifest": manifest,
         },
         headers=headers,
+        follow_redirects=True,
     )
     logger.info(
         "Updated status of {}/{} to 'request-review'", artifact_id, artifact_version
