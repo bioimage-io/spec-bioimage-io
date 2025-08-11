@@ -47,6 +47,7 @@ _ = setup(
         "tifffile>=2020.7.4",
         "tqdm",
         "typing-extensions",
+        "exceptiongroup",  # TODO: remove when py3.11 is lowest supported version
         "zipp",
     ],
     extras_require={

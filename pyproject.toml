@@ -14,7 +14,7 @@ exclude = [
 ]
 include = ["bioimageio", "scripts", "tests"]
 pythonPlatform = "All"
-pythonVersion = "3.12"
+pythonVersion = "3.8"
 reportDuplicateImport = "error"
 reportImplicitStringConcatenation = "error"
 reportImportCycles = true
@@ -48,7 +48,7 @@ testpaths = ["bioimageio/spec", "tests"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py312"
+target-version = "py38"
 exclude = [
     "bioimageio_cache",
     "scripts/pdoc/original.py",
