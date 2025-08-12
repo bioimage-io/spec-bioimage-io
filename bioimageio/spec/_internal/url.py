@@ -26,7 +26,6 @@ def _validate_url_impl(
     request_mode: Literal["head", "get_stream", "get"],
     timeout: int = 3,
 ) -> pydantic.HttpUrl:
-
     url = str(url)
     context = get_validation_context()
     if url in context.known_files:

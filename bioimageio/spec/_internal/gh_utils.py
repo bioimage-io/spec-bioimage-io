@@ -21,6 +21,6 @@ def set_github_warning(title: str, message: str):
     # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#setting-a-warning-message
     print(
         f"::warning file={frameinfo.filename},"
-        + f"line={frameinfo.lineno},endLine={frameinfo.lineno+1},"
+        + f"line={frameinfo.lineno},endLine={frameinfo.lineno + 1},"
         + f"title={title}::{message}"
     )

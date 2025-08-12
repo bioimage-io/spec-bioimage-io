@@ -21,7 +21,8 @@ def is_set(v: Any) -> TypeGuard[Set[Any]]:
 
 def is_kwargs(v: Any) -> TypeGuard[Dict[str, Any]]:
     return isinstance(v, dict) and all(
-        isinstance(k, str) for k in v  # pyright: ignore[reportUnknownVariableType]
+        isinstance(k, str)
+        for k in v  # pyright: ignore[reportUnknownVariableType]
     )
 
 

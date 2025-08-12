@@ -205,9 +205,9 @@ class ResourceDescrBase(
                 cls.implemented_format_version_tuple = (0, 0, 0)
             else:
                 fv_tuple = get_format_version_tuple(cls.implemented_format_version)
-                assert (
-                    fv_tuple is not None
-                ), f"failed to cast '{cls.implemented_format_version}' to tuple"
+                assert fv_tuple is not None, (
+                    f"failed to cast '{cls.implemented_format_version}' to tuple"
+                )
                 cls.implemented_format_version_tuple = fv_tuple
 
     @classmethod

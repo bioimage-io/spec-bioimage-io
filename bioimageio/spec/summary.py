@@ -584,7 +584,6 @@ def _format_summary(
         cell_line_limit: int = 15,
         cell_width_limit: int = 120,
     ) -> Union[CodeRef, CodeCell]:
-
         if not code.strip():
             return CodeCell("")
 
@@ -655,7 +654,6 @@ def _format_summary(
         def append_detail(
             status: str, loc: Loc, text: str, code: Union[CodeRef, CodeCell, None]
         ):
-
             text_lines = format_text(text)
             status_lines = [""] * len(text_lines)
             loc_lines = [""] * len(text_lines)

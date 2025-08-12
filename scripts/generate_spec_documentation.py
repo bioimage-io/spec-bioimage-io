@@ -246,9 +246,9 @@ class AnnotationName:
                 )
                 for tt in args
             ]
-            multiline_parts = f"\n{' '* multiline_level * 2}- ".join(parts)
+            multiline_parts = f"\n{' ' * multiline_level * 2}- ".join(parts)
             return (
-                f"{first_line_descr}\n{' '* multiline_level * 2}- {multiline_parts}\n"
+                f"{first_line_descr}\n{' ' * multiline_level * 2}- {multiline_parts}\n"
             )
 
         return s
@@ -279,7 +279,7 @@ class Field:
     def indent_with_symbol(self):
         spaces = " " * max(0, self.indent_level - 2)
         if len(self.loc) <= self.STYLE_SWITCH_DEPTH:
-            symbol = f"#{'#'* len(self.loc)} "
+            symbol = f"#{'#' * len(self.loc)} "
         else:
             symbol = "* "
 
@@ -425,7 +425,7 @@ def export_documentation(folder: Path, rd_class: Type[ResourceDescr]) -> Path:
             unindent(rd_class.__doc__ or "", ignore_first_line=True)
             + ADDITIONAL_DESCRIPTION_ANY_RESOURCE.format(
                 class_name=f"{rd_class.__module__}.{rd_class.__name__}",
-                rd_class_dev_doc_url=f"https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/{rd_class.__module__[len('bioimageio.spec.'):].replace('.', '/')}.html#{rd_class.__name__}",
+                rd_class_dev_doc_url=f"https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/{rd_class.__module__[len('bioimageio.spec.') :].replace('.', '/')}.html#{rd_class.__name__}",
             )
         )
     )

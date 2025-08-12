@@ -45,7 +45,11 @@ def main(resource_description_path: Path):
     ruamel = ruamel_yaml.load(resource_description_path)
     assert isinstance(ruamel, dict)
 
-    diff = {key: (value, ruamel[key]) for key, value in pyyaml.items() if value != ruamel[key]}  # type: ignore
+    diff = {
+        key: (value, ruamel[key])
+        for key, value in pyyaml.items()
+        if value != ruamel[key]
+    }  # type: ignore
     if diff:
         print(
             "Found differences between yaml syntax 1.1/1.2 for"

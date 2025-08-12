@@ -20,8 +20,10 @@ SHA256_HINT = """You can drag and drop your file to this
 Or you can generate a SHA256 checksum with Python's `hashlib`,
 [here is a codesnippet](https://gist.github.com/FynnBe/e64460463df89439cff218bbf59c1100)."""
 
-with files("bioimageio.spec").joinpath("static/tag_categories.json").open(
-    "r", encoding="utf-8"
+with (
+    files("bioimageio.spec")
+    .joinpath("static/tag_categories.json")
+    .open("r", encoding="utf-8")
 ) as f:
     TAG_CATEGORIES: Mapping[str, Mapping[str, Sequence[str]]] = json.load(f)
 

@@ -64,7 +64,9 @@ def check_node(
         assert expected_dump_json is unset
         assert expected_dump_python is unset
 
-    error_context: ContextManager = pytest.raises(ValidationError) if is_invalid else nullcontext()  # type: ignore
+    error_context: ContextManager = (
+        pytest.raises(ValidationError) if is_invalid else nullcontext()
+    )  # type: ignore
     with error_context:
         node = node_class.model_validate(
             kwargs,
@@ -94,7 +96,9 @@ def check_type(
     is_invalid: bool = False,
 ):
     type_adapter = TypeAdapter(type_)
-    error_context: ContextManager = pytest.raises(ValidationError) if is_invalid else nullcontext()  # type: ignore
+    error_context: ContextManager = (
+        pytest.raises(ValidationError) if is_invalid else nullcontext()
+    )  # type: ignore
 
     with error_context:
         actual = type_adapter.validate_python(value)
@@ -162,9 +166,9 @@ def check_bioimageio_yaml(
         perform_io_checks=perform_io_checks,
     ):
         rd = build_description(deepcopy(data), format_version=format_version)
-        assert not is_invalid or (
-            is_invalid and isinstance(rd, InvalidDescr)
-        ), "Invalid RDF passed validation"
+        assert not is_invalid or (is_invalid and isinstance(rd, InvalidDescr)), (
+            "Invalid RDF passed validation"
+        )
 
     summary = rd.validation_summary
     assert summary is not None

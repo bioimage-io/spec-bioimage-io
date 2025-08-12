@@ -1313,10 +1313,9 @@ class UnionHint(Hint):
             ]),
             Widget("tbody", children=variant_widgets)
         ])
-        #fmt: on
+        # fmt: on
 
-
-        #fmt: off
+        # fmt: off
         return Widget("details", children=[
             Widget("summary", children=[
                 self.short_description(extra=extra_summary),
