@@ -64,9 +64,9 @@ def check_node(
         assert expected_dump_json is unset
         assert expected_dump_python is unset
 
-    error_context: ContextManager = (
+    error_context: "ContextManager[Any]" = (
         pytest.raises(ValidationError) if is_invalid else nullcontext()
-    )  # type: ignore
+    )
     with error_context:
         node = node_class.model_validate(
             kwargs,
@@ -96,9 +96,9 @@ def check_type(
     is_invalid: bool = False,
 ):
     type_adapter = TypeAdapter(type_)
-    error_context: ContextManager = (
+    error_context: "ContextManager[Any]" = (
         pytest.raises(ValidationError) if is_invalid else nullcontext()
-    )  # type: ignore
+    )
 
     with error_context:
         actual = type_adapter.validate_python(value)
