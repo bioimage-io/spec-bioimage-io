@@ -12,8 +12,6 @@ This changelog includes implementation details and my reference the [changes to 
 
 #### bioimageio.spec 0.5.5.0
 
-note: Not yet released
-
 - added programmatic `uplaod` (alpha stage)
 - [generic format 0.3.2 and model format 0.5.5](#generic-032-and-model-055)
 
@@ -303,8 +301,6 @@ Note that 'generic' changes apply to `type` application, dataset and notebook of
 If the changes also apply to `type` model, the coresponding model format version is noted, e.g. [generic 0.3.1 and model 0.5.3](#generic-031-and-model-053).
 
 #### generic 0.3.2 and model 0.5.5
-
-note: not yet released
 
 - Non-breaking changes:
   - New optional `version_comment` field
