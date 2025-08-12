@@ -427,13 +427,13 @@ class SizeReference(Node):
                 **ref_axis**
                 (**ref_axis.scale** is still used; any given **n** is ignored).
         """
-        assert axis.size == self, (
-            "Given `axis.size` is not defined by this `SizeReference`"
-        )
+        assert (
+            axis.size == self
+        ), "Given `axis.size` is not defined by this `SizeReference`"
 
-        assert ref_axis.id == self.axis_id, (
-            f"Expected `ref_axis.id` to be {self.axis_id}, but got {ref_axis.id}."
-        )
+        assert (
+            ref_axis.id == self.axis_id
+        ), f"Expected `ref_axis.id` to be {self.axis_id}, but got {ref_axis.id}."
 
         assert axis.unit == ref_axis.unit, (
             "`SizeReference` requires `axis` and `ref_axis` to have the same `unit`,"
@@ -1934,9 +1934,9 @@ def _convert_proc(
 
             if axis is None:
                 return FixedZeroMeanUnitVarianceDescr(
-                    kwargs=FixedZeroMeanUnitVarianceKwargs(
+                    kwargs=FixedZeroMeanUnitVarianceKwargs.model_construct(
                         mean=mean,
-                        std=std,  # pyright: ignore[reportArgumentType]
+                        std=std,
                     )
                 )
             else:
@@ -3347,8 +3347,12 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
                 if src.attachments is None
                 else [FileDescr(source=f) for f in src.attachments.files]
             ),
-            authors=[_author_conv.convert_as_dict(a) for a in src.authors],  # pyright: ignore[reportArgumentType]
-            cite=[{"text": c.text, "doi": c.doi, "url": c.url} for c in src.cite],  # pyright: ignore[reportArgumentType]
+            authors=[
+                _author_conv.convert_as_dict(a) for a in src.authors
+            ],  # pyright: ignore[reportArgumentType]
+            cite=[
+                {"text": c.text, "doi": c.doi, "url": c.url} for c in src.cite
+            ],  # pyright: ignore[reportArgumentType]
             config=src.config,  # pyright: ignore[reportArgumentType]
             covers=src.covers,
             description=src.description,
@@ -3360,7 +3364,9 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             id_emoji=src.id_emoji,
             license=src.license,  # type: ignore
             links=src.links,
-            maintainers=[_maintainer_conv.convert_as_dict(m) for m in src.maintainers],  # pyright: ignore[reportArgumentType]
+            maintainers=[
+                _maintainer_conv.convert_as_dict(m) for m in src.maintainers
+            ],  # pyright: ignore[reportArgumentType]
             name=name,
             tags=src.tags,
             type=src.type,
@@ -3414,7 +3420,9 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
                     else src.training_data
                 )
             ),
-            packaged_by=[_author_conv.convert_as_dict(a) for a in src.packaged_by],  # pyright: ignore[reportArgumentType]
+            packaged_by=[
+                _author_conv.convert_as_dict(a) for a in src.packaged_by
+            ],  # pyright: ignore[reportArgumentType]
             run_mode=src.run_mode,
             timestamp=src.timestamp,
             weights=(WeightsDescr if TYPE_CHECKING else dict)(

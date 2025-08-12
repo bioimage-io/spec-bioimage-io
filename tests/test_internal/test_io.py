@@ -93,8 +93,8 @@ def test_known_files(tmp_path: Path):
 
         # validate given sha
         file_descr = FileDescr(
-            source=file_name,
-            sha256=sha,  #  pyright: ignore[reportArgumentType]
+            source=file_name,  #  pyright: ignore[reportArgumentType]
+            sha256=sha,
         )
         assert file_descr.sha256 == sha
 
@@ -106,8 +106,8 @@ def test_known_files(tmp_path: Path):
 
         # validate given sha
         file_descr = FileDescr(
-            source=file_name,
-            sha256=sha,  # pyright: ignore[reportArgumentType]
+            source=file_name,  # pyright: ignore[reportArgumentType]
+            sha256=sha,
         )
         assert file_descr.sha256 == sha
 
