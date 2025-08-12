@@ -31,7 +31,7 @@ _ = setup(
     install_requires=[
         "annotated-types>=0.5.0,<1",
         "email_validator",
-        "genericache==0.5.1",
+        "genericache==0.5.2",
         "imageio",
         "loguru",
         "markdown",
