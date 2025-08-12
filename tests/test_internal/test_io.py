@@ -247,7 +247,7 @@ def test_serialize_relative_file_path_from_union():
     assert data == path_str
 
 
-def test_open_url_with_wrong_sha():
+def test_open_url_with_wrong_sha(respx_mock: MockRouter):
     from bioimageio.spec._internal.io import (
         _open_url,  # pyright: ignore[reportPrivateUsage]
     )
@@ -255,7 +255,7 @@ def test_open_url_with_wrong_sha():
     url = "https://example.com/file.txt"
     sha = Sha256("0" * 64)  # invalid sha256 for testing
 
-    with pytest.raises(
-        httpx.HTTPStatusError, match=f"Client error '404 Not Found' for url '{url}'"
-    ):
+    _ = respx_mock.get(url).mock(side_effect=httpx.InvalidURL("Invalid URL"))
+
+    with pytest.raises(httpx.InvalidURL, match="Invalid URL"):
         _ = _open_url(HttpUrl(url), sha256=sha)
