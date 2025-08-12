@@ -123,4 +123,4 @@ To keep the bioimageio.spec Python package version in sync with the (model) desc
 
 ## Δ Changelog
 
-The changelog of the bioimageio.spec Python package and the changes to the resource description format it implements can be found [here](https://github.com/bioimage-io/spec-bioimage-io/blob/main/changelog.md).
+The changelog of the bioimageio.spec Python package and the changes to the resource description format it implements can be found in [changelog.md](https://github.com/bioimage-io/spec-bioimage-io/blob/main/changelog.md).
