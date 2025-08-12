@@ -31,7 +31,7 @@ _ = setup(
     install_requires=[
         "annotated-types>=0.5.0,<1",
         "email_validator",
-        "genericache==0.4.1",
+        "genericache==0.5.2",
         "imageio",
         "loguru",
         "markdown",
@@ -47,6 +47,7 @@ _ = setup(
         "tifffile>=2020.7.4",
         "tqdm",
         "typing-extensions",
+        "exceptiongroup",  # TODO: remove when py3.11 is lowest supported version
         "zipp",
     ],
     extras_require={
