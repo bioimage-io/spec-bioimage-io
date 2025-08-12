@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Coverage for bioimageio/spec/_internal/node_converter.py: 100%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
-    <link rel="stylesheet" href="style_cb_81f8c14c.css" type="text/css">
+    <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
 </head>
 <body class="pyfile">
@@ -54,18 +54,18 @@
             </div>
         </aside>
         <h2>
-            <span class="text">22 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">22<span class="text"> run</span></button>
+            <span class="text">20 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">20<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">0<span class="text"> missing</span></button>
-            <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
+            <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">6<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
             <a id="prevFileLink" class="nav" href="z_c0dbdc82d7fcf101_node_py.html">&#xab; prev</a> &nbsp; &nbsp;
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_c0dbdc82d7fcf101_packaging_context_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.9.2">coverage.py v7.9.2</a>,
-            created at 2025-07-18 12:47 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
+            created at 2025-08-12 13:24 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -84,25 +84,25 @@
     <p class="pln"><span class="n"><a id="t2" href="#t2">2</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t3" href="#t3">3</a></span><span class="t"><span class="key">from</span> <span class="nam">abc</span> <span class="key">import</span> <span class="nam">ABC</span><span class="op">,</span> <span class="nam">abstractmethod</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t4" href="#t4">4</a></span><span class="t"><span class="key">from</span> <span class="nam">typing</span> <span class="key">import</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t5" href="#t5">5</a></span><span class="t">    <span class="nam">Any</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t6" href="#t6">6</a></span><span class="t">    <span class="nam">Dict</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t7" href="#t7">7</a></span><span class="t">    <span class="nam">Final</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t8" href="#t8">8</a></span><span class="t">    <span class="nam">Generic</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t9" href="#t9">9</a></span><span class="t">    <span class="nam">Type</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t">    <span class="nam">Union</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t">    <span class="nam">cast</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t"><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t5" href="#t5">5</a></span><span class="t">    <span class="nam">Any</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t6" href="#t6">6</a></span><span class="t">    <span class="nam">Dict</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t7" href="#t7">7</a></span><span class="t">    <span class="nam">Final</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t8" href="#t8">8</a></span><span class="t">    <span class="nam">Generic</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t9" href="#t9">9</a></span><span class="t">    <span class="nam">Type</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t">    <span class="nam">Union</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t">    <span class="nam">cast</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t"><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t14" href="#t14">14</a></span><span class="t"><span class="key">from</span> <span class="nam">typing_extensions</span> <span class="key">import</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t">    <span class="nam">TypeVar</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t">    <span class="nam">TypeVarTuple</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t17" href="#t17">17</a></span><span class="t">    <span class="nam">Unpack</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t"><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t">    <span class="nam">TypeVar</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t">    <span class="nam">TypeVarTuple</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t17" href="#t17">17</a></span><span class="t">    <span class="nam">Unpack</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t"><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">node</span> <span class="key">import</span> <span class="nam">Node</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t21" href="#t21">21</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">utils</span> <span class="key">import</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t22" href="#t22">22</a></span><span class="t">    <span class="nam">assert_all_params_set_explicitly</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t23" href="#t23">23</a></span><span class="t"><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t22" href="#t22">22</a></span><span class="t">    <span class="nam">assert_all_params_set_explicitly</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t23" href="#t23">23</a></span><span class="t"><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t24" href="#t24">24</a></span><span class="t"><span class="key">from</span> <span class="op">.</span><span class="nam">validated_string</span> <span class="key">import</span> <span class="nam">ValidatedString</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t25" href="#t25">25</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t26" href="#t26">26</a></span><span class="t"><span class="nam">SRC</span> <span class="op">=</span> <span class="nam">TypeVar</span><span class="op">(</span><span class="str">"SRC"</span><span class="op">,</span> <span class="nam">bound</span><span class="op">=</span><span class="nam">Union</span><span class="op">[</span><span class="nam">Node</span><span class="op">,</span> <span class="nam">ValidatedString</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -163,12 +163,12 @@
     <p class="run"><span class="n"><a id="t81" href="#t81">81</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">src</span><span class="op">:</span> <span class="nam">Final</span><span class="op">[</span><span class="nam">Type</span><span class="op">[</span><span class="nam">SRC</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="nam">src</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t82" href="#t82">82</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">tgt</span><span class="op">:</span> <span class="nam">Final</span><span class="op">[</span><span class="nam">Type</span><span class="op">[</span><span class="nam">TGT</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="nam">tgt</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t83" href="#t83">83</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t84" href="#t84">84</a></span><span class="t">    <span class="op">@</span><span class="nam">abstractmethod</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t85" href="#t85">85</a></span><span class="t">    <span class="key">def</span> <span class="nam">_convert</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t86" href="#t86">86</a></span><span class="t">        <span class="nam">self</span><span class="op">,</span> <span class="nam">src</span><span class="op">:</span> <span class="nam">SRC</span><span class="op">,</span> <span class="nam">tgt</span><span class="op">:</span> <span class="str">"type[TGT | dict[str, Any]]"</span><span class="op">,</span> <span class="op">/</span><span class="op">,</span> <span class="op">*</span><span class="nam">args</span><span class="op">:</span> <span class="nam">Unpack</span><span class="op">[</span><span class="nam">CArgs</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t87" href="#t87">87</a></span><span class="t">    <span class="op">)</span> <span class="op">-></span> <span class="str">"TGT | dict[str, Any]"</span><span class="op">:</span> <span class="op">...</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t88" href="#t88">88</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t89" href="#t89">89</a></span><span class="t">    <span class="com"># note: the following is not (yet) allowed, see https://github.com/python/typing/issues/1399</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t84" href="#t84">84</a></span><span class="t">    <span class="op">@</span><span class="nam">abstractmethod</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t85" href="#t85">85</a></span><span class="t">    <span class="key">def</span> <span class="nam">_convert</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t86" href="#t86">86</a></span><span class="t">        <span class="nam">self</span><span class="op">,</span> <span class="nam">src</span><span class="op">:</span> <span class="nam">SRC</span><span class="op">,</span> <span class="nam">tgt</span><span class="op">:</span> <span class="str">"type[TGT | dict[str, Any]]"</span><span class="op">,</span> <span class="op">/</span><span class="op">,</span> <span class="op">*</span><span class="nam">args</span><span class="op">:</span> <span class="nam">Unpack</span><span class="op">[</span><span class="nam">CArgs</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t87" href="#t87">87</a></span><span class="t">    <span class="op">)</span> <span class="op">-></span> <span class="str">"TGT | dict[str, Any]"</span><span class="op">:</span> <span class="op">...</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t88" href="#t88">88</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t89" href="#t89">89</a></span><span class="t">    <span class="com"># note: the following is not (yet) allowed, see https://github.com/python/typing/issues/1399</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t90" href="#t90">90</a></span><span class="t">    <span class="com">#       we therefore use `kwargs` (and not `**kwargs`)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t91" href="#t91">91</a></span><span class="t">    <span class="com"># def convert(self, source: SRC, /, **kwargs: Unpack[KW]) -> TGT:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t92" href="#t92">92</a></span><span class="t">    <span class="key">def</span> <span class="nam">convert</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">source</span><span class="op">:</span> <span class="nam">SRC</span><span class="op">,</span> <span class="op">/</span><span class="op">,</span> <span class="op">*</span><span class="nam">args</span><span class="op">:</span> <span class="nam">Unpack</span><span class="op">[</span><span class="nam">CArgs</span><span class="op">]</span><span class="op">)</span> <span class="op">-></span> <span class="nam">TGT</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -193,8 +193,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_c0dbdc82d7fcf101_packaging_context_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.9.2">coverage.py v7.9.2</a>,
-            created at 2025-07-18 12:47 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
+            created at 2025-08-12 13:24 +0000
         </p>
     </div>
 </footer>

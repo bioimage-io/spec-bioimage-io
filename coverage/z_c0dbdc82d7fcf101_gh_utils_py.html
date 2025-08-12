@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Coverage for bioimageio/spec/_internal/gh_utils.py: 80%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
-    <link rel="stylesheet" href="style_cb_81f8c14c.css" type="text/css">
+    <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
 </head>
 <body class="pyfile">
@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_c0dbdc82d7fcf101_io_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.9.2">coverage.py v7.9.2</a>,
-            created at 2025-07-18 12:47 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
+            created at 2025-08-12 13:24 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -88,10 +88,10 @@
     <p class="pln"><span class="n"><a id="t6" href="#t6">6</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t7" href="#t7">7</a></span><span class="t"><span class="key">def</span> <span class="nam">set_github_warning</span><span class="op">(</span><span class="nam">title</span><span class="op">:</span> <span class="nam">str</span><span class="op">,</span> <span class="nam">message</span><span class="op">:</span> <span class="nam">str</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t8" href="#t8">8</a></span><span class="t">    <span class="key">if</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t9" href="#t9">9</a></span><span class="t">        <span class="key">not</span> <span class="nam">os</span><span class="op">.</span><span class="nam">getenv</span><span class="op">(</span><span class="str">"GITHUB_ACTIONS"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t">        <span class="key">or</span> <span class="op">(</span><span class="nam">current_frame</span> <span class="op">:=</span> <span class="nam">inspect</span><span class="op">.</span><span class="nam">currentframe</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="key">is</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t">        <span class="key">or</span> <span class="op">(</span><span class="nam">caller_frame</span> <span class="op">:=</span> <span class="nam">current_frame</span><span class="op">.</span><span class="nam">f_back</span><span class="op">)</span> <span class="key">is</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t">    <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t9" href="#t9">9</a></span><span class="t">        <span class="key">not</span> <span class="nam">os</span><span class="op">.</span><span class="nam">getenv</span><span class="op">(</span><span class="str">"GITHUB_ACTIONS"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t">        <span class="key">or</span> <span class="op">(</span><span class="nam">current_frame</span> <span class="op">:=</span> <span class="nam">inspect</span><span class="op">.</span><span class="nam">currentframe</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="key">is</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t11" href="#t11">11</a></span><span class="t">        <span class="key">or</span> <span class="op">(</span><span class="nam">caller_frame</span> <span class="op">:=</span> <span class="nam">current_frame</span><span class="op">.</span><span class="nam">f_back</span><span class="op">)</span> <span class="key">is</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t12" href="#t12">12</a></span><span class="t">    <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t">        <span class="com"># fallback to regular logging</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t14" href="#t14">14</a></span><span class="t">        <span class="nam">logger</span><span class="op">.</span><span class="nam">opt</span><span class="op">(</span><span class="nam">depth</span><span class="op">=</span><span class="num">1</span><span class="op">)</span><span class="op">.</span><span class="nam">warning</span><span class="op">(</span><span class="str">"{}: {}"</span><span class="op">,</span> <span class="nam">title</span><span class="op">,</span> <span class="nam">message</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t">        <span class="key">return</span>&nbsp;</span><span class="r"></span></p>
@@ -102,10 +102,10 @@
     <p class="pln"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t">    <span class="com"># log according to</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t21" href="#t21">21</a></span><span class="t">    <span class="com"># https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#setting-a-warning-message</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t22" href="#t22">22</a></span><span class="t">    <span class="nam">print</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t23" href="#t23">23</a></span><span class="t">        <span class="fst">f"</span><span class="fst">::warning file=</span><span class="op">{</span><span class="nam">frameinfo</span><span class="op">.</span><span class="nam">filename</span><span class="op">}</span><span class="fst">,</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t24" href="#t24">24</a></span><span class="t">        <span class="op">+</span> <span class="fst">f"</span><span class="fst">line=</span><span class="op">{</span><span class="nam">frameinfo</span><span class="op">.</span><span class="nam">lineno</span><span class="op">}</span><span class="fst">,endLine=</span><span class="op">{</span><span class="nam">frameinfo</span><span class="op">.</span><span class="nam">lineno</span><span class="op">+</span><span class="num">1</span><span class="op">}</span><span class="fst">,</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t25" href="#t25">25</a></span><span class="t">        <span class="op">+</span> <span class="fst">f"</span><span class="fst">title=</span><span class="op">{</span><span class="nam">title</span><span class="op">}</span><span class="fst">::</span><span class="op">{</span><span class="nam">message</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t26" href="#t26">26</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t23" href="#t23">23</a></span><span class="t">        <span class="fst">f"</span><span class="fst">::warning file=</span><span class="op">{</span><span class="nam">frameinfo</span><span class="op">.</span><span class="nam">filename</span><span class="op">}</span><span class="fst">,</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t24" href="#t24">24</a></span><span class="t">        <span class="op">+</span> <span class="fst">f"</span><span class="fst">line=</span><span class="op">{</span><span class="nam">frameinfo</span><span class="op">.</span><span class="nam">lineno</span><span class="op">}</span><span class="fst">,endLine=</span><span class="op">{</span><span class="nam">frameinfo</span><span class="op">.</span><span class="nam">lineno</span><span class="op">+</span><span class="num">1</span><span class="op">}</span><span class="fst">,</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t25" href="#t25">25</a></span><span class="t">        <span class="op">+</span> <span class="fst">f"</span><span class="fst">title=</span><span class="op">{</span><span class="nam">title</span><span class="op">}</span><span class="fst">::</span><span class="op">{</span><span class="nam">message</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t26" href="#t26">26</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -114,8 +114,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_c0dbdc82d7fcf101_io_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.9.2">coverage.py v7.9.2</a>,
-            created at 2025-07-18 12:47 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
+            created at 2025-08-12 13:24 +0000
         </p>
     </div>
 </footer>

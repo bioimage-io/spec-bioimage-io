@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Coverage for bioimageio/spec/generic/_v0_2_converter.py: 84%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
-    <link rel="stylesheet" href="style_cb_81f8c14c.css" type="text/css">
+    <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
 </head>
 <body class="pyfile">
@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_7c461fd3866d8843__v0_3_converter_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.9.2">coverage.py v7.9.2</a>,
-            created at 2025-07-18 12:47 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
+            created at 2025-08-12 13:24 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -111,8 +111,8 @@
     <p class="pln"><span class="n"><a id="t29" href="#t29">29</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t30" href="#t30">30</a></span><span class="t">    <span class="key">if</span> <span class="nam">data</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"format_version"</span><span class="op">)</span> <span class="op">==</span> <span class="str">"0.2.3"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t31" href="#t31">31</a></span><span class="t">        <span class="key">if</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">config</span> <span class="op">:=</span> <span class="nam">data</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"config"</span><span class="op">)</span><span class="op">,</span> <span class="nam">dict</span><span class="op">)</span> <span class="key">and</span> <span class="nam">isinstance</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t32" href="#t32">32</a></span><span class="t">            <span class="nam">bconfig</span> <span class="op">:=</span> <span class="nam">config</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"bioimageio"</span><span class="op">)</span><span class="op">,</span> <span class="nam">dict</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t33" href="#t33">33</a></span><span class="t">        <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t32" href="#t32">32</a></span><span class="t">            <span class="nam">bconfig</span> <span class="op">:=</span> <span class="nam">config</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"bioimageio"</span><span class="op">)</span><span class="op">,</span> <span class="nam">dict</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t33" href="#t33">33</a></span><span class="t">        <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t34" href="#t34">34</a></span><span class="t">            <span class="key">if</span> <span class="op">(</span><span class="nam">nickname</span> <span class="op">:=</span> <span class="nam">bconfig</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"nickname"</span><span class="op">)</span><span class="op">)</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t35" href="#t35">35</a></span><span class="t">                <span class="nam">data</span><span class="op">[</span><span class="str">"id"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">nickname</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t36" href="#t36">36</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -132,8 +132,8 @@
     <p class="pln"><span class="n"><a id="t50" href="#t50">50</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t51" href="#t51">51</a></span><span class="t">    <span class="com"># update authors and maintainers</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t52" href="#t52">52</a></span><span class="t">    <span class="key">def</span> <span class="nam">rm_slashes_in_person_name</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t53" href="#t53">53</a></span><span class="t">        <span class="nam">person</span><span class="op">:</span> <span class="nam">Union</span><span class="op">[</span><span class="nam">Any</span><span class="op">,</span> <span class="nam">Mapping</span><span class="op">[</span><span class="nam">Union</span><span class="op">[</span><span class="nam">Any</span><span class="op">,</span> <span class="nam">str</span><span class="op">]</span><span class="op">,</span> <span class="nam">Any</span><span class="op">]</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t54" href="#t54">54</a></span><span class="t">    <span class="op">)</span> <span class="op">-></span> <span class="nam">Any</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t53" href="#t53">53</a></span><span class="t">        <span class="nam">person</span><span class="op">:</span> <span class="nam">Union</span><span class="op">[</span><span class="nam">Any</span><span class="op">,</span> <span class="nam">Mapping</span><span class="op">[</span><span class="nam">Union</span><span class="op">[</span><span class="nam">Any</span><span class="op">,</span> <span class="nam">str</span><span class="op">]</span><span class="op">,</span> <span class="nam">Any</span><span class="op">]</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t54" href="#t54">54</a></span><span class="t">    <span class="op">)</span> <span class="op">-></span> <span class="nam">Any</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t55" href="#t55">55</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">is_mapping</span><span class="op">(</span><span class="nam">person</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t56" href="#t56">56</a></span><span class="t">            <span class="key">return</span> <span class="nam">person</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t57" href="#t57">57</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -188,11 +188,11 @@
     <p class="pln"><span class="n"><a id="t106" href="#t106">106</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t107" href="#t107">107</a></span><span class="t">        <span class="key">for</span> <span class="nam">a</span> <span class="key">in</span> <span class="nam">authors</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t108" href="#t108">108</a></span><span class="t">            <span class="key">if</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t109" href="#t109">109</a></span><span class="t">                <span class="nam">isinstance</span><span class="op">(</span><span class="nam">a</span><span class="op">,</span> <span class="nam">dict</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t110" href="#t110">110</a></span><span class="t">                <span class="key">and</span> <span class="str">"github_user"</span> <span class="key">in</span> <span class="nam">a</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">                <span class="key">and</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">a</span><span class="op">[</span><span class="str">"github_user"</span><span class="op">]</span><span class="op">,</span> <span class="nam">str</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t">                <span class="key">and</span> <span class="nam">a</span><span class="op">[</span><span class="str">"github_user"</span><span class="op">]</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"https://github.com/"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">            <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t109" href="#t109">109</a></span><span class="t">                <span class="nam">isinstance</span><span class="op">(</span><span class="nam">a</span><span class="op">,</span> <span class="nam">dict</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t110" href="#t110">110</a></span><span class="t">                <span class="key">and</span> <span class="str">"github_user"</span> <span class="key">in</span> <span class="nam">a</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">                <span class="key">and</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">a</span><span class="op">[</span><span class="str">"github_user"</span><span class="op">]</span><span class="op">,</span> <span class="nam">str</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t">                <span class="key">and</span> <span class="nam">a</span><span class="op">[</span><span class="str">"github_user"</span><span class="op">]</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"https://github.com/"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">            <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">                <span class="nam">a</span><span class="op">[</span><span class="str">"github_user"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">a</span><span class="op">[</span><span class="str">"github_user"</span><span class="op">]</span><span class="op">[</span><span class="nam">len</span><span class="op">(</span><span class="str">"https://github.com/"</span><span class="op">)</span> <span class="op">:</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t116" href="#t116">116</a></span><span class="t">    <span class="nam">rm_gh</span><span class="op">(</span><span class="str">"authors"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -205,8 +205,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_7c461fd3866d8843__v0_3_converter_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.9.2">coverage.py v7.9.2</a>,
-            created at 2025-07-18 12:47 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
+            created at 2025-08-12 13:24 +0000
         </p>
     </div>
 </footer>

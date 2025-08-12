@@ -212,6 +212,7 @@
                 },
                 "description": {
                     "default": "",
+                    "description": "A short description of this axis beyond its type and id.",
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
@@ -285,6 +286,7 @@
                 },
                 "description": {
                     "default": "",
+                    "description": "A short description of this axis beyond its type and id.",
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
@@ -650,6 +652,7 @@
                 },
                 "description": {
                     "default": "",
+                    "description": "A short description of this axis beyond its type and id.",
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
@@ -685,6 +688,7 @@
                 },
                 "description": {
                     "default": "",
+                    "description": "A short description of this axis beyond its type and id.",
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
@@ -1147,6 +1151,44 @@
             "title": "model.v0_5.SizeReference",
             "type": "object"
         },
+        "SoftmaxDescr": {
+            "additionalProperties": false,
+            "description": "The softmax function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: softmax\n        kwargs:\n          axis: channel\n    ```\n- in Python:\n    >>> postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId(\"channel\")))]",
+            "properties": {
+                "id": {
+                    "const": "softmax",
+                    "title": "Id",
+                    "type": "string"
+                },
+                "kwargs": {
+                    "$ref": "#/$defs/SoftmaxKwargs"
+                }
+            },
+            "required": [
+                "id"
+            ],
+            "title": "model.v0_5.SoftmaxDescr",
+            "type": "object"
+        },
+        "SoftmaxKwargs": {
+            "additionalProperties": false,
+            "description": "key word arguments for `SoftmaxDescr`",
+            "properties": {
+                "axis": {
+                    "default": "channel",
+                    "description": "The axis to apply the softmax function along.\nNote:\n    Defaults to 'channel' axis\n    (which may not exist, in which case\n    a different axis id has to be specified).",
+                    "examples": [
+                        "channel"
+                    ],
+                    "maxLength": 16,
+                    "minLength": 1,
+                    "title": "AxisId",
+                    "type": "string"
+                }
+            },
+            "title": "model.v0_5.SoftmaxKwargs",
+            "type": "object"
+        },
         "SpaceInputAxis": {
             "additionalProperties": false,
             "properties": {
@@ -1192,6 +1234,7 @@
                 },
                 "description": {
                     "default": "",
+                    "description": "A short description of this axis beyond its type and id.",
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
@@ -1299,6 +1342,7 @@
                 },
                 "description": {
                     "default": "",
+                    "description": "A short description of this axis beyond its type and id.",
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
@@ -1397,6 +1441,7 @@
                 },
                 "description": {
                     "default": "",
+                    "description": "A short description of this axis beyond its type and id.",
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
@@ -1501,6 +1546,7 @@
                 },
                 "description": {
                     "default": "",
+                    "description": "A short description of this axis beyond its type and id.",
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
@@ -1600,6 +1646,7 @@
                 },
                 "description": {
                     "default": "",
+                    "description": "A short description of this axis beyond its type and id.",
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
@@ -1690,6 +1737,7 @@
                 },
                 "description": {
                     "default": "",
+                    "description": "A short description of this axis beyond its type and id.",
                     "maxLength": 128,
                     "title": "Description",
                     "type": "string"
@@ -2888,11 +2936,12 @@
                 "name": {
                     "description": "A human-friendly name of the resource description.\nMay only contains letters, digits, underscore, minus, parentheses and spaces.",
                     "maxLength": 128,
-                    "minLength": 1,
+                    "minLength": 5,
                     "title": "Name",
                     "type": "string"
                 },
                 "description": {
+                    "default": "",
                     "description": "A string containing a brief description.",
                     "maxLength": 1024,
                     "title": "Description",
@@ -2952,7 +3001,6 @@
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                     },
-                    "minItems": 1,
                     "title": "Authors",
                     "type": "array"
                 },
@@ -2969,7 +3017,6 @@
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__generic__v0_3__CiteEntry"
                     },
-                    "minItems": 1,
                     "title": "Cite",
                     "type": "array"
                 },
@@ -3623,8 +3670,12 @@
                             ],
                             "title": "DeprecatedLicenseId",
                             "type": "string"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.",
                     "examples": [
                         "CC0-1.0",
@@ -3749,6 +3800,20 @@
                     "default": null,
                     "description": "The version of the resource following SemVer 2.0."
                 },
+                "version_comment": {
+                    "anyOf": [
+                        {
+                            "maxLength": 512,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "A comment on the version of the resource.",
+                    "title": "Version Comment"
+                },
                 "format_version": {
                     "const": "0.3.0",
                     "description": "The **format** version of this resource specification",
@@ -3865,10 +3930,6 @@
             },
             "required": [
                 "name",
-                "description",
-                "authors",
-                "cite",
-                "license",
                 "format_version",
                 "type"
             ],
@@ -4951,11 +5012,12 @@
                 "name": {
                     "description": "A human-friendly name of the resource description.\nMay only contains letters, digits, underscore, minus, parentheses and spaces.",
                     "maxLength": 128,
-                    "minLength": 1,
+                    "minLength": 5,
                     "title": "Name",
                     "type": "string"
                 },
                 "description": {
+                    "default": "",
                     "description": "A string containing a brief description.",
                     "maxLength": 1024,
                     "title": "Description",
@@ -5015,7 +5077,6 @@
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                     },
-                    "minItems": 1,
                     "title": "Authors",
                     "type": "array"
                 },
@@ -5032,7 +5093,6 @@
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__generic__v0_3__CiteEntry"
                     },
-                    "minItems": 1,
                     "title": "Cite",
                     "type": "array"
                 },
@@ -5686,8 +5746,12 @@
                             ],
                             "title": "DeprecatedLicenseId",
                             "type": "string"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.",
                     "examples": [
                         "CC0-1.0",
@@ -5812,6 +5876,20 @@
                     "default": null,
                     "description": "The version of the resource following SemVer 2.0."
                 },
+                "version_comment": {
+                    "anyOf": [
+                        {
+                            "maxLength": 512,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "A comment on the version of the resource.",
+                    "title": "Version Comment"
+                },
                 "format_version": {
                     "const": "0.3.0",
                     "description": "The **format** version of this resource specification",
@@ -5920,10 +5998,6 @@
             },
             "required": [
                 "name",
-                "description",
-                "authors",
-                "cite",
-                "license",
                 "format_version",
                 "type"
             ],
@@ -9317,7 +9391,15 @@
                     "type": "array"
                 },
                 "test_tensor": {
-                    "$ref": "#/$defs/FileDescr",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/FileDescr"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "An example tensor to use for testing.\nUsing the model with the test input tensors is expected to yield the test output tensors.\nEach test tensor has be a an ndarray in the\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe file extension must be '.npy'."
                 },
                 "sample_tensor": {
@@ -9386,6 +9468,7 @@
                                 "scale_linear": "#/$defs/bioimageio__spec__model__v0_5__ScaleLinearDescr",
                                 "scale_range": "#/$defs/bioimageio__spec__model__v0_5__ScaleRangeDescr",
                                 "sigmoid": "#/$defs/bioimageio__spec__model__v0_5__SigmoidDescr",
+                                "softmax": "#/$defs/SoftmaxDescr",
                                 "zero_mean_unit_variance": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr"
                             },
                             "propertyName": "id"
@@ -9401,19 +9484,22 @@
                                 "$ref": "#/$defs/EnsureDtypeDescr"
                             },
                             {
+                                "$ref": "#/$defs/FixedZeroMeanUnitVarianceDescr"
+                            },
+                            {
                                 "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleLinearDescr"
+                            },
+                            {
+                                "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleRangeDescr"
                             },
                             {
                                 "$ref": "#/$defs/bioimageio__spec__model__v0_5__SigmoidDescr"
                             },
                             {
-                                "$ref": "#/$defs/FixedZeroMeanUnitVarianceDescr"
+                                "$ref": "#/$defs/SoftmaxDescr"
                             },
                             {
                                 "$ref": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr"
-                            },
-                            {
-                                "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleRangeDescr"
                             }
                         ]
                     },
@@ -9422,8 +9508,7 @@
                 }
             },
             "required": [
-                "axes",
-                "test_tensor"
+                "axes"
             ],
             "title": "model.v0_5.InputTensorDescr",
             "type": "object"
@@ -9569,6 +9654,7 @@
                     "type": "string"
                 },
                 "description": {
+                    "default": "",
                     "description": "A string containing a brief description.",
                     "maxLength": 1024,
                     "title": "Description",
@@ -9628,7 +9714,6 @@
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                     },
-                    "minItems": 1,
                     "title": "Authors",
                     "type": "array"
                 },
@@ -9645,7 +9730,6 @@
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__generic__v0_3__CiteEntry"
                     },
-                    "minItems": 1,
                     "title": "Cite",
                     "type": "array"
                 },
@@ -10299,8 +10383,12 @@
                             ],
                             "title": "DeprecatedLicenseId",
                             "type": "string"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.",
                     "examples": [
                         "CC0-1.0",
@@ -10425,8 +10513,22 @@
                     "default": null,
                     "description": "The version of the resource following SemVer 2.0."
                 },
+                "version_comment": {
+                    "anyOf": [
+                        {
+                            "maxLength": 512,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "A comment on the version of the resource.",
+                    "title": "Version Comment"
+                },
                 "format_version": {
-                    "const": "0.5.4",
+                    "const": "0.5.5",
                     "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
                     "title": "Format Version",
                     "type": "string"
@@ -10455,27 +10557,35 @@
                 "documentation": {
                     "anyOf": [
                         {
-                            "description": "A URL with the HTTP or HTTPS scheme.",
-                            "format": "uri",
-                            "maxLength": 2083,
-                            "minLength": 1,
-                            "title": "HttpUrl",
-                            "type": "string"
+                            "anyOf": [
+                                {
+                                    "description": "A URL with the HTTP or HTTPS scheme.",
+                                    "format": "uri",
+                                    "maxLength": 2083,
+                                    "minLength": 1,
+                                    "title": "HttpUrl",
+                                    "type": "string"
+                                },
+                                {
+                                    "$ref": "#/$defs/RelativeFilePath"
+                                },
+                                {
+                                    "format": "file-path",
+                                    "title": "FilePath",
+                                    "type": "string"
+                                }
+                            ],
+                            "examples": [
+                                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
+                                "README.md"
+                            ]
                         },
                         {
-                            "$ref": "#/$defs/RelativeFilePath"
-                        },
-                        {
-                            "format": "file-path",
-                            "title": "FilePath",
-                            "type": "string"
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.\nThe documentation should include a '#[#] Validation' (sub)section\nwith details on how to quantitatively validate the model on unseen data.",
-                    "examples": [
-                        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
-                        "README.md"
-                    ],
                     "title": "Documentation"
                 },
                 "inputs": {
@@ -10561,18 +10671,13 @@
             },
             "required": [
                 "name",
-                "description",
-                "authors",
-                "cite",
-                "license",
                 "format_version",
                 "type",
-                "documentation",
                 "inputs",
                 "outputs",
                 "weights"
             ],
-            "title": "model 0.5.4",
+            "title": "model 0.5.5",
             "type": "object"
         },
         "bioimageio__spec__model__v0_5__OnnxWeightsDescr": {
@@ -10763,7 +10868,15 @@
                     "type": "array"
                 },
                 "test_tensor": {
-                    "$ref": "#/$defs/FileDescr",
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/FileDescr"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "An example tensor to use for testing.\nUsing the model with the test input tensors is expected to yield the test output tensors.\nEach test tensor has be a an ndarray in the\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe file extension must be '.npy'."
                 },
                 "sample_tensor": {
@@ -10827,6 +10940,7 @@
                                 "scale_mean_variance": "#/$defs/bioimageio__spec__model__v0_5__ScaleMeanVarianceDescr",
                                 "scale_range": "#/$defs/bioimageio__spec__model__v0_5__ScaleRangeDescr",
                                 "sigmoid": "#/$defs/bioimageio__spec__model__v0_5__SigmoidDescr",
+                                "softmax": "#/$defs/SoftmaxDescr",
                                 "zero_mean_unit_variance": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr"
                             },
                             "propertyName": "id"
@@ -10842,22 +10956,25 @@
                                 "$ref": "#/$defs/EnsureDtypeDescr"
                             },
                             {
-                                "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleLinearDescr"
-                            },
-                            {
-                                "$ref": "#/$defs/bioimageio__spec__model__v0_5__SigmoidDescr"
-                            },
-                            {
                                 "$ref": "#/$defs/FixedZeroMeanUnitVarianceDescr"
                             },
                             {
-                                "$ref": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr"
+                                "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleLinearDescr"
+                            },
+                            {
+                                "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleMeanVarianceDescr"
                             },
                             {
                                 "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleRangeDescr"
                             },
                             {
-                                "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleMeanVarianceDescr"
+                                "$ref": "#/$defs/bioimageio__spec__model__v0_5__SigmoidDescr"
+                            },
+                            {
+                                "$ref": "#/$defs/SoftmaxDescr"
+                            },
+                            {
+                                "$ref": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr"
                             }
                         ]
                     },
@@ -10866,8 +10983,7 @@
                 }
             },
             "required": [
-                "axes",
-                "test_tensor"
+                "axes"
             ],
             "title": "model.v0_5.OutputTensorDescr",
             "type": "object"
@@ -11135,8 +11251,7 @@
                 }
             },
             "required": [
-                "id",
-                "kwargs"
+                "id"
             ],
             "title": "model.v0_5.ScaleRangeDescr",
             "type": "object"
@@ -11217,7 +11332,7 @@
         },
         "bioimageio__spec__model__v0_5__SigmoidDescr": {
             "additionalProperties": false,
-            "description": "The logistic sigmoid funciton, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n    >>> postprocessing = [SigmoidDescr()]",
+            "description": "The logistic sigmoid function, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n    >>> postprocessing = [SigmoidDescr()]",
             "properties": {
                 "id": {
                     "const": "sigmoid",
@@ -12733,11 +12848,12 @@
                 "name": {
                     "description": "A human-friendly name of the resource description.\nMay only contains letters, digits, underscore, minus, parentheses and spaces.",
                     "maxLength": 128,
-                    "minLength": 1,
+                    "minLength": 5,
                     "title": "Name",
                     "type": "string"
                 },
                 "description": {
+                    "default": "",
                     "description": "A string containing a brief description.",
                     "maxLength": 1024,
                     "title": "Description",
@@ -12797,7 +12913,6 @@
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
                     },
-                    "minItems": 1,
                     "title": "Authors",
                     "type": "array"
                 },
@@ -12814,7 +12929,6 @@
                     "items": {
                         "$ref": "#/$defs/bioimageio__spec__generic__v0_3__CiteEntry"
                     },
-                    "minItems": 1,
                     "title": "Cite",
                     "type": "array"
                 },
@@ -13468,8 +13582,12 @@
                             ],
                             "title": "DeprecatedLicenseId",
                             "type": "string"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.",
                     "examples": [
                         "CC0-1.0",
@@ -13594,6 +13712,20 @@
                     "default": null,
                     "description": "The version of the resource following SemVer 2.0."
                 },
+                "version_comment": {
+                    "anyOf": [
+                        {
+                            "maxLength": 512,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "A comment on the version of the resource.",
+                    "title": "Version Comment"
+                },
                 "format_version": {
                     "const": "0.3.0",
                     "description": "The **format** version of this resource specification",
@@ -13706,10 +13838,6 @@
             },
             "required": [
                 "name",
-                "description",
-                "authors",
-                "cite",
-                "license",
                 "format_version",
                 "type",
                 "source"
@@ -13764,7 +13892,7 @@
                 "discriminator": {
                     "mapping": {
                         "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-                        "0.5.4": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+                        "0.5.5": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
                     },
                     "propertyName": "format_version"
                 },
@@ -13848,7 +13976,7 @@
             "discriminator": {
                 "mapping": {
                     "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-                    "0.5.4": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+                    "0.5.5": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
                 },
                 "propertyName": "format_version"
             },

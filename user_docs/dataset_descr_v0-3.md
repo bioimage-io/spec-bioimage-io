@@ -24,7 +24,38 @@ The **format** version of this resource specification
 
 
 
-## `authors`<sub> Sequence[generic.v0_3.Author]</sub>
+## `name`<sub> str</sub>
+A human-friendly name of the resource description.
+May only contains letters, digits, underscore, minus, parentheses and spaces.
+
+
+
+## `attachments`<sub> Sequence</sub> ≝ `[]`
+file attachments
+
+<details><summary>Sequence[_internal.io.FileDescr*]
+
+</summary>
+
+Sequence of _internal.io.FileDescr
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f88b5e16ac0>, return_type=PydanticUndefined, when_used='unless-none'))
+
+**_internal.io.FileDescr:**
+### `attachments.i.source`<sub> Union</sub>
+File source
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+### `attachments.i.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
+
+</details>
+
+## `authors`<sub> Sequence[generic.v0_3.Author]</sub> ≝ `[]`
 The authors are the creators of this resource description and the primary points of contact.
 
 <details><summary>Sequence[generic.v0_3.Author]
@@ -65,83 +96,6 @@ Optional[_internal.types.OrcidId]
 
 </details>
 
-## `cite`<sub> Sequence[generic.v0_3.CiteEntry]</sub>
-citations
-
-<details><summary>Sequence[generic.v0_3.CiteEntry]
-
-</summary>
-
-
-**generic.v0_3.CiteEntry:**
-### `cite.i.text`<sub> str</sub>
-free text description
-
-
-
-### `cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
-A digital object identifier (DOI) is the prefered citation reference.
-See https://www.doi.org/ for details.
-Note:
-    Either **doi** or **url** have to be specified.
-
-
-
-### `cite.i.url`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
-URL to cite (preferably specify a **doi** instead/also).
-Note:
-    Either **doi** or **url** have to be specified.
-
-
-
-</details>
-
-## `description`<sub> str</sub>
-A string containing a brief description.
-
-
-
-## `license`<sub> Union</sub>
-A [SPDX license identifier](https://spdx.org/licenses/).
-We do not support custom license beyond the SPDX license list, if you need that please
-[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
-to discuss your intentions with the community.
-[*Examples:*](#license) ['CC0-1.0', 'MIT', 'BSD-2-Clause']
-
-
-Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId]
-
-## `name`<sub> str</sub>
-A human-friendly name of the resource description.
-May only contains letters, digits, underscore, minus, parentheses and spaces.
-
-
-
-## `attachments`<sub> Sequence</sub> ≝ `[]`
-file attachments
-
-<details><summary>Sequence[_internal.io.FileDescr*]
-
-</summary>
-
-Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f580b41e700>, return_type=PydanticUndefined, when_used='unless-none'))
-
-**_internal.io.FileDescr:**
-### `attachments.i.source`<sub> Union</sub>
-File source
-
-
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-
-### `attachments.i.sha256`<sub> Optional</sub> ≝ `None`
-SHA256 hash value of the **source** file.
-
-
-Optional[_internal.io_basics.Sha256]
-
-</details>
-
 ## `badges`<sub> Sequence</sub> ≝ `[]`
 badges associated with this resource
 
@@ -167,7 +121,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package_serializer at 0x7f580b41e7a0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package_serializer at 0x7f88b5e16b60>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -178,6 +132,37 @@ Union of
 ### `badges.i.url`<sub> _internal.url.HttpUrl</sub>
 target URL
 [*Example:*](#badgesiurl) 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
+
+
+
+</details>
+
+## `cite`<sub> Sequence[generic.v0_3.CiteEntry]</sub> ≝ `[]`
+citations
+
+<details><summary>Sequence[generic.v0_3.CiteEntry]
+
+</summary>
+
+
+**generic.v0_3.CiteEntry:**
+### `cite.i.text`<sub> str</sub>
+free text description
+
+
+
+### `cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
+A digital object identifier (DOI) is the prefered citation reference.
+See https://www.doi.org/ for details.
+Note:
+    Either **doi** or **url** have to be specified.
+
+
+
+### `cite.i.url`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+URL to cite (preferably specify a **doi** instead/also).
+Note:
+    Either **doi** or **url** have to be specified.
 
 
 
@@ -226,9 +211,14 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package_serializer at 0x7f580b41e7a0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package_serializer at 0x7f88b5e16b60>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
 
 </details>
+
+## `description`<sub> str</sub> ≝ ``
+A string containing a brief description.
+
+
 
 ## `documentation`<sub> Optional</sub> ≝ `None`
 URL or relative path to a markdown file encoded in UTF-8 with additional documentation.
@@ -239,7 +229,7 @@ The recommended documentation file name is `README.md`. An `.md` suffix is manda
 </summary>
 
 Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package_serializer at 0x7f580b41e7a0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package_serializer at 0x7f88b5e16b60>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
 
 </details>
 
@@ -259,7 +249,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package_serializer at 0x7f580b41e7a0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PlainSerializer(func=<function _package_serializer at 0x7f88b5e16b60>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -276,6 +266,16 @@ UTF-8 emoji for display alongside the `id`.
 
 
 Optional[str (Len(min_length=1, max_length=2); )]
+
+## `license`<sub> Union</sub> ≝ `None`
+A [SPDX license identifier](https://spdx.org/licenses/).
+We do not support custom license beyond the SPDX license list, if you need that please
+[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
+to discuss your intentions with the community.
+[*Examples:*](#license) ['CC0-1.0', 'MIT', 'BSD-2-Clause']
+
+
+Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, None]
 
 ## `links`<sub> Sequence[str]</sub> ≝ `[]`
 IDs of other bioimage.io resources
@@ -370,14 +370,15 @@ The version of the resource following SemVer 2.0.
 
 Optional[_internal.version_type.Version]
 
+## `version_comment`<sub> Optional</sub> ≝ `None`
+A comment on the version of the resource.
+
+
+Optional[str (MaxLen(max_length=512))]
+
 # Example values
 ### `authors.i.orcid`
 0000-0001-2345-6789
-### `license`
-- CC0-1.0
-- MIT
-- BSD-2-Clause
-
 ### `badges.i.label`
 Open in Colab
 ### `badges.i.icon`
@@ -388,6 +389,11 @@ https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master
 ['cover.png']
 ### `git_repo`
 https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
+### `license`
+- CC0-1.0
+- MIT
+- BSD-2-Clause
+
 ### `links`
 ('ilastik/ilastik', 'deepimagej/deepimagej', 'zero/notebook_u-net_3d_zerocostdl4mic')
 ### `maintainers.i.orcid`
