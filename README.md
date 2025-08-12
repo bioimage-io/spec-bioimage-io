@@ -3,7 +3,7 @@
 [![conda-version](https://anaconda.org/conda-forge/bioimageio.spec/badges/version.svg)](https://anaconda.org/conda-forge/bioimageio.spec/)
 [![downloads](https://static.pepy.tech/badge/bioimageio.spec)](https://pepy.tech/project/bioimageio.spec)
 [![conda-forge downloads](https://img.shields.io/conda/dn/conda-forge/bioimageio.spec.svg?label=conda-forge)](https://anaconda.org/conda-forge/bioimageio.spec/)
-![code style](https://img.shields.io/badge/code%20style-black-000000.svg)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![coverage](https://bioimage-io.github.io/spec-bioimage-io/coverage/coverage-badge.svg)](https://bioimage-io.github.io/spec-bioimage-io/coverage/index.html)
 
 # Specifications for bioimage.io
