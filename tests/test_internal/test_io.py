@@ -255,5 +255,7 @@ def test_open_url_with_wrong_sha():
     url = "https://example.com/file.txt"
     sha = Sha256("0" * 64)  # invalid sha256 for testing
 
-    with pytest.raises(ValueError, match=f"Failed to fetch {url}."):
+    with pytest.raises(
+        httpx.HTTPStatusError, match=f"Client error '404 Not Found' for url '{url}'"
+    ):
         _ = _open_url(HttpUrl(url), sha256=sha)
