@@ -9,7 +9,7 @@ ERROR, ERROR_NAME = 50, "error"
 """A warning of the error level is always raised (equivalent to a validation error)"""
 
 ALERT, ALERT_NAME = 35, "alert"
-"""no ALERT nor ERROR -> RDF is worriless"""
+"""no ALERT nor ERROR -> RDF is programmatically usable"""
 
 WARNING, WARNING_NAME = 30, "warning"
 """no WARNING nor ALERT nor ERROR -> RDF is watertight"""
