@@ -38,11 +38,11 @@ from pydantic import (
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import Annotated, Self, assert_never
 
-from bioimageio.spec._internal.type_guards import is_dict
+from bioimageio.spec import __version__
 
-from ._internal.constants import VERSION
 from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml
+from ._internal.type_guards import is_dict
 from ._internal.validation_context import ValidationContextSummary
 from ._internal.warning_levels import (
     ALERT,
@@ -263,7 +263,7 @@ class ValidationSummary(BaseModel, extra="allow"):
     """List of validation details"""
     env: Set[InstalledPackage] = Field(
         default_factory=lambda: {
-            InstalledPackage(name="bioimageio.spec", version=VERSION)
+            InstalledPackage(name="bioimageio.spec", version=__version__)
         }
     )
     """List of selected, relevant package versions"""
@@ -584,7 +584,6 @@ def _format_summary(
         cell_line_limit: int = 15,
         cell_width_limit: int = 120,
     ) -> Union[CodeRef, CodeCell]:
-
         if not code.strip():
             return CodeCell("")
 
@@ -655,7 +654,6 @@ def _format_summary(
         def append_detail(
             status: str, loc: Loc, text: str, code: Union[CodeRef, CodeCell, None]
         ):
-
             text_lines = format_text(text)
             status_lines = [""] * len(text_lines)
             loc_lines = [""] * len(text_lines)

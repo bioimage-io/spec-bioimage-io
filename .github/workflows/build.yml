@@ -184,11 +184,13 @@ jobs:
           cache: 'pip'
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install wheel
-          pip install -e .[tests]
+          python -m pip install --upgrade pip
+          pip --version
+          pip install --upgrade build
+          pip install .
+          pip install pytest
       - name: Test with pytest
-        run: pytest
+        run: pytest --disable-pytest-warnings
       - name: Check version submodule imports
         run: python scripts/generate_version_submodule_imports.py check
       - name: Check if there is a parent commit
@@ -203,7 +205,7 @@ jobs:
         with:
           create-tag: false
           version-command: |
-            bash -o pipefail -c "cat bioimageio/spec/VERSION | jq -r '.version'"
+            python -c "from pathlib import Path;print(Path('bioimageio/spec/__init__.py').read_text().split('__version__ = \"')[1].split('\"')[0])"
 
       - name: Push tag
         id: tag-version
@@ -215,7 +217,7 @@ jobs:
 
       - name: Build package
         run: |
-          python setup.py sdist bdist_wheel
+          python -m build
 
       - name: Publish package on PyPI
         if: steps.tag-version.outputs.new_tag
