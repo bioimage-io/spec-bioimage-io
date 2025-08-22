@@ -1,3 +1,4 @@
+import importlib.metadata
 import os
 import subprocess
 from dataclasses import dataclass
@@ -37,8 +38,6 @@ from pydantic import (
 )
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import Annotated, Self, assert_never
-
-from bioimageio.spec import __version__
 
 from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml
@@ -263,7 +262,10 @@ class ValidationSummary(BaseModel, extra="allow"):
     """List of validation details"""
     env: Set[InstalledPackage] = Field(
         default_factory=lambda: {
-            InstalledPackage(name="bioimageio.spec", version=__version__)
+            InstalledPackage(
+                name="bioimageio.spec",
+                version=importlib.metadata.version("bioimageio.spec"),
+            )
         }
     )
     """List of selected, relevant package versions"""
