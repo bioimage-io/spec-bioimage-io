@@ -1581,7 +1581,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
             return self
 
         reader = get_reader(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
-        tensor: NDArray[Any] = imread(
+        tensor: NDArray[Any] = imread(  # pyright: ignore[reportUnknownVariableType]
             reader.read(),
             extension=PurePosixPath(reader.original_file_name).suffix,
         )
@@ -1934,9 +1934,14 @@ def _convert_proc(
             axis = _get_complement_v04_axis(tensor_axes, p.kwargs.axes)
 
             if axis is None:
+                if isinstance(mean, list):
+                    raise ValueError("Expected single float value for mean, not <list>")
+                if isinstance(std, list):
+                    raise ValueError("Expected single float value for std, not <list>")
                 return FixedZeroMeanUnitVarianceDescr(
                     kwargs=FixedZeroMeanUnitVarianceKwargs(
-                        mean=mean, std=std  # pyright: ignore[reportArgumentType]
+                        mean=mean,
+                        std=std,
                     )
                 )
             else:
