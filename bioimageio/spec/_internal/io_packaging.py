@@ -46,7 +46,8 @@ def package_file_descr_serializer(
     value: FileDescr, handler: SerializerFunctionWrapHandler, info: SerializationInfo
 ):
     ret = handler(
-        value, info  # pyright: ignore[reportArgumentType]  # taken from pydantic docs
+        value,
+        info,  # pyright: ignore[reportArgumentType]  # taken from pydantic docs
     )
     ret["source"] = _package(value.source, info, sha256=value.sha256)
     return ret
@@ -98,9 +99,9 @@ def _package(
         )
 
     fsrcs = packaging_context.file_sources
-    assert not any(
-        fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES
-    ), fname
+    assert not any(fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES), (
+        fname
+    )
     if fname in fsrcs and fsrcs[fname].source != source:
         for i in range(2, 20):
             fn, *ext = fname.split(".")

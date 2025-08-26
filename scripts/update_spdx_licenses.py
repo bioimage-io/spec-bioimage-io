@@ -1,13 +1,11 @@
 """script that updates the content of bioimageio/spec/static/spdx_licenses.json and generates the `LicenseId` Literal"""
 
 import json
+import subprocess
 import sys
 import urllib.request
 from argparse import ArgumentParser
 from pathlib import Path
-
-import black.files
-import black.mode
 
 from bioimageio.spec.utils import SpdxLicenseEntry, SpdxLicenses
 
@@ -68,20 +66,9 @@ def main(*, tag: str):
         license_ids=license_ids, deprecated_license_ids=deprecated_license_ids
     )
 
-    # apply black formating
-    black_config = black.files.parse_pyproject_toml(
-        str(PROJECT_ROOT / "pyproject.toml")
-    )
-    black_config["target_versions"] = set(
-        (
-            getattr(black.mode.TargetVersion, tv.upper())
-            for tv in black_config.pop("target_version")
-        )
-    )
-    code = black.format_str(code, mode=black.mode.Mode(**black_config))
-
     _ = LICENSE_ID_MODULE_PATH.write_text(code, encoding="utf-8")
     print(f"Updated {LICENSE_ID_MODULE_PATH}")
+    _ = subprocess.run(["ruff", "format", str(LICENSE_ID_MODULE_PATH)], check=True)
 
 
 if __name__ == "__main__":

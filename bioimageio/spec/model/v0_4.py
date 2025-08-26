@@ -1070,7 +1070,8 @@ def package_weights(
         value = value.model_construct(None, **{wf: new_w})
 
     return handler(
-        value, info  # pyright: ignore[reportArgumentType]  # taken from pydantic docs
+        value,
+        info,  # pyright: ignore[reportArgumentType]  # taken from pydantic docs
     )
 
 

@@ -64,8 +64,7 @@ def test_FAIR():
         nested: Nested = Field(default_factory=Nested.model_construct)
 
     my_descr = MyDescr.load({})
-    assert (
-        len(my_descr.validation_summary.warnings) == 3
-    ), my_descr.validation_summary.display() or [
-        e.msg for e in my_descr.validation_summary.errors
-    ]
+    assert len(my_descr.validation_summary.warnings) == 3, (
+        my_descr.validation_summary.display()
+        or [e.msg for e in my_descr.validation_summary.errors]
+    )

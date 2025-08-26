@@ -180,7 +180,9 @@ def test_postprocessing(kwargs: Dict[str, Any]):
             dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
         ),
         (
-            ScaleMeanVarianceDescr(kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"}),  # type: ignore
+            ScaleMeanVarianceDescr(
+                kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"}  # type: ignore
+            ),
             dict(
                 name="scale_mean_variance",
                 kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"},

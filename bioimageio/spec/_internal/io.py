@@ -863,9 +863,9 @@ def validate_suffix(
         suffixes = suffix
 
     assert len(suffixes) > 0, "no suffix given"
-    assert all(
-        suff.startswith(".") for suff in suffixes
-    ), "expected suffixes to start with '.'"
+    assert all(suff.startswith(".") for suff in suffixes), (
+        "expected suffixes to start with '.'"
+    )
     o_value = value
     if isinstance(value, FileDescr):
         strict = value.source
