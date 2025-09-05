@@ -64,6 +64,11 @@ def stardist04_data():
 
 
 @pytest.fixture(scope="session")
+def covid_if_dataset_path() -> Path:
+    return EXAMPLE_DESCRIPTIONS / "datasets/covid_if_training_data/bioimageio.yaml"
+
+
+@pytest.fixture(scope="session")
 def unet2d_path() -> Path:
     return UNET2D_ROOT / "bioimageio.yaml"
 
