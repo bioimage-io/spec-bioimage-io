@@ -1079,7 +1079,7 @@
       "licenseId": "CC-BY-NC-SA-2.5",
       "name": "Creative Commons Attribution Non Commercial Share Alike 2.5 Generic",
       "reference": "https://spdx.org/licenses/CC-BY-NC-SA-2.5.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1087,7 +1087,7 @@
       "licenseId": "CC-BY-NC-SA-3.0",
       "name": "Creative Commons Attribution Non Commercial Share Alike 3.0 Unported",
       "reference": "https://spdx.org/licenses/CC-BY-NC-SA-3.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1111,7 +1111,7 @@
       "licenseId": "CC-BY-NC-SA-4.0",
       "name": "Creative Commons Attribution Non Commercial Share Alike 4.0 International",
       "reference": "https://spdx.org/licenses/CC-BY-NC-SA-4.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1119,7 +1119,7 @@
       "licenseId": "CC-BY-ND-1.0",
       "name": "Creative Commons Attribution No Derivatives 1.0 Generic",
       "reference": "https://spdx.org/licenses/CC-BY-ND-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1127,7 +1127,7 @@
       "licenseId": "CC-BY-ND-2.0",
       "name": "Creative Commons Attribution No Derivatives 2.0 Generic",
       "reference": "https://spdx.org/licenses/CC-BY-ND-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1135,7 +1135,7 @@
       "licenseId": "CC-BY-ND-2.5",
       "name": "Creative Commons Attribution No Derivatives 2.5 Generic",
       "reference": "https://spdx.org/licenses/CC-BY-ND-2.5.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1143,7 +1143,7 @@
       "licenseId": "CC-BY-ND-3.0",
       "name": "Creative Commons Attribution No Derivatives 3.0 Unported",
       "reference": "https://spdx.org/licenses/CC-BY-ND-3.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1159,7 +1159,7 @@
       "licenseId": "CC-BY-ND-4.0",
       "name": "Creative Commons Attribution No Derivatives 4.0 International",
       "reference": "https://spdx.org/licenses/CC-BY-ND-4.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1167,7 +1167,7 @@
       "licenseId": "CC-BY-SA-1.0",
       "name": "Creative Commons Attribution Share Alike 1.0 Generic",
       "reference": "https://spdx.org/licenses/CC-BY-SA-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1175,7 +1175,7 @@
       "licenseId": "CC-BY-SA-2.0",
       "name": "Creative Commons Attribution Share Alike 2.0 Generic",
       "reference": "https://spdx.org/licenses/CC-BY-SA-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1183,7 +1183,7 @@
       "licenseId": "CC-BY-SA-2.0-UK",
       "name": "Creative Commons Attribution Share Alike 2.0 England and Wales",
       "reference": "https://spdx.org/licenses/CC-BY-SA-2.0-UK.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1199,7 +1199,7 @@
       "licenseId": "CC-BY-SA-2.5",
       "name": "Creative Commons Attribution Share Alike 2.5 Generic",
       "reference": "https://spdx.org/licenses/CC-BY-SA-2.5.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1207,7 +1207,7 @@
       "licenseId": "CC-BY-SA-3.0",
       "name": "Creative Commons Attribution Share Alike 3.0 Unported",
       "reference": "https://spdx.org/licenses/CC-BY-SA-3.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1215,7 +1215,7 @@
       "licenseId": "CC-BY-SA-3.0-AT",
       "name": "Creative Commons Attribution Share Alike 3.0 Austria",
       "reference": "https://spdx.org/licenses/CC-BY-SA-3.0-AT.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1239,7 +1239,7 @@
       "licenseId": "CC-BY-SA-4.0",
       "name": "Creative Commons Attribution Share Alike 4.0 International",
       "reference": "https://spdx.org/licenses/CC-BY-SA-4.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1247,7 +1247,7 @@
       "licenseId": "CC-PDDC",
       "name": "Creative Commons Public Domain Dedication and Certification",
       "reference": "https://spdx.org/licenses/CC-PDDC.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1255,7 +1255,7 @@
       "licenseId": "CC0-1.0",
       "name": "Creative Commons Zero v1.0 Universal",
       "reference": "https://spdx.org/licenses/CC0-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1263,7 +1263,7 @@
       "licenseId": "CDDL-1.0",
       "name": "Common Development and Distribution License 1.0",
       "reference": "https://spdx.org/licenses/CDDL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1271,7 +1271,7 @@
       "licenseId": "CDDL-1.1",
       "name": "Common Development and Distribution License 1.1",
       "reference": "https://spdx.org/licenses/CDDL-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1287,7 +1287,7 @@
       "licenseId": "CDLA-Permissive-1.0",
       "name": "Community Data License Agreement Permissive 1.0",
       "reference": "https://spdx.org/licenses/CDLA-Permissive-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1303,7 +1303,7 @@
       "licenseId": "CDLA-Sharing-1.0",
       "name": "Community Data License Agreement Sharing 1.0",
       "reference": "https://spdx.org/licenses/CDLA-Sharing-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1311,7 +1311,7 @@
       "licenseId": "CECILL-1.0",
       "name": "CeCILL Free Software License Agreement v1.0",
       "reference": "https://spdx.org/licenses/CECILL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1319,7 +1319,7 @@
       "licenseId": "CECILL-1.1",
       "name": "CeCILL Free Software License Agreement v1.1",
       "reference": "https://spdx.org/licenses/CECILL-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1327,7 +1327,7 @@
       "licenseId": "CECILL-2.0",
       "name": "CeCILL Free Software License Agreement v2.0",
       "reference": "https://spdx.org/licenses/CECILL-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1335,7 +1335,7 @@
       "licenseId": "CECILL-2.1",
       "name": "CeCILL Free Software License Agreement v2.1",
       "reference": "https://spdx.org/licenses/CECILL-2.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1343,7 +1343,7 @@
       "licenseId": "CECILL-B",
       "name": "CeCILL-B Free Software License Agreement",
       "reference": "https://spdx.org/licenses/CECILL-B.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1351,7 +1351,7 @@
       "licenseId": "CECILL-C",
       "name": "CeCILL-C Free Software License Agreement",
       "reference": "https://spdx.org/licenses/CECILL-C.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1359,7 +1359,7 @@
       "licenseId": "CERN-OHL-1.1",
       "name": "CERN Open Hardware Licence v1.1",
       "reference": "https://spdx.org/licenses/CERN-OHL-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1367,7 +1367,7 @@
       "licenseId": "CERN-OHL-1.2",
       "name": "CERN Open Hardware Licence v1.2",
       "reference": "https://spdx.org/licenses/CERN-OHL-1.2.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1375,7 +1375,7 @@
       "licenseId": "CERN-OHL-P-2.0",
       "name": "CERN Open Hardware Licence Version 2 - Permissive",
       "reference": "https://spdx.org/licenses/CERN-OHL-P-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1383,7 +1383,7 @@
       "licenseId": "CERN-OHL-S-2.0",
       "name": "CERN Open Hardware Licence Version 2 - Strongly Reciprocal",
       "reference": "https://spdx.org/licenses/CERN-OHL-S-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1391,7 +1391,7 @@
       "licenseId": "CERN-OHL-W-2.0",
       "name": "CERN Open Hardware Licence Version 2 - Weakly Reciprocal",
       "reference": "https://spdx.org/licenses/CERN-OHL-W-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1423,7 +1423,7 @@
       "licenseId": "ClArtistic",
       "name": "Clarified Artistic License",
       "reference": "https://spdx.org/licenses/ClArtistic.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1455,7 +1455,7 @@
       "licenseId": "CNRI-Jython",
       "name": "CNRI Jython License",
       "reference": "https://spdx.org/licenses/CNRI-Jython.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1463,7 +1463,7 @@
       "licenseId": "CNRI-Python",
       "name": "CNRI Python License",
       "reference": "https://spdx.org/licenses/CNRI-Python.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1471,7 +1471,7 @@
       "licenseId": "CNRI-Python-GPL-Compatible",
       "name": "CNRI Python Open Source GPL Compatible License Agreement",
       "reference": "https://spdx.org/licenses/CNRI-Python-GPL-Compatible.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1495,7 +1495,7 @@
       "licenseId": "Condor-1.1",
       "name": "Condor Public License v1.1",
       "reference": "https://spdx.org/licenses/Condor-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1503,7 +1503,7 @@
       "licenseId": "copyleft-next-0.3.0",
       "name": "copyleft-next 0.3.0",
       "reference": "https://spdx.org/licenses/copyleft-next-0.3.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1511,7 +1511,7 @@
       "licenseId": "copyleft-next-0.3.1",
       "name": "copyleft-next 0.3.1",
       "reference": "https://spdx.org/licenses/copyleft-next-0.3.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1527,7 +1527,7 @@
       "licenseId": "CPAL-1.0",
       "name": "Common Public Attribution License 1.0",
       "reference": "https://spdx.org/licenses/CPAL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1535,7 +1535,7 @@
       "licenseId": "CPL-1.0",
       "name": "Common Public License 1.0",
       "reference": "https://spdx.org/licenses/CPL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1543,7 +1543,7 @@
       "licenseId": "CPOL-1.02",
       "name": "Code Project Open License 1.02",
       "reference": "https://spdx.org/licenses/CPOL-1.02.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1559,7 +1559,7 @@
       "licenseId": "Crossword",
       "name": "Crossword License",
       "reference": "https://spdx.org/licenses/Crossword.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1567,7 +1567,7 @@
       "licenseId": "CrystalStacker",
       "name": "CrystalStacker License",
       "reference": "https://spdx.org/licenses/CrystalStacker.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1575,7 +1575,7 @@
       "licenseId": "CUA-OPL-1.0",
       "name": "CUA Office Public License v1.0",
       "reference": "https://spdx.org/licenses/CUA-OPL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1583,7 +1583,7 @@
       "licenseId": "Cube",
       "name": "Cube License",
       "reference": "https://spdx.org/licenses/Cube.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1591,7 +1591,7 @@
       "licenseId": "curl",
       "name": "curl License",
       "reference": "https://spdx.org/licenses/curl.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1599,7 +1599,7 @@
       "licenseId": "D-FSL-1.0",
       "name": "Deutsche Freie Software Lizenz",
       "reference": "https://spdx.org/licenses/D-FSL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1615,7 +1615,7 @@
       "licenseId": "diffmark",
       "name": "diffmark license",
       "reference": "https://spdx.org/licenses/diffmark.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1639,7 +1639,7 @@
       "licenseId": "DOC",
       "name": "DOC License",
       "reference": "https://spdx.org/licenses/DOC.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1647,7 +1647,7 @@
       "licenseId": "Dotseqn",
       "name": "Dotseqn License",
       "reference": "https://spdx.org/licenses/Dotseqn.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1671,7 +1671,7 @@
       "licenseId": "DSDP",
       "name": "DSDP License",
       "reference": "https://spdx.org/licenses/DSDP.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1687,7 +1687,7 @@
       "licenseId": "dvipdfm",
       "name": "dvipdfm License",
       "reference": "https://spdx.org/licenses/dvipdfm.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1695,7 +1695,7 @@
       "licenseId": "ECL-1.0",
       "name": "Educational Community License v1.0",
       "reference": "https://spdx.org/licenses/ECL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1703,7 +1703,7 @@
       "licenseId": "ECL-2.0",
       "name": "Educational Community License v2.0",
       "reference": "https://spdx.org/licenses/ECL-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": true,
@@ -1719,7 +1719,7 @@
       "licenseId": "EFL-1.0",
       "name": "Eiffel Forum License v1.0",
       "reference": "https://spdx.org/licenses/EFL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1727,7 +1727,7 @@
       "licenseId": "EFL-2.0",
       "name": "Eiffel Forum License v2.0",
       "reference": "https://spdx.org/licenses/EFL-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1735,7 +1735,7 @@
       "licenseId": "eGenix",
       "name": "eGenix.com Public License 1.1.0",
       "reference": "https://spdx.org/licenses/eGenix.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1751,7 +1751,7 @@
       "licenseId": "Entessa",
       "name": "Entessa Public License v1.0",
       "reference": "https://spdx.org/licenses/Entessa.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1759,7 +1759,7 @@
       "licenseId": "EPICS",
       "name": "EPICS Open License",
       "reference": "https://spdx.org/licenses/EPICS.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1767,7 +1767,7 @@
       "licenseId": "EPL-1.0",
       "name": "Eclipse Public License 1.0",
       "reference": "https://spdx.org/licenses/EPL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1775,7 +1775,7 @@
       "licenseId": "EPL-2.0",
       "name": "Eclipse Public License 2.0",
       "reference": "https://spdx.org/licenses/EPL-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1783,7 +1783,7 @@
       "licenseId": "ErlPL-1.1",
       "name": "Erlang Public License v1.1",
       "reference": "https://spdx.org/licenses/ErlPL-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1791,7 +1791,7 @@
       "licenseId": "etalab-2.0",
       "name": "Etalab Open License 2.0",
       "reference": "https://spdx.org/licenses/etalab-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1799,7 +1799,7 @@
       "licenseId": "EUDatagrid",
       "name": "EU DataGrid Software License",
       "reference": "https://spdx.org/licenses/EUDatagrid.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1807,7 +1807,7 @@
       "licenseId": "EUPL-1.0",
       "name": "European Union Public License 1.0",
       "reference": "https://spdx.org/licenses/EUPL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1815,7 +1815,7 @@
       "licenseId": "EUPL-1.1",
       "name": "European Union Public License 1.1",
       "reference": "https://spdx.org/licenses/EUPL-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1823,7 +1823,7 @@
       "licenseId": "EUPL-1.2",
       "name": "European Union Public License 1.2",
       "reference": "https://spdx.org/licenses/EUPL-1.2.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1831,7 +1831,7 @@
       "licenseId": "Eurosym",
       "name": "Eurosym License",
       "reference": "https://spdx.org/licenses/Eurosym.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1839,7 +1839,7 @@
       "licenseId": "Fair",
       "name": "Fair License",
       "reference": "https://spdx.org/licenses/Fair.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1871,7 +1871,7 @@
       "licenseId": "Frameworx-1.0",
       "name": "Frameworx Open License 1.0",
       "reference": "https://spdx.org/licenses/Frameworx-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1887,7 +1887,7 @@
       "licenseId": "FreeImage",
       "name": "FreeImage Public License v1.0",
       "reference": "https://spdx.org/licenses/FreeImage.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1895,7 +1895,7 @@
       "licenseId": "FSFAP",
       "name": "FSF All Permissive License",
       "reference": "https://spdx.org/licenses/FSFAP.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1911,7 +1911,7 @@
       "licenseId": "FSFUL",
       "name": "FSF Unlimited License",
       "reference": "https://spdx.org/licenses/FSFUL.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1919,7 +1919,7 @@
       "licenseId": "FSFULLR",
       "name": "FSF Unlimited License (with License Retention)",
       "reference": "https://spdx.org/licenses/FSFULLR.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1935,7 +1935,7 @@
       "licenseId": "FTL",
       "name": "Freetype Project License",
       "reference": "https://spdx.org/licenses/FTL.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1983,7 +1983,7 @@
       "licenseId": "GFDL-1.1-invariants-only",
       "name": "GNU Free Documentation License v1.1 only - invariants",
       "reference": "https://spdx.org/licenses/GFDL-1.1-invariants-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1991,7 +1991,7 @@
       "licenseId": "GFDL-1.1-invariants-or-later",
       "name": "GNU Free Documentation License v1.1 or later - invariants",
       "reference": "https://spdx.org/licenses/GFDL-1.1-invariants-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -1999,7 +1999,7 @@
       "licenseId": "GFDL-1.1-no-invariants-only",
       "name": "GNU Free Documentation License v1.1 only - no invariants",
       "reference": "https://spdx.org/licenses/GFDL-1.1-no-invariants-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2007,7 +2007,7 @@
       "licenseId": "GFDL-1.1-no-invariants-or-later",
       "name": "GNU Free Documentation License v1.1 or later - no invariants",
       "reference": "https://spdx.org/licenses/GFDL-1.1-no-invariants-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2015,7 +2015,7 @@
       "licenseId": "GFDL-1.1-only",
       "name": "GNU Free Documentation License v1.1 only",
       "reference": "https://spdx.org/licenses/GFDL-1.1-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2023,7 +2023,7 @@
       "licenseId": "GFDL-1.1-or-later",
       "name": "GNU Free Documentation License v1.1 or later",
       "reference": "https://spdx.org/licenses/GFDL-1.1-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": true,
@@ -2039,7 +2039,7 @@
       "licenseId": "GFDL-1.2-invariants-only",
       "name": "GNU Free Documentation License v1.2 only - invariants",
       "reference": "https://spdx.org/licenses/GFDL-1.2-invariants-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2047,7 +2047,7 @@
       "licenseId": "GFDL-1.2-invariants-or-later",
       "name": "GNU Free Documentation License v1.2 or later - invariants",
       "reference": "https://spdx.org/licenses/GFDL-1.2-invariants-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2055,7 +2055,7 @@
       "licenseId": "GFDL-1.2-no-invariants-only",
       "name": "GNU Free Documentation License v1.2 only - no invariants",
       "reference": "https://spdx.org/licenses/GFDL-1.2-no-invariants-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2063,7 +2063,7 @@
       "licenseId": "GFDL-1.2-no-invariants-or-later",
       "name": "GNU Free Documentation License v1.2 or later - no invariants",
       "reference": "https://spdx.org/licenses/GFDL-1.2-no-invariants-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2071,7 +2071,7 @@
       "licenseId": "GFDL-1.2-only",
       "name": "GNU Free Documentation License v1.2 only",
       "reference": "https://spdx.org/licenses/GFDL-1.2-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2079,7 +2079,7 @@
       "licenseId": "GFDL-1.2-or-later",
       "name": "GNU Free Documentation License v1.2 or later",
       "reference": "https://spdx.org/licenses/GFDL-1.2-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": true,
@@ -2095,7 +2095,7 @@
       "licenseId": "GFDL-1.3-invariants-only",
       "name": "GNU Free Documentation License v1.3 only - invariants",
       "reference": "https://spdx.org/licenses/GFDL-1.3-invariants-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2103,7 +2103,7 @@
       "licenseId": "GFDL-1.3-invariants-or-later",
       "name": "GNU Free Documentation License v1.3 or later - invariants",
       "reference": "https://spdx.org/licenses/GFDL-1.3-invariants-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2111,7 +2111,7 @@
       "licenseId": "GFDL-1.3-no-invariants-only",
       "name": "GNU Free Documentation License v1.3 only - no invariants",
       "reference": "https://spdx.org/licenses/GFDL-1.3-no-invariants-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2119,7 +2119,7 @@
       "licenseId": "GFDL-1.3-no-invariants-or-later",
       "name": "GNU Free Documentation License v1.3 or later - no invariants",
       "reference": "https://spdx.org/licenses/GFDL-1.3-no-invariants-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2127,7 +2127,7 @@
       "licenseId": "GFDL-1.3-only",
       "name": "GNU Free Documentation License v1.3 only",
       "reference": "https://spdx.org/licenses/GFDL-1.3-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2135,7 +2135,7 @@
       "licenseId": "GFDL-1.3-or-later",
       "name": "GNU Free Documentation License v1.3 or later",
       "reference": "https://spdx.org/licenses/GFDL-1.3-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2143,7 +2143,7 @@
       "licenseId": "Giftware",
       "name": "Giftware License",
       "reference": "https://spdx.org/licenses/Giftware.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2151,7 +2151,7 @@
       "licenseId": "GL2PS",
       "name": "GL2PS License",
       "reference": "https://spdx.org/licenses/GL2PS.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2159,7 +2159,7 @@
       "licenseId": "Glide",
       "name": "3dfx Glide License",
       "reference": "https://spdx.org/licenses/Glide.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2167,7 +2167,7 @@
       "licenseId": "Glulxe",
       "name": "Glulxe License",
       "reference": "https://spdx.org/licenses/Glulxe.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2175,7 +2175,7 @@
       "licenseId": "GLWTPL",
       "name": "Good Luck With That Public License",
       "reference": "https://spdx.org/licenses/GLWTPL.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2183,7 +2183,7 @@
       "licenseId": "gnuplot",
       "name": "gnuplot License",
       "reference": "https://spdx.org/licenses/gnuplot.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": true,
@@ -2207,7 +2207,7 @@
       "licenseId": "GPL-1.0-only",
       "name": "GNU General Public License v1.0 only",
       "reference": "https://spdx.org/licenses/GPL-1.0-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2215,7 +2215,7 @@
       "licenseId": "GPL-1.0-or-later",
       "name": "GNU General Public License v1.0 or later",
       "reference": "https://spdx.org/licenses/GPL-1.0-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": true,
@@ -2239,7 +2239,7 @@
       "licenseId": "GPL-2.0-only",
       "name": "GNU General Public License v2.0 only",
       "reference": "https://spdx.org/licenses/GPL-2.0-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2247,7 +2247,7 @@
       "licenseId": "GPL-2.0-or-later",
       "name": "GNU General Public License v2.0 or later",
       "reference": "https://spdx.org/licenses/GPL-2.0-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": true,
@@ -2311,7 +2311,7 @@
       "licenseId": "GPL-3.0-only",
       "name": "GNU General Public License v3.0 only",
       "reference": "https://spdx.org/licenses/GPL-3.0-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2319,7 +2319,7 @@
       "licenseId": "GPL-3.0-or-later",
       "name": "GNU General Public License v3.0 or later",
       "reference": "https://spdx.org/licenses/GPL-3.0-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": true,
@@ -2351,7 +2351,7 @@
       "licenseId": "gSOAP-1.3b",
       "name": "gSOAP Public License v1.3b",
       "reference": "https://spdx.org/licenses/gSOAP-1.3b.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2367,7 +2367,7 @@
       "licenseId": "HaskellReport",
       "name": "Haskell Language Report License",
       "reference": "https://spdx.org/licenses/HaskellReport.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2383,7 +2383,7 @@
       "licenseId": "Hippocratic-2.1",
       "name": "Hippocratic License 2.1",
       "reference": "https://spdx.org/licenses/Hippocratic-2.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2407,7 +2407,7 @@
       "licenseId": "HPND",
       "name": "Historical Permission Notice and Disclaimer",
       "reference": "https://spdx.org/licenses/HPND.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2519,7 +2519,7 @@
       "licenseId": "HPND-sell-variant",
       "name": "Historical Permission Notice and Disclaimer - sell variant",
       "reference": "https://spdx.org/licenses/HPND-sell-variant.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2543,7 +2543,7 @@
       "licenseId": "HTMLTIDY",
       "name": "HTML Tidy License",
       "reference": "https://spdx.org/licenses/HTMLTIDY.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2551,7 +2551,7 @@
       "licenseId": "IBM-pibs",
       "name": "IBM PowerPC Initialization and Boot Software",
       "reference": "https://spdx.org/licenses/IBM-pibs.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2559,7 +2559,7 @@
       "licenseId": "ICU",
       "name": "ICU License",
       "reference": "https://spdx.org/licenses/ICU.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2575,7 +2575,7 @@
       "licenseId": "IJG",
       "name": "Independent JPEG Group License",
       "reference": "https://spdx.org/licenses/IJG.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2591,7 +2591,7 @@
       "licenseId": "ImageMagick",
       "name": "ImageMagick License",
       "reference": "https://spdx.org/licenses/ImageMagick.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2599,7 +2599,7 @@
       "licenseId": "iMatix",
       "name": "iMatix Standard Function Library Agreement",
       "reference": "https://spdx.org/licenses/iMatix.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2607,7 +2607,7 @@
       "licenseId": "Imlib2",
       "name": "Imlib2 License",
       "reference": "https://spdx.org/licenses/Imlib2.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2615,7 +2615,7 @@
       "licenseId": "Info-ZIP",
       "name": "Info-ZIP License",
       "reference": "https://spdx.org/licenses/Info-ZIP.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2631,7 +2631,7 @@
       "licenseId": "Intel",
       "name": "Intel Open Source License",
       "reference": "https://spdx.org/licenses/Intel.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2639,7 +2639,7 @@
       "licenseId": "Intel-ACPI",
       "name": "Intel ACPI Software License Agreement",
       "reference": "https://spdx.org/licenses/Intel-ACPI.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2647,7 +2647,7 @@
       "licenseId": "Interbase-1.0",
       "name": "Interbase Public License v1.0",
       "reference": "https://spdx.org/licenses/Interbase-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2655,7 +2655,7 @@
       "licenseId": "IPA",
       "name": "IPA Font License",
       "reference": "https://spdx.org/licenses/IPA.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2663,7 +2663,7 @@
       "licenseId": "IPL-1.0",
       "name": "IBM Public License v1.0",
       "reference": "https://spdx.org/licenses/IPL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2671,7 +2671,7 @@
       "licenseId": "ISC",
       "name": "ISC License",
       "reference": "https://spdx.org/licenses/ISC.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2695,7 +2695,7 @@
       "licenseId": "JasPer-2.0",
       "name": "JasPer License",
       "reference": "https://spdx.org/licenses/JasPer-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2711,7 +2711,7 @@
       "licenseId": "JPNIC",
       "name": "Japan Network Information Center License",
       "reference": "https://spdx.org/licenses/JPNIC.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2719,7 +2719,7 @@
       "licenseId": "JSON",
       "name": "JSON License",
       "reference": "https://spdx.org/licenses/JSON.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2751,7 +2751,7 @@
       "licenseId": "LAL-1.2",
       "name": "Licence Art Libre 1.2",
       "reference": "https://spdx.org/licenses/LAL-1.2.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2759,7 +2759,7 @@
       "licenseId": "LAL-1.3",
       "name": "Licence Art Libre 1.3",
       "reference": "https://spdx.org/licenses/LAL-1.3.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2767,7 +2767,7 @@
       "licenseId": "Latex2e",
       "name": "Latex2e License",
       "reference": "https://spdx.org/licenses/Latex2e.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2783,7 +2783,7 @@
       "licenseId": "Leptonica",
       "name": "Leptonica License",
       "reference": "https://spdx.org/licenses/Leptonica.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": true,
@@ -2807,7 +2807,7 @@
       "licenseId": "LGPL-2.0-only",
       "name": "GNU Library General Public License v2 only",
       "reference": "https://spdx.org/licenses/LGPL-2.0-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2815,7 +2815,7 @@
       "licenseId": "LGPL-2.0-or-later",
       "name": "GNU Library General Public License v2 or later",
       "reference": "https://spdx.org/licenses/LGPL-2.0-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": true,
@@ -2839,7 +2839,7 @@
       "licenseId": "LGPL-2.1-only",
       "name": "GNU Lesser General Public License v2.1 only",
       "reference": "https://spdx.org/licenses/LGPL-2.1-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2847,7 +2847,7 @@
       "licenseId": "LGPL-2.1-or-later",
       "name": "GNU Lesser General Public License v2.1 or later",
       "reference": "https://spdx.org/licenses/LGPL-2.1-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": true,
@@ -2871,7 +2871,7 @@
       "licenseId": "LGPL-3.0-only",
       "name": "GNU Lesser General Public License v3.0 only",
       "reference": "https://spdx.org/licenses/LGPL-3.0-only.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2879,7 +2879,7 @@
       "licenseId": "LGPL-3.0-or-later",
       "name": "GNU Lesser General Public License v3.0 or later",
       "reference": "https://spdx.org/licenses/LGPL-3.0-or-later.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2887,7 +2887,7 @@
       "licenseId": "LGPLLR",
       "name": "Lesser General Public License For Linguistic Resources",
       "reference": "https://spdx.org/licenses/LGPLLR.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2895,7 +2895,7 @@
       "licenseId": "Libpng",
       "name": "libpng License",
       "reference": "https://spdx.org/licenses/Libpng.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2903,7 +2903,7 @@
       "licenseId": "libpng-2.0",
       "name": "PNG Reference Library version 2",
       "reference": "https://spdx.org/licenses/libpng-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2911,7 +2911,7 @@
       "licenseId": "libselinux-1.0",
       "name": "libselinux public domain notice",
       "reference": "https://spdx.org/licenses/libselinux-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2919,7 +2919,7 @@
       "licenseId": "libtiff",
       "name": "libtiff License",
       "reference": "https://spdx.org/licenses/libtiff.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2935,7 +2935,7 @@
       "licenseId": "LiLiQ-P-1.1",
       "name": "Licence Libre du Qu\u00e9bec \u2013 Permissive version 1.1",
       "reference": "https://spdx.org/licenses/LiLiQ-P-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2943,7 +2943,7 @@
       "licenseId": "LiLiQ-R-1.1",
       "name": "Licence Libre du Qu\u00e9bec \u2013 R\u00e9ciprocit\u00e9 version 1.1",
       "reference": "https://spdx.org/licenses/LiLiQ-R-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2951,7 +2951,7 @@
       "licenseId": "LiLiQ-Rplus-1.1",
       "name": "Licence Libre du Qu\u00e9bec \u2013 R\u00e9ciprocit\u00e9 forte version 1.1",
       "reference": "https://spdx.org/licenses/LiLiQ-Rplus-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -2991,7 +2991,7 @@
       "licenseId": "Linux-OpenIB",
       "name": "Linux Kernel Variant of OpenIB.org license",
       "reference": "https://spdx.org/licenses/Linux-OpenIB.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3015,7 +3015,7 @@
       "licenseId": "LPL-1.0",
       "name": "Lucent Public License Version 1.0",
       "reference": "https://spdx.org/licenses/LPL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3023,7 +3023,7 @@
       "licenseId": "LPL-1.02",
       "name": "Lucent Public License v1.02",
       "reference": "https://spdx.org/licenses/LPL-1.02.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3031,7 +3031,7 @@
       "licenseId": "LPPL-1.0",
       "name": "LaTeX Project Public License v1.0",
       "reference": "https://spdx.org/licenses/LPPL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3039,7 +3039,7 @@
       "licenseId": "LPPL-1.1",
       "name": "LaTeX Project Public License v1.1",
       "reference": "https://spdx.org/licenses/LPPL-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3047,7 +3047,7 @@
       "licenseId": "LPPL-1.2",
       "name": "LaTeX Project Public License v1.2",
       "reference": "https://spdx.org/licenses/LPPL-1.2.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3055,7 +3055,7 @@
       "licenseId": "LPPL-1.3a",
       "name": "LaTeX Project Public License v1.3a",
       "reference": "https://spdx.org/licenses/LPPL-1.3a.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3063,7 +3063,7 @@
       "licenseId": "LPPL-1.3c",
       "name": "LaTeX Project Public License v1.3c",
       "reference": "https://spdx.org/licenses/LPPL-1.3c.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3135,7 +3135,7 @@
       "licenseId": "MakeIndex",
       "name": "MakeIndex License",
       "reference": "https://spdx.org/licenses/MakeIndex.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3175,7 +3175,7 @@
       "licenseId": "MirOS",
       "name": "The MirOS Licence",
       "reference": "https://spdx.org/licenses/MirOS.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3183,7 +3183,7 @@
       "licenseId": "MIT",
       "name": "MIT License",
       "reference": "https://spdx.org/licenses/MIT.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3191,7 +3191,7 @@
       "licenseId": "MIT-0",
       "name": "MIT No Attribution",
       "reference": "https://spdx.org/licenses/MIT-0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3199,7 +3199,7 @@
       "licenseId": "MIT-advertising",
       "name": "Enlightenment License (e16)",
       "reference": "https://spdx.org/licenses/MIT-advertising.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3207,7 +3207,7 @@
       "licenseId": "MIT-CMU",
       "name": "CMU License",
       "reference": "https://spdx.org/licenses/MIT-CMU.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3215,7 +3215,7 @@
       "licenseId": "MIT-enna",
       "name": "enna License",
       "reference": "https://spdx.org/licenses/MIT-enna.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3223,7 +3223,7 @@
       "licenseId": "MIT-feh",
       "name": "feh License",
       "reference": "https://spdx.org/licenses/MIT-feh.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3247,7 +3247,7 @@
       "licenseId": "MIT-open-group",
       "name": "MIT Open Group variant",
       "reference": "https://spdx.org/licenses/MIT-open-group.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3271,7 +3271,7 @@
       "licenseId": "MITNFA",
       "name": "MIT +no-false-attribs license",
       "reference": "https://spdx.org/licenses/MITNFA.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3287,7 +3287,7 @@
       "licenseId": "Motosoto",
       "name": "Motosoto License",
       "reference": "https://spdx.org/licenses/Motosoto.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3311,7 +3311,7 @@
       "licenseId": "mpich2",
       "name": "mpich2 License",
       "reference": "https://spdx.org/licenses/mpich2.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3319,7 +3319,7 @@
       "licenseId": "MPL-1.0",
       "name": "Mozilla Public License 1.0",
       "reference": "https://spdx.org/licenses/MPL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3327,7 +3327,7 @@
       "licenseId": "MPL-1.1",
       "name": "Mozilla Public License 1.1",
       "reference": "https://spdx.org/licenses/MPL-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3335,7 +3335,7 @@
       "licenseId": "MPL-2.0",
       "name": "Mozilla Public License 2.0",
       "reference": "https://spdx.org/licenses/MPL-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3343,7 +3343,7 @@
       "licenseId": "MPL-2.0-no-copyleft-exception",
       "name": "Mozilla Public License 2.0 (no copyleft exception)",
       "reference": "https://spdx.org/licenses/MPL-2.0-no-copyleft-exception.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3367,7 +3367,7 @@
       "licenseId": "MS-PL",
       "name": "Microsoft Public License",
       "reference": "https://spdx.org/licenses/MS-PL.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3375,7 +3375,7 @@
       "licenseId": "MS-RL",
       "name": "Microsoft Reciprocal License",
       "reference": "https://spdx.org/licenses/MS-RL.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3383,7 +3383,7 @@
       "licenseId": "MTLL",
       "name": "Matrix Template Library License",
       "reference": "https://spdx.org/licenses/MTLL.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3391,7 +3391,7 @@
       "licenseId": "MulanPSL-1.0",
       "name": "Mulan Permissive Software License, Version 1",
       "reference": "https://spdx.org/licenses/MulanPSL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3399,7 +3399,7 @@
       "licenseId": "MulanPSL-2.0",
       "name": "Mulan Permissive Software License, Version 2",
       "reference": "https://spdx.org/licenses/MulanPSL-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3407,7 +3407,7 @@
       "licenseId": "Multics",
       "name": "Multics License",
       "reference": "https://spdx.org/licenses/Multics.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3415,7 +3415,7 @@
       "licenseId": "Mup",
       "name": "Mup License",
       "reference": "https://spdx.org/licenses/Mup.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3431,7 +3431,7 @@
       "licenseId": "NASA-1.3",
       "name": "NASA Open Source Agreement 1.3",
       "reference": "https://spdx.org/licenses/NASA-1.3.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3439,7 +3439,7 @@
       "licenseId": "Naumen",
       "name": "Naumen Public License",
       "reference": "https://spdx.org/licenses/Naumen.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3447,7 +3447,7 @@
       "licenseId": "NBPL-1.0",
       "name": "Net Boolean Public License v1",
       "reference": "https://spdx.org/licenses/NBPL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3455,7 +3455,7 @@
       "licenseId": "NCGL-UK-2.0",
       "name": "Non-Commercial Government Licence",
       "reference": "https://spdx.org/licenses/NCGL-UK-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3463,7 +3463,7 @@
       "licenseId": "NCSA",
       "name": "University of Illinois/NCSA Open Source License",
       "reference": "https://spdx.org/licenses/NCSA.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3471,7 +3471,7 @@
       "licenseId": "Net-SNMP",
       "name": "Net-SNMP License",
       "reference": "https://spdx.org/licenses/Net-SNMP.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3479,7 +3479,7 @@
       "licenseId": "NetCDF",
       "name": "NetCDF license",
       "reference": "https://spdx.org/licenses/NetCDF.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3487,7 +3487,7 @@
       "licenseId": "Newsletr",
       "name": "Newsletr License",
       "reference": "https://spdx.org/licenses/Newsletr.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3495,7 +3495,7 @@
       "licenseId": "NGPL",
       "name": "Nethack General Public License",
       "reference": "https://spdx.org/licenses/NGPL.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3511,7 +3511,7 @@
       "licenseId": "NIST-PD",
       "name": "NIST Public Domain Notice",
       "reference": "https://spdx.org/licenses/NIST-PD.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3519,7 +3519,7 @@
       "licenseId": "NIST-PD-fallback",
       "name": "NIST Public Domain Notice with license fallback",
       "reference": "https://spdx.org/licenses/NIST-PD-fallback.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3535,7 +3535,7 @@
       "licenseId": "NLOD-1.0",
       "name": "Norwegian Licence for Open Government Data (NLOD) 1.0",
       "reference": "https://spdx.org/licenses/NLOD-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -3559,7 +3559,7 @@
       "licenseId": "Nokia",
       "name": "Nokia Open Source License",
       "reference": "https://spdx.org/licenses/Nokia.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4623,7 +4623,7 @@
       "licenseId": "TCP-wrappers",
       "name": "TCP Wrappers License",
       "reference": "https://spdx.org/licenses/TCP-wrappers.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4647,7 +4647,7 @@
       "licenseId": "TMate",
       "name": "TMate Open Source License",
       "reference": "https://spdx.org/licenses/TMate.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4655,7 +4655,7 @@
       "licenseId": "TORQUE-1.1",
       "name": "TORQUE v2.5+ Software License v1.1",
       "reference": "https://spdx.org/licenses/TORQUE-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4663,7 +4663,7 @@
       "licenseId": "TOSL",
       "name": "Trusster Open Source License",
       "reference": "https://spdx.org/licenses/TOSL.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4703,7 +4703,7 @@
       "licenseId": "TU-Berlin-1.0",
       "name": "Technische Universitaet Berlin License 1.0",
       "reference": "https://spdx.org/licenses/TU-Berlin-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4711,7 +4711,7 @@
       "licenseId": "TU-Berlin-2.0",
       "name": "Technische Universitaet Berlin License 2.0",
       "reference": "https://spdx.org/licenses/TU-Berlin-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4727,7 +4727,7 @@
       "licenseId": "UCL-1.0",
       "name": "Upstream Compatibility License v1.0",
       "reference": "https://spdx.org/licenses/UCL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4759,7 +4759,7 @@
       "licenseId": "Unicode-DFS-2015",
       "name": "Unicode License Agreement - Data Files and Software (2015)",
       "reference": "https://spdx.org/licenses/Unicode-DFS-2015.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4767,7 +4767,7 @@
       "licenseId": "Unicode-DFS-2016",
       "name": "Unicode License Agreement - Data Files and Software (2016)",
       "reference": "https://spdx.org/licenses/Unicode-DFS-2016.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4775,7 +4775,7 @@
       "licenseId": "Unicode-TOU",
       "name": "Unicode Terms of Use",
       "reference": "https://spdx.org/licenses/Unicode-TOU.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4791,7 +4791,7 @@
       "licenseId": "Unlicense",
       "name": "The Unlicense",
       "reference": "https://spdx.org/licenses/Unlicense.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4799,7 +4799,7 @@
       "licenseId": "UPL-1.0",
       "name": "Universal Permissive License v1.0",
       "reference": "https://spdx.org/licenses/UPL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4815,7 +4815,7 @@
       "licenseId": "Vim",
       "name": "Vim License",
       "reference": "https://spdx.org/licenses/Vim.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4823,7 +4823,7 @@
       "licenseId": "VOSTROM",
       "name": "VOSTROM Public License for Open Source",
       "reference": "https://spdx.org/licenses/VOSTROM.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4831,7 +4831,7 @@
       "licenseId": "VSL-1.0",
       "name": "Vovida Software License v1.0",
       "reference": "https://spdx.org/licenses/VSL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4839,7 +4839,7 @@
       "licenseId": "W3C",
       "name": "W3C Software Notice and License (2002-12-31)",
       "reference": "https://spdx.org/licenses/W3C.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4847,7 +4847,7 @@
       "licenseId": "W3C-19980720",
       "name": "W3C Software Notice and License (1998-07-20)",
       "reference": "https://spdx.org/licenses/W3C-19980720.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4855,7 +4855,7 @@
       "licenseId": "W3C-20150513",
       "name": "W3C Software Notice and Document License (2015-05-13)",
       "reference": "https://spdx.org/licenses/W3C-20150513.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4871,7 +4871,7 @@
       "licenseId": "Watcom-1.0",
       "name": "Sybase Open Watcom Public License 1.0",
       "reference": "https://spdx.org/licenses/Watcom-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4887,7 +4887,7 @@
       "licenseId": "Wsuipa",
       "name": "Wsuipa License",
       "reference": "https://spdx.org/licenses/Wsuipa.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4895,7 +4895,7 @@
       "licenseId": "WTFPL",
       "name": "Do What The F*ck You Want To Public License",
       "reference": "https://spdx.org/licenses/WTFPL.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": true,
@@ -4903,7 +4903,7 @@
       "licenseId": "wxWindows",
       "name": "wxWindows Library License",
       "reference": "https://spdx.org/licenses/wxWindows.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4911,7 +4911,7 @@
       "licenseId": "X11",
       "name": "X11 License",
       "reference": "https://spdx.org/licenses/X11.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4935,7 +4935,7 @@
       "licenseId": "Xerox",
       "name": "Xerox License",
       "reference": "https://spdx.org/licenses/Xerox.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4951,7 +4951,7 @@
       "licenseId": "XFree86-1.1",
       "name": "XFree86 License 1.1",
       "reference": "https://spdx.org/licenses/XFree86-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4959,7 +4959,7 @@
       "licenseId": "xinetd",
       "name": "xinetd License",
       "reference": "https://spdx.org/licenses/xinetd.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4983,7 +4983,7 @@
       "licenseId": "Xnet",
       "name": "X.Net License",
       "reference": "https://spdx.org/licenses/Xnet.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4991,7 +4991,7 @@
       "licenseId": "xpp",
       "name": "XPP License",
       "reference": "https://spdx.org/licenses/xpp.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -4999,7 +4999,7 @@
       "licenseId": "XSkat",
       "name": "XSkat License",
       "reference": "https://spdx.org/licenses/XSkat.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -5007,7 +5007,7 @@
       "licenseId": "YPL-1.0",
       "name": "Yahoo! Public License v1.0",
       "reference": "https://spdx.org/licenses/YPL-1.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -5015,7 +5015,7 @@
       "licenseId": "YPL-1.1",
       "name": "Yahoo! Public License v1.1",
       "reference": "https://spdx.org/licenses/YPL-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -5023,7 +5023,7 @@
       "licenseId": "Zed",
       "name": "Zed License",
       "reference": "https://spdx.org/licenses/Zed.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -5039,7 +5039,7 @@
       "licenseId": "Zend-2.0",
       "name": "Zend License v2.0",
       "reference": "https://spdx.org/licenses/Zend-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -5047,7 +5047,7 @@
       "licenseId": "Zimbra-1.3",
       "name": "Zimbra Public License v1.3",
       "reference": "https://spdx.org/licenses/Zimbra-1.3.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -5055,7 +5055,7 @@
       "licenseId": "Zimbra-1.4",
       "name": "Zimbra Public License v1.4",
       "reference": "https://spdx.org/licenses/Zimbra-1.4.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -5063,7 +5063,7 @@
       "licenseId": "Zlib",
       "name": "zlib License",
       "reference": "https://spdx.org/licenses/Zlib.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -5071,7 +5071,7 @@
       "licenseId": "zlib-acknowledgement",
       "name": "zlib/libpng License with Acknowledgement",
       "reference": "https://spdx.org/licenses/zlib-acknowledgement.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -5079,7 +5079,7 @@
       "licenseId": "ZPL-1.1",
       "name": "Zope Public License 1.1",
       "reference": "https://spdx.org/licenses/ZPL-1.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -5087,7 +5087,7 @@
       "licenseId": "ZPL-2.0",
       "name": "Zope Public License 2.0",
       "reference": "https://spdx.org/licenses/ZPL-2.0.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     },
     {
       "isDeprecatedLicenseId": false,
@@ -5095,7 +5095,7 @@
       "licenseId": "ZPL-2.1",
       "name": "Zope Public License 2.1",
       "reference": "https://spdx.org/licenses/ZPL-2.1.html",
-      "isKnownByZenodo": true
+      "isKnownByZenodo": false
     }
   ],
   "releaseDate": "2024-02-08"

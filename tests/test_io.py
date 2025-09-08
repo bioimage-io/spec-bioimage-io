@@ -42,3 +42,19 @@ def test_load_description_again(unet2d_data: BioimageioYamlContent):
         perform_io_checks=False,
     )
     assert descr is descr2
+
+
+def test_load_dataset_description(covid_if_dataset_path: Path, tmp_path: Path):
+    from bioimageio.spec import load_dataset_description
+    from bioimageio.spec._io import save_bioimageio_yaml_only
+    from bioimageio.spec.dataset.v0_2 import DatasetDescr
+
+    dataset_descr = load_dataset_description(covid_if_dataset_path)
+    assert isinstance(dataset_descr, DatasetDescr)
+
+    # this example happens to consist only of the bioimageio.yaml file,
+    # so we can test the roundtrip with `save_bioimageio_yaml_only`
+    save_bioimageio_yaml_only(dataset_descr, tmp_path / "dataset.yaml")
+    dataset_descr2 = load_dataset_description(tmp_path / "dataset.yaml")
+    assert isinstance(dataset_descr2, DatasetDescr)  # we cannot expect
+    assert dataset_descr.model_dump() == dataset_descr2.model_dump()

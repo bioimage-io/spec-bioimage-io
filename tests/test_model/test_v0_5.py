@@ -190,9 +190,9 @@ def test_input_tensor_error_count(model_data: Dict[str, Any]):
     invalid = build_description(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
-    assert (
-        len(invalid.validation_summary.details[0].errors) == 1
-    ), invalid.validation_summary.details[0].errors
+    assert len(invalid.validation_summary.details[0].errors) == 1, (
+        invalid.validation_summary.details[0].errors
+    )
 
 
 @pytest.mark.parametrize(

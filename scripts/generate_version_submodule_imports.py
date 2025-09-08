@@ -1,13 +1,12 @@
 import re
+import subprocess
 import sys
 from argparse import ArgumentParser
 from dataclasses import dataclass, field
 from difflib import ndiff
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import List, Literal
-
-import black.files
-import black.mode
 
 ROOT_PATH = Path(__file__).parent.parent
 
@@ -148,15 +147,14 @@ def process(info: Info, check: bool):
         init_content,
         flags=flags,
     )
-    black_config = black.files.parse_pyproject_toml(str(ROOT_PATH / "pyproject.toml"))
-    black_config["target_versions"] = set(
-        (
-            getattr(black.mode.TargetVersion, tv.upper())
-            for tv in black_config.pop("target_version")
-        )
-    )
-    black_config.pop("extend_exclude", None)
-    updated = black.format_str(updated, mode=black.mode.Mode(**black_config))
+
+    # format with ruff
+    with TemporaryDirectory() as tmp_dir:
+        p = Path(tmp_dir) / "temp.py"
+        _ = p.write_text(updated)
+        _ = subprocess.run(["ruff", "format", str(p)], check=True)
+        updated = p.read_text()
+
     if check:
         if init_content == updated:
             print("all seems fine")

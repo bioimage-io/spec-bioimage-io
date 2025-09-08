@@ -427,13 +427,13 @@ class SizeReference(Node):
                 **ref_axis**
                 (**ref_axis.scale** is still used; any given **n** is ignored).
         """
-        assert (
-            axis.size == self
-        ), "Given `axis.size` is not defined by this `SizeReference`"
+        assert axis.size == self, (
+            "Given `axis.size` is not defined by this `SizeReference`"
+        )
 
-        assert (
-            ref_axis.id == self.axis_id
-        ), f"Expected `ref_axis.id` to be {self.axis_id}, but got {ref_axis.id}."
+        assert ref_axis.id == self.axis_id, (
+            f"Expected `ref_axis.id` to be {self.axis_id}, but got {ref_axis.id}."
+        )
 
         assert axis.unit == ref_axis.unit, (
             "`SizeReference` requires `axis` and `ref_axis` to have the same `unit`,"
@@ -1082,7 +1082,6 @@ class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
 
     @model_validator(mode="after")
     def _validate(self) -> Self:
-
         if isinstance(self.gain, list):
             if isinstance(self.offset, list):
                 if len(self.gain) != len(self.offset):
@@ -1934,9 +1933,14 @@ def _convert_proc(
             axis = _get_complement_v04_axis(tensor_axes, p.kwargs.axes)
 
             if axis is None:
+                if isinstance(mean, list):
+                    raise ValueError("Expected single float value for mean, not <list>")
+                if isinstance(std, list):
+                    raise ValueError("Expected single float value for std, not <list>")
                 return FixedZeroMeanUnitVarianceDescr(
-                    kwargs=FixedZeroMeanUnitVarianceKwargs(
-                        mean=mean, std=std  # pyright: ignore[reportArgumentType]
+                    kwargs=FixedZeroMeanUnitVarianceKwargs.model_construct(
+                        mean=mean,
+                        std=std,
                     )
                 )
             else:
@@ -3347,12 +3351,8 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
                 if src.attachments is None
                 else [FileDescr(source=f) for f in src.attachments.files]
             ),
-            authors=[
-                _author_conv.convert_as_dict(a) for a in src.authors
-            ],  # pyright: ignore[reportArgumentType]
-            cite=[
-                {"text": c.text, "doi": c.doi, "url": c.url} for c in src.cite
-            ],  # pyright: ignore[reportArgumentType]
+            authors=[_author_conv.convert_as_dict(a) for a in src.authors],  # pyright: ignore[reportArgumentType]
+            cite=[{"text": c.text, "doi": c.doi, "url": c.url} for c in src.cite],  # pyright: ignore[reportArgumentType]
             config=src.config,  # pyright: ignore[reportArgumentType]
             covers=src.covers,
             description=src.description,
@@ -3364,9 +3364,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             id_emoji=src.id_emoji,
             license=src.license,  # type: ignore
             links=src.links,
-            maintainers=[
-                _maintainer_conv.convert_as_dict(m) for m in src.maintainers
-            ],  # pyright: ignore[reportArgumentType]
+            maintainers=[_maintainer_conv.convert_as_dict(m) for m in src.maintainers],  # pyright: ignore[reportArgumentType]
             name=name,
             tags=src.tags,
             type=src.type,
@@ -3374,7 +3372,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             version=src.version,
             inputs=[  # pyright: ignore[reportArgumentType]
                 _input_tensor_conv.convert_as_dict(ipt, tt, st, input_size_refs)
-                for ipt, tt, st, in zip(
+                for ipt, tt, st in zip(
                     src.inputs,
                     src.test_inputs,
                     src.sample_inputs or [None] * len(src.test_inputs),
@@ -3382,7 +3380,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             ],
             outputs=[  # pyright: ignore[reportArgumentType]
                 _output_tensor_conv.convert_as_dict(out, tt, st, output_size_refs)
-                for out, tt, st, in zip(
+                for out, tt, st in zip(
                     src.outputs,
                     src.test_outputs,
                     src.sample_outputs or [None] * len(src.test_outputs),
@@ -3420,9 +3418,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
                     else src.training_data
                 )
             ),
-            packaged_by=[
-                _author_conv.convert_as_dict(a) for a in src.packaged_by
-            ],  # pyright: ignore[reportArgumentType]
+            packaged_by=[_author_conv.convert_as_dict(a) for a in src.packaged_by],  # pyright: ignore[reportArgumentType]
             run_mode=src.run_mode,
             timestamp=src.timestamp,
             weights=(WeightsDescr if TYPE_CHECKING else dict)(

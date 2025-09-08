@@ -51,7 +51,9 @@ class SpdxLicenses(TypedDict):
 
 def get_spdx_licenses() -> SpdxLicenses:
     """get details of the SPDX licenses known to bioimageio.spec"""
-    with files("bioimageio.spec").joinpath("static/spdx_licenses.json").open(
-        "r", encoding="utf-8"
+    with (
+        files("bioimageio.spec")
+        .joinpath("static/spdx_licenses.json")
+        .open("r", encoding="utf-8")
     ) as f:
         return json.load(f)

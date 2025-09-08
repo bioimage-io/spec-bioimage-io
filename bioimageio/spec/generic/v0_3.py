@@ -186,7 +186,6 @@ class CiteEntry(Node):
 
 
 class LinkedResourceBase(Node):
-
     @model_validator(mode="before")
     def _remove_version_number(cls, value: Any):
         if is_dict(value):

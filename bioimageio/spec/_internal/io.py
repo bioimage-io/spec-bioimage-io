@@ -13,7 +13,7 @@ from datetime import datetime as _datetime
 from functools import partial
 from io import TextIOWrapper
 from pathlib import Path, PurePath, PurePosixPath
-from tempfile import mktemp
+from tempfile import mkdtemp
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -568,7 +568,7 @@ def extract(
         zip_context = nullcontext(source)
         if folder is None:
             if source.filename is None:
-                folder = Path(mktemp())
+                folder = Path(mkdtemp())
             else:
                 zip_path = Path(source.filename)
                 folder = zip_path.with_suffix(zip_path.suffix + ".unzip")
@@ -863,9 +863,9 @@ def validate_suffix(
         suffixes = suffix
 
     assert len(suffixes) > 0, "no suffix given"
-    assert all(
-        suff.startswith(".") for suff in suffixes
-    ), "expected suffixes to start with '.'"
+    assert all(suff.startswith(".") for suff in suffixes), (
+        "expected suffixes to start with '.'"
+    )
     o_value = value
     if isinstance(value, FileDescr):
         strict = value.source

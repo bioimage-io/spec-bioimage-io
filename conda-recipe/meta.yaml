@@ -1,24 +1,27 @@
-# possibly superseded by recipe.yaml
-# TODO: decide for package builder and clean up
-{% set setup_py_data = load_setup_py_data() %}
+{% set pyproject = load_file_data('pyproject.toml') %}
+{% set version_match = load_file_regex(
+  load_file="bioimageio/spec/__init__.py",
+  regex_pattern='__version__ = "(.+)"') %}
+{% set version = version_match[1] %}
 
 package:
-  name: bioimageio.spec
-  version: {{ setup_py_data['version'] }}
+  name: {{ pyproject['project']['name'] }}
+  version: {{ version }}
 
 source:
   path: ..
 
 requirements:
   build:
-    - python >=3.8,<3.13
-    - pip
-  run:
-    - python >=3.8,<3.13
-    {% for dep in setup_py_data['install_requires'] %}
+    - python {{ pyproject['project']['requires-python'] }}
+    {% for dep in pyproject['build-system']['requires'] %}
     - {{ dep.lower() }}
     {% endfor %}
-
+  run:
+    - python {{ pyproject['project']['requires-python'] }}
+    {% for dep in pyproject['project']['dependencies'] %}
+    - {{ dep.lower() }}
+    {% endfor %}
 
 build:
   noarch: python
@@ -27,18 +30,16 @@ build:
 
 test:
   imports:
-    - bioimageio.spec
+    - {{ pyproject['project']['name'] }}
   source_files:
     - tests
     - example_descriptions
   requires:
-    {% for dep in setup_py_data['extras_require']['dev'] %}
-    {% if dep not in ('json_schema_for_humans',): %}
-    - {{ dep.replace('torch', 'pytorch').lower() }}
-    {% endif %}
+    {% for dep in pyproject['project']['optional-dependencies']['dev'] %}
+    - {{ dep.replace('torch', 'pytorch').lower().replace('_', '-') }}
     {% endfor %}
   commands:
-    - pytest -n auto --capture=no
+    - pytest --capture=no
 
 about:
   home: https://github.com/bioimage-io/spec-bioimage-io

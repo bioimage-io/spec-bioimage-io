@@ -1,7 +1,69 @@
-[tool.black]
-line-length = 88
-target-version = ["py38", "py39", "py310", "py311", "py312", "py313"]
-preview = true
+[project]
+name = "bioimageio.spec"
+description = "Parser and validator library for bioimage.io specifications"
+authors = [{ name = "Fynn Beuttenmüller", email = "thefynnbe@gmail.com" }]
+requires-python = ">=3.8"
+dependencies = [
+    "annotated-types>=0.5.0,<1",
+    "email_validator",
+    "genericache==0.5.2",
+    "imageio",
+    "loguru",
+    "markdown",
+    "numpy>=1.21",
+    "packaging>=17.0",
+    "pooch>=1.5,<2",
+    "pydantic-settings>=2.5,<3",
+    "pydantic>=2.10.3,<2.12",
+    "python-dateutil",
+    "httpx",
+    "rich",
+    "ruyaml",
+    "tifffile>=2020.7.4",
+    "tqdm",
+    "typing-extensions",
+    "exceptiongroup",            # TODO: remove when py3.11 is lowest supported version
+    "zipp",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+    "deepdiff",
+    "json_schema_for_humans",
+    "jsonschema",
+    "jupyter",
+    "lxml",
+    "pdoc",
+    "pre-commit",
+    "pyright==1.1.404",
+    "pytest-cov",
+    "pytest",
+    "python-dotenv",
+    "respx",
+    "ruff",
+]
+
+[build-system]
+requires = ["pip", "setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["bioimageio"]
+
+[tool.setuptools.dynamic]
+version = { attr = "bioimageio.spec.__version__" }
 
 [tool.pyright]
 exclude = [
@@ -56,5 +118,8 @@ exclude = [
 ]
 
 [tool.coverage.report]
-omit = ["bioimageio/spec/pretty_validation_errors.py"]
+omit = [
+    "bioimageio/spec/pretty_validation_errors.py",
+    "bioimageio/spec/partner_utils/imjoy/*.py",
+]
 exclude_also = ["if TYPE_CHECKING:", "assert_never\\("]
