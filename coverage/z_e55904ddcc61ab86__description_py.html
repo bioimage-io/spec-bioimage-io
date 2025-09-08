@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for bioimageio/spec/_description.py: 79%</title>
+    <title>Coverage for bioimageio/spec/_description.py: 86%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_6b508a39.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>bioimageio/spec/_description.py</b>:
-            <span class="pc_cov">79%</span>
+            <span class="pc_cov">86%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">57 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">45<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">12<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">49<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">8<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">20<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_e55904ddcc61ab86__description_impl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
-            created at 2025-08-12 17:44 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
+            created at 2025-09-08 12:41 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -344,25 +344,25 @@
     <p class="run"><span class="n"><a id="t262" href="#t262">262</a></span><span class="t"><span class="key">def</span> <span class="nam">ensure_description_is_dataset</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t263" href="#t263">263</a></span><span class="t">    <span class="nam">rd</span><span class="op">:</span> <span class="nam">Union</span><span class="op">[</span><span class="nam">InvalidDescr</span><span class="op">,</span> <span class="nam">ResourceDescr</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t264" href="#t264">264</a></span><span class="t"><span class="op">)</span> <span class="op">-></span> <span class="nam">AnyDatasetDescr</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t265" href="#t265">265</a></span><span class="t">    <span class="key">if</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">rd</span><span class="op">,</span> <span class="nam">InvalidDescr</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t265" href="#t265">265</a></span><span class="t">    <span class="key">if</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">rd</span><span class="op">,</span> <span class="nam">InvalidDescr</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t266" href="#t266">266</a></span><span class="t">        <span class="nam">rd</span><span class="op">.</span><span class="nam">validation_summary</span><span class="op">.</span><span class="nam">display</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t267" href="#t267">267</a></span><span class="t">        <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="fst">f"</span><span class="fst">Invalid </span><span class="op">{</span><span class="nam">rd</span><span class="op">.</span><span class="nam">type</span><span class="op">}</span><span class="fst"> description.</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t268" href="#t268">268</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t269" href="#t269">269</a></span><span class="t">    <span class="key">if</span> <span class="nam">rd</span><span class="op">.</span><span class="nam">type</span> <span class="op">!=</span> <span class="str">"dataset"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t269" href="#t269">269</a></span><span class="t">    <span class="key">if</span> <span class="nam">rd</span><span class="op">.</span><span class="nam">type</span> <span class="op">!=</span> <span class="str">"dataset"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t270" href="#t270">270</a></span><span class="t">        <span class="nam">rd</span><span class="op">.</span><span class="nam">validation_summary</span><span class="op">.</span><span class="nam">display</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t271" href="#t271">271</a></span><span class="t">        <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis mis2 show_mis"><span class="n"><a id="t272" href="#t272">272</a></span><span class="t">            <span class="fst">f"</span><span class="fst">Expected a dataset resource, but got resource type '</span><span class="op">{</span><span class="nam">rd</span><span class="op">.</span><span class="nam">type</span><span class="op">}</span><span class="fst">'</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis mis2 show_mis"><span class="n"><a id="t273" href="#t273">273</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t274" href="#t274">274</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t275" href="#t275">275</a></span><span class="t">    <span class="key">assert</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t276" href="#t276">276</a></span><span class="t">        <span class="nam">rd</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t277" href="#t277">277</a></span><span class="t">        <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t278" href="#t278">278</a></span><span class="t">            <span class="nam">GenericDescr_v0_2</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t279" href="#t279">279</a></span><span class="t">            <span class="nam">GenericDescr_v0_3</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t280" href="#t280">280</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t281" href="#t281">281</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t275" href="#t275">275</a></span><span class="t">    <span class="key">assert</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t276" href="#t276">276</a></span><span class="t">        <span class="nam">rd</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t277" href="#t277">277</a></span><span class="t">        <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t278" href="#t278">278</a></span><span class="t">            <span class="nam">GenericDescr_v0_2</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t279" href="#t279">279</a></span><span class="t">            <span class="nam">GenericDescr_v0_3</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t280" href="#t280">280</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t281" href="#t281">281</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t282" href="#t282">282</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t283" href="#t283">283</a></span><span class="t">    <span class="key">return</span> <span class="nam">rd</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t283" href="#t283">283</a></span><span class="t">    <span class="key">return</span> <span class="nam">rd</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -371,8 +371,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_e55904ddcc61ab86__description_impl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
-            created at 2025-08-12 17:44 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
+            created at 2025-09-08 12:41 +0000
         </p>
     </div>
 </footer>

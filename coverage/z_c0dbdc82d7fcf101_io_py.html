@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_c0dbdc82d7fcf101_io_basics_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
-            created at 2025-08-12 17:44 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
+            created at 2025-09-08 12:41 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -95,7 +95,7 @@
     <p class="run"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t"><span class="key">from</span> <span class="nam">functools</span> <span class="key">import</span> <span class="nam">partial</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t14" href="#t14">14</a></span><span class="t"><span class="key">from</span> <span class="nam">io</span> <span class="key">import</span> <span class="nam">TextIOWrapper</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t"><span class="key">from</span> <span class="nam">pathlib</span> <span class="key">import</span> <span class="nam">Path</span><span class="op">,</span> <span class="nam">PurePath</span><span class="op">,</span> <span class="nam">PurePosixPath</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t"><span class="key">from</span> <span class="nam">tempfile</span> <span class="key">import</span> <span class="nam">mktemp</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t"><span class="key">from</span> <span class="nam">tempfile</span> <span class="key">import</span> <span class="nam">mkdtemp</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t17" href="#t17">17</a></span><span class="t"><span class="key">from</span> <span class="nam">typing</span> <span class="key">import</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t">    <span class="nam">TYPE_CHECKING</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t">    <span class="nam">Any</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -650,7 +650,7 @@
     <p class="mis show_mis"><span class="n"><a id="t568" href="#t568">568</a></span><span class="t">        <span class="nam">zip_context</span> <span class="op">=</span> <span class="nam">nullcontext</span><span class="op">(</span><span class="nam">source</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t569" href="#t569">569</a></span><span class="t">        <span class="key">if</span> <span class="nam">folder</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t570" href="#t570">570</a></span><span class="t">            <span class="key">if</span> <span class="nam">source</span><span class="op">.</span><span class="nam">filename</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t571" href="#t571">571</a></span><span class="t">                <span class="nam">folder</span> <span class="op">=</span> <span class="nam">Path</span><span class="op">(</span><span class="nam">mktemp</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t571" href="#t571">571</a></span><span class="t">                <span class="nam">folder</span> <span class="op">=</span> <span class="nam">Path</span><span class="op">(</span><span class="nam">mkdtemp</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t572" href="#t572">572</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t573" href="#t573">573</a></span><span class="t">                <span class="nam">zip_path</span> <span class="op">=</span> <span class="nam">Path</span><span class="op">(</span><span class="nam">source</span><span class="op">.</span><span class="nam">filename</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t574" href="#t574">574</a></span><span class="t">                <span class="nam">folder</span> <span class="op">=</span> <span class="nam">zip_path</span><span class="op">.</span><span class="nam">with_suffix</span><span class="op">(</span><span class="nam">zip_path</span><span class="op">.</span><span class="nam">suffix</span> <span class="op">+</span> <span class="str">".unzip"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -945,9 +945,9 @@
     <p class="run"><span class="n"><a id="t863" href="#t863">863</a></span><span class="t">        <span class="nam">suffixes</span> <span class="op">=</span> <span class="nam">suffix</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t864" href="#t864">864</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t865" href="#t865">865</a></span><span class="t">    <span class="key">assert</span> <span class="nam">len</span><span class="op">(</span><span class="nam">suffixes</span><span class="op">)</span> <span class="op">></span> <span class="num">0</span><span class="op">,</span> <span class="str">"no suffix given"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t866" href="#t866">866</a></span><span class="t">    <span class="key">assert</span> <span class="nam">all</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t867" href="#t867">867</a></span><span class="t">        <span class="nam">suff</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"."</span><span class="op">)</span> <span class="key">for</span> <span class="nam">suff</span> <span class="key">in</span> <span class="nam">suffixes</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t868" href="#t868">868</a></span><span class="t">    <span class="op">)</span><span class="op">,</span> <span class="str">"expected suffixes to start with '.'"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t866" href="#t866">866</a></span><span class="t">    <span class="key">assert</span> <span class="nam">all</span><span class="op">(</span><span class="nam">suff</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"."</span><span class="op">)</span> <span class="key">for</span> <span class="nam">suff</span> <span class="key">in</span> <span class="nam">suffixes</span><span class="op">)</span><span class="op">,</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t867" href="#t867">867</a></span><span class="t">        <span class="str">"expected suffixes to start with '.'"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t868" href="#t868">868</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t869" href="#t869">869</a></span><span class="t">    <span class="nam">o_value</span> <span class="op">=</span> <span class="nam">value</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t870" href="#t870">870</a></span><span class="t">    <span class="key">if</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">value</span><span class="op">,</span> <span class="nam">FileDescr</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t871" href="#t871">871</a></span><span class="t">        <span class="nam">strict</span> <span class="op">=</span> <span class="nam">value</span><span class="op">.</span><span class="nam">source</span>&nbsp;</span><span class="r"></span></p>
@@ -1027,8 +1027,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_c0dbdc82d7fcf101_io_basics_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.3">coverage.py v7.10.3</a>,
-            created at 2025-08-12 17:44 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.10.6">coverage.py v7.10.6</a>,
+            created at 2025-09-08 12:41 +0000
         </p>
     </div>
 </footer>
