@@ -40,20 +40,18 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = [
-    "black",
     "deepdiff",
+    "json_schema_for_humans",
     "jsonschema",
+    "jupyter",
     "lxml",
+    "pdoc",
+    "pre-commit",
+    "pyright==1.1.404",
     "pytest-cov",
     "pytest",
     "python-dotenv",
     "respx",
-    "json_schema_for_humans",
-    "jupyter-black",
-    "jupyter",
-    "pdoc",
-    "pre-commit",
-    "pyright==1.1.404",
     "ruff",
 ]
 
