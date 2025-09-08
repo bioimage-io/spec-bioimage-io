@@ -14,13 +14,14 @@ source:
 requirements:
   build:
     - python {{ pyproject['project']['requires-python'] }}
-    - pip
+    {% for dep in pyproject['build-system']['requires'] %}
+    - {{ dep.lower() }}
+    {% endfor %}
   run:
     - python {{ pyproject['project']['requires-python'] }}
     {% for dep in pyproject['project']['dependencies'] %}
     - {{ dep.lower() }}
     {% endfor %}
-
 
 build:
   noarch: python
