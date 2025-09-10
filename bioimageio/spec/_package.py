@@ -190,12 +190,21 @@ def save_bioimageio_package_as_folder(
             write_yaml(src, output_path / name)
         elif (
             isinstance(src.original_root, Path)
-            and src.original_root / src.original_file_name == output_path / name
+            and src.original_root / src.original_file_name
+            == (output_path / name).resolve()
         ):
             logger.debug(
                 f"Not copying {src.original_root / src.original_file_name} to itself."
             )
         else:
+            if isinstance(src.original_root, Path):
+                logger.debug(
+                    f"Copying from path {src.original_root / src.original_file_name} to {output_path / name}."
+                )
+            else:
+                logger.debug(
+                    f"Copying {src.original_root}/{src.original_file_name} to {output_path / name}."
+                )
             with (output_path / name).open("wb") as dest:
                 _ = shutil.copyfileobj(src, dest)
 
