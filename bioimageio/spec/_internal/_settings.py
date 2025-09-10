@@ -13,7 +13,9 @@ from typing_extensions import Annotated
 from .root_url import RootHttpUrl
 
 
-class Settings(BaseSettings, extra="ignore"):
+class Settings(
+    BaseSettings, extra="ignore", allow_inf_nan=False, validate_assignment=True
+):
     """environment variables for bioimageio.spec"""
 
     model_config = SettingsConfigDict(
