@@ -287,6 +287,16 @@ def write_content_to_zip(
             else:
                 reader = get_reader(file)
 
+            if (
+                isinstance(reader.original_root, ZipFile)
+                and reader.original_root.filename == zip.filename
+                and reader.original_file_name == arc_name
+            ):
+                logger.debug(
+                    f"Not copying {reader.original_root}/{reader.original_file_name} to itself."
+                )
+                continue
+
             with zip.open(arc_name, "w") as dest:
                 shutil.copyfileobj(reader, dest, 1024 * 8)
 

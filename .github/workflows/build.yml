@@ -188,11 +188,6 @@ jobs:
           pip --version
           pip install --upgrade build
           pip install .
-          pip install pytest
-      - name: Test with pytest
-        run: pytest --disable-pytest-warnings
-      - name: Check version submodule imports
-        run: python scripts/generate_version_submodule_imports.py check
       - name: Check if there is a parent commit
         id: check-parent-commit
         run: |

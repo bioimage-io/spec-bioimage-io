@@ -10,6 +10,10 @@ In this file we log both:
 
 This changelog includes implementation details and my reference the [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+#### bioimageio.spec 0.5.5.1
+
+- fix package export to the same directory as model source (avoid 'deleting' files by overwriting them in-place)
+
 #### bioimageio.spec 0.5.5.0
 
 - added programmatic `uplaod` (alpha stage)
