@@ -493,7 +493,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.5.0</footer>
+            <footer>bioimageio.spec 0.5.5.1</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -713,105 +713,108 @@ We recommend installing <code>bioimageio.core</code> instead to get access to th
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">.. include:: ../../README.md</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.5.5.0&quot;</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>    <span class="n">application</span><span class="p">,</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>    <span class="n">common</span><span class="p">,</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>    <span class="n">conda_env</span><span class="p">,</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>    <span class="n">dataset</span><span class="p">,</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>    <span class="n">generic</span><span class="p">,</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="n">model</span><span class="p">,</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>    <span class="n">pretty_validation_errors</span><span class="p">,</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>    <span class="n">summary</span><span class="p">,</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="n">utils</span><span class="p">,</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="p">)</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._description</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>    <span class="n">LatestResourceDescr</span><span class="p">,</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>    <span class="n">ResourceDescr</span><span class="p">,</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="n">SpecificResourceDescr</span><span class="p">,</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">build_description</span><span class="p">,</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="n">dump_description</span><span class="p">,</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>    <span class="n">validate_format</span><span class="p">,</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="p">)</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._get_conda_env</span><span class="w"> </span><span class="kn">import</span> <span class="n">BioimageioCondaEnv</span><span class="p">,</span> <span class="n">get_conda_env</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._internal</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._internal.common_nodes</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidDescr</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._internal.validation_context</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationContext</span><span class="p">,</span> <span class="n">get_validation_context</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._io</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="n">load_dataset_description</span><span class="p">,</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>    <span class="n">load_description</span><span class="p">,</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="n">load_description_and_validate_format_only</span><span class="p">,</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>    <span class="n">load_model_description</span><span class="p">,</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>    <span class="n">save_bioimageio_yaml_only</span><span class="p">,</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="n">update_format</span><span class="p">,</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="n">update_hashes</span><span class="p">,</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="p">)</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._package</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="n">get_resource_package_content</span><span class="p">,</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="n">save_bioimageio_package</span><span class="p">,</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="n">save_bioimageio_package_as_folder</span><span class="p">,</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="n">save_bioimageio_package_to_stream</span><span class="p">,</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="p">)</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._upload</span><span class="w"> </span><span class="kn">import</span> <span class="n">upload</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.application</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyApplicationDescr</span><span class="p">,</span> <span class="n">ApplicationDescr</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyDatasetDescr</span><span class="p">,</span> <span class="n">DatasetDescr</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.generic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyGenericDescr</span><span class="p">,</span> <span class="n">GenericDescr</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyModelDescr</span><span class="p">,</span> <span class="n">ModelDescr</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.notebook</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyNotebookDescr</span><span class="p">,</span> <span class="n">NotebookDescr</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.pretty_validation_errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">enable_pretty_validation_errors_in_ipynb</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.summary</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationSummary</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>    <span class="s2">&quot;__version__&quot;</span><span class="p">,</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="s2">&quot;AnyApplicationDescr&quot;</span><span class="p">,</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="s2">&quot;AnyDatasetDescr&quot;</span><span class="p">,</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="s2">&quot;AnyGenericDescr&quot;</span><span class="p">,</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="s2">&quot;AnyModelDescr&quot;</span><span class="p">,</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="s2">&quot;AnyNotebookDescr&quot;</span><span class="p">,</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="s2">&quot;application&quot;</span><span class="p">,</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="s2">&quot;ApplicationDescr&quot;</span><span class="p">,</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="s2">&quot;BioimageioCondaEnv&quot;</span><span class="p">,</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="s2">&quot;build_description&quot;</span><span class="p">,</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="s2">&quot;common&quot;</span><span class="p">,</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>    <span class="s2">&quot;conda_env&quot;</span><span class="p">,</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>    <span class="s2">&quot;DatasetDescr&quot;</span><span class="p">,</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="s2">&quot;dump_description&quot;</span><span class="p">,</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>    <span class="s2">&quot;enable_pretty_validation_errors_in_ipynb&quot;</span><span class="p">,</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>    <span class="s2">&quot;generic&quot;</span><span class="p">,</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="s2">&quot;GenericDescr&quot;</span><span class="p">,</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="s2">&quot;get_conda_env&quot;</span><span class="p">,</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="s2">&quot;get_resource_package_content&quot;</span><span class="p">,</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="s2">&quot;get_validation_context&quot;</span><span class="p">,</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="s2">&quot;InvalidDescr&quot;</span><span class="p">,</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="s2">&quot;LatestResourceDescr&quot;</span><span class="p">,</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="s2">&quot;load_dataset_description&quot;</span><span class="p">,</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="s2">&quot;load_description_and_validate_format_only&quot;</span><span class="p">,</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="s2">&quot;load_description&quot;</span><span class="p">,</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>    <span class="s2">&quot;load_model_description&quot;</span><span class="p">,</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="s2">&quot;model&quot;</span><span class="p">,</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="s2">&quot;ModelDescr&quot;</span><span class="p">,</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="s2">&quot;NotebookDescr&quot;</span><span class="p">,</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="s2">&quot;pretty_validation_errors&quot;</span><span class="p">,</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="s2">&quot;ResourceDescr&quot;</span><span class="p">,</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="s2">&quot;save_bioimageio_package_as_folder&quot;</span><span class="p">,</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="s2">&quot;save_bioimageio_package_to_stream&quot;</span><span class="p">,</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="s2">&quot;save_bioimageio_package&quot;</span><span class="p">,</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="s2">&quot;save_bioimageio_yaml_only&quot;</span><span class="p">,</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="s2">&quot;settings&quot;</span><span class="p">,</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="s2">&quot;SpecificResourceDescr&quot;</span><span class="p">,</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>    <span class="s2">&quot;summary&quot;</span><span class="p">,</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="s2">&quot;update_format&quot;</span><span class="p">,</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="s2">&quot;update_hashes&quot;</span><span class="p">,</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="s2">&quot;upload&quot;</span><span class="p">,</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="s2">&quot;utils&quot;</span><span class="p">,</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="s2">&quot;validate_format&quot;</span><span class="p">,</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="s2">&quot;ValidationContext&quot;</span><span class="p">,</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="s2">&quot;ValidationSummary&quot;</span><span class="p">,</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="p">]</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="c1"># ruff: noqa: E402</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.5.5.1&quot;</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="n">logger</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="s2">&quot;bioimageio.spec&quot;</span><span class="p">)</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>    <span class="n">application</span><span class="p">,</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>    <span class="n">common</span><span class="p">,</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="n">conda_env</span><span class="p">,</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>    <span class="n">dataset</span><span class="p">,</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>    <span class="n">generic</span><span class="p">,</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="n">model</span><span class="p">,</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="n">pretty_validation_errors</span><span class="p">,</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>    <span class="n">summary</span><span class="p">,</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>    <span class="n">utils</span><span class="p">,</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="p">)</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._description</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">LatestResourceDescr</span><span class="p">,</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="n">ResourceDescr</span><span class="p">,</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>    <span class="n">SpecificResourceDescr</span><span class="p">,</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>    <span class="n">build_description</span><span class="p">,</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="n">dump_description</span><span class="p">,</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>    <span class="n">validate_format</span><span class="p">,</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="p">)</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._get_conda_env</span><span class="w"> </span><span class="kn">import</span> <span class="n">BioimageioCondaEnv</span><span class="p">,</span> <span class="n">get_conda_env</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._internal</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._internal.common_nodes</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidDescr</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._internal.validation_context</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationContext</span><span class="p">,</span> <span class="n">get_validation_context</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._io</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>    <span class="n">load_dataset_description</span><span class="p">,</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>    <span class="n">load_description</span><span class="p">,</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="n">load_description_and_validate_format_only</span><span class="p">,</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="n">load_model_description</span><span class="p">,</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>    <span class="n">save_bioimageio_yaml_only</span><span class="p">,</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="n">update_format</span><span class="p">,</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="n">update_hashes</span><span class="p">,</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="p">)</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._package</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="n">get_resource_package_content</span><span class="p">,</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="n">save_bioimageio_package</span><span class="p">,</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="n">save_bioimageio_package_as_folder</span><span class="p">,</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">save_bioimageio_package_to_stream</span><span class="p">,</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="p">)</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">._upload</span><span class="w"> </span><span class="kn">import</span> <span class="n">upload</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.application</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyApplicationDescr</span><span class="p">,</span> <span class="n">ApplicationDescr</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyDatasetDescr</span><span class="p">,</span> <span class="n">DatasetDescr</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.generic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyGenericDescr</span><span class="p">,</span> <span class="n">GenericDescr</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyModelDescr</span><span class="p">,</span> <span class="n">ModelDescr</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.notebook</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyNotebookDescr</span><span class="p">,</span> <span class="n">NotebookDescr</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.pretty_validation_errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">enable_pretty_validation_errors_in_ipynb</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.summary</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationSummary</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="s2">&quot;__version__&quot;</span><span class="p">,</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="s2">&quot;AnyApplicationDescr&quot;</span><span class="p">,</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="s2">&quot;AnyDatasetDescr&quot;</span><span class="p">,</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="s2">&quot;AnyGenericDescr&quot;</span><span class="p">,</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="s2">&quot;AnyModelDescr&quot;</span><span class="p">,</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="s2">&quot;AnyNotebookDescr&quot;</span><span class="p">,</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="s2">&quot;application&quot;</span><span class="p">,</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="s2">&quot;ApplicationDescr&quot;</span><span class="p">,</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>    <span class="s2">&quot;BioimageioCondaEnv&quot;</span><span class="p">,</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="s2">&quot;build_description&quot;</span><span class="p">,</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>    <span class="s2">&quot;common&quot;</span><span class="p">,</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="s2">&quot;conda_env&quot;</span><span class="p">,</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>    <span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>    <span class="s2">&quot;DatasetDescr&quot;</span><span class="p">,</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="s2">&quot;dump_description&quot;</span><span class="p">,</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="s2">&quot;enable_pretty_validation_errors_in_ipynb&quot;</span><span class="p">,</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="s2">&quot;generic&quot;</span><span class="p">,</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="s2">&quot;GenericDescr&quot;</span><span class="p">,</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="s2">&quot;get_conda_env&quot;</span><span class="p">,</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="s2">&quot;get_resource_package_content&quot;</span><span class="p">,</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="s2">&quot;get_validation_context&quot;</span><span class="p">,</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="s2">&quot;InvalidDescr&quot;</span><span class="p">,</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="s2">&quot;LatestResourceDescr&quot;</span><span class="p">,</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>    <span class="s2">&quot;load_dataset_description&quot;</span><span class="p">,</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="s2">&quot;load_description_and_validate_format_only&quot;</span><span class="p">,</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="s2">&quot;load_description&quot;</span><span class="p">,</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="s2">&quot;load_model_description&quot;</span><span class="p">,</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="s2">&quot;ModelDescr&quot;</span><span class="p">,</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="s2">&quot;NotebookDescr&quot;</span><span class="p">,</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="s2">&quot;pretty_validation_errors&quot;</span><span class="p">,</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="s2">&quot;ResourceDescr&quot;</span><span class="p">,</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="s2">&quot;save_bioimageio_package_as_folder&quot;</span><span class="p">,</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="s2">&quot;save_bioimageio_package_to_stream&quot;</span><span class="p">,</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="s2">&quot;save_bioimageio_package&quot;</span><span class="p">,</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>    <span class="s2">&quot;save_bioimageio_yaml_only&quot;</span><span class="p">,</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="s2">&quot;settings&quot;</span><span class="p">,</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="s2">&quot;SpecificResourceDescr&quot;</span><span class="p">,</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="s2">&quot;summary&quot;</span><span class="p">,</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="s2">&quot;update_format&quot;</span><span class="p">,</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="s2">&quot;update_hashes&quot;</span><span class="p">,</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="s2">&quot;upload&quot;</span><span class="p">,</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="s2">&quot;utils&quot;</span><span class="p">,</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>    <span class="s2">&quot;validate_format&quot;</span><span class="p">,</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="s2">&quot;ValidationContext&quot;</span><span class="p">,</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>    <span class="s2">&quot;ValidationSummary&quot;</span><span class="p">,</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="p">]</span>
 </span></pre></div>
 
 
@@ -819,7 +822,7 @@ We recommend installing <code>bioimageio.core</code> instead to get access to th
                 <section id="__version__">
                     <div class="attr variable">
             <span class="name">__version__</span>        =
-<span class="default_value">&#39;0.5.5.0&#39;</span>
+<span class="default_value">&#39;0.5.5.1&#39;</span>
 
         
     </div>
@@ -973,7 +976,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
                             </div>
                             <div id="ApplicationDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Optional[Annotated[Union[<a href="spec/_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="spec/_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f164f694680&gt;), PlainSerializer(func=&lt;function _package_serializer at 0x7f16412bf100&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f16412d9080&gt;, severity=35, msg=None, context=None), FieldInfo(annotation=NoneType, required=True, description=&#39;URL or path to the source of the application&#39;)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Optional[Annotated[Union[<a href="spec/_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="spec/_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f78fd4ecd60&gt;), PlainSerializer(func=&lt;function _package_serializer at 0x7f78ef0b3060&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;)]], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f78ef0ccfe0&gt;, severity=35, msg=None, context=None), FieldInfo(annotation=NoneType, required=True, description=&#39;URL or path to the source of the application&#39;)]</span>
 
         
     </div>
@@ -1395,7 +1398,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
                             </div>
                             <div id="DatasetDescr.source" class="classattr">
                                 <div class="attr variable">
-            <span class="name">source</span><span class="annotation">: Annotated[Optional[<a href="spec/_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f16412d9080&gt;, severity=35, msg=None, context=None)]</span>
+            <span class="name">source</span><span class="annotation">: Annotated[Optional[<a href="spec/_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f78ef0ccfe0&gt;, severity=35, msg=None, context=None)]</span>
 
         
     </div>
@@ -3144,7 +3147,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
                             </div>
                             <div id="ModelDescr.authors" class="classattr">
                                 <div class="attr variable">
-            <span class="name">authors</span><span class="annotation">: Annotated[List[<a href="spec/generic/v0_3.html#Author">bioimageio.spec.generic.v0_3.Author</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f16412d9080&gt;, severity=35, msg=None, context=None)]</span>
+            <span class="name">authors</span><span class="annotation">: Annotated[List[<a href="spec/generic/v0_3.html#Author">bioimageio.spec.generic.v0_3.Author</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f78ef0ccfe0&gt;, severity=35, msg=None, context=None)]</span>
 
         
     </div>
@@ -3157,7 +3160,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
                             </div>
                             <div id="ModelDescr.documentation" class="classattr">
                                 <div class="attr variable">
-            <span class="name">documentation</span><span class="annotation">: Annotated[Optional[Annotated[Union[<a href="spec/_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="spec/_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f164f694680&gt;), PlainSerializer(func=&lt;function _package_serializer at 0x7f16412bf100&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), WithSuffix(suffix=&#39;.md&#39;, case_sensitive=True), FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f16412d9080&gt;, severity=35, msg=None, context=None)]</span>
+            <span class="name">documentation</span><span class="annotation">: Annotated[Optional[Annotated[Union[<a href="spec/_internal/url.html#HttpUrl">bioimageio.spec._internal.url.HttpUrl</a>, <a href="spec/_internal/io.html#RelativeFilePath">bioimageio.spec._internal.io.RelativeFilePath</a>, Annotated[pathlib.Path, PathType(path_type=&#39;file&#39;), FieldInfo(annotation=NoneType, required=True, title=&#39;FilePath&#39;)]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode=&#39;left_to_right&#39;)]), AfterValidator(func=&lt;function wo_special_file_name at 0x7f78fd4ecd60&gt;), PlainSerializer(func=&lt;function _package_serializer at 0x7f78ef0b3060&gt;, return_type=PydanticUndefined, when_used=&#39;unless-none&#39;), WithSuffix(suffix=&#39;.md&#39;, case_sensitive=True), FieldInfo(annotation=NoneType, required=True, examples=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f78ef0ccfe0&gt;, severity=35, msg=None, context=None)]</span>
 
         
     </div>
@@ -3186,7 +3189,7 @@ with details on how to quantitatively validate the model on unseen data.</p>
                             </div>
                             <div id="ModelDescr.name" class="classattr">
                                 <div class="attr variable">
-            <span class="name">name</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_+- ()&#39;), MinLen(min_length=5), MaxLen(max_length=128), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f163fa574c0&gt;, severity=20, msg=&#39;Name longer than 64 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=64)]})]</span>
+            <span class="name">name</span><span class="annotation">: Annotated[str, RestrictCharacters(alphabet=&#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_+- ()&#39;), MinLen(min_length=5), MaxLen(max_length=128), AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f78ed86b2e0&gt;, severity=20, msg=&#39;Name longer than 64 characters.&#39;, context={&#39;typ&#39;: Annotated[Any, MaxLen(max_length=64)]})]</span>
 
         
     </div>
@@ -3242,7 +3245,7 @@ Only required if those persons differ from the <code><a href="#ModelDescr.author
                             </div>
                             <div id="ModelDescr.run_mode" class="classattr">
                                 <div class="attr variable">
-            <span class="name">run_mode</span><span class="annotation">: Annotated[Optional[<a href="spec/model/v0_4.html#RunMode">bioimageio.spec.model.v0_4.RunMode</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f163fa57420&gt;, severity=30, msg=&#34;Run mode &#39;{value}&#39; has limited support across consumer softwares.&#34;, context={&#39;typ&#39;: None})]</span>
+            <span class="name">run_mode</span><span class="annotation">: Annotated[Optional[<a href="spec/model/v0_4.html#RunMode">bioimageio.spec.model.v0_4.RunMode</a>], AfterWarner(func=&lt;function as_warning.&lt;locals&gt;.wrapper at 0x7f78ed86b240&gt;, severity=30, msg=&#34;Run mode &#39;{value}&#39; has limited support across consumer softwares.&#34;, context={&#39;typ&#39;: None})]</span>
 
         
     </div>
@@ -3285,7 +3288,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
                             </div>
                             <div id="ModelDescr.weights" class="classattr">
                                 <div class="attr variable">
-            <span class="name">weights</span><span class="annotation">: Annotated[<a href="spec/model/v0_5.html#WeightsDescr">bioimageio.spec.model.v0_5.WeightsDescr</a>, WrapSerializer(func=&lt;function package_weights at 0x7f1640f1a520&gt;, return_type=PydanticUndefined, when_used=&#39;always&#39;)]</span>
+            <span class="name">weights</span><span class="annotation">: Annotated[<a href="spec/model/v0_5.html#WeightsDescr">bioimageio.spec.model.v0_5.WeightsDescr</a>, WrapSerializer(func=&lt;function package_weights at 0x7f78eed0e480&gt;, return_type=PydanticUndefined, when_used=&#39;always&#39;)]</span>
 
         
     </div>
@@ -4114,11 +4117,27 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
 </span><span id="save_bioimageio_package_as_folder-189"><a href="#save_bioimageio_package_as_folder-189"><span class="linenos">189</span></a>    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">package_content</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 </span><span id="save_bioimageio_package_as_folder-190"><a href="#save_bioimageio_package_as_folder-190"><span class="linenos">190</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
 </span><span id="save_bioimageio_package_as_folder-191"><a href="#save_bioimageio_package_as_folder-191"><span class="linenos">191</span></a>            <span class="n">write_yaml</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">output_path</span> <span class="o">/</span> <span class="n">name</span><span class="p">)</span>
-</span><span id="save_bioimageio_package_as_folder-192"><a href="#save_bioimageio_package_as_folder-192"><span class="linenos">192</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="save_bioimageio_package_as_folder-193"><a href="#save_bioimageio_package_as_folder-193"><span class="linenos">193</span></a>            <span class="k">with</span> <span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dest</span><span class="p">:</span>
-</span><span id="save_bioimageio_package_as_folder-194"><a href="#save_bioimageio_package_as_folder-194"><span class="linenos">194</span></a>                <span class="n">_</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
-</span><span id="save_bioimageio_package_as_folder-195"><a href="#save_bioimageio_package_as_folder-195"><span class="linenos">195</span></a>
-</span><span id="save_bioimageio_package_as_folder-196"><a href="#save_bioimageio_package_as_folder-196"><span class="linenos">196</span></a>    <span class="k">return</span> <span class="n">output_path</span>
+</span><span id="save_bioimageio_package_as_folder-192"><a href="#save_bioimageio_package_as_folder-192"><span class="linenos">192</span></a>        <span class="k">elif</span> <span class="p">(</span>
+</span><span id="save_bioimageio_package_as_folder-193"><a href="#save_bioimageio_package_as_folder-193"><span class="linenos">193</span></a>            <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">original_root</span><span class="p">,</span> <span class="n">Path</span><span class="p">)</span>
+</span><span id="save_bioimageio_package_as_folder-194"><a href="#save_bioimageio_package_as_folder-194"><span class="linenos">194</span></a>            <span class="ow">and</span> <span class="n">src</span><span class="o">.</span><span class="n">original_root</span> <span class="o">/</span> <span class="n">src</span><span class="o">.</span><span class="n">original_file_name</span>
+</span><span id="save_bioimageio_package_as_folder-195"><a href="#save_bioimageio_package_as_folder-195"><span class="linenos">195</span></a>            <span class="o">==</span> <span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+</span><span id="save_bioimageio_package_as_folder-196"><a href="#save_bioimageio_package_as_folder-196"><span class="linenos">196</span></a>        <span class="p">):</span>
+</span><span id="save_bioimageio_package_as_folder-197"><a href="#save_bioimageio_package_as_folder-197"><span class="linenos">197</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+</span><span id="save_bioimageio_package_as_folder-198"><a href="#save_bioimageio_package_as_folder-198"><span class="linenos">198</span></a>                <span class="sa">f</span><span class="s2">&quot;Not copying </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">original_root</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">src</span><span class="o">.</span><span class="n">original_file_name</span><span class="si">}</span><span class="s2"> to itself.&quot;</span>
+</span><span id="save_bioimageio_package_as_folder-199"><a href="#save_bioimageio_package_as_folder-199"><span class="linenos">199</span></a>            <span class="p">)</span>
+</span><span id="save_bioimageio_package_as_folder-200"><a href="#save_bioimageio_package_as_folder-200"><span class="linenos">200</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="save_bioimageio_package_as_folder-201"><a href="#save_bioimageio_package_as_folder-201"><span class="linenos">201</span></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">original_root</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+</span><span id="save_bioimageio_package_as_folder-202"><a href="#save_bioimageio_package_as_folder-202"><span class="linenos">202</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+</span><span id="save_bioimageio_package_as_folder-203"><a href="#save_bioimageio_package_as_folder-203"><span class="linenos">203</span></a>                    <span class="sa">f</span><span class="s2">&quot;Copying from path </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">original_root</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">src</span><span class="o">.</span><span class="n">original_file_name</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">output_path</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
+</span><span id="save_bioimageio_package_as_folder-204"><a href="#save_bioimageio_package_as_folder-204"><span class="linenos">204</span></a>                <span class="p">)</span>
+</span><span id="save_bioimageio_package_as_folder-205"><a href="#save_bioimageio_package_as_folder-205"><span class="linenos">205</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="save_bioimageio_package_as_folder-206"><a href="#save_bioimageio_package_as_folder-206"><span class="linenos">206</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+</span><span id="save_bioimageio_package_as_folder-207"><a href="#save_bioimageio_package_as_folder-207"><span class="linenos">207</span></a>                    <span class="sa">f</span><span class="s2">&quot;Copying </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">original_root</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">original_file_name</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">output_path</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
+</span><span id="save_bioimageio_package_as_folder-208"><a href="#save_bioimageio_package_as_folder-208"><span class="linenos">208</span></a>                <span class="p">)</span>
+</span><span id="save_bioimageio_package_as_folder-209"><a href="#save_bioimageio_package_as_folder-209"><span class="linenos">209</span></a>            <span class="k">with</span> <span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dest</span><span class="p">:</span>
+</span><span id="save_bioimageio_package_as_folder-210"><a href="#save_bioimageio_package_as_folder-210"><span class="linenos">210</span></a>                <span class="n">_</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+</span><span id="save_bioimageio_package_as_folder-211"><a href="#save_bioimageio_package_as_folder-211"><span class="linenos">211</span></a>
+</span><span id="save_bioimageio_package_as_folder-212"><a href="#save_bioimageio_package_as_folder-212"><span class="linenos">212</span></a>    <span class="k">return</span> <span class="n">output_path</span>
 </span></pre></div>
 
 
@@ -4153,58 +4172,58 @@ If none of the prioritized weights formats is found all are included.</li>
 
     </div>
     <a class="headerlink" href="#save_bioimageio_package_to_stream"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="save_bioimageio_package_to_stream-263"><a href="#save_bioimageio_package_to_stream-263"><span class="linenos">263</span></a><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package_to_stream</span><span class="p">(</span>
-</span><span id="save_bioimageio_package_to_stream-264"><a href="#save_bioimageio_package_to_stream-264"><span class="linenos">264</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BioimageioYamlSource</span><span class="p">,</span> <span class="n">ResourceDescr</span><span class="p">],</span>
-</span><span id="save_bioimageio_package_to_stream-265"><a href="#save_bioimageio_package_to_stream-265"><span class="linenos">265</span></a>    <span class="o">/</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-266"><a href="#save_bioimageio_package_to_stream-266"><span class="linenos">266</span></a>    <span class="o">*</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-267"><a href="#save_bioimageio_package_to_stream-267"><span class="linenos">267</span></a>    <span class="n">compression</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ZIP_DEFLATED</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-268"><a href="#save_bioimageio_package_to_stream-268"><span class="linenos">268</span></a>    <span class="n">compression_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-269"><a href="#save_bioimageio_package_to_stream-269"><span class="linenos">269</span></a>    <span class="n">output_stream</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-270"><a href="#save_bioimageio_package_to_stream-270"><span class="linenos">270</span></a>    <span class="n">weights_priority_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>  <span class="c1"># model only</span>
-</span><span id="save_bioimageio_package_to_stream-271"><a href="#save_bioimageio_package_to_stream-271"><span class="linenos">271</span></a>        <span class="n">Sequence</span><span class="p">[</span>
-</span><span id="save_bioimageio_package_to_stream-272"><a href="#save_bioimageio_package_to_stream-272"><span class="linenos">272</span></a>            <span class="n">Literal</span><span class="p">[</span>
-</span><span id="save_bioimageio_package_to_stream-273"><a href="#save_bioimageio_package_to_stream-273"><span class="linenos">273</span></a>                <span class="s2">&quot;keras_hdf5&quot;</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-274"><a href="#save_bioimageio_package_to_stream-274"><span class="linenos">274</span></a>                <span class="s2">&quot;onnx&quot;</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-275"><a href="#save_bioimageio_package_to_stream-275"><span class="linenos">275</span></a>                <span class="s2">&quot;pytorch_state_dict&quot;</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-276"><a href="#save_bioimageio_package_to_stream-276"><span class="linenos">276</span></a>                <span class="s2">&quot;tensorflow_js&quot;</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-277"><a href="#save_bioimageio_package_to_stream-277"><span class="linenos">277</span></a>                <span class="s2">&quot;tensorflow_saved_model_bundle&quot;</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-278"><a href="#save_bioimageio_package_to_stream-278"><span class="linenos">278</span></a>                <span class="s2">&quot;torchscript&quot;</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-279"><a href="#save_bioimageio_package_to_stream-279"><span class="linenos">279</span></a>            <span class="p">]</span>
-</span><span id="save_bioimageio_package_to_stream-280"><a href="#save_bioimageio_package_to_stream-280"><span class="linenos">280</span></a>        <span class="p">]</span>
-</span><span id="save_bioimageio_package_to_stream-281"><a href="#save_bioimageio_package_to_stream-281"><span class="linenos">281</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-282"><a href="#save_bioimageio_package_to_stream-282"><span class="linenos">282</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-</span><span id="save_bioimageio_package_to_stream-283"><a href="#save_bioimageio_package_to_stream-283"><span class="linenos">283</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Package a bioimageio resource into a stream.</span>
-</span><span id="save_bioimageio_package_to_stream-284"><a href="#save_bioimageio_package_to_stream-284"><span class="linenos">284</span></a>
-</span><span id="save_bioimageio_package_to_stream-285"><a href="#save_bioimageio_package_to_stream-285"><span class="linenos">285</span></a><span class="sd">    Args:</span>
-</span><span id="save_bioimageio_package_to_stream-286"><a href="#save_bioimageio_package_to_stream-286"><span class="linenos">286</span></a><span class="sd">        rd: bioimageio resource description</span>
-</span><span id="save_bioimageio_package_to_stream-287"><a href="#save_bioimageio_package_to_stream-287"><span class="linenos">287</span></a><span class="sd">        compression: The numeric constant of compression method.</span>
-</span><span id="save_bioimageio_package_to_stream-288"><a href="#save_bioimageio_package_to_stream-288"><span class="linenos">288</span></a><span class="sd">        compression_level: Compression level to use when writing files to the archive.</span>
-</span><span id="save_bioimageio_package_to_stream-289"><a href="#save_bioimageio_package_to_stream-289"><span class="linenos">289</span></a><span class="sd">                           See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile</span>
-</span><span id="save_bioimageio_package_to_stream-290"><a href="#save_bioimageio_package_to_stream-290"><span class="linenos">290</span></a><span class="sd">        output_stream: stream to write package to</span>
-</span><span id="save_bioimageio_package_to_stream-291"><a href="#save_bioimageio_package_to_stream-291"><span class="linenos">291</span></a><span class="sd">        weights_priority_order: If given only the first weights format present in the model is included.</span>
-</span><span id="save_bioimageio_package_to_stream-292"><a href="#save_bioimageio_package_to_stream-292"><span class="linenos">292</span></a><span class="sd">                                If none of the prioritized weights formats is found all are included.</span>
-</span><span id="save_bioimageio_package_to_stream-293"><a href="#save_bioimageio_package_to_stream-293"><span class="linenos">293</span></a>
-</span><span id="save_bioimageio_package_to_stream-294"><a href="#save_bioimageio_package_to_stream-294"><span class="linenos">294</span></a><span class="sd">    Note: this function bypasses safety checks and does not load/validate the model after writing.</span>
-</span><span id="save_bioimageio_package_to_stream-295"><a href="#save_bioimageio_package_to_stream-295"><span class="linenos">295</span></a>
-</span><span id="save_bioimageio_package_to_stream-296"><a href="#save_bioimageio_package_to_stream-296"><span class="linenos">296</span></a><span class="sd">    Returns:</span>
-</span><span id="save_bioimageio_package_to_stream-297"><a href="#save_bioimageio_package_to_stream-297"><span class="linenos">297</span></a><span class="sd">        stream of zipped bioimageio package</span>
-</span><span id="save_bioimageio_package_to_stream-298"><a href="#save_bioimageio_package_to_stream-298"><span class="linenos">298</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="save_bioimageio_package_to_stream-299"><a href="#save_bioimageio_package_to_stream-299"><span class="linenos">299</span></a>    <span class="k">if</span> <span class="n">output_stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="save_bioimageio_package_to_stream-300"><a href="#save_bioimageio_package_to_stream-300"><span class="linenos">300</span></a>        <span class="n">output_stream</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
-</span><span id="save_bioimageio_package_to_stream-301"><a href="#save_bioimageio_package_to_stream-301"><span class="linenos">301</span></a>
-</span><span id="save_bioimageio_package_to_stream-302"><a href="#save_bioimageio_package_to_stream-302"><span class="linenos">302</span></a>    <span class="n">package_content</span> <span class="o">=</span> <span class="n">_prepare_resource_package</span><span class="p">(</span>
-</span><span id="save_bioimageio_package_to_stream-303"><a href="#save_bioimageio_package_to_stream-303"><span class="linenos">303</span></a>        <span class="n">source</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-304"><a href="#save_bioimageio_package_to_stream-304"><span class="linenos">304</span></a>        <span class="n">weights_priority_order</span><span class="o">=</span><span class="n">weights_priority_order</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-305"><a href="#save_bioimageio_package_to_stream-305"><span class="linenos">305</span></a>    <span class="p">)</span>
-</span><span id="save_bioimageio_package_to_stream-306"><a href="#save_bioimageio_package_to_stream-306"><span class="linenos">306</span></a>
-</span><span id="save_bioimageio_package_to_stream-307"><a href="#save_bioimageio_package_to_stream-307"><span class="linenos">307</span></a>    <span class="n">write_zip</span><span class="p">(</span>
-</span><span id="save_bioimageio_package_to_stream-308"><a href="#save_bioimageio_package_to_stream-308"><span class="linenos">308</span></a>        <span class="n">output_stream</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-309"><a href="#save_bioimageio_package_to_stream-309"><span class="linenos">309</span></a>        <span class="n">package_content</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-310"><a href="#save_bioimageio_package_to_stream-310"><span class="linenos">310</span></a>        <span class="n">compression</span><span class="o">=</span><span class="n">compression</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-311"><a href="#save_bioimageio_package_to_stream-311"><span class="linenos">311</span></a>        <span class="n">compression_level</span><span class="o">=</span><span class="n">compression_level</span><span class="p">,</span>
-</span><span id="save_bioimageio_package_to_stream-312"><a href="#save_bioimageio_package_to_stream-312"><span class="linenos">312</span></a>    <span class="p">)</span>
-</span><span id="save_bioimageio_package_to_stream-313"><a href="#save_bioimageio_package_to_stream-313"><span class="linenos">313</span></a>
-</span><span id="save_bioimageio_package_to_stream-314"><a href="#save_bioimageio_package_to_stream-314"><span class="linenos">314</span></a>    <span class="k">return</span> <span class="n">output_stream</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="save_bioimageio_package_to_stream-279"><a href="#save_bioimageio_package_to_stream-279"><span class="linenos">279</span></a><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package_to_stream</span><span class="p">(</span>
+</span><span id="save_bioimageio_package_to_stream-280"><a href="#save_bioimageio_package_to_stream-280"><span class="linenos">280</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BioimageioYamlSource</span><span class="p">,</span> <span class="n">ResourceDescr</span><span class="p">],</span>
+</span><span id="save_bioimageio_package_to_stream-281"><a href="#save_bioimageio_package_to_stream-281"><span class="linenos">281</span></a>    <span class="o">/</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-282"><a href="#save_bioimageio_package_to_stream-282"><span class="linenos">282</span></a>    <span class="o">*</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-283"><a href="#save_bioimageio_package_to_stream-283"><span class="linenos">283</span></a>    <span class="n">compression</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ZIP_DEFLATED</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-284"><a href="#save_bioimageio_package_to_stream-284"><span class="linenos">284</span></a>    <span class="n">compression_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-285"><a href="#save_bioimageio_package_to_stream-285"><span class="linenos">285</span></a>    <span class="n">output_stream</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-286"><a href="#save_bioimageio_package_to_stream-286"><span class="linenos">286</span></a>    <span class="n">weights_priority_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>  <span class="c1"># model only</span>
+</span><span id="save_bioimageio_package_to_stream-287"><a href="#save_bioimageio_package_to_stream-287"><span class="linenos">287</span></a>        <span class="n">Sequence</span><span class="p">[</span>
+</span><span id="save_bioimageio_package_to_stream-288"><a href="#save_bioimageio_package_to_stream-288"><span class="linenos">288</span></a>            <span class="n">Literal</span><span class="p">[</span>
+</span><span id="save_bioimageio_package_to_stream-289"><a href="#save_bioimageio_package_to_stream-289"><span class="linenos">289</span></a>                <span class="s2">&quot;keras_hdf5&quot;</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-290"><a href="#save_bioimageio_package_to_stream-290"><span class="linenos">290</span></a>                <span class="s2">&quot;onnx&quot;</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-291"><a href="#save_bioimageio_package_to_stream-291"><span class="linenos">291</span></a>                <span class="s2">&quot;pytorch_state_dict&quot;</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-292"><a href="#save_bioimageio_package_to_stream-292"><span class="linenos">292</span></a>                <span class="s2">&quot;tensorflow_js&quot;</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-293"><a href="#save_bioimageio_package_to_stream-293"><span class="linenos">293</span></a>                <span class="s2">&quot;tensorflow_saved_model_bundle&quot;</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-294"><a href="#save_bioimageio_package_to_stream-294"><span class="linenos">294</span></a>                <span class="s2">&quot;torchscript&quot;</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-295"><a href="#save_bioimageio_package_to_stream-295"><span class="linenos">295</span></a>            <span class="p">]</span>
+</span><span id="save_bioimageio_package_to_stream-296"><a href="#save_bioimageio_package_to_stream-296"><span class="linenos">296</span></a>        <span class="p">]</span>
+</span><span id="save_bioimageio_package_to_stream-297"><a href="#save_bioimageio_package_to_stream-297"><span class="linenos">297</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-298"><a href="#save_bioimageio_package_to_stream-298"><span class="linenos">298</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+</span><span id="save_bioimageio_package_to_stream-299"><a href="#save_bioimageio_package_to_stream-299"><span class="linenos">299</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Package a bioimageio resource into a stream.</span>
+</span><span id="save_bioimageio_package_to_stream-300"><a href="#save_bioimageio_package_to_stream-300"><span class="linenos">300</span></a>
+</span><span id="save_bioimageio_package_to_stream-301"><a href="#save_bioimageio_package_to_stream-301"><span class="linenos">301</span></a><span class="sd">    Args:</span>
+</span><span id="save_bioimageio_package_to_stream-302"><a href="#save_bioimageio_package_to_stream-302"><span class="linenos">302</span></a><span class="sd">        rd: bioimageio resource description</span>
+</span><span id="save_bioimageio_package_to_stream-303"><a href="#save_bioimageio_package_to_stream-303"><span class="linenos">303</span></a><span class="sd">        compression: The numeric constant of compression method.</span>
+</span><span id="save_bioimageio_package_to_stream-304"><a href="#save_bioimageio_package_to_stream-304"><span class="linenos">304</span></a><span class="sd">        compression_level: Compression level to use when writing files to the archive.</span>
+</span><span id="save_bioimageio_package_to_stream-305"><a href="#save_bioimageio_package_to_stream-305"><span class="linenos">305</span></a><span class="sd">                           See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile</span>
+</span><span id="save_bioimageio_package_to_stream-306"><a href="#save_bioimageio_package_to_stream-306"><span class="linenos">306</span></a><span class="sd">        output_stream: stream to write package to</span>
+</span><span id="save_bioimageio_package_to_stream-307"><a href="#save_bioimageio_package_to_stream-307"><span class="linenos">307</span></a><span class="sd">        weights_priority_order: If given only the first weights format present in the model is included.</span>
+</span><span id="save_bioimageio_package_to_stream-308"><a href="#save_bioimageio_package_to_stream-308"><span class="linenos">308</span></a><span class="sd">                                If none of the prioritized weights formats is found all are included.</span>
+</span><span id="save_bioimageio_package_to_stream-309"><a href="#save_bioimageio_package_to_stream-309"><span class="linenos">309</span></a>
+</span><span id="save_bioimageio_package_to_stream-310"><a href="#save_bioimageio_package_to_stream-310"><span class="linenos">310</span></a><span class="sd">    Note: this function bypasses safety checks and does not load/validate the model after writing.</span>
+</span><span id="save_bioimageio_package_to_stream-311"><a href="#save_bioimageio_package_to_stream-311"><span class="linenos">311</span></a>
+</span><span id="save_bioimageio_package_to_stream-312"><a href="#save_bioimageio_package_to_stream-312"><span class="linenos">312</span></a><span class="sd">    Returns:</span>
+</span><span id="save_bioimageio_package_to_stream-313"><a href="#save_bioimageio_package_to_stream-313"><span class="linenos">313</span></a><span class="sd">        stream of zipped bioimageio package</span>
+</span><span id="save_bioimageio_package_to_stream-314"><a href="#save_bioimageio_package_to_stream-314"><span class="linenos">314</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="save_bioimageio_package_to_stream-315"><a href="#save_bioimageio_package_to_stream-315"><span class="linenos">315</span></a>    <span class="k">if</span> <span class="n">output_stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="save_bioimageio_package_to_stream-316"><a href="#save_bioimageio_package_to_stream-316"><span class="linenos">316</span></a>        <span class="n">output_stream</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+</span><span id="save_bioimageio_package_to_stream-317"><a href="#save_bioimageio_package_to_stream-317"><span class="linenos">317</span></a>
+</span><span id="save_bioimageio_package_to_stream-318"><a href="#save_bioimageio_package_to_stream-318"><span class="linenos">318</span></a>    <span class="n">package_content</span> <span class="o">=</span> <span class="n">_prepare_resource_package</span><span class="p">(</span>
+</span><span id="save_bioimageio_package_to_stream-319"><a href="#save_bioimageio_package_to_stream-319"><span class="linenos">319</span></a>        <span class="n">source</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-320"><a href="#save_bioimageio_package_to_stream-320"><span class="linenos">320</span></a>        <span class="n">weights_priority_order</span><span class="o">=</span><span class="n">weights_priority_order</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-321"><a href="#save_bioimageio_package_to_stream-321"><span class="linenos">321</span></a>    <span class="p">)</span>
+</span><span id="save_bioimageio_package_to_stream-322"><a href="#save_bioimageio_package_to_stream-322"><span class="linenos">322</span></a>
+</span><span id="save_bioimageio_package_to_stream-323"><a href="#save_bioimageio_package_to_stream-323"><span class="linenos">323</span></a>    <span class="n">write_zip</span><span class="p">(</span>
+</span><span id="save_bioimageio_package_to_stream-324"><a href="#save_bioimageio_package_to_stream-324"><span class="linenos">324</span></a>        <span class="n">output_stream</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-325"><a href="#save_bioimageio_package_to_stream-325"><span class="linenos">325</span></a>        <span class="n">package_content</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-326"><a href="#save_bioimageio_package_to_stream-326"><span class="linenos">326</span></a>        <span class="n">compression</span><span class="o">=</span><span class="n">compression</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-327"><a href="#save_bioimageio_package_to_stream-327"><span class="linenos">327</span></a>        <span class="n">compression_level</span><span class="o">=</span><span class="n">compression_level</span><span class="p">,</span>
+</span><span id="save_bioimageio_package_to_stream-328"><a href="#save_bioimageio_package_to_stream-328"><span class="linenos">328</span></a>    <span class="p">)</span>
+</span><span id="save_bioimageio_package_to_stream-329"><a href="#save_bioimageio_package_to_stream-329"><span class="linenos">329</span></a>
+</span><span id="save_bioimageio_package_to_stream-330"><a href="#save_bioimageio_package_to_stream-330"><span class="linenos">330</span></a>    <span class="k">return</span> <span class="n">output_stream</span>
 </span></pre></div>
 
 
@@ -4244,68 +4263,68 @@ If none of the prioritized weights formats is found all are included.</li>
 
     </div>
     <a class="headerlink" href="#save_bioimageio_package"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="save_bioimageio_package-199"><a href="#save_bioimageio_package-199"><span class="linenos">199</span></a><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package</span><span class="p">(</span>
-</span><span id="save_bioimageio_package-200"><a href="#save_bioimageio_package-200"><span class="linenos">200</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BioimageioYamlSource</span><span class="p">,</span> <span class="n">ResourceDescr</span><span class="p">],</span>
-</span><span id="save_bioimageio_package-201"><a href="#save_bioimageio_package-201"><span class="linenos">201</span></a>    <span class="o">/</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-202"><a href="#save_bioimageio_package-202"><span class="linenos">202</span></a>    <span class="o">*</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-203"><a href="#save_bioimageio_package-203"><span class="linenos">203</span></a>    <span class="n">compression</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ZIP_DEFLATED</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-204"><a href="#save_bioimageio_package-204"><span class="linenos">204</span></a>    <span class="n">compression_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-205"><a href="#save_bioimageio_package-205"><span class="linenos">205</span></a>    <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">NewPath</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-206"><a href="#save_bioimageio_package-206"><span class="linenos">206</span></a>    <span class="n">weights_priority_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>  <span class="c1"># model only</span>
-</span><span id="save_bioimageio_package-207"><a href="#save_bioimageio_package-207"><span class="linenos">207</span></a>        <span class="n">Sequence</span><span class="p">[</span>
-</span><span id="save_bioimageio_package-208"><a href="#save_bioimageio_package-208"><span class="linenos">208</span></a>            <span class="n">Literal</span><span class="p">[</span>
-</span><span id="save_bioimageio_package-209"><a href="#save_bioimageio_package-209"><span class="linenos">209</span></a>                <span class="s2">&quot;keras_hdf5&quot;</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-210"><a href="#save_bioimageio_package-210"><span class="linenos">210</span></a>                <span class="s2">&quot;onnx&quot;</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-211"><a href="#save_bioimageio_package-211"><span class="linenos">211</span></a>                <span class="s2">&quot;pytorch_state_dict&quot;</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-212"><a href="#save_bioimageio_package-212"><span class="linenos">212</span></a>                <span class="s2">&quot;tensorflow_js&quot;</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-213"><a href="#save_bioimageio_package-213"><span class="linenos">213</span></a>                <span class="s2">&quot;tensorflow_saved_model_bundle&quot;</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-214"><a href="#save_bioimageio_package-214"><span class="linenos">214</span></a>                <span class="s2">&quot;torchscript&quot;</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-215"><a href="#save_bioimageio_package-215"><span class="linenos">215</span></a>            <span class="p">]</span>
-</span><span id="save_bioimageio_package-216"><a href="#save_bioimageio_package-216"><span class="linenos">216</span></a>        <span class="p">]</span>
-</span><span id="save_bioimageio_package-217"><a href="#save_bioimageio_package-217"><span class="linenos">217</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-218"><a href="#save_bioimageio_package-218"><span class="linenos">218</span></a>    <span class="n">allow_invalid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-219"><a href="#save_bioimageio_package-219"><span class="linenos">219</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FilePath</span><span class="p">:</span>
-</span><span id="save_bioimageio_package-220"><a href="#save_bioimageio_package-220"><span class="linenos">220</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Package a bioimageio resource as a zip file.</span>
-</span><span id="save_bioimageio_package-221"><a href="#save_bioimageio_package-221"><span class="linenos">221</span></a>
-</span><span id="save_bioimageio_package-222"><a href="#save_bioimageio_package-222"><span class="linenos">222</span></a><span class="sd">    Args:</span>
-</span><span id="save_bioimageio_package-223"><a href="#save_bioimageio_package-223"><span class="linenos">223</span></a><span class="sd">        rd: bioimageio resource description</span>
-</span><span id="save_bioimageio_package-224"><a href="#save_bioimageio_package-224"><span class="linenos">224</span></a><span class="sd">        compression: The numeric constant of compression method.</span>
-</span><span id="save_bioimageio_package-225"><a href="#save_bioimageio_package-225"><span class="linenos">225</span></a><span class="sd">        compression_level: Compression level to use when writing files to the archive.</span>
-</span><span id="save_bioimageio_package-226"><a href="#save_bioimageio_package-226"><span class="linenos">226</span></a><span class="sd">                           See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile</span>
-</span><span id="save_bioimageio_package-227"><a href="#save_bioimageio_package-227"><span class="linenos">227</span></a><span class="sd">        output_path: file path to write package to</span>
-</span><span id="save_bioimageio_package-228"><a href="#save_bioimageio_package-228"><span class="linenos">228</span></a><span class="sd">        weights_priority_order: If given only the first weights format present in the model is included.</span>
-</span><span id="save_bioimageio_package-229"><a href="#save_bioimageio_package-229"><span class="linenos">229</span></a><span class="sd">                                If none of the prioritized weights formats is found all are included.</span>
-</span><span id="save_bioimageio_package-230"><a href="#save_bioimageio_package-230"><span class="linenos">230</span></a>
-</span><span id="save_bioimageio_package-231"><a href="#save_bioimageio_package-231"><span class="linenos">231</span></a><span class="sd">    Returns:</span>
-</span><span id="save_bioimageio_package-232"><a href="#save_bioimageio_package-232"><span class="linenos">232</span></a><span class="sd">        path to zipped bioimageio package</span>
-</span><span id="save_bioimageio_package-233"><a href="#save_bioimageio_package-233"><span class="linenos">233</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="save_bioimageio_package-234"><a href="#save_bioimageio_package-234"><span class="linenos">234</span></a>    <span class="n">package_content</span> <span class="o">=</span> <span class="n">_prepare_resource_package</span><span class="p">(</span>
-</span><span id="save_bioimageio_package-235"><a href="#save_bioimageio_package-235"><span class="linenos">235</span></a>        <span class="n">source</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-236"><a href="#save_bioimageio_package-236"><span class="linenos">236</span></a>        <span class="n">weights_priority_order</span><span class="o">=</span><span class="n">weights_priority_order</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-237"><a href="#save_bioimageio_package-237"><span class="linenos">237</span></a>    <span class="p">)</span>
-</span><span id="save_bioimageio_package-238"><a href="#save_bioimageio_package-238"><span class="linenos">238</span></a>    <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="save_bioimageio_package-239"><a href="#save_bioimageio_package-239"><span class="linenos">239</span></a>        <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
-</span><span id="save_bioimageio_package-240"><a href="#save_bioimageio_package-240"><span class="linenos">240</span></a>            <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.bioimageio.zip&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
-</span><span id="save_bioimageio_package-241"><a href="#save_bioimageio_package-241"><span class="linenos">241</span></a>        <span class="p">)</span>
-</span><span id="save_bioimageio_package-242"><a href="#save_bioimageio_package-242"><span class="linenos">242</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="save_bioimageio_package-243"><a href="#save_bioimageio_package-243"><span class="linenos">243</span></a>        <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
-</span><span id="save_bioimageio_package-244"><a href="#save_bioimageio_package-244"><span class="linenos">244</span></a>
-</span><span id="save_bioimageio_package-245"><a href="#save_bioimageio_package-245"><span class="linenos">245</span></a>    <span class="n">write_zip</span><span class="p">(</span>
-</span><span id="save_bioimageio_package-246"><a href="#save_bioimageio_package-246"><span class="linenos">246</span></a>        <span class="n">output_path</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-247"><a href="#save_bioimageio_package-247"><span class="linenos">247</span></a>        <span class="n">package_content</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-248"><a href="#save_bioimageio_package-248"><span class="linenos">248</span></a>        <span class="n">compression</span><span class="o">=</span><span class="n">compression</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-249"><a href="#save_bioimageio_package-249"><span class="linenos">249</span></a>        <span class="n">compression_level</span><span class="o">=</span><span class="n">compression_level</span><span class="p">,</span>
-</span><span id="save_bioimageio_package-250"><a href="#save_bioimageio_package-250"><span class="linenos">250</span></a>    <span class="p">)</span>
-</span><span id="save_bioimageio_package-251"><a href="#save_bioimageio_package-251"><span class="linenos">251</span></a>    <span class="k">with</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">warning_level</span><span class="o">=</span><span class="n">ERROR</span><span class="p">):</span>
-</span><span id="save_bioimageio_package-252"><a href="#save_bioimageio_package-252"><span class="linenos">252</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">((</span><span class="n">exported</span> <span class="o">:=</span> <span class="n">load_description</span><span class="p">(</span><span class="n">output_path</span><span class="p">)),</span> <span class="n">InvalidDescr</span><span class="p">):</span>
-</span><span id="save_bioimageio_package-253"><a href="#save_bioimageio_package-253"><span class="linenos">253</span></a>            <span class="n">exported</span><span class="o">.</span><span class="n">validation_summary</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
-</span><span id="save_bioimageio_package-254"><a href="#save_bioimageio_package-254"><span class="linenos">254</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Exported package at &#39;</span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&#39; is invalid.&quot;</span>
-</span><span id="save_bioimageio_package-255"><a href="#save_bioimageio_package-255"><span class="linenos">255</span></a>            <span class="k">if</span> <span class="n">allow_invalid</span><span class="p">:</span>
-</span><span id="save_bioimageio_package-256"><a href="#save_bioimageio_package-256"><span class="linenos">256</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="save_bioimageio_package-257"><a href="#save_bioimageio_package-257"><span class="linenos">257</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="save_bioimageio_package-258"><a href="#save_bioimageio_package-258"><span class="linenos">258</span></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="save_bioimageio_package-259"><a href="#save_bioimageio_package-259"><span class="linenos">259</span></a>
-</span><span id="save_bioimageio_package-260"><a href="#save_bioimageio_package-260"><span class="linenos">260</span></a>    <span class="k">return</span> <span class="n">output_path</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="save_bioimageio_package-215"><a href="#save_bioimageio_package-215"><span class="linenos">215</span></a><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package</span><span class="p">(</span>
+</span><span id="save_bioimageio_package-216"><a href="#save_bioimageio_package-216"><span class="linenos">216</span></a>    <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BioimageioYamlSource</span><span class="p">,</span> <span class="n">ResourceDescr</span><span class="p">],</span>
+</span><span id="save_bioimageio_package-217"><a href="#save_bioimageio_package-217"><span class="linenos">217</span></a>    <span class="o">/</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-218"><a href="#save_bioimageio_package-218"><span class="linenos">218</span></a>    <span class="o">*</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-219"><a href="#save_bioimageio_package-219"><span class="linenos">219</span></a>    <span class="n">compression</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">ZIP_DEFLATED</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-220"><a href="#save_bioimageio_package-220"><span class="linenos">220</span></a>    <span class="n">compression_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-221"><a href="#save_bioimageio_package-221"><span class="linenos">221</span></a>    <span class="n">output_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">NewPath</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-222"><a href="#save_bioimageio_package-222"><span class="linenos">222</span></a>    <span class="n">weights_priority_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>  <span class="c1"># model only</span>
+</span><span id="save_bioimageio_package-223"><a href="#save_bioimageio_package-223"><span class="linenos">223</span></a>        <span class="n">Sequence</span><span class="p">[</span>
+</span><span id="save_bioimageio_package-224"><a href="#save_bioimageio_package-224"><span class="linenos">224</span></a>            <span class="n">Literal</span><span class="p">[</span>
+</span><span id="save_bioimageio_package-225"><a href="#save_bioimageio_package-225"><span class="linenos">225</span></a>                <span class="s2">&quot;keras_hdf5&quot;</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-226"><a href="#save_bioimageio_package-226"><span class="linenos">226</span></a>                <span class="s2">&quot;onnx&quot;</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-227"><a href="#save_bioimageio_package-227"><span class="linenos">227</span></a>                <span class="s2">&quot;pytorch_state_dict&quot;</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-228"><a href="#save_bioimageio_package-228"><span class="linenos">228</span></a>                <span class="s2">&quot;tensorflow_js&quot;</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-229"><a href="#save_bioimageio_package-229"><span class="linenos">229</span></a>                <span class="s2">&quot;tensorflow_saved_model_bundle&quot;</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-230"><a href="#save_bioimageio_package-230"><span class="linenos">230</span></a>                <span class="s2">&quot;torchscript&quot;</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-231"><a href="#save_bioimageio_package-231"><span class="linenos">231</span></a>            <span class="p">]</span>
+</span><span id="save_bioimageio_package-232"><a href="#save_bioimageio_package-232"><span class="linenos">232</span></a>        <span class="p">]</span>
+</span><span id="save_bioimageio_package-233"><a href="#save_bioimageio_package-233"><span class="linenos">233</span></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-234"><a href="#save_bioimageio_package-234"><span class="linenos">234</span></a>    <span class="n">allow_invalid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-235"><a href="#save_bioimageio_package-235"><span class="linenos">235</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FilePath</span><span class="p">:</span>
+</span><span id="save_bioimageio_package-236"><a href="#save_bioimageio_package-236"><span class="linenos">236</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Package a bioimageio resource as a zip file.</span>
+</span><span id="save_bioimageio_package-237"><a href="#save_bioimageio_package-237"><span class="linenos">237</span></a>
+</span><span id="save_bioimageio_package-238"><a href="#save_bioimageio_package-238"><span class="linenos">238</span></a><span class="sd">    Args:</span>
+</span><span id="save_bioimageio_package-239"><a href="#save_bioimageio_package-239"><span class="linenos">239</span></a><span class="sd">        rd: bioimageio resource description</span>
+</span><span id="save_bioimageio_package-240"><a href="#save_bioimageio_package-240"><span class="linenos">240</span></a><span class="sd">        compression: The numeric constant of compression method.</span>
+</span><span id="save_bioimageio_package-241"><a href="#save_bioimageio_package-241"><span class="linenos">241</span></a><span class="sd">        compression_level: Compression level to use when writing files to the archive.</span>
+</span><span id="save_bioimageio_package-242"><a href="#save_bioimageio_package-242"><span class="linenos">242</span></a><span class="sd">                           See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile</span>
+</span><span id="save_bioimageio_package-243"><a href="#save_bioimageio_package-243"><span class="linenos">243</span></a><span class="sd">        output_path: file path to write package to</span>
+</span><span id="save_bioimageio_package-244"><a href="#save_bioimageio_package-244"><span class="linenos">244</span></a><span class="sd">        weights_priority_order: If given only the first weights format present in the model is included.</span>
+</span><span id="save_bioimageio_package-245"><a href="#save_bioimageio_package-245"><span class="linenos">245</span></a><span class="sd">                                If none of the prioritized weights formats is found all are included.</span>
+</span><span id="save_bioimageio_package-246"><a href="#save_bioimageio_package-246"><span class="linenos">246</span></a>
+</span><span id="save_bioimageio_package-247"><a href="#save_bioimageio_package-247"><span class="linenos">247</span></a><span class="sd">    Returns:</span>
+</span><span id="save_bioimageio_package-248"><a href="#save_bioimageio_package-248"><span class="linenos">248</span></a><span class="sd">        path to zipped bioimageio package</span>
+</span><span id="save_bioimageio_package-249"><a href="#save_bioimageio_package-249"><span class="linenos">249</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="save_bioimageio_package-250"><a href="#save_bioimageio_package-250"><span class="linenos">250</span></a>    <span class="n">package_content</span> <span class="o">=</span> <span class="n">_prepare_resource_package</span><span class="p">(</span>
+</span><span id="save_bioimageio_package-251"><a href="#save_bioimageio_package-251"><span class="linenos">251</span></a>        <span class="n">source</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-252"><a href="#save_bioimageio_package-252"><span class="linenos">252</span></a>        <span class="n">weights_priority_order</span><span class="o">=</span><span class="n">weights_priority_order</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-253"><a href="#save_bioimageio_package-253"><span class="linenos">253</span></a>    <span class="p">)</span>
+</span><span id="save_bioimageio_package-254"><a href="#save_bioimageio_package-254"><span class="linenos">254</span></a>    <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="save_bioimageio_package-255"><a href="#save_bioimageio_package-255"><span class="linenos">255</span></a>        <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+</span><span id="save_bioimageio_package-256"><a href="#save_bioimageio_package-256"><span class="linenos">256</span></a>            <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.bioimageio.zip&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+</span><span id="save_bioimageio_package-257"><a href="#save_bioimageio_package-257"><span class="linenos">257</span></a>        <span class="p">)</span>
+</span><span id="save_bioimageio_package-258"><a href="#save_bioimageio_package-258"><span class="linenos">258</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="save_bioimageio_package-259"><a href="#save_bioimageio_package-259"><span class="linenos">259</span></a>        <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+</span><span id="save_bioimageio_package-260"><a href="#save_bioimageio_package-260"><span class="linenos">260</span></a>
+</span><span id="save_bioimageio_package-261"><a href="#save_bioimageio_package-261"><span class="linenos">261</span></a>    <span class="n">write_zip</span><span class="p">(</span>
+</span><span id="save_bioimageio_package-262"><a href="#save_bioimageio_package-262"><span class="linenos">262</span></a>        <span class="n">output_path</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-263"><a href="#save_bioimageio_package-263"><span class="linenos">263</span></a>        <span class="n">package_content</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-264"><a href="#save_bioimageio_package-264"><span class="linenos">264</span></a>        <span class="n">compression</span><span class="o">=</span><span class="n">compression</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-265"><a href="#save_bioimageio_package-265"><span class="linenos">265</span></a>        <span class="n">compression_level</span><span class="o">=</span><span class="n">compression_level</span><span class="p">,</span>
+</span><span id="save_bioimageio_package-266"><a href="#save_bioimageio_package-266"><span class="linenos">266</span></a>    <span class="p">)</span>
+</span><span id="save_bioimageio_package-267"><a href="#save_bioimageio_package-267"><span class="linenos">267</span></a>    <span class="k">with</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">warning_level</span><span class="o">=</span><span class="n">ERROR</span><span class="p">):</span>
+</span><span id="save_bioimageio_package-268"><a href="#save_bioimageio_package-268"><span class="linenos">268</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">((</span><span class="n">exported</span> <span class="o">:=</span> <span class="n">load_description</span><span class="p">(</span><span class="n">output_path</span><span class="p">)),</span> <span class="n">InvalidDescr</span><span class="p">):</span>
+</span><span id="save_bioimageio_package-269"><a href="#save_bioimageio_package-269"><span class="linenos">269</span></a>            <span class="n">exported</span><span class="o">.</span><span class="n">validation_summary</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</span><span id="save_bioimageio_package-270"><a href="#save_bioimageio_package-270"><span class="linenos">270</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Exported package at &#39;</span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&#39; is invalid.&quot;</span>
+</span><span id="save_bioimageio_package-271"><a href="#save_bioimageio_package-271"><span class="linenos">271</span></a>            <span class="k">if</span> <span class="n">allow_invalid</span><span class="p">:</span>
+</span><span id="save_bioimageio_package-272"><a href="#save_bioimageio_package-272"><span class="linenos">272</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="save_bioimageio_package-273"><a href="#save_bioimageio_package-273"><span class="linenos">273</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="save_bioimageio_package-274"><a href="#save_bioimageio_package-274"><span class="linenos">274</span></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="save_bioimageio_package-275"><a href="#save_bioimageio_package-275"><span class="linenos">275</span></a>
+</span><span id="save_bioimageio_package-276"><a href="#save_bioimageio_package-276"><span class="linenos">276</span></a>    <span class="k">return</span> <span class="n">output_path</span>
 </span></pre></div>
 
 
