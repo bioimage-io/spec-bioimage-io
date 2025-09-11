@@ -12,7 +12,7 @@ source:
   path: ..
 
 requirements:
-  build:
+  host:
     - python {{ pyproject['project']['requires-python'] }}
     {% for dep in pyproject['build-system']['requires'] %}
     - {{ dep.lower() }}
@@ -25,6 +25,7 @@ requirements:
 
 build:
   noarch: python
+  number: 0
   script:
         - python -m pip install --no-deps --ignore-installed .
 
