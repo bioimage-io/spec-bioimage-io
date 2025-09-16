@@ -1,6 +1,6 @@
 {% set pyproject = load_file_data('pyproject.toml') %}
 {% set version_match = load_file_regex(
-  load_file="bioimageio/spec/__init__.py",
+  load_file="src/bioimageio/spec/__init__.py",
   regex_pattern='__version__ = "(.+)"') %}
 {% set version = version_match[1] %}
 
