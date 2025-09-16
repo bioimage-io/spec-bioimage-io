@@ -3,7 +3,7 @@
 """
 # ruff: noqa: E402
 
-__version__ = "0.5.5.1"
+__version__ = "0.5.5.2"
 from loguru import logger
 
 logger.disable("bioimageio.spec")
