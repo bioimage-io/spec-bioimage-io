@@ -6,23 +6,23 @@ requires-python = ">=3.8"
 dependencies = [
     "annotated-types>=0.5.0,<1",
     "email_validator",
+    "exceptiongroup",            # TODO: remove when py3.11 is lowest supported version
     "genericache==0.5.2",
+    "httpx",
     "imageio",
     "loguru",
     "markdown",
     "numpy>=1.21",
     "packaging>=17.0",
-    "pooch>=1.5,<2",
+    "platformdirs",
     "pydantic-settings>=2.5,<3",
     "pydantic>=2.10.3,<2.12",
     "python-dateutil",
-    "httpx",
     "rich",
     "ruyaml",
     "tifffile>=2020.7.4",
     "tqdm",
     "typing-extensions",
-    "exceptiongroup",            # TODO: remove when py3.11 is lowest supported version
     "zipp",
 ]
 classifiers = [
