@@ -167,10 +167,9 @@ jobs:
 #      with:
 #        recipe-path: conda-recipe/recipe.yaml
 
-  publish-pypi:
-    name: Publish to PyPI
+  pip-build:
+    name: Build and publish to PyPI
     needs: test
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
@@ -204,7 +203,7 @@ jobs:
 
       - name: Push tag
         id: tag-version
-        if: steps.check-version.outputs.previous-version != steps.check-version.outputs.current-version
+        if: github.ref == 'refs/heads/main' && steps.check-version.outputs.previous-version != steps.check-version.outputs.current-version
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -215,7 +214,7 @@ jobs:
           python -m build
 
       - name: Publish package on PyPI
-        if: steps.tag-version.outputs.new_tag
+        if: github.ref == 'refs/heads/main' && steps.tag-version.outputs.new_tag
         uses: pypa/gh-action-pypi-publish@release/v1.12
         with:
           user: __token__
@@ -223,6 +222,7 @@ jobs:
           packages-dir: dist/
 
       - name: Publish the release notes
+        if: github.ref == 'refs/heads/main'
         uses: release-drafter/release-drafter@v6.0.0
         with:
           publish: "${{ steps.tag-version.outputs.new_tag != '' }}"
