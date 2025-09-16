@@ -74,7 +74,7 @@ exclude = [
     "bioimageio_cache",
     "tests/old_*",
 ]
-include = ["bioimageio", "scripts", "tests"]
+include = ["src", "scripts", "tests"]
 pythonPlatform = "All"
 pythonVersion = "3.8"
 reportDuplicateImport = "error"
@@ -106,7 +106,7 @@ useLibraryCodeForTypes = true
 
 [tool.pytest.ini_options]
 addopts = " --failed-first --doctest-modules"
-testpaths = ["bioimageio/spec", "tests"]
+testpaths = ["src", "tests"]
 
 [tool.ruff]
 line-length = 88
@@ -119,7 +119,7 @@ exclude = [
 
 [tool.coverage.report]
 omit = [
-    "bioimageio/spec/pretty_validation_errors.py",
-    "bioimageio/spec/partner_utils/imjoy/*.py",
+    "src/bioimageio/spec/pretty_validation_errors.py",
+    "src/bioimageio/spec/partner_utils/imjoy/*.py",
 ]
 exclude_also = ["if TYPE_CHECKING:", "assert_never\\("]
