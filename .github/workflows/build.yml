@@ -194,7 +194,7 @@ jobs:
 
       - name: Detect new version
         id: check-version
-        if: steps.check-parent-commit.outputs.sha
+        if: github.ref == 'refs/heads/main' && steps.check-parent-commit.outputs.sha
         uses: salsify/action-detect-and-tag-new-version@v2.0.3
         with:
           create-tag: false
