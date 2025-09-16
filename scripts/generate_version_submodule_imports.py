@@ -8,7 +8,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import List, Literal
 
-ROOT_PATH = Path(__file__).parent.parent
+SRC_PATH = Path(__file__).parent.parent / "src"
 
 AUTOGEN_START = "# autogen: start\n"
 AUTOGEN_BODY_SINGLE = """from . import {info.latest_version_module}
@@ -113,7 +113,7 @@ class Info:
         )
         self.all_version_modules_imports = "\n".join(avmi)
 
-        self.package_path = (ROOT_PATH / "bioimageio" / "spec" / self.target).resolve()
+        self.package_path = (SRC_PATH / "bioimageio" / "spec" / self.target).resolve()
         self.submodule_list = "\n".join(
             [
                 f"- {self.target} {vm}: `bioimageio.spec.{self.target}.{vm}."
@@ -176,7 +176,7 @@ def process(info: Info, check: bool):
 def get_ordered_version_submodules(target: str):
     matches = [
         m
-        for p in (ROOT_PATH / "bioimageio" / "spec" / target).iterdir()
+        for p in (SRC_PATH / "bioimageio" / "spec" / target).iterdir()
         if p.is_file() and (m := re.fullmatch(VERSION_MODULE_PATTERN, p.name))
     ]
     if not matches:
