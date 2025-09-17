@@ -3,7 +3,7 @@ from functools import cached_property
 from pathlib import Path
 from typing import Optional, Union
 
-import pooch  # pyright: ignore [reportMissingTypeStubs]
+import platformdirs
 from genericache import DiskCache
 from genericache.digest import UrlDigest
 from pydantic import Field, field_validator
@@ -25,7 +25,7 @@ class Settings(
     allow_pickle: bool = False
     """Sets the `allow_pickle` argument for `numpy.load()`"""
 
-    cache_path: Path = pooch.os_cache("bioimageio")
+    cache_path: Path = Path(platformdirs.user_cache_dir("bioimageio"))
     """bioimageio cache location"""
 
     @field_validator("cache_path", mode="after")
