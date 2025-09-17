@@ -3,6 +3,7 @@ name = "bioimageio.spec"
 description = "Parser and validator library for bioimage.io specifications"
 authors = [{ name = "Fynn Beuttenmüller", email = "thefynnbe@gmail.com" }]
 requires-python = ">=3.8"
+readme = "README.md"
 dependencies = [
     "annotated-types>=0.5.0,<1",
     "email_validator",
