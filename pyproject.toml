@@ -16,6 +16,7 @@ dependencies = [
     "numpy>=1.21",
     "packaging>=17.0",
     "platformdirs",
+    "pydantic-core",
     "pydantic-settings>=2.5,<3",
     "pydantic>=2.10.3,<2.12",
     "python-dateutil",
