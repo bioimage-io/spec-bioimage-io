@@ -50,11 +50,11 @@ jobs:
         run: |
           pyright --version
           pyright -p pyproject.toml --pythonversion ${{ matrix.python-version }}
-      - run: pytest --cov bioimageio --cov-report xml --cov-append --capture no
+      - run: pytest --cov bioimageio --parallel-mode --cov-append --capture no
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
           RUN_EXPENSIVE_TESTS: ${{ matrix.run-expensive-tests && 'true' || 'false' }}
-      - run: pytest --cov bioimageio --cov-report xml --cov-append --capture no scripts  # also test docstrings in scripts for dev-version
+      - run: pytest --cov bioimageio --parallel-mode --cov-append --capture no scripts  # also test docstrings in scripts for dev-version
         if: ${{matrix.is-dev-version}}
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
@@ -64,35 +64,54 @@ jobs:
         with:
           path: bioimageio_cache
           key: "py${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}"
-      - if: matrix.is-dev-version && github.event_name == 'pull_request'
-        uses: orgoro/coverage@v3.2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-part-{{ matrix.python-version }}-{{ matrix.pydantic-version }}
+          retention-days: 1
+          path: .coverage*
+  coverage:
+    needs: [test]
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+      - run: |
+          pip install coverage
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-part-*
+          path: coverage-parts
+      - run: |
+          coverage combine coverage-parts/.coverage*
+          coverage xml -o coverage.xml
+      - uses: orgoro/coverage@v3.2
         with:
           coverageFile: coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           thresholdAll: 0.7
           thresholdNew: 0.9
           thresholdModified: 0.6
-      - if: matrix.is-dev-version
+      - name: generate coverage badge and html report
         run: |
           pip install genbadge[coverage]
           genbadge coverage --input-file coverage.xml --output-file ./dist/coverage/coverage-badge.svg
           coverage html -d dist/coverage
-      - if: matrix.is-dev-version
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: coverage
+          name: coverage-summary
           retention-days: 1
           path: dist
 
 
   deploy:
-    needs: [test]
+    needs: [test,coverage]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: coverage
+          name: coverage-summary
           path: dist
       - uses: actions/setup-python@v6
         with:
