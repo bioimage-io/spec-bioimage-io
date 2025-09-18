@@ -50,11 +50,11 @@ jobs:
         run: |
           pyright --version
           pyright -p pyproject.toml --pythonversion ${{ matrix.python-version }}
-      - run: pytest --cov bioimageio --parallel-mode --cov-append --capture no
+      - run: pytest --cov bioimageio --cov-append --capture no
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
           RUN_EXPENSIVE_TESTS: ${{ matrix.run-expensive-tests && 'true' || 'false' }}
-      - run: pytest --cov bioimageio --parallel-mode --cov-append --capture no scripts  # also test docstrings in scripts for dev-version
+      - run: pytest --cov bioimageio --cov-append --capture no scripts  # also test docstrings in scripts for dev-version
         if: ${{matrix.is-dev-version}}
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
@@ -64,11 +64,14 @@ jobs:
         with:
           path: bioimageio_cache
           key: "py${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}"
+
+      - run: cp .coverage .coverage.${{ matrix.python-version }}-${{ matrix.pydantic-version }}
       - uses: actions/upload-artifact@v4
         with:
-          name: coverage-part-{{ matrix.python-version }}-{{ matrix.pydantic-version }}
+          name: .coverage.${{ matrix.python-version }}-${{ matrix.pydantic-version }}
           retention-days: 1
-          path: .coverage*
+          path: .coverage.${{ matrix.python-version }}-${{ matrix.pydantic-version }}
+          include-hidden-files: true
   coverage:
     needs: [test]
     if: github.event_name == 'pull_request'
@@ -80,10 +83,10 @@ jobs:
           pip install coverage
       - uses: actions/download-artifact@v4
         with:
-          pattern: coverage-part-*
-          path: coverage-parts
+          pattern: .coverage.*
       - run: |
-          coverage combine coverage-parts/.coverage*
+          ls -l
+          coverage combine
           coverage xml -o coverage.xml
       - uses: orgoro/coverage@v3.2
         with:
