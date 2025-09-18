@@ -1,10 +1,6 @@
 import json
 from typing import Any, Dict, List, TypedDict
 
-from pydantic import ConfigDict
-
-from bioimageio.spec import __version__
-
 from ._description import ensure_description_is_dataset, ensure_description_is_model
 from ._internal.io import (
     download,

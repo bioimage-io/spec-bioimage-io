@@ -197,8 +197,7 @@ jobs:
         with:
           create-tag: false
           version-command: |
-            python -c "from pathlib import Path;p = p_src if (p_src:=Path('src/bioimageio/spec/__init__.py')).exists() else Path('bioimageio/spec/__init__.py');print(p.read_text().split('__version__ = \"')[1].split('\"')[0])"
-
+            python -c "from pathlib import Path;print(p_version.read_text().split('VERSION = \"')[1].split('\"')[0] if (p_version:=Path('src/bioimageio/spec/_version.py')).exists() else Path('src/bioimageio/spec/__init__.py').read_text().split('__version__ = \"')[1].split('\"')[0])"
       - name: Push tag
         id: tag-version
         if: github.ref == 'refs/heads/main' && steps.check-version.outputs.previous-version != steps.check-version.outputs.current-version
