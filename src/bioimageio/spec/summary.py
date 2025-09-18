@@ -1,4 +1,3 @@
-import importlib.metadata
 import os
 import subprocess
 from dataclasses import dataclass
@@ -55,6 +54,7 @@ from ._internal.warning_levels import (
     WarningLevel,
     WarningSeverity,
 )
+from ._version import VERSION
 from .conda_env import CondaEnv
 
 Loc = Tuple[Union[int, str], ...]
@@ -264,7 +264,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         default_factory=lambda: {
             InstalledPackage(
                 name="bioimageio.spec",
-                version=importlib.metadata.version("bioimageio.spec"),
+                version=VERSION,
             )
         }
     )

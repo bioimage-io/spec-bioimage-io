@@ -1,5 +1,5 @@
 import json
-from typing import List, TypedDict
+from typing import Any, Dict, List, TypedDict
 
 from ._description import ensure_description_is_dataset, ensure_description_is_model
 from ._internal.io import (
@@ -54,6 +54,16 @@ def get_spdx_licenses() -> SpdxLicenses:
     with (
         files("bioimageio.spec")
         .joinpath("static/spdx_licenses.json")
+        .open("r", encoding="utf-8")
+    ) as f:
+        return json.load(f)
+
+
+def get_bioimageio_json_schema() -> Dict[str, Any]:
+    """get the bioimageio specification as a JSON schema"""
+    with (
+        files("bioimageio.spec")
+        .joinpath("static/bioimageio_schema.json")
         .open("r", encoding="utf-8")
     ) as f:
         return json.load(f)

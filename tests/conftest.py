@@ -1,8 +1,7 @@
-import json
 from pathlib import Path
 from pprint import pprint
 from types import MappingProxyType
-from typing import Any, Dict, Union
+from typing import Any, Dict
 
 import pytest
 from dotenv import load_dotenv
@@ -14,12 +13,8 @@ from bioimageio.spec._internal.constants import (
     N_KNOWN_INVALID_GITHUB_USERS,
 )
 from bioimageio.spec._internal.io_utils import read_yaml
-from bioimageio.spec._internal.type_guards import is_dict, is_kwargs
-
-try:
-    from filelock import FileLock
-except ImportError:
-    FileLock = None
+from bioimageio.spec._internal.type_guards import is_kwargs
+from bioimageio.spec.utils import get_bioimageio_json_schema
 
 _ = load_dotenv()
 
@@ -28,30 +23,8 @@ UNET2D_ROOT = EXAMPLE_DESCRIPTIONS / "models/unet2d_nuclei_broad"
 
 
 @pytest.fixture(scope="session")
-def bioimageio_json_schema(
-    tmp_path_factory: pytest.TempPathFactory, worker_id: str = "master"
-) -> Dict[Any, Any]:
-    """generates json schema (only run with one worker)
-    see https://pytest-xdist.readthedocs.io/en/latest/how-to.html#making-session-scoped-fixtures-execute-only-once
-    """
-    from scripts.generate_json_schemas import generate_json_schemas
-
-    root_tmp_dir = tmp_path_factory.getbasetemp().parent
-    path = root_tmp_dir / "bioimageio_schema_latest.json"
-    if worker_id == "master":
-        # no workers
-        generate_json_schemas(root_tmp_dir, "generate")
-        schema: Union[Any, Dict[Any, Any]] = json.loads(path.read_text())
-    else:
-        assert FileLock is not None
-        with FileLock(path.with_suffix(path.suffix + ".lock")):
-            if not path.is_file():
-                generate_json_schemas(root_tmp_dir, "generate")
-
-            schema: Union[Any, Dict[Any, Any]] = json.loads(path.read_text())
-
-    assert is_dict(schema)
-    return schema
+def bioimageio_json_schema() -> Dict[str, Any]:
+    return get_bioimageio_json_schema()
 
 
 @pytest.fixture(scope="session")

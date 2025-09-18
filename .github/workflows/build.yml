@@ -13,10 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.9", "3.10", "3.11","3.12", "3.13"]
-        pydantic-version: ["2.10.3", "2.11.0"]
+        pydantic-version: ["2.10.6", "2.11.9"]
         include:
-          - python-version: "3.12"
-            pydantic-version: "2.11.0"
+          - python-version: "3.10"
+            pydantic-version: "2.11.9"
             is-dev-version: true
             run-expensive-tests: true
     steps:
@@ -50,11 +50,11 @@ jobs:
         run: |
           pyright --version
           pyright -p pyproject.toml --pythonversion ${{ matrix.python-version }}
-      - run: pytest --cov bioimageio --cov-report xml --cov-append --capture no
+      - run: pytest --cov bioimageio --cov-append --capture no
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
           RUN_EXPENSIVE_TESTS: ${{ matrix.run-expensive-tests && 'true' || 'false' }}
-      - run: pytest --cov bioimageio --cov-report xml --cov-append --capture no scripts  # also test docstrings in scripts for dev-version
+      - run: pytest --cov bioimageio --cov-append --capture no scripts  # also test docstrings in scripts for dev-version
         if: ${{matrix.is-dev-version}}
         env:
           BIOIMAGEIO_CACHE_PATH: bioimageio_cache
@@ -64,35 +64,57 @@ jobs:
         with:
           path: bioimageio_cache
           key: "py${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}"
-      - if: matrix.is-dev-version && github.event_name == 'pull_request'
-        uses: orgoro/coverage@v3.2
+
+      - run: cp .coverage .coverage.${{ matrix.python-version }}-${{ matrix.pydantic-version }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: .coverage.${{ matrix.python-version }}-${{ matrix.pydantic-version }}
+          retention-days: 1
+          path: .coverage.${{ matrix.python-version }}-${{ matrix.pydantic-version }}
+          include-hidden-files: true
+  coverage:
+    needs: [test]
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+      - run: |
+          pip install coverage
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: .coverage.*
+      - run: |
+          ls -l
+          coverage combine
+          coverage xml -o coverage.xml
+      - uses: orgoro/coverage@v3.2
         with:
           coverageFile: coverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           thresholdAll: 0.7
           thresholdNew: 0.9
           thresholdModified: 0.6
-      - if: matrix.is-dev-version
+      - name: generate coverage badge and html report
         run: |
           pip install genbadge[coverage]
           genbadge coverage --input-file coverage.xml --output-file ./dist/coverage/coverage-badge.svg
           coverage html -d dist/coverage
-      - if: matrix.is-dev-version
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: coverage
+          name: coverage-summary
           retention-days: 1
           path: dist
 
 
   deploy:
-    needs: [test]
+    needs: [test,coverage]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: coverage
+          name: coverage-summary
           path: dist
       - uses: actions/setup-python@v6
         with:
@@ -108,8 +130,6 @@ jobs:
         env:
           PYTHONPATH: "./scripts"
         run: python -m interactive_docs
-      - name: Generate JSON schemas
-        run: python scripts/generate_json_schemas.py
       - name: Generate JSON schema documentation
         run: python scripts/generate_json_schema_documentation.py
       - name: Generate developer docs
@@ -155,7 +175,7 @@ jobs:
         shell: bash -l {0}
         run: |
           mkdir -p ./pkgs/noarch
-          conda-build -c conda-forge conda-recipe --no-test --output-folder ./pkgs
+          conda-build -c conda-forge conda-recipe --output-folder ./pkgs
 
 #  rattler-build:
 #    name: Build package
@@ -199,8 +219,7 @@ jobs:
         with:
           create-tag: false
           version-command: |
-            python -c "from pathlib import Path;p = p_src if (p_src:=Path('src/bioimageio/spec/__init__.py')).exists() else Path('bioimageio/spec/__init__.py');print(p.read_text().split('__version__ = \"')[1].split('\"')[0])"
-
+            python -c "from pathlib import Path;print(p_version.read_text().split('VERSION = \"')[1].split('\"')[0] if (p_version:=Path('src/bioimageio/spec/_version.py')).exists() else Path('src/bioimageio/spec/__init__.py').read_text().split('__version__ = \"')[1].split('\"')[0])"
       - name: Push tag
         id: tag-version
         if: github.ref == 'refs/heads/main' && steps.check-version.outputs.previous-version != steps.check-version.outputs.current-version
