@@ -38,8 +38,6 @@ from pydantic import (
 from pydantic_core.core_schema import ErrorType
 from typing_extensions import Annotated, Self, assert_never
 
-import bioimageio.spec
-
 from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml
 from ._internal.type_guards import is_dict
@@ -56,6 +54,7 @@ from ._internal.warning_levels import (
     WarningLevel,
     WarningSeverity,
 )
+from ._version import VERSION
 from .conda_env import CondaEnv
 
 Loc = Tuple[Union[int, str], ...]
@@ -265,7 +264,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         default_factory=lambda: {
             InstalledPackage(
                 name="bioimageio.spec",
-                version=bioimageio.spec.__version__,
+                version=VERSION,
             )
         }
     )

@@ -1,9 +1,8 @@
 """
 .. include:: ../../README.md
 """
-# ruff: noqa: E402
 
-__version__ = "0.5.5.3"
+# ruff: noqa: E402
 from loguru import logger
 
 logger.disable("bioimageio.spec")
@@ -47,6 +46,7 @@ from ._package import (
     save_bioimageio_package_to_stream,
 )
 from ._upload import upload
+from ._version import VERSION as __version__
 from .application import AnyApplicationDescr, ApplicationDescr
 from .dataset import AnyDatasetDescr, DatasetDescr
 from .generic import AnyGenericDescr, GenericDescr
