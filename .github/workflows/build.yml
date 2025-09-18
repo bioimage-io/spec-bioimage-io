@@ -108,8 +108,6 @@ jobs:
         env:
           PYTHONPATH: "./scripts"
         run: python -m interactive_docs
-      - name: Generate JSON schemas
-        run: python scripts/generate_json_schemas.py
       - name: Generate JSON schema documentation
         run: python scripts/generate_json_schema_documentation.py
       - name: Generate developer docs

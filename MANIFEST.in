@@ -2,3 +2,4 @@ include README.md
 include LICENSE
 include src/bioimageio/spec/static/spdx_licenses.json
 include src/bioimageio/spec/static/tag_categories.json
+include src/bioimageio/spec/static/bioimageio_schema.json

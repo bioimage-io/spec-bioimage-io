@@ -1,12 +1,14 @@
 import sys
 from pathlib import Path
 
-from typing_extensions import assert_never
+from typing_extensions import Final, assert_never
 
-from bioimageio.spec import SpecificResourceDescr
-from scripts.generate_json_schemas import MAJOR_MINOR_VERSION
+from bioimageio.spec import SpecificResourceDescr, __version__
 
 from . import generate_docs
+
+MAJOR_MINOR_VERSION: Final[str] = "v" + "-".join(__version__.split(".")[0:2])
+
 
 html_result: "str | Exception" = generate_docs(
     raw_type=SpecificResourceDescr, root_path=["Delivery"]
