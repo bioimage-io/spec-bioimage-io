@@ -65,7 +65,7 @@ build-backend = "setuptools.build_meta"
 where = ["src/"]
 
 [tool.setuptools.dynamic]
-version = { attr = "bioimageio.spec.__version__" }
+version = { attr = "bioimageio.spec._version.VERSION" }
 
 [tool.pyright]
 exclude = [
