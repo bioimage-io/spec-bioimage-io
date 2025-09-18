@@ -10,6 +10,11 @@ In this file we log both:
 
 This changelog includes implementation details and my reference the [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+#### bioimageio.spec 0.5.5.4
+
+- include bioimageio_schema.json in python package
+- fix issues with setuptools and importlib.metadata.version (by avoiding use of `importlib.metadata.version`)
+
 #### bioimageio.spec 0.5.5.3
 
 - Fix MANIFEST.in
