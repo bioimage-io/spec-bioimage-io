@@ -14,9 +14,9 @@ def get_ref_url(
         >>> get_ref_url(
         ...     "class",
         ...     "Binarize",
-        ...     "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/proc_ops.py"
+        ...     "https://github.com/bioimage-io/core-bioimage-io-python/blob/main/src/bioimageio/core/proc_ops.py"
         ... )
-        'https://github.com/bioimage-io/core-bioimage-io-python/blob/main/bioimageio/core/proc_ops.py#L...-L...'
+        'https://github.com/bioimage-io/core-bioimage-io-python/blob/main/src/bioimageio/core/proc_ops.py#L...-L...'
 
     """
     # hotfix to handle httpx not available in pyodide, see
