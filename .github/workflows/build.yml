@@ -84,6 +84,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           pattern: .coverage.*
+          merge-multiple: true
       - run: |
           ls -l
           coverage combine
