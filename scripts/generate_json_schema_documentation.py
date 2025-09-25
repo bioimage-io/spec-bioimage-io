@@ -40,7 +40,7 @@ if __name__ == "__main__":
     )
 
     print(f"Generated json schema docs at {output_dir}", file=sys.stderr)
-    shutil.copytree(
+    _ = shutil.copytree(
         output_dir, latest_dir, copy_function=shutil.copy2, dirs_exist_ok=True
     )
     print(f"Copied generated json schema docs to {latest_dir}", file=sys.stderr)
