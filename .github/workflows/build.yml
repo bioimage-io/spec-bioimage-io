@@ -86,7 +86,7 @@ jobs:
           pattern: .coverage.*
           merge-multiple: true
       - run: |
-          ls -l
+          ls -la .coverage*
           coverage combine
           coverage xml -o coverage.xml
       - uses: orgoro/coverage@v3.2
