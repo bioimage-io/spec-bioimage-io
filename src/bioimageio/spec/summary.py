@@ -1,4 +1,5 @@
 import os
+import platform
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -56,6 +57,8 @@ from ._internal.warning_levels import (
 )
 from ._version import VERSION
 from .conda_env import CondaEnv
+
+CONDA_CMD = "conda.bat" if platform.system() == "Windows" else "conda"
 
 Loc = Tuple[Union[int, str], ...]
 """location of error/warning in a nested data structure"""
@@ -210,10 +213,10 @@ class ValidationDetail(BaseModel, extra="allow"):
                         write_yaml(dumped_env, f)
 
                     compare_proc = subprocess.run(
-                        ["conda", "compare", str(path)],
+                        [CONDA_CMD, "compare", str(path)],
                         stdout=subprocess.PIPE,
                         stderr=subprocess.STDOUT,
-                        shell=True,
+                        shell=False,
                         text=True,
                     )
                     self.saved_conda_compare = (
@@ -280,10 +283,10 @@ class ValidationSummary(BaseModel, extra="allow"):
     def conda_list(self):
         if self.saved_conda_list is None:
             p = subprocess.run(
-                ["conda", "list"],
+                [CONDA_CMD, "list"],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
-                shell=True,
+                shell=False,
                 text=True,
             )
             self.saved_conda_list = (
