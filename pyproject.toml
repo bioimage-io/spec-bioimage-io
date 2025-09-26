@@ -48,6 +48,7 @@ dev = [
     "jsonschema",
     "jupyter",
     "lxml",
+    "nbval",
     "pdoc",
     "pre-commit",
     "pyright==1.1.404",
