@@ -43,6 +43,7 @@ dynamic = ["version"]
 [project.optional-dependencies]
 dev = [
     "deepdiff",
+    "devtools",
     "json_schema_for_humans",
     "jsonschema",
     "jupyter",
