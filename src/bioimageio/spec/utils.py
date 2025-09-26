@@ -10,7 +10,13 @@ from ._internal.io import (
     identify_bioimageio_yaml_file_name,
     is_valid_bioimageio_yaml_name,
 )
-from ._internal.io_utils import load_array, save_array, write_yaml
+from ._internal.io_utils import (
+    load_array,
+    open_bioimageio_yaml,
+    read_yaml,
+    save_array,
+    write_yaml,
+)
 from ._internal.utils import files
 
 __all__ = [
@@ -25,6 +31,8 @@ __all__ = [
     "identify_bioimageio_yaml_file_name",
     "is_valid_bioimageio_yaml_name",
     "load_array",
+    "open_bioimageio_yaml",
+    "read_yaml",
     "save_array",
     "SpdxLicenseEntry",
     "SpdxLicenses",
