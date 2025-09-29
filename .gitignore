@@ -17,3 +17,4 @@ scripts/pdoc/original.py
 scripts/pdoc/patched.py
 bioimageio_cache/
 example/my_bioimageio_dataset.zip
+example/my_model.zip
