@@ -1,3 +1,4 @@
+import html
 import os
 import platform
 import subprocess
@@ -638,7 +639,7 @@ def _format_summary(
             ["status", summary.status],
         ]
         if not hide_source:
-            info_rows.append(["source", summary.source_name])
+            info_rows.append(["source", html.escape(summary.source_name)])
 
         if summary.id is not None:
             info_rows.append(["id", summary.id])

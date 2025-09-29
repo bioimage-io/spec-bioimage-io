@@ -92,6 +92,7 @@ def load_description(
     context = get_validation_context().replace(
         root=opened.original_root,
         file_name=opened.original_file_name,
+        original_source_name=opened.original_source_name,
         perform_io_checks=perform_io_checks,
         known_files=known_files,
     )

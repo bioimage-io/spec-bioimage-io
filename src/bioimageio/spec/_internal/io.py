@@ -505,6 +505,7 @@ def is_yaml_value_read_only(value: Any) -> TypeGuard[YamlValueView]:
 class OpenedBioimageioYaml:
     content: BioimageioYamlContent = field(repr=False)
     original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
+    original_source_name: Optional[str]
     original_file_name: FileName
     unparsed_content: str = field(repr=False)
 

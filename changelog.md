@@ -13,6 +13,7 @@ This changelog includes implementation details and my reference the [changes to 
 #### bioimageio.spec 0.5.5.5
 
 - use OS specific conda command to fix conda subprocess issues
+- keep track of original source name for prettier validation summary display
 
 #### bioimageio.spec 0.5.5.4
 

@@ -23,7 +23,10 @@ from .warning_levels import WarningLevel
 @dataclass(frozen=True, **SLOTS)
 class ValidationContextBase:
     file_name: Optional[FileName] = None
-    """File name of the bioimageio Yaml file."""
+    """File name of the bioimageio YAML file."""
+
+    original_source_name: Optional[str] = None
+    """Original source of the bioimageio resource description, e.g. a URL or file path."""
 
     perform_io_checks: bool = settings.perform_io_checks
     """Wether or not to perform validation that requires file io,
@@ -133,6 +136,7 @@ class ValidationContext(ValidationContextBase):
         known_files: Optional[Dict[str, Optional[Sha256]]] = None,
         raise_errors: Optional[bool] = None,
         update_hashes: Optional[bool] = None,
+        original_source_name: Optional[str] = None,
     ) -> Self:
         if known_files is None and root is not None and self.root != root:
             # reset known files if root changes, but no new known_files are given
@@ -155,11 +159,18 @@ class ValidationContext(ValidationContextBase):
             update_hashes=(
                 self.update_hashes if update_hashes is None else update_hashes
             ),
+            original_source_name=(
+                self.original_source_name
+                if original_source_name is None
+                else original_source_name
+            ),
         )
 
     @property
     def source_name(self) -> str:
-        if self.file_name is None:
+        if self.original_source_name is not None:
+            return self.original_source_name
+        elif self.file_name is None:
             return "in-memory"
         else:
             try:
