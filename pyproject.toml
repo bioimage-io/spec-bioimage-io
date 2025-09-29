@@ -110,7 +110,7 @@ typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
 
 [tool.pytest.ini_options]
-addopts = " --failed-first --doctest-modules --nbval"
+addopts = "--doctest-modules --nbval"
 testpaths = ["example", "src", "tests"]
 
 [tool.ruff]
