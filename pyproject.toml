@@ -48,6 +48,7 @@ dev = [
     "jsonschema",
     "jupyter",
     "lxml",
+    "matplotlib",
     "nbval",
     "pdoc",
     "pre-commit",
@@ -109,8 +110,8 @@ typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
 
 [tool.pytest.ini_options]
-addopts = " --failed-first --doctest-modules"
-testpaths = ["src", "tests"]
+addopts = " --failed-first --doctest-modules --nbval"
+testpaths = ["example", "src", "tests"]
 
 [tool.ruff]
 line-length = 88
@@ -122,8 +123,5 @@ exclude = [
 ]
 
 [tool.coverage.report]
-omit = [
-    "src/bioimageio/spec/pretty_validation_errors.py",
-    "src/bioimageio/spec/partner_utils/imjoy/*.py",
-]
+omit = ["src/bioimageio/spec/partner_utils/imjoy/*.py"]
 exclude_also = ["if TYPE_CHECKING:", "assert_never\\("]
