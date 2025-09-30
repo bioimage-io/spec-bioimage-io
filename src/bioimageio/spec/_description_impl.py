@@ -22,9 +22,7 @@ DISCOVER: Literal["discover"] = "discover"
 def get_rd_class_impl(
     typ: Any,
     format_version: Any,
-    descriptions_map: Mapping[
-        Optional[str], Mapping[Optional[str], Type[ResourceDescrT]]
-    ],
+    descriptions_map: Mapping[Optional[str], Mapping[str, Type[ResourceDescrT]]],
 ) -> Type[ResourceDescrT]:
     """get the resource description class for the given type and format version"""
     assert None in descriptions_map
@@ -50,7 +48,7 @@ def get_rd_class_impl(
     if use_format_version not in descr_versions:
         raise ValueError(
             f"Unsupported format version '{format_version}' for type '{typ}'. "
-            f"Supported format versions are: {', '.join(sorted(fv for fv in descr_versions if fv is not None))}"
+            + f"Supported format versions are: {', '.join(sorted(fv for fv in descr_versions))}"
         )
 
     return descr_versions[use_format_version]
