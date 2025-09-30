@@ -58,6 +58,7 @@ dev = [
     "python-dotenv",
     "respx",
     "ruff",
+    "torch",
 ]
 
 [build-system]

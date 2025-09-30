@@ -260,4 +260,4 @@ def test_open_url_with_wrong_sha(respx_mock: MockRouter):
     _ = respx_mock.get(url).mock(side_effect=httpx.InvalidURL("Invalid URL"))
 
     with pytest.raises(httpx.InvalidURL, match="Invalid URL"):
-        _ = _open_url(HttpUrl(url), sha256=sha)
+        _ = _open_url(HttpUrl(url), sha256=sha, progressbar=False)
