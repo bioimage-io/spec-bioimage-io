@@ -3540,6 +3540,7 @@ def generate_covers(
 
     def to_2d_image(data: NDArray[Any], axes: Sequence[AnyAxis]):
         original_shape = data.shape
+        original_axes = list(axes)
         data, axes = squeeze(data, axes)
 
         # take slice fom any batch or index axis if needed
@@ -3624,9 +3625,9 @@ def generate_covers(
         data, axes = squeeze(data, axes)
         assert len(axes) == ndim
 
-        if (has_c_axis and ndim != 3) or ndim != 2:
+        if (has_c_axis and ndim != 3) or (not has_c_axis and ndim != 2):
             raise ValueError(
-                f"Failed to construct cover image from shape {original_shape}"
+                f"Failed to construct cover image from shape {original_shape} with axes {[a.id for a in original_axes]}."
             )
 
         if not has_c_axis:
