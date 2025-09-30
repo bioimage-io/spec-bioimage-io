@@ -145,8 +145,10 @@ DESCRIPTIONS_MAP = MappingProxyType(
  for a given **type** and **format_version**."""
 
 
-def _get_rd_class(typ: Any, format_version: Any):
-    return get_rd_class_impl(typ, format_version, DESCRIPTIONS_MAP)
+def _get_rd_class(typ: Any, format_version: Any, fallback_to_latest: bool):
+    return get_rd_class_impl(
+        typ, format_version, DESCRIPTIONS_MAP, fallback_to_latest=fallback_to_latest
+    )
 
 
 @overload
