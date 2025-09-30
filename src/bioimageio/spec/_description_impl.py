@@ -26,10 +26,11 @@ def get_rd_class_impl(
         Optional[str], Mapping[Optional[str], Type[ResourceDescrT]]
     ],
 ) -> Type[ResourceDescrT]:
+    """get the resource description class for the given type and format version"""
     assert None in descriptions_map
-    assert all(None in version_map for version_map in descriptions_map.values())
+    assert all("latest" in version_map for version_map in descriptions_map.values())
     assert all(
-        fv is None or fv.count(".") == 1
+        fv == "latest" or fv.count(".") == 1
         for version_map in descriptions_map.values()
         for fv in version_map
     )
@@ -37,15 +38,22 @@ def get_rd_class_impl(
         typ = None
 
     format_version = str(format_version)
-    if (ndots := format_version.count(".")) == 0:
+    if format_version == "latest" or (ndots := format_version.count(".")) == 1:
+        use_format_version = format_version
+    elif ndots == 0:
         use_format_version = format_version + ".0"
-    elif ndots == 2:
-        use_format_version = format_version[: format_version.rfind(".")]
     else:
-        use_format_version = None
+        assert ndots > 1
+        use_format_version = format_version[: format_version.rfind(".")]
 
     descr_versions = descriptions_map[typ]
-    return descr_versions.get(use_format_version, descr_versions[None])
+    if use_format_version not in descr_versions:
+        raise ValueError(
+            f"Unsupported format version '{format_version}' for type '{typ}'. "
+            f"Supported format versions are: {', '.join(sorted(fv for fv in descr_versions if fv is not None))}"
+        )
+
+    return descr_versions[use_format_version]
 
 
 def build_description_impl(
