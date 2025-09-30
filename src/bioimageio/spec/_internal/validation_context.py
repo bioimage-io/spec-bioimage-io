@@ -92,10 +92,16 @@ class ValidationContext(ValidationContextBase):
         of a generated `bioimageio.spec.ValidationSummary`.
     """
 
-    progressbar_factory: Optional[Callable[[], Progressbar]] = None
-    """Callable to return a tqdm-like progressbar.
+    progressbar: Union[None, bool, Callable[[], Progressbar]] = None
+    """Control any progressbar.
+    (Currently this is only used for file downloads.)
 
-    Currently this is only used for file downloads."""
+    Can be:
+    - `None`: use a default tqdm progressbar (if not settings.CI)
+    - `True`: use a default tqdm progressbar
+    - `False`: disable the progressbar
+    - `callable`: A callable that returns a tqdm-like progressbar.
+    """
 
     raise_errors: bool = False
     """Directly raise any validation errors
