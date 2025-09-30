@@ -646,7 +646,7 @@ def _format_summary(
 
         info_rows.append(["format version", f"{summary.type} {summary.format_version}"])
         if not hide_env:
-            info_rows.extend([[e.name, e.version] for e in summary.env])
+            info_rows.extend([[e.name, e.version] for e in sorted(summary.env)])
 
         if include_conda_list:
             info_rows.append(
