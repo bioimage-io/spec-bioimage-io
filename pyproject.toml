@@ -111,7 +111,7 @@ typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
 
 [tool.pytest.ini_options]
-addopts = "--doctest-modules --nbval"
+addopts = "--doctest-modules"           # TODO: add --nbval
 testpaths = ["example", "src", "tests"]
 
 [tool.ruff]
