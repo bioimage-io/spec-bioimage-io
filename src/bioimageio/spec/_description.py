@@ -100,35 +100,35 @@ DESCRIPTIONS_MAP = MappingProxyType(
             {
                 "0.2": GenericDescr_v0_2,
                 "0.3": GenericDescr_v0_3,
-                None: GenericDescr,
+                "latest": GenericDescr,
             }
         ),
         "generic": MappingProxyType(
             {
                 "0.2": GenericDescr_v0_2,
                 "0.3": GenericDescr_v0_3,
-                None: GenericDescr,
+                "latest": GenericDescr,
             }
         ),
         "application": MappingProxyType(
             {
                 "0.2": ApplicationDescr_v0_2,
                 "0.3": ApplicationDescr_v0_3,
-                None: ApplicationDescr,
+                "latest": ApplicationDescr,
             }
         ),
         "dataset": MappingProxyType(
             {
                 "0.2": DatasetDescr_v0_2,
                 "0.3": DatasetDescr_v0_3,
-                None: DatasetDescr,
+                "latest": DatasetDescr,
             }
         ),
         "notebook": MappingProxyType(
             {
                 "0.2": NotebookDescr_v0_2,
                 "0.3": NotebookDescr_v0_3,
-                None: NotebookDescr,
+                "latest": NotebookDescr,
             }
         ),
         "model": MappingProxyType(
@@ -136,7 +136,7 @@ DESCRIPTIONS_MAP = MappingProxyType(
                 "0.3": ModelDescr_v0_4,
                 "0.4": ModelDescr_v0_4,
                 "0.5": ModelDescr_v0_5,
-                None: ModelDescr,
+                "latest": ModelDescr,
             }
         ),
     }
@@ -145,8 +145,10 @@ DESCRIPTIONS_MAP = MappingProxyType(
  for a given **type** and **format_version**."""
 
 
-def _get_rd_class(typ: Any, format_version: Any):
-    return get_rd_class_impl(typ, format_version, DESCRIPTIONS_MAP)
+def _get_rd_class(typ: Any, format_version: Any, fallback_to_latest: bool):
+    return get_rd_class_impl(
+        typ, format_version, DESCRIPTIONS_MAP, fallback_to_latest=fallback_to_latest
+    )
 
 
 @overload
@@ -184,8 +186,14 @@ def build_description(
     Args:
         content: loaded rdf.yaml file (loaded with YAML, not bioimageio.spec)
         context: validation context to use during validation
-        format_version: (optional) use this argument to load the resource and
-                        convert its metadata to a higher format_version
+        format_version:
+            (optional) use this argument to load the resource and
+            convert its metadata to a higher format_version.
+            Note:
+            - Use "latest" to convert to the latest available format version.
+            - Use "discover" to use the format version specified in the RDF.
+            - Only considers major.minor format version, ignores patch version.
+            - Conversion to lower format versions is not supported.
 
     Returns:
         An object holding all metadata of the bioimage.io resource
@@ -213,7 +221,13 @@ def validate_format(
 
     Args:
         data: Dictionary holding the raw bioimageio.yaml content.
-        format_version: Format version to (update to and) use for validation.
+        format_version:
+            Format version to (update to and) use for validation.
+            Note:
+            - Use "latest" to convert to the latest available format version.
+            - Use "discover" to use the format version specified in the RDF.
+            - Only considers major.minor format version, ignores patch version.
+            - Conversion to lower format versions is not supported.
         context: Validation context, see `bioimagieo.spec.ValidationContext`
 
     Note:

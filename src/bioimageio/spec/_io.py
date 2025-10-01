@@ -65,18 +65,28 @@ def load_description(
     """load a bioimage.io resource description
 
     Args:
-        source: Path or URL to an rdf.yaml or a bioimage.io package
-                (zip-file with rdf.yaml in it).
-        format_version: (optional) Use this argument to load the resource and
-                        convert its metadata to a higher format_version.
-        perform_io_checks: Wether or not to perform validation that requires file io,
-                           e.g. downloading a remote files. The existence of local
-                           absolute file paths is still being checked.
-        known_files: Allows to bypass download and hashing of referenced files
-                     (even if perform_io_checks is True).
-                     Checked files will be added to this dictionary
-                     with their SHA-256 value.
-        sha256: Optional SHA-256 value of **source**
+        source:
+            Path or URL to an rdf.yaml or a bioimage.io package
+            (zip-file with rdf.yaml in it).
+        format_version:
+            (optional) Use this argument to load the resource and
+            convert its metadata to a higher format_version.
+            Note:
+            - Use "latest" to convert to the latest available format version.
+            - Use "discover" to use the format version specified in the RDF.
+            - Only considers major.minor format version, ignores patch version.
+            - Conversion to lower format versions is not supported.
+        perform_io_checks:
+            Wether or not to perform validation that requires file io,
+            e.g. downloading a remote files. The existence of local
+            absolute file paths is still being checked.
+        known_files:
+            Allows to bypass download and hashing of referenced files
+            (even if perform_io_checks is True).
+            Checked files will be added to this dictionary
+            with their SHA-256 value.
+        sha256:
+            Optional SHA-256 value of **source**
 
     Returns:
         An object holding all metadata of the bioimage.io resource
@@ -92,6 +102,7 @@ def load_description(
     context = get_validation_context().replace(
         root=opened.original_root,
         file_name=opened.original_file_name,
+        original_source_name=opened.original_source_name,
         perform_io_checks=perform_io_checks,
         known_files=known_files,
     )

@@ -152,7 +152,7 @@ def process(info: Info, check: bool):
     with TemporaryDirectory() as tmp_dir:
         p = Path(tmp_dir) / "temp.py"
         _ = p.write_text(updated)
-        _ = subprocess.run(["ruff", "format", str(p)], check=True)
+        _ = subprocess.check_call(["ruff", "format", str(p)])
         updated = p.read_text()
 
     if check:

@@ -43,10 +43,13 @@ dynamic = ["version"]
 [project.optional-dependencies]
 dev = [
     "deepdiff",
+    "devtools",
     "json_schema_for_humans",
     "jsonschema",
     "jupyter",
     "lxml",
+    "matplotlib",
+    "nbval",
     "pdoc",
     "pre-commit",
     "pyright==1.1.404",
@@ -55,6 +58,7 @@ dev = [
     "python-dotenv",
     "respx",
     "ruff",
+    "torch",
 ]
 
 [build-system]
@@ -107,8 +111,8 @@ typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
 
 [tool.pytest.ini_options]
-addopts = " --failed-first --doctest-modules"
-testpaths = ["src", "tests"]
+addopts = "--doctest-modules"           # TODO: add --nbval
+testpaths = ["example", "src", "tests"]
 
 [tool.ruff]
 line-length = 88
@@ -120,8 +124,5 @@ exclude = [
 ]
 
 [tool.coverage.report]
-omit = [
-    "src/bioimageio/spec/pretty_validation_errors.py",
-    "src/bioimageio/spec/partner_utils/imjoy/*.py",
-]
+omit = ["src/bioimageio/spec/partner_utils/imjoy/*.py"]
 exclude_also = ["if TYPE_CHECKING:", "assert_never\\("]

@@ -4,6 +4,7 @@ import collections.abc
 from typing import Any, Callable, List, Literal, Mapping, Optional, Type, TypeVar, Union
 
 from ._internal.common_nodes import InvalidDescr, ResourceDescrBase
+from ._internal.field_validation import issue_warning
 from ._internal.io import BioimageioYamlContentView
 from ._internal.types import FormatVersionPlaceholder
 from ._internal.validation_context import ValidationContext, get_validation_context
@@ -22,14 +23,14 @@ DISCOVER: Literal["discover"] = "discover"
 def get_rd_class_impl(
     typ: Any,
     format_version: Any,
-    descriptions_map: Mapping[
-        Optional[str], Mapping[Optional[str], Type[ResourceDescrT]]
-    ],
+    descriptions_map: Mapping[Optional[str], Mapping[str, Type[ResourceDescrT]]],
+    fallback_to_latest: bool,
 ) -> Type[ResourceDescrT]:
+    """get the resource description class for the given type and format version"""
     assert None in descriptions_map
-    assert all(None in version_map for version_map in descriptions_map.values())
+    assert all("latest" in version_map for version_map in descriptions_map.values())
     assert all(
-        fv is None or fv.count(".") == 1
+        fv == "latest" or fv.count(".") == 1
         for version_map in descriptions_map.values()
         for fv in version_map
     )
@@ -37,15 +38,32 @@ def get_rd_class_impl(
         typ = None
 
     format_version = str(format_version)
-    if (ndots := format_version.count(".")) == 0:
+    if format_version == "latest" or (ndots := format_version.count(".")) == 1:
+        use_format_version = format_version
+    elif ndots == 0:
         use_format_version = format_version + ".0"
-    elif ndots == 2:
-        use_format_version = format_version[: format_version.rfind(".")]
     else:
-        use_format_version = None
+        assert ndots > 1
+        use_format_version = format_version[: format_version.rfind(".")]
 
     descr_versions = descriptions_map[typ]
-    return descr_versions.get(use_format_version, descr_versions[None])
+    if use_format_version not in descr_versions:
+        if fallback_to_latest:
+            issue_warning(
+                "Unsupported format version '{value}' for type '{typ}'.",
+                value=format_version,
+                field="format_version",
+                log_depth=3,
+                msg_context={"typ": typ},
+            )
+            use_format_version = "latest"
+        else:
+            raise ValueError(
+                f"Unsupported format version '{format_version}' for type '{typ}'."
+                + " Supported format versions are: {', '.join(sorted(fv for fv in descr_versions))}"
+            )
+
+    return descr_versions[use_format_version]
 
 
 def build_description_impl(
@@ -54,7 +72,7 @@ def build_description_impl(
     *,
     context: Optional[ValidationContext] = None,
     format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    get_rd_class: Callable[[Any, Any], Type[ResourceDescrT]],
+    get_rd_class: Callable[[Any, Any, bool], Type[ResourceDescrT]],
 ) -> Union[ResourceDescrT, InvalidDescr]:
     context = context or get_validation_context()
     errors: List[ErrorEntry] = []
@@ -95,17 +113,19 @@ def build_description_impl(
         return ret
 
     typ = content["type"]
-    rd_class = get_rd_class(typ, content["format_version"])
+    # check format_version argument before loading as 'discover'
+    # to throw an exception for an invalid format_version early
+    if str(format_version).lower() != DISCOVER:
+        as_rd_class = get_rd_class(typ, format_version, False)
+    else:
+        as_rd_class = None
+    # always load with discovered format_version first
+    rd_class = get_rd_class(typ, content["format_version"], True)
     rd = rd_class.load(content, context=context)
 
-    if str(format_version).lower() not in (
-        DISCOVER,
-        rd_class.implemented_format_version,
-        ".".join(map(str, rd_class.implemented_format_version_tuple[:2])),
-    ):
+    if as_rd_class is not None and as_rd_class is not rd_class:
         # load with requested format_version
         discover_details = rd.validation_summary.details
-        as_rd_class = get_rd_class(typ, format_version)
         rd = as_rd_class.load(content, context=context)
         assert rd.validation_summary is not None
         rd.validation_summary.details[:0] = discover_details

@@ -296,7 +296,9 @@ class FileDescr(Node):
             )
 
     def get_reader(
-        self, *, progressbar: Union[Progressbar, Callable[[], Progressbar], bool] = True
+        self,
+        *,
+        progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
     ):
         """open the file source (download if needed)"""
         return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
@@ -505,6 +507,7 @@ def is_yaml_value_read_only(value: Any) -> TypeGuard[YamlValueView]:
 class OpenedBioimageioYaml:
     content: BioimageioYamlContent = field(repr=False)
     original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
+    original_source_name: Optional[str]
     original_file_name: FileName
     unparsed_content: str = field(repr=False)
 
@@ -689,7 +692,7 @@ download = get_reader
 def _open_url(
     source: HttpUrl,
     /,
-    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None],
     **kwargs: Unpack[HashKwargs],
 ) -> BytesReader:
     cache = (
@@ -723,40 +726,39 @@ def _open_url(
 def _fetch_url(
     source: RootHttpUrl,
     *,
-    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None],
 ):
     if source.scheme not in ("http", "https"):
         raise NotImplementedError(source.scheme)
 
+    if progressbar is None:
+        # chose progressbar option from validation context
+        progressbar = get_validation_context().progressbar
+
+    if progressbar is None:
+        # default to no progressbar in CI environments
+        progressbar = not settings.CI
+
     if callable(progressbar):
         progressbar = progressbar()
 
-    if settings.CI:
-        headers = {"User-Agent": "ci"}
-        if progressbar is None:
-            progressbar = False
-    else:
-        headers = {}
-        if progressbar is None:
-            progressbar = True
-
-    if isinstance(progressbar, bool):
-        # setup progressbar
-        if progressbar:
-            use_ascii = bool(sys.platform == "win32")
-            progressbar = tqdm(
-                ncols=79,
-                ascii=use_ascii,
-                unit="B",
-                unit_scale=True,
-                leave=True,
-            )
+    if isinstance(progressbar, bool) and progressbar:
+        progressbar = tqdm(
+            ncols=79,
+            ascii=bool(sys.platform == "win32"),
+            unit="B",
+            unit_scale=True,
+            leave=True,
+        )
 
     if progressbar is not False:
         progressbar.set_description(f"Downloading {extract_file_name(source)}")
 
+    headers: Dict[str, str] = {}
     if settings.user_agent is not None:
         headers["User-Agent"] = settings.user_agent
+    elif settings.CI:
+        headers["User-Agent"] = "ci"
 
     r = httpx.get(str(source), follow_redirects=True, headers=headers)
     _ = r.raise_for_status()

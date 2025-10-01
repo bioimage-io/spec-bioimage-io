@@ -73,7 +73,7 @@ def as_warning(
             issue_warning(
                 msg or ",".join(e.args),
                 field=info.field_name,
-                log_depth=2,
+                log_depth=1,
                 msg_context=msg_context,
                 severity=severity,
                 value=value,

@@ -46,7 +46,7 @@ from .io_basics import AbsoluteDirectory, FileName, ZipPath
 from .types import FileSource, PermissiveFileSource
 from .url import HttpUrl, RootHttpUrl
 from .utils import cache
-from .validation_context import ValidationContext
+from .validation_context import ValidationContext, get_validation_context
 
 _yaml_load = YAML(typ="safe")
 
@@ -104,7 +104,9 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
 
 def _open_bioimageio_rdf_in_zip(
     path: ZipPath,
+    *,
     original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile],
+    original_source_name: str,
 ) -> OpenedBioimageioYaml:
     with path.open("rb") as f:
         assert not isinstance(f, io.TextIOWrapper)
@@ -114,19 +116,26 @@ def _open_bioimageio_rdf_in_zip(
 
     return OpenedBioimageioYaml(
         content,
-        original_root,
-        extract_file_name(path),
+        original_root=original_root,
+        original_file_name=extract_file_name(path),
+        original_source_name=original_source_name,
         unparsed_content=unparsed_content,
     )
 
 
 def _open_bioimageio_zip(
     source: ZipFile,
+    *,
+    original_source_name: str,
 ) -> OpenedBioimageioYaml:
     rdf_name = identify_bioimageio_yaml_file_name(
         [info.filename for info in source.filelist]
     )
-    return _open_bioimageio_rdf_in_zip(ZipPath(source, rdf_name), source)
+    return _open_bioimageio_rdf_in_zip(
+        ZipPath(source, rdf_name),
+        original_root=source,
+        original_source_name=original_source_name,
+    )
 
 
 def open_bioimageio_yaml(
@@ -138,9 +147,11 @@ def open_bioimageio_yaml(
         source = source.absolute()
 
     if isinstance(source, ZipFile):
-        return _open_bioimageio_zip(source)
+        return _open_bioimageio_zip(source, original_source_name=str(source))
     elif isinstance(source, ZipPath):
-        return _open_bioimageio_rdf_in_zip(source, source.root)
+        return _open_bioimageio_rdf_in_zip(
+            source, original_root=source.root, original_source_name=str(source)
+        )
 
     try:
         if isinstance(source, (Path, str)) and (source_dir := Path(source)).is_dir():
@@ -181,6 +192,7 @@ def open_bioimageio_yaml(
                     content=content,
                     original_root=url.parent,
                     original_file_name=original_file_name,
+                    original_source_name=source,
                     unparsed_content=unparsed_content,
                 )
 
@@ -200,11 +212,11 @@ def open_bioimageio_yaml(
         entry = id_map[source]
         logger.info("loading {} from {}", source, entry.source)
         reader = entry.get_reader()
-        with ValidationContext(perform_io_checks=False):
+        with get_validation_context().replace(perform_io_checks=False):
             src = HttpUrl(entry.source)
 
     if reader.is_zipfile:
-        return _open_bioimageio_zip(ZipFile(reader))
+        return _open_bioimageio_zip(ZipFile(reader), original_source_name=str(src))
 
     unparsed_content = reader.read().decode(encoding="utf-8")
     content = _sanitize_bioimageio_yaml(read_yaml(unparsed_content))
@@ -220,6 +232,7 @@ def open_bioimageio_yaml(
     return OpenedBioimageioYaml(
         content,
         original_root=root,
+        original_source_name=str(src),
         original_file_name=extract_file_name(src),
         unparsed_content=unparsed_content,
     )

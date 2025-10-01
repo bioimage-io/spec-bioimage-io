@@ -68,7 +68,7 @@ def main(*, tag: str):
 
     _ = LICENSE_ID_MODULE_PATH.write_text(code, encoding="utf-8")
     print(f"Updated {LICENSE_ID_MODULE_PATH}")
-    _ = subprocess.run(["ruff", "format", str(LICENSE_ID_MODULE_PATH)], check=True)
+    _ = subprocess.check_call(["ruff", "format", str(LICENSE_ID_MODULE_PATH)])
 
 
 if __name__ == "__main__":
