@@ -77,7 +77,7 @@ def validate_github_user(
         r = httpx.get(
             f"https://api.github.com/users/{username}",
             auth=settings.github_auth,
-            timeout=3,
+            timeout=settings.http_timeout,
         )
     except httpx.TimeoutException:
         issue_warning(

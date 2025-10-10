@@ -760,7 +760,12 @@ def _fetch_url(
     elif settings.CI:
         headers["User-Agent"] = "ci"
 
-    r = httpx.get(str(source), follow_redirects=True, headers=headers)
+    r = httpx.get(
+        str(source),
+        follow_redirects=True,
+        headers=headers,
+        timeout=settings.http_timeout,
+    )
     _ = r.raise_for_status()
 
     # set progressbar.total

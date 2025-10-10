@@ -59,6 +59,9 @@ class Settings(
         2. Generate a new token at https://bioimage.io/#/api?tab=hypha-rpc
     """
 
+    http_timeout: float = 10.0
+    """Timeout in seconds for http requests."""
+
     id_map: str = (
         "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map.json"
     )
