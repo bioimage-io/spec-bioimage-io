@@ -245,7 +245,9 @@ def _get_id_map_impl(url: str) -> Dict[str, LightHttpFileDescr]:
     if not isinstance(url, str) or "/" not in url:
         logger.opt(depth=1).error("invalid id map url: {}", url)
     try:
-        id_map_raw: Any = httpx.get(url, timeout=10, follow_redirects=True).json()
+        id_map_raw: Any = httpx.get(
+            url, timeout=settings.http_timeout, follow_redirects=True
+        ).json()
     except Exception as e:
         logger.opt(depth=1).error("failed to get {}: {}", url, e)
         return {}

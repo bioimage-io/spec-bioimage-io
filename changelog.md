@@ -10,6 +10,10 @@ In this file we log both:
 
 This changelog includes implementation details and my reference the [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+#### bioimageio.spec 0.5.5.6 (planned; not yet released)
+
+- Add BIOIMAGEIO_HTTP_TIMEOUT environment variable to adjust timeout for http requests.
+
 #### bioimageio.spec 0.5.5.5
 
 - use OS specific conda command to fix conda subprocess issues

@@ -8,13 +8,14 @@ from pydantic import RootModel
 from typing_extensions import Literal, assert_never
 
 from . import warning_levels
+from ._settings import settings
 from .field_warning import issue_warning
 from .root_url import RootHttpUrl
 from .validation_context import get_validation_context
 
 
 def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.HttpUrl:
-    return _validate_url_impl(url, request_mode="head")
+    return _validate_url_impl(url, request_mode="head", timeout=settings.http_timeout)
 
 
 _KNOWN_VALID_URLS = ("https://zenodo.org/records/3446812/files/unet2d_weights.torch",)
@@ -24,7 +25,7 @@ _KNOWN_VALID_URLS = ("https://zenodo.org/records/3446812/files/unet2d_weights.to
 def _validate_url_impl(
     url: Union[str, pydantic.HttpUrl],
     request_mode: Literal["head", "get_stream", "get"],
-    timeout: int = 3,
+    timeout: float,
 ) -> pydantic.HttpUrl:
     url = str(url)
     context = get_validation_context()
