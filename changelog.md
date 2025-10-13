@@ -12,7 +12,7 @@ This changelog includes implementation details and my reference the [changes to 
 
 #### bioimageio.spec 0.5.5.6 (planned; not yet released)
 
-- Add BIOIMAGEIO_HTTP_TIMEOUT environment variable to ajdust timeout for http requests.
+- Add BIOIMAGEIO_HTTP_TIMEOUT environment variable to adjust timeout for http requests.
 
 #### bioimageio.spec 0.5.5.5
 
