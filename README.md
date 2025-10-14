@@ -118,7 +118,7 @@ Made with [contrib.rocks](https://contrib.rocks).
 
 ## 🛈 Versioining scheme
 
-To keep the bioimageio.spec Python package version in sync with the (model) description format version, bioimageio.spec is versioned as MAJOR.MINRO.PATCH.LIB, where MAJOR.MINRO.PATCH correspond to the latest model description format version implemented and LIB may be bumpbed for library changes that do not affect the format version.
+To keep the bioimageio.spec Python package version in sync with the (model) description format version, bioimageio.spec is versioned as MAJOR.MINRO.PATCH.LIB, where MAJOR.MINRO.PATCH correspond to the latest model description format version implemented and LIB may be bumped for library changes that do not affect the format version.
 [This change was introduced with bioimageio.spec 0.5.3.1](changelog.md#bioimageiospec-0531).
 
 ## Δ Changelog
