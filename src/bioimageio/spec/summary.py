@@ -381,14 +381,15 @@ class ValidationSummary(BaseModel, extra="allow"):
             include_conda_list=include_conda_list,
         )
 
-    def add_detail(self, detail: ValidationDetail):
-        if self.status == "valid-format" and detail.status == "passed":
-            # once status is valid-format we can only improve to 'passed'
-            self.status = "passed"
-        elif self.status == "passed" and detail.status == "failed":
-            # once status is passed it can only degrade to 'valid-format'
-            self.status = "valid-format"
-        # once format is 'failed' it cannot improve (valid-format is set at summary creation)
+    def add_detail(self, detail: ValidationDetail, update_status: bool = True):
+        if update_status:
+            if self.status == "valid-format" and detail.status == "passed":
+                # once status is 'valid-format' we can only improve to 'passed'
+                self.status = "passed"
+            elif self.status == "passed" and detail.status == "failed":
+                # once status is 'passed' it can only degrade to 'valid-format'
+                self.status = "valid-format"
+            # once format is 'failed' it cannot improve
 
         self.details.append(detail)
 
