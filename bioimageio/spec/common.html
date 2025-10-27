@@ -233,7 +233,7 @@
     </ul>
 
 
-            <footer>bioimageio.spec 0.5.5.6</footer>
+            <footer>bioimageio.spec 0.5.5.7</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -1125,24 +1125,24 @@ Protocol classes can be generic, they are defined as::</p>
 
     </div>
     <a class="headerlink" href="#InvalidDescr"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="InvalidDescr-392"><a href="#InvalidDescr-392"><span class="linenos">392</span></a><span class="k">class</span><span class="w"> </span><span class="nc">InvalidDescr</span><span class="p">(</span>
-</span><span id="InvalidDescr-393"><a href="#InvalidDescr-393"><span class="linenos">393</span></a>    <span class="n">ResourceDescrBase</span><span class="p">,</span>
-</span><span id="InvalidDescr-394"><a href="#InvalidDescr-394"><span class="linenos">394</span></a>    <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span>
-</span><span id="InvalidDescr-395"><a href="#InvalidDescr-395"><span class="linenos">395</span></a>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;An invalid resource description&quot;</span><span class="p">,</span>
-</span><span id="InvalidDescr-396"><a href="#InvalidDescr-396"><span class="linenos">396</span></a><span class="p">):</span>
-</span><span id="InvalidDescr-397"><a href="#InvalidDescr-397"><span class="linenos">397</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A representation of an invalid resource description&quot;&quot;&quot;</span>
-</span><span id="InvalidDescr-398"><a href="#InvalidDescr-398"><span class="linenos">398</span></a>
-</span><span id="InvalidDescr-399"><a href="#InvalidDescr-399"><span class="linenos">399</span></a>    <span class="n">implemented_type</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;unknown&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
-</span><span id="InvalidDescr-400"><a href="#InvalidDescr-400"><span class="linenos">400</span></a>    <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># see NodeWithExplicitlySetFields</span>
-</span><span id="InvalidDescr-401"><a href="#InvalidDescr-401"><span class="linenos">401</span></a>        <span class="nb">type</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
-</span><span id="InvalidDescr-402"><a href="#InvalidDescr-402"><span class="linenos">402</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="InvalidDescr-403"><a href="#InvalidDescr-403"><span class="linenos">403</span></a>        <span class="nb">type</span><span class="p">:</span> <span class="n">Any</span>
-</span><span id="InvalidDescr-404"><a href="#InvalidDescr-404"><span class="linenos">404</span></a>
-</span><span id="InvalidDescr-405"><a href="#InvalidDescr-405"><span class="linenos">405</span></a>    <span class="n">implemented_format_version</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;unknown&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
-</span><span id="InvalidDescr-406"><a href="#InvalidDescr-406"><span class="linenos">406</span></a>    <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># see NodeWithExplicitlySetFields</span>
-</span><span id="InvalidDescr-407"><a href="#InvalidDescr-407"><span class="linenos">407</span></a>        <span class="n">format_version</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
-</span><span id="InvalidDescr-408"><a href="#InvalidDescr-408"><span class="linenos">408</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="InvalidDescr-409"><a href="#InvalidDescr-409"><span class="linenos">409</span></a>        <span class="n">format_version</span><span class="p">:</span> <span class="n">Any</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="InvalidDescr-396"><a href="#InvalidDescr-396"><span class="linenos">396</span></a><span class="k">class</span><span class="w"> </span><span class="nc">InvalidDescr</span><span class="p">(</span>
+</span><span id="InvalidDescr-397"><a href="#InvalidDescr-397"><span class="linenos">397</span></a>    <span class="n">ResourceDescrBase</span><span class="p">,</span>
+</span><span id="InvalidDescr-398"><a href="#InvalidDescr-398"><span class="linenos">398</span></a>    <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">,</span>
+</span><span id="InvalidDescr-399"><a href="#InvalidDescr-399"><span class="linenos">399</span></a>    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;An invalid resource description&quot;</span><span class="p">,</span>
+</span><span id="InvalidDescr-400"><a href="#InvalidDescr-400"><span class="linenos">400</span></a><span class="p">):</span>
+</span><span id="InvalidDescr-401"><a href="#InvalidDescr-401"><span class="linenos">401</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A representation of an invalid resource description&quot;&quot;&quot;</span>
+</span><span id="InvalidDescr-402"><a href="#InvalidDescr-402"><span class="linenos">402</span></a>
+</span><span id="InvalidDescr-403"><a href="#InvalidDescr-403"><span class="linenos">403</span></a>    <span class="n">implemented_type</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;unknown&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+</span><span id="InvalidDescr-404"><a href="#InvalidDescr-404"><span class="linenos">404</span></a>    <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># see NodeWithExplicitlySetFields</span>
+</span><span id="InvalidDescr-405"><a href="#InvalidDescr-405"><span class="linenos">405</span></a>        <span class="nb">type</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+</span><span id="InvalidDescr-406"><a href="#InvalidDescr-406"><span class="linenos">406</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="InvalidDescr-407"><a href="#InvalidDescr-407"><span class="linenos">407</span></a>        <span class="nb">type</span><span class="p">:</span> <span class="n">Any</span>
+</span><span id="InvalidDescr-408"><a href="#InvalidDescr-408"><span class="linenos">408</span></a>
+</span><span id="InvalidDescr-409"><a href="#InvalidDescr-409"><span class="linenos">409</span></a>    <span class="n">implemented_format_version</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;unknown&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+</span><span id="InvalidDescr-410"><a href="#InvalidDescr-410"><span class="linenos">410</span></a>    <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>  <span class="c1"># see NodeWithExplicitlySetFields</span>
+</span><span id="InvalidDescr-411"><a href="#InvalidDescr-411"><span class="linenos">411</span></a>        <span class="n">format_version</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+</span><span id="InvalidDescr-412"><a href="#InvalidDescr-412"><span class="linenos">412</span></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="InvalidDescr-413"><a href="#InvalidDescr-413"><span class="linenos">413</span></a>        <span class="n">format_version</span><span class="p">:</span> <span class="n">Any</span>
 </span></pre></div>
 
 
