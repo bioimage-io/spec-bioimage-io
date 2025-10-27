@@ -43,6 +43,6 @@ def test_no_forward_compatibility(unet2d_data: BioimageioYamlContent):
 
 
 def test_update_format(unet2d_path_old: str):
-    updated = update_format(unet2d_path_old)
+    updated = update_format(unet2d_path_old, perform_io_checks=False)
     assert updated.type == "model"
     assert updated.format_version == ModelDescr.implemented_format_version

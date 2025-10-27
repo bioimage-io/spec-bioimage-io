@@ -245,16 +245,22 @@ class ValidationSummary(BaseModel, extra="allow"):
 
     name: str
     """Name of the validation"""
+
     source_name: str
     """Source of the validated bioimageio description"""
+
     id: Optional[str] = None
     """ID of the resource being validated"""
+
     type: str
     """Type of the resource being validated"""
+
     format_version: str
     """Format version of the resource being validated"""
+
     status: Literal["passed", "valid-format", "failed"]
-    """overall status of the bioimageio validation"""
+    """Overall status of the bioimageio validation"""
+
     metadata_completeness: Annotated[float, annotated_types.Interval(ge=0, le=1)] = 0.0
     """Estimate of completeness of the metadata in the resource description.
 
@@ -375,11 +381,15 @@ class ValidationSummary(BaseModel, extra="allow"):
             include_conda_list=include_conda_list,
         )
 
-    def add_detail(self, detail: ValidationDetail):
-        if detail.status == "failed":
-            self.status = "failed"
-        elif detail.status != "passed":
-            assert_never(detail.status)
+    def add_detail(self, detail: ValidationDetail, update_status: bool = True):
+        if update_status:
+            if self.status == "valid-format" and detail.status == "passed":
+                # once status is 'valid-format' we can only improve to 'passed'
+                self.status = "passed"
+            elif self.status == "passed" and detail.status == "failed":
+                # once status is 'passed' it can only degrade to 'valid-format'
+                self.status = "valid-format"
+            # once format is 'failed' it cannot improve
 
         self.details.append(detail)
 

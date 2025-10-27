@@ -233,6 +233,7 @@ class ResourceDescrBase(
             with all_warnings_context:
                 _, _, val_warnings = cls._load_impl(deepcopy_yaml_value(data))
 
+        format_status = "failed" if errors else "passed"
         rd.validation_summary.add_detail(
             ValidationDetail(
                 errors=errors,
@@ -240,11 +241,14 @@ class ResourceDescrBase(
                     "bioimageio.spec format validation"
                     f" {rd.type} {cls.implemented_format_version}"
                 ),
-                status="failed" if errors else "passed",
+                status=format_status,
                 warnings=val_warnings,
-                context=context.summary,  # context for format validation detail is identical
-            )
+            ),
+            update_status=False,  # avoid updating status from 'valid-format' to 'passed', but ...
         )
+        if format_status == "failed":
+            # ... update status in case of failure
+            rd.validation_summary.status = "failed"
 
         return rd
 
