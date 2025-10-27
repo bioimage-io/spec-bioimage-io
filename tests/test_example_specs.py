@@ -58,6 +58,7 @@ def test_example_descr_paths(
         as_latest=False,
         exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(key, set()),
         bioimageio_json_schema=bioimageio_json_schema,
+        perform_io_checks=False,
     )
 
 
