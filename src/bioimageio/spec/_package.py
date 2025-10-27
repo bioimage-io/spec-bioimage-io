@@ -235,7 +235,7 @@ def save_bioimageio_package(
     """Package a bioimageio resource as a zip file.
 
     Args:
-        rd: bioimageio resource description
+        source: bioimageio resource description
         compression: The numeric constant of compression method.
         compression_level: Compression level to use when writing files to the archive.
                            See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile
@@ -298,7 +298,7 @@ def save_bioimageio_package_to_stream(
     """Package a bioimageio resource into a stream.
 
     Args:
-        rd: bioimageio resource description
+        source: bioimageio resource description
         compression: The numeric constant of compression method.
         compression_level: Compression level to use when writing files to the archive.
                            See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile
