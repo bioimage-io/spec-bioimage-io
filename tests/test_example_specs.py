@@ -72,4 +72,5 @@ def test_invalid_example_descr_paths(
         as_latest=False,
         is_invalid=True,
         bioimageio_json_schema=bioimageio_json_schema,
+        perform_io_checks=False,
     )
