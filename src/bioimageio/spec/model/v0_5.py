@@ -2359,11 +2359,22 @@ class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     """TensorFlow version used to create these weights."""
 
 
+FileDescr_external_data = Annotated[
+    FileDescr_,
+    WithSuffix(".data", case_sensitive=True),
+    Field(examples=[dict(source="weights.onnx.data")]),
+]
+
+
 class OnnxWeightsDescr(WeightsEntryDescrBase):
     type = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Annotated[int, Ge(7)]
     """ONNX opset version"""
+
+    external_data: Optional[FileDescr_external_data] = None
+    """Source of the external ONNX data file holding the weights.
+    (If present **source** holds the ONNX architecture without weights)."""
 
 
 class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
@@ -2611,11 +2622,11 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    implemented_format_version: ClassVar[Literal["0.5.5"]] = "0.5.5"
+    implemented_format_version: ClassVar[Literal["0.5.6"]] = "0.5.6"
     if TYPE_CHECKING:
-        format_version: Literal["0.5.5"] = "0.5.5"
+        format_version: Literal["0.5.6"] = "0.5.6"
     else:
-        format_version: Literal["0.5.5"]
+        format_version: Literal["0.5.6"]
         """Version of the bioimage.io model description specification used.
         When creating a new model always use the latest micro/patch version described here.
         The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -3357,7 +3368,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             covers=src.covers,
             description=src.description,
             documentation=src.documentation,
-            format_version="0.5.5",
+            format_version="0.5.6",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
             id=None if src.id is None else ModelId(src.id),

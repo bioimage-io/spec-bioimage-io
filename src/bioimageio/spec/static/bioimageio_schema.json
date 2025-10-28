@@ -10528,7 +10528,7 @@
           "title": "Version Comment"
         },
         "format_version": {
-          "const": "0.5.5",
+          "const": "0.5.6",
           "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
           "title": "Format Version",
           "type": "string"
@@ -10677,7 +10677,7 @@
         "outputs",
         "weights"
       ],
-      "title": "model 0.5.5",
+      "title": "model 0.5.6",
       "type": "object"
     },
     "bioimageio__spec__model__v0_5__OnnxWeightsDescr": {
@@ -10773,6 +10773,23 @@
           "minimum": 7,
           "title": "Opset Version",
           "type": "integer"
+        },
+        "external_data": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FileDescr",
+              "examples": [
+                {
+                  "source": "weights.onnx.data"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source of the external ONNX data file holding the weights.\n(If present **source** holds the ONNX architecture without weights)."
         }
       },
       "required": [
@@ -13892,7 +13909,7 @@
         "discriminator": {
           "mapping": {
             "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-            "0.5.5": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+            "0.5.6": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
           },
           "propertyName": "format_version"
         },
@@ -13976,7 +13993,7 @@
       "discriminator": {
         "mapping": {
           "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-          "0.5.5": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+          "0.5.6": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
         },
         "propertyName": "format_version"
       },
