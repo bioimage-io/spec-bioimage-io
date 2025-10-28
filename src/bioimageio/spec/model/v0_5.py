@@ -66,6 +66,7 @@ from .._internal.io import (
     FileSource,
     WithSuffix,
     YamlValue,
+    extract_file_name,
     get_reader,
     wo_special_file_name,
 )
@@ -2375,6 +2376,19 @@ class OnnxWeightsDescr(WeightsEntryDescrBase):
     external_data: Optional[FileDescr_external_data] = None
     """Source of the external ONNX data file holding the weights.
     (If present **source** holds the ONNX architecture without weights)."""
+
+    @model_validator(mode="after")
+    def _validate_external_data_unique_file_name(self) -> Self:
+        if self.external_data is not None and (
+            extract_file_name(self.source)
+            == extract_file_name(self.external_data.source)
+        ):
+            raise ValueError(
+                f"ONNX `external_data` file name '{extract_file_name(self.external_data.source)}'"
+                + " must be different from ONNX `source` file name."
+            )
+
+        return self
 
 
 class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
