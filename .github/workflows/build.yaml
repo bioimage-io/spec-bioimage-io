@@ -147,6 +147,29 @@ jobs:
           branch: ${{ steps.get_branch.outputs.branch }}
           folder: dist
 
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip --version
+          pip install --upgrade build
+          pip install .
+      - name: Build package
+        run: |
+          python -m build
+      - uses: actions/upload-artifact@v4
+        with:
+          path: dist/
+          name: dist
+
   conda-build:
     needs: test
     runs-on: ubuntu-latest
@@ -186,9 +209,8 @@ jobs:
   #      with:
   #        recipe-path: conda-recipe/recipe.yaml
 
-  pip-build:
-    name: Build and publish to PyPI
-    needs: [deploy, conda-build]
+  publish:
+    needs: [build, conda-build]
     runs-on: ubuntu-latest
     environment:
       name: release
@@ -200,17 +222,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.10'
-          cache: 'pip'
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip --version
-          pip install --upgrade build
-          pip install .
       - name: Check if there is a parent commit
         id: check-parent-commit
         run: |
@@ -231,11 +242,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           custom_tag: ${{ steps.check-version.outputs.current-version }}
-
-      - name: Build package
-        run: |
-          python -m build
-
+      - uses: actions/download-artifact@v4
+        if: github.ref == 'refs/heads/main' && steps.tag-version.outputs.new_tag
+        with:
+          name: dist
       - name: Publish package on PyPI
         if: github.ref == 'refs/heads/main' && steps.tag-version.outputs.new_tag
         uses: pypa/gh-action-pypi-publish@release/v1
