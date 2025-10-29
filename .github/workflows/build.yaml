@@ -148,7 +148,6 @@ jobs:
           folder: dist
 
   build:
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -161,7 +160,6 @@ jobs:
           python -m pip install --upgrade pip
           pip --version
           pip install --upgrade build
-          pip install .
       - name: Build package
         run: |
           python -m build
@@ -171,7 +169,6 @@ jobs:
           name: dist
 
   conda-build:
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -210,12 +207,13 @@ jobs:
   #        recipe-path: conda-recipe/recipe.yaml
 
   publish:
-    needs: [build, conda-build]
+    needs: [test, coverage, build, conda-build]
     runs-on: ubuntu-latest
     environment:
       name: release
       url: https://pypi.org/project/bioimageio.spec/
     permissions:
+      contents: write # required for tag creation
       id-token: write # required for pypi publish action
     steps:
       - name: Check out the repository
@@ -228,26 +226,20 @@ jobs:
           echo "sha=$(git rev-parse --verify --quiet HEAD^)" >> $GITHUB_OUTPUT
 
       - name: Detect new version
-        id: check-version
+        id: tag-version
         if: github.ref == 'refs/heads/main' && steps.check-parent-commit.outputs.sha
         uses: salsify/action-detect-and-tag-new-version@v2.0.3
         with:
-          create-tag: false
+          create-tag: true
           version-command: |
             python -c "from pathlib import Path;print(p_version.read_text().split('VERSION = \"')[1].split('\"')[0] if (p_version:=Path('src/bioimageio/spec/_version.py')).exists() else Path('src/bioimageio/spec/__init__.py').read_text().split('__version__ = \"')[1].split('\"')[0])"
-      - name: Push tag
-        id: tag-version
-        if: github.ref == 'refs/heads/main' && steps.check-version.outputs.previous-version != steps.check-version.outputs.current-version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          custom_tag: ${{ steps.check-version.outputs.current-version }}
       - uses: actions/download-artifact@v4
-        if: github.ref == 'refs/heads/main' && steps.tag-version.outputs.new_tag
+        if: github.ref == 'refs/heads/main' && steps.tag-version.outputs.tag
         with:
           name: dist
+          path: dist
       - name: Publish package on PyPI
-        if: github.ref == 'refs/heads/main' && steps.tag-version.outputs.new_tag
+        if: github.ref == 'refs/heads/main' && steps.tag-version.outputs.tag
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
@@ -256,7 +248,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: release-drafter/release-drafter@v6.0.0
         with:
-          publish: "${{ steps.tag-version.outputs.new_tag != '' }}"
-          tag: '${{ steps.tag-version.outputs.new_tag }}'
+          publish: "${{ steps.tag-version.outputs.tag != '' }}"
+          tag: '${{ steps.tag-version.outputs.tag }}'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
