@@ -1,4 +1,6 @@
 # type: ignore
+from typing import List, Optional
+
 import torch
 import torch.nn as nn
 
@@ -75,11 +77,16 @@ class UNetBase(nn.Module):
 
         return x
 
-    def forward(self, *x):
-        assert isinstance(x, (list, tuple)), type(x)
-        # fix issue in onnx export
-        if isinstance(x[0], list) and len(x) == 1:
-            x = x[0]
+    def forward(
+        self,
+        x0: torch.Tensor,
+        x1: Optional[torch.Tensor] = None,
+        x2: Optional[torch.Tensor] = None,
+        x3: Optional[torch.Tensor] = None,
+        x4: Optional[torch.Tensor] = None,
+        /,
+    ) -> List[torch.Tensor]:
+        x = [x for x in [x0, x1, x2, x3, x4] if x is not None]
         assert len(x) == self.in_channels, f"{len(x)}, {self.in_channels}"
         x = torch.cat(x, dim=1)
         out = self._apply_default(x)
