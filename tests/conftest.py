@@ -5,6 +5,7 @@ from typing import Any, Dict
 
 import pytest
 from dotenv import load_dotenv
+from loguru import logger
 
 from bioimageio.spec._internal.constants import (
     KNOWN_GITHUB_USERS,
@@ -17,6 +18,8 @@ from bioimageio.spec._internal.type_guards import is_kwargs
 from bioimageio.spec.utils import get_bioimageio_json_schema
 
 _ = load_dotenv()
+
+logger.enable("bioimageio")
 
 EXAMPLE_DESCRIPTIONS = Path(__file__).parent / "../example_descriptions/"
 UNET2D_ROOT = EXAMPLE_DESCRIPTIONS / "models/unet2d_nuclei_broad"
