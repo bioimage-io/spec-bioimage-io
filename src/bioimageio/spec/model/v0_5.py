@@ -2792,12 +2792,13 @@ class ModelDescr(GenericModelDescrBase):
                     + f" {axis.halo}."
                 )
 
-            input_halo = axis.halo * axis.scale / ref_axis.scale
-            if input_halo != int(input_halo) or input_halo % 2 == 1:
+            ref_halo = axis.halo * axis.scale / ref_axis.scale
+            if ref_halo != int(ref_halo):
                 raise ValueError(
-                    f"input_halo {input_halo} (output_halo {axis.halo} *"
-                    + f" output_scale {axis.scale} / input_scale {ref_axis.scale})"
-                    + f"     {tensor_id}.{axis.id}."
+                    f"Inferred halo for {'.'.join(ref)} is not an integer ({ref_halo} ="
+                    + f" {tensor_id}.{axis.id}.halo {axis.halo}"
+                    + f" * {tensor_id}.{axis.id}.scale {axis.scale}"
+                    + f" / {'.'.join(ref)}.scale {ref_axis.scale})."
                 )
 
     @model_validator(mode="after")
