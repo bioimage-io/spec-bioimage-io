@@ -314,28 +314,6 @@
       "title": "model.v0_5.ChannelAxis",
       "type": "object"
     },
-    "ClipKwargs": {
-      "additionalProperties": false,
-      "description": "key word arguments for `ClipDescr`",
-      "properties": {
-        "min": {
-          "description": "minimum value for clipping",
-          "title": "Min",
-          "type": "number"
-        },
-        "max": {
-          "description": "maximum value for clipping",
-          "title": "Max",
-          "type": "number"
-        }
-      },
-      "required": [
-        "min",
-        "max"
-      ],
-      "title": "model.v0_4.ClipKwargs",
-      "type": "object"
-    },
     "DataDependentSize": {
       "additionalProperties": false,
       "properties": {
@@ -6475,7 +6453,7 @@
           "type": "string"
         },
         "kwargs": {
-          "$ref": "#/$defs/ClipKwargs"
+          "$ref": "#/$defs/bioimageio__spec__model__v0_4__ClipKwargs"
         }
       },
       "required": [
@@ -6483,6 +6461,28 @@
         "kwargs"
       ],
       "title": "model.v0_4.ClipDescr",
+      "type": "object"
+    },
+    "bioimageio__spec__model__v0_4__ClipKwargs": {
+      "additionalProperties": false,
+      "description": "key word arguments for `ClipDescr`",
+      "properties": {
+        "min": {
+          "description": "minimum value for clipping",
+          "title": "Min",
+          "type": "number"
+        },
+        "max": {
+          "description": "maximum value for clipping",
+          "title": "Max",
+          "type": "number"
+        }
+      },
+      "required": [
+        "min",
+        "max"
+      ],
+      "title": "model.v0_4.ClipKwargs",
       "type": "object"
     },
     "bioimageio__spec__model__v0_4__InputTensorDescr": {
@@ -9317,7 +9317,7 @@
           "type": "string"
         },
         "kwargs": {
-          "$ref": "#/$defs/ClipKwargs"
+          "$ref": "#/$defs/bioimageio__spec__model__v0_5__ClipKwargs"
         }
       },
       "required": [
@@ -9325,6 +9325,96 @@
         "kwargs"
       ],
       "title": "model.v0_5.ClipDescr",
+      "type": "object"
+    },
+    "bioimageio__spec__model__v0_5__ClipKwargs": {
+      "additionalProperties": false,
+      "description": "key word arguments for `ClipDescr`",
+      "properties": {
+        "min": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum value for clipping.\n\nExclusive with `min_percentile`",
+          "title": "Min"
+        },
+        "min_percentile": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum percentile for clipping.\n\nExclusive with `min`.\n\nIn range [0, 100).",
+          "title": "Min Percentile"
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum value for clipping.\n\nExclusive with `max_percentile`.",
+          "title": "Max"
+        },
+        "max_percentile": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 1,
+              "maximum": 100,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum percentile for clipping.\n\nExclusive with `max`.\n\nIn range (1, 100].",
+          "title": "Max Percentile"
+        },
+        "axes": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 16,
+                "minLength": 1,
+                "title": "AxisId",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The subset of axes to determine percentiles jointly,\n\ni.e. axes to reduce to compute min/max from `min_percentile`/`max_percentile`.\nFor example to clip 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')\nresulting in a tensor of equal shape with clipped values per channel, specify `axes=('batch', 'x', 'y')`.\nTo clip samples independently, leave out the 'batch' axis.\n\nOnly valid if `min_percentile` and/or `max_percentile` are set.\n\nDefault: Compute percentiles over all axes jointly.",
+          "examples": [
+            [
+              "batch",
+              "x",
+              "y"
+            ]
+          ],
+          "title": "Axes"
+        }
+      },
+      "title": "model.v0_5.ClipKwargs",
       "type": "object"
     },
     "bioimageio__spec__model__v0_5__Config": {
