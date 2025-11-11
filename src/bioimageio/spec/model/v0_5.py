@@ -1417,13 +1417,7 @@ class ScaleRangeDescr(ProcessingDescrBase):
         ...           max_percentile= 99.8,
         ...           min_percentile= 5.0,
         ...         )
-        ...     ),
-        ...     ClipDescr(
-        ...         kwargs=ClipKwargs(
-        ...             min=0.0,
-        ...             max=1.0,
-        ...         )
-        ...     ),
+        ...     )
         ... ]
 
       2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.
@@ -1447,7 +1441,13 @@ class ScaleRangeDescr(ProcessingDescrBase):
         ...       axes= (AxisId('y'), AxisId('x')),
         ...       max_percentile= 99.8,
         ...       min_percentile= 5.0,
-        ...   )
+        ...   ),
+        ...     ClipDescr(
+        ...         kwargs=ClipKwargs(
+        ...             min=0.0,
+        ...             max=1.0,
+        ...         )
+        ...     ),
         ... )]
 
     """
