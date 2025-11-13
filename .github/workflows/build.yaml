@@ -1,4 +1,4 @@
-name: Test and Deploy bioimageio.spec
+name: CI
 
 on:
   push:
