@@ -1436,19 +1436,21 @@ class ScaleRangeDescr(ProcessingDescrBase):
               max: 1.0
         ```
         - in Python
-        >>> preprocessing = [ScaleRangeDescr(
-        ...   kwargs=ScaleRangeKwargs(
+        >>> preprocessing = [
+        ...   ScaleRangeDescr(
+        ...     kwargs=ScaleRangeKwargs(
         ...       axes= (AxisId('y'), AxisId('x')),
         ...       max_percentile= 99.8,
         ...       min_percentile= 5.0,
+        ...     )
         ...   ),
-        ...     ClipDescr(
-        ...         kwargs=ClipKwargs(
-        ...             min=0.0,
-        ...             max=1.0,
-        ...         )
-        ...     ),
-        ... )]
+        ...   ClipDescr(
+        ...     kwargs=ClipKwargs(
+        ...       min=0.0,
+        ...       max=1.0,
+        ...     )
+        ...   ),
+        ... ]
 
     """
 
