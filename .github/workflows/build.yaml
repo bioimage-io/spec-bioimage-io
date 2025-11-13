@@ -5,6 +5,16 @@ on:
     branches: [main]
   pull_request:
     branches: ['**']
+  workflow_dispatch:
+    inputs:
+      force-publish:
+        description: 'Force publish even if no version change detected'
+        required: false
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+        default: 'false'
 
 jobs:
   test:
@@ -106,47 +116,6 @@ jobs:
           retention-days: 1
           path: dist
 
-  deploy:
-    needs: [test, coverage]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: coverage-summary
-          path: dist
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-          cache: 'pip'
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -e .[dev]
-      - name: Generate spec docs
-        run: python scripts/generate_spec_documentation.py --dist dist/user_docs
-      - name: Generate interactive documentation
-        env:
-          PYTHONPATH: './scripts'
-        run: python -m interactive_docs
-      - name: Generate JSON schema documentation
-        run: python scripts/generate_json_schema_documentation.py
-      - name: Generate developer docs
-        run: ./scripts/pdoc/run.sh
-      - name: copy legacy file until BioImage.IO-packager is updated # TODO: remove if packager does not depend on it anymore
-        run: cp weight_formats_spec.json ./dist/weight_formats_spec.json
-      - name: Get branch name to deploy to
-        id: get_branch
-        shell: bash
-        run: |
-          if [[ -n '${{ github.event.pull_request.head.ref }}' ]]; then branch=gh-pages-${{ github.event.pull_request.head.ref }}; else branch=gh-pages; fi
-          echo "::set-output name=branch::$branch"
-      - name: Deploy to ${{ steps.get_branch.outputs.branch }} 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: ${{ steps.get_branch.outputs.branch }}
-          folder: dist
-
   build:
     runs-on: ubuntu-latest
     steps:
@@ -170,8 +139,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
@@ -204,49 +171,117 @@ jobs:
   #      with:
   #        recipe-path: conda-recipe/recipe.yaml
 
-  publish:
-    needs: [test, coverage, build, conda-build, deploy]
+  deploy:
+    needs: [test, coverage, build, conda-build]
     runs-on: ubuntu-latest
-    environment:
-      name: release
-      url: https://pypi.org/project/bioimageio.spec/
     permissions:
       contents: write # required for tag creation
-      id-token: write # required for pypi publish action
+    outputs:
+      new-version: ${{ steps.get-new-version.outputs.new-version }}
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
-      - name: Check if there is a parent commit
-        id: check-parent-commit
+          fetch-depth: 0
+          fetch-tags: true
+      - uses: ./.github/actions/max_disk_space
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage-summary
+          path: dist
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -e .[dev,docs]
+      - name: Generate spec docs
+        run: python scripts/generate_spec_documentation.py --dist dist/user_docs
+      - name: Generate interactive documentation
+        env:
+          PYTHONPATH: './scripts'
+        run: python -m interactive_docs
+      - name: Generate JSON schema documentation
+        run: python scripts/generate_json_schema_documentation.py
+      - name: copy legacy file until BioImage.IO-packager is updated # TODO: remove if packager does not depend on it anymore
+        run: cp weight_formats_spec.json ./dist/weight_formats_spec.json
+      - name: Get branch name to deploy to
+        id: get_branch
+        shell: bash
+        run: |
+          if [[ -n '${{ github.event.pull_request.head.ref }}' ]]; then branch=gh-pages-${{ github.event.pull_request.head.ref }}; else branch=gh-pages; fi
+          echo "::set-output name=branch::$branch"
+      - name: Deploy to ${{ steps.get_branch.outputs.branch }} 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: ${{ steps.get_branch.outputs.branch }}
+          folder: dist
+      - name: Get parent commit
+        if: inputs.force-publish != 'true'
+        id: get-parent-commit
         run: |
           echo "sha=$(git rev-parse --verify --quiet HEAD^)" >> $GITHUB_OUTPUT
-
-      - name: Detect new version
+      - id: get-existing-tag
+        if: inputs.force-publish == 'true'
+        run: echo "existing-tag=$(git tag --points-at HEAD 'v[0-9]*.[0-9]*.[0-9]*')" >> $GITHUB_OUTPUT
+      - name: Detect new version from last commit and create tag
         id: tag-version
-        if: github.ref == 'refs/heads/main' && steps.check-parent-commit.outputs.sha
+        if: github.ref == 'refs/heads/main' && steps.get-parent-commit.outputs.sha && inputs.force-publish != 'true'
         uses: salsify/action-detect-and-tag-new-version@v2.0.3
         with:
           create-tag: true
           version-command: |
-            python -c "from pathlib import Path;print(p_version.read_text().split('VERSION = \"')[1].split('\"')[0] if (p_version:=Path('src/bioimageio/spec/_version.py')).exists() else Path('src/bioimageio/spec/__init__.py').read_text().split('__version__ = \"')[1].split('\"')[0])"
+            python -c "from pathlib import Path;print(Path('src/bioimageio/spec/_version.py').read_text().split('VERSION = \"')[1].split('\"')[0])"
+      - shell: python
+        id: get-new-version
+        run: |
+          import os
+          from pathlib import Path
+
+          if "${{ inputs.force-publish }}" == "true":
+              existing_tag = "${{ steps.get-existing-tag.outputs.existing-tag }}"
+              valid = existing_tag.count("v") == 1 and existing_tag.count(".") == 2 and all(part.isdigit() for part in existing_tag.lstrip("v").split("."))
+              if not valid:
+                  raise Exception(f"Current commit has invalid version tag {existing_tag}.")
+
+              source_version = Path('src/bioimageio/core/__init__.py').read_text().split('__version__ = \"')[1].split('\"')[0]
+              if existing_tag != f"v{source_version}":
+                  raise Exception(f"Version tag {existing_tag} does not match source version {source_version}.")
+
+              new_version = existing_tag
+          else:
+              new_version = "${{ steps.tag-version.outputs.tag }}"
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              print(f"new-version={new_version}", file=f)
+
+      - name: Generate developer docs
+        run: mike deploy --push --branch ${{ steps.get_branch.outputs.branch }} --update-aliases ${{ steps.get-new-version.outputs.new-version || 'dev'}} ${{ steps.get-new-version.outputs.new-version && 'latest' || ' '}}
+
+  publish:
+    needs: [test, coverage, build, conda-build, deploy]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && needs.deploy.outputs.new-version
+    environment:
+      name: release
+      url: https://pypi.org/project/bioimageio.spec/
+    permissions:
+      contents: write # required to create a github release (release drafter)
+      id-token: write # required for pypi publish action
+    steps:
       - uses: actions/download-artifact@v4
-        if: github.ref == 'refs/heads/main' && steps.tag-version.outputs.tag
         with:
           name: dist
           path: dist
       - name: Publish package on PyPI
-        if: github.ref == 'refs/heads/main' && steps.tag-version.outputs.tag
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
-
       - name: Publish the release notes
         if: github.ref == 'refs/heads/main'
         uses: release-drafter/release-drafter@v6.0.0
         with:
-          publish: "${{ steps.tag-version.outputs.tag != '' }}"
-          tag: '${{ steps.tag-version.outputs.tag }}'
+          tag: '${{ needs.deploy.outputs.new-version }}'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
