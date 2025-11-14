@@ -60,6 +60,16 @@ dev = [
     "ruff",
     "torch",
 ]
+docs = [
+    "griffe-pydantic",
+    "markdown-callouts",
+    "markdown-exec",
+    "mike",
+    "mkdocs-api-autonav",
+    "mkdocs-coverage",
+    "mkdocs-material",
+    "mkdocs-section-index",
+]
 
 [build-system]
 requires = ["pip", "setuptools>=61.0"]
