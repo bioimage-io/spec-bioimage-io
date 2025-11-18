@@ -141,7 +141,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - API Reference:
-      - bioimageio.spec: api/bioimageio.spec.md
+      - api/index.md
       - Description Format Specifications:
           - Model: api/model.md
           - Dataset: api/dataset.md

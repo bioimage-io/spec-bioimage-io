@@ -38,7 +38,7 @@ All bioimage.io description formats are defined as [Pydantic models](https://doc
 | generic | 0.3 </br> 0.2 | - | [GenericDescr_v0_3](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/generic/v0_3.html#GenericDescr) </br> [GenericDescr_v0_2](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/generic/v0_2.html#GenericDescr) |
 
 [^1]: JSON Schema based documentation generated with [json-schema-for-humans](https://coveooss.github.io/json-schema-for-humans/).
-[^2]: Part of the bioimageio.spec package documentation generated with [pdoc](https://pdoc.dev/).
+[^2]: Part of the [bioimageio.spec API reference](https://bioimage-io.github.io/spec-bioimage-io/api).
 
 ## JSON Schema
 

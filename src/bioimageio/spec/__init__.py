@@ -1,5 +1,14 @@
 """
-.. include:: ../../README.md
+bioimageio.spec - BioImage.IO specifications in Python.
+
+This package provides Pydantic data models for BioImage.IO resource descriptions and tools to work with such descriptions.
+
+The BioImage.IO resource description format is resource type specific (e.g. models, datasets) and versioned.
+This library defines and validates these specifications and is backwards compatible with previous format versions.
+It also provides download/upload to/from the BioImage.IO Model Zoo at https://bioimage.io.
+
+Note:
+    For more powerful tools to work with BioImage.IO resources, consider using the [bioimageio.core](https://bioimage-io.github.io/core-bioimage-io-python) package.
 """
 
 # ruff: noqa: E402
