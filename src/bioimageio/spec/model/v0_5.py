@@ -2356,7 +2356,7 @@ class WeightsEntryDescrBase(FileDescr):
 
 
 class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
-    type = "keras_hdf5"
+    type: ClassVar[WeightsFormat] = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
     tensorflow_version: Version
     """TensorFlow version used to create these weights."""
@@ -2370,7 +2370,7 @@ FileDescr_external_data = Annotated[
 
 
 class OnnxWeightsDescr(WeightsEntryDescrBase):
-    type = "onnx"
+    type: ClassVar[WeightsFormat] = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Annotated[int, Ge(7)]
     """ONNX opset version"""
@@ -2394,7 +2394,7 @@ class OnnxWeightsDescr(WeightsEntryDescrBase):
 
 
 class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
-    type = "pytorch_state_dict"
+    type: ClassVar[WeightsFormat] = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr]
     pytorch_version: Version
@@ -2413,7 +2413,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
 
 
 class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
-    type = "tensorflow_js"
+    type: ClassVar[WeightsFormat] = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Version
     """Version of the TensorFlow library used."""
@@ -2424,7 +2424,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
 
 
 class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
-    type = "tensorflow_saved_model_bundle"
+    type: ClassVar[WeightsFormat] = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Version
     """Version of the TensorFlow library used."""
@@ -2439,7 +2439,7 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
 
 
 class TorchscriptWeightsDescr(WeightsEntryDescrBase):
-    type = "torchscript"
+    type: ClassVar[WeightsFormat] = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
     pytorch_version: Version
     """Version of the PyTorch library used."""

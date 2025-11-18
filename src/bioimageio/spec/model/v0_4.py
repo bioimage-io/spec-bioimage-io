@@ -294,7 +294,7 @@ class WeightsEntryDescrBase(FileDescr):
 
 
 class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
-    type = "keras_hdf5"
+    type: ClassVar[WeightsFormat] = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
     tensorflow_version: Optional[Version] = None
     """TensorFlow version used to create these weights"""
@@ -314,7 +314,7 @@ class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
 
 
 class OnnxWeightsDescr(WeightsEntryDescrBase):
-    type = "onnx"
+    type: ClassVar[WeightsFormat] = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
     opset_version: Optional[Annotated[int, Ge(7)]] = None
     """ONNX opset version"""
@@ -335,7 +335,7 @@ class OnnxWeightsDescr(WeightsEntryDescrBase):
 
 
 class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
-    type = "pytorch_state_dict"
+    type: ClassVar[WeightsFormat] = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
     architecture: CustomCallable = Field(
         examples=["my_function.py:MyNetworkClass", "my_module.submodule.get_my_model"]
@@ -398,7 +398,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
 
 
 class TorchscriptWeightsDescr(WeightsEntryDescrBase):
-    type = "torchscript"
+    type: ClassVar[WeightsFormat] = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
     pytorch_version: Optional[Version] = None
     """Version of the PyTorch library used."""
@@ -418,7 +418,7 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
 
 
 class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
-    type = "tensorflow_js"
+    type: ClassVar[WeightsFormat] = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
     tensorflow_version: Optional[Version] = None
     """Version of the TensorFlow library used."""
@@ -442,7 +442,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
 
 
 class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
-    type = "tensorflow_saved_model_bundle"
+    type: ClassVar[WeightsFormat] = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
     tensorflow_version: Optional[Version] = None
     """Version of the TensorFlow library used."""
