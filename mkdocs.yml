@@ -85,7 +85,7 @@ plugins:
             docstring_options:
               ignore_init_summary: true
             docstring_section_style: list
-            # filters: []
+            filters: 'public'
             heading_level: 1
             inherited_members: true
             members: true
