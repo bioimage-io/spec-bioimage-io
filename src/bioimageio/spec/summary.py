@@ -324,13 +324,20 @@ class ValidationSummary(BaseModel, extra="allow"):
         *,
         width: Optional[int] = None,
         include_conda_list: bool = False,
-    ):
+    ) -> str:
+        """Format summary as Markdown string (alias to `format_md`)"""
+        return self.format_md(width=width, include_conda_list=include_conda_list)
+
+    def format_md(
+        self,
+        *,
+        width: Optional[int] = None,
+        include_conda_list: bool = False,
+    ) -> str:
         """Format summary as Markdown string"""
         return self._format(
             width=width, target="md", include_conda_list=include_conda_list
         )
-
-    format_md = format
 
     def format_html(
         self,
