@@ -196,7 +196,7 @@ To keep this relation, but avoid overbearing post releases a library version num
 
 #### bioimageio.spec 0.5.0
 
-- new description formats: [generic 0.3, application 0.3, collection 0.3, dataset 0.3, notebook 0.3](generic-030--application-030--collection-030--dataset-030--notebook-030) and [model 0.5](model-050).
+- new description formats: [generic 0.3, application 0.3, collection 0.3, dataset 0.3, notebook 0.3](#generic-030--application-030--collection-030--dataset-030--notebook-030) and [model 0.5](#model-050).
 - various API changes, most important functions:
   - `bioimageio.spec.load_description` (replaces `load_raw_resource_description`, interface changed)
   - `bioimageio.spec.validate_format` (new)
