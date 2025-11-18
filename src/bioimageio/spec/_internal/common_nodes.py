@@ -422,5 +422,5 @@ class KwargsNode(Node):
         else:
             raise KeyError(item)
 
-    def __contains__(self, item: str) -> int:
+    def __contains__(self, item: str) -> bool:
         return item in self.__class__.model_fields

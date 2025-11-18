@@ -96,7 +96,7 @@ class ErrorEntry(ValidationEntry):
     _traceback_rich: Optional[rich.traceback.Traceback] = None
 
     @property
-    def traceback_rich(self):
+    def traceback_rich(self) -> Optional[rich.traceback.Traceback]:
         return self._traceback_rich
 
     def model_post_init(self, __context: Any):
@@ -232,7 +232,7 @@ class ValidationDetail(BaseModel, extra="allow"):
         return self.saved_conda_compare
 
     @property
-    def status_icon(self):
+    def status_icon(self) -> str:
         if self.status == "passed":
             return "✔️"
         else:
@@ -287,7 +287,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         return self.conda_list
 
     @property
-    def conda_list(self):
+    def conda_list(self) -> str:
         if self.saved_conda_list is None:
             p = subprocess.run(
                 [CONDA_CMD, "list"],
@@ -303,7 +303,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         return self.saved_conda_list
 
     @property
-    def status_icon(self):
+    def status_icon(self) -> str:
         if self.status == "passed":
             return "✔️"
         elif self.status == "valid-format":
@@ -337,7 +337,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         *,
         width: Optional[int] = None,
         include_conda_list: bool = False,
-    ):
+    ) -> str:
         md_with_html = self._format(
             target="html", width=width, include_conda_list=include_conda_list
         )
@@ -381,7 +381,7 @@ class ValidationSummary(BaseModel, extra="allow"):
             include_conda_list=include_conda_list,
         )
 
-    def add_detail(self, detail: ValidationDetail, update_status: bool = True):
+    def add_detail(self, detail: ValidationDetail, update_status: bool = True) -> None:
         if update_status:
             if self.status == "valid-format" and detail.status == "passed":
                 # once status is 'valid-format' we can only improve to 'passed'
@@ -460,14 +460,14 @@ class ValidationSummary(BaseModel, extra="allow"):
 
     def save_json(
         self, path: Path = Path("summary.json"), *, indent: Optional[int] = 2
-    ):
+    ) -> None:
         """Save validation/test summary as JSON file."""
         json_str = self.model_dump_json(indent=indent)
         path.parent.mkdir(exist_ok=True, parents=True)
         _ = path.write_text(json_str, encoding="utf-8")
         logger.info("Saved summary to {}", path.absolute())
 
-    def save_markdown(self, path: Path = Path("summary.md")):
+    def save_markdown(self, path: Path = Path("summary.md")) -> None:
         """Save rendered validation/test summary as Markdown file."""
         formatted = self.format_md()
         path.parent.mkdir(exist_ok=True, parents=True)
@@ -509,7 +509,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         target: Union[rich.console.Console, Literal["html", "md"]],
         width: Optional[int],
         include_conda_list: bool,
-    ):
+    ) -> str:
         return _format_summary(
             self,
             target=target,
