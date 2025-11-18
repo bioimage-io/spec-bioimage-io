@@ -496,8 +496,8 @@ class ValidationSummary(BaseModel, extra="allow"):
         return cls.model_validate_json(json_str)
 
     @field_validator("env", mode="before")
-    def _convert_dict(cls, value: List[Union[List[str], Dict[str, str]]]):
-        """convert old env value for backwards compatibility"""
+    def _convert_old_env(cls, value: List[Union[List[str], Dict[str, str]]]):
+        """convert old style dict values of `env` for backwards compatibility"""
         if isinstance(value, list):
             return [
                 (
