@@ -20,7 +20,7 @@ theme:
     - content.tabs.link
     - content.tooltips
     - header.autohide
-    - navigation.expand
+    # - navigation.expand
     - navigation.footer
     # - navigation.indexes
     - navigation.instant
@@ -28,7 +28,7 @@ theme:
     - navigation.instant.preview
     - navigation.instant.progress
     - navigation.path
-    # - navigation.prune
+    - navigation.prune
     # - navigation.sections
     - navigation.tabs
     - navigation.tabs.sticky
