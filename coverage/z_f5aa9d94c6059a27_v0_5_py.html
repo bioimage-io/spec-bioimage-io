@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_a3b008b1e8256058___init___py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
-            created at 2025-11-18 15:05 +0000
+            created at 2025-11-18 19:34 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -2438,7 +2438,7 @@
     <p class="pln"><span class="n"><a id="t2356" href="#t2356">2356</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t2357" href="#t2357">2357</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2358" href="#t2358">2358</a></span><span class="t"><span class="key">class</span> <span class="nam">KerasHdf5WeightsDescr</span><span class="op">(</span><span class="nam">WeightsEntryDescrBase</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t2359" href="#t2359">2359</a></span><span class="t">    <span class="nam">type</span> <span class="op">=</span> <span class="str">"keras_hdf5"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t2359" href="#t2359">2359</a></span><span class="t">    <span class="nam">type</span><span class="op">:</span> <span class="nam">ClassVar</span><span class="op">[</span><span class="nam">WeightsFormat</span><span class="op">]</span> <span class="op">=</span> <span class="str">"keras_hdf5"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2360" href="#t2360">2360</a></span><span class="t">    <span class="nam">weights_format_name</span><span class="op">:</span> <span class="nam">ClassVar</span><span class="op">[</span><span class="nam">str</span><span class="op">]</span> <span class="op">=</span> <span class="str">"Keras HDF5"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2361" href="#t2361">2361</a></span><span class="t">    <span class="nam">tensorflow_version</span><span class="op">:</span> <span class="nam">Version</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2362" href="#t2362">2362</a></span><span class="t">    <span class="str">"""TensorFlow version used to create these weights."""</span>&nbsp;</span><span class="r"></span></p>
@@ -2452,7 +2452,7 @@
     <p class="pln"><span class="n"><a id="t2370" href="#t2370">2370</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t2371" href="#t2371">2371</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2372" href="#t2372">2372</a></span><span class="t"><span class="key">class</span> <span class="nam">OnnxWeightsDescr</span><span class="op">(</span><span class="nam">WeightsEntryDescrBase</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t2373" href="#t2373">2373</a></span><span class="t">    <span class="nam">type</span> <span class="op">=</span> <span class="str">"onnx"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t2373" href="#t2373">2373</a></span><span class="t">    <span class="nam">type</span><span class="op">:</span> <span class="nam">ClassVar</span><span class="op">[</span><span class="nam">WeightsFormat</span><span class="op">]</span> <span class="op">=</span> <span class="str">"onnx"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2374" href="#t2374">2374</a></span><span class="t">    <span class="nam">weights_format_name</span><span class="op">:</span> <span class="nam">ClassVar</span><span class="op">[</span><span class="nam">str</span><span class="op">]</span> <span class="op">=</span> <span class="str">"ONNX"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2375" href="#t2375">2375</a></span><span class="t">    <span class="nam">opset_version</span><span class="op">:</span> <span class="nam">Annotated</span><span class="op">[</span><span class="nam">int</span><span class="op">,</span> <span class="nam">Ge</span><span class="op">(</span><span class="num">7</span><span class="op">)</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2376" href="#t2376">2376</a></span><span class="t">    <span class="str">"""ONNX opset version"""</span>&nbsp;</span><span class="r"></span></p>
@@ -2476,7 +2476,7 @@
     <p class="pln"><span class="n"><a id="t2394" href="#t2394">2394</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t2395" href="#t2395">2395</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2396" href="#t2396">2396</a></span><span class="t"><span class="key">class</span> <span class="nam">PytorchStateDictWeightsDescr</span><span class="op">(</span><span class="nam">WeightsEntryDescrBase</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t2397" href="#t2397">2397</a></span><span class="t">    <span class="nam">type</span> <span class="op">=</span> <span class="str">"pytorch_state_dict"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t2397" href="#t2397">2397</a></span><span class="t">    <span class="nam">type</span><span class="op">:</span> <span class="nam">ClassVar</span><span class="op">[</span><span class="nam">WeightsFormat</span><span class="op">]</span> <span class="op">=</span> <span class="str">"pytorch_state_dict"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2398" href="#t2398">2398</a></span><span class="t">    <span class="nam">weights_format_name</span><span class="op">:</span> <span class="nam">ClassVar</span><span class="op">[</span><span class="nam">str</span><span class="op">]</span> <span class="op">=</span> <span class="str">"Pytorch State Dict"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2399" href="#t2399">2399</a></span><span class="t">    <span class="nam">architecture</span><span class="op">:</span> <span class="nam">Union</span><span class="op">[</span><span class="nam">ArchitectureFromFileDescr</span><span class="op">,</span> <span class="nam">ArchitectureFromLibraryDescr</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2400" href="#t2400">2400</a></span><span class="t">    <span class="nam">pytorch_version</span><span class="op">:</span> <span class="nam">Version</span>&nbsp;</span><span class="r"></span></p>
@@ -2495,7 +2495,7 @@
     <p class="pln"><span class="n"><a id="t2413" href="#t2413">2413</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t2414" href="#t2414">2414</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2415" href="#t2415">2415</a></span><span class="t"><span class="key">class</span> <span class="nam">TensorflowJsWeightsDescr</span><span class="op">(</span><span class="nam">WeightsEntryDescrBase</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t2416" href="#t2416">2416</a></span><span class="t">    <span class="nam">type</span> <span class="op">=</span> <span class="str">"tensorflow_js"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t2416" href="#t2416">2416</a></span><span class="t">    <span class="nam">type</span><span class="op">:</span> <span class="nam">ClassVar</span><span class="op">[</span><span class="nam">WeightsFormat</span><span class="op">]</span> <span class="op">=</span> <span class="str">"tensorflow_js"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2417" href="#t2417">2417</a></span><span class="t">    <span class="nam">weights_format_name</span><span class="op">:</span> <span class="nam">ClassVar</span><span class="op">[</span><span class="nam">str</span><span class="op">]</span> <span class="op">=</span> <span class="str">"Tensorflow.js"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2418" href="#t2418">2418</a></span><span class="t">    <span class="nam">tensorflow_version</span><span class="op">:</span> <span class="nam">Version</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2419" href="#t2419">2419</a></span><span class="t">    <span class="str">"""Version of the TensorFlow library used."""</span>&nbsp;</span><span class="r"></span></p>
@@ -2506,7 +2506,7 @@
     <p class="pln"><span class="n"><a id="t2424" href="#t2424">2424</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t2425" href="#t2425">2425</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2426" href="#t2426">2426</a></span><span class="t"><span class="key">class</span> <span class="nam">TensorflowSavedModelBundleWeightsDescr</span><span class="op">(</span><span class="nam">WeightsEntryDescrBase</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t2427" href="#t2427">2427</a></span><span class="t">    <span class="nam">type</span> <span class="op">=</span> <span class="str">"tensorflow_saved_model_bundle"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t2427" href="#t2427">2427</a></span><span class="t">    <span class="nam">type</span><span class="op">:</span> <span class="nam">ClassVar</span><span class="op">[</span><span class="nam">WeightsFormat</span><span class="op">]</span> <span class="op">=</span> <span class="str">"tensorflow_saved_model_bundle"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2428" href="#t2428">2428</a></span><span class="t">    <span class="nam">weights_format_name</span><span class="op">:</span> <span class="nam">ClassVar</span><span class="op">[</span><span class="nam">str</span><span class="op">]</span> <span class="op">=</span> <span class="str">"Tensorflow Saved Model"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2429" href="#t2429">2429</a></span><span class="t">    <span class="nam">tensorflow_version</span><span class="op">:</span> <span class="nam">Version</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2430" href="#t2430">2430</a></span><span class="t">    <span class="str">"""Version of the TensorFlow library used."""</span>&nbsp;</span><span class="r"></span></p>
@@ -2521,7 +2521,7 @@
     <p class="pln"><span class="n"><a id="t2439" href="#t2439">2439</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t2440" href="#t2440">2440</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2441" href="#t2441">2441</a></span><span class="t"><span class="key">class</span> <span class="nam">TorchscriptWeightsDescr</span><span class="op">(</span><span class="nam">WeightsEntryDescrBase</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t2442" href="#t2442">2442</a></span><span class="t">    <span class="nam">type</span> <span class="op">=</span> <span class="str">"torchscript"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t2442" href="#t2442">2442</a></span><span class="t">    <span class="nam">type</span><span class="op">:</span> <span class="nam">ClassVar</span><span class="op">[</span><span class="nam">WeightsFormat</span><span class="op">]</span> <span class="op">=</span> <span class="str">"torchscript"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2443" href="#t2443">2443</a></span><span class="t">    <span class="nam">weights_format_name</span><span class="op">:</span> <span class="nam">ClassVar</span><span class="op">[</span><span class="nam">str</span><span class="op">]</span> <span class="op">=</span> <span class="str">"TorchScript"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2444" href="#t2444">2444</a></span><span class="t">    <span class="nam">pytorch_version</span><span class="op">:</span> <span class="nam">Version</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t2445" href="#t2445">2445</a></span><span class="t">    <span class="str">"""Version of the PyTorch library used."""</span>&nbsp;</span><span class="r"></span></p>
@@ -3818,7 +3818,7 @@
             <a class="nav" href="z_a3b008b1e8256058___init___py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.12.0">coverage.py v7.12.0</a>,
-            created at 2025-11-18 15:05 +0000
+            created at 2025-11-18 19:34 +0000
         </p>
     </div>
 </footer>
