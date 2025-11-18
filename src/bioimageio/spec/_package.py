@@ -74,9 +74,9 @@ def get_package_content(
     Args:
         rd: resource description
         bioimageio_yaml_file_name: RDF file name
-        # for model resources only:
-        weights_priority_order: If given, only the first weights format present in the model is included.
-                                If none of the prioritized weights formats is found a ValueError is raised.
+        weights_priority_order: (for model resources only)
+            If given, only the first weights format present in the model is included.
+            If none of the prioritized weights formats is found a ValueError is raised.
     """
     os_friendly_name = get_os_friendly_file_name(rd.name)
     bioimageio_yaml_file_name = bioimageio_yaml_file_name.format(
