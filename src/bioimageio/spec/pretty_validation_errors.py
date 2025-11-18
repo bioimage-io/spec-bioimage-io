@@ -89,9 +89,12 @@ else:
 
 
 def enable_pretty_validation_errors_in_ipynb():
-    """DEPRECATED; this is enabled by default at import time."""
+    """(Deprecated) Enable pretty validation errors in IPython notebooks.
+
+    WARNING: Deprecated; pretty validation errors in IPython notebooks are enabled at import time.
+    """
     warnings.warn(
-        "deprecated, this is enabled by default at import time.",
+        "deprecated, this is enabled at import time.",
         DeprecationWarning,
         stacklevel=2,
     )
