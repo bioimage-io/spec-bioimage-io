@@ -169,7 +169,7 @@ jobs:
   #      with:
   #        recipe-path: conda-recipe/recipe.yaml
 
-  deploy:
+  docs:
     needs: [test, coverage, build, conda-build]
     runs-on: ubuntu-latest
     permissions:
@@ -258,9 +258,9 @@ jobs:
         run: mike deploy --push --branch ${{ steps.get_branch.outputs.branch }} --update-aliases ${{ steps.get-new-version.outputs.new-version || 'dev'}} ${{ steps.get-new-version.outputs.new-version && 'latest' || ' '}}
 
   publish:
-    needs: [test, coverage, build, conda-build, deploy]
+    needs: [test, coverage, build, conda-build, docs]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && needs.deploy.outputs.new-version
+    if: github.ref == 'refs/heads/main' && needs.docs.outputs.new-version
     environment:
       name: release
       url: https://pypi.org/project/bioimageio.spec/
@@ -280,6 +280,6 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: release-drafter/release-drafter@v6.0.0
         with:
-          tag: '${{ needs.deploy.outputs.new-version }}'
+          tag: '${{ needs.docs.outputs.new-version }}'
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
