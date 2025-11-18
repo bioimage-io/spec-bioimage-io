@@ -29,7 +29,7 @@ theme:
     - navigation.instant.progress
     - navigation.path
     - navigation.prune
-    # - navigation.sections
+    - navigation.sections
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.top
@@ -38,7 +38,7 @@ theme:
     - search.share
     - search.suggest
     - toc.follow
-    - toc.integrate
+    # - toc.integrate
 
   palette:
     - media: '(prefers-color-scheme)'
@@ -80,6 +80,7 @@ plugins:
           inventories:
             - https://docs.pydantic.dev/latest/objects.inv
           options:
+            annotations_path: source
             backlinks: tree
             docstring_options:
               ignore_init_summary: true
@@ -139,7 +140,16 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - API Reference: api.md
+  - API Reference:
+      - bioimageio.spec: api/bioimageio.spec.md
+      - Description Format Specifications:
+          - Model: api/model.md
+          - Dataset: api/dataset.md
+          - Notebook: api/notebook.md
+          - Application: api/application.md
+          - Generic: api/generic.md
+      - Format Validation Summary: api/summary.md
+      - Utility functions: api/utility.md
   - Changelog: changelog.md
   - Coverage report: coverage.md
 
