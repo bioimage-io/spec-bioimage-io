@@ -303,8 +303,13 @@ class FileDescr(Node):
         """open the file source (download if needed)"""
         return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
 
-    download = get_reader
-    """alias for get_reader() method"""
+    def download(
+        self,
+        *,
+        progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+    ):
+        """alias for `.get_reader`"""
+        return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
 
 
 path_or_url_adapter: "TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]]" = (
