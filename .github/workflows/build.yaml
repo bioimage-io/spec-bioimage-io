@@ -249,6 +249,10 @@ jobs:
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               print(f"new-version={new_version}", file=f)
 
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
       - name: Generate developer docs
         run: mike deploy --push --branch ${{ steps.get_branch.outputs.branch }} --update-aliases ${{ steps.get-new-version.outputs.new-version || 'dev'}} ${{ steps.get-new-version.outputs.new-version && 'latest' || ' '}}
       - name: Deploy additional files to ${{ steps.get_branch.outputs.branch }} 🚀
