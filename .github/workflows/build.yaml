@@ -210,11 +210,6 @@ jobs:
         run: |
           if [[ -n '${{ github.event.pull_request.head.ref }}' ]]; then branch=gh-pages-${{ github.event.pull_request.head.ref }}; else branch=gh-pages; fi
           echo "::set-output name=branch::$branch"
-      - name: Deploy to ${{ steps.get_branch.outputs.branch }} 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: ${{ steps.get_branch.outputs.branch }}
-          folder: dist
       - name: Get parent commit
         if: inputs.force-publish != 'true'
         id: get-parent-commit
@@ -243,7 +238,7 @@ jobs:
               if not valid:
                   raise Exception(f"Current commit has invalid version tag {existing_tag}.")
 
-              source_version = Path('src/bioimageio/core/__init__.py').read_text().split('__version__ = \"')[1].split('\"')[0]
+              source_version = Path('src/bioimageio/spec/_version.py').read_text().split('VERSION = \"')[1].split('\"')[0]
               if existing_tag != f"v{source_version}":
                   raise Exception(f"Version tag {existing_tag} does not match source version {source_version}.")
 
@@ -256,6 +251,11 @@ jobs:
 
       - name: Generate developer docs
         run: mike deploy --push --branch ${{ steps.get_branch.outputs.branch }} --update-aliases ${{ steps.get-new-version.outputs.new-version || 'dev'}} ${{ steps.get-new-version.outputs.new-version && 'latest' || ' '}}
+      - name: Deploy additional files to ${{ steps.get_branch.outputs.branch }} 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: ${{ steps.get_branch.outputs.branch }}
+          folder: dist
 
   publish:
     needs: [test, coverage, build, conda-build, docs]
