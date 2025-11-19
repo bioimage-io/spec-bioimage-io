@@ -260,6 +260,13 @@ jobs:
         with:
           branch: ${{ steps.get_branch.outputs.branch }}
           folder: dist
+          clean: true
+          clean-exclude: |
+            .nojekyll
+            index.html
+            versions.json
+            dev/
+            v0.*/
 
   publish:
     needs: [test, coverage, build, conda-build, docs]
