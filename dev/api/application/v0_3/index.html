@@ -244,17 +244,20 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../../.." class="md-tabs__link">
-        
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../.." class="md-tabs__link">
+          
   
   
     
   
   Home
 
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
@@ -373,9 +376,39 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+    
+    
+      
         
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../../.." class="md-nav__link">
+      
   
   
   <span class="md-ellipsis">
@@ -389,7 +422,13 @@
   
   
 
-      </a>
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
     </li>
   
 
@@ -403,6 +442,16 @@
   
   
     
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -470,6 +519,20 @@
   
     
     
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
     
     
       
@@ -490,8 +553,9 @@
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" checked>
         
           
-          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../../model/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -505,8 +569,14 @@
   
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_1" id="__nav_2_1_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_1">
@@ -520,58 +590,6 @@
           <ul class="md-nav__list" data-md-scrollfix>
             
               
-                
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-        
-      
-    
-    
-      
-        
-        
-      
-    
-    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
-      
-        
-  
-  
-  
-    <a href="../../model/v0_4/" class="md-nav__link">
-      
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Model
-  
-
-    
-  </span>
-  
-  
-
-      
-        <span class="md-nav__icon md-icon"></span>
-      
-    </a>
-  
-
-      
-    </li>
-  
-
-              
             
               
                 
@@ -580,6 +598,12 @@
   
   
     
+    
+      
+        
+      
+        
+      
     
     
     
@@ -634,6 +658,12 @@
   
   
     
+    
+      
+        
+      
+        
+      
     
     
     
@@ -690,6 +720,12 @@
   
   
     
+    
+      
+        
+      
+        
+      
     
     
     
@@ -3907,6 +3943,12 @@
   
     
     
+      
+        
+      
+        
+      
+    
     
     
       
@@ -3996,14 +4038,42 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utility/" class="md-nav__link">
+      <a href="../../utils/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Utility functions
+    Common  Utilities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../partner_utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Partner Utilities
   
 
     
@@ -7163,26 +7233,9 @@
 
 
 
-  
-
 
   <nav class="md-path" aria-label="Navigation" >
     <ol class="md-path__list">
-      
-        
-  
-  
-    <li class="md-path__item">
-      <a href="../../.." class="md-path__link">
-        
-  <span class="md-ellipsis">
-    Home
-  </span>
-
-      </a>
-    </li>
-  
-
       
       
         
@@ -8299,7 +8352,7 @@
 
 <a href="#bioimageio.spec.application.v0_3.FileSource_" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">FileSource_</span> <span class="o">=</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.FileSource">FileSource</a></span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.FileSource">FileSource</a></span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.AfterValidator">AfterValidator</a></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.wo_special_file_name">wo_special_file_name</a></span><span class="p">),</span>
     <span class="n"><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.include_in_package">include_in_package</a></span><span class="p">,</span>
 <span class="p">]</span>
@@ -10363,11 +10416,11 @@
             </li>
             <li>
               <code><span title="bioimageio.spec.application.v0_3.ApplicationDescr._root">_root</span></code>
-                (<code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.DirectoryPath">DirectoryPath</a>, <span title="zipfile.ZipFile">ZipFile</span>]</code>)
+                (<code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.DirectoryPath">DirectoryPath</a>, <span title="zipfile.ZipFile">ZipFile</span>]</code>)
             </li>
             <li>
               <code><span title="bioimageio.spec.application.v0_3.ApplicationDescr._file_name">_file_name</span></code>
-                (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.FileName">FileName</a>]</code>)
+                (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.FileName">FileName</a>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.ApplicationDescr.name">name</a></code>
@@ -10719,7 +10772,7 @@ The recommended documentation file name is <code>README.md</code>. An <code>.md<
   </span>
 
 <a href="#bioimageio.spec.application.v0_3.ApplicationDescr.file_name" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">file_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">file_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -11119,7 +11172,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
   </span>
 
 <a href="#bioimageio.spec.application.v0_3.ApplicationDescr.root" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span><span class="p">,</span> <span class="n"><span title="zipfile.ZipFile">ZipFile</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span><span class="p">,</span> <span class="n"><span title="zipfile.ZipFile">ZipFile</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -11392,7 +11445,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
 
 <a href="#bioimageio.spec.application.v0_3.ApplicationDescr.convert_from_old_format_wo_validation" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">convert_from_old_format_wo_validation</span><span class="p">(</span>
-    <span class="n"><span title="bioimageio.spec.application.v0_3.ApplicationDescr.convert_from_old_format_wo_validation(data)">data</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.application.v0_3.ApplicationDescr.convert_from_old_format_wo_validation(data)">data</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
@@ -11431,7 +11484,7 @@ without validating the result.</p>
 
 <a href="#bioimageio.spec.application.v0_3.ApplicationDescr.get_package_content" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_package_content</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">,</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.FileDescr">FileDescr</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">]</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">,</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.FileDescr">FileDescr</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">]</span>
 <span class="p">]</span>
 </code></pre></div>
 
@@ -12849,7 +12902,7 @@ without validating the result.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.BadgeDescr.icon">icon</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="typing.Optional">Optional</span>[<span title="typing.Union">Union</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.FilePath">FilePath</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.RelativeFilePath">RelativeFilePath</a>], <a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.AfterValidator">AfterValidator</a>(<a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.wo_special_file_name">wo_special_file_name</a>), <a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.include_in_package">include_in_package</a>], <span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.HttpUrl">HttpUrl</a>, <span title="pydantic">pydantic</span>.<a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/networks/#pydantic.networks.HttpUrl">HttpUrl</a>]]], <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;https://colab.research.google.com/assets/colab-badge.svg&#39;])]</code>)
+                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="typing.Optional">Optional</span>[<span title="typing.Union">Union</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.FilePath">FilePath</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.RelativeFilePath">RelativeFilePath</a>], <a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.AfterValidator">AfterValidator</a>(<a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.wo_special_file_name">wo_special_file_name</a>), <a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.include_in_package">include_in_package</a>], <span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.HttpUrl">HttpUrl</a>, <span title="pydantic">pydantic</span>.<a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/networks/#pydantic.networks.HttpUrl">HttpUrl</a>]]], <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;https://colab.research.google.com/assets/colab-badge.svg&#39;])]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.BadgeDescr.url">url</a></code>
@@ -12885,7 +12938,7 @@ without validating the result.</p>
     <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span>
         <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span>
             <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-                <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.FilePath">FilePath</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.RelativeFilePath">RelativeFilePath</a></span><span class="p">],</span>
+                <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.FilePath">FilePath</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.RelativeFilePath">RelativeFilePath</a></span><span class="p">],</span>
                 <span class="n"><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.AfterValidator">AfterValidator</a></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.wo_special_file_name">wo_special_file_name</a></span><span class="p">),</span>
                 <span class="n"><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.include_in_package">include_in_package</a></span><span class="p">,</span>
             <span class="p">],</span>
@@ -15546,7 +15599,7 @@ or if you think such a field should exist.</p>
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.FileDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.FileSource">FileSource</a></code>)
+                (<code><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.FileSource">FileSource</a></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.FileDescr.sha256">sha256</a></code>
@@ -15603,7 +15656,7 @@ or if you think such a field should exist.</p>
   </span>
 
 <a href="#bioimageio.spec.application.v0_3.FileDescr.source" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.FileSource">FileSource</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.FileSource">FileSource</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -17330,11 +17383,11 @@ or if you think such a field should exist.</p>
             </li>
             <li>
               <code><span title="bioimageio.spec.generic.v0_3.GenericDescrBase._root">_root</span></code>
-                (<code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.DirectoryPath">DirectoryPath</a>, <span title="zipfile.ZipFile">ZipFile</span>]</code>)
+                (<code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.DirectoryPath">DirectoryPath</a>, <span title="zipfile.ZipFile">ZipFile</span>]</code>)
             </li>
             <li>
               <code><span title="bioimageio.spec.generic.v0_3.GenericDescrBase._file_name">_file_name</span></code>
-                (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.FileName">FileName</a>]</code>)
+                (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.FileName">FileName</a>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_3/#bioimageio.spec.generic.v0_3.GenericDescrBase.name">name</a></code>
@@ -17670,7 +17723,7 @@ The recommended documentation file name is <code>README.md</code>. An <code>.md<
   </span>
 
 <a href="#bioimageio.spec.application.v0_3.GenericDescrBase.file_name" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">file_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">file_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -17996,7 +18049,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
   </span>
 
 <a href="#bioimageio.spec.application.v0_3.GenericDescrBase.root" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span><span class="p">,</span> <span class="n"><span title="zipfile.ZipFile">ZipFile</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span><span class="p">,</span> <span class="n"><span title="zipfile.ZipFile">ZipFile</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -18216,7 +18269,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
 
 <a href="#bioimageio.spec.application.v0_3.GenericDescrBase.convert_from_old_format_wo_validation" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">convert_from_old_format_wo_validation</span><span class="p">(</span>
-    <span class="n"><span title="bioimageio.spec.application.v0_3.GenericDescrBase.convert_from_old_format_wo_validation(data)">data</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.application.v0_3.GenericDescrBase.convert_from_old_format_wo_validation(data)">data</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
@@ -18255,7 +18308,7 @@ without validating the result.</p>
 
 <a href="#bioimageio.spec.application.v0_3.GenericDescrBase.get_package_content" class="headerlink" title="Permanent link">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_package_content</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">,</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.FileDescr">FileDescr</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">]</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">,</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.FileDescr">FileDescr</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">]</span>
 <span class="p">]</span>
 </code></pre></div>
 
@@ -18786,11 +18839,11 @@ without validating the result.</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></code></p>
 
             <div style="display: none">
               <a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.HttpUrl" id="mermaid-link-bioimageio.spec.application.v0_3.HttpUrl"></a>
-                  <a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.RootHttpUrl" id="mermaid-link-bioimageio.spec._internal.root_url.RootHttpUrl"></a>
+                  <a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.RootHttpUrl" id="mermaid-link-bioimageio.spec._internal.root_url.RootHttpUrl"></a>
                   <a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.ValidatedString" id="mermaid-link-bioimageio.spec._internal.validated_string.ValidatedString"></a>
             </div>
             <pre class="mermaid"><code id="mermaid-diagram-bioimageio.spec.application.v0_3.HttpUrl">
@@ -19639,6 +19692,16 @@ without validating the result.</p>
             <ul class="doc doc-backlink-list">
       <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb">
+      <a href="../../utils/#bioimageio.spec.common"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;common</a>
+  </span>
+
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../utils/#bioimageio.spec.common.RelativeFilePath"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;RelativeFilePath</a>
+  </span>
+
+      </li>
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb">
       <span>Description Format Specifications</span>
   </span>
 
@@ -19791,20 +19854,6 @@ without validating the result.</p>
   </ul>
 
       </li>
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#utility">Utility</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#bioimageio.spec.common"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;common</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb last">
-      <a href="../../utility/#bioimageio.spec.common.RelativeFilePath"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;RelativeFilePath</a>
-  </span>
-
-      </li>
   </ul>
 
       </li>
@@ -19818,6 +19867,16 @@ without validating the result.</p>
   </span>
 
             <ul class="doc doc-backlink-list">
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb">
+      <a href="../../utils/#bioimageio.spec.common"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;common</a>
+  </span>
+
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../utils/#bioimageio.spec.common.FileSource"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;FileSource</a>
+  </span>
+
+      </li>
       <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb">
       <span>Description Format Specifications</span>
@@ -19882,20 +19941,6 @@ without validating the result.</p>
 
       </li>
   </ul>
-
-      </li>
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#utility">Utility</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#bioimageio.spec.common"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;common</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb last">
-      <a href="../../utility/#bioimageio.spec.common.FileSource"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;FileSource</a>
-  </span>
 
       </li>
   </ul>
@@ -19970,7 +20015,7 @@ without validating the result.</p>
         </li>
         <li class="doc-section-item field-body">
           <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.HttpUrl.parent">parent</a></code></b>
-              (<code><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></code>)
+              (<code><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></code>)
           –
           <div class="doc-md-description">
             
@@ -19978,7 +20023,7 @@ without validating the result.</p>
         </li>
         <li class="doc-section-item field-body">
           <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.HttpUrl.parents">parents</a></code></b>
-              (<code><span title="typing.Iterable">Iterable</span>[<a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a>]</code>)
+              (<code><span title="typing.Iterable">Iterable</span>[<a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a>]</code>)
           –
           <div class="doc-md-description">
             <p>iterate over all URL parents (max 100)</p>
@@ -20057,7 +20102,7 @@ without validating the result.</p>
   </span>
 
 <a href="#bioimageio.spec.application.v0_3.HttpUrl.parent" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">parent</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">parent</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -20080,7 +20125,7 @@ without validating the result.</p>
   </span>
 
 <a href="#bioimageio.spec.application.v0_3.HttpUrl.parents" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">parents</span><span class="p">:</span> <span class="n"><span title="typing.Iterable">Iterable</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">parents</span><span class="p">:</span> <span class="n"><span title="typing.Iterable">Iterable</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -23389,7 +23434,7 @@ without validating the result.</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><span title="bioimageio.spec._internal.io.RelativePathBase">RelativePathBase</span>[<span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.AbsoluteFilePath">AbsoluteFilePath</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.HttpUrl">HttpUrl</a>, <a class="autorefs autorefs-internal" href="../../utility/#bioimageio.spec.common.ZipPath">ZipPath</a>]]</code></p>
+              Bases: <code><span title="bioimageio.spec._internal.io.RelativePathBase">RelativePathBase</span>[<span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.AbsoluteFilePath">AbsoluteFilePath</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.HttpUrl">HttpUrl</a>, <a class="autorefs autorefs-internal" href="../../utils/#bioimageio.spec.common.ZipPath">ZipPath</a>]]</code></p>
 
             <div style="display: none">
               <a class="autorefs autorefs-internal" href="#bioimageio.spec.application.v0_3.RelativeFilePath" id="mermaid-link-bioimageio.spec.application.v0_3.RelativeFilePath"></a>
@@ -23653,6 +23698,26 @@ without validating the result.</p>
             <ul class="doc doc-backlink-list">
       <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb">
+      <a href="../../utils/#bioimageio.spec.common"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;common</a>
+  </span>
+
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../utils/#bioimageio.spec.common.FileSource"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;FileSource</a>
+  </span>
+
+      </li>
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb">
+      <a href="../../utils/#bioimageio.spec.utils"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;utils</a>
+  </span>
+
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../utils/#bioimageio.spec.utils.extract_file_name"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;extract_file_name</a>
+  </span>
+
+      </li>
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb">
       <span>Description Format Specifications</span>
   </span>
 
@@ -23723,35 +23788,6 @@ without validating the result.</p>
 
       </li>
   </ul>
-
-      </li>
-  </ul>
-
-      </li>
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#utility">Utility</a>
-  </span>
-
-            <ul class="doc doc-backlink-list">
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#bioimageio.spec.common"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;common</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb last">
-      <a href="../../utility/#bioimageio.spec.common.FileSource"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;FileSource</a>
-  </span>
-
-      </li>
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#bioimageio.spec.utils"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;utils</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb last">
-      <a href="../../utility/#bioimageio.spec.utils.extract_file_name"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;extract_file_name</a>
-  </span>
 
       </li>
   </ul>
@@ -24655,6 +24691,35 @@ without validating the result.</p>
             <ul class="doc doc-backlink-list">
       <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb">
+      <a href="../../utils/#bioimageio.spec.common"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;common</a>
+  </span>
+
+            <ul class="doc doc-backlink-list">
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb">
+      <a href="../../utils/#bioimageio.spec.common.BytesReader"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;BytesReader</a>
+  </span>
+
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../utils/#bioimageio.spec.common.BytesReader.sha256"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;sha256</a>
+  </span>
+
+      </li>
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb">
+      <a href="../../utils/#bioimageio.spec.common.FileDescr"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;FileDescr</a>
+  </span>
+
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../utils/#bioimageio.spec.common.FileDescr.sha256"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;sha256</a>
+  </span>
+
+      </li>
+  </ul>
+
+      </li>
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb">
       <a href="../../summary/#bioimageio.spec.summary"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;summary</a>
   </span>
 
@@ -24664,6 +24729,16 @@ without validating the result.</p>
 
             <span class="doc doc-backlink-crumb last">
       <a href="../../summary/#bioimageio.spec.summary.ValidationContextSummary.known_files"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;known_files</a>
+  </span>
+
+      </li>
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb">
+      <a href="../../utils/#bioimageio.spec.utils"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;utils</a>
+  </span>
+
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../utils/#bioimageio.spec.utils.get_sha256"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_sha256</a>
   </span>
 
       </li>
@@ -24956,54 +25031,6 @@ without validating the result.</p>
   </ul>
 
       </li>
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#utility">Utility</a>
-  </span>
-
-            <ul class="doc doc-backlink-list">
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#bioimageio.spec.common"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;common</a>
-  </span>
-
-            <ul class="doc doc-backlink-list">
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#bioimageio.spec.common.BytesReader"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;BytesReader</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb last">
-      <a href="../../utility/#bioimageio.spec.common.BytesReader.sha256"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;sha256</a>
-  </span>
-
-      </li>
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#bioimageio.spec.common.FileDescr"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;FileDescr</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb last">
-      <a href="../../utility/#bioimageio.spec.common.FileDescr.sha256"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;sha256</a>
-  </span>
-
-      </li>
-  </ul>
-
-      </li>
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#bioimageio.spec.utils"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;utils</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb last">
-      <a href="../../utility/#bioimageio.spec.utils.get_sha256"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_sha256</a>
-  </span>
-
-      </li>
-  </ul>
-
-      </li>
   </ul>
 
       </li>
@@ -25048,9 +25075,20 @@ without validating the result.</p>
       <a href="../../#bioimageio.spec.ValidationContext"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ValidationContext</a>
   </span>
 
+            <ul class="doc doc-backlink-list">
+      <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb last">
       <a href="../../#bioimageio.spec.ValidationContext.known_files"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;known_files</a>
   </span>
+
+      </li>
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../#bioimageio.spec.ValidationContext.replace"><code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;replace</a>
+  </span>
+
+      </li>
+  </ul>
 
       </li>
       <li class="doc doc-backlink">
@@ -25088,29 +25126,21 @@ without validating the result.</p>
             <ul class="doc doc-backlink-list">
       <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb">
-      <a href="../../summary/#bioimageio.spec.summary"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;summary</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb">
-      <a href="../../summary/#bioimageio.spec.summary.ValidationContextSummary"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ValidationContextSummary</a>
+      <a href="../../utils/#bioimageio.spec.common"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;common</a>
   </span>
 
             <span class="doc doc-backlink-crumb last">
-      <a href="../../summary/#bioimageio.spec.summary.ValidationContextSummary.known_files"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;known_files</a>
+      <a href="../../utils/#bioimageio.spec.common.BytesReader"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;BytesReader</a>
   </span>
 
       </li>
       <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#utility">Utility</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb">
-      <a href="../../utility/#bioimageio.spec.common"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;common</a>
+      <a href="../../summary/#bioimageio.spec.summary"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;summary</a>
   </span>
 
             <span class="doc doc-backlink-crumb last">
-      <a href="../../utility/#bioimageio.spec.common.BytesReader"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;BytesReader</a>
+      <a href="../../summary/#bioimageio.spec.summary.ValidationContextSummary"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ValidationContextSummary</a>
   </span>
 
       </li>
@@ -27623,7 +27653,7 @@ post-release suffixes.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.footer", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
