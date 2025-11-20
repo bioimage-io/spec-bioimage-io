@@ -602,7 +602,11 @@
   
   
   
-    <a href="api/model/" class="md-nav__link">
+    
+  
+  
+  
+    <a href="api/model/v0_4/" class="md-nav__link">
       
   
   
@@ -621,6 +625,8 @@
         <span class="md-nav__icon md-icon"></span>
       
     </a>
+  
+
   
 
   
@@ -894,7 +900,7 @@
 <p>This repository contains the specifications of the standard format defined by the bioimage.io community for the content (i.e., models, datasets and applications) in the <a href="https://bioimage.io">bioimage.io website</a>.
 Each item in the content is always described using a YAML 1.2 file named <code>rdf.yaml</code> or <code>bioimageio.yaml</code>.
 This <code>rdf.yaml</code>  <code>bioimageio.yaml</code>--- along with the files referenced in it --- can be downloaded from or uploaded to the <a href="https://bioimage.io">bioimage.io website</a> and may be produced or consumed by bioimage.io-compatible consumers (e.g., image analysis software like ilastik).</p>
-<p><a href="https://github.com/bioimage-io/spec-bioimage-io?tab=readme-ov-file#format-version-overview">These</a> are the rules and format that bioimage.io-compatible resources must fulfill.</p>
+<p><a href="#format-version-overview">These</a> are the rules and format that bioimage.io-compatible resources must fulfill.</p>
 <p>Note that the Python package PyYAML does not support YAML 1.2 .
 We therefore use and recommend <a href="https://ruyaml.readthedocs.io/en/latest/">ruyaml</a>.
 For differences see <a href="https://ruamelyaml.readthedocs.io/en/latest/pyyaml">https://ruamelyaml.readthedocs.io/en/latest/pyyaml</a>.</p>
@@ -918,31 +924,31 @@ The <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.
 <td>model</td>
 <td>0.5 </br> 0.4</td>
 <td><a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i2_oneOf_i1">model 0.5</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i2_oneOf_i0">model 0.4</a></td>
-<td><a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/model/v0_5.html#ModelDescr">ModelDescr_v0_5</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/model/v0_4.html#ModelDescr">ModelDescr_v0_4</a></td>
+<td><a href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/model/v0_5/#bioimageio.spec.model.v0_5.ModelDescr">v0_5.ModelDescr</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/model/v0_4/#bioimageio.spec.model.v0_4.ModelDescr">v0_4.ModelDescr</a></td>
 </tr>
 <tr>
 <td>dataset</td>
 <td>0.3 </br> 0.2</td>
 <td><a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i1_oneOf_i1">dataset 0.3</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i1_oneOf_i0">dataset 0.2</a></td>
-<td><a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/dataset/v0_3.html#DatasetDescr">DatasetDescr_v0_3</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/dataset/v0_2.html#DatasetDescr">DatasetDescr_v0_2</a></td>
+<td><a href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/dataset/v0_3/#bioimageio.spec.dataset.v0_3.DatasetDescr">v0_3.DatasetDescr</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr">v0_2.DatasetDescr</a></td>
 </tr>
 <tr>
 <td>notebook</td>
 <td>0.3 </br> 0.2</td>
 <td><a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i3_oneOf_i1">notebook 0.3</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i3_oneOf_i0">notebook 0.2</a></td>
-<td><a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/notebook/v0_3.html#NotebookDescr">NotebookDescr_v0_3</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/notebook/v0_2.html#NotebookDescr">NotebookDescr_v0_2</a></td>
+<td><a href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/notebook/v0_3/#bioimageio.spec.notebook.v0_3.NotebookDescr">v0_3.NotebookDescr</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/notebook/v0_2/#bioimageio.spec.notebook.v0_2.NotebookDescr">v0_2.NotebookDescr</a></td>
 </tr>
 <tr>
 <td>application</td>
 <td>0.3 </br> 0.2</td>
 <td><a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i0_oneOf_i1">application 0.3</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i0_oneOf_i0">application 0.2</a></td>
-<td><a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/application/v0_3.html#ApplicationDescr">ApplicationDescr_v0_3</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/application/v0_2.html#ApplicationDescr">ApplicationDescr_v0_2</a></td>
+<td><a href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/application/v0_3/#bioimageio.spec.application.v0_3.ApplicationDescr">v0_3.ApplicationDescr</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/application/v0_2/#bioimageio.spec.application.v0_2.ApplicationDescr">v0_2.ApplicationDescr</a></td>
 </tr>
 <tr>
 <td>generic</td>
 <td>0.3 </br> 0.2</td>
 <td>-</td>
-<td><a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/generic/v0_3.html#GenericDescr">GenericDescr_v0_3</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/generic/v0_2.html#GenericDescr">GenericDescr_v0_2</a></td>
+<td><a href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/generic/v0_3/#bioimageio.spec.generic.v0_3.GenericDescr">v0_3.GenericDescr</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/generic/v0_2/#bioimageio.spec.generic.v0_2.GenericDescr">v0_2.GenericDescr</a></td>
 </tr>
 </tbody>
 </table>
