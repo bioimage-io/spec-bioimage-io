@@ -1,3 +1,1 @@
-# Hello
-
-Hi
+--8<-- "README.md"
