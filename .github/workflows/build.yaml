@@ -202,6 +202,8 @@ jobs:
         run: python -m interactive_docs
       - name: Generate JSON schema documentation
         run: python scripts/generate_json_schema_documentation.py
+      - name: Copy json schema for hosting
+        run: cp src/bioimageio/spec/static/bioimageio_schema.json ./dist/bioimageio_schema.json
       - name: copy legacy file until BioImage.IO-packager is updated # TODO: remove if packager does not depend on it anymore
         run: cp weight_formats_spec.json ./dist/weight_formats_spec.json
       - name: Get branch name to deploy to
