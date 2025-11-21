@@ -33,7 +33,7 @@ from ._description import (
     dump_description,
     validate_format,
 )
-from ._get_conda_env import BioimageioCondaEnv, get_conda_env
+from ._get_conda_env import get_conda_env
 from ._internal import settings
 from ._internal.common_nodes import InvalidDescr
 from ._internal.validation_context import ValidationContext, get_validation_context
@@ -60,7 +60,9 @@ from .dataset import AnyDatasetDescr, DatasetDescr
 from .generic import AnyGenericDescr, GenericDescr
 from .model import AnyModelDescr, ModelDescr
 from .notebook import AnyNotebookDescr, NotebookDescr
-from .summary import ValidationSummary
+
+BioimageioCondaEnv = conda_env.BioimageioCondaEnv
+ValidationSummary = summary.ValidationSummary
 
 __all__ = [
     "__version__",
