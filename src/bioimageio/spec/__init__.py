@@ -22,7 +22,6 @@ from . import (
     dataset,
     generic,
     model,
-    pretty_validation_errors,
     summary,
     utils,
 )
@@ -53,6 +52,7 @@ from ._package import (
     save_bioimageio_package_as_folder,
     save_bioimageio_package_to_stream,
 )
+from ._pretty_validation_errors import PRETTY_VALIDATION_ERRORS_IN_IPYNB_ENABLED
 from ._upload import upload
 from ._version import VERSION as __version__
 from .application import AnyApplicationDescr, ApplicationDescr
@@ -60,7 +60,6 @@ from .dataset import AnyDatasetDescr, DatasetDescr
 from .generic import AnyGenericDescr, GenericDescr
 from .model import AnyModelDescr, ModelDescr
 from .notebook import AnyNotebookDescr, NotebookDescr
-from .pretty_validation_errors import enable_pretty_validation_errors_in_ipynb
 from .summary import ValidationSummary
 
 __all__ = [
@@ -72,6 +71,7 @@ __all__ = [
     "AnyNotebookDescr",
     "application",
     "ApplicationDescr",
+    "PRETTY_VALIDATION_ERRORS_IN_IPYNB_ENABLED",
     "BioimageioCondaEnv",
     "build_description",
     "common",
@@ -79,7 +79,6 @@ __all__ = [
     "dataset",
     "DatasetDescr",
     "dump_description",
-    "enable_pretty_validation_errors_in_ipynb",
     "generic",
     "GenericDescr",
     "get_conda_env",
@@ -94,7 +93,6 @@ __all__ = [
     "model",
     "ModelDescr",
     "NotebookDescr",
-    "pretty_validation_errors",
     "ResourceDescr",
     "save_bioimageio_package_as_folder",
     "save_bioimageio_package_to_stream",
