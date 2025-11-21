@@ -77,24 +77,18 @@ try:
             ipy.set_custom_exc((ValidationError,), _custom_exception_handler)
 
 except ImportError:
-    pass
+    _enabled = False
 else:
     try:
         _enable_pretty_validation_errors_in_ipynb()
     except Exception as e:
+        _enabled = False
         warnings.warn(
             "Failed to enable pretty validation errors in ipython: " + str(e),
             stacklevel=2,
         )
+    else:
+        _enabled = True
 
-
-def enable_pretty_validation_errors_in_ipynb():
-    """(Deprecated) Enable pretty validation errors in IPython notebooks.
-
-    WARNING: Deprecated; pretty validation errors in IPython notebooks are enabled at import time.
-    """
-    warnings.warn(
-        "deprecated, this is enabled at import time.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
+PRETTY_VALIDATION_ERRORS_IN_IPYNB_ENABLED = _enabled
+"""Whether pretty validation errors in IPython notebooks were successfully enabled during import."""

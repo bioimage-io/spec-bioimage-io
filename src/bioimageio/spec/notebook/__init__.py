@@ -1,6 +1,7 @@
 # autogen: start
-"""
-implementaions of all released minor versions are available in submodules:
+"""notebook resource description format
+
+Implementations of all released minor versions are available in submodules:
 - notebook v0_2: `bioimageio.spec.notebook.v0_2.NotebookDescr`
 - notebook v0_3: `bioimageio.spec.notebook.v0_3.NotebookDescr`
 """
