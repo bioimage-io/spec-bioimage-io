@@ -7,7 +7,7 @@ bioimageio.spec defines and validates these specifications and is backwards comp
 It also provides download/upload to/from the BioImage.IO Model Zoo at https://bioimage.io.
 
 Note:
-    For more powerful tools to work with BioImage.IO resources, consider using the [bioimageio.core](https://bioimage-io.github.io/core-bioimage-io-python) package.
+    For additional tools to work with BioImage.IO resources in Python, consider using the [bioimageio.core](https://bioimage-io.github.io/core-bioimage-io-python) package.
 """
 
 # ruff: noqa: E402

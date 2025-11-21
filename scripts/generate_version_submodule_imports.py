@@ -17,7 +17,7 @@ AUTOGEN_BODY_SINGLE = """from . import {info.latest_version_module}
 Any{info.target_node} = {info.latest_version_module}.{info.target_node}
 """
 AUTOGEN_BODY_MULTIPLE = """\"\"\"
-implementaions of all released minor versions are available in submodules:
+implementations of all released minor versions are available in submodules:
 {info.submodule_list}
 \"\"\"
 

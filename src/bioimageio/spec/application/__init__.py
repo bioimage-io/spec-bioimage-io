@@ -1,6 +1,6 @@
 # autogen: start
 """
-implementaions of all released minor versions are available in submodules:
+implementations of all released minor versions are available in submodules:
 - application v0_2: `bioimageio.spec.application.v0_2.ApplicationDescr`
 - application v0_3: `bioimageio.spec.application.v0_3.ApplicationDescr`
 """

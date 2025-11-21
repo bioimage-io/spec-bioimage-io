@@ -1,3 +1,3 @@
-"""internal helper modules; do not use outside of bioimageio.spec!"""
+"""internal helper modules"""
 
 from ._settings import settings as settings

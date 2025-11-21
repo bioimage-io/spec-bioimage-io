@@ -88,7 +88,8 @@ class ValidationContext(ValidationContextBase):
     log_warnings: bool = settings.log_warnings
     """If `True` warnings are logged to the terminal
 
-    Note: This setting does not affect warning entries
+    Note:
+        This setting does not affect warning entries
         of a generated `bioimageio.spec.ValidationSummary`.
     """
 
