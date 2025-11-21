@@ -1,6 +1,7 @@
 # autogen: start
-"""
-implementations of all released minor versions are available in submodules:
+"""generic resource description format
+
+Implementations of all released minor versions are available in submodules:
 - generic v0_2: `bioimageio.spec.generic.v0_2.GenericDescr`
 - generic v0_3: `bioimageio.spec.generic.v0_3.GenericDescr`
 """

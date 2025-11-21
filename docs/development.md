@@ -7,7 +7,7 @@ To keep the bioimageio.spec Python package version in sync with the (model) desc
 
 ## Δ Changelog
 
-The [changelog](changelog) describes changes to the bioimageio.spec Python package and changes to the resource description format it implements separately.
+The [changelog](changelog.md) describes changes to the bioimageio.spec Python package and changes to the resource description format it implements separately.
 
 ## ♥ Contributors
 

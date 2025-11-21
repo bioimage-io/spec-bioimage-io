@@ -16,8 +16,9 @@ AUTOGEN_BODY_SINGLE = """from . import {info.latest_version_module}
 {info.target_node} = {info.latest_version_module}.{info.target_node}
 Any{info.target_node} = {info.latest_version_module}.{info.target_node}
 """
-AUTOGEN_BODY_MULTIPLE = """\"\"\"
-implementations of all released minor versions are available in submodules:
+AUTOGEN_BODY_MULTIPLE = """\"\"\"{info.target} resource description format
+
+Implementations of all released minor versions are available in submodules:
 {info.submodule_list}
 \"\"\"
 
