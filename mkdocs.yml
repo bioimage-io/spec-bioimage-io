@@ -107,6 +107,10 @@ plugins:
               - griffe_pydantic:
                   schema: true
             show_inheritance_diagram: true
+  - mike:
+      alias_type: symlink
+      canonical_version: latest
+      version_selector: true
   - search
   - section-index
 
