@@ -18,7 +18,7 @@
         <link rel="prev" href="../generic/v0_3/">
       
       
-        <link rel="next" href="../utils/">
+        <link rel="next" href="../../changelog/">
       
       
         
@@ -448,10 +448,6 @@
       
         
       
-        
-      
-        
-      
     
     
     
@@ -519,8 +515,6 @@
     
       
         
-          
-        
       
         
       
@@ -554,14 +548,14 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../model/" class="md-nav__link ">
+            <a href="../bioimageio_format/" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
     
   
-    Description Format Specifications
+    The bioimage.io Format Specifications
   
 
     
@@ -583,12 +577,70 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Description Format Specifications
+    The bioimage.io Format Specifications
   
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../model/v0_4/" class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
               
             
               
@@ -1974,62 +2026,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../utils/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Common  Utilities
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../partner_utils/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Partner Utilities
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -3231,6 +3227,22 @@
           
 
 
+  <div class="doc doc-backlinks">
+        <b class="doc doc-backlink-type">Used by:</b>
+          <ul class="doc doc-backlink-list">
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb">
+      <a href="../#bioimageio.spec"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;spec</a>
+  </span>
+
+            <span class="doc doc-backlink-crumb last">
+      <a href="../#bioimageio.spec.ValidationSummary"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;ValidationSummary</a>
+  </span>
+
+      </li>
+  </ul>
+
+  </div>
 
 
 
@@ -3238,201 +3250,279 @@
 
 
 
-<p><span class="doc-section-title">Classes:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.CondaEnv">CondaEnv</a></code></b>
-          –
-          <div class="doc-md-description">
-            <p>Represenation of the content of a conda environment.yaml file</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ErrorEntry">ErrorEntry</a></code></b>
-          –
-          <div class="doc-md-description">
-            <p>An error in a <code>ValidationDetail</code></p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage">InstalledPackage</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary">ValidationContextSummary</a></code></b>
-          –
-          <div class="doc-md-description">
-            <p>Summary of the validation context without internally used context fields.</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail">ValidationDetail</a></code></b>
-          –
-          <div class="doc-md-description">
-            <p>a detail in a validation summary</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationEntry">ValidationEntry</a></code></b>
-          –
-          <div class="doc-md-description">
-            <p>Base of <code>ErrorEntry</code> and <code>WarningEntry</code></p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationSummary">ValidationSummary</a></code></b>
-          –
-          <div class="doc-md-description">
-            <p>Summarizes output of all bioimageio validations and tests</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningEntry">WarningEntry</a></code></b>
-          –
-          <div class="doc-md-description">
-            <p>A warning in a <code>ValidationDetail</code></p>
-          </div>
-        </li>
-    </ul>
+
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">CLASS</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.CondaEnv">CondaEnv</a></code></td>
+            <td class="doc-class-details">
+              <div class="doc-md-description">
+                <p>Represenation of the content of a conda environment.yaml file</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ErrorEntry">ErrorEntry</a></code></td>
+            <td class="doc-class-details">
+              <div class="doc-md-description">
+                <p>An error in a <code>ValidationDetail</code></p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage">InstalledPackage</a></code></td>
+            <td class="doc-class-details">
+              <div class="doc-md-description">
+                
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary">ValidationContextSummary</a></code></td>
+            <td class="doc-class-details">
+              <div class="doc-md-description">
+                <p>Summary of the validation context without internally used context fields.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail">ValidationDetail</a></code></td>
+            <td class="doc-class-details">
+              <div class="doc-md-description">
+                <p>a detail in a validation summary</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationEntry">ValidationEntry</a></code></td>
+            <td class="doc-class-details">
+              <div class="doc-md-description">
+                <p>Base of <code>ErrorEntry</code> and <code>WarningEntry</code></p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationSummary">ValidationSummary</a></code></td>
+            <td class="doc-class-details">
+              <div class="doc-md-description">
+                <p>Summarizes output of all bioimageio validations and tests</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningEntry">WarningEntry</a></code></td>
+            <td class="doc-class-details">
+              <div class="doc-md-description">
+                <p>A warning in a <code>ValidationDetail</code></p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 
 
-<p><span class="doc-section-title">Functions:</span></p>
-    <ul>
-          <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary._format_html_table">_format_html_table</a></code></b>
-            –
-            <div class="doc-md-description">
-              <p>format <code>rows</code> as HTML table</p>
-            </div>
-          </li>
-          <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary._format_md_table">_format_md_table</a></code></b>
-            –
-            <div class="doc-md-description">
-              <p>format <code>rows</code> as markdown table</p>
-            </div>
-          </li>
-          <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary._format_summary">_format_summary</a></code></b>
-            –
-            <div class="doc-md-description">
-              
-            </div>
-          </li>
-          <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.format_loc">format_loc</a></code></b>
-            –
-            <div class="doc-md-description">
-              <p>helper to format a location tuple <strong>loc</strong></p>
-            </div>
-          </li>
-          <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.is_dict">is_dict</a></code></b>
-            –
-            <div class="doc-md-description">
-              <p>to avoid Dict[Unknown, Unknown]</p>
-            </div>
-          </li>
-          <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.is_yaml_value">is_yaml_value</a></code></b>
-            –
-            <div class="doc-md-description">
-              
-            </div>
-          </li>
-          <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.write_yaml">write_yaml</a></code></b>
-            –
-            <div class="doc-md-description">
-              
-            </div>
-          </li>
-    </ul>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">FUNCTION</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary._format_html_table">_format_html_table</a></code></td>
+              <td class="doc-function-details">
+                <div class="doc-md-description">
+                  <p>format <code>rows</code> as HTML table</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary._format_md_table">_format_md_table</a></code></td>
+              <td class="doc-function-details">
+                <div class="doc-md-description">
+                  <p>format <code>rows</code> as markdown table</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary._format_summary">_format_summary</a></code></td>
+              <td class="doc-function-details">
+                <div class="doc-md-description">
+                  
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.format_loc">format_loc</a></code></td>
+              <td class="doc-function-details">
+                <div class="doc-md-description">
+                  <p>helper to format a location tuple <strong>loc</strong></p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.is_dict">is_dict</a></code></td>
+              <td class="doc-function-details">
+                <div class="doc-md-description">
+                  <p>to avoid Dict[Unknown, Unknown]</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.is_yaml_value">is_yaml_value</a></code></td>
+              <td class="doc-function-details">
+                <div class="doc-md-description">
+                  
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.write_yaml">write_yaml</a></code></td>
+              <td class="doc-function-details">
+                <div class="doc-md-description">
+                  
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
 
 
 
 
-<p><span class="doc-section-title">Attributes:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.CONDA_CMD">CONDA_CMD</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.Loc">Loc</a></code></b>
-          –
-          <div class="doc-md-description">
-            <p>location of error/warning in a nested data structure</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.VERSION">VERSION</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WARNING_LEVEL_TO_NAME">WARNING_LEVEL_TO_NAME</a></code></b>
-              (<code><span title="typing.Mapping">Mapping</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningLevel">WarningLevel</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningLevelName">WarningLevelName</a>]</code>)
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WARNING_NAME_TO_LEVEL">WARNING_NAME_TO_LEVEL</a></code></b>
-              (<code><span title="typing.Mapping">Mapping</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningLevelName">WarningLevelName</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningLevel">WarningLevel</a>]</code>)
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WARNING_SEVERITY_TO_NAME">WARNING_SEVERITY_TO_NAME</a></code></b>
-              (<code><span title="typing.Mapping">Mapping</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningSeverity">WarningSeverity</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningSeverityName">WarningSeverityName</a>]</code>)
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningLevel">WarningLevel</a></code></b>
-          –
-          <div class="doc-md-description">
-            <p>With warning level x validation warnings of severity &gt;=x are raised.</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningLevelName">WarningLevelName</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningSeverity">WarningSeverity</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningSeverityName">WarningSeverityName</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-    </ul>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">ATTRIBUTE</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.CONDA_CMD">CONDA_CMD</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.Loc">Loc</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                <p>location of error/warning in a nested data structure</p>
+              </div>
+              <p>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.VERSION">VERSION</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WARNING_LEVEL_TO_NAME">WARNING_LEVEL_TO_NAME</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Mapping">Mapping</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningLevel">WarningLevel</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningLevelName">WarningLevelName</a>]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WARNING_NAME_TO_LEVEL">WARNING_NAME_TO_LEVEL</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Mapping">Mapping</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningLevelName">WarningLevelName</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningLevel">WarningLevel</a>]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WARNING_SEVERITY_TO_NAME">WARNING_SEVERITY_TO_NAME</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Mapping">Mapping</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningSeverity">WarningSeverity</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningSeverityName">WarningSeverityName</a>]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningLevel">WarningLevel</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                <p>With warning level x validation warnings of severity &gt;=x are raised.</p>
+              </div>
+              <p>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningLevelName">WarningLevelName</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningSeverity">WarningSeverity</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningSeverityName">WarningSeverityName</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 
@@ -3559,18 +3649,6 @@
       <a href="../#">API Reference</a>
   </span>
 
-            <ul class="doc doc-backlink-list">
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../utils/#bioimageio.spec.pretty_validation_errors"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;pretty_validation_errors</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb last">
-      <a href="../utils/#bioimageio.spec.pretty_validation_errors.format_loc"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;format_loc</a>
-  </span>
-
-      </li>
-      <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb">
       <a href="#bioimageio.spec.summary"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;summary</a>
   </span>
@@ -3578,9 +3656,6 @@
             <span class="doc doc-backlink-crumb last">
       <a href="#bioimageio.spec.summary.format_loc"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;format_loc</a>
   </span>
-
-      </li>
-  </ul>
 
       </li>
   </ul>
@@ -3802,12 +3877,8 @@ Highest warning level 50/error does not raise any validaiton warnings (only vali
       <a href="../#bioimageio.spec"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;spec</a>
   </span>
 
-            <span class="doc doc-backlink-crumb">
-      <a href="../#bioimageio.spec.ValidationContext"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ValidationContext</a>
-  </span>
-
             <span class="doc doc-backlink-crumb last">
-      <a href="../#bioimageio.spec.ValidationContext.replace"><code class="doc-symbol doc-symbol-toc doc-symbol-method"></code>&nbsp;replace</a>
+      <a href="../#bioimageio.spec.ValidationContext"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ValidationContext</a>
   </span>
 
       </li>
@@ -3951,7 +4022,7 @@ Highest warning level 50/error does not raise any validaiton warnings (only vali
       </li>
       <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb">
-      <span>Description Format Specifications</span>
+      <a href="../bioimageio_format/#">The bioimage.io Format Specifications</a>
   </span>
 
             <ul class="doc doc-backlink-list">
@@ -4249,16 +4320,16 @@ Highest warning level 50/error does not raise any validaiton warnings (only vali
         <p>Fields:</p>
         <ul>
             <li>
-              <code><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.conda_env.CondaEnv.name">name</a></code>
+              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.CondaEnv.name">name</a></code>
                 (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
             </li>
             <li>
-              <code><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.conda_env.CondaEnv.channels">channels</a></code>
+              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.CondaEnv.channels">channels</a></code>
                 (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>)
             </li>
             <li>
-              <code><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.conda_env.CondaEnv.dependencies">dependencies</a></code>
-                (<code><span title="typing.List">List</span>[<span title="typing.Union">Union</span>[<span title="str">str</span>, <a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.conda_env.PipDeps">PipDeps</a>]]</code>)
+              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.CondaEnv.dependencies">dependencies</a></code>
+                (<code><span title="typing.List">List</span>[<span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="bioimageio.spec.conda_env.PipDeps">PipDeps</span>]]</code>)
             </li>
         </ul>
 
@@ -4267,7 +4338,7 @@ Highest warning level 50/error does not raise any validaiton warnings (only vali
             <li>
               <code><span title="bioimageio.spec.conda_env.CondaEnv._ensure_valid_conda_env_name">_ensure_valid_conda_env_name</span></code>
                 &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.conda_env.CondaEnv.name">name</a></code>            </li>
+                  <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.CondaEnv.name">name</a></code>            </li>
         </ul>
 
 
@@ -4316,7 +4387,7 @@ Highest warning level 50/error does not raise any validaiton warnings (only vali
   </span>
 
 <a href="#bioimageio.spec.summary.CondaEnv.dependencies" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">dependencies</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.conda_env.PipDeps">PipDeps</a></span><span class="p">]]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">dependencies</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec.conda_env.PipDeps">PipDeps</span></span><span class="p">]]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4924,20 +4995,6 @@ Highest warning level 50/error does not raise any validaiton warnings (only vali
           <ul class="doc doc-backlink-list">
       <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb">
-      <a href="../#bioimageio.spec"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;spec</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb">
-      <a href="../#bioimageio.spec.ValidationSummary"><code class="doc-symbol doc-symbol-toc doc-symbol-class"></code>&nbsp;ValidationSummary</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb last">
-      <a href="../#bioimageio.spec.ValidationSummary.env"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;env</a>
-  </span>
-
-      </li>
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
       <a href="../#">API Reference</a>
   </span>
 
@@ -4971,41 +5028,72 @@ Highest warning level 50/error does not raise any validaiton warnings (only vali
 
 
 
-<p><span class="doc-section-title">Attributes:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage.build">build</a></code></b>
-              (<code><span title="str">str</span></code>)
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage.channel">channel</a></code></b>
-              (<code><span title="str">str</span></code>)
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage.name">name</a></code></b>
-              (<code><span title="str">str</span></code>)
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage.version">version</a></code></b>
-              (<code><span title="str">str</span></code>)
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-    </ul>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">ATTRIBUTE</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage.build">build</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="str">str</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage.channel">channel</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="str">str</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage.name">name</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="str">str</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage.version">version</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="str">str</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 
@@ -5137,15 +5225,15 @@ Highest warning level 50/error does not raise any validaiton warnings (only vali
 
 <a href="#bioimageio.spec.summary.ValidationContextSummary" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">ValidationContextSummary</span><span class="p">(</span>
-    <span class="n"><span title="bioimageio.spec.summary.ValidationContextSummary(file_name)">file_name</span></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.summary.ValidationContextSummary(file_name)">file_name</span></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.io_basics.FileName">FileName</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.summary.ValidationContextSummary(original_source_name)">original_source_name</span></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.summary.ValidationContextSummary(perform_io_checks)">perform_io_checks</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" href="../#bioimageio.spec.settings">settings</a></span><span class="o">.</span><span class="n"><span title="bioimageio.spec._internal._settings.settings.perform_io_checks">perform_io_checks</span></span><span class="p">,</span>
-    <span class="n"><span title="bioimageio.spec.summary.ValidationContextSummary(known_files)">known_files</span></span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.Sha256">Sha256</a></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><span title="typing.cast">cast</span></span><span class="p">(</span>
-        <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[],</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.Sha256">Sha256</a></span><span class="p">]]],</span> <span class="n"><span title="dict">dict</span></span>
+    <span class="n"><span title="bioimageio.spec.summary.ValidationContextSummary(known_files)">known_files</span></span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../application/v0_3/#bioimageio.spec.application.v0_3.Sha256">Sha256</a></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><span title="typing.cast">cast</span></span><span class="p">(</span>
+        <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[],</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../application/v0_3/#bioimageio.spec.application.v0_3.Sha256">Sha256</a></span><span class="p">]]],</span> <span class="n"><span title="dict">dict</span></span>
     <span class="p">)(),</span>
     <span class="n"><span title="bioimageio.spec.summary.ValidationContextSummary(update_hashes)">update_hashes</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.summary.ValidationContextSummary(root)">root</span></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span>
-        <span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span><span class="p">,</span> <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">,</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;in-memory&quot;</span><span class="p">]</span>
+        <span class="n"><span title="bioimageio.spec._internal.root_url.RootHttpUrl">RootHttpUrl</span></span><span class="p">,</span> <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">,</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;in-memory&quot;</span><span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">(),</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -5226,64 +5314,110 @@ Highest warning level 50/error does not raise any validaiton warnings (only vali
 
 
 
-<p><span class="doc-section-title">Attributes:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.__pydantic_config__">__pydantic_config__</a></code></b>
-          –
-          <div class="doc-md-description">
-            <p>Pydantic config to include <strong>ValdationContextSummary</strong> in <strong>ValidationDetail</strong>.</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.file_name">file_name</a></code></b>
-              (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.FileName">FileName</a>]</code>)
-          –
-          <div class="doc-md-description">
-            <p>File name of the bioimageio YAML file.</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.known_files">known_files</a></code></b>
-              (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.Sha256">Sha256</a>]]</code>)
-          –
-          <div class="doc-md-description">
-            <p>Allows to bypass download and hashing of referenced files.</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.original_source_name">original_source_name</a></code></b>
-              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
-          –
-          <div class="doc-md-description">
-            <p>Original source of the bioimageio resource description, e.g. a URL or file path.</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.perform_io_checks">perform_io_checks</a></code></b>
-              (<code><span title="bool">bool</span></code>)
-          –
-          <div class="doc-md-description">
-            <p>Wether or not to perform validation that requires file io,</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.root">root</a></code></b>
-              (<code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a>, <span title="pathlib.Path">Path</span>, <span title="typing.Literal">Literal</span>[&#39;in-memory&#39;]]</code>)
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.update_hashes">update_hashes</a></code></b>
-              (<code><span title="bool">bool</span></code>)
-          –
-          <div class="doc-md-description">
-            <p>Overwrite specified file hashes with values computed from the referenced file (instead of comparing them).</p>
-          </div>
-        </li>
-    </ul>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">ATTRIBUTE</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.__pydantic_config__">__pydantic_config__</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                <p>Pydantic config to include <strong>ValdationContextSummary</strong> in <strong>ValidationDetail</strong>.</p>
+              </div>
+              <p>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.file_name">file_name</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                <p>File name of the bioimageio YAML file.</p>
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Optional">Optional</span>[<span title="bioimageio.spec._internal.io_basics.FileName">FileName</span>]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.known_files">known_files</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                <p>Allows to bypass download and hashing of referenced files.</p>
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" href="../application/v0_3/#bioimageio.spec.application.v0_3.Sha256">Sha256</a>]]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.original_source_name">original_source_name</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                <p>Original source of the bioimageio resource description, e.g. a URL or file path.</p>
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.perform_io_checks">perform_io_checks</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                <p>Wether or not to perform validation that requires file io,</p>
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="bool">bool</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.root">root</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Union">Union</span>[<span title="bioimageio.spec._internal.root_url.RootHttpUrl">RootHttpUrl</span>, <span title="pathlib.Path">Path</span>, <span title="typing.Literal">Literal</span>[&#39;in-memory&#39;]]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationContextSummary.update_hashes">update_hashes</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                <p>Overwrite specified file hashes with values computed from the referenced file (instead of comparing them).</p>
+              </div>
+              <p>
+                  <span class="doc-attribute-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="bool">bool</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 
@@ -5336,7 +5470,7 @@ Highest warning level 50/error does not raise any validaiton warnings (only vali
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationContextSummary.file_name" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">file_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">file_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.io_basics.FileName">FileName</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5362,9 +5496,9 @@ Highest warning level 50/error does not raise any validaiton warnings (only vali
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationContextSummary.known_files" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">known_files</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.Sha256">Sha256</a></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><span title="dataclasses.field">field</span></span><span class="p">(</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">known_files</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../application/v0_3/#bioimageio.spec.application.v0_3.Sha256">Sha256</a></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><span title="dataclasses.field">field</span></span><span class="p">(</span>
     <span class="n"><span title="dataclasses.field(default_factory)">default_factory</span></span><span class="o">=</span><span class="n"><span title="typing.cast">cast</span></span><span class="p">(</span>
-        <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[],</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.Sha256">Sha256</a></span><span class="p">]]],</span> <span class="n"><span title="dict">dict</span></span>
+        <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[],</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../application/v0_3/#bioimageio.spec.application.v0_3.Sha256">Sha256</a></span><span class="p">]]],</span> <span class="n"><span title="dict">dict</span></span>
     <span class="p">)</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -5446,7 +5580,7 @@ e.g. downloading a remote files.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationContextSummary.root" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span><span class="p">,</span> <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">,</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;in-memory&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.root_url.RootHttpUrl">RootHttpUrl</span></span><span class="p">,</span> <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">,</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;in-memory&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">()</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -6087,7 +6221,7 @@ e.g. downloading a remote files.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail.recommended_env">recommended_env</a></code>
-                (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.conda_env.CondaEnv">CondaEnv</a>]</code>)
+                (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.CondaEnv">CondaEnv</a>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail.saved_conda_compare">saved_conda_compare</a></code>
@@ -6242,7 +6376,7 @@ e.g. downloading a remote files.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationDetail.recommended_env" class="headerlink" title="Permanent link">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">recommended_env</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.conda_env.CondaEnv">CondaEnv</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">recommended_env</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.CondaEnv">CondaEnv</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -8139,16 +8273,28 @@ save it to disk. See <code>save</code> for details.</p>
         <p>Save the validation/test summary in JSON, Markdown or HTML format.</p>
 
 
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="typing.List">List</span>[<span title="pathlib.Path">Path</span>]</code>
-          –
-          <div class="doc-md-description">
-            <p>List of file paths the summary was saved to.</p>
-          </div>
-        </li>
-    </ul>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code><span title="typing.List">List</span>[<span title="pathlib.Path">Path</span>]</code>
+                </span>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>List of file paths the summary was saved to.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
         <p>Notes:
 - Format is chosen based on the suffix: <code>.json</code>, <code>.md</code>, <code>.html</code>.
 - If <strong>path</strong> has no suffix it is assumed to be a direcotry to which a
@@ -9443,7 +9589,7 @@ save it to disk. See <code>save</code> for details.</p>
 
 
 <a href="#bioimageio.spec.summary.is_yaml_value" class="headerlink" title="Permanent link">¤</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">is_yaml_value</span><span class="p">(</span><span class="n"><span title="bioimageio.spec.summary.is_yaml_value(value)">value</span></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing_extensions.TypeGuard">TypeGuard</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.YamlValue">YamlValue</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">is_yaml_value</span><span class="p">(</span><span class="n"><span title="bioimageio.spec.summary.is_yaml_value(value)">value</span></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing_extensions.TypeGuard">TypeGuard</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../generic/v0_2/#bioimageio.spec.generic.v0_2.YamlValue">YamlValue</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -9471,11 +9617,11 @@ save it to disk. See <code>save</code> for details.</p>
 <a href="#bioimageio.spec.summary.write_yaml" class="headerlink" title="Permanent link">¤</a></h2>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">write_yaml</span><span class="p">(</span>
     <span class="n"><span title="bioimageio.spec.summary.write_yaml(content)">content</span></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span>
-        <span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.YamlValue">YamlValue</a></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.io.BioimageioYamlContentView">BioimageioYamlContentView</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.BaseModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel">BaseModel</a></span>
+        <span class="n"><a class="autorefs autorefs-internal" href="../generic/v0_2/#bioimageio.spec.generic.v0_2.YamlValue">YamlValue</a></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.io.BioimageioYamlContentView">BioimageioYamlContentView</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.BaseModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel">BaseModel</a></span>
     <span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.summary.write_yaml(file)">file</span></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span>
-        <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.NewPath">NewPath</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.FilePath">FilePath</a></span><span class="p">,</span> <span class="n"><span title="typing.IO">IO</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span> <span class="n"><span title="typing.IO">IO</span></span><span class="p">[</span><span class="n"><span title="bytes">bytes</span></span><span class="p">],</span> <span class="n"><a class="autorefs autorefs-internal" href="../utils/#bioimageio.spec.common.ZipPath">ZipPath</a></span>
+        <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.NewPath">NewPath</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.FilePath">FilePath</a></span><span class="p">,</span> <span class="n"><span title="typing.IO">IO</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span> <span class="n"><span title="typing.IO">IO</span></span><span class="p">[</span><span class="n"><span title="bytes">bytes</span></span><span class="p">],</span> <span class="n"><span title="bioimageio.spec._internal.io_basics.ZipPath">ZipPath</span></span>
     <span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -9582,13 +9728,13 @@ save it to disk. See <code>save</code> for details.</p>
         
         
           
-          <a href="../utils/" class="md-footer__link md-footer__link--next" aria-label="Next: Common  Utilities">
+          <a href="../../changelog/" class="md-footer__link md-footer__link--next" aria-label="Next: Changelog">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Common  Utilities
+                Changelog
               </div>
             </div>
             <div class="md-footer__button md-icon">

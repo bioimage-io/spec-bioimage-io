@@ -2,98 +2,98 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/changelog/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/development/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
+    </url>
+    <url>
+         <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/bioimageio_format/</loc>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/partner_utils/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/summary/</loc>
-         <lastmod>2025-11-20</lastmod>
-    </url>
-    <url>
-         <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/utils/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/application/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/application/v0_2/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/application/v0_3/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/dataset/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/dataset/v0_2/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/dataset/v0_3/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/generic/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/generic/v0_2/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/generic/v0_3/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/model/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/model/v0_4/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/model/v0_5/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/notebook/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/notebook/v0_2/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/api/notebook/v0_3/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/usage/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
     <url>
          <loc>https://bioimage-io.github.io/spec-bioimage-io/dev/coverage/</loc>
-         <lastmod>2025-11-20</lastmod>
+         <lastmod>2025-11-24</lastmod>
     </url>
 </urlset>

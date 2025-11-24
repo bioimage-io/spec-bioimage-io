@@ -522,10 +522,6 @@
       
         
       
-        
-      
-        
-      
     
     
     
@@ -708,6 +704,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#api-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API overview
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -769,7 +776,7 @@ The <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">¤</a></h2>
 <p>The bioimageio.spec documentation is hosted at <a href="https://bioimage-io.github.io/spec-bioimage-io">https://bioimage-io.github.io/spec-bioimage-io</a>.</p>
 <h2 id="format-version-overview">Format version overview<a class="headerlink" href="#format-version-overview" title="Permanent link">¤</a></h2>
-<p>All bioimage.io description formats are defined as <a href="https://docs.pydantic.dev/latest/">Pydantic models</a>.</p>
+<p>All bioimage.io description formats are defined as <a href="https://docs.pydantic.dev/latest/">Pydantic models</a>, see <a href="#api-overview">API overview</a>.</p>
 <table>
 <thead>
 <tr>
@@ -784,7 +791,7 @@ The <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.
 <td>model</td>
 <td>0.5 </br> 0.4</td>
 <td><a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i2_oneOf_i1">model 0.5</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/bioimageio_schema_latest/index.html#oneOf_i2_oneOf_i0">model 0.4</a></td>
-<td><a href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/model/v0_5/#bioimageio.spec.model.v0_5.ModelDescr">v0_5.ModelDescr</a> </br> <a href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/model/v0_4/#bioimageio.spec.model.v0_4.ModelDescr">v0_4.ModelDescr</a></td>
+<td><code>bioimagio.spec.model.v0_5.ModelDescr</code> </br> <code>bioimagio.spec.model.v0_4.ModelDescr</code></td>
 </tr>
 <tr>
 <td>dataset</td>
@@ -837,9 +844,25 @@ The <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.
 </table>
 <p>Note: <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json">bioimageio_schema_v0-5.json</a> and  <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json">bioimageio_schema_latest.json</a> are identical, but  <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json">bioimageio_schema_latest.json</a> will eventually refer to the future <code>bioimageio_schema_v0-6.json</code>.</p>
 <h2 id="flattened-interactive-docs">Flattened, interactive docs<a class="headerlink" href="#flattened-interactive-docs" title="Permanent link">¤</a></h2>
-<p>A flattened view of the types used by the spec that also shows values constraints.</p>
-<p><a href="https://bioimage-io.github.io/spec-bioimage-io/interactive_docs_v0-5.html">rendered</a></p>
-<p>You can also generate these docs locally by running <code>PYTHONPATH=./scripts python -m interactive_docs</code></p>
+<p>Alternatively to the above metadata format documentation, <a href="https://bioimage-io.github.io/spec-bioimage-io/interactive_docs_v0-5.html">this flattened view of the metadata specification</a> that also shows value constraints can be explored.</p>
+<h2 id="api-overview">API overview<a class="headerlink" href="#api-overview" title="Permanent link">¤</a></h2>
+<p>bioimageio.spec implements type and format version specific <code>pydantic.BaseModel</code> models for resources shared on bioimage.io.</p>
+<p>The return type of <code>bioimageio.spec.load_description()</code> is <code>bioimageio.spec.ResourceDescr</code>.
+This is a <code>typing.Union</code> over various format type and format version specific classes including <code>InvalidDescr</code> and <code>GenericDescr</code>.
+The individual <code>*Descr</code>-classes of this <code>Union</code> can be instantiated in code to create a bioimage.io resource description in the first place.</p>
+<p>For more narrow type hints and runtime-checks during loading dedicated <code>load_*_description</code> methods may be used:</p>
+<ul>
+<li><code>load_model_description</code></li>
+<li><code>load_dataset_description</code></li>
+</ul>
+<p>Another way to narrow/check the return type is to call <code>load_description</code>/<code>load_model_description</code>/... with <code>format_version="latest"</code>, returning <code>bioimageio.spec.LatestResourceDescr</code>/<code>bioimageio.spec.ModelDescr</code> (instead of <code>bioimageio.spec.AnyModelDescr</code>)/... .</p>
+<p>To export resource descriptions:</p>
+<ul>
+<li><code>save_bioimageio_package</code></li>
+<li><code>save_bioimageio_package_as_folder</code></li>
+<li><code>save_bioimageio_package_to_stream</code></li>
+<li><code>save_bioimageio_yaml_only</code></li>
+</ul>
 <div class="footnote">
 <hr />
 <ol>

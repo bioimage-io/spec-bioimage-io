@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://bioimage-io.github.io/spec-bioimage-io/dev/api/model/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../bioimageio_format/">
       
       
         <link rel="next" href="v0_4/">
@@ -448,10 +448,6 @@
       
         
       
-        
-      
-        
-      
     
     
     
@@ -521,8 +517,6 @@
     
       
         
-          
-        
       
         
       
@@ -554,14 +548,14 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
+            <a href="../bioimageio_format/" class="md-nav__link ">
               
   
   
   <span class="md-ellipsis">
     
   
-    Description Format Specifications
+    The bioimage.io Format Specifications
   
 
     
@@ -572,7 +566,7 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_2_1" id="__nav_2_1_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2_1" id="__nav_2_1_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -583,12 +577,143 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Description Format Specifications
+    The bioimage.io Format Specifications
   
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1_1" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link md-nav__link--active" for="__nav_2_1_1" id="__nav_2_1_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_1_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Model
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="v0_4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v0_4
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="v0_5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v0_5
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
               
             
               
@@ -867,62 +992,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../utils/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Common  Utilities
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../partner_utils/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Partner Utilities
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1122,7 +1191,7 @@
         <a href="v0_4/" class="md-path__link">
           
   <span class="md-ellipsis">
-    Description Format Specifications
+    The bioimage.io Format Specifications
   </span>
 
         </a>
@@ -1172,7 +1241,8 @@
 
     <div class="doc doc-contents first">
 
-        <p>implementaions of all released minor versions are available in submodules:
+        <p>model resource description format</p>
+<p>Implementations of all released minor versions are available in submodules:
 - model v0_4: <code>bioimageio.spec.model.v0_4.ModelDescr</code>
 - model v0_5: <code>bioimageio.spec.model.v0_5.ModelDescr</code></p>
 
@@ -1182,37 +1252,48 @@
 
 
 
-<p><span class="doc-section-title">Modules:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-          <b><code><span title="bioimageio.spec.model._v0_3_converter">_v0_3_converter</span></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><span title="bioimageio.spec.model._v0_4_converter">_v0_4_converter</span></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="v0_4/#bioimageio.spec.model.v0_4">v0_4</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="v0_5/#bioimageio.spec.model.v0_5">v0_5</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-    </ul>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">MODULE</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><span title="bioimageio.spec.model._v0_3_converter">_v0_3_converter</span></code></td>
+            <td class="doc-module-details">
+              <div class="doc-md-description">
+                
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><span title="bioimageio.spec.model._v0_4_converter">_v0_4_converter</span></code></td>
+            <td class="doc-module-details">
+              <div class="doc-md-description">
+                
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="v0_4/#bioimageio.spec.model.v0_4">v0_4</a></code></td>
+            <td class="doc-module-details">
+              <div class="doc-md-description">
+                
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="v0_5/#bioimageio.spec.model.v0_5">v0_5</a></code></td>
+            <td class="doc-module-details">
+              <div class="doc-md-description">
+                
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 
@@ -1223,37 +1304,56 @@
 
 
 
-<p><span class="doc-section-title">Attributes:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.AnyModelDescr">AnyModelDescr</a></code></b>
-          –
-          <div class="doc-md-description">
-            <p>Union of any released model desription</p>
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.ModelDescr">ModelDescr</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.ModelDescr_v0_4">ModelDescr_v0_4</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-        <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.ModelDescr_v0_5">ModelDescr_v0_5</a></code></b>
-          –
-          <div class="doc-md-description">
-            
-          </div>
-        </li>
-    </ul>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">ATTRIBUTE</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.AnyModelDescr">AnyModelDescr</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                <p>Union of any released model desription</p>
+              </div>
+              <p>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.ModelDescr">ModelDescr</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.ModelDescr_v0_4">ModelDescr_v0_4</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.ModelDescr_v0_5">ModelDescr_v0_5</a></code></td>
+            <td class="doc-attribute-details">
+              <div class="doc-md-description">
+                
+              </div>
+              <p>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
 
@@ -1309,20 +1409,6 @@
 
             <span class="doc doc-backlink-crumb last">
       <a href="../#bioimageio.spec.load_model_description"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;load_model_description</a>
-  </span>
-
-      </li>
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../#">API Reference</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb">
-      <a href="../utils/#bioimageio.spec.utils"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;utils</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb last">
-      <a href="../utils/#bioimageio.spec.utils.ensure_description_is_model"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;ensure_description_is_model</a>
   </span>
 
       </li>
@@ -1444,7 +1530,7 @@
   </span>
 
             <span class="doc doc-backlink-crumb">
-      <span>Description Format Specifications</span>
+      <a href="../bioimageio_format/#">The bioimage.io Format Specifications</a>
   </span>
 
             <span class="doc doc-backlink-crumb">
@@ -1504,7 +1590,7 @@
   </span>
 
             <span class="doc doc-backlink-crumb">
-      <span>Description Format Specifications</span>
+      <a href="../bioimageio_format/#">The bioimage.io Format Specifications</a>
   </span>
 
             <span class="doc doc-backlink-crumb">
@@ -1571,7 +1657,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: API Reference">
+          <a href="../bioimageio_format/" class="md-footer__link md-footer__link--prev" aria-label="Previous: The bioimage.io Format Specifications">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1581,7 +1667,7 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                API Reference
+                The bioimage.io Format Specifications
               </div>
             </div>
           </a>
