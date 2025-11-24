@@ -7,7 +7,7 @@ bioimageio.spec defines and validates these specifications and is backwards comp
 It also provides download/upload to/from the BioImage.IO Model Zoo at https://bioimage.io.
 
 Note:
-    For more powerful tools to work with BioImage.IO resources, consider using the [bioimageio.core](https://bioimage-io.github.io/core-bioimage-io-python) package.
+    For additional tools to work with BioImage.IO resources in Python, consider using the [bioimageio.core](https://bioimage-io.github.io/core-bioimage-io-python) package.
 """
 
 # ruff: noqa: E402
@@ -22,7 +22,6 @@ from . import (
     dataset,
     generic,
     model,
-    pretty_validation_errors,
     summary,
     utils,
 )
@@ -34,7 +33,7 @@ from ._description import (
     dump_description,
     validate_format,
 )
-from ._get_conda_env import BioimageioCondaEnv, get_conda_env
+from ._get_conda_env import get_conda_env
 from ._internal import settings
 from ._internal.common_nodes import InvalidDescr
 from ._internal.validation_context import ValidationContext, get_validation_context
@@ -53,6 +52,7 @@ from ._package import (
     save_bioimageio_package_as_folder,
     save_bioimageio_package_to_stream,
 )
+from ._pretty_validation_errors import PRETTY_VALIDATION_ERRORS_IN_IPYNB_ENABLED
 from ._upload import upload
 from ._version import VERSION as __version__
 from .application import AnyApplicationDescr, ApplicationDescr
@@ -60,8 +60,9 @@ from .dataset import AnyDatasetDescr, DatasetDescr
 from .generic import AnyGenericDescr, GenericDescr
 from .model import AnyModelDescr, ModelDescr
 from .notebook import AnyNotebookDescr, NotebookDescr
-from .pretty_validation_errors import enable_pretty_validation_errors_in_ipynb
-from .summary import ValidationSummary
+
+BioimageioCondaEnv = conda_env.BioimageioCondaEnv
+ValidationSummary = summary.ValidationSummary
 
 __all__ = [
     "__version__",
@@ -72,6 +73,7 @@ __all__ = [
     "AnyNotebookDescr",
     "application",
     "ApplicationDescr",
+    "PRETTY_VALIDATION_ERRORS_IN_IPYNB_ENABLED",
     "BioimageioCondaEnv",
     "build_description",
     "common",
@@ -79,7 +81,6 @@ __all__ = [
     "dataset",
     "DatasetDescr",
     "dump_description",
-    "enable_pretty_validation_errors_in_ipynb",
     "generic",
     "GenericDescr",
     "get_conda_env",
@@ -94,7 +95,6 @@ __all__ = [
     "model",
     "ModelDescr",
     "NotebookDescr",
-    "pretty_validation_errors",
     "ResourceDescr",
     "save_bioimageio_package_as_folder",
     "save_bioimageio_package_to_stream",
