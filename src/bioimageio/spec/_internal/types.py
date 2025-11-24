@@ -6,7 +6,7 @@ from typing import Any, ClassVar, Sequence, Type, TypeVar, Union
 
 import annotated_types
 from dateutil.parser import isoparse
-from pydantic import PlainSerializer, RootModel, StringConstraints
+from pydantic import RootModel, StringConstraints
 from typing_extensions import Annotated, Literal
 
 from .constants import DOI_REGEX, SI_UNIT_REGEX
@@ -17,6 +17,7 @@ from .io_packaging import FileSource_
 from .license_id import DeprecatedLicenseId, LicenseId
 from .type_guards import is_sequence
 from .url import HttpUrl
+from .utils import PrettyPlainSerializer
 from .validated_string import ValidatedString
 from .validator_annotations import AfterValidator, BeforeValidator
 from .version_type import Version
@@ -121,7 +122,9 @@ class Datetime(
         Annotated[
             datetime,
             BeforeValidator(_validate_datetime),
-            PlainSerializer(_serialize_datetime_json, when_used="json-unless-none"),
+            PrettyPlainSerializer(
+                _serialize_datetime_json, when_used="json-unless-none"
+            ),
         ]
     ]
 ):

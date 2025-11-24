@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import dataclasses
 import re
 import sys
+from dataclasses import dataclass
 from functools import wraps
-from inspect import signature
+from inspect import isfunction, signature
 from pathlib import Path
 from typing import (
     Any,
@@ -16,6 +18,7 @@ from typing import (
     Union,
 )
 
+import pydantic
 from ruyaml import Optional
 from typing_extensions import ParamSpec
 
@@ -143,3 +146,32 @@ def assert_all_params_set_explicitly(fn: Callable[P, T]) -> Callable[P, T]:
 
 def get_os_friendly_file_name(name: str) -> str:
     return re.sub(r"\W+|^(?=\d)", "_", name)
+
+
+@dataclass
+class _PrettyDataClassReprMixin:
+    """A mixin that provides a pretty __repr__ for dataclasses
+
+    - leaving out fields that are None
+    - leaving out memory locations of functions
+    """
+
+    def __repr__(self):
+        field_values = {
+            f.name: v
+            for f in dataclasses.fields(self)
+            if (v := getattr(self, f.name)) is not None
+        }
+        field_str = ", ".join(
+            f"{k}=" + (f"<function {v.__name__}>" if isfunction(v) else repr(v))
+            for k, v in field_values.items()
+        )
+        return f"{self.__class__.__name__}({field_str})"
+
+
+class PrettyPlainSerializer(pydantic.PlainSerializer, _PrettyDataClassReprMixin):
+    pass
+
+
+class PrettyWrapSerializer(pydantic.WrapSerializer, _PrettyDataClassReprMixin):
+    pass
