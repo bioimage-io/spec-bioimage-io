@@ -12,6 +12,7 @@ from bioimageio.spec._internal.license_id import LicenseId
 from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.model.v0_5 import (
+    ArchitectureFromFileDescr,
     Author,
     AxisId,
     BatchAxis,
@@ -22,16 +23,23 @@ from bioimageio.spec.model.v0_5 import (
     InputAxis,
     InputTensorDescr,
     IntervalOrRatioDataDescr,
+    KerasHdf5WeightsDescr,
     Maintainer,
     ModelDescr,
     OnnxWeightsDescr,
     OutputTensorDescr,
     ParameterizedSize,
+    PytorchStateDictWeightsDescr,
+    Sha256,
     SizeReference,
     SpaceInputAxis,
     SpaceOutputAxis,
     TensorDescrBase,
+    TensorflowJsWeightsDescr,
+    TensorflowSavedModelBundleWeightsDescr,
     TensorId,
+    TorchscriptWeightsDescr,
+    Version,
     WeightsDescr,
 )
 from tests.conftest import UNET2D_ROOT
@@ -577,3 +585,32 @@ def test_absolute_tolerance(model_data: Dict[str, Any]):
 
     with pytest.raises(ValueError), ValidationContext(perform_io_checks=True):
         _ = model_descr._validate_test_tensors()  # type: ignore[reportPrivateUsage]
+
+
+def test_get_set_weights_descr(model: ModelDescr):
+    available = model.weights.available_formats
+    assert not (set(available) - model.weights.missing_formats)
+    model.weights.onnx = None
+    model.weights.keras_hdf5 = KerasHdf5WeightsDescr(
+        source=UNET2D_ROOT / "weights.h5", tensorflow_version=Version("2.10")
+    )
+    model.weights.pytorch_state_dict = PytorchStateDictWeightsDescr(
+        source=UNET2D_ROOT / "weights.pth",
+        pytorch_version=Version("1.15"),
+        architecture=ArchitectureFromFileDescr(
+            callable=Identifier("Model"),
+            source=UNET2D_ROOT / "code.py",
+            sha256=Sha256("0" * 64),  # dummy sha256
+        ),
+    )
+    model.weights.torchscript = TorchscriptWeightsDescr(
+        source=UNET2D_ROOT / "weights_ts.pt", pytorch_version=Version("1.15")
+    )
+    model.weights.tensorflow_saved_model_bundle = (
+        TensorflowSavedModelBundleWeightsDescr(
+            source=UNET2D_ROOT / "weights_sm", tensorflow_version=Version("2.10")
+        )
+    )
+    model.weights.tensorflow_js = TensorflowJsWeightsDescr(
+        source=UNET2D_ROOT / "weights_js", tensorflow_version=Version("2.10")
+    )
