@@ -9,7 +9,6 @@ from typing import (
 
 from pydantic import (
     AnyUrl,
-    PlainSerializer,
     SerializationInfo,
     SerializerFunctionWrapHandler,
     WrapSerializer,
@@ -33,6 +32,7 @@ from .io_basics import (
 )
 from .packaging_context import packaging_context_var
 from .url import HttpUrl
+from .utils import PrettyPlainSerializer
 from .validator_annotations import AfterValidator
 
 
@@ -119,7 +119,7 @@ def _package(
     return fname
 
 
-include_in_package = PlainSerializer(_package_serializer, when_used="unless-none")
+include_in_package = PrettyPlainSerializer(_package_serializer, when_used="unless-none")
 """DEPRECATED serializer for `source` fields without corresponding `sha256` field."""
 
 include_when_packaging = WrapSerializer(

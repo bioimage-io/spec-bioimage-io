@@ -63,6 +63,7 @@ IGNORE_TYPES_MEMBERS = {
     "NotEmpty",
     "PermissiveFileSource",
     "PlainSerializer",
+    "PrettyPlainSerializer",
     "RootModel",
     "S",
     "Sequence",
