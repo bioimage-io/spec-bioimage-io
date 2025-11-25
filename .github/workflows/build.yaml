@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       force-publish:
-        description: 'Force publish even if no version change detected'
+        description: 'Force publish even if no version change was detected'
         required: false
         type: choice
         options:
@@ -291,7 +291,6 @@ jobs:
         with:
           packages-dir: dist/
       - name: Publish the release notes
-        if: github.ref == 'refs/heads/main'
         uses: release-drafter/release-drafter@v6.0.0
         with:
           tag: '${{ needs.docs.outputs.new-version }}'
