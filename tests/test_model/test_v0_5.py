@@ -9,7 +9,6 @@ from pydantic import RootModel, ValidationError
 from bioimageio.spec import build_description, validate_format
 from bioimageio.spec._internal.io import FileDescr
 from bioimageio.spec._internal.license_id import LicenseId
-from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.model.v0_5 import (
