@@ -9,6 +9,7 @@ from pydantic import RootModel, ValidationError
 from bioimageio.spec import build_description, validate_format
 from bioimageio.spec._internal.io import FileDescr
 from bioimageio.spec._internal.license_id import LicenseId
+from bioimageio.spec._internal.root_url import RootHttpUrl
 from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec.model.v0_5 import (
@@ -589,28 +590,34 @@ def test_absolute_tolerance(model_data: Dict[str, Any]):
 
 def test_get_set_weights_descr(model: ModelDescr):
     available = model.weights.available_formats
-    assert not (set(available) - model.weights.missing_formats)
-    model.weights.onnx = None
-    model.weights.keras_hdf5 = KerasHdf5WeightsDescr(
-        source=UNET2D_ROOT / "weights.h5", tensorflow_version=Version("2.10")
+    assert not any(a in model.weights.missing_formats for a in available), (
+        model.weights.missing_formats,
+        available,
     )
-    model.weights.pytorch_state_dict = PytorchStateDictWeightsDescr(
-        source=UNET2D_ROOT / "weights.pth",
-        pytorch_version=Version("1.15"),
-        architecture=ArchitectureFromFileDescr(
-            callable=Identifier("Model"),
-            source=UNET2D_ROOT / "code.py",
-            sha256=Sha256("0" * 64),  # dummy sha256
-        ),
-    )
-    model.weights.torchscript = TorchscriptWeightsDescr(
-        source=UNET2D_ROOT / "weights_ts.pt", pytorch_version=Version("1.15")
-    )
-    model.weights.tensorflow_saved_model_bundle = (
-        TensorflowSavedModelBundleWeightsDescr(
-            source=UNET2D_ROOT / "weights_sm", tensorflow_version=Version("2.10")
+    with ValidationContext(perform_io_checks=False):
+        root_url = "https://example.com/"
+        model.weights.keras_hdf5 = KerasHdf5WeightsDescr(
+            source=HttpUrl(root_url + "weights.h5"), tensorflow_version=Version("2.10")
         )
-    )
-    model.weights.tensorflow_js = TensorflowJsWeightsDescr(
-        source=UNET2D_ROOT / "weights_js", tensorflow_version=Version("2.10")
-    )
+        model.weights.pytorch_state_dict = PytorchStateDictWeightsDescr(
+            source=HttpUrl(root_url + "weights.pth"),
+            pytorch_version=Version("1.15"),
+            architecture=ArchitectureFromFileDescr(
+                callable=Identifier("Model"),
+                source=HttpUrl(root_url + "code.py"),
+                sha256=Sha256("0" * 64),  # dummy sha256
+            ),
+        )
+        model.weights.torchscript = TorchscriptWeightsDescr(
+            source=HttpUrl(root_url + "weights_ts.pt"), pytorch_version=Version("1.15")
+        )
+        model.weights.tensorflow_saved_model_bundle = (
+            TensorflowSavedModelBundleWeightsDescr(
+                source=HttpUrl(root_url + "weights_sm"),
+                tensorflow_version=Version("2.10"),
+            )
+        )
+        model.weights.tensorflow_js = TensorflowJsWeightsDescr(
+            source=HttpUrl(root_url + "weights_js"), tensorflow_version=Version("2.10")
+        )
+        model.weights.onnx = None
