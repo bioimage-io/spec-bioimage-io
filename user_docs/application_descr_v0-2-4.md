@@ -52,7 +52,7 @@ File attachments
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f50b8f66700>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7327f86700>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -124,7 +124,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f50b8f66700>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7327f86700>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -201,7 +201,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f50b8f66700>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7327f86700>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
 
 </details>
 
@@ -338,7 +338,7 @@ URL or path to the source of the application
 </summary>
 
 Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f50b8f66700>, return_type=PydanticUndefined, when_used='unless-none'))]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7327f86700>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
