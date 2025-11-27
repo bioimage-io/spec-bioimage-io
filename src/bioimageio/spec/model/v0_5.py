@@ -29,6 +29,7 @@ from typing import (
     TypeVar,
     Union,
     cast,
+    overload,
 )
 
 import numpy as np
@@ -2445,6 +2446,16 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     """Version of the PyTorch library used."""
 
 
+SpecificWeightsDescr = Union[
+    KerasHdf5WeightsDescr,
+    OnnxWeightsDescr,
+    PytorchStateDictWeightsDescr,
+    TensorflowJsWeightsDescr,
+    TensorflowSavedModelBundleWeightsDescr,
+    TorchscriptWeightsDescr,
+]
+
+
 class WeightsDescr(Node):
     keras_hdf5: Optional[KerasHdf5WeightsDescr] = None
     onnx: Optional[OnnxWeightsDescr] = None
@@ -2526,8 +2537,92 @@ class WeightsDescr(Node):
 
         return ret
 
+    @overload
+    def __setitem__(
+        self, key: Literal["keras_hdf5"], value: Optional[KerasHdf5WeightsDescr]
+    ) -> None: ...
+    @overload
+    def __setitem__(
+        self, key: Literal["onnx"], value: Optional[OnnxWeightsDescr]
+    ) -> None: ...
+    @overload
+    def __setitem__(
+        self,
+        key: Literal["pytorch_state_dict"],
+        value: Optional[PytorchStateDictWeightsDescr],
+    ) -> None: ...
+    @overload
+    def __setitem__(
+        self, key: Literal["tensorflow_js"], value: Optional[TensorflowJsWeightsDescr]
+    ) -> None: ...
+    @overload
+    def __setitem__(
+        self,
+        key: Literal["tensorflow_saved_model_bundle"],
+        value: Optional[TensorflowSavedModelBundleWeightsDescr],
+    ) -> None: ...
+    @overload
+    def __setitem__(
+        self, key: Literal["torchscript"], value: Optional[TorchscriptWeightsDescr]
+    ) -> None: ...
+
+    def __setitem__(
+        self,
+        key: Literal[
+            "keras_hdf5",
+            "onnx",
+            "pytorch_state_dict",
+            "tensorflow_js",
+            "tensorflow_saved_model_bundle",
+            "torchscript",
+        ],
+        value: Optional[SpecificWeightsDescr],
+    ):
+        if key == "keras_hdf5":
+            if value is not None and not isinstance(value, KerasHdf5WeightsDescr):
+                raise TypeError(
+                    f"Expected KerasHdf5WeightsDescr or None for key 'keras_hdf5', got {type(value)}"
+                )
+            self.keras_hdf5 = value
+        elif key == "onnx":
+            if value is not None and not isinstance(value, OnnxWeightsDescr):
+                raise TypeError(
+                    f"Expected OnnxWeightsDescr or None for key 'onnx', got {type(value)}"
+                )
+            self.onnx = value
+        elif key == "pytorch_state_dict":
+            if value is not None and not isinstance(
+                value, PytorchStateDictWeightsDescr
+            ):
+                raise TypeError(
+                    f"Expected PytorchStateDictWeightsDescr or None for key 'pytorch_state_dict', got {type(value)}"
+                )
+            self.pytorch_state_dict = value
+        elif key == "tensorflow_js":
+            if value is not None and not isinstance(value, TensorflowJsWeightsDescr):
+                raise TypeError(
+                    f"Expected TensorflowJsWeightsDescr or None for key 'tensorflow_js', got {type(value)}"
+                )
+            self.tensorflow_js = value
+        elif key == "tensorflow_saved_model_bundle":
+            if value is not None and not isinstance(
+                value, TensorflowSavedModelBundleWeightsDescr
+            ):
+                raise TypeError(
+                    f"Expected TensorflowSavedModelBundleWeightsDescr or None for key 'tensorflow_saved_model_bundle', got {type(value)}"
+                )
+            self.tensorflow_saved_model_bundle = value
+        elif key == "torchscript":
+            if value is not None and not isinstance(value, TorchscriptWeightsDescr):
+                raise TypeError(
+                    f"Expected TorchscriptWeightsDescr or None for key 'torchscript', got {type(value)}"
+                )
+            self.torchscript = value
+        else:
+            raise KeyError(key)
+
     @property
-    def available_formats(self):
+    def available_formats(self) -> Dict[WeightsFormat, SpecificWeightsDescr]:
         return {
             **({} if self.keras_hdf5 is None else {"keras_hdf5": self.keras_hdf5}),
             **({} if self.onnx is None else {"onnx": self.onnx}),
@@ -2552,7 +2647,7 @@ class WeightsDescr(Node):
         }
 
     @property
-    def missing_formats(self):
+    def missing_formats(self) -> Set[WeightsFormat]:
         return {
             wf for wf in get_args(WeightsFormat) if wf not in self.available_formats
         }
