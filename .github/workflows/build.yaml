@@ -202,10 +202,9 @@ jobs:
         run: python -m interactive_docs
       - name: Generate JSON schema documentation
         run: python scripts/generate_json_schema_documentation.py
-      - name: Copy json schema for hosting (bioimageio_schema_latest.json regstered with schemastore.org)
+      - name: Copy json schema for hosting (bioimageio_schema_latest.json is registered with schemastore.org)
         run: |
-          cp src/bioimageio/spec/static/bioimageio_schema.json ./dist/bioimageio_schema.json
-          ln -s ./dist/bioimageio_schema.json ./dist/bioimageio_schema_latest.json
+          cp src/bioimageio/spec/static/bioimageio_schema.json ./dist/bioimageio_schema_latest.json
       - name: copy legacy file until BioImage.IO-packager is updated # TODO: remove if packager does not depend on it anymore
         run: cp weight_formats_spec.json ./dist/weight_formats_spec.json
       - name: Get branch name to deploy to
