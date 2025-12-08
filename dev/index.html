@@ -550,7 +550,7 @@
   
   
   
-    <a href="api/model/v0_4/" class="md-nav__link">
+    <a href="api/model/v0_5/" class="md-nav__link">
       
   
   
@@ -761,7 +761,7 @@
 <a href="https://anaconda.org/conda-forge/bioimageio.spec/"><img alt="conda-forge downloads" src="https://img.shields.io/conda/dn/conda-forge/bioimageio.spec.svg?label=conda-forge" /></a>
 <a href="https://github.com/astral-sh/ruff"><img alt="Ruff" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" /></a>
 <a href="https://bioimage-io.github.io/spec-bioimage-io/coverage/index.html"><img alt="coverage" src="https://bioimage-io.github.io/spec-bioimage-io/coverage/coverage-badge.svg" /></a></p>
-<h1 id="specifications-for-bioimageio">Specifications for bioimage.io<a class="headerlink" href="#specifications-for-bioimageio" title="Permanent link">¤</a></h1>
+<h1 id="specifications-for-bioimageio">Specifications for bioimage.io<a class="headerlink" href="#specifications-for-bioimageio" title="Anchor link to this section for reference">¤</a></h1>
 <p>This repository contains the specifications of the standard format defined by the bioimage.io community for the content (i.e., models, datasets and applications) in the <a href="https://bioimage.io">bioimage.io website</a>.
 Each item in the content is always described using a YAML 1.2 file named <code>rdf.yaml</code> or <code>bioimageio.yaml</code>.
 This <code>rdf.yaml</code>  <code>bioimageio.yaml</code>--- along with the files referenced in it --- can be downloaded from or uploaded to the <a href="https://bioimage.io">bioimage.io website</a> and may be produced or consumed by bioimage.io-compatible consumers (e.g., image analysis software like ilastik).</p>
@@ -773,9 +773,9 @@ For differences see <a href="https://ruamelyaml.readthedocs.io/en/latest/pyyaml"
 The <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.core</a> Python package also provides the bioimageio command line interface (CLI) with the <code>test</code> command:</p>
 <div class="language-text highlight"><pre><span></span><code>bioimageio test path/to/your/rdf.yaml
 </code></pre></div>
-<h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">¤</a></h2>
+<h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Anchor link to this section for reference">¤</a></h2>
 <p>The bioimageio.spec documentation is hosted at <a href="https://bioimage-io.github.io/spec-bioimage-io">https://bioimage-io.github.io/spec-bioimage-io</a>.</p>
-<h2 id="format-version-overview">Format version overview<a class="headerlink" href="#format-version-overview" title="Permanent link">¤</a></h2>
+<h2 id="format-version-overview">Format version overview<a class="headerlink" href="#format-version-overview" title="Anchor link to this section for reference">¤</a></h2>
 <p>All bioimage.io description formats are defined as <a href="https://docs.pydantic.dev/latest/">Pydantic models</a>, see <a href="#api-overview">API overview</a>.</p>
 <table>
 <thead>
@@ -819,7 +819,7 @@ The <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.
 </tr>
 </tbody>
 </table>
-<h2 id="json-schema">JSON Schema<a class="headerlink" href="#json-schema" title="Permanent link">¤</a></h2>
+<h2 id="json-schema">JSON Schema<a class="headerlink" href="#json-schema" title="Anchor link to this section for reference">¤</a></h2>
 <p>Simplified descriptions are available as <a href="https://json-schema.org/">JSON Schema</a> (generated with Pydantic):</p>
 <table>
 <thead>
@@ -843,9 +843,9 @@ The <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.
 </tbody>
 </table>
 <p>Note: <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_v0-5.json">bioimageio_schema_v0-5.json</a> and  <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json">bioimageio_schema_latest.json</a> are identical, but  <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/gh-pages/bioimageio_schema_latest.json">bioimageio_schema_latest.json</a> will eventually refer to the future <code>bioimageio_schema_v0-6.json</code>.</p>
-<h2 id="flattened-interactive-docs">Flattened, interactive docs<a class="headerlink" href="#flattened-interactive-docs" title="Permanent link">¤</a></h2>
+<h2 id="flattened-interactive-docs">Flattened, interactive docs<a class="headerlink" href="#flattened-interactive-docs" title="Anchor link to this section for reference">¤</a></h2>
 <p>Alternatively to the above metadata format documentation, <a href="https://bioimage-io.github.io/spec-bioimage-io/interactive_docs_v0-5.html">this flattened view of the metadata specification</a> that also shows value constraints can be explored.</p>
-<h2 id="api-overview">API overview<a class="headerlink" href="#api-overview" title="Permanent link">¤</a></h2>
+<h2 id="api-overview">API overview<a class="headerlink" href="#api-overview" title="Anchor link to this section for reference">¤</a></h2>
 <p>bioimageio.spec implements type and format version specific <code>pydantic.BaseModel</code> models for resources shared on bioimage.io.</p>
 <p>The return type of <code>bioimageio.spec.load_description()</code> is <code>bioimageio.spec.ResourceDescr</code>.
 This is a <code>typing.Union</code> over various format type and format version specific classes including <code>InvalidDescr</code> and <code>GenericDescr</code>.
