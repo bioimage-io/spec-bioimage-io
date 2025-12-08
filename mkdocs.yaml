@@ -9,6 +9,7 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
+  language: en
   features:
     - announce.dismiss
     - content.action.edit
@@ -75,6 +76,9 @@ plugins:
       html_report_dir: dist/coverage
   - markdown-exec
   - mkdocstrings:
+      enable_inventory: true
+      default_handler: python
+      locale: en
       handlers:
         python:
           inventories:
@@ -89,7 +93,7 @@ plugins:
               trim_doctest_flags: true
             docstring_section_style: spacy
             docstring_style: google
-            filters: ['public', '!^_[^_]']
+            filters: ['!^_[^_]']
             heading_level: 1
             inherited_members: true
             members: true
@@ -104,12 +108,13 @@ plugins:
             show_root_full_path: false
             show_root_heading: true
             show_signature_annotations: true
+            show_signature_type_parameters: true
             show_source: true
             show_symbol_type_heading: true
             show_symbol_type_toc: true
             signature_crossrefs: true
             summary: true
-            # unwrap_annotated: true
+            unwrap_annotated: true
             extensions:
               - griffe_pydantic:
                   schema: true
@@ -147,6 +152,8 @@ markdown_extensions:
   - pymdownx.tilde
   - toc:
       permalink: '¤'
+      permalink_title: Anchor link to this section for reference
+      toc_depth: 2
 
 nav:
   - Home:
@@ -159,24 +166,24 @@ nav:
           - api/bioimageio_format.md
           - Model:
               - api/model/index.md
-              - v0_4: api/model/v0_4.md
               - v0_5: api/model/v0_5.md
+              - v0_4: api/model/v0_4.md
           - Dataset:
               - api/dataset/index.md
-              - v0_2: api/dataset/v0_2.md
               - v0_3: api/dataset/v0_3.md
+              - v0_2: api/dataset/v0_2.md
           - Notebook:
               - api/notebook/index.md
-              - v0_2: api/notebook/v0_2.md
               - v0_3: api/notebook/v0_3.md
+              - v0_2: api/notebook/v0_2.md
           - Application:
               - api/application/index.md
-              - v0_2: api/application/v0_2.md
               - v0_3: api/application/v0_3.md
+              - v0_2: api/application/v0_2.md
           - Generic:
               - api/generic/index.md
-              - v0_2: api/generic/v0_2.md
               - v0_3: api/generic/v0_3.md
+              - v0_2: api/generic/v0_2.md
       - Format Validation Summary: api/summary.md
   - Changelog: changelog.md
   - Coverage report: coverage.md
