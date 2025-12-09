@@ -979,6 +979,7 @@ class ClipKwargs(ProcessingKwargs):
 
     In range [0, 100).
     """
+
     max: Optional[float] = None
     """Maximum value for clipping.
 
