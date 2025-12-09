@@ -13,6 +13,7 @@ This changelog includes implementation details and my reference the [changes to 
 ### bioimageio.spec 0.5.6.1 (not yet released)
 
 - add `v0_5.WeightsDescr.__setitem__`
+- updated SPDX licenses to version 3.27.0
 
 ### bioimageio.spec 0.5.6.0
 
