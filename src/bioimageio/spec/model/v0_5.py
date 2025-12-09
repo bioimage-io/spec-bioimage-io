@@ -130,7 +130,6 @@ from .v0_4 import CallableFromDepencency as CallableFromDepencency
 from .v0_4 import CallableFromDepencency as _CallableFromDepencency_v0_4
 from .v0_4 import CallableFromFile as _CallableFromFile_v0_4
 from .v0_4 import ClipDescr as _ClipDescr_v0_4
-from .v0_4 import ClipKwargs as ClipKwargs
 from .v0_4 import ImplicitOutputShape as _ImplicitOutputShape_v0_4
 from .v0_4 import InputTensorDescr as _InputTensorDescr_v0_4
 from .v0_4 import KnownRunMode as KnownRunMode
@@ -963,6 +962,80 @@ class BinarizeDescr(ProcessingDescrBase):
     else:
         id: Literal["binarize"]
     kwargs: Union[BinarizeKwargs, BinarizeAlongAxisKwargs]
+
+
+class ClipKwargs(ProcessingKwargs):
+    """key word arguments for `ClipDescr`"""
+
+    min: Optional[float] = None
+    """Minimum value for clipping.
+
+    Exclusive with `min_percentile`
+    """
+    min_percentile: Optional[Annotated[float, Interval(ge=0, lt=100)]] = None
+    """Minimum percentile for clipping.
+
+    Exclusive with `min`.
+
+    In range [0, 100).
+    """
+    max: Optional[float] = None
+    """Maximum value for clipping.
+
+    Exclusive with `max_percentile`.
+    """
+    max_percentile: Optional[Annotated[float, Interval(gt=1, le=100)]] = None
+    """Maximum percentile for clipping.
+
+    Exclusive with `max`.
+
+    In range (1, 100].
+    """
+
+    axes: Annotated[
+        Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
+    ] = None
+    """The subset of axes to determine percentiles jointly,
+
+    i.e. axes to reduce to compute min/max from `min_percentile`/`max_percentile`.
+    For example to clip 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
+    resulting in a tensor of equal shape with clipped values per channel, specify `axes=('batch', 'x', 'y')`.
+    To clip samples independently, leave out the 'batch' axis.
+
+    Only valid if `min_percentile` and/or `max_percentile` are set.
+
+    Default: Compute percentiles over all axes jointly."""
+
+    @model_validator(mode="after")
+    def _validate(self) -> Self:
+        if (self.min is not None) and (self.min_percentile is not None):
+            raise ValueError(
+                "Only one of `min` and `min_percentile` may be set, not both."
+            )
+        if (self.max is not None) and (self.max_percentile is not None):
+            raise ValueError(
+                "Only one of `max` and `max_percentile` may be set, not both."
+            )
+        if (
+            self.min is None
+            and self.min_percentile is None
+            and self.max is None
+            and self.max_percentile is None
+        ):
+            raise ValueError(
+                "At least one of `min`, `min_percentile`, `max`, or `max_percentile` must be set."
+            )
+
+        if (
+            self.axes is not None
+            and self.min_percentile is None
+            and self.max_percentile is None
+        ):
+            raise ValueError(
+                "If `axes` is set, at least one of `min_percentile` or `max_percentile` must be set."
+            )
+
+        return self
 
 
 class ClipDescr(ProcessingDescrBase):
