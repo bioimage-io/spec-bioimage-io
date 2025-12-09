@@ -12,7 +12,7 @@ from bioimageio.spec.utils import SpdxLicenses
 
 PROJECT_ROOT = Path(__file__).parent.parent
 
-LICENSES_JSON_FILE = PROJECT_ROOT / "bioimageio/spec/static/spdx_licenses.json"
+LICENSES_JSON_FILE = PROJECT_ROOT / "src/bioimageio/spec/static/spdx_licenses.json"
 
 
 def main(recheck: bool = False):
