@@ -5,7 +5,7 @@ from pathlib import Path
 from bioimageio.spec._internal.json_schema import generate_json_schema
 
 
-def write_schema():
+def main():
     schema = generate_json_schema()
     path = (
         Path(__file__).parent / "../src/bioimageio/spec/static/bioimageio_schema.json"
@@ -17,4 +17,4 @@ def write_schema():
 
 
 if __name__ == "__main__":
-    sys.exit(write_schema())
+    sys.exit(main())
