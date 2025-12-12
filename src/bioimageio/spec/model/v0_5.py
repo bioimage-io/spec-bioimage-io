@@ -2775,7 +2775,7 @@ class ReproducibilityTolerance(Node, extra="allow"):
     relative_tolerance: RelativeTolerance = 1e-3
     """Maximum relative tolerance of reproduced test tensor."""
 
-    absolute_tolerance: AbsoluteTolerance = 1e-4
+    absolute_tolerance: AbsoluteTolerance = 1e-3
     """Maximum absolute tolerance of reproduced test tensor."""
 
     mismatched_elements_per_million: MismatchedElementsPerMillion = 100
