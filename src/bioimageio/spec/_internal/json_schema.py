@@ -14,7 +14,7 @@ def generate_json_schema(
 
     spec_format_version = ".".join(VERSION.split(".")[:3])  # strip library version
     if type_format is None:
-        adapter: TypeAdapter[SpecificResourceDescr] = TypeAdapter(
+        adapter: TypeAdapter[Any] = TypeAdapter(
             SpecificResourceDescr,
             config=ConfigDict(
                 title=f"bioimage.io resource description {spec_format_version}"
