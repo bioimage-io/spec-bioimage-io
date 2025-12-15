@@ -344,6 +344,7 @@ If the changes also apply to `type` model, the coresponding model format version
 
 - Updated SPDX licenes to version 3.27.0
 - (model only): added `min_percentile` and `max_percentile` to `ClipKwargs`
+- (model only): increased default `config.bioimageio.reproducibility_tolerance[i].absolute_tolerance` to 1e-3
 
 ### model 0.5.6
 
