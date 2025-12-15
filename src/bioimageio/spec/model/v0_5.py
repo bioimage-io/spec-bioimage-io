@@ -56,6 +56,7 @@ from typing_extensions import Annotated, Self, assert_never, get_args
 
 from .._internal.common_nodes import (
     InvalidDescr,
+    KwargsNode,
     Node,
     NodeWithExplicitlySetFields,
 )
@@ -138,7 +139,6 @@ from .v0_4 import OutputTensorDescr as _OutputTensorDescr_v0_4
 from .v0_4 import ParameterizedInputShape as _ParameterizedInputShape_v0_4
 from .v0_4 import PostprocessingDescr as _PostprocessingDescr_v0_4
 from .v0_4 import PreprocessingDescr as _PreprocessingDescr_v0_4
-from .v0_4 import ProcessingKwargs as ProcessingKwargs
 from .v0_4 import RunMode as RunMode
 from .v0_4 import ScaleLinearDescr as _ScaleLinearDescr_v0_4
 from .v0_4 import ScaleMeanVarianceDescr as _ScaleMeanVarianceDescr_v0_4
@@ -911,18 +911,14 @@ class IntervalOrRatioDataDescr(Node):
 TensorDataDescr = Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr]
 
 
-class ProcessingDescrBase(NodeWithExplicitlySetFields, ABC):
-    """processing base class"""
-
-
-class BinarizeKwargs(ProcessingKwargs):
+class BinarizeKwargs(KwargsNode):
     """key word arguments for `BinarizeDescr`"""
 
     threshold: float
     """The fixed threshold"""
 
 
-class BinarizeAlongAxisKwargs(ProcessingKwargs):
+class BinarizeAlongAxisKwargs(KwargsNode):
     """key word arguments for `BinarizeDescr`"""
 
     threshold: NotEmpty[List[float]]
@@ -932,7 +928,7 @@ class BinarizeAlongAxisKwargs(ProcessingKwargs):
     """The `threshold` axis"""
 
 
-class BinarizeDescr(ProcessingDescrBase):
+class BinarizeDescr(NodeWithExplicitlySetFields):
     """Binarize the tensor with a fixed threshold.
 
     Values above `BinarizeKwargs.threshold`/`BinarizeAlongAxisKwargs.threshold`
@@ -964,7 +960,7 @@ class BinarizeDescr(ProcessingDescrBase):
     kwargs: Union[BinarizeKwargs, BinarizeAlongAxisKwargs]
 
 
-class ClipKwargs(ProcessingKwargs):
+class ClipKwargs(KwargsNode):
     """key word arguments for `ClipDescr`"""
 
     min: Optional[float] = None
@@ -1039,7 +1035,7 @@ class ClipKwargs(ProcessingKwargs):
         return self
 
 
-class ClipDescr(ProcessingDescrBase):
+class ClipDescr(NodeWithExplicitlySetFields):
     """Set tensor values below min to min and above max to max.
 
     See `ScaleRangeDescr` for examples.
@@ -1054,7 +1050,7 @@ class ClipDescr(ProcessingDescrBase):
     kwargs: ClipKwargs
 
 
-class EnsureDtypeKwargs(ProcessingKwargs):
+class EnsureDtypeKwargs(KwargsNode):
     """key word arguments for `EnsureDtypeDescr`"""
 
     dtype: Literal[
@@ -1072,7 +1068,7 @@ class EnsureDtypeKwargs(ProcessingKwargs):
     ]
 
 
-class EnsureDtypeDescr(ProcessingDescrBase):
+class EnsureDtypeDescr(NodeWithExplicitlySetFields):
     """Cast the tensor data type to `EnsureDtypeKwargs.dtype` (if not matching).
 
     This can for example be used to ensure the inner neural network model gets a
@@ -1124,7 +1120,7 @@ class EnsureDtypeDescr(ProcessingDescrBase):
     kwargs: EnsureDtypeKwargs
 
 
-class ScaleLinearKwargs(ProcessingKwargs):
+class ScaleLinearKwargs(KwargsNode):
     """Key word arguments for `ScaleLinearDescr`"""
 
     gain: float = 1.0
@@ -1144,7 +1140,7 @@ class ScaleLinearKwargs(ProcessingKwargs):
         return self
 
 
-class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
+class ScaleLinearAlongAxisKwargs(KwargsNode):
     """Key word arguments for `ScaleLinearDescr`"""
 
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
@@ -1182,7 +1178,7 @@ class ScaleLinearAlongAxisKwargs(ProcessingKwargs):
         return self
 
 
-class ScaleLinearDescr(ProcessingDescrBase):
+class ScaleLinearDescr(NodeWithExplicitlySetFields):
     """Fixed linear scaling.
 
     Examples:
@@ -1229,7 +1225,7 @@ class ScaleLinearDescr(ProcessingDescrBase):
     kwargs: Union[ScaleLinearKwargs, ScaleLinearAlongAxisKwargs]
 
 
-class SigmoidDescr(ProcessingDescrBase):
+class SigmoidDescr(NodeWithExplicitlySetFields):
     """The logistic sigmoid function, a.k.a. expit function.
 
     Examples:
@@ -1249,12 +1245,12 @@ class SigmoidDescr(ProcessingDescrBase):
         id: Literal["sigmoid"]
 
     @property
-    def kwargs(self) -> ProcessingKwargs:
+    def kwargs(self) -> KwargsNode:
         """empty kwargs"""
-        return ProcessingKwargs()
+        return KwargsNode()
 
 
-class SoftmaxKwargs(ProcessingKwargs):
+class SoftmaxKwargs(KwargsNode):
     """key word arguments for `SoftmaxDescr`"""
 
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])] = AxisId("channel")
@@ -1266,7 +1262,7 @@ class SoftmaxKwargs(ProcessingKwargs):
     """
 
 
-class SoftmaxDescr(ProcessingDescrBase):
+class SoftmaxDescr(NodeWithExplicitlySetFields):
     """The softmax function.
 
     Examples:
@@ -1290,7 +1286,7 @@ class SoftmaxDescr(ProcessingDescrBase):
     kwargs: SoftmaxKwargs = Field(default_factory=SoftmaxKwargs.model_construct)
 
 
-class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
+class FixedZeroMeanUnitVarianceKwargs(KwargsNode):
     """key word arguments for `FixedZeroMeanUnitVarianceDescr`"""
 
     mean: float
@@ -1300,7 +1296,7 @@ class FixedZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     """The standard deviation value to normalize with."""
 
 
-class FixedZeroMeanUnitVarianceAlongAxisKwargs(ProcessingKwargs):
+class FixedZeroMeanUnitVarianceAlongAxisKwargs(KwargsNode):
     """key word arguments for `FixedZeroMeanUnitVarianceDescr`"""
 
     mean: NotEmpty[List[float]]
@@ -1325,7 +1321,7 @@ class FixedZeroMeanUnitVarianceAlongAxisKwargs(ProcessingKwargs):
         return self
 
 
-class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
+class FixedZeroMeanUnitVarianceDescr(NodeWithExplicitlySetFields):
     """Subtract a given mean and divide by the standard deviation.
 
     Normalize with fixed, precomputed values for
@@ -1381,7 +1377,7 @@ class FixedZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     ]
 
 
-class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
+class ZeroMeanUnitVarianceKwargs(KwargsNode):
     """key word arguments for `ZeroMeanUnitVarianceDescr`"""
 
     axes: Annotated[
@@ -1397,7 +1393,7 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
     """epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`."""
 
 
-class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
+class ZeroMeanUnitVarianceDescr(NodeWithExplicitlySetFields):
     """Subtract mean and divide by variance.
 
     Examples:
@@ -1424,7 +1420,7 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     )
 
 
-class ScaleRangeKwargs(ProcessingKwargs):
+class ScaleRangeKwargs(KwargsNode):
     """key word arguments for `ScaleRangeDescr`
 
     For `min_percentile`=0.0 (the default) and `max_percentile`=100 (the default)
@@ -1470,7 +1466,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
         return value
 
 
-class ScaleRangeDescr(ProcessingDescrBase):
+class ScaleRangeDescr(NodeWithExplicitlySetFields):
     """Scale with percentiles.
 
     Examples:
@@ -1537,7 +1533,7 @@ class ScaleRangeDescr(ProcessingDescrBase):
     kwargs: ScaleRangeKwargs = Field(default_factory=ScaleRangeKwargs.model_construct)
 
 
-class ScaleMeanVarianceKwargs(ProcessingKwargs):
+class ScaleMeanVarianceKwargs(KwargsNode):
     """key word arguments for `ScaleMeanVarianceKwargs`"""
 
     reference_tensor: TensorId
@@ -1557,7 +1553,7 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs):
     `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`"""
 
 
-class ScaleMeanVarianceDescr(ProcessingDescrBase):
+class ScaleMeanVarianceDescr(NodeWithExplicitlySetFields):
     """Scale a tensor's data distribution to match another tensor's mean/std.
     `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`
     """
