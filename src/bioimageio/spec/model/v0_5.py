@@ -4,7 +4,6 @@ import collections.abc
 import re
 import string
 import warnings
-from abc import ABC
 from copy import deepcopy
 from itertools import chain
 from math import ceil
