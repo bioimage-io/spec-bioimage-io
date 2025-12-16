@@ -219,6 +219,9 @@
         },
         "type": {
           "const": "batch",
+          "enum": [
+            "batch"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -226,6 +229,9 @@
           "anyOf": [
             {
               "const": 1,
+              "enum": [
+                1
+              ],
               "type": "integer"
             },
             {
@@ -293,6 +299,9 @@
         },
         "type": {
           "const": "channel",
+          "enum": [
+            "channel"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -352,6 +361,9 @@
       "properties": {
         "id": {
           "const": "ensure_dtype",
+          "enum": [
+            "ensure_dtype"
+          ],
           "title": "Id",
           "type": "string"
         },
@@ -493,6 +505,9 @@
       "properties": {
         "id": {
           "const": "fixed_zero_mean_unit_variance",
+          "enum": [
+            "fixed_zero_mean_unit_variance"
+          ],
           "title": "Id",
           "type": "string"
         },
@@ -637,6 +652,9 @@
         },
         "type": {
           "const": "index",
+          "enum": [
+            "index"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -673,6 +691,9 @@
         },
         "type": {
           "const": "index",
+          "enum": [
+            "index"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -771,6 +792,9 @@
           "anyOf": [
             {
               "const": "arbitrary unit",
+              "enum": [
+                "arbitrary unit"
+              ],
               "type": "string"
             },
             {
@@ -873,6 +897,9 @@
           "anyOf": [
             {
               "const": "arbitrary unit",
+              "enum": [
+                "arbitrary unit"
+              ],
               "type": "string"
             },
             {
@@ -962,14 +989,14 @@
           "default": 0.001,
           "description": "Maximum relative tolerance of reproduced test tensor.",
           "maximum": 0.01,
-          "minimum": 0,
+          "minimum": 0.0,
           "title": "Relative Tolerance",
           "type": "number"
         },
         "absolute_tolerance": {
-          "default": 0.0001,
+          "default": 0.001,
           "description": "Maximum absolute tolerance of reproduced test tensor.",
-          "minimum": 0,
+          "minimum": 0.0,
           "title": "Absolute Tolerance",
           "type": "number"
         },
@@ -1021,6 +1048,9 @@
           "anyOf": [
             {
               "const": "deepimagej",
+              "enum": [
+                "deepimagej"
+              ],
               "type": "string"
             },
             {
@@ -1031,7 +1061,6 @@
           "title": "Name"
         },
         "kwargs": {
-          "additionalProperties": true,
           "description": "Run mode specific key word arguments",
           "title": "Kwargs",
           "type": "object"
@@ -1135,6 +1164,9 @@
       "properties": {
         "id": {
           "const": "softmax",
+          "enum": [
+            "softmax"
+          ],
           "title": "Id",
           "type": "string"
         },
@@ -1219,6 +1251,9 @@
         },
         "type": {
           "const": "space",
+          "enum": [
+            "space"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -1264,7 +1299,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "title": "Scale",
           "type": "number"
         },
@@ -1327,6 +1362,9 @@
         },
         "type": {
           "const": "space",
+          "enum": [
+            "space"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -1372,7 +1410,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "title": "Scale",
           "type": "number"
         }
@@ -1426,6 +1464,9 @@
         },
         "type": {
           "const": "space",
+          "enum": [
+            "space"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -1471,7 +1512,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "title": "Scale",
           "type": "number"
         }
@@ -1531,6 +1572,9 @@
         },
         "type": {
           "const": "time",
+          "enum": [
+            "time"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -1573,7 +1617,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "title": "Scale",
           "type": "number"
         },
@@ -1631,6 +1675,9 @@
         },
         "type": {
           "const": "time",
+          "enum": [
+            "time"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -1673,7 +1720,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "title": "Scale",
           "type": "number"
         }
@@ -1722,6 +1769,9 @@
         },
         "type": {
           "const": "time",
+          "enum": [
+            "time"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -1764,7 +1814,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "title": "Scale",
           "type": "number"
         }
@@ -2143,6 +2193,9 @@
         "format_version": {
           "const": "0.2.4",
           "description": "The format version of this resource specification\n(not the `version` of the resource description)\nWhen creating a new resource always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
+          "enum": [
+            "0.2.4"
+          ],
           "title": "Format Version",
           "type": "string"
         },
@@ -2915,6 +2968,9 @@
         },
         "type": {
           "const": "application",
+          "enum": [
+            "application"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -3919,6 +3975,9 @@
         "format_version": {
           "const": "0.3.0",
           "description": "The **format** version of this resource specification",
+          "enum": [
+            "0.3.0"
+          ],
           "title": "Format Version",
           "type": "string"
         },
@@ -3970,6 +4029,9 @@
         },
         "type": {
           "const": "application",
+          "enum": [
+            "application"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -4321,6 +4383,9 @@
         "format_version": {
           "const": "0.2.4",
           "description": "The format version of this resource specification\n(not the `version` of the resource description)\nWhen creating a new resource always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
+          "enum": [
+            "0.2.4"
+          ],
           "title": "Format Version",
           "type": "string"
         },
@@ -5093,6 +5158,9 @@
         },
         "type": {
           "const": "dataset",
+          "enum": [
+            "dataset"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -6119,6 +6187,9 @@
         "format_version": {
           "const": "0.3.0",
           "description": "The **format** version of this resource specification",
+          "enum": [
+            "0.3.0"
+          ],
           "title": "Format Version",
           "type": "string"
         },
@@ -6170,6 +6241,9 @@
         },
         "type": {
           "const": "dataset",
+          "enum": [
+            "dataset"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -6661,6 +6735,9 @@
       "properties": {
         "name": {
           "const": "binarize",
+          "enum": [
+            "binarize"
+          ],
           "title": "Name",
           "type": "string"
         },
@@ -6697,6 +6774,9 @@
       "properties": {
         "name": {
           "const": "clip",
+          "enum": [
+            "clip"
+          ],
           "title": "Name",
           "type": "string"
         },
@@ -7321,12 +7401,18 @@
         "format_version": {
           "const": "0.4.10",
           "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
+          "enum": [
+            "0.4.10"
+          ],
           "title": "Format Version",
           "type": "string"
         },
         "type": {
           "const": "model",
           "description": "Specialized resource type 'model'",
+          "enum": [
+            "model"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -8211,7 +8297,8 @@
           "type": "array"
         },
         "timestamp": {
-          "$ref": "#/$defs/Datetime"
+          "$ref": "#/$defs/Datetime",
+          "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."
         },
         "training_data": {
           "anyOf": [
@@ -8682,7 +8769,6 @@
           "title": "Architecture Sha256"
         },
         "kwargs": {
-          "additionalProperties": true,
           "description": "key word arguments for the `architecture` callable",
           "title": "Kwargs",
           "type": "object"
@@ -8713,6 +8799,9 @@
       "properties": {
         "name": {
           "const": "scale_linear",
+          "enum": [
+            "scale_linear"
+          ],
           "title": "Name",
           "type": "string"
         },
@@ -8789,6 +8878,9 @@
       "properties": {
         "name": {
           "const": "scale_mean_variance",
+          "enum": [
+            "scale_mean_variance"
+          ],
           "title": "Name",
           "type": "string"
         },
@@ -8841,7 +8933,7 @@
         "eps": {
           "default": 1e-06,
           "description": "Epsilon for numeric stability:\n\"`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.",
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -8860,6 +8952,9 @@
       "properties": {
         "name": {
           "const": "scale_range",
+          "enum": [
+            "scale_range"
+          ],
           "title": "Name",
           "type": "string"
         },
@@ -8928,7 +9023,7 @@
         "eps": {
           "default": 1e-06,
           "description": "Epsilon for numeric stability.\n`out = (tensor - v_lower) / (v_upper - v_lower + eps)`;\nwith `v_lower,v_upper` values at the respective percentiles.",
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -8962,6 +9057,9 @@
       "properties": {
         "name": {
           "const": "sigmoid",
+          "enum": [
+            "sigmoid"
+          ],
           "title": "Name",
           "type": "string"
         }
@@ -9450,6 +9548,9 @@
       "properties": {
         "name": {
           "const": "zero_mean_unit_variance",
+          "enum": [
+            "zero_mean_unit_variance"
+          ],
           "title": "Name",
           "type": "string"
         },
@@ -9544,7 +9645,7 @@
         "eps": {
           "default": 1e-06,
           "description": "epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.",
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -9562,6 +9663,9 @@
       "properties": {
         "id": {
           "const": "binarize",
+          "enum": [
+            "binarize"
+          ],
           "title": "Id",
           "type": "string"
         },
@@ -9622,6 +9726,9 @@
       "properties": {
         "id": {
           "const": "clip",
+          "enum": [
+            "clip"
+          ],
           "title": "Id",
           "type": "string"
         },
@@ -9656,8 +9763,8 @@
         "min_percentile": {
           "anyOf": [
             {
-              "exclusiveMaximum": 100,
-              "minimum": 0,
+              "exclusiveMaximum": 100.0,
+              "minimum": 0.0,
               "type": "number"
             },
             {
@@ -9684,8 +9791,8 @@
         "max_percentile": {
           "anyOf": [
             {
-              "exclusiveMinimum": 1,
-              "maximum": 100,
+              "exclusiveMinimum": 1.0,
+              "maximum": 100.0,
               "type": "number"
             },
             {
@@ -10991,12 +11098,18 @@
         "format_version": {
           "const": "0.5.7",
           "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
+          "enum": [
+            "0.5.7"
+          ],
           "title": "Format Version",
           "type": "string"
         },
         "type": {
           "const": "model",
           "description": "Specialized resource type 'model'",
+          "enum": [
+            "model"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -11601,6 +11714,9 @@
       "properties": {
         "id": {
           "const": "scale_linear",
+          "enum": [
+            "scale_linear"
+          ],
           "title": "Id",
           "type": "string"
         },
@@ -11649,6 +11765,9 @@
       "properties": {
         "id": {
           "const": "scale_mean_variance",
+          "enum": [
+            "scale_mean_variance"
+          ],
           "title": "Id",
           "type": "string"
         },
@@ -11703,7 +11822,7 @@
         "eps": {
           "default": 1e-06,
           "description": "Epsilon for numeric stability:\n`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`",
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -11721,6 +11840,9 @@
       "properties": {
         "id": {
           "const": "scale_range",
+          "enum": [
+            "scale_range"
+          ],
           "title": "Id",
           "type": "string"
         },
@@ -11767,23 +11889,23 @@
         "min_percentile": {
           "default": 0.0,
           "description": "The lower percentile used to determine the value to align with zero.",
-          "exclusiveMaximum": 100,
-          "minimum": 0,
+          "exclusiveMaximum": 100.0,
+          "minimum": 0.0,
           "title": "Min Percentile",
           "type": "number"
         },
         "max_percentile": {
           "default": 100.0,
           "description": "The upper percentile used to determine the value to align with one.\nHas to be bigger than `min_percentile`.\nThe range is 1 to 100 instead of 0 to 100 to avoid mistakenly\naccepting percentiles specified in the range 0.0 to 1.0.",
-          "exclusiveMinimum": 1,
-          "maximum": 100,
+          "exclusiveMinimum": 1.0,
+          "maximum": 100.0,
           "title": "Max Percentile",
           "type": "number"
         },
         "eps": {
           "default": 1e-06,
           "description": "Epsilon for numeric stability.\n`out = (tensor - v_lower) / (v_upper - v_lower + eps)`;\nwith `v_lower,v_upper` values at the respective percentiles.",
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -11814,6 +11936,9 @@
       "properties": {
         "id": {
           "const": "sigmoid",
+          "enum": [
+            "sigmoid"
+          ],
           "title": "Id",
           "type": "string"
         }
@@ -12220,6 +12345,9 @@
       "properties": {
         "id": {
           "const": "zero_mean_unit_variance",
+          "enum": [
+            "zero_mean_unit_variance"
+          ],
           "title": "Id",
           "type": "string"
         },
@@ -12266,7 +12394,7 @@
         "eps": {
           "default": 1e-06,
           "description": "epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.",
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -12558,6 +12686,9 @@
         "format_version": {
           "const": "0.2.4",
           "description": "The format version of this resource specification\n(not the `version` of the resource description)\nWhen creating a new resource always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
+          "enum": [
+            "0.2.4"
+          ],
           "title": "Format Version",
           "type": "string"
         },
@@ -13330,6 +13461,9 @@
         },
         "type": {
           "const": "notebook",
+          "enum": [
+            "notebook"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -13360,7 +13494,6 @@
             },
             {
               "format": "file-path",
-              "title": "FilePath",
               "type": "string"
             },
             {
@@ -14331,6 +14464,9 @@
         "format_version": {
           "const": "0.3.0",
           "description": "The **format** version of this resource specification",
+          "enum": [
+            "0.3.0"
+          ],
           "title": "Format Version",
           "type": "string"
         },
@@ -14382,6 +14518,9 @@
         },
         "type": {
           "const": "notebook",
+          "enum": [
+            "notebook"
+          ],
           "title": "Type",
           "type": "string"
         },
@@ -14427,7 +14566,6 @@
             },
             {
               "format": "file-path",
-              "title": "FilePath",
               "type": "string"
             },
             {
