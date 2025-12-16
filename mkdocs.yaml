@@ -91,15 +91,14 @@ plugins:
               returns_multiple_items: false
               returns_named_value: false
               trim_doctest_flags: true
-            docstring_section_style: spacy
+            # docstring_section_style: spacy
             docstring_style: google
-            filters: ['!^_[^_]']
+            filters: public
             heading_level: 1
             inherited_members: true
-            members: true
             merge_init_into_class: true
             parameter_headings: true
-            # preload_modules: [pydantic]  # causes TypeError: 'NoneType' object is not iterable
+            # preload_modules: [pydantic] # causes TypeError: 'NoneType' object is not iterable
             scoped_crossrefs: true
             separate_signature: true
             show_docstring_examples: true
@@ -114,10 +113,13 @@ plugins:
             show_symbol_type_toc: true
             signature_crossrefs: true
             summary: true
-            unwrap_annotated: true
+            unwrap_annotated: false
             extensions:
               - griffe_pydantic:
                   schema: true
+              - griffe_inherited_docstrings
+              - griffe_public_redundant_aliases
+
   - mike:
       alias_type: symlink
       canonical_version: latest
@@ -131,6 +133,7 @@ markdown_extensions:
   - callouts:
       strip_period: false
   - footnotes
+  - pycon
   - pymdownx.details
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji

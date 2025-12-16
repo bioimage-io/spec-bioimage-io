@@ -44,6 +44,9 @@ dynamic = ["version"]
 dev = [
     "deepdiff",
     "devtools",
+    "griffe-pydantic",
+    "griffe-inherited-docstrings",
+    "griffe-public-redundant-aliases",
     "json_schema_for_humans",
     "jsonschema",
     "jupyter",
@@ -61,9 +64,9 @@ dev = [
     "torch",
 ]
 docs = [
-    "griffe-pydantic",
     "markdown-callouts",
     "markdown-exec",
+    "markdown-pycon",
     "mike",
     "mkdocs-api-autonav",
     "mkdocs-coverage",
