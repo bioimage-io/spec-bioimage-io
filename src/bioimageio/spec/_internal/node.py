@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import collections.abc
+import warnings
 from typing import (
     Any,
+    Literal,
     Mapping,
     Optional,
     Type,
@@ -46,10 +48,11 @@ class Node(
         obj: Union[Any, Mapping[str, Any]],
         *,
         strict: Optional[bool] = None,
+        extra: Optional[Literal["allow", "ignore", "forbid"]] = None,
         from_attributes: Optional[bool] = None,
         context: Union[ValidationContext, Mapping[str, Any], None] = None,
-        by_alias: bool | None = None,
-        by_name: bool | None = None,
+        by_alias: Optional[bool] = None,
+        by_name: Optional[bool] = None,
     ) -> Self:
         """Validate a pydantic model instance.
 
@@ -73,6 +76,10 @@ class Node(
             context = ValidationContext(**context)
 
         assert not isinstance(obj, collections.abc.Mapping) or is_kwargs(obj), obj
+
+        # TODO: pass on extra with pydantic >=2.12
+        if extra is not None:
+            warnings.warn("`extra` argument is currently ignored")
 
         with context:
             # use validation context as context manager for equal behavior of __init__ and model_validate
