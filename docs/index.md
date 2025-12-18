@@ -34,20 +34,20 @@ Alternatively to the above metadata format documentation, [this flattened view o
 
 bioimageio.spec implements type and format version specific `pydantic.BaseModel` models for resources shared on bioimage.io.
 
-The return type of `bioimageio.spec.load_description()` is `bioimageio.spec.ResourceDescr`.
-This is a `typing.Union` over various format type and format version specific classes including `InvalidDescr` and `GenericDescr`.
+The return type of [`load_description`][bioimageio.spec.load_description] is [`ResourceDescr`][bioimageio.spec.ResourceDescr].
+This is a `typing.Union` over various format type and format version specific and unspecific classes including [`InvalidDescr`][bioimageio.spec.InvalidDescr] and [`GenericDescr`][bioimageio.spec.GenericDescr].
 The individual `*Descr`-classes of this `Union` can be instantiated in code to create a bioimage.io resource description in the first place.
 
 For more narrow type hints and runtime-checks during loading dedicated `load_*_description` methods may be used:
 
-- `load_model_description`
-- `load_dataset_description`
+- [`load_model_description`][bioimageio.spec.load_model_description]
+- [`load_dataset_description`][bioimageio.spec.load_dataset_description]
 
-Another way to narrow/check the return type is to call `load_description`/`load_model_description`/... with `format_version="latest"`, returning `bioimageio.spec.LatestResourceDescr`/`bioimageio.spec.ModelDescr` (instead of `bioimageio.spec.AnyModelDescr`)/... .
+Another way to narrow/check the return type is to call [`load_description`][bioimageio.spec.load_description]/[`load_model_description`][bioimageio.spec.load_model_description]... with `format_version="latest"`, returning [`LatestResourceDescr`][bioimageio.spec.LatestResourceDescr]/[`ModelDescr`][bioimageio.spec.ModelDescr] (instead of [`AnyModelDescr`][bioimageio.spec.AnyModelDescr])/... .
 
 To export resource descriptions:
 
-- `save_bioimageio_package`
-  - `save_bioimageio_package_as_folder`
-  - `save_bioimageio_package_to_stream`
-  - `save_bioimageio_yaml_only`
+- [`save_bioimageio_package`][bioimageio.spec.save_bioimageio_package] saves the metadata alongside referenced files as a zip-archive (recommended)
+- [`save_bioimageio_package_as_folder`][bioimageio.spec.save_bioimageio_package_as_folder]
+- [`save_bioimageio_package_to_stream`][bioimageio.spec.save_bioimageio_package_to_stream]
+- [`save_bioimageio_yaml_only`][bioimageio.spec.save_bioimageio_yaml_only] (save only the metadata without referenced files)

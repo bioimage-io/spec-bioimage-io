@@ -37,7 +37,9 @@ test:
     - example_descriptions
   requires:
     {% for dep in pyproject['project']['optional-dependencies']['dev'] %}
+    {% if not dep.startswith('griffe')  %}
     - {{ dep.replace('torch', 'pytorch').lower().replace('_', '-') }}
+    {% endif %}
     {% endfor %}
   commands:
     - pytest --capture=no

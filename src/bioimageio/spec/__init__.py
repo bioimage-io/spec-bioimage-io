@@ -1,4 +1,4 @@
-"""bioimageio.spec - BioImage.IO specifications in Python.
+"""bioimageio.spec --- BioImage.IO specifications in Python.
 
 This package provides Pydantic data models for BioImage.IO resource descriptions and tools to work with such descriptions.
 

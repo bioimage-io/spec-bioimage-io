@@ -621,22 +621,14 @@ class TensorDescrBase(Node):
     If not specified, the full data range that can be expressed in `data_type` is allowed."""
 
 
-class ProcessingKwargs(KwargsNode):
-    """base class for pre-/postprocessing key word arguments"""
-
-
-class ProcessingDescrBase(NodeWithExplicitlySetFields):
-    """processing base class"""
-
-
-class BinarizeKwargs(ProcessingKwargs):
+class BinarizeKwargs(KwargsNode):
     """key word arguments for `BinarizeDescr`"""
 
     threshold: float
     """The fixed threshold"""
 
 
-class BinarizeDescr(ProcessingDescrBase):
+class BinarizeDescr(NodeWithExplicitlySetFields):
     """BinarizeDescr the tensor with a fixed `BinarizeKwargs.threshold`.
     Values above the threshold will be set to one, values below the threshold to zero.
     """
@@ -650,7 +642,7 @@ class BinarizeDescr(ProcessingDescrBase):
     kwargs: BinarizeKwargs
 
 
-class ClipKwargs(ProcessingKwargs):
+class ClipKwargs(KwargsNode):
     """key word arguments for `ClipDescr`"""
 
     min: float
@@ -659,7 +651,7 @@ class ClipKwargs(ProcessingKwargs):
     """maximum value for clipping"""
 
 
-class ClipDescr(ProcessingDescrBase):
+class ClipDescr(NodeWithExplicitlySetFields):
     """Clip tensor values to a range.
 
     Set tensor values below `ClipKwargs.min` to `ClipKwargs.min`
@@ -675,7 +667,7 @@ class ClipDescr(ProcessingDescrBase):
     kwargs: ClipKwargs
 
 
-class ScaleLinearKwargs(ProcessingKwargs):
+class ScaleLinearKwargs(KwargsNode):
     """key word arguments for `ScaleLinearDescr`"""
 
     axes: Annotated[Optional[AxesInCZYX], Field(examples=["xy"])] = None
@@ -707,7 +699,7 @@ class ScaleLinearKwargs(ProcessingKwargs):
         return self
 
 
-class ScaleLinearDescr(ProcessingDescrBase):
+class ScaleLinearDescr(NodeWithExplicitlySetFields):
     """Fixed linear scaling."""
 
     implemented_name: ClassVar[Literal["scale_linear"]] = "scale_linear"
@@ -719,7 +711,7 @@ class ScaleLinearDescr(ProcessingDescrBase):
     kwargs: ScaleLinearKwargs
 
 
-class SigmoidDescr(ProcessingDescrBase):
+class SigmoidDescr(NodeWithExplicitlySetFields):
     """The logistic sigmoid funciton, a.k.a. expit function."""
 
     implemented_name: ClassVar[Literal["sigmoid"]] = "sigmoid"
@@ -729,12 +721,12 @@ class SigmoidDescr(ProcessingDescrBase):
         name: Literal["sigmoid"]
 
     @property
-    def kwargs(self) -> ProcessingKwargs:
+    def kwargs(self) -> KwargsNode:
         """empty kwargs"""
-        return ProcessingKwargs()
+        return KwargsNode()
 
 
-class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
+class ZeroMeanUnitVarianceKwargs(KwargsNode):
     """key word arguments for `ZeroMeanUnitVarianceDescr`"""
 
     mode: Literal["fixed", "per_dataset", "per_sample"] = "fixed"
@@ -774,7 +766,7 @@ class ZeroMeanUnitVarianceKwargs(ProcessingKwargs):
         return self
 
 
-class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
+class ZeroMeanUnitVarianceDescr(NodeWithExplicitlySetFields):
     """Subtract mean and divide by variance."""
 
     implemented_name: ClassVar[Literal["zero_mean_unit_variance"]] = (
@@ -788,7 +780,7 @@ class ZeroMeanUnitVarianceDescr(ProcessingDescrBase):
     kwargs: ZeroMeanUnitVarianceKwargs
 
 
-class ScaleRangeKwargs(ProcessingKwargs):
+class ScaleRangeKwargs(KwargsNode):
     """key word arguments for `ScaleRangeDescr`
 
     For `min_percentile`=0.0 (the default) and `max_percentile`=100 (the default)
@@ -839,7 +831,7 @@ class ScaleRangeKwargs(ProcessingKwargs):
     For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
 
 
-class ScaleRangeDescr(ProcessingDescrBase):
+class ScaleRangeDescr(NodeWithExplicitlySetFields):
     """Scale with percentiles."""
 
     implemented_name: ClassVar[Literal["scale_range"]] = "scale_range"
@@ -851,7 +843,7 @@ class ScaleRangeDescr(ProcessingDescrBase):
     kwargs: ScaleRangeKwargs
 
 
-class ScaleMeanVarianceKwargs(ProcessingKwargs):
+class ScaleMeanVarianceKwargs(KwargsNode):
     """key word arguments for `ScaleMeanVarianceDescr`"""
 
     mode: Literal["per_dataset", "per_sample"]
@@ -875,7 +867,7 @@ class ScaleMeanVarianceKwargs(ProcessingKwargs):
     "`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean."""
 
 
-class ScaleMeanVarianceDescr(ProcessingDescrBase):
+class ScaleMeanVarianceDescr(NodeWithExplicitlySetFields):
     """Scale the tensor s.t. its mean and variance match a reference tensor."""
 
     implemented_name: ClassVar[Literal["scale_mean_variance"]] = "scale_mean_variance"

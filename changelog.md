@@ -10,9 +10,11 @@ In this file we log both:
 
 This changelog includes implementation details and my reference the [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
-### bioimageio.spec 0.5.6.1 (not yet released)
+### bioimageio.spec 0.5.7.0
 
 - add `v0_5.WeightsDescr.__setitem__`
+- updated SPDX licenses to version 3.27.0
+- [generic 0.3.3 and model 0.5.7](#generic-033-and-model-057)
 
 ### bioimageio.spec 0.5.6.0
 
@@ -337,6 +339,12 @@ Which fields a resource description field has and how they are to be interpreted
 Here is a list of changes for each `type` and `format_version`.
 Note that 'generic' changes apply to `type` application, dataset and notebook of the same `format_versions`.
 If the changes also apply to `type` model, the coresponding model format version is noted, e.g. [generic 0.3.1 and model 0.5.3](#generic-031-and-model-053).
+
+### generic 0.3.3 and model 0.5.7
+
+- Updated SPDX licenes to version 3.27.0
+- (model only): added `min_percentile` and `max_percentile` to `ClipKwargs`
+- (model only): increased default `config.bioimageio.reproducibility_tolerance[i].absolute_tolerance` to 1e-3
 
 ### model 0.5.6
 
