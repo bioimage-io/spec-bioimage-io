@@ -1,11 +1,11 @@
 import dataclasses
+import inspect
 from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, get_args
 
 import pydantic.functional_validators
 from annotated_types import BaseMetadata, GroupedMetadata
 from loguru import logger
 from pydantic import TypeAdapter
-from pydantic._internal._decorators import inspect_validator
 from pydantic_core import PydanticCustomError
 from pydantic_core.core_schema import (
     NoInfoValidatorFunction,
@@ -43,14 +43,43 @@ def warn(
     )
 
 
-def call_validator_func(
+def _call_validator_func(
     func: "_V2Validator",
     mode: Literal["after", "before", "plain", "wrap"],
     value: Any,
     info: ValidationInfo,
 ) -> Any:
-    info_arg = inspect_validator(func, mode)
-    if info_arg:
+    # determine if validator needs info arg
+    # logic adapted from pydantic._internal._decorators.py v2.11.10
+    sig = inspect.signature(func)
+    parameters = list(sig.parameters.values())
+    n_positional = sum(
+        1
+        for param in parameters
+        if param.kind
+        in (inspect.Parameter.POSITIONAL_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD)
+        # First argument is the value being validated/serialized, and can have a default value
+        # (e.g. `float`, which has signature `(x=0, /)`). We assume other parameters (the info arg
+        # for instance) should be required, and thus without any default value.
+        and (param.default is inspect.Parameter.empty or param is parameters[0])
+    )
+    needs_info = None
+    if mode == "wrap":
+        if n_positional == 3:
+            needs_info = True
+        elif n_positional == 2:
+            needs_info = False
+    else:
+        assert mode in {"before", "after", "plain"}, (
+            f"invalid mode: {mode!r}, expected 'before', 'after' or 'plain"
+        )
+        if n_positional == 2:
+            needs_info = True
+        elif n_positional == 1:
+            needs_info = False
+
+    assert needs_info is not None, "could not determine if validator needs info arg"
+    if needs_info:
         return func(value, info)  # type: ignore
     else:
         return func(value)  # type: ignore
@@ -68,7 +97,7 @@ def as_warning(
 
     def wrapper(value: Any, info: ValidationInfo) -> Any:
         try:
-            call_validator_func(func, mode, value, info)
+            _call_validator_func(func, mode, value, info)
         except (AssertionError, ValueError) as e:
             issue_warning(
                 msg or ",".join(e.args),

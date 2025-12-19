@@ -12,6 +12,7 @@ dist/
 example/my_bioimageio_dataset.zip
 example/my_model.zip
 output/
+pkgs/
 scripts/pdoc/original.py
 scripts/pdoc/patched.py
 site/

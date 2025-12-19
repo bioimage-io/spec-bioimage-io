@@ -18,7 +18,7 @@ dependencies = [
     "platformdirs",
     "pydantic-core",
     "pydantic-settings>=2.5,<3",
-    "pydantic>=2.10.3,<2.12",
+    "pydantic>=2.10.3,<3",
     "python-dateutil",
     "rich",
     "ruyaml",
