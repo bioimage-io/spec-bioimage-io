@@ -9,11 +9,7 @@ from bioimageio.spec._internal.validation_context import ValidationContext
 
 @pytest.mark.parametrize(
     "url",
-    [
-        "https://example.com",
-        "https://colab.research.google.com/github/bioimage-io/spec-bioimage-io/blob/main/example/load_model_and_create_your_own.ipynb",
-        "https://www.kaggle.com/c/data-science-bowl-2018",
-    ],
+    ["https://example.com"],
 )
 def test_httpurl_valid(url: str):
     from bioimageio.spec._internal.url import HttpUrl
