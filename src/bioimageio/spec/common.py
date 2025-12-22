@@ -1,3 +1,5 @@
+"""Common nodes and field types of bioimage.io specifications."""
+
 from pydantic import ValidationError
 
 from ._internal.common_nodes import InvalidDescr

@@ -418,7 +418,7 @@ class SizeReference(Node):
         """Compute the concrete size for a given axis and its reference axis.
 
         Args:
-            axis: The axis this `SizeReference` is the size of.
+            axis: The axis this [SizeReference][] is the size of.
             ref_axis: The reference axis to compute the size from.
             n: If the **ref_axis** is parameterized (of type `ParameterizedSize`)
                 and no fixed **ref_size** is given,
@@ -500,7 +500,7 @@ class WithHalo(Node):
             ]
         ),
     ]
-    """reference to another axis with an optional offset (see `SizeReference`)"""
+    """reference to another axis with an optional offset (see [SizeReference][])"""
 
 
 BATCH_AXIS_ID = AxisId("batch")
@@ -592,8 +592,8 @@ class _WithInputAxisSize(Node):
     ]
     """The size/length of this axis can be specified as
     - fixed integer
-    - parameterized series of valid sizes (`ParameterizedSize`)
-    - reference to another axis with an optional offset (`SizeReference`)
+    - parameterized series of valid sizes ([ParameterizedSize][])
+    - reference to another axis with an optional offset ([SizeReference][])
     """
 
 
@@ -601,7 +601,7 @@ class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
     concatenable: bool = False
     """If a model has a `concatenable` input axis, it can be processed blockwise,
     splitting a longer sample axis into blocks matching its input tensor description.
-    Output axes are concatenable if they have a `SizeReference` to a concatenable
+    Output axes are concatenable if they have a [SizeReference][] to a concatenable
     input axis.
     """
 
@@ -620,8 +620,8 @@ class IndexOutputAxis(IndexAxisBase):
     ]
     """The size/length of this axis can be specified as
     - fixed integer
-    - reference to another axis with an optional offset (`SizeReference`)
-    - data dependent size using `DataDependentSize` (size is only known after model inference)
+    - reference to another axis with an optional offset ([SizeReference][])
+    - data dependent size using [DataDependentSize][] (size is only known after model inference)
     """
 
 
@@ -641,7 +641,7 @@ class TimeInputAxis(TimeAxisBase, _WithInputAxisSize):
     concatenable: bool = False
     """If a model has a `concatenable` input axis, it can be processed blockwise,
     splitting a longer sample axis into blocks matching its input tensor description.
-    Output axes are concatenable if they have a `SizeReference` to a concatenable
+    Output axes are concatenable if they have a [SizeReference][] to a concatenable
     input axis.
     """
 
@@ -662,7 +662,7 @@ class SpaceInputAxis(SpaceAxisBase, _WithInputAxisSize):
     concatenable: bool = False
     """If a model has a `concatenable` input axis, it can be processed blockwise,
     splitting a longer sample axis into blocks matching its input tensor description.
-    Output axes are concatenable if they have a `SizeReference` to a concatenable
+    Output axes are concatenable if they have a [SizeReference][] to a concatenable
     input axis.
     """
 
@@ -696,7 +696,7 @@ class _WithOutputAxisSize(Node):
     ]
     """The size/length of this axis can be specified as
     - fixed integer
-    - reference to another axis with an optional offset (see `SizeReference`)
+    - reference to another axis with an optional offset (see [SizeReference][])
     """
 
 
@@ -911,14 +911,14 @@ TensorDataDescr = Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr]
 
 
 class BinarizeKwargs(KwargsNode):
-    """key word arguments for `BinarizeDescr`"""
+    """key word arguments for [BinarizeDescr][]"""
 
     threshold: float
     """The fixed threshold"""
 
 
 class BinarizeAlongAxisKwargs(KwargsNode):
-    """key word arguments for `BinarizeDescr`"""
+    """key word arguments for [BinarizeDescr][]"""
 
     threshold: NotEmpty[List[float]]
     """The fixed threshold values along `axis`"""
@@ -930,7 +930,7 @@ class BinarizeAlongAxisKwargs(KwargsNode):
 class BinarizeDescr(NodeWithExplicitlySetFields):
     """Binarize the tensor with a fixed threshold.
 
-    Values above `BinarizeKwargs.threshold`/`BinarizeAlongAxisKwargs.threshold`
+    Values above [BinarizeKwargs.threshold][]/[BinarizeAlongAxisKwargs.threshold][]
     will be set to one, values below the threshold to zero.
 
     Examples:
@@ -960,17 +960,17 @@ class BinarizeDescr(NodeWithExplicitlySetFields):
 
 
 class ClipKwargs(KwargsNode):
-    """key word arguments for `ClipDescr`"""
+    """key word arguments for [ClipDescr][]"""
 
     min: Optional[float] = None
     """Minimum value for clipping.
 
-    Exclusive with `min_percentile`
+    Exclusive with [min_percentile][]
     """
     min_percentile: Optional[Annotated[float, Interval(ge=0, lt=100)]] = None
     """Minimum percentile for clipping.
 
-    Exclusive with `min`.
+    Exclusive with [min][].
 
     In range [0, 100).
     """
@@ -1050,7 +1050,7 @@ class ClipDescr(NodeWithExplicitlySetFields):
 
 
 class EnsureDtypeKwargs(KwargsNode):
-    """key word arguments for `EnsureDtypeDescr`"""
+    """key word arguments for [EnsureDtypeDescr][]"""
 
     dtype: Literal[
         "float32",
@@ -1120,7 +1120,7 @@ class EnsureDtypeDescr(NodeWithExplicitlySetFields):
 
 
 class ScaleLinearKwargs(KwargsNode):
-    """Key word arguments for `ScaleLinearDescr`"""
+    """Key word arguments for [ScaleLinearDescr][]"""
 
     gain: float = 1.0
     """multiplicative factor"""
@@ -1140,7 +1140,7 @@ class ScaleLinearKwargs(KwargsNode):
 
 
 class ScaleLinearAlongAxisKwargs(KwargsNode):
-    """Key word arguments for `ScaleLinearDescr`"""
+    """Key word arguments for [ScaleLinearDescr][]"""
 
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
     """The axis of gain and offset values."""
@@ -1250,7 +1250,7 @@ class SigmoidDescr(NodeWithExplicitlySetFields):
 
 
 class SoftmaxKwargs(KwargsNode):
-    """key word arguments for `SoftmaxDescr`"""
+    """key word arguments for [SoftmaxDescr][]"""
 
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])] = AxisId("channel")
     """The axis to apply the softmax function along.
@@ -1286,7 +1286,7 @@ class SoftmaxDescr(NodeWithExplicitlySetFields):
 
 
 class FixedZeroMeanUnitVarianceKwargs(KwargsNode):
-    """key word arguments for `FixedZeroMeanUnitVarianceDescr`"""
+    """key word arguments for [FixedZeroMeanUnitVarianceDescr][]"""
 
     mean: float
     """The mean value to normalize with."""
@@ -1296,7 +1296,7 @@ class FixedZeroMeanUnitVarianceKwargs(KwargsNode):
 
 
 class FixedZeroMeanUnitVarianceAlongAxisKwargs(KwargsNode):
-    """key word arguments for `FixedZeroMeanUnitVarianceDescr`"""
+    """key word arguments for [FixedZeroMeanUnitVarianceDescr][]"""
 
     mean: NotEmpty[List[float]]
     """The mean value(s) to normalize with."""
@@ -1377,7 +1377,7 @@ class FixedZeroMeanUnitVarianceDescr(NodeWithExplicitlySetFields):
 
 
 class ZeroMeanUnitVarianceKwargs(KwargsNode):
-    """key word arguments for `ZeroMeanUnitVarianceDescr`"""
+    """key word arguments for [ZeroMeanUnitVarianceDescr][]"""
 
     axes: Annotated[
         Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
@@ -1420,7 +1420,7 @@ class ZeroMeanUnitVarianceDescr(NodeWithExplicitlySetFields):
 
 
 class ScaleRangeKwargs(KwargsNode):
-    """key word arguments for `ScaleRangeDescr`
+    """key word arguments for [ScaleRangeDescr][]
 
     For `min_percentile`=0.0 (the default) and `max_percentile`=100 (the default)
     this processing step normalizes data to the [0, 1] intervall.
@@ -1533,7 +1533,7 @@ class ScaleRangeDescr(NodeWithExplicitlySetFields):
 
 
 class ScaleMeanVarianceKwargs(KwargsNode):
-    """key word arguments for `ScaleMeanVarianceKwargs`"""
+    """key word arguments for [ScaleMeanVarianceKwargs][]"""
 
     reference_tensor: TensorId
     """Name of tensor to match."""

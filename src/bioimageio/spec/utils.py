@@ -1,3 +1,5 @@
+"""Utility functions for bioimage.io specifications (mostly IO)."""
+
 import json
 from typing import Any, Dict, List, TypedDict
 

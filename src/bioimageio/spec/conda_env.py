@@ -1,3 +1,5 @@
+"""Representation of conda environment.yaml files for bioimageio specifications."""
+
 import warnings
 from typing import Any, Callable, List, Optional, Union, cast
 
