@@ -2,7 +2,11 @@ import json
 import sys
 from pathlib import Path
 
+from loguru import logger
+
 from bioimageio.spec._internal.json_schema import generate_json_schema
+
+logger.enable("bioimageio")
 
 
 def main():
