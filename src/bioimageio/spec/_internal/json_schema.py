@@ -1,9 +1,37 @@
+import difflib
+import re
 from typing import Any, Dict, Optional, Tuple
 
+from loguru import logger
 from pydantic import ConfigDict
 
 from .._description import DESCRIPTIONS_MAP, SpecificResourceDescr
 from .._version import VERSION
+from .type_guards import is_dict, is_list
+
+
+def _patch_desccription(
+    json_schema: Dict[str, Any], path: Tuple[str, ...] = ()
+) -> None:
+    """Patch descriptions:
+
+    - replace mkdocstrings cross-reference syntax [object][] by `object`
+    """
+    if isinstance(descr := json_schema.get("description"), str) and descr:
+        # Replace markdown link references like [object][] with `object`
+        new_descr = re.sub(r"\[([^\]]+)\]\[\]", r"`\1`", descr)
+        if descr != new_descr:
+            diff = difflib.Differ().compare(descr.splitlines(), new_descr.splitlines())
+            logger.debug(f"updated {'.'.join(path)}:\n" + "\n".join(diff))
+            json_schema["description"] = new_descr
+
+    for k, v in json_schema.items():
+        if is_dict(v):
+            _patch_desccription(v, path + (str(k),))
+        elif is_list(v):
+            for index, item in enumerate(v):
+                if is_dict(item):
+                    _patch_desccription(item, path + (str(k), str(index)))
 
 
 def generate_json_schema(
@@ -30,4 +58,6 @@ def generate_json_schema(
             ),
         )
 
-    return adapter.json_schema()
+    json_schema = adapter.json_schema()
+    _patch_desccription(json_schema)
+    return json_schema
