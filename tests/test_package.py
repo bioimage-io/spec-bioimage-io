@@ -23,7 +23,7 @@ def test_package(unet2d_path: Path):
     )
     assert (
         rdf2["weights"]["pytorch_state_dict"].pop("source")  # type: ignore
-        == "unet2d_weights.torch"
+        == "unet2d_nuclei_broad_weights.torch"
     )
 
     diff = DeepDiff(rdf1, rdf2)
