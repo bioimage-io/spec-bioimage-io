@@ -51,12 +51,7 @@ def generate_json_schema(
     else:
         typ, format_version = type_format
         rd_class = DESCRIPTIONS_MAP[typ][format_version]
-        adapter = TypeAdapter(
-            rd_class,
-            config=ConfigDict(
-                title=f"bioimage.io resource description {spec_format_version} - {typ} v{format_version}"
-            ),
-        )
+        adapter = TypeAdapter(rd_class)
 
     json_schema = adapter.json_schema()
     _patch_desccription(json_schema)
