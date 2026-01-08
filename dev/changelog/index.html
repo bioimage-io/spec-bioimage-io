@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://bioimage-io.github.io/spec-bioimage-io/latest/changelog/">
       
       
-        <link rel="prev" href="../api/summary/">
+        <link rel="prev" href="../api/">
       
       
         <link rel="next" href="../coverage/">
@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -439,43 +439,9 @@
   
   
   
-    
-    
-      
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
         
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-      
-        
-        
-      
-    
-    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
-      
-        
-  
-  
-  
-    
-  
-  
-  
-    
-  
-  
-  
-    <a href="../api/model/v0_5/" class="md-nav__link">
-      
   
   
   <span class="md-ellipsis">
@@ -489,17 +455,7 @@
   
   
 
-      
-        <span class="md-nav__icon md-icon"></span>
-      
-    </a>
-  
-
-  
-
-  
-
-      
+      </a>
     </li>
   
 
@@ -723,9 +679,11 @@ In this file we log both:</p>
 </ul>
 <h2 id="changes-to-the-bioimageiospec-python-package">Changes to the bioimageio.spec Python package<a class="headerlink" href="#changes-to-the-bioimageiospec-python-package" title="Anchor link to this section for reference">¤</a></h2>
 <p>This changelog includes implementation details and my reference the <a href="#changes-to-the-resource-description-format">changes to the Resource Description Format</a>, e.g. in entry <a href="#bioimageiospec-052">bioimageio.spec 0.5.2</a>.</p>
-<h3 id="bioimageiospec-0561-not-yet-released">bioimageio.spec 0.5.6.1 (not yet released)<a class="headerlink" href="#bioimageiospec-0561-not-yet-released" title="Anchor link to this section for reference">¤</a></h3>
+<h3 id="bioimageiospec-0570">bioimageio.spec 0.5.7.0<a class="headerlink" href="#bioimageiospec-0570" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
 <li>add <code>v0_5.WeightsDescr.__setitem__</code></li>
+<li>updated SPDX licenses to version 3.27.0</li>
+<li><a href="#generic-033-and-model-057">generic 0.3.3 and model 0.5.7</a></li>
 </ul>
 <h3 id="bioimageiospec-0560">bioimageio.spec 0.5.6.0<a class="headerlink" href="#bioimageiospec-0560" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
@@ -1066,6 +1024,12 @@ To keep this relation, but avoid overbearing post releases a library version num
 Here is a list of changes for each <code>type</code> and <code>format_version</code>.
 Note that 'generic' changes apply to <code>type</code> application, dataset and notebook of the same <code>format_versions</code>.
 If the changes also apply to <code>type</code> model, the coresponding model format version is noted, e.g. <a href="#generic-031-and-model-053">generic 0.3.1 and model 0.5.3</a>.</p>
+<h3 id="generic-033-and-model-057">generic 0.3.3 and model 0.5.7<a class="headerlink" href="#generic-033-and-model-057" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Updated SPDX licenes to version 3.27.0</li>
+<li>(model only): added <code>min_percentile</code> and <code>max_percentile</code> to <code>ClipKwargs</code></li>
+<li>(model only): increased default <code>config.bioimageio.reproducibility_tolerance[i].absolute_tolerance</code> to 1e-3</li>
+</ul>
 <h3 id="model-056">model 0.5.6<a class="headerlink" href="#model-056" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
 <li>Non-breaking changes:</li>
@@ -1335,7 +1299,7 @@ If the changes also apply to <code>type</code> model, the coresponding model for
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../api/summary/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Format Validation Summary">
+          <a href="../api/" class="md-footer__link md-footer__link--prev" aria-label="Previous: API Reference">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1345,7 +1309,7 @@ If the changes also apply to <code>type</code> model, the coresponding model for
                 Previous
               </span>
               <div class="md-ellipsis">
-                Format Validation Summary
+                API Reference
               </div>
             </div>
           </a>
@@ -1413,10 +1377,10 @@ If the changes also apply to <code>type</code> model, the coresponding model for
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="../assets/_markdown_exec_pyodide.js"></script>
       

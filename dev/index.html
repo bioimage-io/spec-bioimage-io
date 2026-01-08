@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
@@ -515,43 +515,9 @@
   
   
   
-    
-    
-      
+    <li class="md-nav__item">
+      <a href="api/" class="md-nav__link">
         
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-      
-        
-        
-      
-    
-    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
-      
-        
-  
-  
-  
-    
-  
-  
-  
-    
-  
-  
-  
-    <a href="api/model/v0_5/" class="md-nav__link">
-      
   
   
   <span class="md-ellipsis">
@@ -565,17 +531,7 @@
   
   
 
-      
-        <span class="md-nav__icon md-icon"></span>
-      
-    </a>
-  
-
-  
-
-  
-
-      
+      </a>
     </li>
   
 
@@ -847,21 +803,21 @@ The <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.
 <p>Alternatively to the above metadata format documentation, <a href="https://bioimage-io.github.io/spec-bioimage-io/interactive_docs_v0-5.html">this flattened view of the metadata specification</a> that also shows value constraints can be explored.</p>
 <h2 id="api-overview">API overview<a class="headerlink" href="#api-overview" title="Anchor link to this section for reference">¤</a></h2>
 <p>bioimageio.spec implements type and format version specific <code>pydantic.BaseModel</code> models for resources shared on bioimage.io.</p>
-<p>The return type of <code>bioimageio.spec.load_description()</code> is <code>bioimageio.spec.ResourceDescr</code>.
-This is a <code>typing.Union</code> over various format type and format version specific classes including <code>InvalidDescr</code> and <code>GenericDescr</code>.
+<p>The return type of <a class="autorefs autorefs-internal" href="api/#bioimageio.spec.load_description"><code>load_description</code></a> is <a class="autorefs autorefs-internal" href="api/#bioimageio.spec.ResourceDescr"><code>ResourceDescr</code></a>.
+This is a <code>typing.Union</code> over various format type and format version specific and unspecific classes including <a class="autorefs autorefs-internal" href="api/#bioimageio.spec.InvalidDescr"><code>InvalidDescr</code></a> and <a class="autorefs autorefs-internal" href="api/#bioimageio.spec.GenericDescr"><code>GenericDescr</code></a>.
 The individual <code>*Descr</code>-classes of this <code>Union</code> can be instantiated in code to create a bioimage.io resource description in the first place.</p>
 <p>For more narrow type hints and runtime-checks during loading dedicated <code>load_*_description</code> methods may be used:</p>
 <ul>
-<li><code>load_model_description</code></li>
-<li><code>load_dataset_description</code></li>
+<li><a class="autorefs autorefs-internal" href="api/#bioimageio.spec.load_model_description"><code>load_model_description</code></a></li>
+<li><a class="autorefs autorefs-internal" href="api/#bioimageio.spec.load_dataset_description"><code>load_dataset_description</code></a></li>
 </ul>
-<p>Another way to narrow/check the return type is to call <code>load_description</code>/<code>load_model_description</code>/... with <code>format_version="latest"</code>, returning <code>bioimageio.spec.LatestResourceDescr</code>/<code>bioimageio.spec.ModelDescr</code> (instead of <code>bioimageio.spec.AnyModelDescr</code>)/... .</p>
+<p>Another way to narrow/check the return type is to call <a class="autorefs autorefs-internal" href="api/#bioimageio.spec.load_description"><code>load_description</code></a>/<a class="autorefs autorefs-internal" href="api/#bioimageio.spec.load_model_description"><code>load_model_description</code></a>... with <code>format_version="latest"</code>, returning <a class="autorefs autorefs-internal" href="api/#bioimageio.spec.LatestResourceDescr"><code>LatestResourceDescr</code></a>/<a class="autorefs autorefs-internal" href="api/#bioimageio.spec.ModelDescr"><code>ModelDescr</code></a> (instead of <a class="autorefs autorefs-internal" href="api/#bioimageio.spec.AnyModelDescr"><code>AnyModelDescr</code></a>)/... .</p>
 <p>To export resource descriptions:</p>
 <ul>
-<li><code>save_bioimageio_package</code></li>
-<li><code>save_bioimageio_package_as_folder</code></li>
-<li><code>save_bioimageio_package_to_stream</code></li>
-<li><code>save_bioimageio_yaml_only</code></li>
+<li><a class="autorefs autorefs-internal" href="api/#bioimageio.spec.save_bioimageio_package"><code>save_bioimageio_package</code></a> saves the metadata alongside referenced files as a zip-archive (recommended)</li>
+<li><a class="autorefs autorefs-internal" href="api/#bioimageio.spec.save_bioimageio_package_as_folder"><code>save_bioimageio_package_as_folder</code></a></li>
+<li><a class="autorefs autorefs-internal" href="api/#bioimageio.spec.save_bioimageio_package_to_stream"><code>save_bioimageio_package_to_stream</code></a></li>
+<li><a class="autorefs autorefs-internal" href="api/#bioimageio.spec.save_bioimageio_yaml_only"><code>save_bioimageio_yaml_only</code></a> (save only the metadata without referenced files)</li>
 </ul>
 <div class="footnote">
 <hr />
@@ -973,10 +929,10 @@ The individual <code>*Descr</code>-classes of this <code>Union</code> can be ins
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="assets/_markdown_exec_pyodide.js"></script>
       
