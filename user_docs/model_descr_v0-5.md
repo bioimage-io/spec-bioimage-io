@@ -19,7 +19,7 @@ Specialized resource type 'model'
 
 
 
-## `format_version`<sub> Literal[0.5.6]</sub>
+## `format_version`<sub> Literal[0.5.7]</sub>
 Version of the bioimage.io model description specification used.
 When creating a new model always use the latest micro/patch version described here.
 The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -103,8 +103,8 @@ Sequence[_internal.types.Identifier]
 #### `inputs.axes.size`<sub> Union</sub>
 The size/length of this axis can be specified as
 - fixed integer
-- parameterized series of valid sizes (`ParameterizedSize`)
-- reference to another axis with an optional offset (`SizeReference`)
+- parameterized series of valid sizes ([ParameterizedSize][])
+- reference to another axis with an optional offset ([SizeReference][])
 [*Examples:*](#inputsaxessize) [10, {'min': 32, 'step': 16}, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
 
 <details><summary>Union[int (Gt(gt=0)), ParameterizedSize, SizeReference]
@@ -159,7 +159,7 @@ A short description of this axis beyond its type and id.
 #### `inputs.axes.concatenable`<sub> bool</sub> ≝ `False`
 If a model has a `concatenable` input axis, it can be processed blockwise,
 splitting a longer sample axis into blocks matching its input tensor description.
-Output axes are concatenable if they have a `SizeReference` to a concatenable
+Output axes are concatenable if they have a [SizeReference][] to a concatenable
 input axis.
 
 
@@ -168,8 +168,8 @@ input axis.
 #### `inputs.axes.size`<sub> Union</sub>
 The size/length of this axis can be specified as
 - fixed integer
-- parameterized series of valid sizes (`ParameterizedSize`)
-- reference to another axis with an optional offset (`SizeReference`)
+- parameterized series of valid sizes ([ParameterizedSize][])
+- reference to another axis with an optional offset ([SizeReference][])
 [*Examples:*](#inputsaxessize) [10, {'min': 32, 'step': 16}, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
 
 <details><summary>Union[int (Gt(gt=0)), ParameterizedSize, SizeReference]
@@ -264,7 +264,7 @@ Optional[Literal of
 #### `inputs.axes.concatenable`<sub> bool</sub> ≝ `False`
 If a model has a `concatenable` input axis, it can be processed blockwise,
 splitting a longer sample axis into blocks matching its input tensor description.
-Output axes are concatenable if they have a `SizeReference` to a concatenable
+Output axes are concatenable if they have a [SizeReference][] to a concatenable
 input axis.
 
 
@@ -273,8 +273,8 @@ input axis.
 #### `inputs.axes.size`<sub> Union</sub>
 The size/length of this axis can be specified as
 - fixed integer
-- parameterized series of valid sizes (`ParameterizedSize`)
-- reference to another axis with an optional offset (`SizeReference`)
+- parameterized series of valid sizes ([ParameterizedSize][])
+- reference to another axis with an optional offset ([SizeReference][])
 [*Examples:*](#inputsaxessize) [10, {'min': 32, 'step': 16}, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
 
 <details><summary>Union[int (Gt(gt=0)), ParameterizedSize, SizeReference]
@@ -373,7 +373,7 @@ Optional[Literal of
 #### `inputs.axes.concatenable`<sub> bool</sub> ≝ `False`
 If a model has a `concatenable` input axis, it can be processed blockwise,
 splitting a longer sample axis into blocks matching its input tensor description.
-Output axes are concatenable if they have a `SizeReference` to a concatenable
+Output axes are concatenable if they have a [SizeReference][] to a concatenable
 input axis.
 
 
@@ -392,7 +392,7 @@ The file extension must be '.npy'.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f11281767a0>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f04e49a0b80>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `inputs.test_tensor.source`<sub> Union</sub>
@@ -422,7 +422,7 @@ The image dimensionality has to match the number of axes specified in this tenso
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f11281767a0>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f04e49a0b80>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `inputs.sample_tensor.source`<sub> Union</sub>
@@ -658,24 +658,64 @@ The `threshold` axis
 
 
 
-#### `inputs.preprocessing.i.kwargs`<sub> model.v0_4.ClipKwargs</sub>
+#### `inputs.preprocessing.i.kwargs`<sub> ClipKwargs</sub>
 
 
-<details><summary>model.v0_4.ClipKwargs
+<details><summary>ClipKwargs
 
 </summary>
 
 
-**model.v0_4.ClipKwargs:**
-##### `inputs.preprocessing.i.kwargs.min`<sub> float</sub>
-minimum value for clipping
+**ClipKwargs:**
+##### `inputs.preprocessing.i.kwargs.min`<sub> Optional[float]</sub> ≝ `None`
+Minimum value for clipping.
+
+Exclusive with [min_percentile][]
 
 
 
-##### `inputs.preprocessing.i.kwargs.max`<sub> float</sub>
-maximum value for clipping
+##### `inputs.preprocessing.i.kwargs.min_percentile`<sub> Optional</sub> ≝ `None`
+Minimum percentile for clipping.
+
+Exclusive with [min][].
+
+In range [0, 100).
 
 
+Optional[float (Interval(gt=None, ge=0, lt=100, le=None))]
+
+##### `inputs.preprocessing.i.kwargs.max`<sub> Optional[float]</sub> ≝ `None`
+Maximum value for clipping.
+
+Exclusive with `max_percentile`.
+
+
+
+##### `inputs.preprocessing.i.kwargs.max_percentile`<sub> Optional</sub> ≝ `None`
+Maximum percentile for clipping.
+
+Exclusive with `max`.
+
+In range (1, 100].
+
+
+Optional[float (Interval(gt=1, ge=None, lt=None, le=100))]
+
+##### `inputs.preprocessing.i.kwargs.axes`<sub> Optional</sub> ≝ `None`
+The subset of axes to determine percentiles jointly,
+
+i.e. axes to reduce to compute min/max from `min_percentile`/`max_percentile`.
+For example to clip 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
+resulting in a tensor of equal shape with clipped values per channel, specify `axes=('batch', 'x', 'y')`.
+To clip samples independently, leave out the 'batch' axis.
+
+Only valid if `min_percentile` and/or `max_percentile` are set.
+
+Default: Compute percentiles over all axes jointly.
+[*Example:*](#inputspreprocessingikwargsaxes) ('batch', 'x', 'y')
+
+
+Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
 </details>
 
@@ -950,11 +990,11 @@ free text description
 ### `outputs.axes`<sub> Sequence</sub>
 tensor axes
 
-<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f1127d6c720>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f1127d6c720>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f04e45e4a40>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f04e45e4a40>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f1127d6c720>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f1127d6c720>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f04e45e4a40>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f04e45e4a40>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BatchAxis:**
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `batch`
@@ -1019,8 +1059,8 @@ A short description of this axis beyond its type and id.
 #### `outputs.axes.size`<sub> Union</sub>
 The size/length of this axis can be specified as
 - fixed integer
-- reference to another axis with an optional offset (`SizeReference`)
-- data dependent size using `DataDependentSize` (size is only known after model inference)
+- reference to another axis with an optional offset ([SizeReference][])
+- data dependent size using [DataDependentSize][] (size is only known after model inference)
 [*Examples:*](#outputsaxessize) [10, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
 
 <details><summary>Union[int (Gt(gt=0)), SizeReference, DataDependentSize]
@@ -1061,7 +1101,7 @@ axis id of the reference axis
 #### `outputs.axes.size`<sub> Union</sub>
 The size/length of this axis can be specified as
 - fixed integer
-- reference to another axis with an optional offset (see `SizeReference`)
+- reference to another axis with an optional offset (see [SizeReference][])
 [*Examples:*](#outputsaxessize) [10, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
 
 <details><summary>Union[int (Gt(gt=0)), SizeReference]
@@ -1151,7 +1191,7 @@ To document a halo that is already cropped by the model use `size.offset` instea
 
 
 #### `outputs.axes.size`<sub> SizeReference</sub>
-reference to another axis with an optional offset (see `SizeReference`)
+reference to another axis with an optional offset (see [SizeReference][])
 [*Examples:*](#outputsaxessize) [10, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
 
 <details><summary>SizeReference
@@ -1236,7 +1276,7 @@ Optional[Literal of
 #### `outputs.axes.size`<sub> Union</sub>
 The size/length of this axis can be specified as
 - fixed integer
-- reference to another axis with an optional offset (see `SizeReference`)
+- reference to another axis with an optional offset (see [SizeReference][])
 [*Examples:*](#outputsaxessize) [10, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
 
 <details><summary>Union[int (Gt(gt=0)), SizeReference]
@@ -1330,7 +1370,7 @@ To document a halo that is already cropped by the model use `size.offset` instea
 
 
 #### `outputs.axes.size`<sub> SizeReference</sub>
-reference to another axis with an optional offset (see `SizeReference`)
+reference to another axis with an optional offset (see [SizeReference][])
 [*Examples:*](#outputsaxessize) [10, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
 
 <details><summary>SizeReference
@@ -1429,7 +1469,7 @@ The file extension must be '.npy'.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f11281767a0>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f04e49a0b80>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `outputs.test_tensor.source`<sub> Union</sub>
@@ -1459,7 +1499,7 @@ The image dimensionality has to match the number of axes specified in this tenso
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f11281767a0>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f04e49a0b80>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `outputs.sample_tensor.source`<sub> Union</sub>
@@ -1687,24 +1727,64 @@ The `threshold` axis
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> model.v0_4.ClipKwargs</sub>
+#### `outputs.postprocessing.i.kwargs`<sub> ClipKwargs</sub>
 
 
-<details><summary>model.v0_4.ClipKwargs
+<details><summary>ClipKwargs
 
 </summary>
 
 
-**model.v0_4.ClipKwargs:**
-##### `outputs.postprocessing.i.kwargs.min`<sub> float</sub>
-minimum value for clipping
+**ClipKwargs:**
+##### `outputs.postprocessing.i.kwargs.min`<sub> Optional[float]</sub> ≝ `None`
+Minimum value for clipping.
+
+Exclusive with [min_percentile][]
 
 
 
-##### `outputs.postprocessing.i.kwargs.max`<sub> float</sub>
-maximum value for clipping
+##### `outputs.postprocessing.i.kwargs.min_percentile`<sub> Optional</sub> ≝ `None`
+Minimum percentile for clipping.
+
+Exclusive with [min][].
+
+In range [0, 100).
 
 
+Optional[float (Interval(gt=None, ge=0, lt=100, le=None))]
+
+##### `outputs.postprocessing.i.kwargs.max`<sub> Optional[float]</sub> ≝ `None`
+Maximum value for clipping.
+
+Exclusive with `max_percentile`.
+
+
+
+##### `outputs.postprocessing.i.kwargs.max_percentile`<sub> Optional</sub> ≝ `None`
+Maximum percentile for clipping.
+
+Exclusive with `max`.
+
+In range (1, 100].
+
+
+Optional[float (Interval(gt=1, ge=None, lt=None, le=100))]
+
+##### `outputs.postprocessing.i.kwargs.axes`<sub> Optional</sub> ≝ `None`
+The subset of axes to determine percentiles jointly,
+
+i.e. axes to reduce to compute min/max from `min_percentile`/`max_percentile`.
+For example to clip 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
+resulting in a tensor of equal shape with clipped values per channel, specify `axes=('batch', 'x', 'y')`.
+To clip samples independently, leave out the 'batch' axis.
+
+Only valid if `min_percentile` and/or `max_percentile` are set.
+
+Default: Compute percentiles over all axes jointly.
+[*Example:*](#outputspostprocessingikwargsaxes) ('batch', 'x', 'y')
+
+
+Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
 </details>
 
@@ -2183,7 +2263,7 @@ Source of the external ONNX data file holding the weights.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f11281767a0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.data', case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f04e49a0b80>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.data', case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.onnx.external_data.source`<sub> Union</sub>
@@ -2355,7 +2435,7 @@ The conda environment file should include pytorch and any version pinning has to
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f11281767a0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f04e49a0b80>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.pytorch_state_dict.dependencies.source`<sub> Union</sub>
@@ -2561,7 +2641,7 @@ Should include tensorflow and any version pinning has to be compatible with **te
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f11281767a0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f04e49a0b80>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.tensorflow_saved_model_bundle.dependencies.source`<sub> Union</sub>
@@ -2679,7 +2759,7 @@ file attachments
 </summary>
 
 Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f11281767a0>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f04e49a0b80>, return_type=PydanticUndefined, when_used='unless-none'))
 
 **_internal.io.FileDescr:**
 ### `attachments.i.source`<sub> Union</sub>
@@ -2802,7 +2882,7 @@ Maximum relative tolerance of reproduced test tensor.
 
 
 
-##### `config.bioimageio.reproducibility_tolerance.absolute_tolerance`<sub> float</sub> ≝ `0.0001`
+##### `config.bioimageio.reproducibility_tolerance.absolute_tolerance`<sub> float</sub> ≝ `0.001`
 Maximum absolute tolerance of reproduced test tensor.
 
 
@@ -2845,7 +2925,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f1128176700>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f04e49cb060>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
 
 </details>
 
@@ -2865,7 +2945,7 @@ with details on how to quantitatively validate the model on unseen data.
 </summary>
 
 Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f1128176700>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f04e49cb060>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
 
 </details>
 
@@ -2885,7 +2965,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f1128176700>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f04e49cb060>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -3055,7 +3135,7 @@ Associated tags
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2025, 12, 8, 13, 8, 19, 591399, tzinfo=datetime.timezone.utc)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2026, 1, 8, 13, 55, 59, 23432, tzinfo=datetime.timezone.utc)`
 Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
 with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
 (In Python a datetime object is valid, too).
@@ -3104,7 +3184,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f1128176700>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f04e49cb060>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
 
 </details>
 
@@ -3163,7 +3243,7 @@ file attachments
 </summary>
 
 Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f11281767a0>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f04e49a0b80>, return_type=PydanticUndefined, when_used='unless-none'))
 
 **_internal.io.FileDescr:**
 #### `training_data.attachments.i.source`<sub> Union</sub>
@@ -3237,7 +3317,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f1128176700>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f04e49cb060>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -3346,7 +3426,7 @@ The recommended documentation file name is `README.md`. An `.md` suffix is manda
 </summary>
 
 Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f1128176700>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f04e49cb060>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
 
 </details>
 
@@ -3375,7 +3455,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f1128176700>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f04e49cb060>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -3466,7 +3546,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f1128176700>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f04e49cb060>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
 
 </details>
 
@@ -3534,7 +3614,7 @@ File attachments
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f1128176700>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f04e49cb060>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -3752,7 +3832,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f1128176700>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f04e49cb060>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -3893,6 +3973,8 @@ Optional[str (MaxLen(max_length=512))]
 
 ### `inputs.preprocessing.i.kwargs.axis`
 channel
+### `inputs.preprocessing.i.kwargs.axes`
+('batch', 'x', 'y')
 ### `inputs.preprocessing.i.kwargs.axis`
 - channel
 - index
@@ -3963,6 +4045,8 @@ channel
 
 ### `outputs.postprocessing.i.kwargs.axis`
 channel
+### `outputs.postprocessing.i.kwargs.axes`
+('batch', 'x', 'y')
 ### `outputs.postprocessing.i.kwargs.axis`
 - channel
 - index
