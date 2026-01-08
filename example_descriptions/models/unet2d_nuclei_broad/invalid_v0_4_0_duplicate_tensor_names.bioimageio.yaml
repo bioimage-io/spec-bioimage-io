@@ -4,18 +4,18 @@ format_version: 0.4.0
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
 authors:
-  - name: "Constantin Pape;@bioimage-io"
-    affiliation: "EMBL Heidelberg"
-    orcid: "0000-0001-6562-7187"
-  - name: "Fynn Beuttenmueller"
-    affiliation: "EMBL Heidelberg"
-    orcid: "0000-0002-8567-6389"
+  - name: 'Constantin Pape;@bioimage-io'
+    affiliation: 'EMBL Heidelberg'
+    orcid: '0000-0001-6562-7187'
+  - name: 'Fynn Beuttenmueller'
+    affiliation: 'EMBL Heidelberg'
+    orcid: '0000-0002-8567-6389'
 
 # we allow for multiple citations. Each citation contains TEXT, DOI and URL. One of DOI or URL needs to be given.
 cite:
-  - text: "Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015."
+  - text: 'Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image segmentation. MICCAI 2015.'
     doi: 10.1007/978-3-319-24574-4_28
-  - text: "2018 Data Science Bowl"
+  - text: '2018 Data Science Bowl'
     url: https://www.kaggle.com/c/data-science-bowl-2018
 
 git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
@@ -59,11 +59,11 @@ test_outputs: [test_output.npy]
 weights:
   pytorch_state_dict:
     authors:
-      - name: "Constantin Pape;@bioimage-io"
-        affiliation: "EMBL Heidelberg"
-        orcid: "0000-0001-6562-7187"
+      - name: 'Constantin Pape;@bioimage-io'
+        affiliation: 'EMBL Heidelberg'
+        orcid: '0000-0001-6562-7187'
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
-    source: https://zenodo.org/records/3446812/files/unet2d_weights.torch
+    source: http://files.ilastik.org/bioimageio_test/unet2d_nuclei_broad_weights.torch
     architecture: unet2d.py:UNet2d
     architecture_sha256: 589f0c9e60fa00f015213cd251541bcbf9582644f3ecffb2e6f3a30d2af1931a
     kwargs: { input_channels: 1, output_channels: 1 }

@@ -9,7 +9,8 @@ authors:
     orcid: 0000-0002-8567-6389
 cite:
   - doi: 10.1007/978-3-319-24574-4_28
-    text: 'Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image
+    text:
+      'Ronneberger, Olaf et al. U-net: Convolutional networks for biomedical image
       segmentation. MICCAI 2015.'
   - text: 2018 Data Science Bowl
     url: https://www.kaggle.com/c/data-science-bowl-2018
@@ -123,4 +124,4 @@ weights:
       source: environment.yaml
     pytorch_version: '1.10'
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
-    source: https://zenodo.org/records/3446812/files/unet2d_weights.torch
+    source: http://files.ilastik.org/bioimageio_test/unet2d_nuclei_broad_weights.torch

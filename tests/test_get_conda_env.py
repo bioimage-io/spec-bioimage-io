@@ -25,7 +25,7 @@ from bioimageio.spec.model.v0_5 import (
                     )
                 ],
                 sha256="e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2",
-                source="https://zenodo.org/records/3446812/files/unet2d_weights.torch",
+                source="http://files.ilastik.org/bioimageio_test/unet2d_nuclei_broad_weights.torch",
                 architecture=dict(
                     callable="UNet2d",
                     source="unet2d.py",

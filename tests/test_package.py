@@ -19,7 +19,7 @@ def test_package(unet2d_path: Path):
     # assert expected differences
     assert (
         rdf1["weights"]["pytorch_state_dict"].pop("source")  # type: ignore
-        == "https://zenodo.org/records/3446812/files/unet2d_weights.torch"
+        == "http://files.ilastik.org/bioimageio_test/unet2d_nuclei_broad_weights.torch"
     )
     assert (
         rdf2["weights"]["pytorch_state_dict"].pop("source")  # type: ignore
