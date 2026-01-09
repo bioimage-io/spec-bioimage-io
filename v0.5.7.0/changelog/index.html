@@ -1,0 +1,1389 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Parser and validator library for bioimage.io specifications.">
+      
+      
+        <meta name="author" content="Fynn Beuttenmüller">
+      
+      
+        <link rel="canonical" href="https://bioimage-io.github.io/spec-bioimage-io/latest/changelog/">
+      
+      
+        <link rel="prev" href="../api/">
+      
+      
+        <link rel="next" href="../coverage/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Changelog - bioimageio.spec</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_markdown_exec_pyodide.css">
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="bioimageio.spec" class="md-header__button md-logo" aria-label="bioimageio.spec" data-md-component="logo">
+      
+  <img src="../images/bioimage-io-icon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            bioimageio.spec
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/bioimage-io/spec-bioimage-io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bioimage-io/spec-bioimage-io
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href=".." class="md-tabs__link">
+          
+  
+  
+    
+  
+  Home
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../coverage/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Coverage report
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="bioimageio.spec" class="md-nav__button md-logo" aria-label="bioimageio.spec" data-md-component="logo">
+      
+  <img src="../images/bioimage-io-icon.png" alt="logo">
+
+    </a>
+    bioimageio.spec
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bioimage-io/spec-bioimage-io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bioimage-io/spec-bioimage-io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href=".." class="md-nav__link">
+      
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#changes-to-the-bioimageiospec-python-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes to the bioimageio.spec Python package
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changes-to-the-resource-description-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes to the Resource Description Format
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../coverage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coverage report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#changes-to-the-bioimageiospec-python-package" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes to the bioimageio.spec Python package
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changes-to-the-resource-description-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes to the Resource Description Format
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/bioimage-io/spec-bioimage-io/edit/main/docs/changelog.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/bioimage-io/spec-bioimage-io/raw/main/docs/changelog.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Anchor link to this section for reference">¤</a></h1>
+<p>The bioimageio.spec Python package defines a type specific, versioned resource description format.
+In this file we log both:</p>
+<ul>
+<li><a href="#changes-to-the-bioimageiospec-python-package">Changes to the bioimageio.spec Python package</a></li>
+<li><a href="#changes-to-the-resource-description-format">Changes to the Resource Description Format</a></li>
+</ul>
+<h2 id="changes-to-the-bioimageiospec-python-package">Changes to the bioimageio.spec Python package<a class="headerlink" href="#changes-to-the-bioimageiospec-python-package" title="Anchor link to this section for reference">¤</a></h2>
+<p>This changelog includes implementation details and my reference the <a href="#changes-to-the-resource-description-format">changes to the Resource Description Format</a>, e.g. in entry <a href="#bioimageiospec-052">bioimageio.spec 0.5.2</a>.</p>
+<h3 id="bioimageiospec-0570">bioimageio.spec 0.5.7.0<a class="headerlink" href="#bioimageiospec-0570" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>add <code>v0_5.WeightsDescr.__setitem__</code></li>
+<li>updated SPDX licenses to version 3.27.0</li>
+<li><a href="#generic-033-and-model-057">generic 0.3.3 and model 0.5.7</a></li>
+</ul>
+<h3 id="bioimageiospec-0560">bioimageio.spec 0.5.6.0<a class="headerlink" href="#bioimageiospec-0560" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li><a href="#model-056">model format 0.5.6</a></li>
+</ul>
+<h3 id="bioimageiospec-0557">bioimageio.spec 0.5.5.7<a class="headerlink" href="#bioimageiospec-0557" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Fix <code>ValidationSummary.add_detail()</code> (respect 'valid-format' status)</li>
+</ul>
+<h3 id="bioimageiospec-0556">bioimageio.spec 0.5.5.6<a class="headerlink" href="#bioimageiospec-0556" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Add BIOIMAGEIO_HTTP_TIMEOUT environment variable to adjust timeout for http requests.</li>
+</ul>
+<h3 id="bioimageiospec-0555">bioimageio.spec 0.5.5.5<a class="headerlink" href="#bioimageiospec-0555" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>use OS specific conda command to fix conda subprocess issues</li>
+<li>keep track of original source name for prettier validation summary display</li>
+</ul>
+<h3 id="bioimageiospec-0554">bioimageio.spec 0.5.5.4<a class="headerlink" href="#bioimageiospec-0554" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>include bioimageio_schema.json in python package</li>
+<li>fix issues with setuptools and importlib.metadata.version (by avoiding use of <code>importlib.metadata.version</code>)</li>
+</ul>
+<h3 id="bioimageiospec-0553">bioimageio.spec 0.5.5.3<a class="headerlink" href="#bioimageiospec-0553" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Fix MANIFEST.in</li>
+</ul>
+<h3 id="bioimageiospec-0552">bioimageio.spec 0.5.5.2<a class="headerlink" href="#bioimageiospec-0552" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Replace pooch with platformdirs dependency</li>
+</ul>
+<h3 id="bioimageiospec-0551">bioimageio.spec 0.5.5.1<a class="headerlink" href="#bioimageiospec-0551" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix package export to the same directory as model source (avoid 'deleting' files by overwriting them in-place)</li>
+</ul>
+<h3 id="bioimageiospec-0550">bioimageio.spec 0.5.5.0<a class="headerlink" href="#bioimageiospec-0550" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>added programmatic <code>upload</code> (alpha stage)</li>
+<li><a href="#generic-032-and-model-055">generic format 0.3.2 and model format 0.5.5</a></li>
+</ul>
+<h3 id="bioimageiospec-0544">bioimageio.spec 0.5.4.4<a class="headerlink" href="#bioimageiospec-0544" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>infinity and not-a-number values are no longer allowed (when used in a tensor description under data.range they are replaced with <code>None</code>)</li>
+<li>stricter validation of integers; float values no longer allowed for input/output fields <code>size.offset</code>, <code>size.min</code>, <code>size.max</code></li>
+</ul>
+<h3 id="bioimageiospec-0543">bioimageio.spec 0.5.4.3<a class="headerlink" href="#bioimageiospec-0543" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix root determination of cacheless downloads of non-zip files</li>
+<li>use httpx instead of requests</li>
+<li>improved caching with genericache (thanks @Tomaz-Vieira !)</li>
+<li>enable pretty validation errors in ipython at import time (deprecates <code>enable_pretty_validation_errors_in_ipynb()</code>)</li>
+</ul>
+<h3 id="bioimageiospec-0542">bioimageio.spec 0.5.4.2<a class="headerlink" href="#bioimageiospec-0542" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>improved validation summary formatting</li>
+<li>new validation context <code>disable_cache</code> (equivalent to an empty <code>cache_path</code> in <code>settings</code>)
+  circumvents caching to disk and keeps downloads in memory only</li>
+<li>new setting <code>allow_pickle</code> to control <code>numpy.load</code>/<code>numpy.save</code> behavior</li>
+<li>allow the <code>ValidationContext</code>'s <code>known_files</code> to include <code>None</code> values (isntead of known SHA values) to only check for file existence without comparing file hashes.</li>
+</ul>
+<h3 id="bioimageiospec-0541">bioimageio.spec 0.5.4.1<a class="headerlink" href="#bioimageiospec-0541" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fixed mutable default ValidationContext</li>
+</ul>
+<h3 id="bioimageiospec-0540">bioimageio.spec 0.5.4.0<a class="headerlink" href="#bioimageiospec-0540" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li><a href="#model-054">model format 0.5.4</a></li>
+<li>new utlity functions <code>update_format</code>, <code>update_hashes</code></li>
+<li>environment for tensorflow 1 is now using tf 2.17 (to support py &gt;=3.8)</li>
+<li>update conda environments (remove <code>cpuonly</code> from pytorch envs)</li>
+<li>bugfix: Fix wrong warning by matching a '# Validation' section within the
+    documentation (not only at the start).</li>
+<li>bugfix: Include dependency file when packaging 0.4 models.</li>
+<li>experimental feature for debugging: raise validation errors with <code>ValidationContext.raise_errors=True</code></li>
+<li>remove deprecated <code>IN_PACKAGE_MESSAGE</code></li>
+<li>added utitlity methods <code>ValidationSummary.save_markdown</code>, <code>ValidationSummary.save</code>, <code>ValidationSummary.load</code></li>
+<li>added <code>ValidationSummary.status</code> field to include new status <code>valid-format</code> (to distinguish if core tests have run or not)</li>
+</ul>
+<h3 id="bioimageiospec-0536">bioimageio.spec 0.5.3.6<a class="headerlink" href="#bioimageiospec-0536" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix URL validation (checking with actual http requests was erroneously skipped)</li>
+</ul>
+<h3 id="bioimageiospec-0535">bioimageio.spec 0.5.3.5<a class="headerlink" href="#bioimageiospec-0535" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix loading tifffile in python 3.8 (pin tifffile)</li>
+<li>use default tensorflow environments for Keras H5 weights</li>
+</ul>
+<h3 id="bioimageiospec-0534">bioimageio.spec 0.5.3.4<a class="headerlink" href="#bioimageiospec-0534" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>support loading and saving from/to zipfile.ZipFile objects</li>
+<li>fix bug when packaging with weights priority order (#638)</li>
+<li>add conda_env module providing helper to create recommended conda environments for model descriptions</li>
+<li>fix summary formatting</li>
+<li>improve logged origin for logged messages</li>
+<li>make the <code>model.v0_5.ModelDescr.training_data</code> field a <code>left_to_right</code> Union to avoid warnings</li>
+<li>the deprecated <code>version_number</code> is no longer appended to the <code>id</code>, but instead set as <code>version</code> if no <code>version</code> is specified.</li>
+</ul>
+<h3 id="bioimageiospec-0533">bioimageio.spec 0.5.3.3<a class="headerlink" href="#bioimageiospec-0533" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>expose <code>progressbar</code> to customize display of download progress</li>
+<li>expose <code>get_resource_package_content</code></li>
+<li>prefer <code>rdf.yaml</code> over <code>bioimageio.yaml</code> (name <code>bioimageio.yaml</code> file <code>rdf.yaml</code> file when packaging, look for <code>rdf.yaml</code> first, etc.)</li>
+<li>enforce: (generic 0.3/model 0.5 spec) documentation source file encoding has to be UTF-8.</li>
+<li>bugfix: allow optional pre- and postprocessing to be missing in an RDF (before it required an empty dict).</li>
+</ul>
+<h3 id="bioimageiospec-0532">bioimageio.spec 0.5.3.2<a class="headerlink" href="#bioimageiospec-0532" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>bugfix "reset known files if root changes" (#619)</li>
+</ul>
+<h3 id="bioimageiospec-0531">bioimageio.spec 0.5.3.1<a class="headerlink" href="#bioimageiospec-0531" title="Anchor link to this section for reference">¤</a></h3>
+<p>note: the versioning scheme was changed as our previous <code>post</code> releases include changes beyond what a post release should entail (only changing docstrings, etc).
+This was motivated by the desire to keep the library version in sync with the (model) format version to avoid confusion.
+To keep this relation, but avoid overbearing post releases a library version number is now added as the 4th part MAJOR.MINOR.PATCH.LIB_VERSION.</p>
+<ul>
+<li>add <code>load_model_description</code> and <code>load_dataset_description</code></li>
+<li>add <code>ensure_description_is_model</code> and <code>ensure_description_is_dataset</code></li>
+<li>expose <code>perform_io_checks</code> and <code>known_files</code> from <code>ValidationContext</code> to <code>load_description</code> and <code>load_description_and_validate_format_only</code></li>
+</ul>
+<h3 id="bioimageiospec-053post4">bioimageio.spec 0.5.3post4<a class="headerlink" href="#bioimageiospec-053post4" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix pinning of pydantic</li>
+</ul>
+<h3 id="bioimageiospec-053post3">bioimageio.spec 0.5.3post3<a class="headerlink" href="#bioimageiospec-053post3" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>update resolving of bioimage.io resource IDs</li>
+</ul>
+<h3 id="bioimageiospec-053post2">bioimageio.spec 0.5.3post2<a class="headerlink" href="#bioimageiospec-053post2" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix SHA-256 value when resolving a RDF version from the bioimage.io collection that is not the latest</li>
+</ul>
+<h3 id="bioimageiospec-053post1">bioimageio.spec 0.5.3post1<a class="headerlink" href="#bioimageiospec-053post1" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>bump patch version during loading for model 0.5.x</li>
+<li>improve validation error formatting</li>
+<li>validate URLs first with a head request, if forbidden, follow up with a get request that is streamed and if that is also forbidden a regular get request.</li>
+<li><code>RelativePath.absolute()</code> is now a method (not a property) analog to <code>pathlib.Path</code></li>
+</ul>
+<h3 id="bioimageiospec-053">bioimageio.spec 0.5.3<a class="headerlink" href="#bioimageiospec-053" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>remove collection description</li>
+<li>update SPDX license list</li>
+<li>update generic description to 0.3.1</li>
+<li>update model description to 0.5.3</li>
+<li>add timeout argument to all requests.get calls</li>
+</ul>
+<h3 id="bioimageiospec-052post5">bioimageio.spec 0.5.2post5<a class="headerlink" href="#bioimageiospec-052post5" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>added more information to validation summary</li>
+<li>deprioritize <code>Path</code> objects in the <code>FileSource</code> union</li>
+</ul>
+<h3 id="bioimageiospec-052post4">bioimageio.spec 0.5.2post4<a class="headerlink" href="#bioimageiospec-052post4" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>resolve backup DOIs</li>
+<li>fix resolving relative file paths given as strings</li>
+<li>allow to bypass download and hashing of known files</li>
+</ul>
+<h3 id="bioimageiospec-052post3">bioimageio.spec 0.5.2post3<a class="headerlink" href="#bioimageiospec-052post3" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>avoid full download when validating urls</li>
+</ul>
+<h3 id="bioimageiospec-052post2">bioimageio.spec 0.5.2post2<a class="headerlink" href="#bioimageiospec-052post2" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>resolve version (un)specific collection IDs, e.g. <code>load_description('affable-shark')</code>, <code>load_description('affable-shark/1')</code></li>
+</ul>
+<h3 id="bioimageiospec-052post1">bioimageio.spec 0.5.2post1<a class="headerlink" href="#bioimageiospec-052post1" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix model packaging with weights format priority</li>
+</ul>
+<h3 id="bioimageiospec-052">bioimageio.spec 0.5.2<a class="headerlink" href="#bioimageiospec-052" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>new patch version <a href="#model-052">model 0.5.2</a></li>
+</ul>
+<h3 id="bioimageiospec-051">bioimageio.spec 0.5.1<a class="headerlink" href="#bioimageiospec-051" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>new patch version <a href="#model-051">model 0.5.1</a></li>
+</ul>
+<h3 id="bioimageiospec-050post2">bioimageio.spec 0.5.0post2<a class="headerlink" href="#bioimageiospec-050post2" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>don't fail if CI env var is a string</li>
+</ul>
+<h3 id="bioimageiospec-050post1">bioimageio.spec 0.5.0post1<a class="headerlink" href="#bioimageiospec-050post1" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix <code>_internal.io_utils.identify_bioimageio_yaml_file()</code></li>
+</ul>
+<h3 id="bioimageiospec-050">bioimageio.spec 0.5.0<a class="headerlink" href="#bioimageiospec-050" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>new description formats: <a href="#generic-030--application-030--collection-030--dataset-030--notebook-030">generic 0.3, application 0.3, collection 0.3, dataset 0.3, notebook 0.3</a> and <a href="#model-050">model 0.5</a>.</li>
+<li>various API changes, most important functions:</li>
+<li><code>bioimageio.spec.load_description</code> (replaces <code>load_raw_resource_description</code>, interface changed)</li>
+<li><code>bioimageio.spec.validate_format</code> (new)</li>
+<li><code>bioimageio.spec.dump_description</code> (replaces <code>serialize_raw_resource_description_to_dict</code>, interface changed)</li>
+<li><code>bioimageio.spec.update_format</code> (interface changed)</li>
+<li>switch from Marshmallow to Pydantic</li>
+<li>extended validation</li>
+<li>one joint, more precise JSON Schema</li>
+</ul>
+<h3 id="bioimageiospec-049">bioimageio.spec 0.4.9<a class="headerlink" href="#bioimageiospec-049" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>small bugixes</li>
+<li>better type hints</li>
+<li>improved tests</li>
+</ul>
+<h3 id="bioimageiospec-048post1">bioimageio.spec 0.4.8post1<a class="headerlink" href="#bioimageiospec-048post1" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>add <code>axes</code> and <code>eps</code> to <code>scale_mean_var</code></li>
+</ul>
+<h3 id="bioimageiospec-047post1">bioimageio.spec 0.4.7post1<a class="headerlink" href="#bioimageiospec-047post1" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>add simple forward compatibility by treating future format versions as latest known (for the respective resource type)</li>
+</ul>
+<h3 id="bioimageiospec-046post3">bioimageio.spec 0.4.6post3<a class="headerlink" href="#bioimageiospec-046post3" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>
+<p>Make CLI output more readable</p>
+</li>
+<li>
+<p>find redirected URLs when checking for URL availability</p>
+</li>
+</ul>
+<h3 id="bioimageiospec-046post2">bioimageio.spec 0.4.6post2<a class="headerlink" href="#bioimageiospec-046post2" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>
+<p>Improve error message for non-existing RDF file path given as string</p>
+</li>
+<li>
+<p>Improve documentation for model description's <code>documentation</code> field</p>
+</li>
+</ul>
+<h3 id="bioimageiospec-046post1">bioimageio.spec 0.4.6post1<a class="headerlink" href="#bioimageiospec-046post1" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix enrich_partial_rdf_with_imjoy_plugin (see <a href="https://github.com/bioimage-io/spec-bioimage-io/pull/452">https://github.com/bioimage-io/spec-bioimage-io/pull/452</a>)</li>
+</ul>
+<h3 id="bioimageiospec-045post16">bioimageio.spec 0.4.5post16<a class="headerlink" href="#bioimageiospec-045post16" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix rdf_update of entries in <code>resolve_collection_entries()</code></li>
+</ul>
+<h3 id="bioimageiospec-045post15">bioimageio.spec 0.4.5post15<a class="headerlink" href="#bioimageiospec-045post15" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>pass root to <code>enrich_partial_rdf</code> arg of <code>resolve_collection_entries()</code></li>
+</ul>
+<h3 id="bioimageiospec-045post14">bioimageio.spec 0.4.5post14<a class="headerlink" href="#bioimageiospec-045post14" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>keep <code>ResourceDescrption.root_path</code> as URI for remote resources. This fixes the collection description as the collection entries are resolved after the collection description has been loaded.</li>
+</ul>
+<h3 id="bioimageiospec-045post13">bioimageio.spec 0.4.5post13<a class="headerlink" href="#bioimageiospec-045post13" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>new bioimageio.spec.partner module adding validate-partner-collection command if optional 'lxml' dependency is available</li>
+</ul>
+<h3 id="bioimageiospec-045post12">bioimageio.spec 0.4.5post12<a class="headerlink" href="#bioimageiospec-045post12" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>
+<p>new env var <code>BIOIMAGEIO_CACHE_WARNINGS_LIMIT</code> (default: 3) to avoid spam from cache hit warnings</p>
+</li>
+<li>
+<p>more robust conversion of ImportableSourceFile for absolute paths to relative paths (don't fail on non-path source file)</p>
+</li>
+</ul>
+<h3 id="bioimageiospec-045post11">bioimageio.spec 0.4.5post11<a class="headerlink" href="#bioimageiospec-045post11" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>resolve symlinks when transforming absolute to relative paths during serialization; see <a href="https://github.com/bioimage-io/spec-bioimage-io/pull/438">#438</a></li>
+</ul>
+<h3 id="bioimageiospec-045post10">bioimageio.spec 0.4.5post10<a class="headerlink" href="#bioimageiospec-045post10" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix loading of collection description with id (id used to be ignored)</li>
+</ul>
+<h3 id="bioimageiospec-045post9">bioimageio.spec 0.4.5post9<a class="headerlink" href="#bioimageiospec-045post9" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>support loading bioimageio resources by their animal nickname (currently only models have nicknames).</li>
+</ul>
+<h3 id="bioimageiospec-045post8">bioimageio.spec 0.4.5post8<a class="headerlink" href="#bioimageiospec-045post8" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>
+<p>any field previously expecting a local relative path is now also accepting an absolute path</p>
+</li>
+<li>
+<p>load_raw_resource_description returns a raw resource description which has no relative paths (any relative paths are converted to absolute paths).</p>
+</li>
+</ul>
+<h3 id="bioimageiospec-044post7">bioimageio.spec 0.4.4post7<a class="headerlink" href="#bioimageiospec-044post7" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>add command <code>commands.update_rdf()</code>/<code>update-rdf</code>(cli)</li>
+</ul>
+<h3 id="bioimageiospec-044post2">bioimageio.spec 0.4.4post2<a class="headerlink" href="#bioimageiospec-044post2" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix unresolved ImportableSourceFile</li>
+</ul>
+<h3 id="bioimageiospec-044post1">bioimageio.spec 0.4.4post1<a class="headerlink" href="#bioimageiospec-044post1" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fix collection description conversion for type field</li>
+</ul>
+<h3 id="bioimageiospec-043post1">bioimageio.spec 0.4.3post1<a class="headerlink" href="#bioimageiospec-043post1" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>
+<p>fix to shape validation for model description 0.4: output shape now needs to be bigger than halo</p>
+</li>
+<li>
+<p>moved objects from bioimageio.spec.shared.utils to bioimageio.spec.shared[.node_transformer]</p>
+</li>
+<li>additional keys to validation summary: bioimageio_spec_version, status</li>
+</ul>
+<h3 id="bioimageiospec-042post4">bioimageio.spec 0.4.2post4<a class="headerlink" href="#bioimageiospec-042post4" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fixes to generic description:</li>
+<li>ignore value of field <code>root_path</code> if present in yaml. This field is used internally and always present in RDF nodes.</li>
+</ul>
+<h3 id="bioimageiospec-041post5">bioimageio.spec 0.4.1.post5<a class="headerlink" href="#bioimageiospec-041post5" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>fixes to collection description:</li>
+<li>RDFs specified directly in collection description are validated correctly even if their source field does not point to an RDF.</li>
+<li>nesting of collection description allowed</li>
+</ul>
+<h3 id="bioimageiospec-041post4">bioimageio.spec 0.4.1.post4<a class="headerlink" href="#bioimageiospec-041post4" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>
+<p>fixed missing field <code>icon</code> in generic description's raw node</p>
+</li>
+<li>
+<p>fixes to collection description:</p>
+</li>
+<li>RDFs specified directly in collection description are validated correctly</li>
+<li>no nesting of collection description allowed for now</li>
+<li><code>links</code> is no longer an explicit collection entry field ("moved" to unknown)</li>
+</ul>
+<h3 id="bioimageiospec-041post0">bioimageio.spec 0.4.1.post0<a class="headerlink" href="#bioimageiospec-041post0" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>new model spec 0.3.5 and 0.4.1</li>
+</ul>
+<h3 id="bioimageiospec-040post3">bioimageio.spec 0.4.0.post3<a class="headerlink" href="#bioimageiospec-040post3" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li><code>load_raw_resource_description</code> no longer accepts <code>update_to_current_format</code> kwarg (use <code>update_to_format</code> instead)</li>
+</ul>
+<h3 id="bioimageiospec-040post2">bioimageio.spec 0.4.0.post2<a class="headerlink" href="#bioimageiospec-040post2" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li><code>load_raw_resource_description</code> accepts <code>update_to_format</code> kwarg</li>
+</ul>
+<h2 id="changes-to-the-resource-description-format">Changes to the Resource Description Format<a class="headerlink" href="#changes-to-the-resource-description-format" title="Anchor link to this section for reference">¤</a></h2>
+<p>Which fields a resource description field has and how they are to be interpreted depends on the <code>type</code> and  <code>format_version</code> fields.
+Here is a list of changes for each <code>type</code> and <code>format_version</code>.
+Note that 'generic' changes apply to <code>type</code> application, dataset and notebook of the same <code>format_versions</code>.
+If the changes also apply to <code>type</code> model, the coresponding model format version is noted, e.g. <a href="#generic-031-and-model-053">generic 0.3.1 and model 0.5.3</a>.</p>
+<h3 id="generic-033-and-model-057">generic 0.3.3 and model 0.5.7<a class="headerlink" href="#generic-033-and-model-057" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Updated SPDX licenes to version 3.27.0</li>
+<li>(model only): added <code>min_percentile</code> and <code>max_percentile</code> to <code>ClipKwargs</code></li>
+<li>(model only): increased default <code>config.bioimageio.reproducibility_tolerance[i].absolute_tolerance</code> to 1e-3</li>
+</ul>
+<h3 id="model-056">model 0.5.6<a class="headerlink" href="#model-056" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes:</li>
+<li>New optional <code>weights.onnx.external_data</code> field to allow for (large) ONNX models split into an architecture and an external data (weights) file.</li>
+</ul>
+<h3 id="generic-032-and-model-055">generic 0.3.2 and model 0.5.5<a class="headerlink" href="#generic-032-and-model-055" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes:</li>
+<li>New optional <code>version_comment</code> field</li>
+<li>Many FAIR fields are optional now to make it easier to tinker with resources not ready for publishing yet.</li>
+<li>new softmax pre-/postprocessing</li>
+</ul>
+<h3 id="model-054">model 0.5.4<a class="headerlink" href="#model-054" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Breaking changes (that shouldn't affect any released models though)</li>
+<li>Do not allow a model to reference itself in the <code>parent</code> field</li>
+<li>Non-breaking changes</li>
+<li>validate <code>config.bioimageio.reproducibility_tolerance</code> to store relative and absolute tolerances as well as a tolerance for mismatched elements.</li>
+<li>allow <code>+</code> in name</li>
+<li>new optional <code>comment</code> field for weights entries</li>
+</ul>
+<h3 id="generic-031-and-model-053">generic 0.3.1 and model 0.5.3<a class="headerlink" href="#generic-031-and-model-053" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li>remove <code>version_number</code> in favor of using <code>version</code></li>
+</ul>
+<h3 id="model-052">model 0.5.2<a class="headerlink" href="#model-052" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li>added <code>concatenable</code> flag to index, time and space input axes</li>
+</ul>
+<h3 id="model-051">model 0.5.1<a class="headerlink" href="#model-051" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li>added <code>DataDependentSize</code> for <code>outputs.i.size</code> to specify an output shape that is not known before inference is run.</li>
+<li>added optional <code>inputs.i.optional</code> field to indicate that a tensor may be <code>None</code></li>
+<li>made data type assumptions in <code>preprocessing</code> and <code>postprocessing</code> explicit by adding <code>'ensure_dtype'</code> operations per default.</li>
+<li>allow to specify multiple thresholds (along an <code>axis</code>) in a 'binarize' processing step</li>
+</ul>
+<h3 id="generic-030-application-030-collection-030-dataset-030-notebook-030">generic 0.3.0 / application 0.3.0 / collection 0.3.0 / dataset 0.3.0 / notebook 0.3.0<a class="headerlink" href="#generic-030-application-030-collection-030-dataset-030-notebook-030" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Breaking canges that are fully auto-convertible</li>
+<li>dropped <code>download_url</code></li>
+<li>dropped non-file attachments</li>
+<li><code>attachments.files</code> moved to <code>attachments.i.source</code></li>
+<li>Non-breaking changes</li>
+<li>added optional <code>parent</code> field</li>
+</ul>
+<h3 id="model-050">model 0.5.0<a class="headerlink" href="#model-050" title="Anchor link to this section for reference">¤</a></h3>
+<p>all generic 0.3.0 changes (except models already have the <code>parent</code> field) plus:</p>
+<ul>
+<li>Breaking changes that are partially auto-convertible</li>
+<li><code>inputs.i.axes</code> are now defined in more detail (same for <code>outputs.i.axes</code>)</li>
+<li><code>inputs.i.shape</code> moved per axes to <code>inputs.i.axes.size</code> (same for <code>outputs.i.shape</code>)</li>
+<li>new pre-/postprocessing 'fixed_zero_mean_unit_variance' separated from 'zero_mean_unit_variance', where <code>mode=fixed</code> is no longer valid.
+    (for scalar values this is auto-convertible.)</li>
+<li>Breaking changes that are fully auto-convertible</li>
+<li>changes in <code>weights.pytorch_state_dict.architecture</code><ul>
+<li>renamed <code>weights.pytorch_state_dict.architecture.source_file</code> to <code>...architecture.source</code></li>
+</ul>
+</li>
+<li>changes in <code>weights.pytorch_state_dict.dependencies</code><ul>
+<li>only conda environment allowed and specified by <code>weights.pytorch_state_dict.dependencies.source</code></li>
+<li>new optional field <code>weights.pytorch_state_dict.dependencies.sha256</code></li>
+</ul>
+</li>
+<li>changes in <code>weights.tensorflow_model_bundle.dependencies</code><ul>
+<li>same as changes in <code>weights.pytorch_state_dict.dependencies</code></li>
+</ul>
+</li>
+<li>moved <code>test_inputs</code> to <code>inputs.i.test_tensor</code></li>
+<li>moved <code>test_outputs</code> to <code>outputs.i.test_tensor</code></li>
+<li>moved <code>sample_inputs</code> to <code>inputs.i.sample_tensor</code></li>
+<li>moved <code>sample_outputs</code> to <code>outputs.i.sample_tensor</code></li>
+<li>renamed <code>inputs.i.name</code> to <code>inputs.i.id</code></li>
+<li>renamed <code>outputs.i.name</code> to <code>outputs.i.id</code></li>
+<li>renamed <code>inputs.i.preprocessing.name</code> to <code>inputs.i.preprocessing.id</code></li>
+<li>renamed <code>outputs.i.postprocessing.name</code> to <code>outputs.i.postprocessing.id</code></li>
+<li>Non-breaking changes:</li>
+<li>new pre-/postprocessing: <code>id</code>='ensure_dtype' with kwarg <code>dtype</code></li>
+</ul>
+<h3 id="generic-024-and-model-0410">generic 0.2.4 and model 0.4.10<a class="headerlink" href="#generic-024-and-model-0410" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Breaking changes that are fully auto-convertible</li>
+<li><code>id</code> overwritten with value from <code>config.bioimageio.nickname</code> if available</li>
+<li>Non-breaking changes</li>
+<li><code>version_number</code> is a new, optional field indicating that an RDF is the nth published version with a given <code>id</code></li>
+<li><code>id_emoji</code> is a new, optional field (set from <code>config.bioimageio.nickname_icon</code> if available)</li>
+<li><code>uploader</code> is a new, optional field with <code>email</code> and an optional <code>name</code> subfields</li>
+</ul>
+<h3 id="model-049">model 0.4.9<a class="headerlink" href="#model-049" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li>make pre-/postprocessing kwargs <code>mode</code> and <code>axes</code> always optional for model description 0.3 and 0.4</li>
+</ul>
+<h3 id="model-048">model 0.4.8<a class="headerlink" href="#model-048" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li><code>cite</code> field is now optional</li>
+</ul>
+<h3 id="generic-022-and-model-047">generic 0.2.2 and model 0.4.7<a class="headerlink" href="#generic-022-and-model-047" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Breaking changes that are fully auto-convertible</li>
+<li>name field may not include '/' or '\' (conversion removes these)</li>
+</ul>
+<h3 id="model-046">model 0.4.6<a class="headerlink" href="#model-046" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li>Implicit output shape can be expanded by inserting <code>null</code> into <code>shape:scale</code> and indicating length of new dimension D in the <code>offset</code> field. Keep in mind that <code>D=2*'offset'</code>.</li>
+</ul>
+<h3 id="model-045">model 0.4.5<a class="headerlink" href="#model-045" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Breaking changes that are fully auto-convertible</li>
+<li><code>parent</code> field changed to hold a string that is a bioimage.io ID, a URL or a local relative path (and not subfields <code>uri</code> and <code>sha256</code>)</li>
+</ul>
+<h3 id="model-044">model 0.4.4<a class="headerlink" href="#model-044" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li>new optional field <code>training_data</code></li>
+</ul>
+<h3 id="dataset-022">dataset 0.2.2<a class="headerlink" href="#dataset-022" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li>explicitly define and document dataset description (for now, clone of generic description with type="dataset")</li>
+</ul>
+<h3 id="model-043">model 0.4.3<a class="headerlink" href="#model-043" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li>add optional field <code>download_url</code></li>
+<li>add optional field <code>dependencies</code> to all weight formats (not only pytorch_state_dict)</li>
+<li>add optional <code>pytorch_version</code> to the pytorch_state_dict and torchscript weight formats</li>
+</ul>
+<h3 id="model-042">model 0.4.2<a class="headerlink" href="#model-042" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Bug fixes:</li>
+<li>in a <code>pytorch_state_dict</code> weight entry <code>architecture</code> is no longer optional.</li>
+</ul>
+<h3 id="collection-022">collection 0.2.2<a class="headerlink" href="#collection-022" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li>
+<p>make <code>authors</code>, <code>cite</code>, <code>documentation</code> and <code>tags</code> optional</p>
+</li>
+<li>
+<p>Breaking changes that are fully auto-convertible</p>
+</li>
+<li>Simplifies collection description 0.2.1 by merging resource type fields together to a <code>collection</code> field,
+    holindg a list of all resources in the specified collection.</li>
+</ul>
+<h3 id="generic-022-model-036-model-042">generic 0.2.2 / model 0.3.6 / model 0.4.2<a class="headerlink" href="#generic-022-model-036-model-042" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li><code>rdf_source</code> new optional field</li>
+<li><code>id</code> new optional field</li>
+</ul>
+<h3 id="collection-021">collection 0.2.1<a class="headerlink" href="#collection-021" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>First official release, extends generic description with fields <code>application</code>, <code>model</code>, <code>dataset</code>, <code>notebook</code> and (nested)
+  <code>collection</code>, which hold lists linking to respective resources.</li>
+</ul>
+<h3 id="generic-021">generic 0.2.1<a class="headerlink" href="#generic-021" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li>add optional <code>email</code> and <code>github_user</code> fields to entries in <code>authors</code></li>
+<li>add optional <code>maintainers</code> field (entries like in <code>authors</code> but  <code>github_user</code> is required (and <code>name</code> is not))</li>
+</ul>
+<h3 id="model-041">model 0.4.1<a class="headerlink" href="#model-041" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Breaking changes that are fully auto-convertible</li>
+<li>
+<p>moved field <code>dependencies</code> to <code>weights:pytorch_state_dict:dependencies</code></p>
+</li>
+<li>
+<p>Non-breaking changes</p>
+</li>
+<li><code>documentation</code> field accepts URLs as well</li>
+</ul>
+<h3 id="model-035">model 0.3.5<a class="headerlink" href="#model-035" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li><code>documentation</code> field accepts URLs as well</li>
+</ul>
+<h3 id="model-040">model 0.4.0<a class="headerlink" href="#model-040" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Breaking changes</li>
+<li>model inputs and outputs may not use duplicated names.</li>
+<li>
+<p>model field <code>sha256</code> is required if <code>pytorch_state_dict</code> weights are defined.
+    and is now moved to the <code>pytroch_state_dict</code> entry as <code>architecture_sha256</code>.</p>
+</li>
+<li>
+<p>Breaking changes that are fully auto-convertible</p>
+</li>
+<li>model fields language and framework are removed.</li>
+<li>model field <code>source</code> is renamed <code>architecture</code> and is moved together with <code>kwargs</code> to the <code>pytorch_state_dict</code>
+    weights entry (if it exists, otherwise they are removed).</li>
+<li>the weight format <code>pytorch_script</code> was renamed to <code>torchscript</code>.</li>
+<li>Other changes</li>
+<li>model inputs (like outputs) may be defined by <code>scale</code>ing and <code>offset</code>ing a <code>reference_tensor</code></li>
+<li>a <code>maintainers</code> field was added to the model description.</li>
+<li>the entries in the <code>authors</code> field may now additionally contain <code>email</code> or <code>github_user</code>.</li>
+<li>the summary returned by the <code>validate</code> command now also contains a list of warnings.</li>
+<li>an <code>update_format</code> command was added to aid with updating older RDFs by applying auto-conversion.</li>
+</ul>
+<h3 id="model-034">model 0.3.4<a class="headerlink" href="#model-034" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes</li>
+<li>Add optional parameter <code>eps</code> to <code>scale_range</code> postprocessing.</li>
+</ul>
+<h3 id="model-033">model 0.3.3<a class="headerlink" href="#model-033" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Breaking changes that are fully auto-convertible</li>
+<li><code>reference_input</code> for implicit output tensor shape was renamed to <code>reference_tensor</code></li>
+</ul>
+<h3 id="model-032">model 0.3.2<a class="headerlink" href="#model-032" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Breaking changes</li>
+<li>The RDF file name in a package should be <code>rdf.yaml</code> for all the RDF (not <code>model.yaml</code>);</li>
+<li>Change <code>authors</code> and <code>packaged_by</code> fields from List[str] to List[Author] with Author consisting of a dictionary <code>{name: '&lt;Full name&gt;', affiliation: '&lt;Affiliation&gt;', orcid: 'optional orcid id'}</code>;</li>
+<li>Add a mandatory <code>type</code> field to comply with the generic description. Only valid value is 'model' for model description;</li>
+<li>
+<p>Only allow <code>license</code> identifier from the <a href="https://spdx.org/licenses/">SPDX license list</a>;</p>
+</li>
+<li>
+<p>Non-breaking changes</p>
+</li>
+<li>Add optional <code>version</code> field (default 0.1.0) to keep track of model changes;</li>
+<li>Allow the values in the <code>attachments</code> list to be any values besides URI;</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../api/" class="md-footer__link md-footer__link--prev" aria-label="Previous: API Reference">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                API Reference
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../coverage/" class="md-footer__link md-footer__link--next" aria-label="Next: Coverage report">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Coverage report
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/bioimage-io" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../assets/_markdown_exec_pyodide.js"></script>
+      
+    
+  </body>
+</html>
