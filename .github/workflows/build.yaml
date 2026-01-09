@@ -239,13 +239,13 @@ jobs:
 
           if "${{ inputs.force-publish }}" == "true":
               existing_tag = "${{ steps.get-existing-tag.outputs.existing-tag }}"
-              valid = existing_tag.count("v") == 1 and existing_tag.count(".") == 2 and all(part.isdigit() for part in existing_tag.lstrip("v").split("."))
+              valid = existing_tag.count("v") == 1 and existing_tag.count(".") == 3 and all(part.isdigit() for part in existing_tag.lstrip("v").split("."))
               if not valid:
-                  raise Exception(f"Current commit has invalid version tag {existing_tag}.")
+                  raise Exception(f"Current commit has invalid version tag {existing_tag}")
 
               source_version = Path('src/bioimageio/spec/_version.py').read_text().split('VERSION = \"')[1].split('\"')[0]
               if existing_tag != f"v{source_version}":
-                  raise Exception(f"Version tag {existing_tag} does not match source version {source_version}.")
+                  raise Exception(f"Version tag {existing_tag} does not match source version {source_version}")
 
               new_version = existing_tag
           else:
