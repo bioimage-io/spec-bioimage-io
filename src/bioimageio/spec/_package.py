@@ -43,6 +43,7 @@ def get_resource_package_content(
     bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
 ) -> Dict[FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]]:
+    """Get the content of a bioimage.io resource package."""
     ret: Dict[
         FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]
     ] = {}
