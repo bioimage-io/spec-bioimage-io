@@ -33,6 +33,9 @@ class Settings(
     def _expand_user(cls, value: Path):
         return Path(os.path.expanduser(str(value)))
 
+    CI: Annotated[Union[bool, str], Field(alias="CI")] = False
+    """Wether or not the execution happens in a continuous integration (CI) environment."""
+
     collection_http_pattern: str = (
         "https://hypha.aicell.io/bioimage-io/artifacts/{bioimageio_id}/files/rdf.yaml"
     )
@@ -43,6 +46,15 @@ class Settings(
     - This method takes precedence over resolving via **id_map**.
     - If this endpoints fails, we fall back to **id_map**.
     """
+
+    github_username: Optional[str] = None
+    """GitHub username for API requests"""
+
+    github_token: Optional[str] = None
+    """GitHub token for API requests"""
+
+    http_timeout: float = 10.0
+    """Timeout in seconds for http requests."""
 
     hypha_upload: str = (
         "https://hypha.aicell.io/public/services/artifact-manager/create"
@@ -59,9 +71,6 @@ class Settings(
         2. Generate a new token at https://bioimage.io/#/api?tab=hypha-rpc
     """
 
-    http_timeout: float = 10.0
-    """Timeout in seconds for http requests."""
-
     id_map: str = (
         "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map.json"
     )
@@ -71,6 +80,9 @@ class Settings(
         "https://uk1s3.embassy.ebi.ac.uk/public-datasets/bioimage.io/id_map_draft.json"
     )
     """URL to bioimageio id_map_draft.json to resolve draft IDs ending with '/draft'."""
+
+    log_warnings: bool = True
+    """Log validation warnings to console."""
 
     perform_io_checks: bool = True
     """Wether or not to perform validation that requires file io,
@@ -87,27 +99,8 @@ class Settings(
     Set this flag to False to avoid this potential security risk
     and disallow loading draft versions."""
 
-    log_warnings: bool = True
-    """Log validation warnings to console."""
-
-    github_username: Optional[str] = None
-    """GitHub username for API requests"""
-
-    github_token: Optional[str] = None
-    """GitHub token for API requests"""
-
-    CI: Annotated[Union[bool, str], Field(alias="CI")] = False
-    """Wether or not the execution happens in a continuous integration (CI) environment."""
-
     user_agent: Optional[str] = None
     """user agent for http requests"""
-
-    @property
-    def github_auth(self):
-        if self.github_username is None or self.github_token is None:
-            return None
-        else:
-            return (self.github_username, self.github_token)
 
     @cached_property
     def disk_cache(self):
@@ -117,6 +110,13 @@ class Settings(
             url_hasher=UrlDigest.from_str,
         )
         return cache
+
+    @property
+    def github_auth(self):
+        if self.github_username is None or self.github_token is None:
+            return None
+        else:
+            return (self.github_username, self.github_token)
 
 
 settings = Settings()
