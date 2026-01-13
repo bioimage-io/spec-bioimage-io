@@ -21,9 +21,8 @@ from ._internal.common_nodes import ResourceDescrBase
 from ._internal.io import BioimageioYamlContent, YamlValue
 from ._internal.io_basics import Sha256
 from ._internal.io_utils import open_bioimageio_yaml, write_yaml
-from ._internal.types import FormatVersionPlaceholder
+from ._internal.types import FormatVersionPlaceholder, PermissiveFileSource
 from ._internal.validation_context import get_validation_context
-from .common import PermissiveFileSource
 from .dataset import AnyDatasetDescr, DatasetDescr
 from .model import AnyModelDescr, ModelDescr
 from .summary import ValidationSummary

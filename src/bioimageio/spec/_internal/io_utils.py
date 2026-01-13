@@ -342,6 +342,7 @@ def write_zip(
 
 
 def load_array(source: Union[FileSource, FileDescr, ZipPath]) -> NDArray[Any]:
+    """load a numpy ndarray from a .npy file"""
     reader = get_reader(source)
     if settings.allow_pickle:
         logger.warning("Loading numpy array with `allow_pickle=True`.")
@@ -350,6 +351,7 @@ def load_array(source: Union[FileSource, FileDescr, ZipPath]) -> NDArray[Any]:
 
 
 def save_array(path: Union[Path, ZipPath], array: NDArray[Any]) -> None:
+    """save a numpy ndarray to a .npy file"""
     with path.open(mode="wb") as f:
         assert not isinstance(f, io.TextIOWrapper)
         return numpy.save(f, array, allow_pickle=False)
