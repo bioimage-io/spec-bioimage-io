@@ -1,3 +1,4 @@
+from functools import partial
 from pathlib import PurePosixPath
 from typing import Any, Dict, Optional, Tuple
 
@@ -5,11 +6,21 @@ import numpy as np
 from imageio.v3 import imread, imwrite  # pyright: ignore[reportUnknownVariableType]
 from loguru import logger
 from numpy.typing import NDArray
+from typing_extensions import assert_never
 
 from bioimageio.spec._internal.validation_context import get_validation_context
+from bioimageio.spec.model.v0_5 import (
+    KerasHdf5WeightsDescr,
+    OnnxWeightsDescr,
+    PytorchStateDictWeightsDescr,
+    TensorflowJsWeightsDescr,
+    TensorflowSavedModelBundleWeightsDescr,
+    TorchscriptWeightsDescr,
+)
 
 from ._internal.io import RelativeFilePath, get_reader
 from ._internal.io_utils import load_array
+from ._version import VERSION
 from .model import ModelDescr
 from .utils import get_spdx_licenses, load_image
 
@@ -237,6 +248,88 @@ def create_hf_model_card(model: ModelDescr) -> Tuple[ModelDescr, str, Dict[str, 
     )
     referenced_files.update(images)
 
+    dl_framework = []
+    model_size: Optional[str] = None
+    for weights in model.weights.available_formats.values():
+        if isinstance(weights, (PytorchStateDictWeightsDescr, TorchscriptWeightsDescr)):
+            dl_framework_version = weights.pytorch_version
+        elif isinstance(
+            weights,
+            (
+                TensorflowSavedModelBundleWeightsDescr,
+                TensorflowJsWeightsDescr,
+                KerasHdf5WeightsDescr,
+            ),
+        ):
+            dl_framework_version = weights.tensorflow_version
+        elif isinstance(weights, OnnxWeightsDescr):
+            dl_framework_version = f"opset version: {weights.opset_version}"
+        else:
+            assert_never(weights)
+
+        dl_framework.append(f"{weights.weights_format_name}: {dl_framework_version}")
+
+        if model_size is None:
+            s = 0
+            r = weights.get_reader()
+            for chunk in iter(partial(r.read, 128 * 1024), b""):
+                s += len(chunk)
+
+            if model.config.bioimageio.model_parameter_count is not None:
+                if model.config.bioimageio.model_parameter_count < 1e9:
+                    model_size = f"{model.config.bioimageio.model_parameter_count / 1e6:.2f} million parameters, "
+                else:
+                    model_size = f"{model.config.bioimageio.model_parameter_count / 1e9:.2f} billion parameters, "
+            else:
+                model_size = ""
+
+            if s < 1e9:
+                model_size += f"{s / 1e6:.2f} MB"
+            else:
+                model_size += f"{s / 1e9:.2f} GB"
+
+    if (
+        model.weights.pytorch_state_dict is not None
+        and model.weights.pytorch_state_dict.dependencies is not None
+    ):
+        referenced_files["environment.yaml"] = (
+            model.weights.pytorch_state_dict.dependencies.get_reader().read()
+        )
+        dependencies = "Depdencies for pytorch state dicht weights listed in [environment.yaml](environment.yaml)."
+    else:
+        dependencies = "none beyond the respective framework"
+
+    out_of_scope_use = (
+        model.config.bioimageio.out_of_scope_use
+        if model.config.bioimageio.out_of_scope_use
+        else """missing; therefore these limitations should be considered:
+
+- *Likely not suitable for diagnostic purposes.*
+- *Likely not validated for different imaging modalities than present in the training data.*
+- *Should not be used without proper validation on user's specific datasets.*
+
+"""
+    )
+
+    evaluation = (
+        "".join(
+            e.format_md()
+            for e in model.config.bioimageio.evaluations
+            if e.dataset_role != "independent"
+        )
+        or "missing"
+    )
+
+    evaluation += "\n### Validation on External Data\n"
+    evaluation += (
+        "".join(
+            e.format_md()
+            for e in model.config.bioimageio.evaluations
+            if e.dataset_role == "independent"
+        )
+        or "missing"
+    )
+
     markdown = f"""# {model.name}
 
 {model.description or ""}
@@ -262,10 +355,22 @@ def create_hf_model_card(model: ModelDescr) -> Tuple[ModelDescr, str, Dict[str, 
 - **model version:** {model.version or "missing"}
 - **Additional model documentation:** {doc_local_link or "missing"}
 - **Developed by:**{developed_by}
-- **Funded by:** {model.config.bioimageio.hf_card_info.funded_by if model.config.bioimageio.hf_card_info and model.config.bioimageio.hf_card_info.funded_by else "missing"}
+- **Funded by:** {
+        model.config.bioimageio.funded_by
+        if model.config.bioimageio.funded_by
+        else "missing"
+    }
 - **Shared by:** {shared_by}
-- **Model type:** {model.config.bioimageio.hf_card_info.model_type if model.config.bioimageio.hf_card_info and model.config.bioimageio.hf_card_info.model_type else "missing"}
-- **Modality:** {model.config.bioimageio.hf_card_info.modality if model.config.bioimageio.hf_card_info and model.config.bioimageio.hf_card_info.modality else "missing"}
+- **Model type:** {
+        model.config.bioimageio.model_type
+        if model.config.bioimageio.model_type
+        else "missing"
+    }
+- **Modality:** {
+        model.config.bioimageio.modality
+        if model.config.bioimageio.modality
+        else "missing"
+    }
 - **License:** {license}
 - **Finetuned from model:** {"N/A" if model.parent is None else model.parent.id}
 
@@ -282,17 +387,19 @@ def create_hf_model_card(model: ModelDescr) -> Tuple[ModelDescr, str, Dict[str, 
 
 ## Downstream Use
 
-*Explain how this model can be fine-tuned or integrated into larger bioimage analysis pipelines.*
+This model is compatible with the bioimageio.spec Python package (version >= {
+        VERSION
+    }) and other bioimage.io tools like the bioimageio.core Python package supporting model inference in Python code or via the `bioimageio` CLI.
+Specific bioimage.io partner tool compatibilities may be reported at [Compatibility Reports](https://bioimage-io.github.io/collection/latest/compatibility/#compatibility-by-resource).
+{
+        "Training (and fine-tuning) code may be available at " + model.git_repo + "."
+        if model.git_repo
+        else ""
+    }
 
 ## Out-of-Scope Use
 
-*List how the model may be misused in bioimage analysis contexts and what users should not do with the model.*
-
-*Examples:*
-
-- *Not suitable for diagnostic purposes*
-- *Not validated for different imaging modalities than training data*
-- *Should not be used without proper validation on user's specific datasets*
+{out_of_scope_use}
 
 # Task Details
 
@@ -307,154 +414,95 @@ def create_hf_model_card(model: ModelDescr) -> Tuple[ModelDescr, str, Dict[str, 
 
 # Bias, Risks, and Limitations
 
-*Identify foreseeable harms, misunderstandings, and technical limitations specific to bioimage analysis.*
-
 ## Known Biases
 
-*Describe biases in training data or model behavior:*
-
-- *Species-specific training data limitations*
-- *Imaging protocol dependencies*
-- *Cell type or experimental condition biases*
+{
+        model.config.bioimageio.known_biases
+        if model.config.bioimageio.known_biases
+        else "missing"
+    }
 
 ## Risks
 
-*Potential risks in bioimage analysis applications:*
-
-- *Misinterpretation of results*
-- *Over-reliance on automated analysis*
-- *Generalization to unseen experimental conditions*
+{model.config.bioimageio.risks if model.config.bioimageio.risks else "missing"}
 
 ## Limitations
 
-*Technical limitations and failure modes:*
-
-- *Resolution requirements*
-- *Imaging condition dependencies*
-- *Performance degradation scenarios*
+{
+        model.config.bioimageio.limitations
+        if model.config.bioimageio.limitations
+        else "missing"
+    }
 
 ## Recommendations
 
-*Mitigation strategies and best practices:*
-
-- *Always validate on your specific dataset*
-- *Use appropriate controls and manual verification*
-- *Consider domain adaptation for different experimental setups*
+{
+        model.config.bioimageio.recommendations
+        if model.config.bioimageio.recommendations
+        else "missing"
+    }
 
 # Training Details
 
 ## Training Data
 
-*Describe the training dataset with bioimage-specific details:*
-
-- **Source:** *[Dataset name, publication, or source]*
-- **Size:** *[Number of images, total volume, number of annotations]*
-- **Modality:** *[Imaging technique and parameters]*
-- **Biological systems:** *[Cell types, organisms, experimental conditions]*
-- **Ground truth:** *[Annotation method and quality]*
-- **Data splits:** *[Training/validation/test ratios]*
+{
+        "This model was trained on `" + str(model.training_data.id) + "`."
+        if model.training_data is not None
+        else "missing"
+    }
 
 ## Training Procedure
 
 ### Preprocessing
 
-*Detail image preprocessing steps:*
-
-- *Normalization methods*
-- *Augmentation strategies*
-- *Resizing/resampling procedures*
-- *Artifact handling*
+{model.config.bioimageio.training_preprocessing or "missing"}
 
 ### Training Hyperparameters
 
-- **Architecture:** *[Detailed architecture description]*
-- **Framework:** *[PyTorch, TensorFlow, etc.]*
-- **Epochs:** *[Number of training epochs]*
-- **Batch size:** *[Training batch size]*
-- **Learning rate:** *[Initial LR and schedule]*
-- **Loss function:** *[Loss function and rationale]*
-- **Optimizer:** *[Optimizer and parameters]*
-- **Regularization:** *[Dropout, weight decay, etc.]*
+- **Architecture:** {model.config.bioimageio.architecture or "missing"}
+- **Framework:** {dl_framework.join(", ")}
+- **Epochs:** {model.config.bioimageio.training_epochs or "missing"}
+- **Batch size:** {model.config.bioimageio.training_batch_size or "missing"}
+- **Learning rate:** {model.config.bioimageio.initial_learning_rate or "missing"} {
+        model.config.bioimageio.learning_rate_schedule or ""
+    }
+- **Loss function:** {model.config.bioimageio.loss_function or "missing"} {
+        "with " + str(model.config.bioimageio.loss_function_kwargs)
+        if model.config.bioimageio.loss_function_kwargs
+        else ""
+    }
+- **Optimizer:** {model.config.bioimageio.optimizer or "missing"} {
+        "with " + str(model.config.bioimageio.optimizer_kwargs)
+        if model.config.bioimageio.optimizer_kwargs
+        else ""
+    }
+- **Regularization:** {model.config.bioimageio.regularization or "missing"}
 
 ### Speeds, Sizes, Times
 
-- **Training time:** *[Total training duration]*
-- **Model size:** *[Number of parameters, file size]*
-- **Inference time:** *[Time per image/volume]*
-- **Memory requirements:** *[GPU memory needed]*
+- **Training time:** {
+        "{:.2f}".format(model.config.bioimageio.training_duration)
+        if model.config.bioimageio.training_duration is not None
+        else "missing"
+    }
+- **Model size:** {model_size}
+- **Inference time:** {model.config.bioimageio.inference_time or "missing"}
+- **Memory requirements:** {
+        model.config.bioimageio.memory_requirements_inference or "missing"
+    }
 
 # Evaluation
 
-## Testing Data, Factors & Metrics
-
-### Testing Data
-
-*Describe test dataset or link to Dataset Card:*
-
-- **Source:** *[Test dataset details]*
-- **Size:** *[Number of test samples]*
-- **Biological diversity:** *[Range of conditions tested]*
-
-### Factors
-
-*Characteristics that influence model behavior:*
-
-- *Imaging conditions (SNR, resolution, etc.)*
-- *Biological factors (cell type, experimental conditions)*
-- *Technical factors (microscope type, acquisition parameters)*
-
-### Metrics
-
-*Evaluation metrics appropriate for bioimage analysis:*
-
-- *Segmentation: IoU, Dice coefficient, Hausdorff distance*
-- *Classification: Accuracy, precision, recall, F1-score*
-- *Detection: mAP, precision-recall curves*
-- *Denoising: PSNR, SSIM, perceptual metrics*
-
-## Results
-
-### Quantitative Results
-
-*Present results disaggregated by relevant factors:*
-
-| Metric | Overall | Condition A | Condition B | Condition C |
-|--------|---------|-------------|-------------|-------------|
-| IoU    | 0.XX ± 0.XX | 0.XX ± 0.XX | 0.XX ± 0.XX | 0.XX ± 0.XX |
-| Dice   | 0.XX ± 0.XX | 0.XX ± 0.XX | 0.XX ± 0.XX | 0.XX ± 0.XX |
-
-### Summary
-
-*Interpretation of results for general audience:*
-
-- *Model performance summary*
-- *Comparison to existing methods*
-- *Limitations and areas for improvement*
-
-### Validation on External Data
-
-*Results on independent datasets if available*
+{evaluation}
 
 ## Societal Impact Assessment
 
-*Assessment of broader impacts for bioimage analysis:*
-
-- *Potential for misuse in research*
-- *Impact on research reproducibility*
-- *Accessibility and democratization of analysis tools*
-- *Educational and training implications*
+{model.config.bioimageio.societal_impact_assessment or "missing"}
 
 # Environmental Impact
 
-*Environmental considerations for model training and deployment:*
-
-- **Hardware Type:** *[GPU/CPU specifications]*
-- **Hours used:** *[Total compute hours]*
-- **Cloud Provider:** *[If applicable]*
-- **Compute Region:** *[Geographic location]*
-- **Carbon Emitted:** *[CO2 equivalent if calculated]*
-
-*Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute)*
+{model.config.bioimageio.environmental_impact.format_md()}
 
 # Technical Specifications
 
@@ -471,19 +519,21 @@ def create_hf_model_card(model: ModelDescr) -> Tuple[ModelDescr, str, Dict[str, 
 
 ### Hardware Requirements
 
-*Minimum and recommended hardware:*
-
-- **Training:** *[GPU memory, compute requirements]*
-- **Inference:** *[Minimum hardware for deployment]*
-- **Storage:** *[Model size and data requirements]*
+- **Training:** GPU memory: {
+        model.config.bioimageio.memory_requirements_training or "missing"
+    },
+- **Inference:** GPU memory: {
+        model.config.bioimageio.memory_requirements_inference or "missing"
+    }
+- **Storage:** Model size: {model_size}
 
 ### Software Dependencies
 
 *Software requirements:*
 
-- **Framework:** *[Deep learning framework version]*
-- **Libraries:** *[Key dependencies and versions]*
-- **BioImage.IO compatibility:** *[Supported consumer software]*
+- **Framework:** {dl_framework.join(", ")}
+- **Libraries:** {dependencies}
+- **BioImage.IO partner compatibility:** [Compatibility Reports](https://bioimage-io.github.io/collection/latest/compatibility/#compatibility-by-resource)
 
 # How to Get Started with the Model
 
@@ -499,6 +549,7 @@ def create_hf_model_card(model: ModelDescr) -> Tuple[ModelDescr, str, Dict[str, 
 
 *Define domain-specific terms:*
 
+- **CLI**: *Command Line Interface*
 - **IoU (Intersection over Union):** *Metric for evaluating segmentation quality*
 - **Dice coefficient:** *Similarity metric for binary segmentation*
 - **Voxel:** *3D pixel representing volume element*
