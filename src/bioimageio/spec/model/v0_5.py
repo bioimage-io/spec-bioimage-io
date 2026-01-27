@@ -2783,12 +2783,27 @@ class ReproducibilityTolerance(Node, extra="allow"):
     """Limits the weights formats these details apply to."""
 
 
+class HfCardInfo(Node, extra="allow"):
+    """Additional information to populate a Hugging Face model card that is currently not expressed in other fields."""
+
+    funded_by: Optional[str] = None
+    """Funding agency, grant number if applicable"""
+
+    model_type: Optional[str] = None  # TODO: extract from tags if missing
+    """Architecture type, e.g., 3D U-Net, ResNet, transformer"""
+
+    modality: Optional[str] = None  # TODO: extract from tags if missing
+    """Input modality, e.g., fluorescence microscopy, electron microscopy"""
+
+
 class BioimageioConfig(Node, extra="allow"):
     reproducibility_tolerance: Sequence[ReproducibilityTolerance] = ()
     """Tolerances to allow when reproducing the model's test outputs
     from the model's test inputs.
     Only the first entry matching tensor id and weights format is considered.
     """
+    hf_card_info: Optional[HfCardInfo] = None
+    """Additional information to populate a Hugging Face model card."""
 
 
 class Config(Node, extra="allow"):

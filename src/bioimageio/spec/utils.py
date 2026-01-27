@@ -11,6 +11,7 @@ from typing import (
     TypedDict,
     TypeVar,
     Union,
+    overload,
 )
 
 from imageio.v3 import imread
@@ -20,6 +21,7 @@ from typing_extensions import assert_never
 
 from ._description import ensure_description_is_dataset, ensure_description_is_model
 from ._internal.io import (
+    FileDescr,
     download,
     extract_file_name,
     get_reader,
@@ -37,7 +39,11 @@ from ._internal.io_utils import (
     write_yaml,
 )
 from ._internal.type_guards import is_ndarray
-from ._internal.types import FileSource, PermissiveFileSource, RelativeFilePath
+from ._internal.types import (
+    FileSource,
+    PermissiveFileSource,
+    RelativeFilePath,
+)
 from ._internal.url import HttpUrl
 from ._internal.utils import files
 
@@ -45,8 +51,6 @@ DEFAULT_H5_DATASET_PATH = "data"
 
 
 SUFFIXES_WITH_DATAPATH = (".h5", ".hdf", ".hdf5")
-
-_SourceT = TypeVar("_SourceT", Path, HttpUrl, ZipPath)
 
 __all__ = [
     "download",
@@ -107,14 +111,14 @@ def get_bioimageio_json_schema() -> Dict[str, Any]:
         return json.load(f)
 
 
-def load_image(source: Union[ZipPath, PermissiveFileSource]) -> NDArray[Any]:
+def load_image(source: Union[FileDescr, ZipPath, PermissiveFileSource]) -> NDArray[Any]:
     """load a single image as numpy array
 
     Args:
         source: image source
     """
 
-    if isinstance(source, ZipPath):
+    if isinstance(source, (FileDescr, ZipPath)):
         parsed_source = source
     else:
         parsed_source = interprete_file_source(source)
@@ -175,8 +179,8 @@ def load_image(source: Union[ZipPath, PermissiveFileSource]) -> NDArray[Any]:
 
 
 def split_dataset_path(
-    source: _SourceT,
-) -> Tuple[_SourceT, Suffix, Optional[PurePosixPath]]:
+    source: Union[FileDescr, Path, HttpUrl, ZipPath, RelativeFilePath],
+) -> Tuple[Union[FileDescr, Path, HttpUrl, ZipPath], Suffix, Optional[PurePosixPath]]:
     """Split off subpath (e.g. internal  h5 dataset path)
     from a file path following a file extension.
 
@@ -188,12 +192,16 @@ def split_dataset_path(
         (...Path('my_plain_file'), '', None)
 
     """
-    if isinstance(source, RelativeFilePath):
-        src = source.absolute()
-    else:
-        src = source
-
-    del source
+    if isinstance(source, FileDescr):
+        file_source, suffix, data_path = split_dataset_path(source.source)
+        if data_path is None:
+            return source, suffix, None
+        else:
+            return (
+                FileDescr.construct(source=file_source, sha256=source.sha256),
+                suffix,
+                data_path,
+            )
 
     def separate_pure_path(path: PurePosixPath):
         for p in path.parents:
@@ -202,32 +210,33 @@ def split_dataset_path(
 
         return path, path.suffix, None
 
-    if isinstance(src, HttpUrl):
-        file_path, suffix, data_path = separate_pure_path(PurePosixPath(src.path or ""))
+    if isinstance(source, RelativeFilePath):
+        source = source.absolute()
 
-        if data_path is None:
-            return src, suffix, None
-
-        return (
-            HttpUrl(str(file_path).replace(f"/{data_path}", "")),
-            suffix,
-            data_path,
+    if isinstance(source, HttpUrl):
+        file_path, suffix, data_path = separate_pure_path(
+            PurePosixPath(source.path or "")
         )
+    elif isinstance(source, ZipPath):
+        file_path, suffix, data_path = separate_pure_path(PurePosixPath(str(source)))
+    elif isinstance(source, Path):
+        file_path, suffix, data_path = separate_pure_path(PurePosixPath(source))
+    else:
+        assert_never(source)
 
-    if isinstance(src, ZipPath):
-        file_path, suffix, data_path = separate_pure_path(PurePosixPath(str(src)))
+    if data_path is None:
+        return source, suffix, None
 
-        if data_path is None:
-            return src, suffix, None
+    if isinstance(source, HttpUrl):
+        file_source = HttpUrl(str(file_path).replace(f"/{data_path}", ""))
+    elif isinstance(source, ZipPath):
+        file_source = ZipPath(str(file_path).replace(f"/{data_path}", ""))
+    elif isinstance(source, Path):
+        file_source = Path(file_path)
+    else:
+        assert_never(source)
 
-        return (
-            ZipPath(str(file_path).replace(f"/{data_path}", "")),
-            suffix,
-            data_path,
-        )
-
-    file_path, suffix, data_path = separate_pure_path(PurePosixPath(src))
-    return Path(file_path), suffix, data_path
+    return file_source, suffix, data_path
 
 
 def get_suffix(source: Union[ZipPath, FileSource]) -> Suffix:

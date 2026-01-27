@@ -3,6 +3,7 @@ from pathlib import Path, PurePath
 from typing import Annotated, Any, Union
 from zipfile import ZipFile
 
+import h5py
 import httpx
 import pytest
 from pydantic import Field, ValidationError
@@ -11,6 +12,7 @@ from respx import MockRouter
 from bioimageio.spec import ValidationContext
 from bioimageio.spec._internal.io_basics import Sha256, ZipPath
 from bioimageio.spec._internal.url import HttpUrl
+from bioimageio.spec._internal.validation_context import get_validation_context
 from bioimageio.spec.common import RelativeFilePath
 
 
@@ -76,6 +78,19 @@ def test_interprete_file_source_from_rel_path():
     assert isinstance(interpreted, RelativeFilePath)
     assert isinstance(interpreted.absolute(), Path)
     assert interpreted.absolute().exists()
+
+
+def test_file_descr_with_data_path(tmp_path: Path):
+    from bioimageio.spec._internal.io import FileDescr
+
+    with h5py.File(tmp_path / "data.h5", "w") as f:
+        _ = f.create_dataset("my_dataset", data=[1, 2, 3])
+
+    with get_validation_context().replace(perform_io_checks=True):
+        fdescr = FileDescr(source=f"{tmp_path / 'data.h5'}/my_dataset")
+
+    assert isinstance(fdescr.source, Path)
+    assert fdescr.surce.name == "data.h5/my_dataset"
 
 
 def test_known_files(tmp_path: Path):

@@ -1,0 +1,521 @@
+from pathlib import PurePosixPath
+from typing import Any, Dict, Optional, Tuple
+
+import numpy as np
+from imageio.v3 import imread, imwrite  # pyright: ignore[reportUnknownVariableType]
+from loguru import logger
+from numpy.typing import NDArray
+
+from bioimageio.spec._internal.validation_context import get_validation_context
+
+from ._internal.io import RelativeFilePath, get_reader
+from ._internal.io_utils import load_array
+from .model import ModelDescr
+from .utils import get_spdx_licenses, load_image
+
+
+def _generate_png_from_tensor(tensor: NDArray[np.generic]) -> Optional[bytes]:
+    """Generate PNG bytes from a sample tensor.
+
+    Prefers 2D slices from multi-dimensional arrays.
+    Returns PNG bytes or None if generation fails.
+    """
+    try:
+        # Squeeze out singleton dimensions
+        arr = np.squeeze(tensor)
+
+        # Handle different dimensionalities
+        if arr.ndim == 2:
+            img_data = arr
+        elif arr.ndim == 3:
+            # Could be (H, W, C) or (Z, H, W)
+            if arr.shape[-1] in [1, 3, 4]:  # Likely channels last
+                img_data = arr
+            else:  # Take middle slice
+                img_data = arr[arr.shape[0] // 2]
+        elif arr.ndim == 4:
+            # Take middle slices (e.g., batch, z, y, x)
+            img_data = (
+                arr[0, arr.shape[1] // 2]
+                if arr.shape[0] == 1
+                else arr[arr.shape[0] // 2, arr.shape[1] // 2]
+            )
+        elif arr.ndim > 4:
+            # Take middle slices of all extra dimensions
+            slices = tuple(s // 2 for s in arr.shape[:-2])
+            img_data = arr[slices]
+        else:
+            return None
+
+        # Normalize to 0-255 uint8
+        img_data = np.squeeze(img_data)
+        if img_data.dtype != np.uint8:
+            img_min, img_max = img_data.min(), img_data.max()
+            if img_max > img_min:
+                img_data: NDArray[Any] = (img_data - img_min) / (img_max - img_min)
+            else:
+                img_data = np.zeros_like(img_data)
+            img_data = (img_data * 255).astype(np.uint8)
+        return imwrite("<bytes>", img_data, extension=".png")
+    except Exception:
+        return None
+
+
+def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
+    """Generate a description of model inputs and outputs with sample images.
+
+    Returns:
+        A tuple of (markdown_string, referenced_files_dict) where referenced_files_dict maps
+        filenames to file bytes.
+    """
+    sections = []
+    images: dict[str, bytes] = {}
+
+    # Input descriptions
+    if model.inputs:
+        sections.append("### Model Inputs\n")
+        for inp in model.inputs:
+            axes_str = ", ".join(str(a.id) for a in inp.axes)
+            shape_str = " × ".join(
+                str(a.size) if isinstance(a.size, int) else str(a.size)
+                for a in inp.axes
+            )
+
+            inp_desc = f"`{inp.id}`: {inp.description or 'No description provided'}\n"
+            inp_desc += f"- Axes: `{axes_str}`\n"
+            inp_desc += f"- Shape: `{shape_str}`\n"
+            inp_desc += f"- Data type: `{inp.dtype}`\n"
+
+            # Try to load and display sample_tensor (preferred) or test_tensor
+            img_bytes = None
+            if inp.sample_tensor is not None:
+                try:
+                    arr = load_image(inp.sample_tensor)
+                    img_bytes = _generate_png_from_tensor(arr)
+                except Exception as e:
+                    logger.error("failed to generate input sample image: {}", e)
+
+            if img_bytes is None and inp.test_tensor is not None:
+                try:
+                    arr = load_array(inp.test_tensor)
+                    img_bytes = _generate_png_from_tensor(arr)
+                except Exception as e:
+                    logger.error(
+                        "failed to generate input sample image from test data: {}", e
+                    )
+
+            if img_bytes:
+                filename = f"input_{inp.id}_sample.png"
+                images[filename] = img_bytes
+                inp_desc += f"\n![{inp.id} sample]({filename})\n"
+
+            sections.append(inp_desc)
+
+    # Output descriptions
+    if model.outputs:
+        sections.append("\n### Model Outputs\n")
+        for out in model.outputs:
+            axes_str = ", ".join(str(a.id) for a in out.axes)
+            shape_str = " × ".join(
+                str(a.size) if isinstance(a.size, int) else str(a.size)
+                for a in out.axes
+            )
+
+            out_desc = f"**{out.id}**: {out.description or 'No description provided'}\n"
+            out_desc += f"- Axes: `{axes_str}`\n"
+            out_desc += f"- Shape: `{shape_str}`\n"
+            out_desc += f"- Data type: `{out.dtype}`\n"
+
+            # Try to load and display sample_tensor (preferred) or test_tensor
+            img_bytes = None
+            if out.sample_tensor is not None:
+                try:
+                    arr = load_image(out.sample_tensor)
+                    img_bytes = _generate_png_from_tensor(arr)
+                except Exception as e:
+                    logger.error("failed to generate output sample image: {}", e)
+
+            if img_bytes is None and out.test_tensor is not None:
+                try:
+                    arr = load_array(out.test_tensor)
+                    img_bytes = _generate_png_from_tensor(arr)
+                except Exception as e:
+                    logger.error(
+                        "failed to generate output sample image from test data: {}", e
+                    )
+
+            if img_bytes:
+                filename = f"output_{out.id}_sample.png"
+                images[filename] = img_bytes
+                out_desc += f"\n![{out.id} sample]({filename})\n"
+
+            sections.append(out_desc)
+
+    return "\n".join(sections), images
+
+
+def create_hf_model_card(model: ModelDescr) -> Tuple[ModelDescr, str, Dict[str, bytes]]:
+    """Create a Hugging Face model card for a BioImage.IO model.
+
+    Returns:
+        A tuple of (markdown_string, images_dict) where images_dict maps
+        filenames to PNG bytes that should be saved alongside the markdown.
+    """
+    referenced_files: Dict[str, bytes] = {}
+    if model.documentation is None:
+        doc_local_link = ""
+    else:
+        doc_reader = get_reader(model.documentation)
+        local_doc_path = f"package/{doc_reader.original_file_name}"
+        model = model.model_copy()
+        with get_validation_context().replace(perform_io_checks=False):
+            model.documentation = RelativeFilePath(PurePosixPath(local_doc_path))
+
+        doc_local_link = f"[{doc_reader.original_file_name}]({local_doc_path})"
+        referenced_files[doc_reader.original_file_name] = doc_reader.read()
+
+    shared_by = (
+        "".join(
+            (
+                f"\n    - {a.name}"
+                + (f", {a.affiliation}" if a.affiliation else "")
+                + (
+                    f", [https://orcid.org/{a.orcid}](https://orcid.org/{a.orcid})"
+                    if a.orcid
+                    else ""
+                )
+                + (
+                    f", [https://github.com/{a.github_user}](https://github.com/{a.github_user})"
+                    if a.github_user
+                    else ""
+                )
+                for a in model.authors
+            )
+        )
+        if model.authors
+        else "missing"
+    )
+
+    developed_by = (
+        "".join(
+            (
+                f"\n    - {c.text}: "
+                + (f"https://www.doi.org/{c.doi}" if c.doi else str(c.url))
+            )
+            for c in model.cite
+        )
+        if model.cite
+        else " missing"
+    )
+    if model.license is None:
+        license = "missing"
+    else:
+        matches = [
+            (entry["name"], entry["reference"])
+            for entry in get_spdx_licenses()["licenses"]
+            if entry["licenseId"] == model.license
+        ]
+        if matches:
+            if len(matches) > 1:
+                logger.warning(
+                    "Multiple SPDX license matches found for '{}', using the first one.",
+                    model.license,
+                )
+            name, reference = matches[0]
+            license = f"[{name}]({reference})"
+        else:
+            license = model.license
+
+    repository = (
+        f"[{model.git_repo}]({model.git_repo})" if model.git_repo else "missing"
+    )
+
+    # Get input/output descriptions with images
+    io_desc, images = _get_io_description(model)
+    assert not any(k in referenced_files for k in images.keys()), (
+        "filename collision in referenced files"
+    )
+    referenced_files.update(images)
+
+    markdown = f"""# {model.name}
+
+{model.description or ""}
+
+
+# Table of Contents
+
+- [Model Details](#model-details)
+- [Uses](#uses)
+- [Task Details](#task-details)
+- [Bias, Risks, and Limitations](#bias-risks-and-limitations)
+- [Training Details](#training-details)
+- [Evaluation](#evaluation)
+- [Environmental Impact](#environmental-impact)
+- [Technical Specifications](#technical-specifications)
+- [How to Get Started with the Model](#how-to-get-started-with-the-model)
+
+
+# Model Details
+
+## Model Description
+
+- **model version:** {model.version or "missing"}
+- **Additional model documentation:** {doc_local_link or "missing"}
+- **Developed by:**{developed_by}
+- **Funded by:** {model.config.bioimageio.hf_card_info.funded_by if model.config.bioimageio.hf_card_info and model.config.bioimageio.hf_card_info.funded_by else "missing"}
+- **Shared by:** {shared_by}
+- **Model type:** {model.config.bioimageio.hf_card_info.model_type if model.config.bioimageio.hf_card_info and model.config.bioimageio.hf_card_info.model_type else "missing"}
+- **Modality:** {model.config.bioimageio.hf_card_info.modality if model.config.bioimageio.hf_card_info and model.config.bioimageio.hf_card_info.modality else "missing"}
+- **License:** {license}
+- **Finetuned from model:** {"N/A" if model.parent is None else model.parent.id}
+
+## Model Sources
+
+- **Repository:** {repository}
+- **Paper:** see **Developed by**
+
+# Uses
+
+## Direct Use
+
+{io_desc}
+
+## Downstream Use
+
+*Explain how this model can be fine-tuned or integrated into larger bioimage analysis pipelines.*
+
+## Out-of-Scope Use
+
+*List how the model may be misused in bioimage analysis contexts and what users should not do with the model.*
+
+*Examples:*
+
+- *Not suitable for diagnostic purposes*
+- *Not validated for different imaging modalities than training data*
+- *Should not be used without proper validation on user's specific datasets*
+
+# Task Details
+
+*Bioimage-specific task information*
+
+- **Task type:** *[segmentation, classification, detection, denoising, etc.]*
+- **Input modality:** *[2D/3D fluorescence, brightfield, EM, etc.]*
+- **Target structures:** *[nuclei, cells, organelles, etc.]*
+- **Imaging technique:** *[confocal, widefield, super-resolution, etc.]*
+- **Spatial resolution:** *[pixel/voxel size requirements]*
+- **Temporal resolution:** *[if applicable]*
+
+# Bias, Risks, and Limitations
+
+*Identify foreseeable harms, misunderstandings, and technical limitations specific to bioimage analysis.*
+
+## Known Biases
+
+*Describe biases in training data or model behavior:*
+
+- *Species-specific training data limitations*
+- *Imaging protocol dependencies*
+- *Cell type or experimental condition biases*
+
+## Risks
+
+*Potential risks in bioimage analysis applications:*
+
+- *Misinterpretation of results*
+- *Over-reliance on automated analysis*
+- *Generalization to unseen experimental conditions*
+
+## Limitations
+
+*Technical limitations and failure modes:*
+
+- *Resolution requirements*
+- *Imaging condition dependencies*
+- *Performance degradation scenarios*
+
+## Recommendations
+
+*Mitigation strategies and best practices:*
+
+- *Always validate on your specific dataset*
+- *Use appropriate controls and manual verification*
+- *Consider domain adaptation for different experimental setups*
+
+# Training Details
+
+## Training Data
+
+*Describe the training dataset with bioimage-specific details:*
+
+- **Source:** *[Dataset name, publication, or source]*
+- **Size:** *[Number of images, total volume, number of annotations]*
+- **Modality:** *[Imaging technique and parameters]*
+- **Biological systems:** *[Cell types, organisms, experimental conditions]*
+- **Ground truth:** *[Annotation method and quality]*
+- **Data splits:** *[Training/validation/test ratios]*
+
+## Training Procedure
+
+### Preprocessing
+
+*Detail image preprocessing steps:*
+
+- *Normalization methods*
+- *Augmentation strategies*
+- *Resizing/resampling procedures*
+- *Artifact handling*
+
+### Training Hyperparameters
+
+- **Architecture:** *[Detailed architecture description]*
+- **Framework:** *[PyTorch, TensorFlow, etc.]*
+- **Epochs:** *[Number of training epochs]*
+- **Batch size:** *[Training batch size]*
+- **Learning rate:** *[Initial LR and schedule]*
+- **Loss function:** *[Loss function and rationale]*
+- **Optimizer:** *[Optimizer and parameters]*
+- **Regularization:** *[Dropout, weight decay, etc.]*
+
+### Speeds, Sizes, Times
+
+- **Training time:** *[Total training duration]*
+- **Model size:** *[Number of parameters, file size]*
+- **Inference time:** *[Time per image/volume]*
+- **Memory requirements:** *[GPU memory needed]*
+
+# Evaluation
+
+## Testing Data, Factors & Metrics
+
+### Testing Data
+
+*Describe test dataset or link to Dataset Card:*
+
+- **Source:** *[Test dataset details]*
+- **Size:** *[Number of test samples]*
+- **Biological diversity:** *[Range of conditions tested]*
+
+### Factors
+
+*Characteristics that influence model behavior:*
+
+- *Imaging conditions (SNR, resolution, etc.)*
+- *Biological factors (cell type, experimental conditions)*
+- *Technical factors (microscope type, acquisition parameters)*
+
+### Metrics
+
+*Evaluation metrics appropriate for bioimage analysis:*
+
+- *Segmentation: IoU, Dice coefficient, Hausdorff distance*
+- *Classification: Accuracy, precision, recall, F1-score*
+- *Detection: mAP, precision-recall curves*
+- *Denoising: PSNR, SSIM, perceptual metrics*
+
+## Results
+
+### Quantitative Results
+
+*Present results disaggregated by relevant factors:*
+
+| Metric | Overall | Condition A | Condition B | Condition C |
+|--------|---------|-------------|-------------|-------------|
+| IoU    | 0.XX ± 0.XX | 0.XX ± 0.XX | 0.XX ± 0.XX | 0.XX ± 0.XX |
+| Dice   | 0.XX ± 0.XX | 0.XX ± 0.XX | 0.XX ± 0.XX | 0.XX ± 0.XX |
+
+### Summary
+
+*Interpretation of results for general audience:*
+
+- *Model performance summary*
+- *Comparison to existing methods*
+- *Limitations and areas for improvement*
+
+### Validation on External Data
+
+*Results on independent datasets if available*
+
+## Societal Impact Assessment
+
+*Assessment of broader impacts for bioimage analysis:*
+
+- *Potential for misuse in research*
+- *Impact on research reproducibility*
+- *Accessibility and democratization of analysis tools*
+- *Educational and training implications*
+
+# Environmental Impact
+
+*Environmental considerations for model training and deployment:*
+
+- **Hardware Type:** *[GPU/CPU specifications]*
+- **Hours used:** *[Total compute hours]*
+- **Cloud Provider:** *[If applicable]*
+- **Compute Region:** *[Geographic location]*
+- **Carbon Emitted:** *[CO2 equivalent if calculated]*
+
+*Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute)*
+
+# Technical Specifications
+
+## Model Architecture and Objective
+
+*Detailed technical specifications:*
+
+- **Architecture:** *[Detailed network architecture]*
+- **Input specifications:** *[Tensor shapes, data types, preprocessing]*
+- **Output specifications:** *[Output format and interpretation]*
+- **Objective function:** *[Loss function and optimization details]*
+
+## Compute Infrastructure
+
+### Hardware Requirements
+
+*Minimum and recommended hardware:*
+
+- **Training:** *[GPU memory, compute requirements]*
+- **Inference:** *[Minimum hardware for deployment]*
+- **Storage:** *[Model size and data requirements]*
+
+### Software Dependencies
+
+*Software requirements:*
+
+- **Framework:** *[Deep learning framework version]*
+- **Libraries:** *[Key dependencies and versions]*
+- **BioImage.IO compatibility:** *[Supported consumer software]*
+
+# How to Get Started with the Model
+
+{io_desc}
+
+## Usage Instructions
+
+*Provide step-by-step instructions for using the model with the above inputs/outputs:*
+
+---
+
+## Glossary
+
+*Define domain-specific terms:*
+
+- **IoU (Intersection over Union):** *Metric for evaluating segmentation quality*
+- **Dice coefficient:** *Similarity metric for binary segmentation*
+- **Voxel:** *3D pixel representing volume element*
+- **Z-projection:** *2D representation of 3D data*
+
+---
+
+*This model card was created using the template of the bioimageio.spec Python Package, which intern is based on the BioImage Model Zoo template, incorporating best practices from the Hugging Face Model Card Template. For more information on contributing models, visit [bioimage.io](https://bioimage.io).*
+
+---
+
+**References:**
+
+- [Hugging Face Model Card Template](https://huggingface.co/docs/hub/en/model-card-annotated)
+- [BioImage Model Zoo Documentation](https://bioimage.io/docs/)
+- [Model Cards for Model Reporting](https://arxiv.org/abs/1810.03993)
+- [bioimageio.spec Python Package](https://bioimage-io.github.io/spec-bioimage-io)
+"""
+
+    return markdown, images
