@@ -2783,216 +2783,62 @@ class ReproducibilityTolerance(Node, extra="allow"):
     """Limits the weights formats these details apply to."""
 
 
-class EnvironmentalImpact(Node, extra="allow"):
-    """Environmental considerations for model training and deployment.
+class BiasRisksLimitations(Node, extra="allow"):
+    """Known biases, risks, technical limitations, and recommendations for model use."""
 
-    Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute).
-    """
+    known_biases: str = """In general bioimage models may suffer from biases caused by:
 
-    hardware_type: Optional[str] = None
-    """GPU/CPU specifications"""
-
-    hours_used: Optional[float] = None
-    """Total compute hours"""
-
-    cloud_provider: Optional[str] = None
-    """If applicable"""
-
-    compute_region: Optional[str] = None
-    """Geographic location"""
-
-    carbon_emitted: Optional[float] = None
-    """kg CO2 equivalent
-
-    Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute).
-    """
-
-    def format_md(self):
-        """Filled Markdown template section following [Hugging Face Model Card Template](https://huggingface.co/docs/hub/en/model-card-annotated)."""
-        return f"""
-    - **Hardware Type:** {self.hardware_type or "missing"}
-    - **Hours used:** {self.hours_used or "missing"}
-    - **Cloud Provider:** {self.cloud_provider or "missing"}
-    - **Compute Region:** {self.compute_region or "missing"}
-    - **Carbon Emitted:** {self.carbon_emitted or "missing"}
-"""
-
-
-class Evaluation(Node, extra="allow"):
-    model_id: Optional[ModelId] = None
-    """Model being evaluated."""
-
-    dataset_id: DatasetId
-    """Dataset used for evaluation."""
-
-    dataset_source: HttpUrl
-    """Source of the dataset."""
-
-    dataset_role: Literal["train", "validation", "test", "independent", "unknown"]
-    """Role of the dataset used for evaluation.
-
-    - `train`: dataset was (part of) the training data
-    - `validation`: dataset was (part of) the validation data used during training, e.g. used for model selection or hyperparameter tuning
-    - `test`: dataset was (part of) the designated test data; not used during training or validation, but acquired from the same source/distribution as training data
-    - `independent`: dataset is entirely independent test data; not used during training or validation, and acquired from a different source/distribution than training data
-    - `unknown`: role of the dataset is unknown; choose this if you are not certain if (a subset) of the data was seen by the model during training.
-    """
-
-    sample_count: int
-    """Number of evaluated samples."""
-
-    evaluation_factors: List[Annotated[str, MaxLen(16)]]
-    """(Abbreviations of) each evaluation factor."""
-
-    evaluation_factors_long: List[str]
-    """Descriptions (long form) of each evaluation factor."""
-
-    metrics: List[Annotated[str, MaxLen(16)]]
-    """(Abbreviations of) metrics used for evaluation."""
-
-    metrics_long: List[str]
-    """Description of each metric used."""
-
-    @model_validator(mode="after")
-    def _validate_list_lengths(self) -> Self:
-        if len(self.evaluation_factors) != len(self.evaluation_factors_long):
-            raise ValueError(
-                "`evaluation_factors` and `evaluation_factors_long` must have the same length"
-            )
-
-        if len(self.metrics) != len(self.metrics_long):
-            raise ValueError("`metrics` and `metrics_long` must have the same length")
-
-        if len(self.results) != len(self.metrics):
-            raise ValueError("`results` must have the same number of rows as `metrics`")
-
-        for row in self.results:
-            if len(row) != len(self.evaluation_factors):
-                raise ValueError(
-                    "`results` must have the same number of columns (in every row) as `evaluation_factors`"
-                )
-
-        return self
-
-    results: List[List[str]]
-    """Results for each metric (rows) and each evaluation factor (columns)."""
-
-    results_summary: Optional[str] = None
-    """Interpretation of results for general audience.
-
-    Consider:
-        - Overall model performance
-        - Comparison to existing methods
-        - Limitations and areas for improvement
+    - Imaging protocol dependencies
+    - Use of a specific cell type
+    - Species-specific training data limitations
 
 """
+    """Biases in training data or model behavior."""
 
-    def format_md(self):
-        results_header = ["Metric"] + self.evaluation_factors
-        results_table_cells = [results_header, ["---"] * len(results_header)] + [
-            [metric] + row for metric, row in zip(self.metrics, self.results)
-        ]
+    risks: str = """Common risks in bioimage analysis include:
 
-        results_table = "".join(
-            "| " + " | ".join(row) + " |\n" for row in results_table_cells
-        )
-        factors = "".join(
-            f"\n - {ef}: {efl}"
-            for ef, efl in zip(self.evaluation_factors, self.evaluation_factors_long)
-        )
-        metrics = "".join(
-            f"\n - {em}: {eml}" for em, eml in zip(self.metrics, self.metrics_long)
-        )
-
-        return f"""
-## Testing Data, Factors & Metrics
-
-Evaluation of {self.model_id or "this"} model on the {self.dataset_id} dataset (dataset role: {self.dataset_role}).
-
-### Testing Data
-
-- **Source:** [{self.dataset}]({self.dataset_source})
-- **Size:** {self.sample_count} evaluated samples
-
-### Factors
-{factors}
-
-### Metrics
-{metrics}
-
-## Results
-
-### Quantitative Results
-
-{results_table}
-
-### Summary
-
-{self.results_summary or "missing"}
+    - Erroneously assuming generalization to unseen experimental conditions
+    - Trusting (overconfident) model outputs without validation
+    - Misinterpretation of results
 
 """
-
-
-class BioimageioConfig(Node, extra="allow"):
-    reproducibility_tolerance: Sequence[ReproducibilityTolerance] = ()
-    """Tolerances to allow when reproducing the model's test outputs
-    from the model's test inputs.
-    Only the first entry matching tensor id and weights format is considered.
-    """
-
-    funded_by: Optional[str] = None
-    """Funding agency, grant number if applicable"""
-
-    model_type: Optional[str] = None  # TODO: extract from tags if missing
-    """Architecture type, e.g., 3D U-Net, ResNet, transformer"""
-
-    modality: Optional[str] = None  # TODO: extract from tags if missing
-    """Input modality, e.g., fluorescence microscopy, electron microscopy"""
-
-    new_version: Optional[ModelId] = None
-    """A new version of this model exists with a different model id."""
-
-    out_of_scope_use: Optional[str] = None
-    """Describe how the model may be misused in bioimage analysis contexts and what users should not do with the model"""
-
-    known_biases: Optional[str] = None
-    """Describe biases in training data or model behavior
-
-    Are there...
-        - species-specific training data limitations?
-        - imaging protocol dependencies?
-        - cell type or experimental condition biases?
-    """
-
-    risks: Optional[str] = None
-    """Potential risks in bioimage analysis applications.
-
-    Consider:
-        - Misinterpretation of results
-        - Over-reliance on automated analysis.
-        - Generalization to unseen experimental conditions.
-
-    """
+    """Potential risks in the context of bioimage analysis."""
 
     limitations: Optional[str] = None
-    """Technical limitations and failure modes.
+    """Technical limitations and failure modes."""
+
+    recommendations: str = "Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model."
+    """Mitigation strategies regarding `known_biases`, `risks`, and `limitations`, as well as applicable best practices.
 
     Consider:
-        - Resolution requirements
-        - Imaging condition dependencies
-        - Performance degradation scenarios
-
-    """
-
-    recommendations: Optional[str] = None
-    """Mitigation strategies regarding `limitations` and best practices.
-
     - How to use a validation dataset?
     - How to manually validate?
     - Feasibility of domain adaptation for different experimental setups?
 
     """
 
+    def format_md(self) -> str:
+        if self.limitations is None:
+            limitations_header = ""
+        else:
+            limitations_header = "## Limitations\n\n"
+
+        return f"""# Bias, Risks, and Limitations
+
+{self.known_biases}
+
+{self.risks}
+
+{limitations_header}{self.limitations or ""}
+
+## Recommendations
+
+{self.recommendations}
+
+"""
+
+
+class TrainingDetails(Node, extra="allow"):
     training_preprocessing: Optional[str] = None
     """Detailed image preprocessing steps during model training:
 
@@ -3003,8 +2849,6 @@ class BioimageioConfig(Node, extra="allow"):
     - *Artifact handling*
 
     """
-    architecture: Optional[str] = None
-    """Detailed model architecture description."""
 
     training_epochs: Optional[float] = None
     """Number of training epochs."""
@@ -3040,8 +2884,208 @@ class BioimageioConfig(Node, extra="allow"):
     training_duration: Optional[float] = None
     """Total training duration in hours."""
 
+
+class Evaluation(Node, extra="allow"):
+    model_id: Optional[ModelId] = None
+    """Model being evaluated."""
+
+    dataset_id: DatasetId
+    """Dataset used for evaluation."""
+
+    dataset_source: HttpUrl
+    """Source of the dataset."""
+
+    dataset_role: Literal["train", "validation", "test", "independent", "unknown"]
+    """Role of the dataset used for evaluation.
+
+    - `train`: dataset was (part of) the training data
+    - `validation`: dataset was (part of) the validation data used during training, e.g. used for model selection or hyperparameter tuning
+    - `test`: dataset was (part of) the designated test data; not used during training or validation, but acquired from the same source/distribution as training data
+    - `independent`: dataset is entirely independent test data; not used during training or validation, and acquired from a different source/distribution than training data
+    - `unknown`: role of the dataset is unknown; choose this if you are not certain if (a subset) of the data was seen by the model during training.
+    """
+
+    sample_count: int
+    """Number of evaluated samples."""
+
+    evaluation_factors: List[Annotated[str, MaxLen(16)]]
+    """(Abbreviations of) each evaluation factor.
+
+    Evaluation factors are criteria along which model performance is evaluated, e.g. different image conditions
+    like 'low SNR', 'high cell density', or different biological conditions like 'cell type A', 'cell type B'.
+    An 'overall' factor may be included to summarize performance across all conditions.
+    """
+
+    evaluation_factors_long: List[str]
+    """Descriptions (long form) of each evaluation factor."""
+
+    metrics: List[Annotated[str, MaxLen(16)]]
+    """(Abbreviations of) metrics used for evaluation."""
+
+    metrics_long: List[str]
+    """Description of each metric used."""
+
+    @model_validator(mode="after")
+    def _validate_list_lengths(self) -> Self:
+        if len(self.evaluation_factors) != len(self.evaluation_factors_long):
+            raise ValueError(
+                "`evaluation_factors` and `evaluation_factors_long` must have the same length"
+            )
+
+        if len(self.metrics) != len(self.metrics_long):
+            raise ValueError("`metrics` and `metrics_long` must have the same length")
+
+        if len(self.results) != len(self.metrics):
+            raise ValueError("`results` must have the same number of rows as `metrics`")
+
+        for row in self.results:
+            if len(row) != len(self.evaluation_factors):
+                raise ValueError(
+                    "`results` must have the same number of columns (in every row) as `evaluation_factors`"
+                )
+
+        return self
+
+    results: List[List[str]]
+    """Results for each metric (rows; outer list) and each evaluation factor (columns; inner list)."""
+
+    results_summary: Optional[str] = None
+    """Interpretation of results for general audience.
+
+    Consider:
+        - Overall model performance
+        - Comparison to existing methods
+        - Limitations and areas for improvement
+
+"""
+
+    def format_md(self):
+        results_header = ["Metric"] + self.evaluation_factors
+        results_table_cells = [results_header, ["---"] * len(results_header)] + [
+            [metric] + row for metric, row in zip(self.metrics, self.results)
+        ]
+
+        results_table = "".join(
+            "| " + " | ".join(row) + " |\n" for row in results_table_cells
+        )
+        factors = "".join(
+            f"\n - {ef}: {efl}"
+            for ef, efl in zip(self.evaluation_factors, self.evaluation_factors_long)
+        )
+        metrics = "".join(
+            f"\n - {em}: {eml}" for em, eml in zip(self.metrics, self.metrics_long)
+        )
+
+        return f"""## Testing Data, Factors & Metrics
+
+Evaluation of {self.model_id or "this"} model on the {self.dataset_id} dataset (dataset role: {self.dataset_role}).
+
+### Testing Data
+
+- **Source:** [{self.dataset_id}]({self.dataset_source})
+- **Size:** {self.sample_count} evaluated samples
+
+### Factors
+{factors}
+
+### Metrics
+{metrics}
+
+## Results
+
+### Quantitative Results
+
+{results_table}
+
+### Summary
+
+{self.results_summary or "missing"}
+
+"""
+
+
+class EnvironmentalImpact(Node, extra="allow"):
+    """Environmental considerations for model training and deployment.
+
+    Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
+    """
+
+    hardware_type: Optional[str] = None
+    """GPU/CPU specifications"""
+
+    hours_used: Optional[float] = None
+    """Total compute hours"""
+
+    cloud_provider: Optional[str] = None
+    """If applicable"""
+
+    compute_region: Optional[str] = None
+    """Geographic location"""
+
+    co2_emitted: Optional[float] = None
+    """kg CO2 equivalent
+
+    Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
+    """
+
+    def format_md(self):
+        """Filled Markdown template section following [Hugging Face Model Card Template](https://huggingface.co/docs/hub/en/model-card-annotated)."""
+        return f"""# Environmental Impact
+
+    - **Hardware Type:** {self.hardware_type or "missing"}
+    - **Hours used:** {self.hours_used or "missing"}
+    - **Cloud Provider:** {self.cloud_provider or "missing"}
+    - **Compute Region:** {self.compute_region or "missing"}
+    - **Carbon Emitted:** {self.co2_emitted or "missing"}
+
+"""
+
+
+class BioimageioConfig(Node, extra="allow"):
+    reproducibility_tolerance: Sequence[ReproducibilityTolerance] = ()
+    """Tolerances to allow when reproducing the model's test outputs
+    from the model's test inputs.
+    Only the first entry matching tensor id and weights format is considered.
+    """
+
+    funded_by: Optional[str] = None
+    """Funding agency, grant number if applicable"""
+
+    architecture_type: Optional[Annotated[str, MaxLen(32)]] = (
+        None  # TODO: add to differentiated tags
+    )
+    """Model architecture type, e.g., 3D U-Net, ResNet, transformer"""
+
+    architecture_description: Optional[str] = None
+    """Text description of model architecture."""
+
+    modality: Optional[str] = None  # TODO: add to differentiated tags
+    """Input modality, e.g., fluorescence microscopy, electron microscopy"""
+
+    target_structure: List[str] = Field(  # TODO: add to differentiated tags
+        default_factory=cast(Callable[[], List[str]], list)
+    )
+    """Biological structure(s) the model is designed to analyze, e.g., nuclei, mitochondria, cells"""
+
+    task: Optional[str] = None  # TODO: add to differentiated tags
+    """Bioimage-specific task type, e.g., segmentation, classification, detection, denoising"""
+
+    new_version: Optional[ModelId] = None
+    """A new version of this model exists with a different model id."""
+
+    out_of_scope_use: Optional[str] = None
+    """Describe how the model may be misused in bioimage analysis contexts and what users should **not** do with the model."""
+
+    bias_risks_limitations: BiasRisksLimitations = Field(
+        default_factory=BiasRisksLimitations.model_construct
+    )
+    """Description of known bias, risks, and technical limitations for in-scope model use."""
+
     model_parameter_count: Optional[int] = None
     """Total number of model parameters."""
+
+    training: TrainingDetails = Field(default_factory=TrainingDetails.model_construct)
+    """Details on how the model was trained."""
 
     inference_time: Optional[str] = None
     """Average inference time per image/tile. Specify hardware and image size. Multiple examples can be given."""
@@ -3055,22 +3099,12 @@ class BioimageioConfig(Node, extra="allow"):
     evaluations: List[Evaluation] = Field(
         default_factory=cast(Callable[[], List[Evaluation]], list)
     )
-    """Quantitative model evaluations on various datasets.
+    """Quantitative model evaluations.
 
-    At the moment we recommend to include only a single test dataset
-    (with evaluation factors that may mark subsets of the dataset)
-    to avoid confusion and make the presentation of results cleaner.
-    """
-
-    societal_impact_assessment: Optional[str] = None
-    """Assessment of broader impacts for bioimage analysis
-
-    Consider:
-        - Potential for misuse in research
-        - Impact on research reproducibility
-        - Accessibility and democratization of analysis tools
-        - Educational and training implications
-
+    Note:
+        At the moment we recommend to include only a single test dataset
+        (with evaluation factors that may mark subsets of the dataset)
+        to avoid confusion and make the presentation of results cleaner.
     """
 
     environmental_impact: EnvironmentalImpact = Field(
