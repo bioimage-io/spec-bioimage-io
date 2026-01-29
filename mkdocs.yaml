@@ -76,7 +76,8 @@ plugins:
   - gen-files:
       scripts:
         - scripts/generate_api_doc_pages.py
-  - markdown-exec
+  - markdown-exec:
+      ansi: required
   - mkdocstrings:
       enable_inventory: true
       default_handler: python
