@@ -73,6 +73,9 @@ plugins:
   - autorefs
   - coverage:
       html_report_dir: dist/coverage
+  - gen-files:
+      scripts:
+        - scripts/generate_api_doc_pages.py
   - markdown-exec
   - mkdocstrings:
       enable_inventory: true
@@ -108,7 +111,7 @@ plugins:
             show_signature_annotations: true
             show_signature_type_parameters: true
             show_source: true
-            show_submodules: true
+            show_submodules: false
             show_symbol_type_heading: true
             show_symbol_type_toc: true
             signature_crossrefs: true
@@ -124,6 +127,8 @@ plugins:
       alias_type: symlink
       canonical_version: latest
       version_selector: true
+  - literate-nav:
+      nav_file: SUMMARY.md
   - search
   - section-index
 
@@ -163,32 +168,7 @@ nav:
       - index.md
       - Usage: usage/index.md
       - Development: development.md
-  - API Reference:
-      api.md
-      # - api/index.md
-      # - The bioimage.io Format Specifications:
-      #     - api/bioimageio_format.md
-      #     - Model:
-      #         - api/model/index.md
-      #         - v0_5: api/model/v0_5.md
-      #         - v0_4: api/model/v0_4.md
-      #     - Dataset:
-      #         - api/dataset/index.md
-      #         - v0_3: api/dataset/v0_3.md
-      #         - v0_2: api/dataset/v0_2.md
-      #     - Notebook:
-      #         - api/notebook/index.md
-      #         - v0_3: api/notebook/v0_3.md
-      #         - v0_2: api/notebook/v0_2.md
-      #     - Application:
-      #         - api/application/index.md
-      #         - v0_3: api/application/v0_3.md
-      #         - v0_2: api/application/v0_2.md
-      #     - Generic:
-      #         - api/generic/index.md
-      #         - v0_3: api/generic/v0_3.md
-      #         - v0_2: api/generic/v0_2.md
-      # - Format Validation Summary: api/summary.md
+  - API Reference: api/
   - Changelog: changelog.md
   - Coverage report: coverage.md
 

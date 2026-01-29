@@ -34,8 +34,8 @@ from ._description import (
     validate_format,
 )
 from ._get_conda_env import get_conda_env
-from ._internal import settings
-from ._internal.common_nodes import InvalidDescr
+from ._internal import common_nodes
+from ._internal import settings as settings
 from ._internal.validation_context import ValidationContext, get_validation_context
 from ._io import (
     load_dataset_description,
@@ -63,6 +63,7 @@ from .notebook import AnyNotebookDescr, NotebookDescr
 
 BioimageioCondaEnv = conda_env.BioimageioCondaEnv
 ValidationSummary = summary.ValidationSummary
+InvalidDescr = common_nodes.InvalidDescr
 
 __all__ = [
     "__version__",

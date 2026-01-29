@@ -1,3 +1,0 @@
-# bioimageio.spec
-
-::: bioimageio.spec
