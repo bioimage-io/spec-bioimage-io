@@ -44,9 +44,10 @@ dynamic = ["version"]
 dev = [
     "deepdiff",
     "devtools",
-    "griffe-pydantic",
     "griffe-inherited-docstrings",
     "griffe-public-redundant-aliases",
+    "griffe-pydantic",
+    "h5py",
     "json_schema_for_humans",
     "jsonschema",
     "jupyter",
