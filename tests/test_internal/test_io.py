@@ -90,7 +90,7 @@ def test_file_descr_with_data_path(tmp_path: Path):
         fdescr = FileDescr(source=f"{tmp_path / 'data.h5'}/my_dataset")
 
     assert isinstance(fdescr.source, Path)
-    assert fdescr.surce.name == "data.h5/my_dataset"
+    assert fdescr.source.name == "data.h5/my_dataset"
 
 
 def test_known_files(tmp_path: Path):
