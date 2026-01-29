@@ -18,8 +18,7 @@ Any{info.target_node} = {info.latest_version_module}.{info.target_node}
 """
 AUTOGEN_BODY_MULTIPLE = """\"\"\"{info.target} resource description format
 
-Implementations of all released minor versions are available in submodules:
-{info.submodule_list}
+Implementations of all released minor versions are available in submodules.
 \"\"\"
 
 from typing import Union

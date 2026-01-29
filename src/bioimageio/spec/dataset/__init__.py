@@ -1,9 +1,7 @@
 # autogen: start
 """dataset resource description format
 
-Implementations of all released minor versions are available in submodules:
-- dataset v0_2: `bioimageio.spec.dataset.v0_2.DatasetDescr`
-- dataset v0_3: `bioimageio.spec.dataset.v0_3.DatasetDescr`
+Implementations of all released minor versions are available in submodules.
 """
 
 from typing import Union
