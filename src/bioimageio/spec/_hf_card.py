@@ -196,15 +196,20 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
     return markdown_string, images
 
 
-def create_hf_model_card(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
+def create_huggingface_model_card(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
     """Create a Hugging Face model card for a BioImage.IO model.
 
     Returns:
         A tuple of (markdown_string, images_dict) where images_dict maps
         filenames to PNG bytes that should be saved alongside the markdown.
     """
+    if model.version is None:
+        model_version = ""
+    else:
+        model_version = f"\n- **model version:** {model.version}"
+
     if model.documentation is None:
-        doc_local_link = ""
+        additional_model_doc = ""
     else:
         doc_reader = get_reader(model.documentation)
         local_doc_path = f"package/{doc_reader.original_file_name}"
@@ -213,40 +218,73 @@ def create_hf_model_card(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
             model.documentation = RelativeFilePath(PurePosixPath(local_doc_path))
 
         doc_local_link = f"[{doc_reader.original_file_name}]({local_doc_path})"
+        additional_model_doc = (
+            f"\n- **Additional model documentation:** {doc_local_link}"
+        )
 
-    shared_by = (
-        "".join(
-            (
-                f"\n    - {a.name}"
-                + (f", {a.affiliation}" if a.affiliation else "")
-                + (
-                    f", [https://orcid.org/{a.orcid}](https://orcid.org/{a.orcid})"
-                    if a.orcid
-                    else ""
+    if model.cite:
+        developed_by = "\n- **Developed by:** " + (
+            "".join(
+                (
+                    f"\n    - {c.text}: "
+                    + (f"https://www.doi.org/{c.doi}" if c.doi else str(c.url))
                 )
-                + (
-                    f", [https://github.com/{a.github_user}](https://github.com/{a.github_user})"
-                    if a.github_user
-                    else ""
-                )
-                for a in model.authors
+                for c in model.cite
             )
         )
-        if model.authors
-        else "missing"
-    )
+    else:
+        developed_by = ""
 
-    developed_by = (
-        "".join(
-            (
-                f"\n    - {c.text}: "
-                + (f"https://www.doi.org/{c.doi}" if c.doi else str(c.url))
+    if model.config.bioimageio.funded_by:
+        funded_by = f"\n- **Funded by:** {model.config.bioimageio.funded_by}"
+    else:
+        funded_by = ""
+
+    if model.authors:
+        shared_by = "\n- **Shared by:** " + (
+            "".join(
+                (
+                    f"\n    - {a.name}"
+                    + (f", {a.affiliation}" if a.affiliation else "")
+                    + (
+                        f", [https://orcid.org/{a.orcid}](https://orcid.org/{a.orcid})"
+                        if a.orcid
+                        else ""
+                    )
+                    + (
+                        f", [https://github.com/{a.github_user}](https://github.com/{a.github_user})"
+                        if a.github_user
+                        else ""
+                    )
+                    for a in model.authors
+                )
             )
-            for c in model.cite
         )
-        if model.cite
-        else " missing"
-    )
+    else:
+        shared_by = ""
+
+    if model.config.bioimageio.architecture_type:
+        model_type = f"\n- **Model type:** {model.config.bioimageio.architecture_type}"
+    else:
+        model_type = ""
+
+    if model.config.bioimageio.modality:
+        model_modality = f"\n- **Modality:** {model.config.bioimageio.modality}"
+    else:
+        model_modality = ""
+
+    if model.config.bioimageio.target_structure:
+        target_structures = f"\n- **Target structures:** " + ", ".join(
+            model.config.bioimageio.target_structure
+        )
+    else:
+        target_structures = ""
+
+    if model.config.bioimageio.task:
+        task_type = f"\n- **Task type:** {model.config.bioimageio.task}"
+    else:
+        task_type = ""
+
     if model.license is None:
         license = "missing"
     else:
@@ -265,6 +303,11 @@ def create_hf_model_card(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
             license = f"[{name}]({reference})"
         else:
             license = model.license
+
+    if model.parent:
+        finetuned_from = f"\n- **Finetuned from model:** {model.parent.id}"
+    else:
+        finetuned_from = ""
 
     repository = (
         f"[{model.git_repo}]({model.git_repo})" if model.git_repo else "missing"
@@ -489,31 +532,15 @@ def create_hf_model_card(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
 # Model Details
 
 ## Model Description
-
-- **model version:** {model.version or "missing"}
-- **Additional model documentation:** {doc_local_link or "missing"}
-- **Developed by:** {developed_by}
-- **Funded by:** {
-        model.config.bioimageio.funded_by
-        if model.config.bioimageio.funded_by
-        else "missing"
-    }
-- **Shared by:** {shared_by}
-- **Model type:** {model.config.bioimageio.architecture_type or "missing"}
-- **Modality:** {model.config.bioimageio.modality or "missing"}
-- **Target structures:** {
-        ", ".join(model.config.bioimageio.target_structure)
-        if model.config.bioimageio.target_structure
-        else "missing"
-    }
-- **Task type:** {model.config.bioimageio.task or "missing"}
-- **License:** {license}
-- **Finetuned from model:** {"N/A" if model.parent is None else model.parent.id}
+{model_version}{additional_model_doc}{developed_by}{funded_by}{shared_by}{model_type}{
+        model_modality
+    }{target_structures}{task_type}
+- **License:** {license}{finetuned_from}
 
 ## Model Sources
 
 - **Repository:** {repository}
-- **Paper:** see **Developed by**
+- **Paper:** see [**Developed by**](#model-description)
 
 # Uses
 
@@ -561,7 +588,7 @@ from bioimageio.core.digest_spec import create_sample_for_model
 
 input_sample = create_sample_for_model(
     model_descr,
-    inputs={"raw": "<path to your input image>"}
+    inputs={{"raw": "<path to your input image>"}}
 )
 output_sample = predict(model=model_descr, inputs=input_sample)
 ```

@@ -7,20 +7,21 @@ from loguru import logger
 
 from bioimageio.spec.model.v0_5 import ModelDescr
 
-from ._hf_card import create_hf_model_card
+from ._hf_card import create_huggingface_model_card
 from ._version import VERSION
 
 
 @cache
-def get_hf_api():
+def get_huggingface_api():
     from huggingface_hub import HfApi
 
     return HfApi(library_name="bioimageio.spec", library_version=VERSION)
 
 
-def push_to_hf(
+def push_to_hub(
     descr: ModelDescr,
     username_or_org: str,
+    *,
     local_dry_run: Optional[Union[os.PathLike[str], str]] = None,
 ):
     """Push the model package described by `descr` to the Hugging Face Hub under the specified username or organization."""
@@ -29,7 +30,7 @@ def push_to_hf(
         raise ValueError("descr.id must be set to push to Hugging Face Hub.")
     repo_id = f"{username_or_org}/{descr.id}"
 
-    readme, images = create_hf_model_card(descr)
+    readme, images = create_huggingface_model_card(descr)
     if local_dry_run is not None:
         local_repo = Path(local_dry_run) / repo_id
         logger.info(

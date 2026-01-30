@@ -9,6 +9,7 @@ from itertools import chain
 from math import ceil
 from pathlib import Path, PurePosixPath
 from tempfile import mkdtemp
+from textwrap import dedent
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -2786,22 +2787,24 @@ class ReproducibilityTolerance(Node, extra="allow"):
 class BiasRisksLimitations(Node, extra="allow"):
     """Known biases, risks, technical limitations, and recommendations for model use."""
 
-    known_biases: str = """In general bioimage models may suffer from biases caused by:
+    known_biases: str = dedent("""\
+    In general bioimage models may suffer from biases caused by:
 
     - Imaging protocol dependencies
     - Use of a specific cell type
     - Species-specific training data limitations
 
-"""
+    """)
     """Biases in training data or model behavior."""
 
-    risks: str = """Common risks in bioimage analysis include:
+    risks: str = dedent("""\
+    Common risks in bioimage analysis include:
 
     - Erroneously assuming generalization to unseen experimental conditions
     - Trusting (overconfident) model outputs without validation
     - Misinterpretation of results
 
-"""
+    """)
     """Potential risks in the context of bioimage analysis."""
 
     limitations: Optional[str] = None
