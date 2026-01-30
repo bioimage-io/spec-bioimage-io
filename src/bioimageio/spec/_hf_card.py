@@ -86,29 +86,29 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
     markdown_string = ""
     images: dict[str, bytes] = {}
 
+    def format_data_descr(
+        d: Union[
+            NominalOrOrdinalDataDescr,
+            IntervalOrRatioDataDescr,
+            Sequence[Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr]],
+        ],
+    ) -> str:
+        ret = ""
+        if isinstance(d, NominalOrOrdinalDataDescr):
+            ret += f"        - Values: {d.values}\n"
+        elif isinstance(d, IntervalOrRatioDataDescr):
+            ret += f"        - Values: {d.scale} {d.unit} with offset: {d.offset} in range {d.range}\n"
+        elif isinstance(d, collections.abc.Sequence):
+            for dd in d:
+                ret += format_data_descr(dd)
+        else:
+            assert_never(d)
+
+        return ret
+
     # Input descriptions
     if model.inputs:
         markdown_string += "\n    - **Input specifications:**\n"
-
-        def append_data_descr(
-            md_string: str,
-            d: Union[
-                NominalOrOrdinalDataDescr,
-                IntervalOrRatioDataDescr,
-                Sequence[Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr]],
-            ],
-        ) -> str:
-            if isinstance(d, NominalOrOrdinalDataDescr):
-                md_string += f"        - Values: {d.values}\n"
-            elif isinstance(d, IntervalOrRatioDataDescr):
-                md_string += f"        - Values: {d.scale} {d.unit} with offset: {d.offset} in range {d.range}\n"
-            elif isinstance(d, collections.abc.Sequence):
-                for dd in d:
-                    md_string += append_data_descr(md_string, dd)
-            else:
-                assert_never(d)
-
-            return md_string
 
         for inp in model.inputs:
             axes_str = ", ".join(str(a.id) for a in inp.axes)
@@ -123,7 +123,7 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
             markdown_string += f"        - Axes: `{axes_str}`\n"
             markdown_string += f"        - Shape: `{shape_str}`\n"
             markdown_string += f"        - Data type: `{inp.dtype}`\n"
-            markdown_string = append_data_descr(markdown_string, inp.data)
+            markdown_string += format_data_descr(inp.data)
 
             # Try to load and display sample_tensor (preferred) or test_tensor
             img_bytes = None
@@ -166,7 +166,7 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
             markdown_string += f"      - Axes: `{axes_str}`\n"
             markdown_string += f"      - Shape: `{shape_str}`\n"
             markdown_string += f"      - Data type: `{out.dtype}`\n"
-            markdown_string = append_data_descr(markdown_string, out.data)
+            markdown_string += format_data_descr(out.data)
 
             # Try to load and display sample_tensor (preferred) or test_tensor
             img_bytes = None
@@ -196,7 +196,7 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
     return markdown_string, images
 
 
-def create_hf_model_card(model: ModelDescr) -> Tuple[ModelDescr, str, Dict[str, bytes]]:
+def create_hf_model_card(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
     """Create a Hugging Face model card for a BioImage.IO model.
 
     Returns:

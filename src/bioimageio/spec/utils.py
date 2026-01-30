@@ -91,14 +91,14 @@ def get_bioimageio_json_schema() -> Dict[str, Any]:
         return json.load(f)
 
 
-def load_image(source: Union[ZipPath, PermissiveFileSource]) -> NDArray[Any]:
+def load_image(source: Union[FileDescr, ZipPath, PermissiveFileSource]) -> NDArray[Any]:
     """load a single image as numpy array
 
     Args:
         source: image source
     """
 
-    if isinstance(source, ZipPath):
+    if isinstance(source, (FileDescr, ZipPath)):
         parsed_source = source
     else:
         parsed_source = interprete_file_source(source)

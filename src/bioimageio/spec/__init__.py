@@ -15,6 +15,7 @@ from loguru import logger
 
 logger.disable("bioimageio.spec")
 
+from . import _version
 from . import application as application
 from . import common as common
 from . import conda_env as conda_env
@@ -54,7 +55,8 @@ from ._pretty_validation_errors import (
     PRETTY_VALIDATION_ERRORS_IN_IPYNB_ENABLED as PRETTY_VALIDATION_ERRORS_IN_IPYNB_ENABLED,
 )
 from ._upload import upload as upload
-from ._version import VERSION as __version__
+
+__version__ = _version.VERSION
 
 # reexpose slected objects from submodules
 AnyApplicationDescr = application.AnyApplicationDescr
