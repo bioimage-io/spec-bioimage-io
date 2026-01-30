@@ -11,7 +11,6 @@ from respx import MockRouter
 from bioimageio.spec import ValidationContext
 from bioimageio.spec._internal.io_basics import Sha256, ZipPath
 from bioimageio.spec._internal.url import HttpUrl
-from bioimageio.spec._internal.validation_context import get_validation_context
 from bioimageio.spec.common import RelativeFilePath
 
 
