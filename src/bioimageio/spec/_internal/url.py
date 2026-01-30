@@ -1,4 +1,5 @@
 from contextlib import nullcontext
+from pathlib import PurePosixPath
 from typing import Any, ClassVar, Optional, Type, Union
 
 import httpx
@@ -157,3 +158,10 @@ class HttpUrl(RootHttpUrl):
                 self._exists = True
 
         return self._exists
+
+    @property
+    def suffix(self) -> str:
+        if self.path is None:
+            return ""
+        else:
+            return PurePosixPath(self.path).suffix

@@ -2,20 +2,9 @@
 
 import json
 from pathlib import Path, PurePosixPath
-from typing import (
-    Any,
-    Dict,
-    List,
-    Optional,
-    Tuple,
-    TypedDict,
-    TypeVar,
-    Union,
-    overload,
-)
+from typing import Any, Dict, List, Optional, Tuple, TypedDict, Union
 
-from imageio.v3 import imread
-from loguru import logger
+from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
 from typing_extensions import assert_never
 
@@ -39,18 +28,9 @@ from ._internal.io_utils import (
     write_yaml,
 )
 from ._internal.type_guards import is_ndarray
-from ._internal.types import (
-    FileSource,
-    PermissiveFileSource,
-    RelativeFilePath,
-)
+from ._internal.types import PermissiveFileSource, RelativeFilePath
 from ._internal.url import HttpUrl
 from ._internal.utils import files
-
-DEFAULT_H5_DATASET_PATH = "data"
-
-
-SUFFIXES_WITH_DATAPATH = (".h5", ".hdf", ".hdf5")
 
 __all__ = [
     "download",
@@ -111,147 +91,28 @@ def get_bioimageio_json_schema() -> Dict[str, Any]:
         return json.load(f)
 
 
-def load_image(source: Union[FileDescr, ZipPath, PermissiveFileSource]) -> NDArray[Any]:
+def load_image(source: Union[ZipPath, PermissiveFileSource]) -> NDArray[Any]:
     """load a single image as numpy array
 
     Args:
         source: image source
     """
 
-    if isinstance(source, (FileDescr, ZipPath)):
+    if isinstance(source, ZipPath):
         parsed_source = source
     else:
         parsed_source = interprete_file_source(source)
 
     if isinstance(parsed_source, RelativeFilePath):
-        src = parsed_source.absolute()
+        parsed_source = parsed_source.absolute()
+
+    if parsed_source.suffix == ".npy":
+        image = load_array(parsed_source)
     else:
-        src = parsed_source
-
-    if isinstance(src, Path):
-        file_source, suffix, subpath = split_dataset_path(src)
-    elif isinstance(src, HttpUrl):
-        file_source, suffix, subpath = split_dataset_path(src)
-    elif isinstance(src, ZipPath):
-        file_source, suffix, subpath = split_dataset_path(src)
-    else:
-        assert_never(src)
-
-    if suffix == ".npy":
-        if subpath is not None:
-            logger.warning(
-                "Unexpected subpath {} for .npy source {}", subpath, file_source
-            )
-
-        image = load_array(file_source)
-    elif suffix in SUFFIXES_WITH_DATAPATH:
-        import h5py
-
-        if subpath is None:
-            dataset_path = DEFAULT_H5_DATASET_PATH
-        else:
-            dataset_path = str(subpath)
-
-        reader = download(file_source)
-
-        with h5py.File(reader, "r") as f:
-            h5_dataset = f.get(  # pyright: ignore[reportUnknownVariableType]
-                dataset_path
-            )
-            if not isinstance(h5_dataset, h5py.Dataset):
-                raise ValueError(
-                    f"{file_source} did not load as {h5py.Dataset}, but has type "
-                    + str(
-                        type(h5_dataset)  # pyright: ignore[reportUnknownArgumentType]
-                    )
-                )
-            image: NDArray[Any]
-            image = h5_dataset[:]  # pyright: ignore[reportUnknownVariableType]
-    else:
-        reader = download(file_source)
-
+        reader = get_reader(parsed_source)
         image = imread(  # pyright: ignore[reportUnknownVariableType]
-            reader.read(), extension=suffix
+            reader.read(), extension=parsed_source.suffix
         )
 
     assert is_ndarray(image)
     return image
-
-
-def split_dataset_path(
-    source: Union[FileDescr, Path, HttpUrl, ZipPath, RelativeFilePath],
-) -> Tuple[Union[FileDescr, Path, HttpUrl, ZipPath], Suffix, Optional[PurePosixPath]]:
-    """Split off subpath (e.g. internal  h5 dataset path)
-    from a file path following a file extension.
-
-    Examples:
-        >>> _split_dataset_path(Path("my_file.h5/dataset"))
-        (...Path('my_file.h5'), '.h5', PurePosixPath('dataset'))
-
-        >>> _split_dataset_path(Path("my_plain_file"))
-        (...Path('my_plain_file'), '', None)
-
-    """
-    if isinstance(source, FileDescr):
-        file_source, suffix, data_path = split_dataset_path(source.source)
-        if data_path is None:
-            return source, suffix, None
-        else:
-            return (
-                FileDescr.construct(source=file_source, sha256=source.sha256),
-                suffix,
-                data_path,
-            )
-
-    def separate_pure_path(path: PurePosixPath):
-        for p in path.parents:
-            if p.suffix in SUFFIXES_WITH_DATAPATH:
-                return p, p.suffix, PurePosixPath(path.relative_to(p))
-
-        return path, path.suffix, None
-
-    if isinstance(source, RelativeFilePath):
-        source = source.absolute()
-
-    if isinstance(source, HttpUrl):
-        file_path, suffix, data_path = separate_pure_path(
-            PurePosixPath(source.path or "")
-        )
-    elif isinstance(source, ZipPath):
-        file_path, suffix, data_path = separate_pure_path(PurePosixPath(str(source)))
-    elif isinstance(source, Path):
-        file_path, suffix, data_path = separate_pure_path(PurePosixPath(source))
-    else:
-        assert_never(source)
-
-    if data_path is None:
-        return source, suffix, None
-
-    if isinstance(source, HttpUrl):
-        file_source = HttpUrl(str(file_path).replace(f"/{data_path}", ""))
-    elif isinstance(source, ZipPath):
-        file_source = ZipPath(str(file_path).replace(f"/{data_path}", ""))
-    elif isinstance(source, Path):
-        file_source = Path(file_path)
-    else:
-        assert_never(source)
-
-    return file_source, suffix, data_path
-
-
-def get_suffix(source: Union[ZipPath, FileSource]) -> Suffix:
-    if isinstance(source, Path):
-        return source.suffix
-    elif isinstance(source, ZipPath):
-        return source.suffix
-    if isinstance(source, RelativeFilePath):
-        return source.path.suffix
-    elif isinstance(source, ZipPath):
-        return source.suffix
-    elif isinstance(source, HttpUrl):
-        if source.path is None:
-            return ""
-        else:
-            return PurePosixPath(source.path).suffix
-    else:
-        assert_never(source)
