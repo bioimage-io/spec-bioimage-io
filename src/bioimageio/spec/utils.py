@@ -1,57 +1,32 @@
 """Utility functions for bioimage.io specifications (mostly IO)."""
 
 import json
-from pathlib import Path, PurePosixPath
-from typing import Any, Dict, List, Optional, Tuple, TypedDict, Union
+from typing import Any, Dict, List, TypedDict, Union
 
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from numpy.typing import NDArray
-from typing_extensions import assert_never
 
-from ._description import ensure_description_is_dataset, ensure_description_is_model
+from ._description import ensure_description_is_dataset as ensure_description_is_dataset
+from ._description import ensure_description_is_model as ensure_description_is_model
+from ._internal.io import FileDescr
+from ._internal.io import download as download
+from ._internal.io import extract_file_name as extract_file_name
+from ._internal.io import get_reader as get_reader
+from ._internal.io import get_sha256 as get_sha256
 from ._internal.io import (
-    FileDescr,
-    download,
-    extract_file_name,
-    get_reader,
-    get_sha256,
-    identify_bioimageio_yaml_file_name,
-    interprete_file_source,
-    is_valid_bioimageio_yaml_name,
+    identify_bioimageio_yaml_file_name as identify_bioimageio_yaml_file_name,
 )
-from ._internal.io_basics import Suffix, ZipPath
-from ._internal.io_utils import (
-    load_array,
-    open_bioimageio_yaml,
-    read_yaml,
-    save_array,
-    write_yaml,
-)
+from ._internal.io import interprete_file_source as interprete_file_source
+from ._internal.io import is_valid_bioimageio_yaml_name as is_valid_bioimageio_yaml_name
+from ._internal.io_basics import ZipPath
+from ._internal.io_utils import load_array as load_array
+from ._internal.io_utils import open_bioimageio_yaml as open_bioimageio_yaml
+from ._internal.io_utils import read_yaml as read_yaml
+from ._internal.io_utils import save_array as save_array
+from ._internal.io_utils import write_yaml as write_yaml
 from ._internal.type_guards import is_ndarray
 from ._internal.types import PermissiveFileSource, RelativeFilePath
-from ._internal.url import HttpUrl
 from ._internal.utils import files
-
-__all__ = [
-    "download",
-    "ensure_description_is_dataset",
-    "ensure_description_is_model",
-    "extract_file_name",
-    "get_file_name",
-    "get_reader",
-    "get_sha256",
-    "get_spdx_licenses",
-    "identify_bioimageio_yaml_file_name",
-    "is_valid_bioimageio_yaml_name",
-    "load_array",
-    "load_image",
-    "open_bioimageio_yaml",
-    "read_yaml",
-    "save_array",
-    "SpdxLicenseEntry",
-    "SpdxLicenses",
-    "write_yaml",
-]
 
 get_file_name = extract_file_name
 
