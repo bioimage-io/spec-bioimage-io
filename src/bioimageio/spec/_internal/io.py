@@ -226,6 +226,10 @@ class RelativeFilePath(
 
         return absolute
 
+    @property
+    def suffix(self):
+        return self.root.suffix
+
 
 class RelativeDirectory(
     RelativePathBase[Union[AbsoluteDirectory, HttpUrl, ZipPath]], frozen=True
