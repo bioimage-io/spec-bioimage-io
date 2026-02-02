@@ -213,17 +213,21 @@ class ValidationDetail(BaseModel, extra="allow"):
                     with path.open("w", encoding="utf-8") as f:
                         write_yaml(dumped_env, f)
 
-                    compare_proc = subprocess.run(
-                        [CONDA_CMD, "compare", str(path)],
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.STDOUT,
-                        shell=False,
-                        text=True,
-                    )
-                    self.saved_conda_compare = (
-                        compare_proc.stdout
-                        or f"`conda compare` exited with {compare_proc.returncode}"
-                    )
+                    try:
+                        compare_proc = subprocess.run(
+                            [CONDA_CMD, "compare", str(path)],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            shell=False,
+                            text=True,
+                        )
+                    except Exception as e:
+                        self.saved_conda_compare = f"Failed to run `conda compare`: {e}"
+                    else:
+                        self.saved_conda_compare = (
+                            compare_proc.stdout
+                            or f"`conda compare` exited with {compare_proc.returncode}"
+                        )
             else:
                 self.saved_conda_compare = (
                     "Failed to dump recommended env to valid yaml"
@@ -289,16 +293,20 @@ class ValidationSummary(BaseModel, extra="allow"):
     @property
     def conda_list(self) -> str:
         if self.saved_conda_list is None:
-            p = subprocess.run(
-                [CONDA_CMD, "list"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                shell=False,
-                text=True,
-            )
-            self.saved_conda_list = (
-                p.stdout or f"`conda list` exited with {p.returncode}"
-            )
+            try:
+                p = subprocess.run(
+                    [CONDA_CMD, "list"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    shell=False,
+                    text=True,
+                )
+            except Exception as e:
+                self.saved_conda_list = f"Failed to run `conda list`: {e}"
+            else:
+                self.saved_conda_list = (
+                    p.stdout or f"`conda list` exited with {p.returncode}"
+                )
 
         return self.saved_conda_list
 
