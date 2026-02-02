@@ -22,7 +22,7 @@ repos:
         pass_filenames: false
       - id: generate json schemas
         name: generate json schemas
-        entry: python scripts/write_json_schema.py
+        entry: python scripts/generate_json_schema.py
         language: system
         always_run: true
         pass_filenames: false
