@@ -84,7 +84,7 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
         filenames to file bytes.
     """
     markdown_string = ""
-    images: dict[str, bytes] = {}
+    referenced_files: dict[str, bytes] = {}
 
     def format_data_descr(
         d: Union[
@@ -95,9 +95,9 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
     ) -> str:
         ret = ""
         if isinstance(d, NominalOrOrdinalDataDescr):
-            ret += f"        - Values: {d.values}\n"
+            ret += f"    - Values: {d.values}\n"
         elif isinstance(d, IntervalOrRatioDataDescr):
-            ret += f"        - Values: {d.scale} {d.unit} with offset: {d.offset} in range {d.range}\n"
+            ret += f"    - Values: {d.scale} {d.unit} with offset: {d.offset} in range {d.range}\n"
         elif isinstance(d, collections.abc.Sequence):
             for dd in d:
                 ret += format_data_descr(dd)
@@ -118,11 +118,11 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
             )
 
             markdown_string += (
-                f"      `{inp.id}`: {inp.description or 'No description provided'}\n"
+                f"  `{inp.id}`: {inp.description or 'No description provided'}\n"
             )
-            markdown_string += f"        - Axes: `{axes_str}`\n"
-            markdown_string += f"        - Shape: `{shape_str}`\n"
-            markdown_string += f"        - Data type: `{inp.dtype}`\n"
+            markdown_string += f"    - Axes: `{axes_str}`\n"
+            markdown_string += f"    - Shape: `{shape_str}`\n"
+            markdown_string += f"    - Data type: `{inp.dtype}`\n"
             markdown_string += format_data_descr(inp.data)
 
             # Try to load and display sample_tensor (preferred) or test_tensor
@@ -144,10 +144,10 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
                     )
 
             if img_bytes:
-                filename = f"input_{inp.id}_sample.png"
-                images[filename] = img_bytes
+                filename = f"images/input_{inp.id}_sample.png"
+                referenced_files[filename] = img_bytes
                 markdown_string += (
-                    f"        - example\n          ![{inp.id} sample]({filename})\n"
+                    f"    - example\n          ![{inp.id} sample]({filename})\n"
                 )
 
     # Output descriptions
@@ -161,11 +161,11 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
             )
 
             markdown_string += (
-                f"      **{out.id}**: {out.description or 'No description provided'}\n"
+                f"  **{out.id}**: {out.description or 'No description provided'}\n"
             )
-            markdown_string += f"      - Axes: `{axes_str}`\n"
-            markdown_string += f"      - Shape: `{shape_str}`\n"
-            markdown_string += f"      - Data type: `{out.dtype}`\n"
+            markdown_string += f"  - Axes: `{axes_str}`\n"
+            markdown_string += f"  - Shape: `{shape_str}`\n"
+            markdown_string += f"  - Data type: `{out.dtype}`\n"
             markdown_string += format_data_descr(out.data)
 
             # Try to load and display sample_tensor (preferred) or test_tensor
@@ -187,13 +187,13 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
                     )
 
             if img_bytes:
-                filename = f"output_{out.id}_sample.png"
-                images[filename] = img_bytes
+                filename = f"images/output_{out.id}_sample.png"
+                referenced_files[filename] = img_bytes
                 markdown_string += (
-                    f"      - example\n        ![{out.id} sample]({filename})\n"
+                    f"  - example\n        ![{out.id} sample]({filename})\n"
                 )
 
-    return markdown_string, images
+    return markdown_string, referenced_files
 
 
 def create_huggingface_model_card(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
@@ -274,7 +274,7 @@ def create_huggingface_model_card(model: ModelDescr) -> Tuple[str, Dict[str, byt
         model_modality = ""
 
     if model.config.bioimageio.target_structure:
-        target_structures = f"\n- **Target structures:** " + ", ".join(
+        target_structures = "\n- **Target structures:** " + ", ".join(
             model.config.bioimageio.target_structure
         )
     else:
@@ -428,24 +428,24 @@ def create_huggingface_model_card(model: ModelDescr) -> Tuple[str, Dict[str, byt
         training_details += f"### Preprocessing\n\n{model.config.bioimageio.training.training_preprocessing}\n\n"
 
     training_details += "### Training Hyperparameters\n\n"
-    training_details += f"    # - **Framework:** {' / '.join(training_frameworks)}"
+    training_details += f"- **Framework:** {' / '.join(training_frameworks)}"
     if model.config.bioimageio.training.training_epochs is not None:
         training_details += (
-            f"    - **Epochs:** {model.config.bioimageio.training.training_epochs}\n"
+            f"- **Epochs:** {model.config.bioimageio.training.training_epochs}\n"
         )
 
     if model.config.bioimageio.training.training_batch_size is not None:
-        training_details += f"    - **Batch size:** {model.config.bioimageio.training.training_batch_size}\n"
+        training_details += f"- **Batch size:** {model.config.bioimageio.training.training_batch_size}\n"
 
     if model.config.bioimageio.training.initial_learning_rate is not None:
-        training_details += f"    - **Initial learning rate:** {model.config.bioimageio.training.initial_learning_rate}\n"
+        training_details += f"- **Initial learning rate:** {model.config.bioimageio.training.initial_learning_rate}\n"
 
     if model.config.bioimageio.training.learning_rate_schedule is not None:
-        training_details += f"    - **Learning rate schedule:** {model.config.bioimageio.training.learning_rate_schedule}\n"
+        training_details += f"- **Learning rate schedule:** {model.config.bioimageio.training.learning_rate_schedule}\n"
 
     if model.config.bioimageio.training.loss_function is not None:
         training_details += (
-            f"    - **Loss function:** {model.config.bioimageio.training.loss_function}"
+            f"- **Loss function:** {model.config.bioimageio.training.loss_function}"
         )
         if model.config.bioimageio.training.loss_function_kwargs:
             training_details += (
@@ -455,7 +455,7 @@ def create_huggingface_model_card(model: ModelDescr) -> Tuple[str, Dict[str, byt
 
     if model.config.bioimageio.training.optimizer is not None:
         training_details += (
-            f"    - **Optimizer:** {model.config.bioimageio.training.optimizer}"
+            f"- **Optimizer:** {model.config.bioimageio.training.optimizer}"
         )
         if model.config.bioimageio.training.optimizer_kwargs:
             training_details += (
@@ -464,20 +464,22 @@ def create_huggingface_model_card(model: ModelDescr) -> Tuple[str, Dict[str, byt
         training_details += "\n"
 
     if model.config.bioimageio.training.regularization is not None:
-        training_details += f"    - **Regularization:** {model.config.bioimageio.training.regularization}\n"
+        training_details += (
+            f"- **Regularization:** {model.config.bioimageio.training.regularization}\n"
+        )
 
     speeds_sizes_times = "### Speeds, Sizes, Times\n\n"
     if model.config.bioimageio.training.training_duration is not None:
-        speeds_sizes_times += f"    - **Training time:** {'{:.2f}'.format(model.config.bioimageio.training.training_duration)}\n"
+        speeds_sizes_times += f"- **Training time:** {'{:.2f}'.format(model.config.bioimageio.training.training_duration)}\n"
 
-    speeds_sizes_times += f"    - **Model size:** {model_size}\n"
+    speeds_sizes_times += f"- **Model size:** {model_size}\n"
     if model.config.bioimageio.inference_time:
         speeds_sizes_times += (
-            f"    - **Inference time:** {model.config.bioimageio.inference_time}\n"
+            f"- **Inference time:** {model.config.bioimageio.inference_time}\n"
         )
 
     if model.config.bioimageio.memory_requirements_inference:
-        speeds_sizes_times += f"    - **Memory requirements:** {model.config.bioimageio.memory_requirements_inference}\n"
+        speeds_sizes_times += f"- **Memory requirements:** {model.config.bioimageio.memory_requirements_inference}\n"
 
     model_arch_and_objective = "## Model Architecture and Objective\n\n"
     if (
@@ -485,7 +487,7 @@ def create_huggingface_model_card(model: ModelDescr) -> Tuple[str, Dict[str, byt
         or model.config.bioimageio.architecture_description
     ):
         model_arch_and_objective += (
-            f"    - **Architecture:** {model.config.bioimageio.architecture_type or ''}"
+            f"- **Architecture:** {model.config.bioimageio.architecture_type or ''}"
             + (
                 " --- "
                 if model.config.bioimageio.architecture_type
@@ -505,12 +507,12 @@ def create_huggingface_model_card(model: ModelDescr) -> Tuple[str, Dict[str, byt
 
     hardware_requirements = "\n### Hardware Requirements\n"
     if model.config.bioimageio.memory_requirements_training is not None:
-        hardware_requirements += f"    - **Training:** GPU memory: {model.config.bioimageio.memory_requirements_training}\n"
+        hardware_requirements += f"- **Training:** GPU memory: {model.config.bioimageio.memory_requirements_training}\n"
 
     if model.config.bioimageio.memory_requirements_inference is not None:
-        hardware_requirements += f"    - **Inference:** GPU memory: {model.config.bioimageio.memory_requirements_inference}\n"
+        hardware_requirements += f"- **Inference:** GPU memory: {model.config.bioimageio.memory_requirements_inference}\n"
 
-    hardware_requirements += f"    - **Storage:** Model size: {model_size}\n"
+    hardware_requirements += f"- **Storage:** Model size: {model_size}\n"
 
     markdown = f"""# {model.name}
 
