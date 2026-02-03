@@ -71,7 +71,9 @@ def _push_to_hub_impl(
     prep_dir: Path,
     prep_only: bool,
 ):
-    readme, referenced_files = create_huggingface_model_card(descr)
+    from huggingface_hub import create_branch, list_repo_refs
+
+    readme, referenced_files = create_huggingface_model_card(descr, repo_id=repo_id)
     referenced_files_subfolders = {"images"}
     assert not (
         unexpected := [
@@ -106,8 +108,29 @@ def _push_to_hub_impl(
         repo_url = api.create_repo(repo_id=repo_id, exist_ok=True, repo_type="model")
         logger.info(f"Created repository at {repo_url}")
 
+        version_tag = f"v{descr.version}" if descr.version else None
+        existing_refs = list_repo_refs(
+            repo_id=repo_id, repo_type="model", include_pull_requests=True
+        )
+        has_draft_ref = False
+        for ref in existing_refs.branches + existing_refs.tags:
+            if ref.name == version_tag:
+                raise ValueError(
+                    f"Version '{version_tag}' already exists in the repository."
+                )
+            if ref.name == "draft":
+                has_draft_ref = True
+
+        if descr.version is None:
+            base_revision = "draft"
+            if not has_draft_ref:
+                create_branch(repo_id=repo_id, branch="draft", repo_type="model")
+        else:
+            base_revision = "main"
+
         commit_info = api.upload_folder(
             repo_id=repo_id,
+            revision=base_revision,
             folder_path=prep_dir,
             delete_patterns=[f"{sf}/*" for sf in referenced_files_subfolders]
             + ["package/*"],
@@ -115,10 +138,11 @@ def _push_to_hub_impl(
             commit_description=commit_description,
         )
         logger.info(f"Created commit {commit_info.commit_url}")
-        api.create_tag(
-            repo_id=repo_id,
-            tag=str(descr.version) if descr.version else "draft",
-            revision=commit_info.oid,
-            tag_message=descr.version_comment,
-            exist_ok=descr.version is None,
-        )
+        if descr.version:
+            api.create_tag(
+                repo_id=repo_id,
+                tag=str(descr.version),
+                revision=commit_info.oid,
+                tag_message=descr.version_comment,
+                exist_ok=False,
+            )

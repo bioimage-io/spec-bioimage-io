@@ -196,7 +196,9 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
     return markdown_string, referenced_files
 
 
-def create_huggingface_model_card(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
+def create_huggingface_model_card(
+    model: ModelDescr, *, repo_id: str
+) -> Tuple[str, Dict[str, bytes]]:
     """Create a Hugging Face model card for a BioImage.IO model.
 
     Returns:
@@ -217,10 +219,7 @@ def create_huggingface_model_card(model: ModelDescr) -> Tuple[str, Dict[str, byt
         with get_validation_context().replace(perform_io_checks=False):
             model.documentation = RelativeFilePath(PurePosixPath(local_doc_path))
 
-        doc_local_link = f"[{doc_reader.original_file_name}]({local_doc_path})"
-        additional_model_doc = (
-            f"\n- **Additional model documentation:** {doc_local_link}"
-        )
+        additional_model_doc = f"\n- **Additional model documentation:** [{local_doc_path}]({local_doc_path})"
 
     if model.cite:
         developed_by = "\n- **Developed by:** " + (
@@ -374,7 +373,7 @@ def create_huggingface_model_card(model: ModelDescr) -> Tuple[str, Dict[str, byt
     out_of_scope_use = (
         model.config.bioimageio.out_of_scope_use
         if model.config.bioimageio.out_of_scope_use
-        else """missing; therefore these limitations should be considered:
+        else """missing; therefore these typical limitations should be considered:
 
 - *Likely not suitable for diagnostic purposes.*
 - *Likely not validated for different imaging modalities than present in the training data.*
@@ -572,34 +571,11 @@ Specific bioimage.io partner tool compatibilities may be reported at [Compatibil
 
 # How to Get Started with the Model
 
-`pip install bioimageio.core[dev]`
+You can use "huggingface/{repo_id}{
+        "/v" + str(model.version) if model.version else ""
+    }" as the resource identifier to load this model directly from the Hugging Face Hub using bioimageio.spec or bioimageio.core.
 
-Get started using the test sample provided by the model:
-```python
-from bioimageio.core import load_model_description, predict
-from bioimageio.core.digest_spec import get_test_input_sample
-
-model_descr = load_model_description("<model.yaml or model.zip path or URL>")
-input_sample = get_test_input_sample(model_descr)
-output_sample = predict(model=model_descr, inputs=input_sample)
-```
-
-Deploy on your own data:
-```python
-from bioimageio.core.digest_spec import create_sample_for_model
-
-input_sample = create_sample_for_model(
-    model_descr,
-    inputs={{"raw": "<path to your input image>"}}
-)
-output_sample = predict(model=model_descr, inputs=input_sample)
-```
-
-Alternatively, use the `bioimageio` CLI provided by the `bioimageio.core` package:
-
-```console
-bioimageio predict --help
-```
+See [bioimageio.core documentation: Get started](https://bioimage-io.github.io/core-bioimage-io-python/latest/get-started) for instructions on how to load and run this model using the `bioimageio.core` Python package or the bioimageio CLI.
 
 # Training Details
 

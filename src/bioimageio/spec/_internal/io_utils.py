@@ -6,14 +6,7 @@ from contextlib import nullcontext
 from difflib import get_close_matches
 from pathlib import Path
 from types import MappingProxyType
-from typing import (
-    IO,
-    Any,
-    Dict,
-    Mapping,
-    Union,
-    cast,
-)
+from typing import IO, Any, Dict, Mapping, Union, cast
 from zipfile import ZipFile
 
 import httpx
@@ -143,6 +136,30 @@ def open_bioimageio_yaml(
     /,
     **kwargs: Unpack[HashKwargs],
 ) -> OpenedBioimageioYaml:
+    if (
+        isinstance(source, str)
+        and source.startswith("huggingface/")
+        and source.count("/") >= 2
+    ):
+        if source.count("/") == 2:
+            # huggingface/{user_or_org}/{repo_name}
+            repo_id = source[len("huggingface/") :]
+            branch = "main"
+        else:
+            # huggingface/{user_or_org}/{repo_id}/
+            # huggingface/{user_or_org}/{repo_id}/version
+            repo_id, version = source[len("huggingface/") :].rsplit("/", 1)
+            if len(version) == 0:
+                branch = "main"
+            elif version[0].isdigit():
+                branch = f"v{version}"
+            else:
+                branch = version
+
+        source = HttpUrl(
+            settings.huggingface_http_pattern.format(repo_id=repo_id, branch=branch)
+        )
+
     if isinstance(source, RelativeFilePath):
         source = source.absolute()
 
@@ -335,6 +352,9 @@ def write_zip(
                            See https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile
 
     """
+    if isinstance(path, Path):
+        path.parent.mkdir(parents=True, exist_ok=True)
+
     with ZipFile(
         path, "w", compression=compression, compresslevel=compression_level
     ) as zip:

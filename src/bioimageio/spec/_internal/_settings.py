@@ -43,8 +43,8 @@ class Settings(
     Notes:
     - '{bioimageio_id}' is replaced with user query,
       e.g. "affable-shark" when calling `load_description("affable-shark")`.
-    - This method takes precedence over resolving via **id_map**.
-    - If this endpoints fails, we fall back to **id_map**.
+    - This method takes precedence over resolving via `id_map`.
+    - If this endpoints fails, we fall back to `id_map`.
     """
 
     github_username: Optional[str] = None
@@ -55,6 +55,19 @@ class Settings(
 
     http_timeout: float = 10.0
     """Timeout in seconds for http requests."""
+
+    huggingface_http_pattern: str = (
+        "https://huggingface.co/{repo_id}/tree/{branch}/package/bioimageio.yaml"
+    )
+    """A pattern to map huggingface repo IDs to bioimageio.yaml URLs.
+    Notes:
+    - Used for loading source strings of the form "huggingface/{user_or_org}/{resource_id}[/{version}]"
+    - example use: `load_description("huggingface/fynnbe/ambitious-sloth/1.3")`
+    - A given version {version} is mapped to a branch name "v{version}", e.g. "v1.3".
+    - If no version is provided the "main" branch is used.
+    - This method takes precedence over resolving via `id_map`.
+    - If this endpoints fails, we fall back to `id_map`.
+    """
 
     hypha_upload: str = (
         "https://hypha.aicell.io/public/services/artifact-manager/create"
