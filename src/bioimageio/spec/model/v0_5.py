@@ -3035,11 +3035,11 @@ class EnvironmentalImpact(Node, extra="allow"):
         """Filled Markdown template section following [Hugging Face Model Card Template](https://huggingface.co/docs/hub/en/model-card-annotated)."""
         return f"""# Environmental Impact
 
-    - **Hardware Type:** {self.hardware_type or "missing"}
-    - **Hours used:** {self.hours_used or "missing"}
-    - **Cloud Provider:** {self.cloud_provider or "missing"}
-    - **Compute Region:** {self.compute_region or "missing"}
-    - **Carbon Emitted:** {self.co2_emitted or "missing"}
+- **Hardware Type:** {self.hardware_type or "missing"}
+- **Hours used:** {self.hours_used or "missing"}
+- **Cloud Provider:** {self.cloud_provider or "missing"}
+- **Compute Region:** {self.compute_region or "missing"}
+- **Carbon Emitted:** {self.co2_emitted or "missing"}
 
 """
 

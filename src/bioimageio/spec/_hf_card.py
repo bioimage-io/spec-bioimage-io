@@ -108,7 +108,7 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
 
     # Input descriptions
     if model.inputs:
-        markdown_string += "\n    - **Input specifications:**\n"
+        markdown_string += "\n- **Input specifications:**\n"
 
         for inp in model.inputs:
             axes_str = ", ".join(str(a.id) for a in inp.axes)
@@ -117,12 +117,10 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
                 for a in inp.axes
             )
 
-            markdown_string += (
-                f"  `{inp.id}`: {inp.description or 'No description provided'}\n"
-            )
-            markdown_string += f"    - Axes: `{axes_str}`\n"
-            markdown_string += f"    - Shape: `{shape_str}`\n"
-            markdown_string += f"    - Data type: `{inp.dtype}`\n"
+            markdown_string += f"  `{inp.id}`: {inp.description or ''}\n\n"
+            markdown_string += f"  - Axes: `{axes_str}`\n"
+            markdown_string += f"  - Shape: `{shape_str}`\n"
+            markdown_string += f"  - Data type: `{inp.dtype}`\n"
             markdown_string += format_data_descr(inp.data)
 
             # Try to load and display sample_tensor (preferred) or test_tensor
@@ -146,13 +144,11 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
             if img_bytes:
                 filename = f"images/input_{inp.id}_sample.png"
                 referenced_files[filename] = img_bytes
-                markdown_string += (
-                    f"    - example\n          ![{inp.id} sample]({filename})\n"
-                )
+                markdown_string += f"  - example\n    ![{inp.id} sample]({filename})\n"
 
     # Output descriptions
     if model.outputs:
-        markdown_string += "\n    - **Output specifications:**\n"
+        markdown_string += "\n- **Output specifications:**\n"
         for out in model.outputs:
             axes_str = ", ".join(str(a.id) for a in out.axes)
             shape_str = " × ".join(
@@ -160,9 +156,7 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
                 for a in out.axes
             )
 
-            markdown_string += (
-                f"  **{out.id}**: {out.description or 'No description provided'}\n"
-            )
+            markdown_string += f"  `{out.id}`: {out.description or ''}\n"
             markdown_string += f"  - Axes: `{axes_str}`\n"
             markdown_string += f"  - Shape: `{shape_str}`\n"
             markdown_string += f"  - Data type: `{out.dtype}`\n"
@@ -189,9 +183,7 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
             if img_bytes:
                 filename = f"images/output_{out.id}_sample.png"
                 referenced_files[filename] = img_bytes
-                markdown_string += (
-                    f"  - example\n        ![{out.id} sample]({filename})\n"
-                )
+                markdown_string += f"  - example\n    {out.id} sample]({filename})\n"
 
     return markdown_string, referenced_files
 
