@@ -8,6 +8,7 @@ from typing import Optional, Union
 from loguru import logger
 
 from bioimageio.spec import save_bioimageio_package_as_folder
+from bioimageio.spec._internal.validation_context import get_validation_context
 from bioimageio.spec.model.v0_5 import ModelDescr
 
 from ._hf_card import create_huggingface_model_card
@@ -88,7 +89,8 @@ def _push_to_hub_impl(
         image_path.parent.mkdir(parents=True, exist_ok=True)
         _ = image_path.write_bytes(img_data)
 
-    _ = save_bioimageio_package_as_folder(descr, output_path=prep_dir / "package")
+    with get_validation_context().replace(file_name="bioimageio.yaml"):
+        _ = save_bioimageio_package_as_folder(descr, output_path=prep_dir / "package")
 
     logger.info(f"Prepared model for upload at {prep_dir}")
 
