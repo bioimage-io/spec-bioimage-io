@@ -121,7 +121,7 @@ def _push_to_hub_impl(
             if ref.name == "draft":
                 has_draft_ref = True
 
-        if descr.version is None:
+        if version_tag is None:
             base_revision = "draft"
             if not has_draft_ref:
                 create_branch(repo_id=repo_id, branch="draft", repo_type="model")
@@ -138,10 +138,10 @@ def _push_to_hub_impl(
             commit_description=commit_description,
         )
         logger.info(f"Created commit {commit_info.commit_url}")
-        if descr.version:
+        if version_tag is not None:
             api.create_tag(
                 repo_id=repo_id,
-                tag=str(descr.version),
+                tag=version_tag,
                 revision=commit_info.oid,
                 tag_message=descr.version_comment,
                 exist_ok=False,
