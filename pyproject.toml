@@ -47,6 +47,7 @@ dev = [
     "griffe-inherited-docstrings",
     "griffe-public-redundant-aliases",
     "griffe-pydantic",
+    "huggingface-hub",
     "json_schema_for_humans",
     "jsonschema",
     "jupyter",
