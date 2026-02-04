@@ -6,7 +6,7 @@ requires-python = ">=3.8"
 readme = "README.md"
 dependencies = [
     "annotated-types>=0.5.0,<1",
-    "email_validator",
+    "email-validator",
     "exceptiongroup",            # TODO: remove when py3.11 is lowest supported version
     "genericache==0.5.2",
     "httpx",
@@ -48,7 +48,7 @@ dev = [
     "griffe-public-redundant-aliases",
     "griffe-pydantic",
     "huggingface-hub",
-    "json_schema_for_humans",
+    "json-schema-for-humans",
     "jsonschema",
     "jupyter",
     "lxml",

@@ -20,7 +20,7 @@ requirements:
   run:
     - python {{ pyproject['project']['requires-python'] }}
     {% for dep in pyproject['project']['dependencies'] %}
-    - {{ dep.lower() }}
+    - {{ dep.lower().replace('email-validator', 'email_validator') }}
     {% endfor %}
 
 build:
@@ -38,7 +38,7 @@ test:
   requires:
     {% for dep in pyproject['project']['optional-dependencies']['dev'] %}
     {% if not dep.startswith('griffe')  %}
-    - {{ dep.replace('torch', 'pytorch').lower().replace('_', '-') }}
+    - {{ dep.lower().replace('torch', 'pytorch').replace('huggingface-hub', 'huggingface_hub') }}
     {% endif %}
     {% endfor %}
   commands:
