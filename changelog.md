@@ -10,6 +10,11 @@ In this file we log both:
 
 This changelog includes implementation details and my reference the [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+### bioimageio.spec 0.5.7.1
+
+- add `bioimageio.spec.load_image` (previously in bioimageio.core)
+- add experimental (private) `bioimageio.spec._hf.push_to_hub` function to publish models on the Hugging Face Hub
+
 ### bioimageio.spec 0.5.7.0
 
 - add `v0_5.WeightsDescr.__setitem__`
