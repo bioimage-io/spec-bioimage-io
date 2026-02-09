@@ -88,6 +88,7 @@ version = { attr = "bioimageio.spec._version.VERSION" }
 
 [tool.pyright]
 exclude = [
+    "**/.*",
     "**/__pycache__",
     "**/node_modules",
     "scripts/pdoc/original.py",
