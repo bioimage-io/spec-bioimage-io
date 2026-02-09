@@ -127,7 +127,7 @@ typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
 
 [tool.pytest.ini_options]
-addopts = "--doctest-modules"           # TODO: add --nbval
+addopts = "--doctest-modules --ignore scripts/generate_api_doc_pages.py"  # TODO: add --nbval
 testpaths = ["example", "src", "tests"]
 
 [tool.ruff]
