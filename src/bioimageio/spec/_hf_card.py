@@ -19,6 +19,7 @@ from bioimageio.spec.model.v0_5 import (
     PytorchStateDictWeightsDescr,
     TensorflowJsWeightsDescr,
     TensorflowSavedModelBundleWeightsDescr,
+    TensorId,
     TorchscriptWeightsDescr,
 )
 
@@ -27,6 +28,89 @@ from ._internal.io_utils import load_array
 from ._version import VERSION
 from .model import ModelDescr
 from .utils import get_spdx_licenses, load_image
+
+HF_KNOWN_LICENSES = (
+    "apache-2.0",
+    "mit",
+    "openrail",
+    "bigscience-openrail-m",
+    "creativeml-openrail-m",
+    "bigscience-bloom-rail-1.0",
+    "bigcode-openrail-m",
+    "afl-3.0",
+    "artistic-2.0",
+    "bsl-1.0",
+    "bsd",
+    "bsd-2-clause",
+    "bsd-3-clause",
+    "bsd-3-clause-clear",
+    "c-uda",
+    "cc",
+    "cc0-1.0",
+    "cc-by-2.0",
+    "cc-by-2.5",
+    "cc-by-3.0",
+    "cc-by-4.0",
+    "cc-by-sa-3.0",
+    "cc-by-sa-4.0",
+    "cc-by-nc-2.0",
+    "cc-by-nc-3.0",
+    "cc-by-nc-4.0",
+    "cc-by-nd-4.0",
+    "cc-by-nc-nd-3.0",
+    "cc-by-nc-nd-4.0",
+    "cc-by-nc-sa-2.0",
+    "cc-by-nc-sa-3.0",
+    "cc-by-nc-sa-4.0",
+    "cdla-sharing-1.0",
+    "cdla-permissive-1.0",
+    "cdla-permissive-2.0",
+    "wtfpl",
+    "ecl-2.0",
+    "epl-1.0",
+    "epl-2.0",
+    "etalab-2.0",
+    "eupl-1.1",
+    "eupl-1.2",
+    "agpl-3.0",
+    "gfdl",
+    "gpl",
+    "gpl-2.0",
+    "gpl-3.0",
+    "lgpl",
+    "lgpl-2.1",
+    "lgpl-3.0",
+    "isc",
+    "h-research",
+    "intel-research",
+    "lppl-1.3c",
+    "ms-pl",
+    "apple-ascl",
+    "apple-amlr",
+    "mpl-2.0",
+    "odc-by",
+    "odbl",
+    "openmdw-1.0",
+    "openrail++",
+    "osl-3.0",
+    "postgresql",
+    "ofl-1.1",
+    "ncsa",
+    "unlicense",
+    "zlib",
+    "pddl",
+    "lgpl-lr",
+    "deepfloyd-if-license",
+    "fair-noncommercial-research-license",
+    "llama2",
+    "llama3",
+    "llama3.1",
+    "llama3.2",
+    "llama3.3",
+    "llama4",
+    "grok2-community",
+    "gemma",
+)
 
 
 def _generate_png_from_tensor(tensor: NDArray[np.generic]) -> Optional[bytes]:
@@ -76,15 +160,19 @@ def _generate_png_from_tensor(tensor: NDArray[np.generic]) -> Optional[bytes]:
         return None
 
 
-def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
+def _get_io_description(
+    model: ModelDescr,
+) -> Tuple[str, Dict[str, bytes], List[TensorId], List[TensorId]]:
     """Generate a description of model inputs and outputs with sample images.
 
     Returns:
-        A tuple of (markdown_string, referenced_files_dict) where referenced_files_dict maps
+        A tuple of (markdown_string, referenced_files_dict, input_ids, output_ids) where referenced_files_dict maps
         filenames to file bytes.
     """
     markdown_string = ""
     referenced_files: dict[str, bytes] = {}
+    input_ids: List[TensorId] = []
+    output_ids: List[TensorId] = []
 
     def format_data_descr(
         d: Union[
@@ -95,9 +183,16 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
     ) -> str:
         ret = ""
         if isinstance(d, NominalOrOrdinalDataDescr):
-            ret += f"    - Values: {d.values}\n"
+            ret += f"  - Values: {d.values}\n"
         elif isinstance(d, IntervalOrRatioDataDescr):
-            ret += f"    - Values: {d.scale} {d.unit} with offset: {d.offset} in range {d.range}\n"
+            ret += f"  - Value unit: {d.unit}\n"
+            ret += f"  - Value scale factor: {d.scale}\n"
+            if d.offset is not None:
+                ret += f"  - Value offset: {d.offset}\n"
+            elif d.range[0] is not None:
+                ret += f"  - Value minimum: {d.range[0]}\n"
+            elif d.range[1] is not None:
+                ret += f"  - Value maximum: {d.range[1]}\n"
         elif isinstance(d, collections.abc.Sequence):
             for dd in d:
                 ret += format_data_descr(dd)
@@ -111,6 +206,7 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
         markdown_string += "\n- **Input specifications:**\n"
 
         for inp in model.inputs:
+            input_ids.append(inp.id)
             axes_str = ", ".join(str(a.id) for a in inp.axes)
             shape_str = " × ".join(
                 str(a.size) if isinstance(a.size, int) else str(a.size)
@@ -150,6 +246,7 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
     if model.outputs:
         markdown_string += "\n- **Output specifications:**\n"
         for out in model.outputs:
+            output_ids.append(out.id)
             axes_str = ", ".join(str(a.id) for a in out.axes)
             shape_str = " × ".join(
                 str(a.size) if isinstance(a.size, int) else str(a.size)
@@ -185,7 +282,7 @@ def _get_io_description(model: ModelDescr) -> Tuple[str, Dict[str, bytes]]:
                 referenced_files[filename] = img_bytes
                 markdown_string += f"  - example\n    {out.id} sample]({filename})\n"
 
-    return markdown_string, referenced_files
+    return markdown_string, referenced_files, input_ids, output_ids
 
 
 def create_huggingface_model_card(
@@ -276,25 +373,6 @@ def create_huggingface_model_card(
     else:
         task_type = ""
 
-    if model.license is None:
-        license = "missing"
-    else:
-        matches = [
-            (entry["name"], entry["reference"])
-            for entry in get_spdx_licenses()["licenses"]
-            if entry["licenseId"] == model.license
-        ]
-        if matches:
-            if len(matches) > 1:
-                logger.warning(
-                    "Multiple SPDX license matches found for '{}', using the first one.",
-                    model.license,
-                )
-            name, reference = matches[0]
-            license = f"[{name}]({reference})"
-        else:
-            license = model.license
-
     if model.parent:
         finetuned_from = f"\n- **Finetuned from model:** {model.parent.id}"
     else:
@@ -304,7 +382,7 @@ def create_huggingface_model_card(
         f"[{model.git_repo}]({model.git_repo})" if model.git_repo else "missing"
     )
 
-    dl_frameworks: List[str] = []
+    dl_framework_parts: List[str] = []
     training_frameworks: List[str] = []
     model_size: Optional[str] = None
     for weights in model.weights.available_formats.values():
@@ -327,7 +405,9 @@ def create_huggingface_model_card(
         if weights.parent is None:
             training_frameworks.append(weights.weights_format_name)
 
-        dl_frameworks.append(f"{weights.weights_format_name}: {dl_framework_version}")
+        dl_framework_parts.append(
+            f"\n    - {weights.weights_format_name}: {dl_framework_version}"
+        )
 
         if model_size is None:
             s = 0
@@ -348,6 +428,7 @@ def create_huggingface_model_card(
             else:
                 model_size += f"{s / 1e9:.2f} GB"
 
+    dl_frameworks = "".join(dl_framework_parts)
     if len(training_frameworks) > 1:
         warnings.warn(
             "Multiple training frameworks detected. (Some weight formats are probably missing a `parent` reference.)"
@@ -374,6 +455,14 @@ def create_huggingface_model_card(
 """
     )
 
+    environmental_impact = model.config.bioimageio.environmental_impact.format_md()
+    if environmental_impact:
+        environmental_impact_toc_entry = (
+            "\n- [Environmental Impact](#environmental-impact)"
+        )
+    else:
+        environmental_impact_toc_entry = ""
+
     evaluation_parts: List[str] = []
     n_evals = 0
     for e in model.config.bioimageio.evaluations:
@@ -381,19 +470,9 @@ def create_huggingface_model_card(
             continue  # treated separately below
 
         n_evals += 1
-        if n_evals == 1:
-            n_evals_str = ""
-        else:
-            n_evals_str = f" {n_evals}"
-
-        evaluation_parts.append(f"# Evaluation{n_evals_str}\n")
+        n_evals_str = "" if n_evals == 1 else f" {n_evals}"
+        evaluation_parts.append(f"\n# Evaluation{n_evals_str}\n")
         evaluation_parts.append(e.format_md())
-
-    if not evaluation_parts:
-        evaluation_parts.append("# Evaluation\n")
-        evaluation_parts.append("missing")
-
-    evaluation_parts.append("### Validation on External Data\n")
 
     n_evals = 0
     for e in model.config.bioimageio.evaluations:
@@ -401,18 +480,17 @@ def create_huggingface_model_card(
             continue  # treated separately above
 
         n_evals += 1
-        if n_evals == 1:
-            n_evals_str = ""
-        else:
-            n_evals_str = f" {n_evals}"
+        n_evals_str = "" if n_evals == 1 else f" {n_evals}"
 
         evaluation_parts.append(f"### Validation on External Data{n_evals_str}\n")
         evaluation_parts.append(e.format_md())
 
-    if n_evals == 0:
-        evaluation_parts.append("missing")
-
-    evaluation = "\n".join(evaluation_parts)
+    if evaluation_parts:
+        evaluation = "\n".join(evaluation_parts)
+        evaluation_toc_entry = "\n- [Evaluation](#evaluation)"
+    else:
+        evaluation = ""
+        evaluation_toc_entry = ""
 
     training_details = ""
     if model.config.bioimageio.training.training_preprocessing:
@@ -493,7 +571,10 @@ def create_huggingface_model_card(
             + "\n"
         )
 
-    io_desc, referenced_files = _get_io_description(model)
+    io_desc, referenced_files, input_ids, output_ids = _get_io_description(model)
+    predict_snippet_inputs = str(
+        {input_id: "<path or tensor>" for input_id in input_ids}
+    )
     model_arch_and_objective += io_desc
 
     hardware_requirements = "\n### Hardware Requirements\n"
@@ -505,7 +586,53 @@ def create_huggingface_model_card(
 
     hardware_requirements += f"- **Storage:** Model size: {model_size}\n"
 
-    markdown = f"""# {model.name}
+    if model.license is None:
+        license = "unknown"
+        license_meta = "unknown"
+    else:
+        spdx_licenses = get_spdx_licenses()
+        matches = [
+            (entry["name"], entry["reference"])
+            for entry in spdx_licenses["licenses"]
+            if entry["licenseId"].lower() == model.license.lower()
+        ]
+        if matches:
+            if len(matches) > 1:
+                logger.warning(
+                    "Multiple SPDX license matches found for '{}', using the first one.",
+                    model.license,
+                )
+            name, reference = matches[0]
+            license = f"[{name}]({reference})"
+            license_meta = f"other\nlicense_name: {model.license.lower()}\nlicense_link: {reference}"
+        else:
+            if model.license.lower() in HF_KNOWN_LICENSES:
+                license_meta = model.license.lower()
+            else:
+                license_meta = "other"
+
+            license = model.license.lower()
+
+    base_model = (
+        f"\nbase_model: {model.parent.id[len('huggingface/') :]}"
+        if model.parent is not None and model.parent.id.startswith("huggingface/")
+        else ""
+    )
+    dataset_meta = (
+        f"\ndataset: {model.training_data.id[len('huggingface/') :]}"
+        if model.training_data is not None
+        and model.training_data.id is not None
+        and model.training_data.id.startswith("huggingface/")
+        else ""
+    )
+    # TODO: add pipeline_tag to metadata
+    readme = f"""---
+license: {license_meta}
+tags: {list({"biology"}.union(set(model.tags)))}
+language: [en]
+library_name: bioimageio{base_model}{dataset_meta}
+---
+# {model.name}
 
 {model.description or ""}
 
@@ -516,9 +643,9 @@ def create_huggingface_model_card(
 - [Uses](#uses)
 - [Bias, Risks, and Limitations](#bias-risks-and-limitations)
 - [How to Get Started with the Model](#how-to-get-started-with-the-model)
-- [Training Details](#training-details)
-- [Evaluation](#evaluation)
-- [Environmental Impact](#environmental-impact)
+- [Training Details](#training-details){evaluation_toc_entry}{
+        environmental_impact_toc_entry
+    }
 - [Technical Specifications](#technical-specifications)
 
 
@@ -543,7 +670,20 @@ This model is compatible with the bioimageio.spec Python package (version >= {
         VERSION
     }) and the bioimageio.core Python package supporting model inference in Python code or via the `bioimageio` CLI.
 
+```python
+from bioimageio.core import predict
 
+output_sample = predict(
+    "huggingface/{repo_id}/{model.version or "draft"}",
+    inputs={predict_snippet_inputs},
+)
+
+output_tensor = output_sample.members["{
+        output_ids[0] if output_ids else "<output_id>"
+    }"]
+xarray_dataarray = output_tensor.data
+numpy_ndarray = output_tensor.data.to_numpy()
+```
 
 ## Downstream Use
 
@@ -563,8 +703,8 @@ Specific bioimage.io partner tool compatibilities may be reported at [Compatibil
 
 # How to Get Started with the Model
 
-You can use "huggingface/{repo_id}{
-        "/v" + str(model.version) if model.version else ""
+You can use "huggingface/{repo_id}/{
+        model.version or "draft"
     }" as the resource identifier to load this model directly from the Hugging Face Hub using bioimageio.spec or bioimageio.core.
 
 See [bioimageio.core documentation: Get started](https://bioimage-io.github.io/core-bioimage-io-python/latest/get-started) for instructions on how to load and run this model using the `bioimageio.core` Python package or the bioimageio CLI.
@@ -584,10 +724,8 @@ See [bioimageio.core documentation: Get started](https://bioimage-io.github.io/c
 {training_details}
 
 {speeds_sizes_times}
-
 {evaluation}
-
-{model.config.bioimageio.environmental_impact.format_md()}
+{environmental_impact}
 
 # Technical Specifications
 
@@ -618,4 +756,4 @@ See [bioimageio.core documentation: Get started](https://bioimage-io.github.io/c
 - [bioimageio.spec Python Package](https://bioimage-io.github.io/spec-bioimage-io)
 """
 
-    return markdown, referenced_files
+    return readme, referenced_files

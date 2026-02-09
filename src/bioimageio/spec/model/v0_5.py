@@ -3033,15 +3033,22 @@ class EnvironmentalImpact(Node, extra="allow"):
 
     def format_md(self):
         """Filled Markdown template section following [Hugging Face Model Card Template](https://huggingface.co/docs/hub/en/model-card-annotated)."""
-        return f"""# Environmental Impact
+        if self == self.__class__():
+            return ""
 
-- **Hardware Type:** {self.hardware_type or "missing"}
-- **Hours used:** {self.hours_used or "missing"}
-- **Cloud Provider:** {self.cloud_provider or "missing"}
-- **Compute Region:** {self.compute_region or "missing"}
-- **Carbon Emitted:** {self.co2_emitted or "missing"}
+        ret = "# Environmental Impact\n\n"
+        if self.hardware_type is not None:
+            ret += f"- **Hardware Type:** {self.hardware_type}\n"
+        if self.hours_used is not None:
+            ret += f"- **Hours used:** {self.hours_used}\n"
+        if self.cloud_provider is not None:
+            ret += f"- **Cloud Provider:** {self.cloud_provider}\n"
+        if self.compute_region is not None:
+            ret += f"- **Compute Region:** {self.compute_region}\n"
+        if self.co2_emitted is not None:
+            ret += f"- **Carbon Emitted:** {self.co2_emitted} kg CO2e\n"
 
-"""
+        return ret + "\n"
 
 
 class BioimageioConfig(Node, extra="allow"):

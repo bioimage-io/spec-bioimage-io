@@ -1,5 +1,6 @@
 import os
 import tempfile
+import warnings
 from contextlib import nullcontext
 from functools import cache
 from pathlib import Path
@@ -71,8 +72,6 @@ def _push_to_hub_impl(
     prep_dir: Path,
     prep_only: bool,
 ):
-    from huggingface_hub import create_branch, list_repo_refs
-
     readme, referenced_files = create_huggingface_model_card(descr, repo_id=repo_id)
     referenced_files_subfolders = {"images"}
     assert not (
@@ -108,41 +107,44 @@ def _push_to_hub_impl(
         repo_url = api.create_repo(repo_id=repo_id, exist_ok=True, repo_type="model")
         logger.info(f"Created repository at {repo_url}")
 
-        version_tag = f"v{descr.version}" if descr.version else None
-        existing_refs = list_repo_refs(
+        existing_refs = api.list_repo_refs(
             repo_id=repo_id, repo_type="model", include_pull_requests=True
         )
         has_draft_ref = False
+        has_tag = False
         for ref in existing_refs.branches + existing_refs.tags:
-            if ref.name == version_tag:
-                raise ValueError(
-                    f"Version '{version_tag}' already exists in the repository."
-                )
+            if ref.name == str(descr.version):
+                has_tag = True
             if ref.name == "draft":
                 has_draft_ref = True
 
-        if version_tag is None:
-            base_revision = "draft"
+        if descr.version is None:
+            parent_commit = "draft"
             if not has_draft_ref:
-                create_branch(repo_id=repo_id, branch="draft", repo_type="model")
+                api.create_branch(repo_id=repo_id, branch="draft", repo_type="model")
         else:
-            base_revision = "main"
+            parent_commit = None
 
         commit_info = api.upload_folder(
             repo_id=repo_id,
-            revision=base_revision,
+            revision="main",
             folder_path=prep_dir,
             delete_patterns=[f"{sf}/*" for sf in referenced_files_subfolders]
             + ["package/*"],
             commit_message=commit_message,
             commit_description=commit_description,
+            create_pr=True,
+            parent_commit=parent_commit,
         )
         logger.info(f"Created commit {commit_info.commit_url}")
-        if version_tag is not None:
+        if descr.version is not None:
+            if has_tag:
+                warnings.warn(f"Moving existing version tag {descr.version}.")
+
             api.create_tag(
                 repo_id=repo_id,
-                tag=version_tag,
+                tag=str(descr.version),
                 revision=commit_info.oid,
                 tag_message=descr.version_comment,
-                exist_ok=False,
+                exist_ok=True,
             )
