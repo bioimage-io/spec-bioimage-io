@@ -71,6 +71,7 @@ docs = [
     "mike",
     "mkdocs-api-autonav",
     "mkdocs-coverage",
+    "mkdocs-gen-files",
     "mkdocs-material",
     "mkdocs-section-index",
 ]
