@@ -193,7 +193,32 @@ def generate_flat_source_from_object(
     var_name: Optional[str] = None,
     known_third_party: Set[str],
     output_file: Path,
+    i_know_i_need_to_check_third_party_licenses: bool,
 ):
+    """Generate a flat source file for the given object, including dependencies.
+
+    Args:
+        var_name: Variable name to assign the object to in the output file.
+        known_third_party: Set of known third-party library names to exclude from flattening.
+            (Keep them as dependencies.)
+        output_file: Path to the output flat source file.
+        i_know_i_need_to_check_third_party_licenses: If True, indicates that the user (YOU!)
+            has verified compliance with third-party licenses for included code.
+            Check the licenses of the inluded third-party code in the resulting flattened code before distributing!
+
+        Note:
+            Check the licenses of the inluded third-party code in the resulting flattened code before distributing!
+
+    Raises:
+        RuntimeError: i_know_i_need_to_check_third_party_licenses is not True.
+    """
+    if i_know_i_need_to_check_third_party_licenses is not True:
+        raise RuntimeError(
+            "You must set i_know_i_need_to_check_third_party_licenses=True "
+            + "to acknowledge that you will check third-party licenses "
+            + "for any included code before distributing the flattened source."
+        )
+
     src_file = inspect.getsourcefile(obj)
     if src_file is None:
         raise RuntimeError(f"Cannot locate source file for object, {obj}")
@@ -241,16 +266,17 @@ def generate_flat_source_from_object(
 # CLI support
 # --------------------------
 if __name__ == "__main__":
-    if len(sys.argv) < 5:
+    if len(sys.argv) < 6:
         print(
-            "Usage: flatten.py <input.py> <object_name> <known_lib1,known_lib2> <output.py>"
+            "Usage: flatten.py 'i_know_i_need_to_check_third_party_licenses' <input.py> <object_name> <known_lib1,known_lib2> <output.py>"
         )
         sys.exit(1)
 
-    input_file = Path(sys.argv[1])
-    object_name = sys.argv[2]
-    known_libs = set(sys.argv[3].split(","))
-    output_file = Path(sys.argv[4])
+    i_know = sys.argv[1]
+    input_file = Path(sys.argv[2])
+    object_name = sys.argv[3]
+    known_libs = set(sys.argv[4].split(","))
+    output_file = Path(sys.argv[5])
 
     from importlib.util import module_from_spec, spec_from_file_location
 
@@ -262,5 +288,10 @@ if __name__ == "__main__":
     obj = getattr(mod, object_name)
 
     generate_flat_source_from_object(
-        obj, var_name=object_name, known_third_party=known_libs, output_file=output_file
+        obj,
+        var_name=object_name,
+        known_third_party=known_libs,
+        output_file=output_file,
+        i_know_i_need_to_check_third_party_licenses=i_know
+        == "i_know_i_need_to_check_third_party_licenses",
     )

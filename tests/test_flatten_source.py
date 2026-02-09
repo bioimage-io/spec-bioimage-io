@@ -47,5 +47,6 @@ def a_func():
         obj,
         known_third_party={"numpy", "torch"},
         output_file=out_path,
+        i_know_i_need_to_check_third_party_licenses=True,
     )
     assert expected[obj_name] == out_path.read_text()
