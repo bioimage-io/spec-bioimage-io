@@ -593,7 +593,17 @@
           "description": "Results for each metric (rows; outer list) and each evaluation factor (columns; inner list).",
           "items": {
             "items": {
-              "type": "string"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
             },
             "type": "array"
           },
