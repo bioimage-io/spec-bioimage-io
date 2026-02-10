@@ -65,7 +65,7 @@ def test_hf(unet2d_path: Path, fill_meta: bool, tmp_path: Path):
         model.config.bioimageio.evaluations.append(
             Evaluation(
                 dataset_id=DatasetId("my_test_set"),
-                dataset_source=HttpUrl("https://example.com"),
+                dataset_source=HttpUrl("https://example.com/dataset_source"),
                 dataset_role="test",
                 sample_count=3,
                 evaluation_factors=["nuclei", "membrane"],
@@ -80,7 +80,7 @@ def test_hf(unet2d_path: Path, fill_meta: bool, tmp_path: Path):
             Evaluation(
                 model_id=model.id,
                 dataset_id=DatasetId("my_test_set"),
-                dataset_source=HttpUrl("https://example.com"),
+                dataset_source=HttpUrl("https://example.com/dataset_source"),
                 dataset_role="independent",
                 sample_count=3,
                 evaluation_factors=["nuclei", "membrane"],
@@ -95,9 +95,10 @@ def test_hf(unet2d_path: Path, fill_meta: bool, tmp_path: Path):
         model.authors = []
         model.cite = []
         model.license = None
+        assert model.weights.onnx is not None
         model.weights = WeightsDescr(
             onnx=OnnxWeightsDescr(
-                source=HttpUrl("https://example.com"),
+                source=model.weights.onnx.source,
                 opset_version=11,
                 comment="fake example weights",
             )

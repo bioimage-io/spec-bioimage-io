@@ -187,6 +187,9 @@ def save_bioimageio_package_as_folder(
 
     output_path.mkdir(exist_ok=True, parents=True)
     for name, src in package_content.items():
+        if not name:
+            raise ValueError("got empty file name in package content")
+
         if isinstance(src, collections.abc.Mapping):
             write_yaml(src, output_path / name)
         elif (

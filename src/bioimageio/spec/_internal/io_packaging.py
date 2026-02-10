@@ -92,6 +92,9 @@ def _package(
         return unpackaged  # return unpackaged file source
 
     fname = extract_file_name(source)
+    if not fname:
+        raise ValueError(f"Got empty file name for source {source}")
+
     if fname == packaging_context.bioimageio_yaml_file_name:
         raise ValueError(
             f"Reserved file name '{packaging_context.bioimageio_yaml_file_name}' "
