@@ -2949,7 +2949,7 @@ class Evaluation(Node, extra="allow"):
 
         return self
 
-    results: List[List[str]]
+    results: List[List[Union[str, float, int]]]
     """Results for each metric (rows; outer list) and each evaluation factor (columns; inner list)."""
 
     results_summary: Optional[str] = None
@@ -2965,7 +2965,8 @@ class Evaluation(Node, extra="allow"):
     def format_md(self):
         results_header = ["Metric"] + self.evaluation_factors
         results_table_cells = [results_header, ["---"] * len(results_header)] + [
-            [metric] + row for metric, row in zip(self.metrics, self.results)
+            [metric] + [str(r) for r in row]
+            for metric, row in zip(self.metrics, self.results)
         ]
 
         results_table = "".join(
