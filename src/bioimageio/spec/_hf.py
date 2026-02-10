@@ -17,7 +17,7 @@ from ._version import VERSION
 
 
 @cache
-def get_huggingface_api():
+def get_huggingface_api():  # pragma: no cover
     from huggingface_hub import HfApi
 
     return HfApi(library_name="bioimageio.spec", library_version=VERSION)

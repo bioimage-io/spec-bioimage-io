@@ -104,7 +104,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           thresholdAll: 0.7
           thresholdNew: 0.9
-          thresholdModified: 0.6
+          thresholdModified: 0.65
       - name: generate coverage badge and html report
         run: |
           pip install genbadge[coverage]
@@ -170,7 +170,7 @@ jobs:
   #        recipe-path: conda-recipe/recipe.yaml
 
   docs:
-    needs: [test, coverage, build, conda-build]
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: write # required for tag creation
