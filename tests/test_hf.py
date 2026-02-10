@@ -7,6 +7,7 @@ from bioimageio.spec.model.v0_5 import (
     DatasetId,
     Evaluation,
     HttpUrl,
+    LicenseId,
     LinkedModel,
     ModelId,
     OnnxWeightsDescr,
@@ -23,7 +24,7 @@ def test_hf(unet2d_path: Path, fill_meta: bool, tmp_path: Path):
     model.id = ModelId("unet2d_nuclei_broad")
 
     if fill_meta:
-        model.license = "AAL"
+        model.license = LicenseId("AAL")
         model.parent = LinkedModel(
             id=ModelId("unet2d_nuclei_broad_v0.1"),
             version=Version("0.1"),
