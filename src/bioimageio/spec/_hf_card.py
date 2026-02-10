@@ -604,12 +604,15 @@ def create_huggingface_model_card(
                 )
             name, reference = matches[0]
             license = f"[{name}]({reference})"
-            license_meta = f"other\nlicense_name: {model.license.lower()}\nlicense_link: {reference}"
+            if model.license.lower() in HF_KNOWN_LICENSES:
+                license_meta = model.license.lower()
+            else:
+                license_meta = f"other\nlicense_name: {model.license.lower()}\nlicense_link: {reference}"
         else:
             if model.license.lower() in HF_KNOWN_LICENSES:
                 license_meta = model.license.lower()
             else:
-                license_meta = "other"
+                license_meta = "unknown"
 
             license = model.license.lower()
 
