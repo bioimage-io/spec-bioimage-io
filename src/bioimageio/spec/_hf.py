@@ -100,7 +100,7 @@ def _push_to_hub_impl(
         f"Version comment: {descr.version_comment}" if descr.version_comment else None
     )
 
-    if not prep_only:
+    if not prep_only:  # pragma: no cover
         logger.info(f"Pushing model '{descr.id}' to Hugging Face Hub")
 
         api = get_huggingface_api()
