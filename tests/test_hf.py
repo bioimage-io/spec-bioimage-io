@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from bioimageio.spec import load_model_description
-from bioimageio.spec.model.v0_5 import Evaluation, ModelId
+from bioimageio.spec.model.v0_5 import DatasetId, Evaluation, HttpUrl, ModelId
 
 
 @pytest.mark.parametrize("fill_meta", (True, False))
@@ -27,7 +27,7 @@ def test_hf(unet2d_path: Path, fill_meta: bool):
             "EMBL Heidelberg"
         )
         my_model.config.bioimageio.funded_by = "EMBL"
-        my_model.config.bioimageio.new_version = (
+        my_model.config.bioimageio.new_version = ModelId(
             "huggingface/bioimageio/not_a_real_model"
         )
         my_model.config.bioimageio.out_of_scope_use = (
@@ -49,8 +49,8 @@ def test_hf(unet2d_path: Path, fill_meta: bool):
         my_model.config.bioimageio.memory_requirements_training = "also not much"
         my_model.config.bioimageio.evaluations.append(
             Evaluation(
-                dataset_id="my_test_set",
-                dataset_source="https://example.com",
+                dataset_id=DatasetId("my_test_set"),
+                dataset_source=HttpUrl("https://example.com"),
                 dataset_role="test",
                 sample_count=3,
                 evaluation_factors=["nuclei", "membrane"],
