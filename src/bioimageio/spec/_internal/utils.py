@@ -6,7 +6,6 @@ import sys
 from dataclasses import dataclass
 from functools import wraps
 from inspect import isfunction, signature
-from pathlib import Path
 from typing import (
     Any,
     Callable,
@@ -34,6 +33,7 @@ NestedDict = Dict[K, "NestedDict[K, V] | V"]
 
 if sys.version_info < (3, 9):  # pragma: no cover
     from functools import lru_cache as cache
+    from pathlib import Path
 
     def files(package_name: str):
         assert package_name == "bioimageio.spec", package_name

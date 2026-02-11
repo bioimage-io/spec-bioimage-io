@@ -6,7 +6,7 @@ requires-python = ">=3.8"
 readme = "README.md"
 dependencies = [
     "annotated-types>=0.5.0,<1",
-    "email_validator",
+    "email-validator",
     "exceptiongroup",            # TODO: remove when py3.11 is lowest supported version
     "genericache==0.5.2",
     "httpx",
@@ -44,10 +44,11 @@ dynamic = ["version"]
 dev = [
     "deepdiff",
     "devtools",
-    "griffe-pydantic",
     "griffe-inherited-docstrings",
     "griffe-public-redundant-aliases",
-    "json_schema_for_humans",
+    "griffe-pydantic",
+    "huggingface-hub",
+    "json-schema-for-humans",
     "jsonschema",
     "jupyter",
     "lxml",
@@ -65,11 +66,13 @@ dev = [
 ]
 docs = [
     "markdown-callouts",
-    "markdown-exec",
+    "markdown-exec[ansi]",
     "markdown-pycon",
     "mike",
     "mkdocs-api-autonav",
     "mkdocs-coverage",
+    "mkdocs-gen-files",
+    "mkdocs-literate-nav",
     "mkdocs-material",
     "mkdocs-section-index",
 ]
@@ -86,6 +89,7 @@ version = { attr = "bioimageio.spec._version.VERSION" }
 
 [tool.pyright]
 exclude = [
+    "**/.*",
     "**/__pycache__",
     "**/node_modules",
     "scripts/pdoc/original.py",
@@ -124,7 +128,7 @@ typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
 
 [tool.pytest.ini_options]
-addopts = "--doctest-modules"           # TODO: add --nbval
+addopts = "--doctest-modules --ignore scripts/generate_api_doc_pages.py"  # TODO: add --nbval
 testpaths = ["example", "src", "tests"]
 
 [tool.ruff]

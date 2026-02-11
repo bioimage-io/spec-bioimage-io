@@ -1,9 +1,7 @@
 # autogen: start
 """application resource description format
 
-Implementations of all released minor versions are available in submodules:
-- application v0_2: `bioimageio.spec.application.v0_2.ApplicationDescr`
-- application v0_3: `bioimageio.spec.application.v0_3.ApplicationDescr`
+Implementations of all released minor versions are available in submodules.
 """
 
 from typing import Union

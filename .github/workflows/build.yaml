@@ -38,7 +38,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install pydantic~=${{matrix.pydantic-version }} -e .[dev]
+          pip install pydantic~=${{matrix.pydantic-version }} -e .[dev,docs]
       - name: Get Date
         id: get-date
         run: |
@@ -83,7 +83,7 @@ jobs:
           path: .coverage.${{ matrix.python-version }}-${{ matrix.pydantic-version }}
           include-hidden-files: true
   coverage:
-    needs: [test]
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -98,13 +98,11 @@ jobs:
           ls -la .coverage*
           coverage combine
           coverage xml -o coverage.xml
-      - uses: orgoro/coverage@v3.2
+      - uses: actions/upload-artifact@v4
         with:
-          coverageFile: coverage.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          thresholdAll: 0.7
-          thresholdNew: 0.9
-          thresholdModified: 0.6
+          name: coverage.xml
+          retention-days: 1
+          path: coverage.xml
       - name: generate coverage badge and html report
         run: |
           pip install genbadge[coverage]
@@ -115,6 +113,23 @@ jobs:
           name: coverage-summary
           retention-days: 1
           path: dist
+
+  coverage-comment:
+    needs: coverage
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage.xml
+      - uses: orgoro/coverage@v3.2
+        with:
+          coverageFile: coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          thresholdAll: 0.7
+          thresholdNew: 0.9
+          thresholdModified: 0.65
 
   build:
     runs-on: ubuntu-latest
@@ -170,7 +185,7 @@ jobs:
   #        recipe-path: conda-recipe/recipe.yaml
 
   docs:
-    needs: [test, coverage, build, conda-build]
+    needs: coverage
     runs-on: ubuntu-latest
     permissions:
       contents: write # required for tag creation

@@ -43,6 +43,7 @@ def get_resource_package_content(
     bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
 ) -> Dict[FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]]:
+    """Get the content of a bioimage.io resource package."""
     ret: Dict[
         FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]
     ] = {}
@@ -186,6 +187,9 @@ def save_bioimageio_package_as_folder(
 
     output_path.mkdir(exist_ok=True, parents=True)
     for name, src in package_content.items():
+        if not name:
+            raise ValueError("got empty file name in package content")
+
         if isinstance(src, collections.abc.Mapping):
             write_yaml(src, output_path / name)
         elif (

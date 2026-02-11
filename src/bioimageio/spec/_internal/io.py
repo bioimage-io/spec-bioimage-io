@@ -226,6 +226,10 @@ class RelativeFilePath(
 
         return absolute
 
+    @property
+    def suffix(self):
+        return self.root.suffix
+
 
 class RelativeDirectory(
     RelativePathBase[Union[AbsoluteDirectory, HttpUrl, ZipPath]], frozen=True
@@ -310,6 +314,10 @@ class FileDescr(Node):
     ):
         """alias for `.get_reader`"""
         return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
+
+    @property
+    def suffix(self) -> str:
+        return self.source.suffix
 
 
 path_or_url_adapter: "TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]]" = (

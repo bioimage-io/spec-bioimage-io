@@ -45,4 +45,15 @@ pip install -U bioimageio.spec
 
 ## 🏞 Environment variables
 
-TODO: link to settings in dev docs
+See [bioimageio.spec.settings][]
+
+## 🗎 Logging
+
+bioimageio.spec (and bioimageio.core) use [loguru](https://loguru.readthedocs.io/en/stable/) for logging.
+To enable logs from bioimageio.spec (and bioimageio.core) use:
+
+```python
+from loguru import logger
+
+logger.enable("bioimageio")
+```

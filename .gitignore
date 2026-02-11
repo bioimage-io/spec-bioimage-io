@@ -9,6 +9,7 @@ bioimageio_cache/
 build/
 coverage.xml
 dist/
+docs/api/
 example/my_bioimageio_dataset.zip
 example/my_model.zip
 output/
