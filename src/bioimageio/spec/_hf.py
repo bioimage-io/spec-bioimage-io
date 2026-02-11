@@ -29,6 +29,7 @@ def push_to_hub(
     *,
     prep_dir: Optional[Union[os.PathLike[str], str]] = None,
     prep_only_no_upload: bool = False,
+    create_pr: Optional[bool] = None,
 ):
     """Push the model package described by `descr` to the Hugging Face Hub.
 
@@ -37,7 +38,26 @@ def push_to_hub(
         username_or_org: The Hugging Face username or organization under which the model package will be uploaded.
             The model ID from `descr.id` will be used as the repository name.
         prep_dir: Optional path to an empty directory where the model package will be prepared before uploading.
-        prep_only_no_upload: If `True`, only prepare the model package in `prep_dir` without uploading it to the Hugging Face Hub.
+        prep_only_no_upload: If `True`, only prepare the model package in `prep_dir` without uploading it
+            to the Hugging Face Hub.
+        create_pr: If `True`, create a pull request instead of committing directly
+            to the 'main' or 'draft' branch when uploading the model package.
+            Defaults to `True` if uploading to a model description with version (to the main branch),
+            and `False` if uploading a model description without version (to the 'draft' branch).
+
+    Examples:
+        Upload a model description as a new version to the main branch
+        (id and version must be set):
+
+        >>> my_model_descr = ModelDescr(id="my-model-id", version="1.0", create_pr=False, ...)
+        >>> push_to_hub(my_model_descr, "my_hf_username")
+
+        Upload a model description as a draft to the 'draft' branch
+        (id must be set; version must be None):
+
+        >>> my_model_descr = ModelDescr(id="my-model-id", version=None, ...)
+        >>> push_to_hub(my_model_descr, "my_hf_username")
+
     """
 
     if descr.id is None:
@@ -71,6 +91,7 @@ def _push_to_hub_impl(
     repo_id: str,
     prep_dir: Path,
     prep_only: bool,
+    create_pr: Optional[bool],
 ):
     readme, referenced_files = create_huggingface_model_card(descr, repo_id=repo_id)
     referenced_files_subfolders = {"images"}
@@ -119,22 +140,26 @@ def _push_to_hub_impl(
                 has_draft_ref = True
 
         if descr.version is None:
-            parent_commit = "draft"
+            revision = "draft"
             if not has_draft_ref:
                 api.create_branch(repo_id=repo_id, branch="draft", repo_type="model")
         else:
-            parent_commit = None
+            revision = None
+
+        if create_pr is None:
+            # default to creating a PR if commiting to main branch,
+            # commit directly to 'draft' branch
+            create_pr = revision is None
 
         commit_info = api.upload_folder(
             repo_id=repo_id,
-            revision="main",
+            revision=revision,
             folder_path=prep_dir,
             delete_patterns=[f"{sf}/*" for sf in referenced_files_subfolders]
             + ["package/*"],
             commit_message=commit_message,
             commit_description=commit_description,
-            create_pr=True,
-            parent_commit=parent_commit,
+            create_pr=create_pr,
         )
         logger.info(f"Created commit {commit_info.commit_url}")
         if descr.version is not None:
