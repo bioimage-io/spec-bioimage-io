@@ -55,14 +55,18 @@ def push_to_hub(
         Upload a model description as a new version to the main branch
         (`descr.id` and `descr.version` must be set):
 
-        >>> descr = ModelDescr(id="my-model-id", version="1.0", create_pr=False, ...)
-        >>> push_to_hub(descr, "my_hf_username")
+        >>> descr = ModelDescr(id="my-model-id", version="1.0", create_pr=False, ...)  # doctest: +SKIP
+        >>> push_to_hub(descr, "my_hf_username") # doctest: +SKIP
 
         Upload a model description as a draft to the 'draft' branch
         (`descr.id` must be set; `descr.version` must be `None`):
 
-        >>> descr = ModelDescr(id="my-model-id", version=None, ...)
-        >>> push_to_hub(descr, "my_hf_username")
+        >>> descr = ModelDescr(id="my-model-id", version=None, ...)  # doctest: +SKIP
+        >>> push_to_hub(descr, "my_hf_username") # doctest: +SKIP
+
+        See what would be uploaded without actually uploading:
+
+        >>> push_to_hub(..., prep_dir="empty_local_folder", prep_only_no_upload=True) # doctest: +SKIP
 
     """
 
