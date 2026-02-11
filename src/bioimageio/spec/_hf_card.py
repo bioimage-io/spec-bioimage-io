@@ -628,14 +628,28 @@ def create_huggingface_model_card(
         and model.training_data.id.startswith("huggingface/")
         else ""
     )
+    if model.covers:
+        cover_image_reader = get_reader(model.covers[0])
+        cover_image_bytes = cover_image_reader.read()
+        cover_image_filename = f"images/{cover_image_reader.original_file_name}"
+        referenced_files[cover_image_filename] = cover_image_bytes
+        cover_image_md = f"\n![cover image]({cover_image_filename})\n\n"
+        thumbnail_meta = (
+            f"\nthumbnail: {cover_image_filename}"  # TODO: fix this to be a proper URL
+        )
+
+    else:
+        cover_image_md = ""
+        thumbnail_meta = ""
+
     # TODO: add pipeline_tag to metadata
     readme = f"""---
-license: {license_meta}
+license: {license_meta}{thumbnail_meta}
 tags: {list({"biology"}.union(set(model.tags)))}
 language: [en]
 library_name: bioimageio{base_model}{dataset_meta}
 ---
-# {model.name}
+# {model.name}{cover_image_md}
 
 {model.description or ""}
 
