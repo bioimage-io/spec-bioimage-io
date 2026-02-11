@@ -33,6 +33,12 @@ def push_to_hub(
 ):
     """Push the model package described by `descr` to the Hugging Face Hub.
 
+    Note:
+        - Uses `descr.id` as the repository name under the provided `username_or_org`.
+        - If `descr.version` is set, the model package is uploaded to the 'main' branch
+          and tagged with the version.
+        - If `descr.version` is `None`, the model package is uploaded to the 'draft' branch.
+
     Args:
         descr: The model description to be pushed to the Hugging Face Hub.
         username_or_org: The Hugging Face username or organization under which the model package will be uploaded.
@@ -40,23 +46,23 @@ def push_to_hub(
         prep_dir: Optional path to an empty directory where the model package will be prepared before uploading.
         prep_only_no_upload: If `True`, only prepare the model package in `prep_dir` without uploading it
             to the Hugging Face Hub.
-        create_pr: If `True`, create a pull request instead of committing directly
-            to the 'main' or 'draft' branch when uploading the model package.
+        create_pr: If `False` commit directly to the 'main'/'draft' branch.
+            If `True`, create a pull request targeting 'main'/'draft'.
             Defaults to `True` if uploading to a model description with version (to the main branch),
             and `False` if uploading a model description without version (to the 'draft' branch).
 
     Examples:
         Upload a model description as a new version to the main branch
-        (id and version must be set):
+        (`descr.id` and `descr.version` must be set):
 
-        >>> my_model_descr = ModelDescr(id="my-model-id", version="1.0", create_pr=False, ...)
-        >>> push_to_hub(my_model_descr, "my_hf_username")
+        >>> descr = ModelDescr(id="my-model-id", version="1.0", create_pr=False, ...)
+        >>> push_to_hub(descr, "my_hf_username")
 
         Upload a model description as a draft to the 'draft' branch
-        (id must be set; version must be None):
+        (`descr.id` must be set; `descr.version` must be `None`):
 
-        >>> my_model_descr = ModelDescr(id="my-model-id", version=None, ...)
-        >>> push_to_hub(my_model_descr, "my_hf_username")
+        >>> descr = ModelDescr(id="my-model-id", version=None, ...)
+        >>> push_to_hub(descr, "my_hf_username")
 
     """
 
@@ -82,6 +88,7 @@ def push_to_hub(
             repo_id=repo_id,
             prep_dir=Path(pdir),
             prep_only=prep_only_no_upload,
+            create_pr=create_pr,
         )
 
 
