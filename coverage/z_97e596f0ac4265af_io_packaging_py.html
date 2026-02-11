@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for src/bioimageio/spec/_internal/io_packaging.py: 79%</title>
+    <title>Coverage for src/bioimageio/spec/_internal/io_packaging.py: 78%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_c827f16f.png">
     <link rel="stylesheet" href="style_cb_9ff733b0.css" type="text/css">
     <script src="coverage_html_cb_dd2e7eb5.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>src&#8201;/&#8201;bioimageio&#8201;/&#8201;spec&#8201;/&#8201;_internal&#8201;/&#8201;io_packaging.py</b>:
-            <span class="pc_cov">79%</span>
+            <span class="pc_cov">78%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -54,9 +54,9 @@
             </div>
         </aside>
         <h2>
-            <span class="text">58 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">46<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">12<span class="text"> missing</span></button>
+            <span class="text">60 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">47<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">13<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">2<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_97e596f0ac4265af_io_utils_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-09 13:16 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.13.4">coverage.py v7.13.4</a>,
+            created at 2026-02-11 16:05 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -174,53 +174,56 @@
     <p class="run"><span class="n"><a id="t92" href="#t92">92</a></span><span class="t">        <span class="key">return</span> <span class="nam">unpackaged</span>  <span class="com"># return unpackaged file source</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t93" href="#t93">93</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t94" href="#t94">94</a></span><span class="t">    <span class="nam">fname</span> <span class="op">=</span> <span class="nam">extract_file_name</span><span class="op">(</span><span class="nam">source</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t95" href="#t95">95</a></span><span class="t">    <span class="key">if</span> <span class="nam">fname</span> <span class="op">==</span> <span class="nam">packaging_context</span><span class="op">.</span><span class="nam">bioimageio_yaml_file_name</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t96" href="#t96">96</a></span><span class="t">        <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t97" href="#t97">97</a></span><span class="t">            <span class="fst">f"</span><span class="fst">Reserved file name '</span><span class="op">{</span><span class="nam">packaging_context</span><span class="op">.</span><span class="nam">bioimageio_yaml_file_name</span><span class="op">}</span><span class="fst">' </span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t98" href="#t98">98</a></span><span class="t">            <span class="op">+</span> <span class="str">"not allowed for a file to be packaged"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t99" href="#t99">99</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t100" href="#t100">100</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t101" href="#t101">101</a></span><span class="t">    <span class="nam">fsrcs</span> <span class="op">=</span> <span class="nam">packaging_context</span><span class="op">.</span><span class="nam">file_sources</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t102" href="#t102">102</a></span><span class="t">    <span class="key">assert</span> <span class="key">not</span> <span class="nam">any</span><span class="op">(</span><span class="nam">fname</span><span class="op">.</span><span class="nam">endswith</span><span class="op">(</span><span class="nam">special</span><span class="op">)</span> <span class="key">for</span> <span class="nam">special</span> <span class="key">in</span> <span class="nam">ALL_BIOIMAGEIO_YAML_NAMES</span><span class="op">)</span><span class="op">,</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t103" href="#t103">103</a></span><span class="t">        <span class="nam">fname</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t104" href="#t104">104</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t105" href="#t105">105</a></span><span class="t">    <span class="key">if</span> <span class="nam">fname</span> <span class="key">in</span> <span class="nam">fsrcs</span> <span class="key">and</span> <span class="nam">fsrcs</span><span class="op">[</span><span class="nam">fname</span><span class="op">]</span><span class="op">.</span><span class="nam">source</span> <span class="op">!=</span> <span class="nam">source</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t106" href="#t106">106</a></span><span class="t">        <span class="key">for</span> <span class="nam">i</span> <span class="key">in</span> <span class="nam">range</span><span class="op">(</span><span class="num">2</span><span class="op">,</span> <span class="num">20</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t107" href="#t107">107</a></span><span class="t">            <span class="nam">fn</span><span class="op">,</span> <span class="op">*</span><span class="nam">ext</span> <span class="op">=</span> <span class="nam">fname</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">"."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t108" href="#t108">108</a></span><span class="t">            <span class="nam">alternative_file_name</span> <span class="op">=</span> <span class="str">"."</span><span class="op">.</span><span class="nam">join</span><span class="op">(</span><span class="op">[</span><span class="fst">f"</span><span class="op">{</span><span class="nam">fn</span><span class="op">}</span><span class="fst">_</span><span class="op">{</span><span class="nam">i</span><span class="op">}</span><span class="fst">"</span><span class="op">,</span> <span class="op">*</span><span class="nam">ext</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t109" href="#t109">109</a></span><span class="t">            <span class="key">if</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t110" href="#t110">110</a></span><span class="t">                <span class="nam">alternative_file_name</span> <span class="key">not</span> <span class="key">in</span> <span class="nam">fsrcs</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">                <span class="key">or</span> <span class="nam">fsrcs</span><span class="op">[</span><span class="nam">alternative_file_name</span><span class="op">]</span><span class="op">.</span><span class="nam">source</span> <span class="op">==</span> <span class="nam">source</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis mis2 show_mis"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t">            <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">                <span class="nam">fname</span> <span class="op">=</span> <span class="nam">alternative_file_name</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">                <span class="key">break</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t116" href="#t116">116</a></span><span class="t">            <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="fst">f"</span><span class="fst">Too many file name clashes for </span><span class="op">{</span><span class="nam">fname</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t117" href="#t117">117</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t118" href="#t118">118</a></span><span class="t">    <span class="nam">fsrcs</span><span class="op">[</span><span class="nam">fname</span><span class="op">]</span> <span class="op">=</span> <span class="nam">FileDescr</span><span class="op">(</span><span class="nam">source</span><span class="op">=</span><span class="nam">source</span><span class="op">,</span> <span class="nam">sha256</span><span class="op">=</span><span class="nam">sha256</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t119" href="#t119">119</a></span><span class="t">    <span class="key">return</span> <span class="nam">fname</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t95" href="#t95">95</a></span><span class="t">    <span class="key">if</span> <span class="key">not</span> <span class="nam">fname</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t96" href="#t96">96</a></span><span class="t">        <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="fst">f"</span><span class="fst">Got empty file name for source </span><span class="op">{</span><span class="nam">source</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t97" href="#t97">97</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t98" href="#t98">98</a></span><span class="t">    <span class="key">if</span> <span class="nam">fname</span> <span class="op">==</span> <span class="nam">packaging_context</span><span class="op">.</span><span class="nam">bioimageio_yaml_file_name</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t99" href="#t99">99</a></span><span class="t">        <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t100" href="#t100">100</a></span><span class="t">            <span class="fst">f"</span><span class="fst">Reserved file name '</span><span class="op">{</span><span class="nam">packaging_context</span><span class="op">.</span><span class="nam">bioimageio_yaml_file_name</span><span class="op">}</span><span class="fst">' </span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t101" href="#t101">101</a></span><span class="t">            <span class="op">+</span> <span class="str">"not allowed for a file to be packaged"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t102" href="#t102">102</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t103" href="#t103">103</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t104" href="#t104">104</a></span><span class="t">    <span class="nam">fsrcs</span> <span class="op">=</span> <span class="nam">packaging_context</span><span class="op">.</span><span class="nam">file_sources</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t105" href="#t105">105</a></span><span class="t">    <span class="key">assert</span> <span class="key">not</span> <span class="nam">any</span><span class="op">(</span><span class="nam">fname</span><span class="op">.</span><span class="nam">endswith</span><span class="op">(</span><span class="nam">special</span><span class="op">)</span> <span class="key">for</span> <span class="nam">special</span> <span class="key">in</span> <span class="nam">ALL_BIOIMAGEIO_YAML_NAMES</span><span class="op">)</span><span class="op">,</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t106" href="#t106">106</a></span><span class="t">        <span class="nam">fname</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t107" href="#t107">107</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t108" href="#t108">108</a></span><span class="t">    <span class="key">if</span> <span class="nam">fname</span> <span class="key">in</span> <span class="nam">fsrcs</span> <span class="key">and</span> <span class="nam">fsrcs</span><span class="op">[</span><span class="nam">fname</span><span class="op">]</span><span class="op">.</span><span class="nam">source</span> <span class="op">!=</span> <span class="nam">source</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t109" href="#t109">109</a></span><span class="t">        <span class="key">for</span> <span class="nam">i</span> <span class="key">in</span> <span class="nam">range</span><span class="op">(</span><span class="num">2</span><span class="op">,</span> <span class="num">20</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t110" href="#t110">110</a></span><span class="t">            <span class="nam">fn</span><span class="op">,</span> <span class="op">*</span><span class="nam">ext</span> <span class="op">=</span> <span class="nam">fname</span><span class="op">.</span><span class="nam">split</span><span class="op">(</span><span class="str">"."</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">            <span class="nam">alternative_file_name</span> <span class="op">=</span> <span class="str">"."</span><span class="op">.</span><span class="nam">join</span><span class="op">(</span><span class="op">[</span><span class="fst">f"</span><span class="op">{</span><span class="nam">fn</span><span class="op">}</span><span class="fst">_</span><span class="op">{</span><span class="nam">i</span><span class="op">}</span><span class="fst">"</span><span class="op">,</span> <span class="op">*</span><span class="nam">ext</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t">            <span class="key">if</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">                <span class="nam">alternative_file_name</span> <span class="key">not</span> <span class="key">in</span> <span class="nam">fsrcs</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">                <span class="key">or</span> <span class="nam">fsrcs</span><span class="op">[</span><span class="nam">alternative_file_name</span><span class="op">]</span><span class="op">.</span><span class="nam">source</span> <span class="op">==</span> <span class="nam">source</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis mis2 show_mis"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">            <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t116" href="#t116">116</a></span><span class="t">                <span class="nam">fname</span> <span class="op">=</span> <span class="nam">alternative_file_name</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t117" href="#t117">117</a></span><span class="t">                <span class="key">break</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t118" href="#t118">118</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t119" href="#t119">119</a></span><span class="t">            <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="fst">f"</span><span class="fst">Too many file name clashes for </span><span class="op">{</span><span class="nam">fname</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t120" href="#t120">120</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t121" href="#t121">121</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t122" href="#t122">122</a></span><span class="t"><span class="nam">include_in_package</span> <span class="op">=</span> <span class="nam">PrettyPlainSerializer</span><span class="op">(</span><span class="nam">_package_serializer</span><span class="op">,</span> <span class="nam">when_used</span><span class="op">=</span><span class="str">"unless-none"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t123" href="#t123">123</a></span><span class="t"><span class="str">"""DEPRECATED serializer for `source` fields without corresponding `sha256` field."""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t121" href="#t121">121</a></span><span class="t">    <span class="nam">fsrcs</span><span class="op">[</span><span class="nam">fname</span><span class="op">]</span> <span class="op">=</span> <span class="nam">FileDescr</span><span class="op">(</span><span class="nam">source</span><span class="op">=</span><span class="nam">source</span><span class="op">,</span> <span class="nam">sha256</span><span class="op">=</span><span class="nam">sha256</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t122" href="#t122">122</a></span><span class="t">    <span class="key">return</span> <span class="nam">fname</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t123" href="#t123">123</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t124" href="#t124">124</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t125" href="#t125">125</a></span><span class="t"><span class="nam">include_when_packaging</span> <span class="op">=</span> <span class="nam">WrapSerializer</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t126" href="#t126">126</a></span><span class="t">    <span class="nam">package_file_descr_serializer</span><span class="op">,</span> <span class="nam">when_used</span><span class="op">=</span><span class="str">"unless-none"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t127" href="#t127">127</a></span><span class="t"><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t128" href="#t128">128</a></span><span class="t"><span class="str">"""Pydantic serializer that marks the annotated `FileDescr` to be included when packaging</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t129" href="#t129">129</a></span><span class="t"><span class="str">(saving a bioimageio zip package)."""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t130" href="#t130">130</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t131" href="#t131">131</a></span><span class="t"><span class="nam">FileSource_</span> <span class="op">=</span> <span class="nam">Annotated</span><span class="op">[</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">    <span class="nam">FileSource</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t">    <span class="nam">AfterValidator</span><span class="op">(</span><span class="nam">wo_special_file_name</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t134" href="#t134">134</a></span><span class="t">    <span class="nam">include_in_package</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t135" href="#t135">135</a></span><span class="t"><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t136" href="#t136">136</a></span><span class="t"><span class="str">"""A file source that is included when packaging the resource."""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t137" href="#t137">137</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t138" href="#t138">138</a></span><span class="t"><span class="nam">FileDescr_</span> <span class="op">=</span> <span class="nam">Annotated</span><span class="op">[</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t139" href="#t139">139</a></span><span class="t">    <span class="nam">FileDescr</span><span class="op">,</span> <span class="nam">AfterValidator</span><span class="op">(</span><span class="nam">wo_special_file_name</span><span class="op">)</span><span class="op">,</span> <span class="nam">include_when_packaging</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t140" href="#t140">140</a></span><span class="t"><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t141" href="#t141">141</a></span><span class="t"><span class="str">"""A `FileDescr` whose **source** is included when packaging the resource."""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t125" href="#t125">125</a></span><span class="t"><span class="nam">include_in_package</span> <span class="op">=</span> <span class="nam">PrettyPlainSerializer</span><span class="op">(</span><span class="nam">_package_serializer</span><span class="op">,</span> <span class="nam">when_used</span><span class="op">=</span><span class="str">"unless-none"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t126" href="#t126">126</a></span><span class="t"><span class="str">"""DEPRECATED serializer for `source` fields without corresponding `sha256` field."""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t127" href="#t127">127</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t128" href="#t128">128</a></span><span class="t"><span class="nam">include_when_packaging</span> <span class="op">=</span> <span class="nam">WrapSerializer</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t129" href="#t129">129</a></span><span class="t">    <span class="nam">package_file_descr_serializer</span><span class="op">,</span> <span class="nam">when_used</span><span class="op">=</span><span class="str">"unless-none"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t130" href="#t130">130</a></span><span class="t"><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t131" href="#t131">131</a></span><span class="t"><span class="str">"""Pydantic serializer that marks the annotated `FileDescr` to be included when packaging</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t"><span class="str">(saving a bioimageio zip package)."""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t134" href="#t134">134</a></span><span class="t"><span class="nam">FileSource_</span> <span class="op">=</span> <span class="nam">Annotated</span><span class="op">[</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t135" href="#t135">135</a></span><span class="t">    <span class="nam">FileSource</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t136" href="#t136">136</a></span><span class="t">    <span class="nam">AfterValidator</span><span class="op">(</span><span class="nam">wo_special_file_name</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t137" href="#t137">137</a></span><span class="t">    <span class="nam">include_in_package</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t138" href="#t138">138</a></span><span class="t"><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t139" href="#t139">139</a></span><span class="t"><span class="str">"""A file source that is included when packaging the resource."""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t140" href="#t140">140</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t141" href="#t141">141</a></span><span class="t"><span class="nam">FileDescr_</span> <span class="op">=</span> <span class="nam">Annotated</span><span class="op">[</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t142" href="#t142">142</a></span><span class="t">    <span class="nam">FileDescr</span><span class="op">,</span> <span class="nam">AfterValidator</span><span class="op">(</span><span class="nam">wo_special_file_name</span><span class="op">)</span><span class="op">,</span> <span class="nam">include_when_packaging</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t143" href="#t143">143</a></span><span class="t"><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t144" href="#t144">144</a></span><span class="t"><span class="str">"""A `FileDescr` whose **source** is included when packaging the resource."""</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -229,8 +232,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_97e596f0ac4265af_io_utils_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-09 13:16 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.13.4">coverage.py v7.13.4</a>,
+            created at 2026-02-11 16:05 +0000
         </p>
     </div>
 </footer>

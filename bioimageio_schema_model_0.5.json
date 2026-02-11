@@ -243,6 +243,45 @@
       "title": "model.v0_5.BatchAxis",
       "type": "object"
     },
+    "BiasRisksLimitations": {
+      "additionalProperties": true,
+      "description": "Known biases, risks, technical limitations, and recommendations for model use.",
+      "properties": {
+        "known_biases": {
+          "default": "In general bioimage models may suffer from biases caused by:\n\n- Imaging protocol dependencies\n- Use of a specific cell type\n- Species-specific training data limitations\n\n",
+          "description": "Biases in training data or model behavior.",
+          "title": "Known Biases",
+          "type": "string"
+        },
+        "risks": {
+          "default": "Common risks in bioimage analysis include:\n\n- Erroneously assuming generalization to unseen experimental conditions\n- Trusting (overconfident) model outputs without validation\n- Misinterpretation of results\n\n",
+          "description": "Potential risks in the context of bioimage analysis.",
+          "title": "Risks",
+          "type": "string"
+        },
+        "limitations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Technical limitations and failure modes.",
+          "title": "Limitations"
+        },
+        "recommendations": {
+          "default": "Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model.",
+          "description": "Mitigation strategies regarding `known_biases`, `risks`, and `limitations`, as well as applicable best practices.\n\nConsider:\n- How to use a validation dataset?\n- How to manually validate?\n- Feasibility of domain adaptation for different experimental setups?",
+          "title": "Recommendations",
+          "type": "string"
+        }
+      },
+      "title": "model.v0_5.BiasRisksLimitations",
+      "type": "object"
+    },
     "BinarizeAlongAxisKwargs": {
       "additionalProperties": false,
       "description": "key word arguments for `BinarizeDescr`",
@@ -546,6 +585,211 @@
         "dtype"
       ],
       "title": "model.v0_5.EnsureDtypeKwargs",
+      "type": "object"
+    },
+    "EnvironmentalImpact": {
+      "additionalProperties": true,
+      "description": "Environmental considerations for model training and deployment.\n\nCarbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).",
+      "properties": {
+        "hardware_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GPU/CPU specifications",
+          "title": "Hardware Type"
+        },
+        "hours_used": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total compute hours",
+          "title": "Hours Used"
+        },
+        "cloud_provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If applicable",
+          "title": "Cloud Provider"
+        },
+        "compute_region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Geographic location",
+          "title": "Compute Region"
+        },
+        "co2_emitted": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "kg CO2 equivalent\n\nCarbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).",
+          "title": "Co2 Emitted"
+        }
+      },
+      "title": "model.v0_5.EnvironmentalImpact",
+      "type": "object"
+    },
+    "Evaluation": {
+      "additionalProperties": true,
+      "properties": {
+        "model_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "title": "ModelId",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Model being evaluated.",
+          "title": "Model Id"
+        },
+        "dataset_id": {
+          "description": "Dataset used for evaluation.",
+          "minLength": 1,
+          "title": "DatasetId",
+          "type": "string"
+        },
+        "dataset_source": {
+          "description": "Source of the dataset.",
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "HttpUrl",
+          "type": "string"
+        },
+        "dataset_role": {
+          "description": "Role of the dataset used for evaluation.\n\n- `train`: dataset was (part of) the training data\n- `validation`: dataset was (part of) the validation data used during training, e.g. used for model selection or hyperparameter tuning\n- `test`: dataset was (part of) the designated test data; not used during training or validation, but acquired from the same source/distribution as training data\n- `independent`: dataset is entirely independent test data; not used during training or validation, and acquired from a different source/distribution than training data\n- `unknown`: role of the dataset is unknown; choose this if you are not certain if (a subset) of the data was seen by the model during training.",
+          "enum": [
+            "train",
+            "validation",
+            "test",
+            "independent",
+            "unknown"
+          ],
+          "title": "Dataset Role",
+          "type": "string"
+        },
+        "sample_count": {
+          "description": "Number of evaluated samples.",
+          "title": "Sample Count",
+          "type": "integer"
+        },
+        "evaluation_factors": {
+          "description": "(Abbreviations of) each evaluation factor.\n\nEvaluation factors are criteria along which model performance is evaluated, e.g. different image conditions\nlike 'low SNR', 'high cell density', or different biological conditions like 'cell type A', 'cell type B'.\nAn 'overall' factor may be included to summarize performance across all conditions.",
+          "items": {
+            "maxLength": 16,
+            "type": "string"
+          },
+          "title": "Evaluation Factors",
+          "type": "array"
+        },
+        "evaluation_factors_long": {
+          "description": "Descriptions (long form) of each evaluation factor.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Evaluation Factors Long",
+          "type": "array"
+        },
+        "metrics": {
+          "description": "(Abbreviations of) metrics used for evaluation.",
+          "items": {
+            "maxLength": 16,
+            "type": "string"
+          },
+          "title": "Metrics",
+          "type": "array"
+        },
+        "metrics_long": {
+          "description": "Description of each metric used.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Metrics Long",
+          "type": "array"
+        },
+        "results": {
+          "description": "Results for each metric (rows; outer list) and each evaluation factor (columns; inner list).",
+          "items": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array"
+          },
+          "title": "Results",
+          "type": "array"
+        },
+        "results_summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Interpretation of results for general audience.\n\nConsider:\n    - Overall model performance\n    - Comparison to existing methods\n    - Limitations and areas for improvement",
+          "title": "Results Summary"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "dataset_source",
+        "dataset_role",
+        "sample_count",
+        "evaluation_factors",
+        "evaluation_factors_long",
+        "metrics",
+        "metrics_long",
+        "results"
+      ],
+      "title": "model.v0_5.Evaluation",
       "type": "object"
     },
     "FileDescr": {
@@ -3181,6 +3425,146 @@
         "pytorch_version"
       ],
       "title": "model.v0_5.TorchscriptWeightsDescr",
+      "type": "object"
+    },
+    "TrainingDetails": {
+      "additionalProperties": true,
+      "properties": {
+        "training_preprocessing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Detailed image preprocessing steps during model training:\n\nMention:\n- *Normalization methods*\n- *Augmentation strategies*\n- *Resizing/resampling procedures*\n- *Artifact handling*",
+          "title": "Training Preprocessing"
+        },
+        "training_epochs": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of training epochs.",
+          "title": "Training Epochs"
+        },
+        "training_batch_size": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Batch size used in training.",
+          "title": "Training Batch Size"
+        },
+        "initial_learning_rate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Initial learning rate used in training.",
+          "title": "Initial Learning Rate"
+        },
+        "learning_rate_schedule": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Learning rate schedule used in training.",
+          "title": "Learning Rate Schedule"
+        },
+        "loss_function": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Loss function used in training, e.g. nn.MSELoss.",
+          "title": "Loss Function"
+        },
+        "loss_function_kwargs": {
+          "additionalProperties": {
+            "$ref": "#/$defs/YamlValue"
+          },
+          "description": "key word arguments for the `loss_function`",
+          "title": "Loss Function Kwargs",
+          "type": "object"
+        },
+        "optimizer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "optimizer, e.g. torch.optim.Adam",
+          "title": "Optimizer"
+        },
+        "optimizer_kwargs": {
+          "additionalProperties": {
+            "$ref": "#/$defs/YamlValue"
+          },
+          "description": "key word arguments for the `optimizer`",
+          "title": "Optimizer Kwargs",
+          "type": "object"
+        },
+        "regularization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Regularization techniques used during training, e.g. drop-out or weight decay.",
+          "title": "Regularization"
+        },
+        "training_duration": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total training duration in hours.",
+          "title": "Training Duration"
+        }
+      },
+      "title": "model.v0_5.TrainingDetails",
       "type": "object"
     },
     "Uploader": {
@@ -5969,6 +6353,180 @@
           },
           "title": "Reproducibility Tolerance",
           "type": "array"
+        },
+        "funded_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Funding agency, grant number if applicable",
+          "title": "Funded By"
+        },
+        "architecture_type": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Model architecture type, e.g., 3D U-Net, ResNet, transformer",
+          "title": "Architecture Type"
+        },
+        "architecture_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text description of model architecture.",
+          "title": "Architecture Description"
+        },
+        "modality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Input modality, e.g., fluorescence microscopy, electron microscopy",
+          "title": "Modality"
+        },
+        "target_structure": {
+          "description": "Biological structure(s) the model is designed to analyze, e.g., nuclei, mitochondria, cells",
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Structure",
+          "type": "array"
+        },
+        "task": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bioimage-specific task type, e.g., segmentation, classification, detection, denoising",
+          "title": "Task"
+        },
+        "new_version": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "title": "ModelId",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A new version of this model exists with a different model id.",
+          "title": "New Version"
+        },
+        "out_of_scope_use": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Describe how the model may be misused in bioimage analysis contexts and what users should **not** do with the model.",
+          "title": "Out Of Scope Use"
+        },
+        "bias_risks_limitations": {
+          "$ref": "#/$defs/BiasRisksLimitations",
+          "description": "Description of known bias, risks, and technical limitations for in-scope model use."
+        },
+        "model_parameter_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total number of model parameters.",
+          "title": "Model Parameter Count"
+        },
+        "training": {
+          "$ref": "#/$defs/TrainingDetails",
+          "description": "Details on how the model was trained."
+        },
+        "inference_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Average inference time per image/tile. Specify hardware and image size. Multiple examples can be given.",
+          "title": "Inference Time"
+        },
+        "memory_requirements_inference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GPU memory needed for inference. Multiple examples with different image size can be given.",
+          "title": "Memory Requirements Inference"
+        },
+        "memory_requirements_training": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GPU memory needed for training. Multiple examples with different image/batch sizes can be given.",
+          "title": "Memory Requirements Training"
+        },
+        "evaluations": {
+          "description": "Quantitative model evaluations.\n\nNote:\n    At the moment we recommend to include only a single test dataset\n    (with evaluation factors that may mark subsets of the dataset)\n    to avoid confusion and make the presentation of results cleaner.",
+          "items": {
+            "$ref": "#/$defs/Evaluation"
+          },
+          "title": "Evaluations",
+          "type": "array"
+        },
+        "environmental_impact": {
+          "$ref": "#/$defs/EnvironmentalImpact",
+          "description": "Environmental considerations for model training and deployment"
         }
       },
       "title": "model.v0_5.BioimageioConfig",
