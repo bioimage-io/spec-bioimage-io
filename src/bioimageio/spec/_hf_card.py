@@ -406,7 +406,7 @@ def create_huggingface_model_card(
             training_frameworks.append(weights.weights_format_name)
 
         dl_framework_parts.append(
-            f"\n    - {weights.weights_format_name}: {dl_framework_version}"
+            f"\n  - {weights.weights_format_name}: {dl_framework_version}"
         )
 
         if model_size is None:
@@ -754,7 +754,7 @@ See [bioimageio.core documentation: Get started](https://bioimage-io.github.io/c
 
 ### Software
 
-- **Framework:** {" or ".join(dl_frameworks)}
+- **Framework:** {dl_frameworks}
 - **Libraries:** {dependencies}
 - **BioImage.IO partner compatibility:** [Compatibility Reports](https://bioimage-io.github.io/collection/latest/compatibility/#compatibility-by-resource)
 
