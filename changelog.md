@@ -10,6 +10,11 @@ In this file we log both:
 
 This changelog includes implementation details and my reference the [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+### bioimageio.spec 0.5.7.2
+
+- force redownload when SHA is unknown (avoids cache clashes)
+- fix `version_type.Version` comparisons
+
 ### bioimageio.spec 0.5.7.1
 
 - add `bioimageio.spec.load_image` (previously in bioimageio.core)

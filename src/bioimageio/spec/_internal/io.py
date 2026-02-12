@@ -714,7 +714,7 @@ def _open_url(
         else settings.disk_cache
     )
     sha = kwargs.get("sha256")
-    digest = False if sha is None else ContentDigest.parse(hexdigest=sha)
+    force_refetch = True if sha is None else ContentDigest.parse(hexdigest=sha)
     source_path = PurePosixPath(
         source.path
         or sha
@@ -724,7 +724,7 @@ def _open_url(
     reader = cache.fetch(
         source,
         fetcher=partial(_fetch_url, progressbar=progressbar),
-        force_refetch=digest,
+        force_refetch=force_refetch,
     )
     return BytesReader(
         reader,
