@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_97e596f0ac4265af_io_basics_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.4">coverage.py v7.13.4</a>,
-            created at 2026-02-11 16:05 +0000
+            created at 2026-02-12 16:10 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -796,7 +796,7 @@
     <p class="run run2"><span class="n"><a id="t714" href="#t714">714</a></span><span class="t">        <span class="key">else</span> <span class="nam">settings</span><span class="op">.</span><span class="nam">disk_cache</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t715" href="#t715">715</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t716" href="#t716">716</a></span><span class="t">    <span class="nam">sha</span> <span class="op">=</span> <span class="nam">kwargs</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"sha256"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t717" href="#t717">717</a></span><span class="t">    <span class="nam">digest</span> <span class="op">=</span> <span class="key">False</span> <span class="key">if</span> <span class="nam">sha</span> <span class="key">is</span> <span class="key">None</span> <span class="key">else</span> <span class="nam">ContentDigest</span><span class="op">.</span><span class="nam">parse</span><span class="op">(</span><span class="nam">hexdigest</span><span class="op">=</span><span class="nam">sha</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t717" href="#t717">717</a></span><span class="t">    <span class="nam">force_refetch</span> <span class="op">=</span> <span class="key">True</span> <span class="key">if</span> <span class="nam">sha</span> <span class="key">is</span> <span class="key">None</span> <span class="key">else</span> <span class="nam">ContentDigest</span><span class="op">.</span><span class="nam">parse</span><span class="op">(</span><span class="nam">hexdigest</span><span class="op">=</span><span class="nam">sha</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t718" href="#t718">718</a></span><span class="t">    <span class="nam">source_path</span> <span class="op">=</span> <span class="nam">PurePosixPath</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t719" href="#t719">719</a></span><span class="t">        <span class="nam">source</span><span class="op">.</span><span class="nam">path</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t720" href="#t720">720</a></span><span class="t">        <span class="key">or</span> <span class="nam">sha</span>&nbsp;</span><span class="r"></span></p>
@@ -806,7 +806,7 @@
     <p class="run"><span class="n"><a id="t724" href="#t724">724</a></span><span class="t">    <span class="nam">reader</span> <span class="op">=</span> <span class="nam">cache</span><span class="op">.</span><span class="nam">fetch</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t725" href="#t725">725</a></span><span class="t">        <span class="nam">source</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t726" href="#t726">726</a></span><span class="t">        <span class="nam">fetcher</span><span class="op">=</span><span class="nam">partial</span><span class="op">(</span><span class="nam">_fetch_url</span><span class="op">,</span> <span class="nam">progressbar</span><span class="op">=</span><span class="nam">progressbar</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run run2"><span class="n"><a id="t727" href="#t727">727</a></span><span class="t">        <span class="nam">force_refetch</span><span class="op">=</span><span class="nam">digest</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t727" href="#t727">727</a></span><span class="t">        <span class="nam">force_refetch</span><span class="op">=</span><span class="nam">force_refetch</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t728" href="#t728">728</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t729" href="#t729">729</a></span><span class="t">    <span class="key">return</span> <span class="nam">BytesReader</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t730" href="#t730">730</a></span><span class="t">        <span class="nam">reader</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -1048,7 +1048,7 @@
             <a class="nav" href="z_97e596f0ac4265af_io_basics_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.4">coverage.py v7.13.4</a>,
-            created at 2026-02-11 16:05 +0000
+            created at 2026-02-12 16:10 +0000
         </p>
     </div>
 </footer>
