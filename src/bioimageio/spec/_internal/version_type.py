@@ -19,10 +19,15 @@ class Version(RootModel[Union[str, int, float]]):
         self._version = packaging.version.Version(str(self.root))
         return super().model_post_init(__context)
 
-    def __lt__(self, other: Version):
+    def __lt__(self, other: Any):
+        if not isinstance(other, Version):
+            return NotImplemented
+
         return self._version < other._version
 
-    def __eq__(self, other: Version):
+    def __eq__(self, other: Any):
+        if not isinstance(other, Version):
+            return NotImplemented
         return self._version == other._version
 
     # the properties below are adopted from and mirror properties of packaging.version.Version
