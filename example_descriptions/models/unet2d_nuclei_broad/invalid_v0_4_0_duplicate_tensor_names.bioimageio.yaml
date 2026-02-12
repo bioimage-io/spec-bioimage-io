@@ -65,7 +65,7 @@ weights:
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
     source: http://files.ilastik.org/bioimageio_test/unet2d_nuclei_broad_weights.torch
     architecture: unet2d.py:UNet2d
-    architecture_sha256: 589f0c9e60fa00f015213cd251541bcbf9582644f3ecffb2e6f3a30d2af1931a
+    architecture_sha256: d00721e7d00f55222e8cbf90019dd85ce9df0ae42fd46a07f0e6ea45729b310d
     kwargs: { input_channels: 1, output_channels: 1 }
   onnx:
     sha256: f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c
