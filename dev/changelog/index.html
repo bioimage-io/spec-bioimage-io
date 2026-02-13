@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://bioimage-io.github.io/spec-bioimage-io/latest/changelog/">
       
       
-        <link rel="prev" href="../api/">
+        <link rel="prev" href="../api/bioimageio/spec/utils/">
       
       
         <link rel="next" href="../coverage/">
@@ -56,6 +56,8 @@
     
     
       <link rel="stylesheet" href="../assets/_markdown_exec_pyodide.css">
+    
+      <link rel="stylesheet" href="../assets/_markdown_exec_ansi.css">
     
       <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
@@ -266,17 +268,20 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../api/" class="md-tabs__link">
-        
+    
+    
+      <li class="md-tabs__item">
+        <a href="../api/" class="md-tabs__link">
+          
   
   
     
   
   API Reference
 
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
@@ -439,9 +444,55 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../api/" class="md-nav__link">
+    
+    
+      
         
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    <li class="md-nav__item md-nav__item--pruned md-nav__item--nested">
+      
+        
+  
+  
+  
+    <a href="../api/" class="md-nav__link">
+      
   
   
   <span class="md-ellipsis">
@@ -455,7 +506,13 @@
   
   
 
-      </a>
+      
+        <span class="md-nav__icon md-icon"></span>
+      
+    </a>
+  
+
+      
     </li>
   
 
@@ -679,6 +736,16 @@ In this file we log both:</p>
 </ul>
 <h2 id="changes-to-the-bioimageiospec-python-package">Changes to the bioimageio.spec Python package<a class="headerlink" href="#changes-to-the-bioimageiospec-python-package" title="Anchor link to this section for reference">¤</a></h2>
 <p>This changelog includes implementation details and my reference the <a href="#changes-to-the-resource-description-format">changes to the Resource Description Format</a>, e.g. in entry <a href="#bioimageiospec-052">bioimageio.spec 0.5.2</a>.</p>
+<h3 id="bioimageiospec-0572">bioimageio.spec 0.5.7.2<a class="headerlink" href="#bioimageiospec-0572" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>force redownload when SHA is unknown (avoids cache clashes)</li>
+<li>fix <code>version_type.Version</code> comparisons</li>
+</ul>
+<h3 id="bioimageiospec-0571">bioimageio.spec 0.5.7.1<a class="headerlink" href="#bioimageiospec-0571" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>add <code>bioimageio.spec.load_image</code> (previously in bioimageio.core)</li>
+<li>add experimental (private) <code>bioimageio.spec._hf.push_to_hub</code> function to publish models on the Hugging Face Hub</li>
+</ul>
 <h3 id="bioimageiospec-0570">bioimageio.spec 0.5.7.0<a class="headerlink" href="#bioimageiospec-0570" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
 <li>add <code>v0_5.WeightsDescr.__setitem__</code></li>
@@ -1299,7 +1366,7 @@ If the changes also apply to <code>type</code> model, the coresponding model for
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../api/" class="md-footer__link md-footer__link--prev" aria-label="Previous: API Reference">
+          <a href="../api/bioimageio/spec/utils/" class="md-footer__link md-footer__link--prev" aria-label="Previous: bioimageio.spec.utils">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1309,7 +1376,7 @@ If the changes also apply to <code>type</code> model, the coresponding model for
                 Previous
               </span>
               <div class="md-ellipsis">
-                API Reference
+                bioimageio.spec.utils
               </div>
             </div>
           </a>
