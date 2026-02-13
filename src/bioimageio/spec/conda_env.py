@@ -115,7 +115,7 @@ class BioimageioCondaEnv(CondaEnv):
             for d in self.dependencies
             if not isinstance(d, PipDeps)
         ):
-            self.dependencies.append("conda-forge::bioimageio.core")
+            self.dependencies.append("conda-forge::bioimageio.core>=0.9.4")
 
         self.dependencies.sort()
         return self

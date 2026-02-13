@@ -199,7 +199,7 @@ def _get_default_tf_env(tensorflow_version: Optional[Version]) -> BioimageioCond
         tensorflow_version = Version("2.17")
 
     return BioimageioCondaEnv(
-        dependencies=["bioimageio.core", f"tensorflow =={tensorflow_version}"],
+        dependencies=[f"tensorflow =={tensorflow_version}"],
     )
 
 
@@ -212,7 +212,7 @@ def _get_env_from_deps(
             pip_deps_str = deps_reader.read_text()
             pip_deps = [d.strip() for d in pip_deps_str.split("\n")]
             if "bioimageio.core" not in pip_deps:
-                pip_deps.append("bioimageio.core")
+                pip_deps.append("bioimageio.core>=0.9.4")
 
             return BioimageioCondaEnv(
                 dependencies=[PipDeps(pip=pip_deps)],
