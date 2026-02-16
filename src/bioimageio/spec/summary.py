@@ -1,3 +1,10 @@
+"""Utilities for summarizing and formatting BioImage.IO validation results.
+
+This module defines data structures to capture validation errors, warnings,
+and summaries for BioImage.IO resource descriptions, along with helpers to
+format these results as plain text, Markdown, or HTML for reporting and
+diagnostics.
+"""
 import html
 import os
 import platform
