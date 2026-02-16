@@ -14,7 +14,7 @@ jobs:
         id: ls-remote
         run: |
           out=$(git ls-remote --heads origin gh-pages-${{ github.event.pull_request.head.ref }})
-          echo "::set-output name=out::$out"
+          echo "name=out::$out" >> $GITHUB_OUTPUT
       - name: delete gh-pages preview branch gh-pages-${{ github.event.pull_request.head.ref }}
         if: steps.ls-remote.outputs.out
         run: git push origin --delete gh-pages-${{ github.event.pull_request.head.ref }}
