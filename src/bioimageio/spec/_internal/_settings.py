@@ -57,7 +57,7 @@ class Settings(
     """Timeout in seconds for http requests."""
 
     huggingface_http_pattern: str = (
-        "https://huggingface.co/{repo_id}/tree/{branch}/package/bioimageio.yaml"
+        "https://huggingface.co/{repo_id}/resolve/{branch}/package/bioimageio.yaml"
     )
     """A pattern to map huggingface repo IDs to bioimageio.yaml URLs.
     Notes:
