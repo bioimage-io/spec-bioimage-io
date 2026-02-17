@@ -101,4 +101,4 @@ def empty_cache():
 
     shutil.rmtree(settings.cache_path)
     settings.cache_path.mkdir(parents=True, exist_ok=True)
-    logger.info("Emptied cache.")
+    logger.info("Emptied cache at {}", settings.cache_path)

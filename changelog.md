@@ -16,6 +16,7 @@ This changelog includes implementation details and might reference [changes to t
 - add `bioimageio.spec.utils.empty_cache()`
 - fix reassignment of `settings.cache_path`
 - update default HuggingFace download pattern
+- include a resource's version in the validation summary
 
 ### bioimageio.spec 0.5.7.3
 

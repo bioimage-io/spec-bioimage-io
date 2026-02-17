@@ -5,6 +5,7 @@ and summaries for BioImage.IO resource descriptions, along with helpers to
 format these results as plain text, Markdown, or HTML for reporting and
 diagnostics.
 """
+
 import html
 import os
 import platform
@@ -51,6 +52,7 @@ from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml
 from ._internal.type_guards import is_dict
 from ._internal.validation_context import ValidationContextSummary
+from ._internal.version_type import Version
 from ._internal.warning_levels import (
     ALERT,
     ALERT_NAME,
@@ -261,13 +263,16 @@ class ValidationSummary(BaseModel, extra="allow"):
     """Source of the validated bioimageio description"""
 
     id: Optional[str] = None
-    """ID of the resource being validated"""
+    """ID of the validated resource"""
+
+    version: Optional[Version] = None
+    """Version of the validated resource"""
 
     type: str
-    """Type of the resource being validated"""
+    """Type of the validated resource"""
 
     format_version: str
-    """Format version of the resource being validated"""
+    """Format version of the validated resource"""
 
     status: Literal["passed", "valid-format", "failed"]
     """Overall status of the bioimageio validation"""
@@ -676,7 +681,10 @@ def _format_summary(
         if summary.id is not None:
             info_rows.append(["id", summary.id])
 
-        info_rows.append(["format version", f"{summary.type} {summary.format_version}"])
+        if summary.version is not None:
+            info_rows.append(["version", str(summary.version)])
+
+        info_rows.append(["applied format", f"{summary.type} {summary.format_version}"])
         if not hide_env:
             info_rows.extend([[e.name, e.version] for e in sorted(summary.env)])
 

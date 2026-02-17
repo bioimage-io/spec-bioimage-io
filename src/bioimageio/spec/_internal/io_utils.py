@@ -202,6 +202,7 @@ def open_bioimageio_yaml(
             except Exception as e:
                 logger.warning("Failed to get bioimageio.yaml from {}: {}", url, e)
             else:
+                logger.info("loaded {} from {}", source, url)
                 original_file_name = (
                     "rdf.yaml" if url.path is None else url.path.split("/")[-1]
                 )
@@ -209,7 +210,7 @@ def open_bioimageio_yaml(
                     content=content,
                     original_root=url.parent,
                     original_file_name=original_file_name,
-                    original_source_name=source,
+                    original_source_name=url,
                     unparsed_content=unparsed_content,
                 )
 
