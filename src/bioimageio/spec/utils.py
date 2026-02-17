@@ -5,6 +5,7 @@ import shutil
 from typing import Any, Dict, List, TypedDict, Union
 
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
+from loguru import logger
 from numpy.typing import NDArray
 
 from ._description import ensure_description_is_dataset as ensure_description_is_dataset
@@ -100,3 +101,4 @@ def empty_cache():
 
     shutil.rmtree(settings.cache_path)
     settings.cache_path.mkdir(parents=True, exist_ok=True)
+    logger.info("Emptied cache.")

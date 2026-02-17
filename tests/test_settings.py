@@ -1,0 +1,25 @@
+from pathlib import Path
+
+import platformdirs
+
+
+def test_cache_path(tmp_path: Path):
+    from bioimageio.spec._internal._settings import settings
+    from bioimageio.spec.utils import empty_cache, get_reader
+
+    original_cache_path = settings.cache_path
+    assert original_cache_path == Path(platformdirs.user_cache_dir("bioimageio"))
+    try:
+        settings.cache_path = tmp_path
+        assert "disk_cache" not in settings.__dict__
+        assert settings.cache_path == tmp_path
+        _ = get_reader(
+            "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/refs/heads/main/README.md"
+        ).read()
+        assert "disk_cache" in settings.__dict__
+        assert settings.disk_cache.dir_path == tmp_path
+        assert len(list(tmp_path.iterdir())) == 1
+        empty_cache()
+        assert len(list(tmp_path.iterdir())) == 0
+    finally:
+        settings.cache_path = original_cache_path
