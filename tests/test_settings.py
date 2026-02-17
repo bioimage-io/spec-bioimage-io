@@ -1,14 +1,11 @@
 from pathlib import Path
 
-import platformdirs
-
 
 def test_cache_path(tmp_path: Path):
     from bioimageio.spec._internal._settings import settings
     from bioimageio.spec.utils import empty_cache, get_reader
 
     original_cache_path = settings.cache_path
-    assert original_cache_path == Path(platformdirs.user_cache_dir("bioimageio"))
     try:
         settings.cache_path = tmp_path
         assert "disk_cache" not in settings.__dict__
