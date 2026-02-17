@@ -1,7 +1,7 @@
 import os
 from functools import cached_property
 from pathlib import Path
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 import platformdirs
 from genericache import DiskCache
@@ -27,6 +27,16 @@ class Settings(
 
     cache_path: Path = Path(platformdirs.user_cache_dir("bioimageio"))
     """bioimageio cache location"""
+
+    def __setattr__(self, name: str, value: Any):
+        super().__setattr__(name, value)
+        # if cache_path is being changed, we need to reset the disk_cache so that it gets re-created with the new path when accessed next time
+        if (
+            name == "cache_path"
+            and "disk_cache" in self.__dict__
+            and self.disk_cache.dir_path != value
+        ):
+            del self.disk_cache
 
     @field_validator("cache_path", mode="after")
     @classmethod
@@ -57,7 +67,7 @@ class Settings(
     """Timeout in seconds for http requests."""
 
     huggingface_http_pattern: str = (
-        "https://huggingface.co/{repo_id}/tree/{branch}/package/bioimageio.yaml"
+        "https://huggingface.co/{repo_id}/resolve/{branch}/package/bioimageio.yaml"
     )
     """A pattern to map huggingface repo IDs to bioimageio.yaml URLs.
     Notes:

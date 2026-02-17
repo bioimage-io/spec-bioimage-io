@@ -155,6 +155,7 @@ class ResourceDescrBase(
             name="bioimageio format validation",
             source_name=context.source_name,
             id=getattr(self, "id", None),
+            version=getattr(self, "version", None),
             type=self.type,
             format_version=self.format_version,
             status="failed" if isinstance(self, InvalidDescr) else "valid-format",
