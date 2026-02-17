@@ -15,8 +15,8 @@ def test_cache_path(tmp_path: Path):
         ).read()
         assert "disk_cache" in settings.__dict__
         assert settings.disk_cache.dir_path == tmp_path
-        assert len(list(tmp_path.iterdir())) == 1
+        assert len([fn for fn in tmp_path.iterdir() if fn.suffix != ".lock"]) == 1
         empty_cache()
-        assert len(list(tmp_path.iterdir())) == 0
+        assert len([fn for fn in tmp_path.iterdir() if fn.suffix != ".lock"]) == 0
     finally:
         settings.cache_path = original_cache_path
