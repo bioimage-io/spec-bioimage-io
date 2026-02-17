@@ -10,6 +10,13 @@ In this file we log both:
 
 This changelog includes implementation details and might reference [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+### bioimageio.spec 0.5.7.4
+
+- update default pytorch conda environments
+- add `bioimageio.spec.utils.empty_cache()`
+- fix reassignment of `settings.cache_path`
+- update default HuggingFace download pattern
+
 ### bioimageio.spec 0.5.7.3
 
 - add lower pin for bioimageio.core in recommended environments
