@@ -1,6 +1,7 @@
 """Utility functions for bioimage.io specifications (mostly IO)."""
 
 import json
+import shutil
 from typing import Any, Dict, List, TypedDict, Union
 
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
@@ -8,6 +9,7 @@ from numpy.typing import NDArray
 
 from ._description import ensure_description_is_dataset as ensure_description_is_dataset
 from ._description import ensure_description_is_model as ensure_description_is_model
+from ._internal._settings import settings
 from ._internal.io import FileDescr
 from ._internal.io import download as download
 from ._internal.io import extract_file_name as extract_file_name
@@ -91,3 +93,10 @@ def load_image(source: Union[FileDescr, ZipPath, PermissiveFileSource]) -> NDArr
 
     assert is_ndarray(image)
     return image
+
+
+def empty_cache():
+    """Empty the bioimageio disk cache."""
+
+    shutil.rmtree(settings.cache_path)
+    settings.cache_path.mkdir(parents=True, exist_ok=True)
