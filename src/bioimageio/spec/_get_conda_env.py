@@ -83,8 +83,6 @@ def _get_default_pytorch_env(
         pytorch_version = Version("1.10.1")
 
     channels = ["conda-forge", "nodefaults"]
-    if pytorch_version < Version("2.5.2"):
-        channels.insert(0, "pytorch")
 
     # dependencies to install pytorch according to
     # https://pytorch.org/get-started/previous-versions/
@@ -151,6 +149,20 @@ def _get_default_pytorch_env(
         deps += ["torchvision==0.19.1", "torchaudio==2.4.1"]
     elif v == "2.5.0":
         deps += ["torchvision==0.20.0", "torchaudio==2.5.0"]
+    elif v == "2.5.1":
+        deps += ["torchvision==0.20.1", "torchaudio==2.5.1"]
+    elif v == "2.6.0":
+        deps += ["torchvision==0.21.0", "torchaudio==2.6.0"]
+    elif v == "2.7.0":
+        deps += ["torchvision==0.22.0", "torchaudio==2.7.0"]
+    elif v == "2.7.1":
+        deps += ["torchvision==0.22.1", "torchaudio==2.7.1"]
+    elif v == "2.8.0":
+        deps += ["torchvision==0.23.0", "torchaudio==2.8.0"]
+    elif v == "2.9.0":
+        deps += ["torchvision==0.24.0", "torchaudio==2.9.0"]
+    elif v == "2.9.1":
+        deps += ["torchvision==0.24.1", "torchaudio==2.9.1"]
     else:
         set_github_warning(
             "UPDATE NEEDED",
@@ -173,14 +185,9 @@ def _get_default_pytorch_env(
         # see https://github.com/pypa/setuptools/issues/4376#issuecomment-2126162839
         deps.append("setuptools <70.0.0")
 
-    if pytorch_version < Version(
-        "2.3"
-    ):  # TODO: verify that future pytorch 2.4 is numpy 2.0 compatible
-        # make sure we have a compatible numpy version
-        # see https://github.com/pytorch/vision/issues/8460
+    if pytorch_version < Version("2.3"):
+        # see https://github.com/pytorch/pytorch/issues/107302
         deps.append("numpy <2")
-    else:
-        deps.append("numpy >=2,<3")
 
     return BioimageioCondaEnv(channels=channels, dependencies=deps)
 
