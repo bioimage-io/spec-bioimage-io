@@ -145,7 +145,6 @@ from .v0_4 import ScaleMeanVarianceDescr as _ScaleMeanVarianceDescr_v0_4
 from .v0_4 import ScaleRangeDescr as _ScaleRangeDescr_v0_4
 from .v0_4 import SigmoidDescr as _SigmoidDescr_v0_4
 from .v0_4 import TensorName as _TensorName_v0_4
-from .v0_4 import WeightsFormat as WeightsFormat
 from .v0_4 import ZeroMeanUnitVarianceDescr as _ZeroMeanUnitVarianceDescr_v0_4
 from .v0_4 import package_weights
 
@@ -224,6 +223,16 @@ _AXIS_ID_MAP = {
     "i": "index",
     "c": "channel",
 }
+
+WeightsFormat = Literal[
+    "keras_hdf5",
+    "keras_v3",
+    "onnx",
+    "pytorch_state_dict",
+    "tensorflow_js",
+    "tensorflow_saved_model_bundle",
+    "torchscript",
+]
 
 
 class TensorId(LowerCaseIdentifier):
@@ -2433,6 +2442,20 @@ class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     """TensorFlow version used to create these weights."""
 
 
+class KerasV3WeightsDescr(WeightsEntryDescrBase):
+    type: ClassVar[WeightsFormat] = "keras_v3"
+    weights_format_name: ClassVar[str] = "Keras v3"
+    keras_version: Annotated[Version, Ge(Version(3))]
+    """Keras version used to create these weights."""
+
+    source: Annotated[
+        FileSource,
+        AfterValidator(wo_special_file_name),
+        WithSuffix(".keras", case_sensitive=True),
+    ]
+    """Source of the .keras weights file."""
+
+
 FileDescr_external_data = Annotated[
     FileDescr_,
     WithSuffix(".data", case_sensitive=True),
@@ -2518,6 +2541,7 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
 
 SpecificWeightsDescr = Union[
     KerasHdf5WeightsDescr,
+    KerasV3WeightsDescr,
     OnnxWeightsDescr,
     PytorchStateDictWeightsDescr,
     TensorflowJsWeightsDescr,
@@ -2578,17 +2602,12 @@ class WeightsDescr(Node):
 
     def __getitem__(
         self,
-        key: Literal[
-            "keras_hdf5",
-            "onnx",
-            "pytorch_state_dict",
-            "tensorflow_js",
-            "tensorflow_saved_model_bundle",
-            "torchscript",
-        ],
+        key: WeightsFormat,
     ):
         if key == "keras_hdf5":
             ret = self.keras_hdf5
+        elif key == "keras_v3":
+            ret = self.keras_v3
         elif key == "onnx":
             ret = self.onnx
         elif key == "pytorch_state_dict":
@@ -2610,6 +2629,10 @@ class WeightsDescr(Node):
     @overload
     def __setitem__(
         self, key: Literal["keras_hdf5"], value: Optional[KerasHdf5WeightsDescr]
+    ) -> None: ...
+    @overload
+    def __setitem__(
+        self, key: Literal["keras_v3"], value: Optional[KerasV3WeightsDescr]
     ) -> None: ...
     @overload
     def __setitem__(
@@ -2638,14 +2661,7 @@ class WeightsDescr(Node):
 
     def __setitem__(
         self,
-        key: Literal[
-            "keras_hdf5",
-            "onnx",
-            "pytorch_state_dict",
-            "tensorflow_js",
-            "tensorflow_saved_model_bundle",
-            "torchscript",
-        ],
+        key: WeightsFormat,
         value: Optional[SpecificWeightsDescr],
     ):
         if key == "keras_hdf5":
@@ -2654,6 +2670,12 @@ class WeightsDescr(Node):
                     f"Expected KerasHdf5WeightsDescr or None for key 'keras_hdf5', got {type(value)}"
                 )
             self.keras_hdf5 = value
+        elif key == "keras_v3":
+            if value is not None and not isinstance(value, KerasV3WeightsDescr):
+                raise TypeError(
+                    f"Expected KerasV3WeightsDescr or None for key 'keras_v3', got {type(value)}"
+                )
+            self.keras_v3 = value
         elif key == "onnx":
             if value is not None and not isinstance(value, OnnxWeightsDescr):
                 raise TypeError(
@@ -2695,6 +2717,7 @@ class WeightsDescr(Node):
     def available_formats(self) -> Dict[WeightsFormat, SpecificWeightsDescr]:
         return {
             **({} if self.keras_hdf5 is None else {"keras_hdf5": self.keras_hdf5}),
+            **({} if self.keras_v3 is None else {"keras_v3": self.keras_v3}),
             **({} if self.onnx is None else {"onnx": self.onnx}),
             **(
                 {}

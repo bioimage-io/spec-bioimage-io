@@ -30,6 +30,16 @@ class Version(RootModel[Union[str, int, float]]):
             return NotImplemented
         return self._version == other._version
 
+    def __ge__(self, other: Any):
+        if not isinstance(other, Version):
+            return NotImplemented
+        return self._version >= other._version
+
+    def __le__(self, other: Any):
+        if not isinstance(other, Version):
+            return NotImplemented
+        return self._version <= other._version
+
     # the properties below are adopted from and mirror properties of packaging.version.Version
     @property
     def epoch(self) -> int:
