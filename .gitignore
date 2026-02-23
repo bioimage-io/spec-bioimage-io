@@ -1,10 +1,10 @@
-__pycache__/
+*.DS_Store
+*.egg-info/
 .coverage
 .env
 .ipynb_checkpoints
 .vscode/launch.json
-*.DS_Store
-*.egg-info/
+__pycache__/
 bioimageio_cache/
 build/
 coverage.xml
@@ -12,6 +12,7 @@ dist/
 docs/api/
 example/my_bioimageio_dataset.zip
 example/my_model.zip
+lala.py
 output/
 pkgs/
 scripts/pdoc/original.py
