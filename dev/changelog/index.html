@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
     
     
       
@@ -735,7 +735,19 @@ In this file we log both:</p>
 <li><a href="#changes-to-the-resource-description-format">Changes to the Resource Description Format</a></li>
 </ul>
 <h2 id="changes-to-the-bioimageiospec-python-package">Changes to the bioimageio.spec Python package<a class="headerlink" href="#changes-to-the-bioimageiospec-python-package" title="Anchor link to this section for reference">¤</a></h2>
-<p>This changelog includes implementation details and my reference the <a href="#changes-to-the-resource-description-format">changes to the Resource Description Format</a>, e.g. in entry <a href="#bioimageiospec-052">bioimageio.spec 0.5.2</a>.</p>
+<p>This changelog includes implementation details and might reference <a href="#changes-to-the-resource-description-format">changes to the Resource Description Format</a>, e.g. in entry <a href="#bioimageiospec-052">bioimageio.spec 0.5.2</a>.</p>
+<h3 id="bioimageiospec-0574">bioimageio.spec 0.5.7.4<a class="headerlink" href="#bioimageiospec-0574" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>update default pytorch conda environments</li>
+<li>add <code>bioimageio.spec.utils.empty_cache()</code></li>
+<li>fix reassignment of <code>settings.cache_path</code></li>
+<li>update default HuggingFace download pattern</li>
+<li>include a resource's version in the validation summary</li>
+</ul>
+<h3 id="bioimageiospec-0573">bioimageio.spec 0.5.7.3<a class="headerlink" href="#bioimageiospec-0573" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>add lower pin for bioimageio.core in recommended environments</li>
+</ul>
 <h3 id="bioimageiospec-0572">bioimageio.spec 0.5.7.2<a class="headerlink" href="#bioimageiospec-0572" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
 <li>force redownload when SHA is unknown (avoids cache clashes)</li>
@@ -1444,7 +1456,7 @@ If the changes also apply to <code>type</code> model, the coresponding model for
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
