@@ -2447,7 +2447,8 @@ class KerasV3WeightsDescr(WeightsEntryDescrBase):
     weights_format_name: ClassVar[str] = "Keras v3"
     keras_version: Annotated[Version, Ge(Version(3))]
     """Keras version used to create these weights."""
-
+    backend: Tuple[Literal["tensorflow", "jax", "torch"], Version]
+    """Keras backend used to create these weights."""
     source: Annotated[
         FileSource,
         AfterValidator(wo_special_file_name),
