@@ -3151,6 +3151,7 @@ class Config(Node, extra="allow"):
     bioimageio: BioimageioConfig = Field(
         default_factory=BioimageioConfig.model_construct
     )
+    stardist: YamlValue = None
 
 
 class ModelDescr(GenericModelDescrBase):

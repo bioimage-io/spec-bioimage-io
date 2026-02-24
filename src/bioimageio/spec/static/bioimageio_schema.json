@@ -1243,6 +1243,7 @@
           "items": {
             "enum": [
               "keras_hdf5",
+              "keras_v3",
               "onnx",
               "pytorch_state_dict",
               "tensorflow_js",
@@ -10289,6 +10290,10 @@
       "properties": {
         "bioimageio": {
           "$ref": "#/$defs/bioimageio__spec__model__v0_5__BioimageioConfig"
+        },
+        "stardist": {
+          "$ref": "#/$defs/YamlValue",
+          "default": null
         }
       },
       "title": "model.v0_5.Config",
@@ -10533,6 +10538,7 @@
             {
               "enum": [
                 "keras_hdf5",
+                "keras_v3",
                 "onnx",
                 "pytorch_state_dict",
                 "tensorflow_js",
@@ -11762,6 +11768,7 @@
             {
               "enum": [
                 "keras_hdf5",
+                "keras_v3",
                 "onnx",
                 "pytorch_state_dict",
                 "tensorflow_js",
@@ -12087,6 +12094,7 @@
             {
               "enum": [
                 "keras_hdf5",
+                "keras_v3",
                 "onnx",
                 "pytorch_state_dict",
                 "tensorflow_js",
@@ -12445,6 +12453,7 @@
             {
               "enum": [
                 "keras_hdf5",
+                "keras_v3",
                 "onnx",
                 "pytorch_state_dict",
                 "tensorflow_js",
@@ -12545,6 +12554,7 @@
             {
               "enum": [
                 "keras_hdf5",
+                "keras_v3",
                 "onnx",
                 "pytorch_state_dict",
                 "tensorflow_js",
@@ -12662,6 +12672,7 @@
             {
               "enum": [
                 "keras_hdf5",
+                "keras_v3",
                 "onnx",
                 "pytorch_state_dict",
                 "tensorflow_js",
