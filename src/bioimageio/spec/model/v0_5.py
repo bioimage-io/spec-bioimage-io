@@ -2553,6 +2553,7 @@ SpecificWeightsDescr = Union[
 
 class WeightsDescr(Node):
     keras_hdf5: Optional[KerasHdf5WeightsDescr] = None
+    keras_v3: Optional[KerasV3WeightsDescr] = None
     onnx: Optional[OnnxWeightsDescr] = None
     pytorch_state_dict: Optional[PytorchStateDictWeightsDescr] = None
     tensorflow_js: Optional[TensorflowJsWeightsDescr] = None

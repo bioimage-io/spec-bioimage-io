@@ -1051,6 +1051,129 @@
       "title": "model.v0_5.IntervalOrRatioDataDescr",
       "type": "object"
     },
+    "KerasV3WeightsDescr": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "anyOf": [
+            {
+              "description": "A URL with the HTTP or HTTPS scheme.",
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "title": "HttpUrl",
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/RelativeFilePath"
+            },
+            {
+              "format": "file-path",
+              "title": "FilePath",
+              "type": "string"
+            }
+          ],
+          "description": "Source of the .keras weights file.",
+          "title": "Source"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "description": "A SHA-256 hash value",
+              "maxLength": 64,
+              "minLength": 64,
+              "title": "Sha256",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SHA256 hash value of the **source** file.",
+          "title": "Sha256"
+        },
+        "authors": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
+          "title": "Authors"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "enum": [
+                "keras_hdf5",
+                "keras_v3",
+                "onnx",
+                "pytorch_state_dict",
+                "tensorflow_js",
+                "tensorflow_saved_model_bundle",
+                "torchscript"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
+          "examples": [
+            "pytorch_state_dict"
+          ],
+          "title": "Parent"
+        },
+        "comment": {
+          "default": "",
+          "description": "A comment about this weights entry, for example how these weights were created.",
+          "title": "Comment",
+          "type": "string"
+        },
+        "keras_version": {
+          "$ref": "#/$defs/Version",
+          "description": "Keras version used to create these weights.",
+          "ge": 3
+        },
+        "backend": {
+          "description": "Keras backend used to create these weights.",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "enum": [
+                "tensorflow",
+                "jax",
+                "torch"
+              ],
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/Version"
+            }
+          ],
+          "title": "Backend",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source",
+        "keras_version",
+        "backend"
+      ],
+      "title": "model.v0_5.KerasV3WeightsDescr",
+      "type": "object"
+    },
     "NominalOrOrdinalDataDescr": {
       "additionalProperties": false,
       "properties": {
@@ -12717,6 +12840,17 @@
           "anyOf": [
             {
               "$ref": "#/$defs/bioimageio__spec__model__v0_5__KerasHdf5WeightsDescr"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "keras_v3": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KerasV3WeightsDescr"
             },
             {
               "type": "null"
