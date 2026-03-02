@@ -94,81 +94,81 @@ def _get_default_pytorch_env(
 
     deps: List[Union[str, PipDeps]] = [f"pytorch=={v}"]
     if v == "1.5.1":
-        deps += ["torchvision==0.6.1"]
+        deps.append("torchvision==0.6.1")
     elif v == "1.6.0":
-        deps += ["torchvision==0.7.0"]
+        deps.append("torchvision==0.7.0")
     elif v == "1.7.0":
-        deps += ["torchvision==0.8.0", "torchaudio==0.7.0"]
+        deps.append("torchvision==0.8.0")
     elif v == "1.7.1":
-        deps += ["torchvision==0.8.2", "torchaudio==0.7.1"]
+        deps.append("torchvision==0.8.2")
     elif v == "1.8.0":
-        deps += ["torchvision==0.9.0", "torchaudio==0.8.0"]
+        deps.append("torchvision==0.9.0")
     elif v == "1.8.1":
-        deps += ["torchvision==0.9.1", "torchaudio==0.8.1"]
+        deps.append("torchvision==0.9.1")
     elif v == "1.9.0":
-        deps += ["torchvision==0.10.0", "torchaudio==0.9.0"]
+        deps.append("torchvision==0.10.0")
     elif v == "1.9.1":
-        deps += ["torchvision==0.10.1", "torchaudio==0.9.1"]
+        deps.append("torchvision==0.10.1")
     elif v == "1.10.0":
-        deps += ["torchvision==0.11.0", "torchaudio==0.10.0"]
+        deps.append("torchvision==0.11.0")
     elif v == "1.10.1":
-        deps += ["torchvision==0.11.2", "torchaudio==0.10.1"]
+        deps.append("torchvision==0.11.2")
     elif v == "1.11.0":
-        deps += ["torchvision==0.12.0", "torchaudio==0.11.0"]
+        deps.append("torchvision==0.12.0")
     elif v == "1.12.0":
-        deps += ["torchvision==0.13.0", "torchaudio==0.12.0"]
+        deps.append("torchvision==0.13.0")
     elif v == "1.12.1":
-        deps += ["torchvision==0.13.1", "torchaudio==0.12.1"]
+        deps.append("torchvision==0.13.1")
     elif v == "1.13.0":
-        deps += ["torchvision==0.14.0", "torchaudio==0.13.0"]
+        deps.append("torchvision==0.14.0")
     elif v == "1.13.1":
-        deps += ["torchvision==0.14.1", "torchaudio==0.13.1"]
+        deps.append("torchvision==0.14.1")
     elif v == "2.0.0":
-        deps += ["torchvision==0.15.0", "torchaudio==2.0.0"]
+        deps.append("torchvision==0.15.0")
     elif v == "2.0.1":
-        deps += ["torchvision==0.15.2", "torchaudio==2.0.2"]
+        deps.append("torchvision==0.15.2")
     elif v == "2.1.0":
-        deps += ["torchvision==0.16.0", "torchaudio==2.1.0"]
+        deps.append("torchvision==0.16.0")
     elif v == "2.1.1":
-        deps += ["torchvision==0.16.1", "torchaudio==2.1.1"]
+        deps.append("torchvision==0.16.1")
     elif v == "2.1.2":
-        deps += ["torchvision==0.16.2", "torchaudio==2.1.2"]
+        deps.append("torchvision==0.16.2")
     elif v == "2.2.0":
-        deps += ["torchvision==0.17.0", "torchaudio==2.2.0"]
+        deps.append("torchvision==0.17.0")
     elif v == "2.2.1":
-        deps += ["torchvision==0.17.1", "torchaudio==2.2.1"]
+        deps.append("torchvision==0.17.1")
     elif v == "2.2.2":
-        deps += ["torchvision==0.17.2", "torchaudio==2.2.2"]
+        deps.append("torchvision==0.17.2")
     elif v == "2.3.0":
-        deps += ["torchvision==0.18.0", "torchaudio==2.3.0"]
+        deps.append("torchvision==0.18.0")
     elif v == "2.3.1":
-        deps += ["torchvision==0.18.1", "torchaudio==2.3.1"]
+        deps.append("torchvision==0.18.1")
     elif v == "2.4.0":
-        deps += ["torchvision==0.19.0", "torchaudio==2.4.0"]
+        deps.append("torchvision==0.19.0")
     elif v == "2.4.1":
-        deps += ["torchvision==0.19.1", "torchaudio==2.4.1"]
+        deps.append("torchvision==0.19.1")
     elif v == "2.5.0":
-        deps += ["torchvision==0.20.0", "torchaudio==2.5.0"]
+        deps.append("torchvision==0.20.0")
     elif v == "2.5.1":
-        deps += ["torchvision==0.20.1", "torchaudio==2.5.1"]
+        deps.append("torchvision==0.20.1")
     elif v == "2.6.0":
-        deps += ["torchvision==0.21.0", "torchaudio==2.6.0"]
+        deps.append("torchvision==0.21.0")
     elif v == "2.7.0":
-        deps += ["torchvision==0.22.0", "torchaudio==2.7.0"]
+        deps.append("torchvision==0.22.0")
     elif v == "2.7.1":
-        deps += ["torchvision==0.22.1", "torchaudio==2.7.1"]
+        deps.append("torchvision==0.22.1")
     elif v == "2.8.0":
-        deps += ["torchvision==0.23.0", "torchaudio==2.8.0"]
+        deps.append("torchvision==0.23.0")
     elif v == "2.9.0":
-        deps += ["torchvision==0.24.0", "torchaudio==2.9.0"]
+        deps.append("torchvision==0.24.0")
     elif v == "2.9.1":
-        deps += ["torchvision==0.24.1", "torchaudio==2.9.1"]
+        deps.append("torchvision==0.24.1")
     else:
         set_github_warning(
             "UPDATE NEEDED",
-            f"Leaving torchvision and torchaudio unpinned for pytorch=={v}",
+            f"Leaving torchvision unpinned for pytorch=={v}",
         )
-        deps += ["torchvision", "torchaudio"]
+        deps += ["torchvision"]
 
     # avoid `undefined symbol: iJIT_NotifyEvent` from `torch/lib/libtorch_cpu.so`
     # see https://github.com/pytorch/pytorch/issues/123097
