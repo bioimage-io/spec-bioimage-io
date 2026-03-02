@@ -14,6 +14,7 @@ from bioimageio.spec._internal.validation_context import get_validation_context
 from bioimageio.spec.model.v0_5 import (
     IntervalOrRatioDataDescr,
     KerasHdf5WeightsDescr,
+    KerasV3WeightsDescr,
     NominalOrOrdinalDataDescr,
     OnnxWeightsDescr,
     PytorchStateDictWeightsDescr,
@@ -397,6 +398,8 @@ def create_huggingface_model_card(
             ),
         ):
             dl_framework_version = weights.tensorflow_version
+        elif isinstance(weights, KerasV3WeightsDescr):
+            dl_framework_version = weights.keras_version
         elif isinstance(weights, OnnxWeightsDescr):
             dl_framework_version = f"opset version: {weights.opset_version}"
         else:
