@@ -140,6 +140,9 @@ exclude = [
     "scripts/pdoc/patched.py",
 ]
 
+[tool.ruff.lint]
+extend-select = ["NPY201"]
+
 [tool.coverage.report]
 omit = ["src/bioimageio/spec/partner_utils/imjoy/*.py"]
 exclude_also = ["if TYPE_CHECKING:", "assert_never\\("]
