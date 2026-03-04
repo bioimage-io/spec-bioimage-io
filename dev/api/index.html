@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
     
     
       
@@ -3132,7 +3132,9 @@ Note:
 <span class="normal">72</span>
 <span class="normal">73</span>
 <span class="normal">74</span>
-<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_conda_env</span><span class="p">(</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_conda_env</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">entry</span><span class="p">:</span> <span class="n">SupportedWeightsEntry</span><span class="p">,</span>
     <span class="n">env_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;DROP&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3173,6 +3175,8 @@ Note:
         <span class="p">(</span><span class="n">v0_4</span><span class="o">.</span><span class="n">KerasHdf5WeightsDescr</span><span class="p">,</span> <span class="n">v0_5</span><span class="o">.</span><span class="n">KerasHdf5WeightsDescr</span><span class="p">),</span>
     <span class="p">):</span>
         <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_default_tf_env</span><span class="p">(</span><span class="n">tensorflow_version</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">tensorflow_version</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">v0_5</span><span class="o">.</span><span class="n">KerasV3WeightsDescr</span><span class="p">):</span>
+        <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_default_keras3_env</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">backend</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">assert_never</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
 
