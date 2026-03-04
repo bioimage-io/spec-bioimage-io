@@ -1875,20 +1875,20 @@
       "additionalProperties": false,
       "description": "key word arguments for `StardistPostprocessingDescr`",
       "properties": {
-        "prob_thres": {
+        "prob_threshold": {
           "description": "The probability threshold for object candidate selection.",
-          "title": "Prob Thres",
+          "title": "Prob Threshold",
           "type": "number"
         },
-        "nms_thresh": {
-          "default": 0.3,
+        "nms_threshold": {
           "description": "The overlap threshold for non-maximum suppression.",
-          "title": "Nms Thresh",
+          "title": "Nms Threshold",
           "type": "number"
         }
       },
       "required": [
-        "prob_thres"
+        "prob_threshold",
+        "nms_threshold"
       ],
       "title": "model.v0_5.StardistPostprocessingKwargs",
       "type": "object"

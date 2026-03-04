@@ -1298,10 +1298,10 @@ class SoftmaxDescr(NodeWithExplicitlySetFields):
 class StardistPostprocessingKwargs(KwargsNode):
     """key word arguments for [StardistPostprocessingDescr][]"""
 
-    prob_thres: float
+    prob_threshold: float
     """The probability threshold for object candidate selection."""
 
-    nms_thresh: float = 0.3
+    nms_threshold: float
     """The overlap threshold for non-maximum suppression."""
 
 
