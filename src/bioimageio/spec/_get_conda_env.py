@@ -93,82 +93,51 @@ def _get_default_pytorch_env(
         v += ".0"
 
     deps: List[Union[str, PipDeps]] = [f"pytorch=={v}"]
-    if v == "1.5.1":
-        deps.append("torchvision==0.6.1")
-    elif v == "1.6.0":
-        deps.append("torchvision==0.7.0")
-    elif v == "1.7.0":
-        deps.append("torchvision==0.8.0")
-    elif v == "1.7.1":
-        deps.append("torchvision==0.8.2")
-    elif v == "1.8.0":
-        deps.append("torchvision==0.9.0")
-    elif v == "1.8.1":
-        deps.append("torchvision==0.9.1")
-    elif v == "1.9.0":
-        deps.append("torchvision==0.10.0")
-    elif v == "1.9.1":
-        deps.append("torchvision==0.10.1")
-    elif v == "1.10.0":
-        deps.append("torchvision==0.11.0")
-    elif v == "1.10.1":
-        deps.append("torchvision==0.11.2")
-    elif v == "1.11.0":
-        deps.append("torchvision==0.12.0")
-    elif v == "1.12.0":
-        deps.append("torchvision==0.13.0")
-    elif v == "1.12.1":
-        deps.append("torchvision==0.13.1")
-    elif v == "1.13.0":
-        deps.append("torchvision==0.14.0")
-    elif v == "1.13.1":
-        deps.append("torchvision==0.14.1")
-    elif v == "2.0.0":
-        deps.append("torchvision==0.15.0")
-    elif v == "2.0.1":
-        deps.append("torchvision==0.15.2")
-    elif v == "2.1.0":
-        deps.append("torchvision==0.16.0")
-    elif v == "2.1.1":
-        deps.append("torchvision==0.16.1")
-    elif v == "2.1.2":
-        deps.append("torchvision==0.16.2")
-    elif v == "2.2.0":
-        deps.append("torchvision==0.17.0")
-    elif v == "2.2.1":
-        deps.append("torchvision==0.17.1")
-    elif v == "2.2.2":
-        deps.append("torchvision==0.17.2")
-    elif v == "2.3.0":
-        deps.append("torchvision==0.18.0")
-    elif v == "2.3.1":
-        deps.append("torchvision==0.18.1")
-    elif v == "2.4.0":
-        deps.append("torchvision==0.19.0")
-    elif v == "2.4.1":
-        deps.append("torchvision==0.19.1")
-    elif v == "2.5.0":
-        deps.append("torchvision==0.20.0")
-    elif v == "2.5.1":
-        deps.append("torchvision==0.20.1")
-    elif v == "2.6.0":
-        deps.append("torchvision==0.21.0")
-    elif v == "2.7.0":
-        deps.append("torchvision==0.22.0")
-    elif v == "2.7.1":
-        deps.append("torchvision==0.22.1")
-    elif v == "2.8.0":
-        deps.append("torchvision==0.23.0")
-    elif v == "2.9.0":
-        deps.append("torchvision==0.24.0")
-    elif v == "2.9.1":
-        deps.append("torchvision==0.24.1")
-    else:
+    additional_deps = {
+        "1.5.1": "torchvision==0.6.1",
+        "1.6.0": "torchvision==0.7.0",
+        "1.7.0": "torchvision==0.8.0",
+        "1.7.1": "torchvision==0.8.2",
+        "1.8.0": "torchvision==0.9.0",
+        "1.8.1": "torchvision==0.9.1",
+        "1.9.0": "torchvision==0.10.0",
+        "1.9.1": "torchvision==0.10.1",
+        "1.10.0": "torchvision==0.11.0",
+        "1.10.1": "torchvision==0.11.2",
+        "1.11.0": "torchvision==0.12.0",
+        "1.12.0": "torchvision==0.13.0",
+        "1.12.1": "torchvision==0.13.1",
+        "1.13.0": "torchvision==0.14.0",
+        "1.13.1": "torchvision==0.14.1",
+        "2.0.0": "torchvision==0.15.0",
+        "2.0.1": "torchvision==0.15.2",
+        "2.1.0": "torchvision==0.16.0",
+        "2.1.1": "torchvision==0.16.1",
+        "2.1.2": "torchvision==0.16.2",
+        "2.2.0": "torchvision==0.17.0",
+        "2.2.1": "torchvision==0.17.1",
+        "2.2.2": "torchvision==0.17.2",
+        "2.3.0": "torchvision==0.18.0",
+        "2.3.1": "torchvision==0.18.1",
+        "2.4.0": "torchvision==0.19.0",
+        "2.4.1": "torchvision==0.19.1",
+        "2.5.0": "torchvision==0.20.0",
+        "2.5.1": "torchvision==0.20.1",
+        "2.6.0": "torchvision==0.21.0",
+        "2.7.0": "torchvision==0.22.0",
+        "2.7.1": "torchvision==0.22.1",
+        "2.8.0": "torchvision==0.23.0",
+        "2.9.0": "torchvision==0.24.0",
+        "2.9.1": "torchvision==0.24.1",
+    }.get(v)
+    if additional_deps is None:
         set_github_warning(
             "UPDATE NEEDED",
             f"Leaving torchvision unpinned for pytorch=={v}",
         )
-        deps += ["torchvision"]
+        additional_deps = "torchvision"
+
+    deps.append(additional_deps)
 
     # avoid `undefined symbol: iJIT_NotifyEvent` from `torch/lib/libtorch_cpu.so`
     # see https://github.com/pytorch/pytorch/issues/123097
