@@ -10,9 +10,9 @@ In this file we log both:
 
 This changelog includes implementation details and might reference [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
-### bioimageio.spec 0.5.7.5
+### bioimageio.spec 0.5.8.0
 
-- add Keras v3 weights description
+- [model 0.5.8](#model-058)
 - remove torchaudio from recommended environments
 
 ### bioimageio.spec 0.5.7.4
@@ -366,6 +366,12 @@ Which fields a resource description field has and how they are to be interpreted
 Here is a list of changes for each `type` and `format_version`.
 Note that 'generic' changes apply to `type` application, dataset and notebook of the same `format_versions`.
 If the changes also apply to `type` model, the coresponding model format version is noted, e.g. [generic 0.3.1 and model 0.5.3](#generic-031-and-model-053).
+
+### model 0.5.8
+
+- Non-breaking changes:
+  - added keras_v3 weights description
+  - added stardist postprocessing
 
 ### generic 0.3.3 and model 0.5.7
 
