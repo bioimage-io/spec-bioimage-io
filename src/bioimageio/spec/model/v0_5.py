@@ -1295,6 +1295,43 @@ class SoftmaxDescr(NodeWithExplicitlySetFields):
     kwargs: SoftmaxKwargs = Field(default_factory=SoftmaxKwargs.model_construct)
 
 
+class StardistPostprocessingKwargs(KwargsNode):
+    """key word arguments for [StardistPostprocessingDescr][]"""
+
+    prob_thres: float
+    """The probability threshold for object candidate selection."""
+
+    nms_thresh: float = 0.3
+    """The overlap threshold for non-maximum suppression."""
+
+
+class StardistPostprocessingDescr(NodeWithExplicitlySetFields):
+    """Stardist postprocessing including non-maximum suppression and converting polygon representations to instance labels
+
+    as described in:
+    - Uwe Schmidt, Martin Weigert, Coleman Broaddus, and Gene Myers.
+    [*Cell Detection with Star-convex Polygons*](https://arxiv.org/abs/1806.03535).
+    International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI), Granada, Spain, September 2018.
+    - Martin Weigert, Uwe Schmidt, Robert Haase, Ko Sugawara, and Gene Myers.
+    [*Star-convex Polyhedra for 3D Object Detection and Segmentation in Microscopy*](http://openaccess.thecvf.com/content_WACV_2020/papers/Weigert_Star-convex_Polyhedra_for_3D_Object_Detection_and_Segmentation_in_Microscopy_WACV_2020_paper.pdf).
+    The IEEE Winter Conference on Applications of Computer Vision (WACV), Snowmass Village, Colorado, March 2020.
+
+    Note: Only available if the `stardist` package is installed.
+    """
+
+    implemented_id: ClassVar[Literal["stardist_postprocessing"]] = (
+        "stardist_postprocessing"
+    )
+    if TYPE_CHECKING:
+        id: Literal["stardist_postprocessing"] = "stardist_postprocessing"
+    else:
+        id: Literal["stardist_postprocessing"]
+
+    kwargs: StardistPostprocessingKwargs = Field(
+        default_factory=StardistPostprocessingKwargs.model_construct
+    )
+
+
 class FixedZeroMeanUnitVarianceKwargs(KwargsNode):
     """key word arguments for [FixedZeroMeanUnitVarianceDescr][]"""
 
@@ -1600,6 +1637,7 @@ PostprocessingDescr = Annotated[
         ScaleRangeDescr,
         SigmoidDescr,
         SoftmaxDescr,
+        StardistPostprocessingDescr,
         ZeroMeanUnitVarianceDescr,
     ],
     Discriminator("id"),
@@ -2088,7 +2126,9 @@ class _InputTensorConv(
         prep: List[PreprocessingDescr] = []
         for p in src.preprocessing:
             cp = _convert_proc(p, src.axes)
-            assert not isinstance(cp, ScaleMeanVarianceDescr)
+            assert not isinstance(
+                cp, (ScaleMeanVarianceDescr, StardistPostprocessingDescr)
+            )
             prep.append(cp)
 
         prep.append(EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype="float32")))
