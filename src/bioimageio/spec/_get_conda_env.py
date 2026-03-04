@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional, Union
+from typing import List, Literal, Optional, Tuple, Union
 
 from typing_extensions import assert_never
 
@@ -64,6 +64,8 @@ def get_conda_env(
         (v0_4.KerasHdf5WeightsDescr, v0_5.KerasHdf5WeightsDescr),
     ):
         conda_env = _get_default_tf_env(tensorflow_version=entry.tensorflow_version)
+    elif isinstance(entry, v0_5.KerasV3WeightsDescr):
+        conda_env = _get_default_keras3_env(entry.backend)
     else:
         assert_never(entry)
 
@@ -73,6 +75,26 @@ def get_conda_env(
         conda_env.name = env_name
 
     return conda_env
+
+
+def _get_default_keras3_env(
+    backend: Tuple[Literal["tensorflow", "jax", "torch"], Version],
+) -> BioimageioCondaEnv:
+    if backend[0] == "tensorflow":
+        env = _get_default_tf_env(tensorflow_version=backend[1])
+    elif backend[0] == "torch":
+        env = _get_default_pytorch_env(pytorch_version=backend[1])
+    elif backend[0] == "jax":
+        env = BioimageioCondaEnv(
+            dependencies=[
+                f"jax=={backend[1]}",
+            ]
+        )
+    else:
+        assert_never(backend[0])
+
+    env.dependencies.append("keras >=3.0, <4")
+    return env
 
 
 def _get_default_pytorch_env(
