@@ -1979,6 +1979,7 @@
                 "scale_range": "#/$defs/ScaleRangeDescr",
                 "sigmoid": "#/$defs/SigmoidDescr",
                 "softmax": "#/$defs/SoftmaxDescr",
+                "stardist_postprocessing": "#/$defs/StardistPostprocessingDescr",
                 "zero_mean_unit_variance": "#/$defs/ZeroMeanUnitVarianceDescr"
               },
               "propertyName": "id"
@@ -2010,6 +2011,9 @@
               },
               {
                 "$ref": "#/$defs/SoftmaxDescr"
+              },
+              {
+                "$ref": "#/$defs/StardistPostprocessingDescr"
               },
               {
                 "$ref": "#/$defs/ZeroMeanUnitVarianceDescr"
@@ -2942,6 +2946,47 @@
         "type"
       ],
       "title": "model.v0_5.SpaceOutputAxisWithHalo",
+      "type": "object"
+    },
+    "StardistPostprocessingDescr": {
+      "additionalProperties": false,
+      "description": "Stardist postprocessing including non-maximum suppression and converting polygon representations to instance labels\n\nas described in:\n- Uwe Schmidt, Martin Weigert, Coleman Broaddus, and Gene Myers.\n[*Cell Detection with Star-convex Polygons*](https://arxiv.org/abs/1806.03535).\nInternational Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI), Granada, Spain, September 2018.\n- Martin Weigert, Uwe Schmidt, Robert Haase, Ko Sugawara, and Gene Myers.\n[*Star-convex Polyhedra for 3D Object Detection and Segmentation in Microscopy*](http://openaccess.thecvf.com/content_WACV_2020/papers/Weigert_Star-convex_Polyhedra_for_3D_Object_Detection_and_Segmentation_in_Microscopy_WACV_2020_paper.pdf).\nThe IEEE Winter Conference on Applications of Computer Vision (WACV), Snowmass Village, Colorado, March 2020.\n\nNote: Only available if the `stardist` package is installed.",
+      "properties": {
+        "id": {
+          "const": "stardist_postprocessing",
+          "title": "Id",
+          "type": "string"
+        },
+        "kwargs": {
+          "$ref": "#/$defs/StardistPostprocessingKwargs"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "model.v0_5.StardistPostprocessingDescr",
+      "type": "object"
+    },
+    "StardistPostprocessingKwargs": {
+      "additionalProperties": false,
+      "description": "key word arguments for `StardistPostprocessingDescr`",
+      "properties": {
+        "prob_thres": {
+          "description": "The probability threshold for object candidate selection.",
+          "title": "Prob Thres",
+          "type": "number"
+        },
+        "nms_thresh": {
+          "default": 0.3,
+          "description": "The overlap threshold for non-maximum suppression.",
+          "title": "Nms Thresh",
+          "type": "number"
+        }
+      },
+      "required": [
+        "prob_thres"
+      ],
+      "title": "model.v0_5.StardistPostprocessingKwargs",
       "type": "object"
     },
     "TensorflowJsWeightsDescr": {
@@ -7635,7 +7680,7 @@
       "title": "Version Comment"
     },
     "format_version": {
-      "const": "0.5.7",
+      "const": "0.5.8",
       "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
       "title": "Format Version",
       "type": "string"
@@ -7784,6 +7829,6 @@
     "outputs",
     "weights"
   ],
-  "title": "model 0.5.7",
+  "title": "model 0.5.8",
   "type": "object"
 }
