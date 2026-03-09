@@ -1862,18 +1862,26 @@
           "type": "string"
         },
         "kwargs": {
-          "$ref": "#/$defs/StardistPostprocessingKwargs"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StardistPostprocessingKwargs2D"
+            },
+            {
+              "$ref": "#/$defs/StardistPostprocessingKwargs3D"
+            }
+          ],
+          "title": "Kwargs"
         }
       },
       "required": [
-        "id"
+        "id",
+        "kwargs"
       ],
       "title": "model.v0_5.StardistPostprocessingDescr",
       "type": "object"
     },
-    "StardistPostprocessingKwargs": {
+    "StardistPostprocessingKwargs2D": {
       "additionalProperties": false,
-      "description": "key word arguments for `StardistPostprocessingDescr`",
       "properties": {
         "prob_threshold": {
           "description": "The probability threshold for object candidate selection.",
@@ -1881,16 +1889,93 @@
           "type": "number"
         },
         "nms_threshold": {
-          "description": "The overlap threshold for non-maximum suppression.",
+          "description": "The IoU threshold for non-maximum suppression.",
           "title": "Nms Threshold",
           "type": "number"
+        },
+        "grid": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Grid",
+          "type": "array"
         }
       },
       "required": [
         "prob_threshold",
-        "nms_threshold"
+        "nms_threshold",
+        "grid"
       ],
-      "title": "model.v0_5.StardistPostprocessingKwargs",
+      "title": "model.v0_5.StardistPostprocessingKwargs2D",
+      "type": "object"
+    },
+    "StardistPostprocessingKwargs3D": {
+      "additionalProperties": false,
+      "properties": {
+        "prob_threshold": {
+          "description": "The probability threshold for object candidate selection.",
+          "title": "Prob Threshold",
+          "type": "number"
+        },
+        "nms_threshold": {
+          "description": "The IoU threshold for non-maximum suppression.",
+          "title": "Nms Threshold",
+          "type": "number"
+        },
+        "grid": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Grid",
+          "type": "array"
+        },
+        "n_rays": {
+          "title": "N Rays",
+          "type": "integer"
+        },
+        "anisotropy": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Anisotropy",
+          "type": "array"
+        }
+      },
+      "required": [
+        "prob_threshold",
+        "nms_threshold",
+        "grid",
+        "n_rays",
+        "anisotropy"
+      ],
+      "title": "model.v0_5.StardistPostprocessingKwargs3D",
       "type": "object"
     },
     "TimeInputAxis": {

@@ -1295,14 +1295,24 @@ class SoftmaxDescr(NodeWithExplicitlySetFields):
     kwargs: SoftmaxKwargs = Field(default_factory=SoftmaxKwargs.model_construct)
 
 
-class StardistPostprocessingKwargs(KwargsNode):
+class _StardistPostprocessingKwargsBase(KwargsNode):
     """key word arguments for [StardistPostprocessingDescr][]"""
 
     prob_threshold: float
     """The probability threshold for object candidate selection."""
 
     nms_threshold: float
-    """The overlap threshold for non-maximum suppression."""
+    """The IoU threshold for non-maximum suppression."""
+
+
+class StardistPostprocessingKwargs2D(_StardistPostprocessingKwargsBase):
+    grid: Tuple[int, int]
+
+
+class StardistPostprocessingKwargs3D(_StardistPostprocessingKwargsBase):
+    grid: Tuple[int, int, int]
+    n_rays: int
+    anisotropy: Tuple[float, float, float]
 
 
 class StardistPostprocessingDescr(NodeWithExplicitlySetFields):
@@ -1327,9 +1337,7 @@ class StardistPostprocessingDescr(NodeWithExplicitlySetFields):
     else:
         id: Literal["stardist_postprocessing"]
 
-    kwargs: StardistPostprocessingKwargs = Field(
-        default_factory=StardistPostprocessingKwargs.model_construct
-    )
+    kwargs: Union[StardistPostprocessingKwargs2D, StardistPostprocessingKwargs3D]
 
 
 class FixedZeroMeanUnitVarianceKwargs(KwargsNode):
