@@ -1508,8 +1508,9 @@ class ScaleRangeKwargs(KwargsNode):
     with `v_lower,v_upper` values at the respective percentiles."""
 
     reference_tensor: Optional[TensorId] = None
-    """Tensor ID to compute the percentiles from. Default: The tensor itself.
-    For any tensor in `inputs` only input tensor references are allowed."""
+    """ID of the unprocessed input tensor to compute the percentiles from.
+    Default: The tensor itself.
+    """
 
     @field_validator("max_percentile", mode="after")
     @classmethod
@@ -1591,7 +1592,7 @@ class ScaleMeanVarianceKwargs(KwargsNode):
     """key word arguments for [ScaleMeanVarianceKwargs][]"""
 
     reference_tensor: TensorId
-    """Name of tensor to match."""
+    """ID of unprocessed input tensor to match."""
 
     axes: Annotated[
         Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
@@ -2251,12 +2252,12 @@ TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
 def validate_tensors(
     tensors: Mapping[TensorId, Tuple[TensorDescr, Optional[NDArray[Any]]]],
     tensor_origin: Literal[
-        "test_tensor"
-    ],  # for more precise error messages, e.g. 'test_tensor'
+        "source", "test_tensor"
+    ] = "source",  # for more precise error messages
 ):
     all_tensor_axes: Dict[TensorId, Dict[AxisId, Tuple[AnyAxis, Optional[int]]]] = {}
 
-    def e_msg(d: TensorDescr):
+    def e_msg_location(d: TensorDescr):
         return f"{'inputs' if isinstance(d, InputTensorDescr) else 'outputs'}[{d.id}]"
 
     for descr, array in tensors.values():
@@ -2266,7 +2267,7 @@ def validate_tensors(
             try:
                 axis_sizes = descr.get_axis_sizes_for_array(array)
             except ValueError as e:
-                raise ValueError(f"{e_msg(descr)} {e}")
+                raise ValueError(f"{e_msg_location(descr)} {e}")
 
         all_tensor_axes[descr.id] = {a.id: (a, axis_sizes[a.id]) for a in descr.axes}
 
@@ -2292,8 +2293,8 @@ def validate_tensors(
 
         if invalid_test_tensor_dtype:
             raise ValueError(
-                f"{e_msg(descr)}.{tensor_origin}.dtype '{array.dtype.name}' does not"
-                + f" match described dtype '{descr.dtype}'"
+                f"{tensor_origin} data type '{array.dtype.name}' does not"
+                + f" match described {e_msg_location(descr)}.dtype '{descr.dtype}'"
             )
 
         if array.min() > -1e-4 and array.max() < 1e-4:
@@ -2313,7 +2314,7 @@ def validate_tensors(
             if isinstance(a.size, int):
                 if actual_size != a.size:
                     raise ValueError(
-                        f"{e_msg(descr)}.{tensor_origin}: axis '{a.id}' "
+                        f"{e_msg_location(descr)}.{tensor_origin}: axis '{a.id}' "
                         + f"has incompatible size {actual_size}, expected {a.size}"
                     )
             elif isinstance(a.size, ParameterizedSize):
@@ -2324,20 +2325,20 @@ def validate_tensors(
                 ref_tensor_axes = all_tensor_axes.get(a.size.tensor_id)
                 if ref_tensor_axes is None:
                     raise ValueError(
-                        f"{e_msg(descr)}.axes[{a.id}].size.tensor_id: Unknown tensor"
+                        f"{e_msg_location(descr)}.axes[{a.id}].size.tensor_id: Unknown tensor"
                         + f" reference '{a.size.tensor_id}'"
                     )
 
                 ref_axis, ref_size = ref_tensor_axes.get(a.size.axis_id, (None, None))
                 if ref_axis is None or ref_size is None:
                     raise ValueError(
-                        f"{e_msg(descr)}.axes[{a.id}].size.axis_id: Unknown tensor axis"
+                        f"{e_msg_location(descr)}.axes[{a.id}].size.axis_id: Unknown tensor axis"
                         + f" reference '{a.size.tensor_id}.{a.size.axis_id}"
                     )
 
                 if a.unit != ref_axis.unit:
                     raise ValueError(
-                        f"{e_msg(descr)}.axes[{a.id}].size: `SizeReference` requires"
+                        f"{e_msg_location(descr)}.axes[{a.id}].size: `SizeReference` requires"
                         + " axis and reference axis to have the same `unit`, but"
                         + f" {a.unit}!={ref_axis.unit}"
                     )
@@ -2348,7 +2349,7 @@ def validate_tensors(
                     )
                 ):
                     raise ValueError(
-                        f"{e_msg(descr)}.{tensor_origin}: axis '{a.id}' of size"
+                        f"{e_msg_location(descr)}.{tensor_origin}: axis '{a.id}' of size"
                         + f" {actual_size} invalid for referenced size {ref_size};"
                         + f" expected {expected_size}"
                     )
@@ -3374,43 +3375,56 @@ class ModelDescr(GenericModelDescrBase):
                     + f" / {'.'.join(ref)}.scale {ref_axis.scale})."
                 )
 
+    def validate_input_tensors(
+        self,
+        sources: Union[
+            Sequence[NDArray[Any]], Mapping[TensorId, Optional[NDArray[Any]]]
+        ],
+    ) -> Mapping[TensorId, Optional[NDArray[Any]]]:
+        """Check if the given input tensors match the model's input tensor descriptions.
+        This includes checks of tensor shapes and dtypes, but not of the actual values.
+        """
+        if not isinstance(sources, collections.abc.Mapping):
+            sources = {descr.id: tensor for descr, tensor in zip(self.inputs, sources)}
+
+        tensors = {descr.id: (descr, sources.get(descr.id)) for descr in self.inputs}
+        validate_tensors(tensors)
+
+        return sources
+
     @model_validator(mode="after")
     def _validate_test_tensors(self) -> Self:
         if not get_validation_context().perform_io_checks:
             return self
 
-        test_output_arrays = [
-            None if descr.test_tensor is None else load_array(descr.test_tensor)
-            for descr in self.outputs
-        ]
-        test_input_arrays = [
-            None if descr.test_tensor is None else load_array(descr.test_tensor)
-            for descr in self.inputs
-        ]
-
-        tensors = {
-            descr.id: (descr, array)
-            for descr, array in zip(
-                chain(self.inputs, self.outputs), test_input_arrays + test_output_arrays
+        test_inputs = {
+            descr.id: (
+                descr,
+                None if descr.test_tensor is None else load_array(descr.test_tensor),
             )
+            for descr in self.inputs
         }
-        validate_tensors(tensors, tensor_origin="test_tensor")
+        test_outputs = {
+            descr.id: (
+                descr,
+                None if descr.test_tensor is None else load_array(descr.test_tensor),
+            )
+            for descr in self.outputs
+        }
 
-        output_arrays = {
-            descr.id: array for descr, array in zip(self.outputs, test_output_arrays)
-        }
+        validate_tensors(test_inputs, tensor_origin="test_tensor")
+        validate_tensors(test_outputs, tensor_origin="test_tensor")
+
         for rep_tol in self.config.bioimageio.reproducibility_tolerance:
             if not rep_tol.absolute_tolerance:
                 continue
 
             if rep_tol.output_ids:
                 out_arrays = {
-                    oid: a
-                    for oid, a in output_arrays.items()
-                    if oid in rep_tol.output_ids
+                    k: v[1] for k, v in test_outputs.items() if k in rep_tol.output_ids
                 }
             else:
-                out_arrays = output_arrays
+                out_arrays = {k: v[1] for k, v in test_outputs.items()}
 
             for out_id, array in out_arrays.items():
                 if array is None:
@@ -3428,34 +3442,20 @@ class ModelDescr(GenericModelDescrBase):
     @model_validator(mode="after")
     def _validate_tensor_references_in_proc_kwargs(self, info: ValidationInfo) -> Self:
         ipt_refs = {t.id for t in self.inputs}
-        out_refs = {t.id for t in self.outputs}
-        for ipt in self.inputs:
-            for p in ipt.preprocessing:
-                ref = p.kwargs.get("reference_tensor")
-                if ref is None:
-                    continue
-                if ref not in ipt_refs:
-                    raise ValueError(
-                        f"`reference_tensor` '{ref}' not found. Valid input tensor"
-                        + f" references are: {ipt_refs}."
-                    )
+        missing_refs = [
+            k["reference_tensor"]
+            for k in [p.kwargs for ipt in self.inputs for p in ipt.preprocessing]
+            + [p.kwargs for out in self.outputs for p in out.postprocessing]
+            if "reference_tensor" in k and k["reference_tensor"] not in ipt_refs
+        ]
 
-        for out in self.outputs:
-            for p in out.postprocessing:
-                ref = p.kwargs.get("reference_tensor")
-                if ref is None:
-                    continue
-
-                if ref not in ipt_refs and ref not in out_refs:
-                    raise ValueError(
-                        f"`reference_tensor` '{ref}' not found. Valid tensor references"
-                        + f" are: {ipt_refs | out_refs}."
-                    )
+        if missing_refs:
+            raise ValueError(
+                f"`reference_tensor`s {missing_refs} not found. Valid input tensor"
+                + f" references are: {ipt_refs}."
+            )
 
         return self
-
-    # TODO: use validate funcs in validate_test_tensors
-    # def validate_inputs(self, input_tensors: Mapping[TensorId, NDArray[Any]]) -> Mapping[TensorId, NDArray[Any]]:
 
     name: Annotated[
         str,

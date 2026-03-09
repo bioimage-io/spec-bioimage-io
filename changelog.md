@@ -369,6 +369,8 @@ If the changes also apply to `type` model, the coresponding model format version
 
 ### model 0.5.8
 
+- Breaking changes (that shouldn't affect anyone)
+  - only allow input tensor references in `ScaleRange` and `ScaleMeanVariance` processing steps
 - Non-breaking changes:
   - added keras_v3 weights description
   - added stardist postprocessing

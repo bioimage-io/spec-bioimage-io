@@ -12487,7 +12487,7 @@
       "description": "key word arguments for `ScaleMeanVarianceKwargs`",
       "properties": {
         "reference_tensor": {
-          "description": "Name of tensor to match.",
+          "description": "ID of unprocessed input tensor to match.",
           "maxLength": 32,
           "minLength": 1,
           "title": "TensorId",
@@ -12620,7 +12620,7 @@
             }
           ],
           "default": null,
-          "description": "Tensor ID to compute the percentiles from. Default: The tensor itself.\nFor any tensor in `inputs` only input tensor references are allowed.",
+          "description": "ID of the unprocessed input tensor to compute the percentiles from.\nDefault: The tensor itself.",
           "title": "Reference Tensor"
         }
       },
