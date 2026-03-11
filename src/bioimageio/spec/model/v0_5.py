@@ -2326,14 +2326,14 @@ def validate_tensors(
                 if ref_tensor_axes is None:
                     raise ValueError(
                         f"{e_msg_location(descr)}.axes[{a.id}].size.tensor_id: Unknown tensor"
-                        + f" reference '{a.size.tensor_id}'"
+                        + f" reference '{a.size.tensor_id}', available: {list(all_tensor_axes)}"
                     )
 
                 ref_axis, ref_size = ref_tensor_axes.get(a.size.axis_id, (None, None))
                 if ref_axis is None or ref_size is None:
                     raise ValueError(
                         f"{e_msg_location(descr)}.axes[{a.id}].size.axis_id: Unknown tensor axis"
-                        + f" reference '{a.size.tensor_id}.{a.size.axis_id}"
+                        + f" reference '{a.size.tensor_id}.{a.size.axis_id}, available: {list(ref_tensor_axes)}"
                     )
 
                 if a.unit != ref_axis.unit:
@@ -3412,8 +3412,7 @@ class ModelDescr(GenericModelDescrBase):
             for descr in self.outputs
         }
 
-        validate_tensors(test_inputs, tensor_origin="test_tensor")
-        validate_tensors(test_outputs, tensor_origin="test_tensor")
+        validate_tensors({**test_inputs, **test_outputs}, tensor_origin="test_tensor")
 
         for rep_tol in self.config.bioimageio.reproducibility_tolerance:
             if not rep_tol.absolute_tolerance:
