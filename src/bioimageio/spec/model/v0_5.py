@@ -3445,7 +3445,9 @@ class ModelDescr(GenericModelDescrBase):
             k["reference_tensor"]
             for k in [p.kwargs for ipt in self.inputs for p in ipt.preprocessing]
             + [p.kwargs for out in self.outputs for p in out.postprocessing]
-            if "reference_tensor" in k and k["reference_tensor"] not in ipt_refs
+            if "reference_tensor" in k
+            and k["reference_tensor"] is not None
+            and k["reference_tensor"] not in ipt_refs
         ]
 
         if missing_refs:
