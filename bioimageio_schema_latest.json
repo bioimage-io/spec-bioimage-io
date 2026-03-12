@@ -1862,35 +1862,136 @@
           "type": "string"
         },
         "kwargs": {
-          "$ref": "#/$defs/StardistPostprocessingKwargs"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StardistPostprocessingKwargs2D"
+            },
+            {
+              "$ref": "#/$defs/StardistPostprocessingKwargs3D"
+            }
+          ],
+          "title": "Kwargs"
         }
       },
       "required": [
-        "id"
+        "id",
+        "kwargs"
       ],
       "title": "model.v0_5.StardistPostprocessingDescr",
       "type": "object"
     },
-    "StardistPostprocessingKwargs": {
+    "StardistPostprocessingKwargs2D": {
       "additionalProperties": false,
-      "description": "key word arguments for `StardistPostprocessingDescr`",
       "properties": {
-        "prob_thres": {
+        "prob_threshold": {
           "description": "The probability threshold for object candidate selection.",
-          "title": "Prob Thres",
+          "title": "Prob Threshold",
           "type": "number"
         },
-        "nms_thresh": {
-          "default": 0.3,
-          "description": "The overlap threshold for non-maximum suppression.",
-          "title": "Nms Thresh",
+        "nms_threshold": {
+          "description": "The IoU threshold for non-maximum suppression.",
+          "title": "Nms Threshold",
           "type": "number"
+        },
+        "b": {
+          "description": "Border region in which object probability is set to zero.",
+          "title": "B",
+          "type": "integer"
+        },
+        "grid": {
+          "description": "Grid size of network predictions.",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Grid",
+          "type": "array"
         }
       },
       "required": [
-        "prob_thres"
+        "prob_threshold",
+        "nms_threshold",
+        "b",
+        "grid"
       ],
-      "title": "model.v0_5.StardistPostprocessingKwargs",
+      "title": "model.v0_5.StardistPostprocessingKwargs2D",
+      "type": "object"
+    },
+    "StardistPostprocessingKwargs3D": {
+      "additionalProperties": false,
+      "properties": {
+        "prob_threshold": {
+          "description": "The probability threshold for object candidate selection.",
+          "title": "Prob Threshold",
+          "type": "number"
+        },
+        "nms_threshold": {
+          "description": "The IoU threshold for non-maximum suppression.",
+          "title": "Nms Threshold",
+          "type": "number"
+        },
+        "b": {
+          "description": "Border region in which object probability is set to zero.",
+          "title": "B",
+          "type": "integer"
+        },
+        "grid": {
+          "description": "Grid size of network predictions.",
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Grid",
+          "type": "array"
+        },
+        "n_rays": {
+          "description": "Number of rays for 3D star-convex polyhedra.",
+          "title": "N Rays",
+          "type": "integer"
+        },
+        "anisotropy": {
+          "description": "Anisotropy factors for 3D star-convex polyhedra, i.e. the physical pixel size along each spatial axis.",
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Anisotropy",
+          "type": "array"
+        }
+      },
+      "required": [
+        "prob_threshold",
+        "nms_threshold",
+        "b",
+        "grid",
+        "n_rays",
+        "anisotropy"
+      ],
+      "title": "model.v0_5.StardistPostprocessingKwargs3D",
       "type": "object"
     },
     "TimeInputAxis": {
@@ -12402,7 +12503,7 @@
       "description": "key word arguments for `ScaleMeanVarianceKwargs`",
       "properties": {
         "reference_tensor": {
-          "description": "Name of tensor to match.",
+          "description": "ID of unprocessed input tensor to match.",
           "maxLength": 32,
           "minLength": 1,
           "title": "TensorId",
@@ -12535,7 +12636,7 @@
             }
           ],
           "default": null,
-          "description": "Tensor ID to compute the percentiles from. Default: The tensor itself.\nFor any tensor in `inputs` only input tensor references are allowed.",
+          "description": "ID of the unprocessed input tensor to compute the percentiles from.\nDefault: The tensor itself.",
           "title": "Reference Tensor"
         }
       },
