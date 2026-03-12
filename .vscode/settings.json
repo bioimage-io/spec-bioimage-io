@@ -23,6 +23,10 @@
             "packageManager": "ms-python.python:conda"
         }
     ],
-    "python.languageServer": "None",
-    "python.analysis.typeCheckingMode": "off"
+    "python.languageServer": "Pylance",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.unusedImports": "explicit",
+        "source.organizeImports": "explicit"
+    },
 }
