@@ -1893,7 +1893,13 @@
           "title": "Nms Threshold",
           "type": "number"
         },
+        "b": {
+          "description": "Border region in which object probability is set to zero.",
+          "title": "B",
+          "type": "integer"
+        },
         "grid": {
+          "description": "Grid size of network predictions.",
           "maxItems": 2,
           "minItems": 2,
           "prefixItems": [
@@ -1911,6 +1917,7 @@
       "required": [
         "prob_threshold",
         "nms_threshold",
+        "b",
         "grid"
       ],
       "title": "model.v0_5.StardistPostprocessingKwargs2D",
@@ -1929,7 +1936,13 @@
           "title": "Nms Threshold",
           "type": "number"
         },
+        "b": {
+          "description": "Border region in which object probability is set to zero.",
+          "title": "B",
+          "type": "integer"
+        },
         "grid": {
+          "description": "Grid size of network predictions.",
           "maxItems": 3,
           "minItems": 3,
           "prefixItems": [
@@ -1947,10 +1960,12 @@
           "type": "array"
         },
         "n_rays": {
+          "description": "Number of rays for 3D star-convex polyhedra.",
           "title": "N Rays",
           "type": "integer"
         },
         "anisotropy": {
+          "description": "Anisotropy factors for 3D star-convex polyhedra, i.e. the physical pixel size along each spatial axis.",
           "maxItems": 3,
           "minItems": 3,
           "prefixItems": [
@@ -1971,6 +1986,7 @@
       "required": [
         "prob_threshold",
         "nms_threshold",
+        "b",
         "grid",
         "n_rays",
         "anisotropy"
