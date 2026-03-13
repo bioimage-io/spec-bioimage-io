@@ -20,6 +20,7 @@ from textwrap import TextWrapper
 from types import MappingProxyType
 from typing import (
     Any,
+    Callable,
     Dict,
     List,
     Literal,
@@ -46,7 +47,7 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core.core_schema import ErrorType
-from typing_extensions import Annotated, Self, assert_never
+from typing_extensions import Annotated, Self, assert_never, cast
 
 from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml
@@ -179,12 +180,13 @@ class ValidationDetail(BaseModel, extra="allow"):
     status: Literal["passed", "failed"]
     loc: Loc = ()
     """location in the RDF that this detail applies to"""
-    errors: List[ErrorEntry] = Field(  # pyright: ignore[reportUnknownVariableType]
-        default_factory=list
+    errors: List[ErrorEntry] = Field(
+        default_factory=cast(Callable[[], List[ErrorEntry]], list)
     )
-    warnings: List[WarningEntry] = Field(  # pyright: ignore[reportUnknownVariableType]
-        default_factory=list
+    warnings: List[WarningEntry] = Field(
+        default_factory=cast(Callable[[], List[WarningEntry]], list)
     )
+
     context: Optional[ValidationContextSummary] = None
 
     recommended_env: Optional[CondaEnv] = None
@@ -723,7 +725,9 @@ def _format_summary(
                 )
 
             for entry in d.warnings:
-                append_detail("⚠", entry.loc, entry.msg, None)
+                append_detail(
+                    "⚠" if entry.severity > INFO else "ℹ", entry.loc, entry.msg, None
+                )
 
             if d.recommended_env is not None:
                 rec_env = StringIO()
