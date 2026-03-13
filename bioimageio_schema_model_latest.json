@@ -3077,6 +3077,19 @@
           ],
           "title": "Anisotropy",
           "type": "array"
+        },
+        "overlap_label": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional label to apply to any area of overlapping predicted objects.",
+          "title": "Overlap Label"
         }
       },
       "required": [
