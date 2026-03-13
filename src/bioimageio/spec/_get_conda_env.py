@@ -16,6 +16,7 @@ SupportedWeightsEntry = Union[
     v0_4.TensorflowSavedModelBundleWeightsDescr,
     v0_4.TorchscriptWeightsDescr,
     v0_5.KerasHdf5WeightsDescr,
+    v0_5.KerasV3WeightsDescr,
     v0_5.OnnxWeightsDescr,
     v0_5.PytorchStateDictWeightsDescr,
     v0_5.TensorflowSavedModelBundleWeightsDescr,

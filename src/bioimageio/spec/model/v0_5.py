@@ -1320,6 +1320,8 @@ class StardistPostprocessingKwargs3D(_StardistPostprocessingKwargsBase):
     """Number of rays for 3D star-convex polyhedra."""
     anisotropy: Tuple[float, float, float]
     """Anisotropy factors for 3D star-convex polyhedra, i.e. the physical pixel size along each spatial axis."""
+    overlap_label: Optional[int] = None
+    """Optional label to apply to any area of overlapping predicted objects."""
 
 
 class StardistPostprocessingDescr(NodeWithExplicitlySetFields):
