@@ -412,6 +412,22 @@ class InvalidDescr(
     else:
         format_version: Any
 
+    def get_reason(self) -> Optional[str]:
+        """Get the reason why the description is invalid, if available."""
+        reasons: List[str] = []
+        if self.validation_summary and self.validation_summary.details:
+            for detail in self.validation_summary.details:
+                if detail.status == "failed" and detail.errors:
+                    reasons.extend(
+                        f"{loc}: {msg}"
+                        for loc, msg in (
+                            (error.loc, error.msg.replace("\n", " "))
+                            for error in detail.errors
+                        )
+                    )
+
+        return "\n- ".join(reasons) if reasons else None
+
 
 class KwargsNode(Node):
     def get(self, item: str, default: Any = None) -> Any:
