@@ -132,7 +132,7 @@ def _prepare_resource_package(
             descr = build_description(opened.content)
 
     if isinstance(descr, InvalidDescr):
-        raise ValueError(f"{source} is invalid: {descr.validation_summary}")
+        raise ValueError(f"Resource description is invalid:\n{descr.get_reason()}")
 
     with context:
         package_content = get_package_content(
