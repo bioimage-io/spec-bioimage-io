@@ -2,6 +2,7 @@ import io
 import shutil
 from pathlib import Path
 
+import pytest
 from deepdiff.diff import DeepDiff
 
 from bioimageio.spec.model import v0_5
@@ -28,6 +29,13 @@ def test_package(unet2d_path: Path):
 
     diff = DeepDiff(rdf1, rdf2)
     assert not diff, diff.pretty()
+
+
+def test_package_invalid():
+    from bioimageio.spec import save_bioimageio_package
+
+    with pytest.raises(ValueError, match=".* is invalid: .*"):
+        _ = save_bioimageio_package({"invalid": True})
 
 
 def test_save_bioimageio_package(unet2d_path: Path):
