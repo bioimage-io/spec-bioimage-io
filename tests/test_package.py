@@ -34,7 +34,7 @@ def test_package(unet2d_path: Path):
 def test_package_invalid():
     from bioimageio.spec import save_bioimageio_package
 
-    with pytest.raises(ValueError, match=".* is invalid: .*"):
+    with pytest.raises(ValueError, match=".* is invalid:.*"):
         _ = save_bioimageio_package({"invalid": True})
 
 
