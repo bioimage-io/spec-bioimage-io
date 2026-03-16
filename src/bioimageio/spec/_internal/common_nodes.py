@@ -36,9 +36,9 @@ from ..summary import (
 from .field_warning import issue_warning
 from .io import (
     BioimageioYamlContent,
-    BioimageioYamlContentView,
+    DescrDataView,
     FileDescr,
-    deepcopy_yaml_value,
+    deepcopy_descr_data,
     extract_file_descrs,
     populate_cache,
 )
@@ -214,17 +214,17 @@ class ResourceDescrBase(
     @classmethod
     def load(
         cls,
-        data: BioimageioYamlContentView,
+        data: DescrDataView,
         context: Optional[ValidationContext] = None,
     ) -> Union[Self, InvalidDescr]:
         """factory method to create a resource description object"""
         context = context or get_validation_context()
         if context.perform_io_checks:
-            file_descrs = extract_file_descrs({k: v for k, v in data.items()})
+            file_descrs = extract_file_descrs(data)
             populate_cache(file_descrs)  # TODO: add progress bar
 
         with context.replace(log_warnings=context.warning_level <= INFO):
-            rd, errors, val_warnings = cls._load_impl(deepcopy_yaml_value(data))
+            rd, errors, val_warnings = cls._load_impl(deepcopy_descr_data(data))
 
         if context.warning_level > INFO:
             all_warnings_context = context.replace(
@@ -232,7 +232,7 @@ class ResourceDescrBase(
             )
             # raise all validation warnings by reloading
             with all_warnings_context:
-                _, _, val_warnings = cls._load_impl(deepcopy_yaml_value(data))
+                _, _, val_warnings = cls._load_impl(deepcopy_descr_data(data))
 
         format_status = "failed" if errors else "passed"
         rd.validation_summary.add_detail(
@@ -274,7 +274,7 @@ class ResourceDescrBase(
 
     @classmethod
     def _load_impl(
-        cls, data: BioimageioYamlContent
+        cls, data: DescrDataView
     ) -> Tuple[Union[Self, InvalidDescr], List[ErrorEntry], List[WarningEntry]]:
         rd: Union[Self, InvalidDescr, None] = None
         val_errors: List[ErrorEntry] = []

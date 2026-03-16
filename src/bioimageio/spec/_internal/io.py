@@ -7,6 +7,7 @@ import warnings
 import zipfile
 from abc import abstractmethod
 from contextlib import nullcontext
+from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import date as _date
 from datetime import datetime as _datetime
@@ -453,8 +454,28 @@ else:
         ],
     )
 
+
 BioimageioYamlContent = Dict[str, YamlValue]
 BioimageioYamlContentView = Mapping[str, YamlValueView]
+
+DescrDataLeafValue = Union[Node, YamlLeafValue]
+"""Leaf value for a partial description"""
+
+DescrData = Union[
+    DescrDataLeafValue,
+    List["DescrData"],
+    Dict[YamlKey, "DescrData"],
+]
+"""A partial resource description, i.e. YAML values and Node instances mixed."""
+
+DescrDataView = Union[
+    DescrDataLeafValue,
+    Sequence["DescrDataView"],
+    Mapping[YamlKey, "DescrDataView"],
+]
+
+"""A non-editable partial resource description, i.e. YAML 'view' values and Node instances mixed."""
+
 BioimageioYamlSource = Union[
     PermissiveFileSource, ZipFile, BioimageioYamlContent, BioimageioYamlContentView
 ]
@@ -471,14 +492,29 @@ def deepcopy_yaml_value(value: YamlValueView) -> YamlValue: ...
 def deepcopy_yaml_value(
     value: Union[BioimageioYamlContentView, YamlValueView],
 ) -> Union[BioimageioYamlContent, YamlValue]:
-    if isinstance(value, str):
-        return value
-    elif isinstance(value, collections.abc.Mapping):
+    if isinstance(value, collections.abc.Mapping):
         return {key: deepcopy_yaml_value(val) for key, val in value.items()}
     elif isinstance(value, collections.abc.Sequence):
         return [deepcopy_yaml_value(val) for val in value]
     else:
         return value
+
+
+def deepcopy_descr_data(
+    data: DescrDataView,
+) -> DescrData:
+    if isinstance(data, Node):
+        return deepcopy(data)
+    elif isinstance(data, str):
+        return data
+    elif isinstance(data, collections.abc.Mapping):
+        return {key: deepcopy_descr_data(val) for key, val in data.items()}
+    elif isinstance(data, collections.abc.Sequence):
+        return [deepcopy_descr_data(val) for val in data]
+    elif isinstance(data, (bool, int, float, type(None), _date, _datetime)):
+        return data
+    else:
+        assert_never(data)
 
 
 def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
@@ -843,7 +879,7 @@ def extract_file_name(
             return url.path.split("/")[-1]
 
 
-def extract_file_descrs(data: YamlValueView):
+def extract_file_descrs(data: DescrDataView):
     collected: List[FileDescr] = []
     with get_validation_context().replace(perform_io_checks=False, log_warnings=False):
         _extract_file_descrs_impl(data, collected)
@@ -851,15 +887,30 @@ def extract_file_descrs(data: YamlValueView):
     return collected
 
 
-def _extract_file_descrs_impl(data: YamlValueView, collected: List[FileDescr]):
-    if isinstance(data, collections.abc.Mapping):
+def _extract_file_descrs_impl(data: DescrDataView, collected: List[FileDescr]):
+    if isinstance(data, FileDescr):
+        collected.append(data)
+    elif isinstance(data, Node):
+        for _, v in data:
+            _extract_file_descrs_impl(v, collected)
+    elif isinstance(data, collections.abc.Mapping):
         if "source" in data and "sha256" in data:
             try:
                 fd = FileDescr.model_validate(
                     dict(source=data["source"], sha256=data["sha256"])
                 )
             except Exception:
-                pass
+                warnings.warn(
+                    "Found mapping with 'source' and 'sha256' keys, but could not parse it as a FileDescr. Ignoring `sha256`."
+                )
+                try:
+                    fd = FileDescr.model_validate(dict(source=data["source"]))
+                except Exception:
+                    warnings.warn(
+                        f"Found mapping with 'source' and `sha256' keys , but could not parse it as a FileDescr, evning when ignoring 'sha256'. Ignoring `source`: {data['source']}."
+                    )
+                else:
+                    collected.append(fd)
             else:
                 collected.append(fd)
 
