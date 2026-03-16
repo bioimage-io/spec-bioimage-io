@@ -134,16 +134,6 @@ useLibraryCodeForTypes = true
 addopts = "--doctest-modules --ignore scripts/generate_api_doc_pages.py"  # TODO: add --nbval
 testpaths = ["example", "src", "tests"]
 
-[tool.coverage.run]
-source = ["bioimageio"]
-relative_files = true
-
-[tool.coverage.paths]
-bioimageio = [
-    "src/bioimageio",
-    "*/site-packages/bioimageio",
-]
-
 [tool.ruff]
 line-length = 88
 target-version = "py38"
