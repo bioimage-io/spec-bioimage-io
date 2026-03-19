@@ -10,6 +10,10 @@ In this file we log both:
 
 This changelog includes implementation details and might reference [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+### bioimageio.spec 0.5.7.5
+
+- patch copying files from zip to zip
+
 ### bioimageio.spec 0.5.7.4
 
 - update default pytorch conda environments
