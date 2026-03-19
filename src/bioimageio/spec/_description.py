@@ -253,11 +253,9 @@ def ensure_description_is_model(
         ValueError: for invalid or non-model resources
     """
     if isinstance(rd, InvalidDescr):
-        rd.validation_summary.display()
-        raise ValueError(f"Invalid {rd.type} description")
+        raise ValueError(f"Invalid {rd.type} description:\n{rd.get_reason()}")
 
     if rd.type != "model":
-        rd.validation_summary.display()
         raise ValueError(
             f"Expected a model resource, but got resource type '{rd.type}'"
         )
@@ -277,11 +275,9 @@ def ensure_description_is_dataset(
     rd: Union[InvalidDescr, ResourceDescr],
 ) -> AnyDatasetDescr:
     if isinstance(rd, InvalidDescr):
-        rd.validation_summary.display()
-        raise ValueError(f"Invalid {rd.type} description.")
+        raise ValueError(f"Invalid {rd.type} description:\n{rd.get_reason()}")
 
     if rd.type != "dataset":
-        rd.validation_summary.display()
         raise ValueError(
             f"Expected a dataset resource, but got resource type '{rd.type}'"
         )

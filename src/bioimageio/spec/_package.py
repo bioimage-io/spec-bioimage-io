@@ -269,8 +269,7 @@ def save_bioimageio_package(
     )
     with get_validation_context().replace(warning_level=ERROR):
         if isinstance((exported := load_description(output_path)), InvalidDescr):
-            exported.validation_summary.display()
-            msg = f"Exported package at '{output_path}' is invalid."
+            msg = f"Exported package at '{output_path}' is invalid:\n{exported.get_reason()}"
             if allow_invalid:
                 logger.error(msg)
             else:
