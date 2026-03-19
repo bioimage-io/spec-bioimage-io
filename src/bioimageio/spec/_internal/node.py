@@ -4,6 +4,7 @@ import collections.abc
 import warnings
 from typing import (
     Any,
+    Dict,
     Literal,
     Mapping,
     Optional,
@@ -12,7 +13,7 @@ from typing import (
 )
 
 import pydantic
-from typing_extensions import Self
+from typing_extensions import Callable, ParamSpec, Self, TypeVar
 
 from .type_guards import is_kwargs
 from .validation_context import ValidationContext, get_validation_context
@@ -25,6 +26,10 @@ def _node_title_generator(node: Type[Node]) -> str:
         and hasattr(node, "implemented_format_version")
         else f"{node.__module__.replace('bioimageio.spec.', '')}.{node.__name__}"
     )
+
+
+P = ParamSpec("P")
+T = TypeVar("T")
 
 
 class Node(
@@ -86,3 +91,10 @@ class Node(
             return super().model_validate(
                 obj, strict=strict, from_attributes=from_attributes
             )
+
+    @classmethod
+    def dict_from_kwargs(
+        cls: Callable[P, T], *args: P.args, **kwargs: P.kwargs
+    ) -> Dict[str, Any]:
+        assert not args, "Did not expected any args"
+        return dict(kwargs)

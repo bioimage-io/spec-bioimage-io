@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
+from inspect import signature
 from io import BytesIO
 from pathlib import Path
 from types import MappingProxyType
@@ -17,6 +18,7 @@ from typing import (
     Optional,
     Protocol,
     Tuple,
+    TypeVar,
     Union,
 )
 from zipfile import ZipFile
@@ -24,7 +26,7 @@ from zipfile import ZipFile
 import pydantic
 from pydantic import DirectoryPath, PrivateAttr, model_validator
 from pydantic_core import PydanticUndefined
-from typing_extensions import Self
+from typing_extensions import Callable, ParamSpec, Self
 
 from ..summary import (
     WARNING_LEVEL_TO_NAME,
@@ -36,9 +38,10 @@ from ..summary import (
 from .field_warning import issue_warning
 from .io import (
     BioimageioYamlContent,
-    DescrDataView,
     FileDescr,
-    deepcopy_descr_data,
+    IncompleteDescr,
+    IncompleteDescrView,
+    deepcopy_incomplete_descr,
     extract_file_descrs,
     populate_cache,
 )
@@ -103,6 +106,10 @@ else:
 
     class _ResourceDescrBaseAbstractFieldsProtocol:
         pass
+
+
+P = ParamSpec("P")
+T = TypeVar("T")
 
 
 class ResourceDescrBase(
@@ -212,19 +219,31 @@ class ResourceDescrBase(
                 cls.implemented_format_version_tuple = fv_tuple
 
     @classmethod
+    def load_from_kwargs(
+        cls: Callable[P, T],
+        context: Optional[ValidationContext] = None,
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ) -> Union[T, InvalidDescr]:
+        sig = signature(cls)
+        bound = sig.bind_partial(*args, **kwargs)
+        return cls.load(dict(bound.arguments), context=context)  # pyright: ignore[reportFunctionMemberAccess]
+
+    @classmethod
     def load(
         cls,
-        data: DescrDataView,
+        data: IncompleteDescrView,
         context: Optional[ValidationContext] = None,
     ) -> Union[Self, InvalidDescr]:
         """factory method to create a resource description object"""
+
         context = context or get_validation_context()
         if context.perform_io_checks:
             file_descrs = extract_file_descrs(data)
             populate_cache(file_descrs)  # TODO: add progress bar
 
         with context.replace(log_warnings=context.warning_level <= INFO):
-            rd, errors, val_warnings = cls._load_impl(deepcopy_descr_data(data))
+            rd, errors, val_warnings = cls._load_impl(deepcopy_incomplete_descr(data))
 
         if context.warning_level > INFO:
             all_warnings_context = context.replace(
@@ -232,7 +251,7 @@ class ResourceDescrBase(
             )
             # raise all validation warnings by reloading
             with all_warnings_context:
-                _, _, val_warnings = cls._load_impl(deepcopy_descr_data(data))
+                _, _, val_warnings = cls._load_impl(deepcopy_incomplete_descr(data))
 
         format_status = "failed" if errors else "passed"
         rd.validation_summary.add_detail(
@@ -274,7 +293,7 @@ class ResourceDescrBase(
 
     @classmethod
     def _load_impl(
-        cls, data: DescrDataView
+        cls, data: IncompleteDescr
     ) -> Tuple[Union[Self, InvalidDescr], List[ErrorEntry], List[WarningEntry]]:
         rd: Union[Self, InvalidDescr, None] = None
         val_errors: List[ErrorEntry] = []

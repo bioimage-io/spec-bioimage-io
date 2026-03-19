@@ -4,13 +4,11 @@ from typing import Any, Literal, Optional, TypeVar, Union, overload
 from pydantic import Discriminator
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.validation_context import ValidationContext
-
 from ._description_impl import DISCOVER, build_description_impl, get_rd_class_impl
 from ._internal.common_nodes import InvalidDescr
 from ._internal.io import BioimageioYamlContent, BioimageioYamlContentView
 from ._internal.types import FormatVersionPlaceholder
-from ._internal.validation_context import get_validation_context
+from ._internal.validation_context import ValidationContext, get_validation_context
 from .application import (
     AnyApplicationDescr,
     ApplicationDescr,

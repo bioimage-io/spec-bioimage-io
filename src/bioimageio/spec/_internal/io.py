@@ -86,6 +86,7 @@ from .type_guards import is_dict, is_list, is_mapping, is_sequence
 from .url import HttpUrl
 from .utils import SLOTS
 from .validation_context import get_validation_context
+from .version_type import Version
 
 AbsolutePathT = TypeVar(
     "AbsolutePathT",
@@ -458,23 +459,34 @@ else:
 BioimageioYamlContent = Dict[str, YamlValue]
 BioimageioYamlContentView = Mapping[str, YamlValueView]
 
-DescrDataLeafValue = Union[Node, YamlLeafValue]
-"""Leaf value for a partial description"""
+IncompleteDescrLeaf = Union[Node, YamlValue, PermissiveFileSource, Version]
+"""Leaf value of a partial description"""
 
-DescrData = Union[
-    DescrDataLeafValue,
-    List["DescrData"],
-    Dict[YamlKey, "DescrData"],
+IncompleteDescrInner = Union[
+    IncompleteDescrLeaf,
+    List["IncompleteDescrInner"],
+    Dict[YamlKey, "IncompleteDescrInner"],
 ]
-"""A partial resource description, i.e. YAML values and Node instances mixed."""
+"""An inner node of an incomplete resource description --- YAML values and description nodes mixed."""
 
-DescrDataView = Union[
-    DescrDataLeafValue,
-    Sequence["DescrDataView"],
-    Mapping[YamlKey, "DescrDataView"],
+IncompleteDescr = Dict[str, IncompleteDescrInner]
+"""An incomplete resource description --- YAML values and description nodes mixed."""
+
+
+IncompleteDescrLeafView = Union[Node, YamlValueView, PermissiveFileSource, Version]
+"""Non-editable leaf value of an incomplete description"""
+
+IncompleteDescrInnerView = Union[
+    IncompleteDescrLeafView,
+    Sequence["IncompleteDescrInnerView"],
+    Mapping[YamlKey, "IncompleteDescrInnerView"],
+    # Mapping[str, YamlValueView],  # not sure why this is explicit Mapping is needed
 ]
+"""A inner node of a non-editable incomplete resource description --- YAML value views and Node instances mixed."""
 
-"""A non-editable partial resource description, i.e. YAML 'view' values and Node instances mixed."""
+IncompleteDescrView = Mapping[str, IncompleteDescrInnerView]
+"""A non-editable incomplete resource description --- YAML mappings and Node instances mixed."""
+
 
 BioimageioYamlSource = Union[
     PermissiveFileSource, ZipFile, BioimageioYamlContent, BioimageioYamlContentView
@@ -500,18 +512,37 @@ def deepcopy_yaml_value(
         return value
 
 
-def deepcopy_descr_data(
-    data: DescrDataView,
-) -> DescrData:
+def deepcopy_incomplete_descr(data: IncompleteDescrView) -> IncompleteDescr:
+    return {k: _deepcopy_incomplete_descr_impl(v) for k, v in data.items()}
+
+
+def _deepcopy_incomplete_descr_impl(
+    data: IncompleteDescrInnerView,
+) -> IncompleteDescrInner:
     if isinstance(data, Node):
         return deepcopy(data)
     elif isinstance(data, str):
         return data
     elif isinstance(data, collections.abc.Mapping):
-        return {key: deepcopy_descr_data(val) for key, val in data.items()}
+        return {k: _deepcopy_incomplete_descr_impl(v) for k, v in data.items()}
     elif isinstance(data, collections.abc.Sequence):
-        return [deepcopy_descr_data(val) for val in data]
-    elif isinstance(data, (bool, int, float, type(None), _date, _datetime)):
+        return [_deepcopy_incomplete_descr_impl(v) for v in data]
+    elif isinstance(
+        data,
+        (
+            bool,
+            int,
+            float,
+            type(None),
+            _date,
+            _datetime,
+            Version,
+            RelativeFilePath,
+            PurePath,
+            HttpUrl,
+            pydantic.HttpUrl,
+        ),
+    ):
         return data
     else:
         assert_never(data)
@@ -879,7 +910,9 @@ def extract_file_name(
             return url.path.split("/")[-1]
 
 
-def extract_file_descrs(data: DescrDataView):
+def extract_file_descrs(
+    data: IncompleteDescrView,
+) -> List[FileDescr]:
     collected: List[FileDescr] = []
     with get_validation_context().replace(perform_io_checks=False, log_warnings=False):
         _extract_file_descrs_impl(data, collected)
@@ -887,7 +920,10 @@ def extract_file_descrs(data: DescrDataView):
     return collected
 
 
-def _extract_file_descrs_impl(data: DescrDataView, collected: List[FileDescr]):
+def _extract_file_descrs_impl(
+    data: Union[IncompleteDescrView, IncompleteDescrInnerView],
+    collected: List[FileDescr],
+) -> None:
     if isinstance(data, FileDescr):
         collected.append(data)
     elif isinstance(data, Node):
@@ -916,7 +952,9 @@ def _extract_file_descrs_impl(data: DescrDataView, collected: List[FileDescr]):
 
         for v in data.values():
             _extract_file_descrs_impl(v, collected)
-    elif not isinstance(data, str) and isinstance(data, collections.abc.Sequence):
+    elif not isinstance(data, (str, Path, RelativeFilePath)) and isinstance(
+        data, collections.abc.Sequence
+    ):
         for v in data:
             _extract_file_descrs_impl(v, collected)
 
