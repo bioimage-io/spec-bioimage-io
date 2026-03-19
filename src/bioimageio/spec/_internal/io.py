@@ -728,7 +728,7 @@ def get_reader(
 
     if isinstance(source, ZipPath):
         if not source.exists():
-            raise FileNotFoundError(source)
+            raise FileNotFoundError(source.filename)
 
         f = source.open(mode="rb")
         assert not isinstance(f, TextIOWrapper)
