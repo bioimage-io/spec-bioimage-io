@@ -82,8 +82,14 @@ def load_description(
         known_files:
             Allows to bypass download and hashing of referenced files
             (even if perform_io_checks is True).
-            Checked files will be added to this dictionary
-            with their SHA-256 value.
+            Keys should be file paths or URL strings as they appear in the
+            bioimageio.yaml file.
+            Values are Sha256 values compared to hash values in the description.
+            For `None` values no hash value comparison is performed.
+            If `perfrom_io_checks` is True, checked files will be added to
+            this dictionary with their SHA-256 value.
+            If `perform_io_checks` is False and `known_files` is not empty,
+            missing, 'unknown' file references are considered invalid.
         sha256:
             Optional SHA-256 value of **source**
 

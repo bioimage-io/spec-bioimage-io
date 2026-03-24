@@ -268,30 +268,34 @@ class FileDescr(Node):
 
     @model_validator(mode="after")
     def _validate_sha256(self) -> Self:
-        if get_validation_context().perform_io_checks:
-            self.validate_sha256()
-
+        self.validate_sha256()
         return self
 
     def validate_sha256(self, force_recompute: bool = False) -> None:
         """validate the sha256 hash value of the **source** file"""
         context = get_validation_context()
         src_str = str(self.source)
-        if not force_recompute and src_str in context.known_files:
-            actual_sha = context.known_files[src_str]
+        if force_recompute:
+            actual_sha = None
         else:
-            reader = get_reader(self.source, sha256=self.sha256)
-            if force_recompute:
-                actual_sha = get_sha256(reader)
-            else:
-                actual_sha = reader.sha256
-
-            context.known_files[src_str] = actual_sha
+            actual_sha = context.known_files.get(src_str)
 
         if actual_sha is None:
+            if context.perform_io_checks or force_recompute:
+                reader = get_reader(self.source, sha256=self.sha256)
+                if force_recompute:
+                    actual_sha = get_sha256(reader)
+                else:
+                    actual_sha = reader.sha256
+
+                context.known_files[src_str] = actual_sha
+            elif context.known_files and src_str not in context.known_files:
+                # perform_io_checks is False, but known files were given,
+                # so we expect all file references to be in there
+                raise ValueError(f"File {src_str} not found in `known_files`.")
+
+        if actual_sha is None or self.sha256 == actual_sha:
             return
-        elif self.sha256 == actual_sha:
-            pass
         elif self.sha256 is None or context.update_hashes:
             self.sha256 = actual_sha
         elif self.sha256 != actual_sha:
