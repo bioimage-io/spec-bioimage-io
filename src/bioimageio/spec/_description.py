@@ -4,13 +4,11 @@ from typing import Any, Literal, Optional, TypeVar, Union, overload
 from pydantic import Discriminator
 from typing_extensions import Annotated
 
-from bioimageio.spec._internal.validation_context import ValidationContext
-
 from ._description_impl import DISCOVER, build_description_impl, get_rd_class_impl
 from ._internal.common_nodes import InvalidDescr
 from ._internal.io import BioimageioYamlContent, BioimageioYamlContentView
 from ._internal.types import FormatVersionPlaceholder
-from ._internal.validation_context import get_validation_context
+from ._internal.validation_context import ValidationContext, get_validation_context
 from .application import (
     AnyApplicationDescr,
     ApplicationDescr,
@@ -253,11 +251,9 @@ def ensure_description_is_model(
         ValueError: for invalid or non-model resources
     """
     if isinstance(rd, InvalidDescr):
-        rd.validation_summary.display()
-        raise ValueError(f"Invalid {rd.type} description")
+        raise ValueError(f"Invalid {rd.type} description:\n{rd.get_reason()}")
 
     if rd.type != "model":
-        rd.validation_summary.display()
         raise ValueError(
             f"Expected a model resource, but got resource type '{rd.type}'"
         )
@@ -277,11 +273,9 @@ def ensure_description_is_dataset(
     rd: Union[InvalidDescr, ResourceDescr],
 ) -> AnyDatasetDescr:
     if isinstance(rd, InvalidDescr):
-        rd.validation_summary.display()
-        raise ValueError(f"Invalid {rd.type} description.")
+        raise ValueError(f"Invalid {rd.type} description:\n{rd.get_reason()}")
 
     if rd.type != "dataset":
-        rd.validation_summary.display()
         raise ValueError(
             f"Expected a dataset resource, but got resource type '{rd.type}'"
         )

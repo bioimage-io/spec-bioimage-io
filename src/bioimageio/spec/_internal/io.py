@@ -7,6 +7,7 @@ import warnings
 import zipfile
 from abc import abstractmethod
 from contextlib import nullcontext
+from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import date as _date
 from datetime import datetime as _datetime
@@ -85,6 +86,7 @@ from .type_guards import is_dict, is_list, is_mapping, is_sequence
 from .url import HttpUrl
 from .utils import SLOTS
 from .validation_context import get_validation_context
+from .version_type import Version
 
 AbsolutePathT = TypeVar(
     "AbsolutePathT",
@@ -266,30 +268,34 @@ class FileDescr(Node):
 
     @model_validator(mode="after")
     def _validate_sha256(self) -> Self:
-        if get_validation_context().perform_io_checks:
-            self.validate_sha256()
-
+        self.validate_sha256()
         return self
 
     def validate_sha256(self, force_recompute: bool = False) -> None:
         """validate the sha256 hash value of the **source** file"""
         context = get_validation_context()
         src_str = str(self.source)
-        if not force_recompute and src_str in context.known_files:
-            actual_sha = context.known_files[src_str]
+        if force_recompute:
+            actual_sha = None
         else:
-            reader = get_reader(self.source, sha256=self.sha256)
-            if force_recompute:
-                actual_sha = get_sha256(reader)
-            else:
-                actual_sha = reader.sha256
-
-            context.known_files[src_str] = actual_sha
+            actual_sha = context.known_files.get(src_str)
 
         if actual_sha is None:
+            if context.perform_io_checks or force_recompute:
+                reader = get_reader(self.source, sha256=self.sha256)
+                if force_recompute:
+                    actual_sha = get_sha256(reader)
+                else:
+                    actual_sha = reader.sha256
+
+                context.known_files[src_str] = actual_sha
+            elif context.known_files and src_str not in context.known_files:
+                # perform_io_checks is False, but known files were given,
+                # so we expect all file references to be in there
+                raise ValueError(f"File {src_str} not found in `known_files`.")
+
+        if actual_sha is None or self.sha256 == actual_sha:
             return
-        elif self.sha256 == actual_sha:
-            pass
         elif self.sha256 is None or context.update_hashes:
             self.sha256 = actual_sha
         elif self.sha256 != actual_sha:
@@ -453,8 +459,39 @@ else:
         ],
     )
 
+
 BioimageioYamlContent = Dict[str, YamlValue]
 BioimageioYamlContentView = Mapping[str, YamlValueView]
+
+IncompleteDescrLeaf = Union[Node, YamlValue, PermissiveFileSource, Version]
+"""Leaf value of a partial description"""
+
+IncompleteDescrInner = Union[
+    IncompleteDescrLeaf,
+    List["IncompleteDescrInner"],
+    Dict[YamlKey, "IncompleteDescrInner"],
+]
+"""An inner node of an incomplete resource description --- YAML values and description nodes mixed."""
+
+IncompleteDescr = Dict[str, IncompleteDescrInner]
+"""An incomplete resource description --- YAML values and description nodes mixed."""
+
+
+IncompleteDescrLeafView = Union[Node, YamlValueView, PermissiveFileSource, Version]
+"""Non-editable leaf value of an incomplete description"""
+
+IncompleteDescrInnerView = Union[
+    IncompleteDescrLeafView,
+    Sequence["IncompleteDescrInnerView"],
+    Mapping[YamlKey, "IncompleteDescrInnerView"],
+    # Mapping[str, YamlValueView],  # not sure why this is explicit Mapping is needed
+]
+"""A inner node of a non-editable incomplete resource description --- YAML value views and Node instances mixed."""
+
+IncompleteDescrView = Mapping[str, IncompleteDescrInnerView]
+"""A non-editable incomplete resource description --- YAML mappings and Node instances mixed."""
+
+
 BioimageioYamlSource = Union[
     PermissiveFileSource, ZipFile, BioimageioYamlContent, BioimageioYamlContentView
 ]
@@ -471,14 +508,48 @@ def deepcopy_yaml_value(value: YamlValueView) -> YamlValue: ...
 def deepcopy_yaml_value(
     value: Union[BioimageioYamlContentView, YamlValueView],
 ) -> Union[BioimageioYamlContent, YamlValue]:
-    if isinstance(value, str):
-        return value
-    elif isinstance(value, collections.abc.Mapping):
+    if isinstance(value, collections.abc.Mapping):
         return {key: deepcopy_yaml_value(val) for key, val in value.items()}
     elif isinstance(value, collections.abc.Sequence):
         return [deepcopy_yaml_value(val) for val in value]
     else:
         return value
+
+
+def deepcopy_incomplete_descr(data: IncompleteDescrView) -> IncompleteDescr:
+    return {k: _deepcopy_incomplete_descr_impl(v) for k, v in data.items()}
+
+
+def _deepcopy_incomplete_descr_impl(
+    data: IncompleteDescrInnerView,
+) -> IncompleteDescrInner:
+    if isinstance(data, Node):
+        return deepcopy(data)
+    elif isinstance(data, str):
+        return data
+    elif isinstance(data, collections.abc.Mapping):
+        return {k: _deepcopy_incomplete_descr_impl(v) for k, v in data.items()}
+    elif isinstance(data, collections.abc.Sequence):
+        return [_deepcopy_incomplete_descr_impl(v) for v in data]
+    elif isinstance(
+        data,
+        (
+            bool,
+            int,
+            float,
+            type(None),
+            _date,
+            _datetime,
+            Version,
+            RelativeFilePath,
+            PurePath,
+            HttpUrl,
+            pydantic.HttpUrl,
+        ),
+    ):
+        return data
+    else:
+        assert_never(data)
 
 
 def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
@@ -661,7 +732,7 @@ def get_reader(
 
     if isinstance(source, ZipPath):
         if not source.exists():
-            raise FileNotFoundError(source)
+            raise FileNotFoundError(source.filename)
 
         f = source.open(mode="rb")
         assert not isinstance(f, TextIOWrapper)
@@ -843,7 +914,9 @@ def extract_file_name(
             return url.path.split("/")[-1]
 
 
-def extract_file_descrs(data: YamlValueView):
+def extract_file_descrs(
+    data: IncompleteDescrView,
+) -> List[FileDescr]:
     collected: List[FileDescr] = []
     with get_validation_context().replace(perform_io_checks=False, log_warnings=False):
         _extract_file_descrs_impl(data, collected)
@@ -851,21 +924,41 @@ def extract_file_descrs(data: YamlValueView):
     return collected
 
 
-def _extract_file_descrs_impl(data: YamlValueView, collected: List[FileDescr]):
-    if isinstance(data, collections.abc.Mapping):
+def _extract_file_descrs_impl(
+    data: Union[IncompleteDescrView, IncompleteDescrInnerView],
+    collected: List[FileDescr],
+) -> None:
+    if isinstance(data, FileDescr):
+        collected.append(data)
+    elif isinstance(data, Node):
+        for _, v in data:
+            _extract_file_descrs_impl(v, collected)
+    elif isinstance(data, collections.abc.Mapping):
         if "source" in data and "sha256" in data:
             try:
                 fd = FileDescr.model_validate(
                     dict(source=data["source"], sha256=data["sha256"])
                 )
             except Exception:
-                pass
+                warnings.warn(
+                    "Found mapping with 'source' and 'sha256' keys, but could not parse it as a FileDescr. Ignoring `sha256`."
+                )
+                try:
+                    fd = FileDescr.model_validate(dict(source=data["source"]))
+                except Exception:
+                    warnings.warn(
+                        f"Found mapping with 'source' and `sha256' keys , but could not parse it as a FileDescr, evning when ignoring 'sha256'. Ignoring `source`: {data['source']}."
+                    )
+                else:
+                    collected.append(fd)
             else:
                 collected.append(fd)
 
         for v in data.values():
             _extract_file_descrs_impl(v, collected)
-    elif not isinstance(data, str) and isinstance(data, collections.abc.Sequence):
+    elif not isinstance(data, (str, Path, RelativeFilePath)) and isinstance(
+        data, collections.abc.Sequence
+    ):
         for v in data:
             _extract_file_descrs_impl(v, collected)
 

@@ -145,7 +145,6 @@ from .v0_4 import ScaleMeanVarianceDescr as _ScaleMeanVarianceDescr_v0_4
 from .v0_4 import ScaleRangeDescr as _ScaleRangeDescr_v0_4
 from .v0_4 import SigmoidDescr as _SigmoidDescr_v0_4
 from .v0_4 import TensorName as _TensorName_v0_4
-from .v0_4 import WeightsFormat as WeightsFormat
 from .v0_4 import ZeroMeanUnitVarianceDescr as _ZeroMeanUnitVarianceDescr_v0_4
 from .v0_4 import package_weights
 
@@ -224,6 +223,16 @@ _AXIS_ID_MAP = {
     "i": "index",
     "c": "channel",
 }
+
+WeightsFormat = Literal[
+    "keras_hdf5",
+    "keras_v3",
+    "onnx",
+    "pytorch_state_dict",
+    "tensorflow_js",
+    "tensorflow_saved_model_bundle",
+    "torchscript",
+]
 
 
 class TensorId(LowerCaseIdentifier):
@@ -1286,6 +1295,60 @@ class SoftmaxDescr(NodeWithExplicitlySetFields):
     kwargs: SoftmaxKwargs = Field(default_factory=SoftmaxKwargs.model_construct)
 
 
+class _StardistPostprocessingKwargsBase(KwargsNode):
+    """key word arguments for [StardistPostprocessingDescr][]"""
+
+    prob_threshold: float
+    """The probability threshold for object candidate selection."""
+
+    nms_threshold: float
+    """The IoU threshold for non-maximum suppression."""
+
+    b: int
+    """Border region in which object probability is set to zero."""
+
+
+class StardistPostprocessingKwargs2D(_StardistPostprocessingKwargsBase):
+    grid: Tuple[int, int]
+    """Grid size of network predictions."""
+
+
+class StardistPostprocessingKwargs3D(_StardistPostprocessingKwargsBase):
+    grid: Tuple[int, int, int]
+    """Grid size of network predictions."""
+    n_rays: int
+    """Number of rays for 3D star-convex polyhedra."""
+    anisotropy: Tuple[float, float, float]
+    """Anisotropy factors for 3D star-convex polyhedra, i.e. the physical pixel size along each spatial axis."""
+    overlap_label: Optional[int] = None
+    """Optional label to apply to any area of overlapping predicted objects."""
+
+
+class StardistPostprocessingDescr(NodeWithExplicitlySetFields):
+    """Stardist postprocessing including non-maximum suppression and converting polygon representations to instance labels
+
+    as described in:
+    - Uwe Schmidt, Martin Weigert, Coleman Broaddus, and Gene Myers.
+    [*Cell Detection with Star-convex Polygons*](https://arxiv.org/abs/1806.03535).
+    International Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI), Granada, Spain, September 2018.
+    - Martin Weigert, Uwe Schmidt, Robert Haase, Ko Sugawara, and Gene Myers.
+    [*Star-convex Polyhedra for 3D Object Detection and Segmentation in Microscopy*](http://openaccess.thecvf.com/content_WACV_2020/papers/Weigert_Star-convex_Polyhedra_for_3D_Object_Detection_and_Segmentation_in_Microscopy_WACV_2020_paper.pdf).
+    The IEEE Winter Conference on Applications of Computer Vision (WACV), Snowmass Village, Colorado, March 2020.
+
+    Note: Only available if the `stardist` package is installed.
+    """
+
+    implemented_id: ClassVar[Literal["stardist_postprocessing"]] = (
+        "stardist_postprocessing"
+    )
+    if TYPE_CHECKING:
+        id: Literal["stardist_postprocessing"] = "stardist_postprocessing"
+    else:
+        id: Literal["stardist_postprocessing"]
+
+    kwargs: Union[StardistPostprocessingKwargs2D, StardistPostprocessingKwargs3D]
+
+
 class FixedZeroMeanUnitVarianceKwargs(KwargsNode):
     """key word arguments for [FixedZeroMeanUnitVarianceDescr][]"""
 
@@ -1454,8 +1517,9 @@ class ScaleRangeKwargs(KwargsNode):
     with `v_lower,v_upper` values at the respective percentiles."""
 
     reference_tensor: Optional[TensorId] = None
-    """Tensor ID to compute the percentiles from. Default: The tensor itself.
-    For any tensor in `inputs` only input tensor references are allowed."""
+    """ID of the unprocessed input tensor to compute the percentiles from.
+    Default: The tensor itself.
+    """
 
     @field_validator("max_percentile", mode="after")
     @classmethod
@@ -1537,7 +1601,7 @@ class ScaleMeanVarianceKwargs(KwargsNode):
     """key word arguments for [ScaleMeanVarianceKwargs][]"""
 
     reference_tensor: TensorId
-    """Name of tensor to match."""
+    """ID of unprocessed input tensor to match."""
 
     axes: Annotated[
         Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
@@ -1591,6 +1655,7 @@ PostprocessingDescr = Annotated[
         ScaleRangeDescr,
         SigmoidDescr,
         SoftmaxDescr,
+        StardistPostprocessingDescr,
         ZeroMeanUnitVarianceDescr,
     ],
     Discriminator("id"),
@@ -2079,7 +2144,9 @@ class _InputTensorConv(
         prep: List[PreprocessingDescr] = []
         for p in src.preprocessing:
             cp = _convert_proc(p, src.axes)
-            assert not isinstance(cp, ScaleMeanVarianceDescr)
+            assert not isinstance(
+                cp, (ScaleMeanVarianceDescr, StardistPostprocessingDescr)
+            )
             prep.append(cp)
 
         prep.append(EnsureDtypeDescr(kwargs=EnsureDtypeKwargs(dtype="float32")))
@@ -2194,12 +2261,12 @@ TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
 def validate_tensors(
     tensors: Mapping[TensorId, Tuple[TensorDescr, Optional[NDArray[Any]]]],
     tensor_origin: Literal[
-        "test_tensor"
-    ],  # for more precise error messages, e.g. 'test_tensor'
+        "source", "test_tensor"
+    ] = "source",  # for more precise error messages
 ):
     all_tensor_axes: Dict[TensorId, Dict[AxisId, Tuple[AnyAxis, Optional[int]]]] = {}
 
-    def e_msg(d: TensorDescr):
+    def e_msg_location(d: TensorDescr):
         return f"{'inputs' if isinstance(d, InputTensorDescr) else 'outputs'}[{d.id}]"
 
     for descr, array in tensors.values():
@@ -2209,7 +2276,7 @@ def validate_tensors(
             try:
                 axis_sizes = descr.get_axis_sizes_for_array(array)
             except ValueError as e:
-                raise ValueError(f"{e_msg(descr)} {e}")
+                raise ValueError(f"{e_msg_location(descr)} {e}")
 
         all_tensor_axes[descr.id] = {a.id: (a, axis_sizes[a.id]) for a in descr.axes}
 
@@ -2235,8 +2302,8 @@ def validate_tensors(
 
         if invalid_test_tensor_dtype:
             raise ValueError(
-                f"{e_msg(descr)}.{tensor_origin}.dtype '{array.dtype.name}' does not"
-                + f" match described dtype '{descr.dtype}'"
+                f"{tensor_origin} data type '{array.dtype.name}' does not"
+                + f" match described {e_msg_location(descr)}.dtype '{descr.dtype}'"
             )
 
         if array.min() > -1e-4 and array.max() < 1e-4:
@@ -2256,7 +2323,7 @@ def validate_tensors(
             if isinstance(a.size, int):
                 if actual_size != a.size:
                     raise ValueError(
-                        f"{e_msg(descr)}.{tensor_origin}: axis '{a.id}' "
+                        f"{e_msg_location(descr)}.{tensor_origin}: axis '{a.id}' "
                         + f"has incompatible size {actual_size}, expected {a.size}"
                     )
             elif isinstance(a.size, ParameterizedSize):
@@ -2267,20 +2334,20 @@ def validate_tensors(
                 ref_tensor_axes = all_tensor_axes.get(a.size.tensor_id)
                 if ref_tensor_axes is None:
                     raise ValueError(
-                        f"{e_msg(descr)}.axes[{a.id}].size.tensor_id: Unknown tensor"
-                        + f" reference '{a.size.tensor_id}'"
+                        f"{e_msg_location(descr)}.axes[{a.id}].size.tensor_id: Unknown tensor"
+                        + f" reference '{a.size.tensor_id}', available: {list(all_tensor_axes)}"
                     )
 
                 ref_axis, ref_size = ref_tensor_axes.get(a.size.axis_id, (None, None))
                 if ref_axis is None or ref_size is None:
                     raise ValueError(
-                        f"{e_msg(descr)}.axes[{a.id}].size.axis_id: Unknown tensor axis"
-                        + f" reference '{a.size.tensor_id}.{a.size.axis_id}"
+                        f"{e_msg_location(descr)}.axes[{a.id}].size.axis_id: Unknown tensor axis"
+                        + f" reference '{a.size.tensor_id}.{a.size.axis_id}, available: {list(ref_tensor_axes)}"
                     )
 
                 if a.unit != ref_axis.unit:
                     raise ValueError(
-                        f"{e_msg(descr)}.axes[{a.id}].size: `SizeReference` requires"
+                        f"{e_msg_location(descr)}.axes[{a.id}].size: `SizeReference` requires"
                         + " axis and reference axis to have the same `unit`, but"
                         + f" {a.unit}!={ref_axis.unit}"
                     )
@@ -2291,7 +2358,7 @@ def validate_tensors(
                     )
                 ):
                     raise ValueError(
-                        f"{e_msg(descr)}.{tensor_origin}: axis '{a.id}' of size"
+                        f"{e_msg_location(descr)}.{tensor_origin}: axis '{a.id}' of size"
                         + f" {actual_size} invalid for referenced size {ref_size};"
                         + f" expected {expected_size}"
                     )
@@ -2433,6 +2500,21 @@ class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     """TensorFlow version used to create these weights."""
 
 
+class KerasV3WeightsDescr(WeightsEntryDescrBase):
+    type: ClassVar[WeightsFormat] = "keras_v3"
+    weights_format_name: ClassVar[str] = "Keras v3"
+    keras_version: Annotated[Version, Ge(Version(3))]
+    """Keras version used to create these weights."""
+    backend: Tuple[Literal["tensorflow", "jax", "torch"], Version]
+    """Keras backend used to create these weights."""
+    source: Annotated[
+        FileSource,
+        AfterValidator(wo_special_file_name),
+        WithSuffix(".keras", case_sensitive=True),
+    ]
+    """Source of the .keras weights file."""
+
+
 FileDescr_external_data = Annotated[
     FileDescr_,
     WithSuffix(".data", case_sensitive=True),
@@ -2518,6 +2600,7 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
 
 SpecificWeightsDescr = Union[
     KerasHdf5WeightsDescr,
+    KerasV3WeightsDescr,
     OnnxWeightsDescr,
     PytorchStateDictWeightsDescr,
     TensorflowJsWeightsDescr,
@@ -2528,6 +2611,7 @@ SpecificWeightsDescr = Union[
 
 class WeightsDescr(Node):
     keras_hdf5: Optional[KerasHdf5WeightsDescr] = None
+    keras_v3: Optional[KerasV3WeightsDescr] = None
     onnx: Optional[OnnxWeightsDescr] = None
     pytorch_state_dict: Optional[PytorchStateDictWeightsDescr] = None
     tensorflow_js: Optional[TensorflowJsWeightsDescr] = None
@@ -2578,17 +2662,12 @@ class WeightsDescr(Node):
 
     def __getitem__(
         self,
-        key: Literal[
-            "keras_hdf5",
-            "onnx",
-            "pytorch_state_dict",
-            "tensorflow_js",
-            "tensorflow_saved_model_bundle",
-            "torchscript",
-        ],
+        key: WeightsFormat,
     ):
         if key == "keras_hdf5":
             ret = self.keras_hdf5
+        elif key == "keras_v3":
+            ret = self.keras_v3
         elif key == "onnx":
             ret = self.onnx
         elif key == "pytorch_state_dict":
@@ -2610,6 +2689,10 @@ class WeightsDescr(Node):
     @overload
     def __setitem__(
         self, key: Literal["keras_hdf5"], value: Optional[KerasHdf5WeightsDescr]
+    ) -> None: ...
+    @overload
+    def __setitem__(
+        self, key: Literal["keras_v3"], value: Optional[KerasV3WeightsDescr]
     ) -> None: ...
     @overload
     def __setitem__(
@@ -2638,14 +2721,7 @@ class WeightsDescr(Node):
 
     def __setitem__(
         self,
-        key: Literal[
-            "keras_hdf5",
-            "onnx",
-            "pytorch_state_dict",
-            "tensorflow_js",
-            "tensorflow_saved_model_bundle",
-            "torchscript",
-        ],
+        key: WeightsFormat,
         value: Optional[SpecificWeightsDescr],
     ):
         if key == "keras_hdf5":
@@ -2654,6 +2730,12 @@ class WeightsDescr(Node):
                     f"Expected KerasHdf5WeightsDescr or None for key 'keras_hdf5', got {type(value)}"
                 )
             self.keras_hdf5 = value
+        elif key == "keras_v3":
+            if value is not None and not isinstance(value, KerasV3WeightsDescr):
+                raise TypeError(
+                    f"Expected KerasV3WeightsDescr or None for key 'keras_v3', got {type(value)}"
+                )
+            self.keras_v3 = value
         elif key == "onnx":
             if value is not None and not isinstance(value, OnnxWeightsDescr):
                 raise TypeError(
@@ -2695,6 +2777,7 @@ class WeightsDescr(Node):
     def available_formats(self) -> Dict[WeightsFormat, SpecificWeightsDescr]:
         return {
             **({} if self.keras_hdf5 is None else {"keras_hdf5": self.keras_hdf5}),
+            **({} if self.keras_v3 is None else {"keras_v3": self.keras_v3}),
             **({} if self.onnx is None else {"onnx": self.onnx}),
             **(
                 {}
@@ -3128,6 +3211,7 @@ class Config(Node, extra="allow"):
     bioimageio: BioimageioConfig = Field(
         default_factory=BioimageioConfig.model_construct
     )
+    stardist: YamlValue = None
 
 
 class ModelDescr(GenericModelDescrBase):
@@ -3135,11 +3219,11 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    implemented_format_version: ClassVar[Literal["0.5.7"]] = "0.5.7"
+    implemented_format_version: ClassVar[Literal["0.5.8"]] = "0.5.8"
     if TYPE_CHECKING:
-        format_version: Literal["0.5.7"] = "0.5.7"
+        format_version: Literal["0.5.8"] = "0.5.8"
     else:
-        format_version: Literal["0.5.7"]
+        format_version: Literal["0.5.8"]
         """Version of the bioimage.io model description specification used.
         When creating a new model always use the latest micro/patch version described here.
         The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -3300,43 +3384,55 @@ class ModelDescr(GenericModelDescrBase):
                     + f" / {'.'.join(ref)}.scale {ref_axis.scale})."
                 )
 
+    def validate_input_tensors(
+        self,
+        sources: Union[
+            Sequence[NDArray[Any]], Mapping[TensorId, Optional[NDArray[Any]]]
+        ],
+    ) -> Mapping[TensorId, Optional[NDArray[Any]]]:
+        """Check if the given input tensors match the model's input tensor descriptions.
+        This includes checks of tensor shapes and dtypes, but not of the actual values.
+        """
+        if not isinstance(sources, collections.abc.Mapping):
+            sources = {descr.id: tensor for descr, tensor in zip(self.inputs, sources)}
+
+        tensors = {descr.id: (descr, sources.get(descr.id)) for descr in self.inputs}
+        validate_tensors(tensors)
+
+        return sources
+
     @model_validator(mode="after")
     def _validate_test_tensors(self) -> Self:
         if not get_validation_context().perform_io_checks:
             return self
 
-        test_output_arrays = [
-            None if descr.test_tensor is None else load_array(descr.test_tensor)
-            for descr in self.outputs
-        ]
-        test_input_arrays = [
-            None if descr.test_tensor is None else load_array(descr.test_tensor)
-            for descr in self.inputs
-        ]
-
-        tensors = {
-            descr.id: (descr, array)
-            for descr, array in zip(
-                chain(self.inputs, self.outputs), test_input_arrays + test_output_arrays
+        test_inputs = {
+            descr.id: (
+                descr,
+                None if descr.test_tensor is None else load_array(descr.test_tensor),
             )
+            for descr in self.inputs
         }
-        validate_tensors(tensors, tensor_origin="test_tensor")
+        test_outputs = {
+            descr.id: (
+                descr,
+                None if descr.test_tensor is None else load_array(descr.test_tensor),
+            )
+            for descr in self.outputs
+        }
 
-        output_arrays = {
-            descr.id: array for descr, array in zip(self.outputs, test_output_arrays)
-        }
+        validate_tensors({**test_inputs, **test_outputs}, tensor_origin="test_tensor")
+
         for rep_tol in self.config.bioimageio.reproducibility_tolerance:
             if not rep_tol.absolute_tolerance:
                 continue
 
             if rep_tol.output_ids:
                 out_arrays = {
-                    oid: a
-                    for oid, a in output_arrays.items()
-                    if oid in rep_tol.output_ids
+                    k: v[1] for k, v in test_outputs.items() if k in rep_tol.output_ids
                 }
             else:
-                out_arrays = output_arrays
+                out_arrays = {k: v[1] for k, v in test_outputs.items()}
 
             for out_id, array in out_arrays.items():
                 if array is None:
@@ -3354,34 +3450,22 @@ class ModelDescr(GenericModelDescrBase):
     @model_validator(mode="after")
     def _validate_tensor_references_in_proc_kwargs(self, info: ValidationInfo) -> Self:
         ipt_refs = {t.id for t in self.inputs}
-        out_refs = {t.id for t in self.outputs}
-        for ipt in self.inputs:
-            for p in ipt.preprocessing:
-                ref = p.kwargs.get("reference_tensor")
-                if ref is None:
-                    continue
-                if ref not in ipt_refs:
-                    raise ValueError(
-                        f"`reference_tensor` '{ref}' not found. Valid input tensor"
-                        + f" references are: {ipt_refs}."
-                    )
+        missing_refs = [
+            k["reference_tensor"]
+            for k in [p.kwargs for ipt in self.inputs for p in ipt.preprocessing]
+            + [p.kwargs for out in self.outputs for p in out.postprocessing]
+            if "reference_tensor" in k
+            and k["reference_tensor"] is not None
+            and k["reference_tensor"] not in ipt_refs
+        ]
 
-        for out in self.outputs:
-            for p in out.postprocessing:
-                ref = p.kwargs.get("reference_tensor")
-                if ref is None:
-                    continue
-
-                if ref not in ipt_refs and ref not in out_refs:
-                    raise ValueError(
-                        f"`reference_tensor` '{ref}' not found. Valid tensor references"
-                        + f" are: {ipt_refs | out_refs}."
-                    )
+        if missing_refs:
+            raise ValueError(
+                f"`reference_tensor`s {missing_refs} not found. Valid input tensor"
+                + f" references are: {ipt_refs}."
+            )
 
         return self
-
-    # TODO: use validate funcs in validate_test_tensors
-    # def validate_inputs(self, input_tensors: Mapping[TensorId, NDArray[Any]]) -> Mapping[TensorId, NDArray[Any]]:
 
     name: Annotated[
         str,
@@ -3882,7 +3966,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             covers=src.covers,
             description=src.description,
             documentation=src.documentation,
-            format_version="0.5.7",
+            format_version="0.5.8",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
             id=None if src.id is None else ModelId(src.id),

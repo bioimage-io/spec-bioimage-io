@@ -22,7 +22,7 @@ def _patch_desccription(
         new_descr = re.sub(r"\[([^\]]+)\]\[\]", r"`\1`", descr)
         if descr != new_descr:
             diff = difflib.Differ().compare(descr.splitlines(), new_descr.splitlines())
-            logger.debug(f"updated {'.'.join(path)}:\n" + "\n".join(diff))
+            logger.trace(f"updated {'.'.join(path)}:\n" + "\n".join(diff))
             json_schema["description"] = new_descr
 
     for k, v in json_schema.items():

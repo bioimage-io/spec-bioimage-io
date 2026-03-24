@@ -22,5 +22,11 @@
             "envManager": "ms-python.python:conda",
             "packageManager": "ms-python.python:conda"
         }
-    ]
+    ],
+    "python.languageServer": "Pylance",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.unusedImports": "explicit",
+        "source.organizeImports": "explicit"
+    },
 }

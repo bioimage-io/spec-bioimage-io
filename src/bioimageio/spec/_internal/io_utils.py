@@ -322,11 +322,16 @@ def write_content_to_zip(
 
             if (
                 isinstance(reader.original_root, ZipFile)
-                and reader.original_root.filename == zip.filename
-                and reader.original_file_name == arc_name
+                and reader.original_root is zip
             ):
                 logger.debug(
-                    f"Not copying {reader.original_root}/{reader.original_file_name} to itself."
+                    f"Not copying {reader.original_file_name} in "
+                    + (
+                        "zip file"
+                        if reader.original_root.filename is None
+                        else reader.original_root.filename
+                    )
+                    + " to itself."
                 )
                 continue
 
