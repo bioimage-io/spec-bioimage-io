@@ -80,36 +80,65 @@ def test_interprete_file_source_from_rel_path():
 
 def test_known_files(tmp_path: Path):
     from bioimageio.spec._internal.io import FileDescr, get_sha256
+    from bioimageio.spec._internal.node import Node
 
     file_name = "lala.txt"
+    file_path = Path(file_name)
     src = tmp_path / file_name
     _ = src.write_text("lala")
     sha = get_sha256(src)
 
     with ValidationContext(root=tmp_path, perform_io_checks=True):
         # set sha on loading
-        file_descr = FileDescr(source=file_name)  # pyright: ignore[reportArgumentType]
+        file_descr = FileDescr(source=file_path)
         assert file_descr.sha256 == sha
 
         # validate given sha
-        file_descr = FileDescr(
-            source=file_name,  #  pyright: ignore[reportArgumentType]
-            sha256=sha,
-        )
+        file_descr = FileDescr(source=file_path, sha256=sha)
         assert file_descr.sha256 == sha
 
     # give known files to bypass file io
     with ValidationContext(known_files={file_name: sha}, perform_io_checks=True):
         # set sha on loading
-        file_descr = FileDescr(source=file_name)  # pyright: ignore[reportArgumentType]
+        file_descr = FileDescr(source=file_path)
         assert file_descr.sha256 == sha
 
         # validate given sha
         file_descr = FileDescr(
-            source=file_name,  # pyright: ignore[reportArgumentType]
+            source=file_path,
             sha256=sha,
         )
         assert file_descr.sha256 == sha
+
+    # hit known files
+    with ValidationContext(perform_io_checks=False, known_files={file_name: None}):
+        # set sha on loading
+        file_descr = FileDescr(source=file_path)
+        file_descr.validate_sha256()
+
+    class TestNode(Node):
+        a: FileDescr
+        b: FileDescr
+
+    # missing file ref in known files
+    with pytest.raises(ValueError), ValidationContext(
+        perform_io_checks=False, known_files={file_name: None}
+    ):
+        _ = TestNode(
+            a=FileDescr(source=file_path),
+            b=FileDescr(source=Path("missing_file.txt")),
+        )
+
+    # missing file ref is found when perform_io_checks is True
+    with ValidationContext(
+        root=tmp_path,
+        perform_io_checks=True,
+        known_files={"known_file.txt": Sha256("0" * 64)},
+    ):
+        _ = TestNode(
+            a=FileDescr(source=file_path),
+            b=FileDescr(source=Path("known_file.txt")),
+        )
 
 
 def test_disable_cache(respx_mock: MockRouter):
