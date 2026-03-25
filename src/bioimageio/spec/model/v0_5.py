@@ -319,12 +319,14 @@ class ParameterizedSize(Node):
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
 
-    def validate_size(self, size: int) -> int:
+    def validate_size(self, size: int, msg_prefix: str = "") -> int:
         if size < self.min:
-            raise ValueError(f"size {size} < {self.min}")
+            raise ValueError(
+                f"{msg_prefix}size {size} < {self.min} (minimum axis size)"
+            )
         if (size - self.min) % self.step != 0:
             raise ValueError(
-                f"axis of size {size} is not parameterized by `min + n*step` ="
+                f"{msg_prefix}size {size} is not parameterized by `min + n*step` ="
                 + f" `{self.min} + n*{self.step}`"
             )
 
@@ -349,12 +351,12 @@ class DataDependentSize(Node):
 
         return self
 
-    def validate_size(self, size: int) -> int:
+    def validate_size(self, size: int, msg_prefix: str = "") -> int:
         if size < self.min:
-            raise ValueError(f"size {size} < {self.min}")
+            raise ValueError(f"{msg_prefix}size {size} < {self.min}")
 
         if self.max is not None and size > self.max:
-            raise ValueError(f"size {size} > {self.max}")
+            raise ValueError(f"{msg_prefix}size {size} > {self.max}")
 
         return size
 
@@ -2323,13 +2325,19 @@ def validate_tensors(
             if isinstance(a.size, int):
                 if actual_size != a.size:
                     raise ValueError(
-                        f"{e_msg_location(descr)}.{tensor_origin}: axis '{a.id}' "
+                        f"{e_msg_location(descr)}.axes[{a.id}]: {tensor_origin} axis "
                         + f"has incompatible size {actual_size}, expected {a.size}"
                     )
             elif isinstance(a.size, ParameterizedSize):
-                _ = a.size.validate_size(actual_size)
+                _ = a.size.validate_size(
+                    actual_size,
+                    f"{e_msg_location(descr)}.axes[{a.id}]: {tensor_origin} axis ",
+                )
             elif isinstance(a.size, DataDependentSize):
-                _ = a.size.validate_size(actual_size)
+                _ = a.size.validate_size(
+                    actual_size,
+                    f"{e_msg_location(descr)}.axes[{a.id}]: {tensor_origin} axis ",
+                )
             elif isinstance(a.size, SizeReference):
                 ref_tensor_axes = all_tensor_axes.get(a.size.tensor_id)
                 if ref_tensor_axes is None:
