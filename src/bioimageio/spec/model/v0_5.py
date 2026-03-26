@@ -1306,22 +1306,28 @@ class _StardistPostprocessingKwargsBase(KwargsNode):
     nms_threshold: float
     """The IoU threshold for non-maximum suppression."""
 
-    b: int
-    """Border region in which object probability is set to zero."""
-
 
 class StardistPostprocessingKwargs2D(_StardistPostprocessingKwargsBase):
     grid: Tuple[int, int]
     """Grid size of network predictions."""
 
+    b: Union[int, Tuple[Tuple[int, int], Tuple[int, int]]]
+    """Border region in which object probability is set to zero."""
+
 
 class StardistPostprocessingKwargs3D(_StardistPostprocessingKwargsBase):
     grid: Tuple[int, int, int]
     """Grid size of network predictions."""
+
+    b: Union[int, Tuple[Tuple[int, int], Tuple[int, int], Tuple[int, int]]]
+    """Border region in which object probability is set to zero."""
+
     n_rays: int
     """Number of rays for 3D star-convex polyhedra."""
+
     anisotropy: Tuple[float, float, float]
     """Anisotropy factors for 3D star-convex polyhedra, i.e. the physical pixel size along each spatial axis."""
+
     overlap_label: Optional[int] = None
     """Optional label to apply to any area of overlapping predicted objects."""
 
