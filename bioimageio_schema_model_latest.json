@@ -1392,6 +1392,7 @@
             {
               "enum": [
                 "keras_hdf5",
+                "keras_v3",
                 "onnx",
                 "pytorch_state_dict",
                 "tensorflow_js",
@@ -1427,6 +1428,129 @@
         "tensorflow_version"
       ],
       "title": "model.v0_5.KerasHdf5WeightsDescr",
+      "type": "object"
+    },
+    "KerasV3WeightsDescr": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "anyOf": [
+            {
+              "description": "A URL with the HTTP or HTTPS scheme.",
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "title": "HttpUrl",
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/RelativeFilePath"
+            },
+            {
+              "format": "file-path",
+              "title": "FilePath",
+              "type": "string"
+            }
+          ],
+          "description": "Source of the .keras weights file.",
+          "title": "Source"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "description": "A SHA-256 hash value",
+              "maxLength": 64,
+              "minLength": 64,
+              "title": "Sha256",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SHA256 hash value of the **source** file.",
+          "title": "Sha256"
+        },
+        "authors": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/bioimageio__spec__generic__v0_3__Author"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Authors\nEither the person(s) that have trained this model resulting in the original weights file.\n    (If this is the initial weights entry, i.e. it does not have a `parent`)\nOr the person(s) who have converted the weights to this weights format.\n    (If this is a child weight, i.e. it has a `parent` field)",
+          "title": "Authors"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "enum": [
+                "keras_hdf5",
+                "keras_v3",
+                "onnx",
+                "pytorch_state_dict",
+                "tensorflow_js",
+                "tensorflow_saved_model_bundle",
+                "torchscript"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The source weights these weights were converted from.\nFor example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,\nThe `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.\nAll weight entries except one (the initial set of weights resulting from training the model),\nneed to have this field.",
+          "examples": [
+            "pytorch_state_dict"
+          ],
+          "title": "Parent"
+        },
+        "comment": {
+          "default": "",
+          "description": "A comment about this weights entry, for example how these weights were created.",
+          "title": "Comment",
+          "type": "string"
+        },
+        "keras_version": {
+          "$ref": "#/$defs/Version",
+          "description": "Keras version used to create these weights.",
+          "ge": 3
+        },
+        "backend": {
+          "description": "Keras backend used to create these weights.",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "enum": [
+                "tensorflow",
+                "jax",
+                "torch"
+              ],
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/Version"
+            }
+          ],
+          "title": "Backend",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source",
+        "keras_version",
+        "backend"
+      ],
+      "title": "model.v0_5.KerasV3WeightsDescr",
       "type": "object"
     },
     "LinkedDataset": {
@@ -1639,6 +1763,7 @@
             {
               "enum": [
                 "keras_hdf5",
+                "keras_v3",
                 "onnx",
                 "pytorch_state_dict",
                 "tensorflow_js",
@@ -1854,6 +1979,7 @@
                 "scale_range": "#/$defs/ScaleRangeDescr",
                 "sigmoid": "#/$defs/SigmoidDescr",
                 "softmax": "#/$defs/SoftmaxDescr",
+                "stardist_postprocessing": "#/$defs/StardistPostprocessingDescr",
                 "zero_mean_unit_variance": "#/$defs/ZeroMeanUnitVarianceDescr"
               },
               "propertyName": "id"
@@ -1885,6 +2011,9 @@
               },
               {
                 "$ref": "#/$defs/SoftmaxDescr"
+              },
+              {
+                "$ref": "#/$defs/StardistPostprocessingDescr"
               },
               {
                 "$ref": "#/$defs/ZeroMeanUnitVarianceDescr"
@@ -1986,6 +2115,7 @@
             {
               "enum": [
                 "keras_hdf5",
+                "keras_v3",
                 "onnx",
                 "pytorch_state_dict",
                 "tensorflow_js",
@@ -2103,6 +2233,7 @@
           "items": {
             "enum": [
               "keras_hdf5",
+              "keras_v3",
               "onnx",
               "pytorch_state_dict",
               "tensorflow_js",
@@ -2275,7 +2406,7 @@
       "description": "key word arguments for `ScaleMeanVarianceKwargs`",
       "properties": {
         "reference_tensor": {
-          "description": "Name of tensor to match.",
+          "description": "ID of unprocessed input tensor to match.",
           "maxLength": 32,
           "minLength": 1,
           "title": "TensorId",
@@ -2408,7 +2539,7 @@
             }
           ],
           "default": null,
-          "description": "Tensor ID to compute the percentiles from. Default: The tensor itself.\nFor any tensor in `inputs` only input tensor references are allowed.",
+          "description": "ID of the unprocessed input tensor to compute the percentiles from.\nDefault: The tensor itself.",
           "title": "Reference Tensor"
         }
       },
@@ -2817,6 +2948,248 @@
       "title": "model.v0_5.SpaceOutputAxisWithHalo",
       "type": "object"
     },
+    "StardistPostprocessingDescr": {
+      "additionalProperties": false,
+      "description": "Stardist postprocessing including non-maximum suppression and converting polygon representations to instance labels\n\nas described in:\n- Uwe Schmidt, Martin Weigert, Coleman Broaddus, and Gene Myers.\n[*Cell Detection with Star-convex Polygons*](https://arxiv.org/abs/1806.03535).\nInternational Conference on Medical Image Computing and Computer-Assisted Intervention (MICCAI), Granada, Spain, September 2018.\n- Martin Weigert, Uwe Schmidt, Robert Haase, Ko Sugawara, and Gene Myers.\n[*Star-convex Polyhedra for 3D Object Detection and Segmentation in Microscopy*](http://openaccess.thecvf.com/content_WACV_2020/papers/Weigert_Star-convex_Polyhedra_for_3D_Object_Detection_and_Segmentation_in_Microscopy_WACV_2020_paper.pdf).\nThe IEEE Winter Conference on Applications of Computer Vision (WACV), Snowmass Village, Colorado, March 2020.\n\nNote: Only available if the `stardist` package is installed.",
+      "properties": {
+        "id": {
+          "const": "stardist_postprocessing",
+          "title": "Id",
+          "type": "string"
+        },
+        "kwargs": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StardistPostprocessingKwargs2D"
+            },
+            {
+              "$ref": "#/$defs/StardistPostprocessingKwargs3D"
+            }
+          ],
+          "title": "Kwargs"
+        }
+      },
+      "required": [
+        "id",
+        "kwargs"
+      ],
+      "title": "model.v0_5.StardistPostprocessingDescr",
+      "type": "object"
+    },
+    "StardistPostprocessingKwargs2D": {
+      "additionalProperties": false,
+      "properties": {
+        "prob_threshold": {
+          "description": "The probability threshold for object candidate selection.",
+          "title": "Prob Threshold",
+          "type": "number"
+        },
+        "nms_threshold": {
+          "description": "The IoU threshold for non-maximum suppression.",
+          "title": "Nms Threshold",
+          "type": "number"
+        },
+        "grid": {
+          "description": "Grid size of network predictions.",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Grid",
+          "type": "array"
+        },
+        "b": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ],
+              "type": "array"
+            }
+          ],
+          "description": "Border region in which object probability is set to zero.",
+          "title": "B"
+        }
+      },
+      "required": [
+        "prob_threshold",
+        "nms_threshold",
+        "grid",
+        "b"
+      ],
+      "title": "model.v0_5.StardistPostprocessingKwargs2D",
+      "type": "object"
+    },
+    "StardistPostprocessingKwargs3D": {
+      "additionalProperties": false,
+      "properties": {
+        "prob_threshold": {
+          "description": "The probability threshold for object candidate selection.",
+          "title": "Prob Threshold",
+          "type": "number"
+        },
+        "nms_threshold": {
+          "description": "The IoU threshold for non-maximum suppression.",
+          "title": "Nms Threshold",
+          "type": "number"
+        },
+        "grid": {
+          "description": "Grid size of network predictions.",
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Grid",
+          "type": "array"
+        },
+        "b": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ],
+              "type": "array"
+            }
+          ],
+          "description": "Border region in which object probability is set to zero.",
+          "title": "B"
+        },
+        "n_rays": {
+          "description": "Number of rays for 3D star-convex polyhedra.",
+          "title": "N Rays",
+          "type": "integer"
+        },
+        "anisotropy": {
+          "description": "Anisotropy factors for 3D star-convex polyhedra, i.e. the physical pixel size along each spatial axis.",
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Anisotropy",
+          "type": "array"
+        },
+        "overlap_label": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional label to apply to any area of overlapping predicted objects.",
+          "title": "Overlap Label"
+        }
+      },
+      "required": [
+        "prob_threshold",
+        "nms_threshold",
+        "grid",
+        "b",
+        "n_rays",
+        "anisotropy"
+      ],
+      "title": "model.v0_5.StardistPostprocessingKwargs3D",
+      "type": "object"
+    },
     "TensorflowJsWeightsDescr": {
       "additionalProperties": false,
       "properties": {
@@ -2880,6 +3253,7 @@
             {
               "enum": [
                 "keras_hdf5",
+                "keras_v3",
                 "onnx",
                 "pytorch_state_dict",
                 "tensorflow_js",
@@ -2980,6 +3354,7 @@
             {
               "enum": [
                 "keras_hdf5",
+                "keras_v3",
                 "onnx",
                 "pytorch_state_dict",
                 "tensorflow_js",
@@ -3390,6 +3765,7 @@
             {
               "enum": [
                 "keras_hdf5",
+                "keras_v3",
                 "onnx",
                 "pytorch_state_dict",
                 "tensorflow_js",
@@ -3618,6 +3994,17 @@
           "anyOf": [
             {
               "$ref": "#/$defs/KerasHdf5WeightsDescr"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "keras_v3": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/KerasV3WeightsDescr"
             },
             {
               "type": "null"
@@ -6537,6 +6924,10 @@
       "properties": {
         "bioimageio": {
           "$ref": "#/$defs/bioimageio__spec__model__v0_5__BioimageioConfig"
+        },
+        "stardist": {
+          "$ref": "#/$defs/YamlValue",
+          "default": null
         }
       },
       "title": "model.v0_5.Config",
@@ -7490,7 +7881,7 @@
       "title": "Version Comment"
     },
     "format_version": {
-      "const": "0.5.7",
+      "const": "0.5.9",
       "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
       "title": "Format Version",
       "type": "string"
@@ -7639,6 +8030,6 @@
     "outputs",
     "weights"
   ],
-  "title": "model 0.5.7",
+  "title": "model 0.5.9",
   "type": "object"
 }

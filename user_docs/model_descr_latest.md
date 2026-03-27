@@ -19,7 +19,7 @@ Specialized resource type 'model'
 
 
 
-## `format_version`<sub> Literal[0.5.7]</sub>
+## `format_version`<sub> Literal[0.5.9]</sub>
 Version of the bioimage.io model description specification used.
 When creating a new model always use the latest micro/patch version described here.
 The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -392,7 +392,7 @@ The file extension must be '.npy'.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f7bd658e520>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fbe9151d260>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `inputs.test_tensor.source`<sub> Union</sub>
@@ -422,7 +422,7 @@ The image dimensionality has to match the number of axes specified in this tenso
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f7bd658e520>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fbe9151d260>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `inputs.sample_tensor.source`<sub> Union</sub>
@@ -882,8 +882,8 @@ with `v_lower,v_upper` values at the respective percentiles.
 
 
 ##### `inputs.preprocessing.i.kwargs.reference_tensor`<sub> Optional[TensorId]</sub> ≝ `None`
-Tensor ID to compute the percentiles from. Default: The tensor itself.
-For any tensor in `inputs` only input tensor references are allowed.
+ID of the unprocessed input tensor to compute the percentiles from.
+Default: The tensor itself.
 
 
 
@@ -990,11 +990,11 @@ free text description
 ### `outputs.axes`<sub> Sequence</sub>
 tensor axes
 
-<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f7bd40c0400>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f7bd40c0400>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fbe8f1cc860>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fbe8f1cc860>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f7bd40c0400>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f7bd40c0400>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fbe8f1cc860>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fbe8f1cc860>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BatchAxis:**
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `batch`
@@ -1469,7 +1469,7 @@ The file extension must be '.npy'.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f7bd658e520>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fbe9151d260>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `outputs.test_tensor.source`<sub> Union</sub>
@@ -1499,7 +1499,7 @@ The image dimensionality has to match the number of axes specified in this tenso
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f7bd658e520>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fbe9151d260>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `outputs.sample_tensor.source`<sub> Union</sub>
@@ -1683,6 +1683,7 @@ Sequence of Union of
 - ScaleRangeDescr
 - SigmoidDescr
 - SoftmaxDescr
+- StardistPostprocessingDescr
 - ZeroMeanUnitVarianceDescr
 
 (Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None))
@@ -1920,7 +1921,7 @@ Union[float, Sequence[float] (MinLen(min_length=1))]
 
 **ScaleMeanVarianceKwargs:**
 ##### `outputs.postprocessing.i.kwargs.reference_tensor`<sub> TensorId</sub>
-Name of tensor to match.
+ID of unprocessed input tensor to match.
 
 
 
@@ -1990,8 +1991,8 @@ with `v_lower,v_upper` values at the respective percentiles.
 
 
 ##### `outputs.postprocessing.i.kwargs.reference_tensor`<sub> Optional[TensorId]</sub> ≝ `None`
-Tensor ID to compute the percentiles from. Default: The tensor itself.
-For any tensor in `inputs` only input tensor references are allowed.
+ID of the unprocessed input tensor to compute the percentiles from.
+Default: The tensor itself.
 
 
 
@@ -2025,6 +2026,81 @@ Note:
     (which may not exist, in which case
     a different axis id has to be specified).
 [*Example:*](#outputspostprocessingikwargsaxis) 'channel'
+
+
+
+</details>
+
+**StardistPostprocessingDescr:**
+#### `outputs.postprocessing.i.id`<sub> Literal[stardist_postprocessing]</sub>
+
+
+
+
+#### `outputs.postprocessing.i.kwargs`<sub> Union</sub>
+
+
+<details><summary>Union[StardistPostprocessingKwargs2D, StardistPostprocessingKwargs3D]
+
+</summary>
+
+
+**StardistPostprocessingKwargs2D:**
+##### `outputs.postprocessing.i.kwargs.prob_threshold`<sub> float</sub>
+The probability threshold for object candidate selection.
+
+
+
+##### `outputs.postprocessing.i.kwargs.nms_threshold`<sub> float</sub>
+The IoU threshold for non-maximum suppression.
+
+
+
+##### `outputs.postprocessing.i.kwargs.grid`<sub> Sequence[int, int]</sub>
+Grid size of network predictions.
+
+
+
+##### `outputs.postprocessing.i.kwargs.b`<sub> Union</sub>
+Border region in which object probability is set to zero.
+
+
+Union[int, Sequence[Sequence[int, int], Sequence[int, int]]]
+
+**StardistPostprocessingKwargs3D:**
+##### `outputs.postprocessing.i.kwargs.prob_threshold`<sub> float</sub>
+The probability threshold for object candidate selection.
+
+
+
+##### `outputs.postprocessing.i.kwargs.nms_threshold`<sub> float</sub>
+The IoU threshold for non-maximum suppression.
+
+
+
+##### `outputs.postprocessing.i.kwargs.grid`<sub> Sequence[int, int, int]</sub>
+Grid size of network predictions.
+
+
+
+##### `outputs.postprocessing.i.kwargs.b`<sub> Union</sub>
+Border region in which object probability is set to zero.
+
+
+Union[int, Sequence[Sequence[int, int], Sequence[int, int], Sequence[int, int]]]
+
+##### `outputs.postprocessing.i.kwargs.n_rays`<sub> int</sub>
+Number of rays for 3D star-convex polyhedra.
+
+
+
+##### `outputs.postprocessing.i.kwargs.anisotropy`<sub> Sequence[float, float, float]</sub>
+Anisotropy factors for 3D star-convex polyhedra, i.e. the physical pixel size along each spatial axis.
+
+
+
+##### `outputs.postprocessing.i.kwargs.overlap_label`<sub> Optional[int]</sub> ≝ `None`
+Optional label to apply to any area of overlapping predicted objects.
 
 
 
@@ -2152,8 +2228,13 @@ All weight entries except one (the initial set of weights resulting from trainin
 need to have this field.
 [*Example:*](#weightskeras_hdf5parent) 'pytorch_state_dict'
 
+<details><summary>Optional[Literal[keras_hdf5, ..., torchscript]]
 
-Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+</summary>
+
+Optional[Literal[keras_hdf5, keras_v3, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+
+</details>
 
 #### `weights.keras_hdf5.comment`<sub> str</sub> ≝ ``
 A comment about this weights entry, for example how these weights were created.
@@ -2164,6 +2245,106 @@ A comment about this weights entry, for example how these weights were created.
 TensorFlow version used to create these weights.
 
 
+
+</details>
+
+### `weights.keras_v3`<sub> Optional[KerasV3WeightsDescr]</sub> ≝ `None`
+
+
+<details><summary>Optional[KerasV3WeightsDescr]
+
+</summary>
+
+
+**KerasV3WeightsDescr:**
+#### `weights.keras_v3.source`<sub> Union</sub>
+Source of the .keras weights file.
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+#### `weights.keras_v3.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
+
+#### `weights.keras_v3.authors`<sub> Optional</sub> ≝ `None`
+Authors
+Either the person(s) that have trained this model resulting in the original weights file.
+    (If this is the initial weights entry, i.e. it does not have a `parent`)
+Or the person(s) who have converted the weights to this weights format.
+    (If this is a child weight, i.e. it has a `parent` field)
+
+<details><summary>Optional[Sequence[generic.v0_3.Author]]
+
+</summary>
+
+
+**generic.v0_3.Author:**
+##### `weights.keras_v3.authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+Affiliation
+
+
+
+##### `weights.keras_v3.authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
+Email
+
+
+
+##### `weights.keras_v3.authors.i.orcid`<sub> Optional</sub> ≝ `None`
+An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
+) in hyphenated groups of 4 digits, (and [valid](
+https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
+) as per ISO 7064 11,2.)
+[*Example:*](#weightskeras_v3authorsiorcid) '0000-0001-2345-6789'
+
+
+Optional[_internal.types.OrcidId]
+
+##### `weights.keras_v3.authors.i.name`<sub> str</sub>
+
+
+
+
+##### `weights.keras_v3.authors.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+
+</details>
+
+#### `weights.keras_v3.parent`<sub> Optional</sub> ≝ `None`
+The source weights these weights were converted from.
+For example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,
+The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
+All weight entries except one (the initial set of weights resulting from training the model),
+need to have this field.
+[*Example:*](#weightskeras_v3parent) 'pytorch_state_dict'
+
+<details><summary>Optional[Literal[keras_hdf5, ..., torchscript]]
+
+</summary>
+
+Optional[Literal[keras_hdf5, keras_v3, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+
+</details>
+
+#### `weights.keras_v3.comment`<sub> str</sub> ≝ ``
+A comment about this weights entry, for example how these weights were created.
+
+
+
+#### `weights.keras_v3.keras_version`<sub> _internal.version_type.Version</sub>
+Keras version used to create these weights.
+
+
+
+#### `weights.keras_v3.backend`<sub> Sequence</sub>
+Keras backend used to create these weights.
+
+
+Sequence[Literal[tensorflow, jax, torch], _internal.version_type.Version]
 
 </details>
 
@@ -2241,8 +2422,13 @@ All weight entries except one (the initial set of weights resulting from trainin
 need to have this field.
 [*Example:*](#weightsonnxparent) 'pytorch_state_dict'
 
+<details><summary>Optional[Literal[keras_hdf5, ..., torchscript]]
 
-Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+</summary>
+
+Optional[Literal[keras_hdf5, keras_v3, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+
+</details>
 
 #### `weights.onnx.comment`<sub> str</sub> ≝ ``
 A comment about this weights entry, for example how these weights were created.
@@ -2263,7 +2449,7 @@ Source of the external ONNX data file holding the weights.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f7bd658e520>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.data', case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fbe9151d260>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.data', case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.onnx.external_data.source`<sub> Union</sub>
@@ -2356,8 +2542,13 @@ All weight entries except one (the initial set of weights resulting from trainin
 need to have this field.
 [*Example:*](#weightspytorch_state_dictparent) 'pytorch_state_dict'
 
+<details><summary>Optional[Literal[keras_hdf5, ..., torchscript]]
 
-Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+</summary>
+
+Optional[Literal[keras_hdf5, keras_v3, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+
+</details>
 
 #### `weights.pytorch_state_dict.comment`<sub> str</sub> ≝ ``
 A comment about this weights entry, for example how these weights were created.
@@ -2435,7 +2626,7 @@ The conda environment file should include pytorch and any version pinning has to
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f7bd658e520>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fbe9151d260>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.pytorch_state_dict.dependencies.source`<sub> Union</sub>
@@ -2529,8 +2720,13 @@ All weight entries except one (the initial set of weights resulting from trainin
 need to have this field.
 [*Example:*](#weightstensorflow_jsparent) 'pytorch_state_dict'
 
+<details><summary>Optional[Literal[keras_hdf5, ..., torchscript]]
 
-Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+</summary>
+
+Optional[Literal[keras_hdf5, keras_v3, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+
+</details>
 
 #### `weights.tensorflow_js.comment`<sub> str</sub> ≝ ``
 A comment about this weights entry, for example how these weights were created.
@@ -2619,8 +2815,13 @@ All weight entries except one (the initial set of weights resulting from trainin
 need to have this field.
 [*Example:*](#weightstensorflow_saved_model_bundleparent) 'pytorch_state_dict'
 
+<details><summary>Optional[Literal[keras_hdf5, ..., torchscript]]
 
-Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+</summary>
+
+Optional[Literal[keras_hdf5, keras_v3, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+
+</details>
 
 #### `weights.tensorflow_saved_model_bundle.comment`<sub> str</sub> ≝ ``
 A comment about this weights entry, for example how these weights were created.
@@ -2641,7 +2842,7 @@ Should include tensorflow and any version pinning has to be compatible with **te
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f7bd658e520>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fbe9151d260>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.tensorflow_saved_model_bundle.dependencies.source`<sub> Union</sub>
@@ -2734,8 +2935,13 @@ All weight entries except one (the initial set of weights resulting from trainin
 need to have this field.
 [*Example:*](#weightstorchscriptparent) 'pytorch_state_dict'
 
+<details><summary>Optional[Literal[keras_hdf5, ..., torchscript]]
 
-Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+</summary>
+
+Optional[Literal[keras_hdf5, keras_v3, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
+
+</details>
 
 #### `weights.torchscript.comment`<sub> str</sub> ≝ ``
 A comment about this weights entry, for example how these weights were created.
@@ -2759,7 +2965,7 @@ file attachments
 </summary>
 
 Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f7bd658e520>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fbe9151d260>, return_type=PydanticUndefined, when_used='unless-none'))
 
 **_internal.io.FileDescr:**
 ### `attachments.i.source`<sub> Union</sub>
@@ -2850,7 +3056,7 @@ Note:
 
 ## `config`<sub> Config</sub> ≝ 🡇
 ```python
-Config(bioimageio=BioimageioConfig(reproducibility_tolerance=(), funded_by=None, architecture_type=None, architecture_description=None, modality=None, target_structure=[], task=None, new_version=None, out_of_scope_use=None, bias_risks_limitations=BiasRisksLimitations(known_biases='In general bioimage models may suffer from biases caused by:\n\n- Imaging protocol dependencies\n- Use of a specific cell type\n- Species-specific training data limitations\n\n', risks='Common risks in bioimage analysis include:\n\n- Erroneously assuming generalization to unseen experimental conditions\n- Trusting (overconfident) model outputs without validation\n- Misinterpretation of results\n\n', limitations=None, recommendations='Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model.'), model_parameter_count=None, training=TrainingDetails(training_preprocessing=None, training_epochs=None, training_batch_size=None, initial_learning_rate=None, learning_rate_schedule=None, loss_function=None, loss_function_kwargs={}, optimizer=None, optimizer_kwargs={}, regularization=None, training_duration=None), inference_time=None, memory_requirements_inference=None, memory_requirements_training=None, evaluations=[], environmental_impact=EnvironmentalImpact(hardware_type=None, hours_used=None, cloud_provider=None, compute_region=None, co2_emitted=None)))
+Config(bioimageio=BioimageioConfig(reproducibility_tolerance=(), funded_by=None, architecture_type=None, architecture_description=None, modality=None, target_structure=[], task=None, new_version=None, out_of_scope_use=None, bias_risks_limitations=BiasRisksLimitations(known_biases='In general bioimage models may suffer from biases caused by:\n\n- Imaging protocol dependencies\n- Use of a specific cell type\n- Species-specific training data limitations\n\n', risks='Common risks in bioimage analysis include:\n\n- Erroneously assuming generalization to unseen experimental conditions\n- Trusting (overconfident) model outputs without validation\n- Misinterpretation of results\n\n', limitations=None, recommendations='Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model.'), model_parameter_count=None, training=TrainingDetails(training_preprocessing=None, training_epochs=None, training_batch_size=None, initial_learning_rate=None, learning_rate_schedule=None, loss_function=None, loss_function_kwargs={}, optimizer=None, optimizer_kwargs={}, regularization=None, training_duration=None), inference_time=None, memory_requirements_inference=None, memory_requirements_training=None, evaluations=[], environmental_impact=EnvironmentalImpact(hardware_type=None, hours_used=None, cloud_provider=None, compute_region=None, co2_emitted=None)), stardist=None)
 ```
 
 
@@ -2909,11 +3115,11 @@ Sequence[bioimageio.spec.model.v0_5.TensorId]
 ##### `config.bioimageio.reproducibility_tolerance.weights_formats`<sub> Sequence</sub> ≝ `()`
 Limits the weights formats these details apply to.
 
-<details><summary>Sequence[typing.Literal['keras_hdf5', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
+<details><summary>Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
 
 </summary>
 
-Sequence[typing.Literal['keras_hdf5', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
+Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
 
 </details>
 
@@ -3252,6 +3458,11 @@ Carbon emissions can be estimated using the [Machine Learning Impact calculator]
 
 </details>
 
+### `config.stardist`<sub> YamlValue</sub> ≝ `None`
+
+
+
+
 </details>
 
 ## `covers`<sub> Sequence</sub> ≝ `[]`
@@ -3264,7 +3475,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7bd658e5c0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fbe9152b740>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
 
 </details>
 
@@ -3284,7 +3495,7 @@ with details on how to quantitatively validate the model on unseen data.
 </summary>
 
 Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7bd658e5c0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fbe9152b740>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
 
 </details>
 
@@ -3304,7 +3515,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7bd658e5c0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fbe9152b740>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -3474,7 +3685,7 @@ Associated tags
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2026, 2, 19, 15, 45, 16, 703947, tzinfo=datetime.timezone.utc)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2026, 3, 27, 14, 20, 43, 741067, tzinfo=datetime.timezone.utc)`
 Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
 with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
 (In Python a datetime object is valid, too).
@@ -3523,7 +3734,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7bd658e5c0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fbe9152b740>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
 
 </details>
 
@@ -3582,7 +3793,7 @@ file attachments
 </summary>
 
 Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f7bd658e520>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fbe9151d260>, return_type=PydanticUndefined, when_used='unless-none'))
 
 **_internal.io.FileDescr:**
 #### `training_data.attachments.i.source`<sub> Union</sub>
@@ -3656,7 +3867,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7bd658e5c0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fbe9152b740>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -3765,7 +3976,7 @@ The recommended documentation file name is `README.md`. An `.md` suffix is manda
 </summary>
 
 Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7bd658e5c0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fbe9152b740>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
 
 </details>
 
@@ -3794,7 +4005,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7bd658e5c0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fbe9152b740>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -3885,7 +4096,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7bd658e5c0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fbe9152b740>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
 
 </details>
 
@@ -3953,7 +4164,7 @@ File attachments
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7bd658e5c0>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fbe9152b740>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -4171,7 +4382,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f7bd658e5c0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fbe9152b740>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -4403,6 +4614,10 @@ channel
 ### `weights.keras_hdf5.authors.i.orcid`
 0000-0001-2345-6789
 ### `weights.keras_hdf5.parent`
+pytorch_state_dict
+### `weights.keras_v3.authors.i.orcid`
+0000-0001-2345-6789
+### `weights.keras_v3.parent`
 pytorch_state_dict
 ### `weights.onnx.authors.i.orcid`
 0000-0001-2345-6789
