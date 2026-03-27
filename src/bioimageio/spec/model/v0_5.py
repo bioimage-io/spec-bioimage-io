@@ -319,12 +319,14 @@ class ParameterizedSize(Node):
     min: Annotated[int, Gt(0)]
     step: Annotated[int, Gt(0)]
 
-    def validate_size(self, size: int) -> int:
+    def validate_size(self, size: int, msg_prefix: str = "") -> int:
         if size < self.min:
-            raise ValueError(f"size {size} < {self.min}")
+            raise ValueError(
+                f"{msg_prefix}size {size} < {self.min} (minimum axis size)"
+            )
         if (size - self.min) % self.step != 0:
             raise ValueError(
-                f"axis of size {size} is not parameterized by `min + n*step` ="
+                f"{msg_prefix}size {size} is not parameterized by `min + n*step` ="
                 + f" `{self.min} + n*{self.step}`"
             )
 
@@ -349,12 +351,12 @@ class DataDependentSize(Node):
 
         return self
 
-    def validate_size(self, size: int) -> int:
+    def validate_size(self, size: int, msg_prefix: str = "") -> int:
         if size < self.min:
-            raise ValueError(f"size {size} < {self.min}")
+            raise ValueError(f"{msg_prefix}size {size} < {self.min}")
 
         if self.max is not None and size > self.max:
-            raise ValueError(f"size {size} > {self.max}")
+            raise ValueError(f"{msg_prefix}size {size} > {self.max}")
 
         return size
 
@@ -1304,22 +1306,28 @@ class _StardistPostprocessingKwargsBase(KwargsNode):
     nms_threshold: float
     """The IoU threshold for non-maximum suppression."""
 
-    b: int
-    """Border region in which object probability is set to zero."""
-
 
 class StardistPostprocessingKwargs2D(_StardistPostprocessingKwargsBase):
     grid: Tuple[int, int]
     """Grid size of network predictions."""
 
+    b: Union[int, Tuple[Tuple[int, int], Tuple[int, int]]]
+    """Border region in which object probability is set to zero."""
+
 
 class StardistPostprocessingKwargs3D(_StardistPostprocessingKwargsBase):
     grid: Tuple[int, int, int]
     """Grid size of network predictions."""
+
+    b: Union[int, Tuple[Tuple[int, int], Tuple[int, int], Tuple[int, int]]]
+    """Border region in which object probability is set to zero."""
+
     n_rays: int
     """Number of rays for 3D star-convex polyhedra."""
+
     anisotropy: Tuple[float, float, float]
     """Anisotropy factors for 3D star-convex polyhedra, i.e. the physical pixel size along each spatial axis."""
+
     overlap_label: Optional[int] = None
     """Optional label to apply to any area of overlapping predicted objects."""
 
@@ -2323,13 +2331,19 @@ def validate_tensors(
             if isinstance(a.size, int):
                 if actual_size != a.size:
                     raise ValueError(
-                        f"{e_msg_location(descr)}.{tensor_origin}: axis '{a.id}' "
+                        f"{e_msg_location(descr)}.axes[{a.id}]: {tensor_origin} axis "
                         + f"has incompatible size {actual_size}, expected {a.size}"
                     )
             elif isinstance(a.size, ParameterizedSize):
-                _ = a.size.validate_size(actual_size)
+                _ = a.size.validate_size(
+                    actual_size,
+                    f"{e_msg_location(descr)}.axes[{a.id}]: {tensor_origin} axis ",
+                )
             elif isinstance(a.size, DataDependentSize):
-                _ = a.size.validate_size(actual_size)
+                _ = a.size.validate_size(
+                    actual_size,
+                    f"{e_msg_location(descr)}.axes[{a.id}]: {tensor_origin} axis ",
+                )
             elif isinstance(a.size, SizeReference):
                 ref_tensor_axes = all_tensor_axes.get(a.size.tensor_id)
                 if ref_tensor_axes is None:
@@ -3219,11 +3233,11 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    implemented_format_version: ClassVar[Literal["0.5.8"]] = "0.5.8"
+    implemented_format_version: ClassVar[Literal["0.5.9"]] = "0.5.9"
     if TYPE_CHECKING:
-        format_version: Literal["0.5.8"] = "0.5.8"
+        format_version: Literal["0.5.9"] = "0.5.9"
     else:
-        format_version: Literal["0.5.8"]
+        format_version: Literal["0.5.9"]
         """Version of the bioimage.io model description specification used.
         When creating a new model always use the latest micro/patch version described here.
         The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -3966,7 +3980,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             covers=src.covers,
             description=src.description,
             documentation=src.documentation,
-            format_version="0.5.8",
+            format_version="0.5.9",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
             id=None if src.id is None else ModelId(src.id),

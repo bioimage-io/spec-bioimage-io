@@ -1893,11 +1893,6 @@
           "title": "Nms Threshold",
           "type": "number"
         },
-        "b": {
-          "description": "Border region in which object probability is set to zero.",
-          "title": "B",
-          "type": "integer"
-        },
         "grid": {
           "description": "Grid size of network predictions.",
           "maxItems": 2,
@@ -1912,13 +1907,55 @@
           ],
           "title": "Grid",
           "type": "array"
+        },
+        "b": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ],
+              "type": "array"
+            }
+          ],
+          "description": "Border region in which object probability is set to zero.",
+          "title": "B"
         }
       },
       "required": [
         "prob_threshold",
         "nms_threshold",
-        "b",
-        "grid"
+        "grid",
+        "b"
       ],
       "title": "model.v0_5.StardistPostprocessingKwargs2D",
       "type": "object"
@@ -1935,11 +1972,6 @@
           "description": "The IoU threshold for non-maximum suppression.",
           "title": "Nms Threshold",
           "type": "number"
-        },
-        "b": {
-          "description": "Border region in which object probability is set to zero.",
-          "title": "B",
-          "type": "integer"
         },
         "grid": {
           "description": "Grid size of network predictions.",
@@ -1958,6 +1990,61 @@
           ],
           "title": "Grid",
           "type": "array"
+        },
+        "b": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ],
+                  "type": "array"
+                }
+              ],
+              "type": "array"
+            }
+          ],
+          "description": "Border region in which object probability is set to zero.",
+          "title": "B"
         },
         "n_rays": {
           "description": "Number of rays for 3D star-convex polyhedra.",
@@ -1999,8 +2086,8 @@
       "required": [
         "prob_threshold",
         "nms_threshold",
-        "b",
         "grid",
+        "b",
         "n_rays",
         "anisotropy"
       ],
@@ -11831,7 +11918,7 @@
           "title": "Version Comment"
         },
         "format_version": {
-          "const": "0.5.8",
+          "const": "0.5.9",
           "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
           "title": "Format Version",
           "type": "string"
@@ -11980,7 +12067,7 @@
         "outputs",
         "weights"
       ],
-      "title": "model 0.5.8",
+      "title": "model 0.5.9",
       "type": "object"
     },
     "bioimageio__spec__model__v0_5__OnnxWeightsDescr": {
@@ -15356,7 +15443,7 @@
         "discriminator": {
           "mapping": {
             "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-            "0.5.8": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+            "0.5.9": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
           },
           "propertyName": "format_version"
         },
@@ -15440,7 +15527,7 @@
       "discriminator": {
         "mapping": {
           "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-          "0.5.8": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+          "0.5.9": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
         },
         "propertyName": "format_version"
       },

@@ -1,4 +1,4 @@
-VERSION = "0.5.8.0"
+VERSION = "0.5.9.0"
 """bioimageio.spec version as MAJOR.MINOR.PATCH.LIB
 
 MAJOR.MINOR.PATCH correspond to the latest model description format version implemented.
