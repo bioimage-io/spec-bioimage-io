@@ -3233,11 +3233,11 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    implemented_format_version: ClassVar[Literal["0.5.8"]] = "0.5.8"
+    implemented_format_version: ClassVar[Literal["0.5.9"]] = "0.5.9"
     if TYPE_CHECKING:
-        format_version: Literal["0.5.8"] = "0.5.8"
+        format_version: Literal["0.5.9"] = "0.5.9"
     else:
-        format_version: Literal["0.5.8"]
+        format_version: Literal["0.5.9"]
         """Version of the bioimage.io model description specification used.
         When creating a new model always use the latest micro/patch version described here.
         The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -3980,7 +3980,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             covers=src.covers,
             description=src.description,
             documentation=src.documentation,
-            format_version="0.5.8",
+            format_version="0.5.9",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
             id=None if src.id is None else ModelId(src.id),
