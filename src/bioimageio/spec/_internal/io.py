@@ -405,9 +405,7 @@ def find_bioimageio_yaml_file_name(path: Union[Path, ZipFile]) -> FileName:
     else:
         file_names = [p.name for p in path.glob("*")]
 
-    return identify_bioimageio_yaml_file_name(
-        file_names
-    )  # TODO: try/except with better error message for dir
+    return identify_bioimageio_yaml_file_name(file_names)
 
 
 def ensure_has_valid_bioimageio_yaml_name(src: FileSource) -> FileSource:

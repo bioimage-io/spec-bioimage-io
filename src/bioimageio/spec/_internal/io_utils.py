@@ -179,14 +179,10 @@ def open_bioimageio_yaml(
 
         reader = get_reader(src, **kwargs)
 
-    except Exception:
+    except Exception as e:
         # check if `source` is a collection id
-        if (
-            not isinstance(source, str)
-            or not isinstance(settings.id_map, str)
-            or "/" not in settings.id_map
-        ):
-            raise
+        if not isinstance(source, str):
+            raise e
 
         if settings.collection_http_pattern:
             with ValidationContext(perform_io_checks=False):
@@ -199,8 +195,10 @@ def open_bioimageio_yaml(
                 _ = r.raise_for_status()
                 unparsed_content = r.content.decode(encoding="utf-8")
                 content = _sanitize_bioimageio_yaml(read_yaml(unparsed_content))
-            except Exception as e:
-                logger.warning("Failed to get bioimageio.yaml from {}: {}", url, e)
+            except Exception as e_coll_pattern:
+                collection_pattern_error_msg = f"BIOIMAGEIO_COLLECTION_HTTP_PATTERN: Failed to get bioimageio.yaml from {url}: {e_coll_pattern}"
+                logger.warning(collection_pattern_error_msg)
+                collection_pattern_error_msg = "\n" + collection_pattern_error_msg
             else:
                 logger.info("loaded {} from {}", source, url)
                 original_file_name = (
@@ -213,19 +211,35 @@ def open_bioimageio_yaml(
                     original_source_name=url,
                     unparsed_content=unparsed_content,
                 )
+        else:
+            collection_pattern_error_msg = ""
+
+        if not isinstance(settings.id_map, str) or "/" not in settings.id_map:
+            raise ValueError(
+                f"BIOIMAGEIO_ID_MAP: Invalid id map url {settings.id_map}.{collection_pattern_error_msg}"
+            ) from e
 
         id_map = get_id_map()
+        if not id_map:
+            raise ValueError(
+                f"BIOIMAGEIO_ID_MAP: Empty (or unavailable) id map from {settings.id_map}.{collection_pattern_error_msg}"
+            ) from e
+
         if id_map and source not in id_map:
             close_matches = get_close_matches(source, id_map)
             if len(close_matches) == 0:
-                raise
+                raise ValueError(
+                    f"BIOIMAGEIO_ID_MAP: '{source}' not found in {settings.id_map}.{collection_pattern_error_msg}"
+                ) from e
 
             if len(close_matches) == 1:
                 did_you_mean = f" Did you mean '{close_matches[0]}'?"
             else:
                 did_you_mean = f" Did you mean any of {close_matches}?"
 
-            raise FileNotFoundError(f"'{source}' not found.{did_you_mean}")
+            raise ValueError(
+                f"BIOIMAGEIO_ID_MAP: '{source}' not found in {settings.id_map}.{did_you_mean}{collection_pattern_error_msg}"
+            ) from e
 
         entry = id_map[source]
         logger.info("loading {} from {}", source, entry.source)
@@ -285,7 +299,7 @@ def get_id_map() -> Mapping[str, LightHttpFileDescr]:
         ret.update(_get_id_map_impl(settings.id_map))
 
     except Exception as e:
-        logger.error("failed to get resource id mapping: {}", e)
+        logger.error("failed to get resource id map: {}", e)
         ret = {}
 
     return MappingProxyType(ret)

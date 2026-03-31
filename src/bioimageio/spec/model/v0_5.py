@@ -955,6 +955,7 @@ class BinarizeDescr(NodeWithExplicitlySetFields):
               threshold: [0.25, 0.5, 0.75]
         ```
     - in Python:
+
         >>> postprocessing = [BinarizeDescr(
         ...   kwargs=BinarizeAlongAxisKwargs(
         ...       axis=AxisId('channel'),
@@ -1203,6 +1204,7 @@ class ScaleLinearDescr(NodeWithExplicitlySetFields):
               offset: 3.0
         ```
         - in Python:
+
         >>> preprocessing = [
         ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))
         ... ]
@@ -1217,6 +1219,7 @@ class ScaleLinearDescr(NodeWithExplicitlySetFields):
               gain: [1.0, 2.0, 3.0]
         ```
         - in Python:
+
         >>> preprocessing = [
         ...     ScaleLinearDescr(
         ...         kwargs=ScaleLinearAlongAxisKwargs(
@@ -1246,6 +1249,7 @@ class SigmoidDescr(NodeWithExplicitlySetFields):
           - id: sigmoid
         ```
     - in Python:
+
         >>> postprocessing = [SigmoidDescr()]
     """
 
@@ -1285,6 +1289,7 @@ class SoftmaxDescr(NodeWithExplicitlySetFields):
               axis: channel
         ```
     - in Python:
+
         >>> postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId("channel")))]
     """
 
@@ -1553,6 +1558,7 @@ class ScaleRangeDescr(NodeWithExplicitlySetFields):
               min_percentile: 5.0
         ```
         - in Python
+
         >>> preprocessing = [
         ...     ScaleRangeDescr(
         ...         kwargs=ScaleRangeKwargs(
@@ -1572,13 +1578,13 @@ class ScaleRangeDescr(NodeWithExplicitlySetFields):
               axes: ['y', 'x']
               max_percentile: 99.8
               min_percentile: 5.0
-                  - id: scale_range
            - id: clip
              kwargs:
               min: 0.0
               max: 1.0
         ```
         - in Python
+
         >>> preprocessing = [
         ...   ScaleRangeDescr(
         ...     kwargs=ScaleRangeKwargs(

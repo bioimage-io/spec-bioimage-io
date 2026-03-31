@@ -810,7 +810,10 @@ def _format_html_table(rows: List[List[str]]) -> str:
     def get_line(cells: List[str], cell_tag: Literal["th", "td"] = "td"):
         return (
             ["  <tr>"]
-            + [f"    <{cell_tag}>{c}</{cell_tag}>" for c in cells]
+            + [
+                f'    <{cell_tag} style="text-align:{"center" if cell_tag == "th" else "left"}">{c}</{cell_tag}>'
+                for c in cells
+            ]
             + ["  </tr>"]
         )
 
