@@ -8546,13 +8546,7 @@ otherwise (the default) it may be chosen arbitrarily depending on available memo
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2920</span>
-<span class="normal">2921</span>
-<span class="normal">2922</span>
-<span class="normal">2923</span>
-<span class="normal">2924</span>
-<span class="normal">2925</span>
-<span class="normal">2926</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2926</span>
 <span class="normal">2927</span>
 <span class="normal">2928</span>
 <span class="normal">2929</span>
@@ -8564,7 +8558,13 @@ otherwise (the default) it may be chosen arbitrarily depending on available memo
 <span class="normal">2935</span>
 <span class="normal">2936</span>
 <span class="normal">2937</span>
-<span class="normal">2938</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">2938</span>
+<span class="normal">2939</span>
+<span class="normal">2940</span>
+<span class="normal">2941</span>
+<span class="normal">2942</span>
+<span class="normal">2943</span>
+<span class="normal">2944</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">limitations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">limitations_header</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -9423,13 +9423,16 @@ will be set to one, values below the threshold to zero.</p>
 <span class="w">      </span><span class="nt">axis</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;channel&#39;</span>
 <span class="w">      </span><span class="nt">threshold</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.25</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.75</span><span class="p p-Indicator">]</span>
 </code></pre></div></li>
-<li>in Python:
-    &gt;&gt;&gt; postprocessing = [BinarizeDescr(
-    ...   kwargs=BinarizeAlongAxisKwargs(
-    ...       axis=AxisId('channel'),
-    ...       threshold=[0.25, 0.5, 0.75],
-    ...   )
-    ... )]</li>
+<li>
+<p>in Python:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">postprocessing</span> <span class="o">=</span> <span class="p">[</span><span class="n">BinarizeDescr</span><span class="p">(</span>
+<span class="gp">... </span>  <span class="n">kwargs</span><span class="o">=</span><span class="n">BinarizeAlongAxisKwargs</span><span class="p">(</span>
+<span class="gp">... </span>      <span class="n">axis</span><span class="o">=</span><span class="n">AxisId</span><span class="p">(</span><span class="s1">&#39;channel&#39;</span><span class="p">),</span>
+<span class="gp">... </span>      <span class="n">threshold</span><span class="o">=</span><span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">],</span>
+<span class="gp">... </span>  <span class="p">)</span>
+<span class="gp">... </span><span class="p">)]</span>
+</code></pre></div>
+</li>
 </ul>
 
       <details><summary>Show JSON schema:</summary>
@@ -9484,7 +9487,7 @@ will be set to one, values below the threshold to zero.</p>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Binarize the tensor with a fixed threshold.\n\nValues above [BinarizeKwargs.threshold][]/[BinarizeAlongAxisKwargs.threshold][]\nwill be set to one, values below the threshold to zero.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: binarize\n        kwargs:\n          axis: &#39;channel&#39;\n          threshold: [0.25, 0.5, 0.75]\n    ```\n- in Python:\n    &gt;&gt;&gt; postprocessing = [BinarizeDescr(\n    ...   kwargs=BinarizeAlongAxisKwargs(\n    ...       axis=AxisId(&#39;channel&#39;),\n    ...       threshold=[0.25, 0.5, 0.75],\n    ...   )\n    ... )]&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Binarize the tensor with a fixed threshold.\n\nValues above [BinarizeKwargs.threshold][]/[BinarizeAlongAxisKwargs.threshold][]\nwill be set to one, values below the threshold to zero.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: binarize\n        kwargs:\n          axis: &#39;channel&#39;\n          threshold: [0.25, 0.5, 0.75]\n    ```\n- in Python:\n\n    &gt;&gt;&gt; postprocessing = [BinarizeDescr(\n    ...   kwargs=BinarizeAlongAxisKwargs(\n    ...       axis=AxisId(&#39;channel&#39;),\n    ...       threshold=[0.25, 0.5, 0.75],\n    ...   )\n    ... )]&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;binarize&quot;</span><span class="p">,</span>
@@ -22011,13 +22014,7 @@ casts it to uint8, which is what the neural network in this example expects.
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3132</span>
-<span class="normal">3133</span>
-<span class="normal">3134</span>
-<span class="normal">3135</span>
-<span class="normal">3136</span>
-<span class="normal">3137</span>
-<span class="normal">3138</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3138</span>
 <span class="normal">3139</span>
 <span class="normal">3140</span>
 <span class="normal">3141</span>
@@ -22028,7 +22025,13 @@ casts it to uint8, which is what the neural network in this example expects.
 <span class="normal">3146</span>
 <span class="normal">3147</span>
 <span class="normal">3148</span>
-<span class="normal">3149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">3149</span>
+<span class="normal">3150</span>
+<span class="normal">3151</span>
+<span class="normal">3152</span>
+<span class="normal">3153</span>
+<span class="normal">3154</span>
+<span class="normal">3155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Filled Markdown template section following [Hugging Face Model Card Template](https://huggingface.co/docs/hub/en/model-card-annotated).&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">():</span>
         <span class="k">return</span> <span class="s2">&quot;&quot;</span>
@@ -22891,13 +22894,7 @@ An 'overall' factor may be included to summarize performance across all conditio
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3062</span>
-<span class="normal">3063</span>
-<span class="normal">3064</span>
-<span class="normal">3065</span>
-<span class="normal">3066</span>
-<span class="normal">3067</span>
-<span class="normal">3068</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3068</span>
 <span class="normal">3069</span>
 <span class="normal">3070</span>
 <span class="normal">3071</span>
@@ -22934,7 +22931,13 @@ An 'overall' factor may be included to summarize performance across all conditio
 <span class="normal">3102</span>
 <span class="normal">3103</span>
 <span class="normal">3104</span>
-<span class="normal">3105</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">3105</span>
+<span class="normal">3106</span>
+<span class="normal">3107</span>
+<span class="normal">3108</span>
+<span class="normal">3109</span>
+<span class="normal">3110</span>
+<span class="normal">3111</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">results_header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Metric&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_factors</span>
         <span class="n">results_table_cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">results_header</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;---&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_header</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span>
             <span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span>
@@ -28872,7 +28875,7 @@ input axis.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;BinarizeDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Binarize the tensor with a fixed threshold.\n\nValues above [BinarizeKwargs.threshold][]/[BinarizeAlongAxisKwargs.threshold][]\nwill be set to one, values below the threshold to zero.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: binarize\n        kwargs:\n          axis: &#39;channel&#39;\n          threshold: [0.25, 0.5, 0.75]\n    ```\n- in Python:\n    &gt;&gt;&gt; postprocessing = [BinarizeDescr(\n    ...   kwargs=BinarizeAlongAxisKwargs(\n    ...       axis=AxisId(&#39;channel&#39;),\n    ...       threshold=[0.25, 0.5, 0.75],\n    ...   )\n    ... )]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Binarize the tensor with a fixed threshold.\n\nValues above [BinarizeKwargs.threshold][]/[BinarizeAlongAxisKwargs.threshold][]\nwill be set to one, values below the threshold to zero.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: binarize\n        kwargs:\n          axis: &#39;channel&#39;\n          threshold: [0.25, 0.5, 0.75]\n    ```\n- in Python:\n\n    &gt;&gt;&gt; postprocessing = [BinarizeDescr(\n    ...   kwargs=BinarizeAlongAxisKwargs(\n    ...       axis=AxisId(&#39;channel&#39;),\n    ...       threshold=[0.25, 0.5, 0.75],\n    ...   )\n    ... )]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;binarize&quot;</span><span class="p">,</span>
@@ -29593,7 +29596,7 @@ input axis.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;ScaleLinearDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fixed linear scaling.\n\nExamples:\n  1. Scale with scalar gain and offset\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          gain: 2.0\n          offset: 3.0\n    ```\n    - in Python:\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))\n    ... ]\n\n  2. Independent scaling along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          axis: &#39;channel&#39;\n          gain: [1.0, 2.0, 3.0]\n    ```\n    - in Python:\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(\n    ...         kwargs=ScaleLinearAlongAxisKwargs(\n    ...             axis=AxisId(\&quot;channel\&quot;),\n    ...             gain=[1.0, 2.0, 3.0],\n    ...         )\n    ...     )\n    ... ]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fixed linear scaling.\n\nExamples:\n  1. Scale with scalar gain and offset\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          gain: 2.0\n          offset: 3.0\n    ```\n    - in Python:\n\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))\n    ... ]\n\n  2. Independent scaling along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          axis: &#39;channel&#39;\n          gain: [1.0, 2.0, 3.0]\n    ```\n    - in Python:\n\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(\n    ...         kwargs=ScaleLinearAlongAxisKwargs(\n    ...             axis=AxisId(\&quot;channel\&quot;),\n    ...             gain=[1.0, 2.0, 3.0],\n    ...         )\n    ...     )\n    ... ]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;scale_linear&quot;</span><span class="p">,</span>
@@ -29641,7 +29644,7 @@ input axis.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;ScaleRangeDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Scale with percentiles.\n\nExamples:\n1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n    ```\n    - in Python\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleRangeDescr(\n    ...         kwargs=ScaleRangeKwargs(\n    ...           axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...           max_percentile= 99.8,\n    ...           min_percentile= 5.0,\n    ...         )\n    ...     )\n    ... ]\n\n  2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n              - id: scale_range\n       - id: clip\n         kwargs:\n          min: 0.0\n          max: 1.0\n    ```\n    - in Python\n    &gt;&gt;&gt; preprocessing = [\n    ...   ScaleRangeDescr(\n    ...     kwargs=ScaleRangeKwargs(\n    ...       axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...       max_percentile= 99.8,\n    ...       min_percentile= 5.0,\n    ...     )\n    ...   ),\n    ...   ClipDescr(\n    ...     kwargs=ClipKwargs(\n    ...       min=0.0,\n    ...       max=1.0,\n    ...     )\n    ...   ),\n    ... ]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Scale with percentiles.\n\nExamples:\n1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n    ```\n    - in Python\n\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleRangeDescr(\n    ...         kwargs=ScaleRangeKwargs(\n    ...           axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...           max_percentile= 99.8,\n    ...           min_percentile= 5.0,\n    ...         )\n    ...     )\n    ... ]\n\n  2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n       - id: clip\n         kwargs:\n          min: 0.0\n          max: 1.0\n    ```\n    - in Python\n\n    &gt;&gt;&gt; preprocessing = [\n    ...   ScaleRangeDescr(\n    ...     kwargs=ScaleRangeKwargs(\n    ...       axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...       max_percentile= 99.8,\n    ...       min_percentile= 5.0,\n    ...     )\n    ...   ),\n    ...   ClipDescr(\n    ...     kwargs=ClipKwargs(\n    ...       min=0.0,\n    ...       max=1.0,\n    ...     )\n    ...   ),\n    ... ]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;scale_range&quot;</span><span class="p">,</span>
@@ -29734,7 +29737,7 @@ input axis.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;SigmoidDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The logistic sigmoid function, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n    &gt;&gt;&gt; postprocessing = [SigmoidDescr()]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The logistic sigmoid function, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n\n    &gt;&gt;&gt; postprocessing = [SigmoidDescr()]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sigmoid&quot;</span><span class="p">,</span>
@@ -29781,7 +29784,7 @@ input axis.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;SoftmaxDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The softmax function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: softmax\n        kwargs:\n          axis: channel\n    ```\n- in Python:\n    &gt;&gt;&gt; postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId(\&quot;channel\&quot;)))]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The softmax function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: softmax\n        kwargs:\n          axis: channel\n    ```\n- in Python:\n\n    &gt;&gt;&gt; postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId(\&quot;channel\&quot;)))]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;softmax&quot;</span><span class="p">,</span>
@@ -30688,13 +30691,13 @@ The file extension must be '.npy'.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1828</span>
-<span class="normal">1829</span>
-<span class="normal">1830</span>
-<span class="normal">1831</span>
-<span class="normal">1832</span>
-<span class="normal">1833</span>
-<span class="normal">1834</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes_for_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1834</span>
+<span class="normal">1835</span>
+<span class="normal">1836</span>
+<span class="normal">1837</span>
+<span class="normal">1838</span>
+<span class="normal">1839</span>
+<span class="normal">1840</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes_for_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Dimension mismatch: array shape </span><span class="si">{</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (#</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
@@ -36155,7 +36158,7 @@ These fields are typically stored in a YAML file which we call a model resource 
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;BinarizeDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Binarize the tensor with a fixed threshold.\n\nValues above [BinarizeKwargs.threshold][]/[BinarizeAlongAxisKwargs.threshold][]\nwill be set to one, values below the threshold to zero.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: binarize\n        kwargs:\n          axis: &#39;channel&#39;\n          threshold: [0.25, 0.5, 0.75]\n    ```\n- in Python:\n    &gt;&gt;&gt; postprocessing = [BinarizeDescr(\n    ...   kwargs=BinarizeAlongAxisKwargs(\n    ...       axis=AxisId(&#39;channel&#39;),\n    ...       threshold=[0.25, 0.5, 0.75],\n    ...   )\n    ... )]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Binarize the tensor with a fixed threshold.\n\nValues above [BinarizeKwargs.threshold][]/[BinarizeAlongAxisKwargs.threshold][]\nwill be set to one, values below the threshold to zero.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: binarize\n        kwargs:\n          axis: &#39;channel&#39;\n          threshold: [0.25, 0.5, 0.75]\n    ```\n- in Python:\n\n    &gt;&gt;&gt; postprocessing = [BinarizeDescr(\n    ...   kwargs=BinarizeAlongAxisKwargs(\n    ...       axis=AxisId(&#39;channel&#39;),\n    ...       threshold=[0.25, 0.5, 0.75],\n    ...   )\n    ... )]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;binarize&quot;</span><span class="p">,</span>
@@ -38175,7 +38178,7 @@ These fields are typically stored in a YAML file which we call a model resource 
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;ScaleLinearDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fixed linear scaling.\n\nExamples:\n  1. Scale with scalar gain and offset\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          gain: 2.0\n          offset: 3.0\n    ```\n    - in Python:\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))\n    ... ]\n\n  2. Independent scaling along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          axis: &#39;channel&#39;\n          gain: [1.0, 2.0, 3.0]\n    ```\n    - in Python:\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(\n    ...         kwargs=ScaleLinearAlongAxisKwargs(\n    ...             axis=AxisId(\&quot;channel\&quot;),\n    ...             gain=[1.0, 2.0, 3.0],\n    ...         )\n    ...     )\n    ... ]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fixed linear scaling.\n\nExamples:\n  1. Scale with scalar gain and offset\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          gain: 2.0\n          offset: 3.0\n    ```\n    - in Python:\n\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))\n    ... ]\n\n  2. Independent scaling along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          axis: &#39;channel&#39;\n          gain: [1.0, 2.0, 3.0]\n    ```\n    - in Python:\n\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(\n    ...         kwargs=ScaleLinearAlongAxisKwargs(\n    ...             axis=AxisId(\&quot;channel\&quot;),\n    ...             gain=[1.0, 2.0, 3.0],\n    ...         )\n    ...     )\n    ... ]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;scale_linear&quot;</span><span class="p">,</span>
@@ -38295,7 +38298,7 @@ These fields are typically stored in a YAML file which we call a model resource 
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;ScaleRangeDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Scale with percentiles.\n\nExamples:\n1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n    ```\n    - in Python\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleRangeDescr(\n    ...         kwargs=ScaleRangeKwargs(\n    ...           axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...           max_percentile= 99.8,\n    ...           min_percentile= 5.0,\n    ...         )\n    ...     )\n    ... ]\n\n  2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n              - id: scale_range\n       - id: clip\n         kwargs:\n          min: 0.0\n          max: 1.0\n    ```\n    - in Python\n    &gt;&gt;&gt; preprocessing = [\n    ...   ScaleRangeDescr(\n    ...     kwargs=ScaleRangeKwargs(\n    ...       axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...       max_percentile= 99.8,\n    ...       min_percentile= 5.0,\n    ...     )\n    ...   ),\n    ...   ClipDescr(\n    ...     kwargs=ClipKwargs(\n    ...       min=0.0,\n    ...       max=1.0,\n    ...     )\n    ...   ),\n    ... ]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Scale with percentiles.\n\nExamples:\n1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n    ```\n    - in Python\n\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleRangeDescr(\n    ...         kwargs=ScaleRangeKwargs(\n    ...           axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...           max_percentile= 99.8,\n    ...           min_percentile= 5.0,\n    ...         )\n    ...     )\n    ... ]\n\n  2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n       - id: clip\n         kwargs:\n          min: 0.0\n          max: 1.0\n    ```\n    - in Python\n\n    &gt;&gt;&gt; preprocessing = [\n    ...   ScaleRangeDescr(\n    ...     kwargs=ScaleRangeKwargs(\n    ...       axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...       max_percentile= 99.8,\n    ...       min_percentile= 5.0,\n    ...     )\n    ...   ),\n    ...   ClipDescr(\n    ...     kwargs=ClipKwargs(\n    ...       min=0.0,\n    ...       max=1.0,\n    ...     )\n    ...   ),\n    ... ]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;scale_range&quot;</span><span class="p">,</span>
@@ -38388,7 +38391,7 @@ These fields are typically stored in a YAML file which we call a model resource 
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;SigmoidDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The logistic sigmoid function, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n    &gt;&gt;&gt; postprocessing = [SigmoidDescr()]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The logistic sigmoid function, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n\n    &gt;&gt;&gt; postprocessing = [SigmoidDescr()]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sigmoid&quot;</span><span class="p">,</span>
@@ -38435,7 +38438,7 @@ These fields are typically stored in a YAML file which we call a model resource 
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;SoftmaxDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The softmax function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: softmax\n        kwargs:\n          axis: channel\n    ```\n- in Python:\n    &gt;&gt;&gt; postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId(\&quot;channel\&quot;)))]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The softmax function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: softmax\n        kwargs:\n          axis: channel\n    ```\n- in Python:\n\n    &gt;&gt;&gt; postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId(\&quot;channel\&quot;)))]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;softmax&quot;</span><span class="p">,</span>
@@ -45097,13 +45100,7 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3882</span>
-<span class="normal">3883</span>
-<span class="normal">3884</span>
-<span class="normal">3885</span>
-<span class="normal">3886</span>
-<span class="normal">3887</span>
-<span class="normal">3888</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3888</span>
 <span class="normal">3889</span>
 <span class="normal">3890</span>
 <span class="normal">3891</span>
@@ -45137,7 +45134,13 @@ without validating the result.</p>
 <span class="normal">3919</span>
 <span class="normal">3920</span>
 <span class="normal">3921</span>
-<span class="normal">3922</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">3922</span>
+<span class="normal">3923</span>
+<span class="normal">3924</span>
+<span class="normal">3925</span>
+<span class="normal">3926</span>
+<span class="normal">3927</span>
+<span class="normal">3928</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_from_old_format_wo_validation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert metadata following an older format version to this classes&#39; format</span>
 <span class="sd">    without validating the result.</span>
@@ -45347,13 +45350,7 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3746</span>
-<span class="normal">3747</span>
-<span class="normal">3748</span>
-<span class="normal">3749</span>
-<span class="normal">3750</span>
-<span class="normal">3751</span>
-<span class="normal">3752</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3752</span>
 <span class="normal">3753</span>
 <span class="normal">3754</span>
 <span class="normal">3755</span>
@@ -45475,7 +45472,13 @@ Or simply whenever you know the full input shape.</p>
 <span class="normal">3871</span>
 <span class="normal">3872</span>
 <span class="normal">3873</span>
-<span class="normal">3874</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes</span><span class="p">(</span>
+<span class="normal">3874</span>
+<span class="normal">3875</span>
+<span class="normal">3876</span>
+<span class="normal">3877</span>
+<span class="normal">3878</span>
+<span class="normal">3879</span>
+<span class="normal">3880</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">ns</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">],</span>
     <span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -45633,13 +45636,7 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3674</span>
-<span class="normal">3675</span>
-<span class="normal">3676</span>
-<span class="normal">3677</span>
-<span class="normal">3678</span>
-<span class="normal">3679</span>
-<span class="normal">3680</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3680</span>
 <span class="normal">3681</span>
 <span class="normal">3682</span>
 <span class="normal">3683</span>
@@ -45651,7 +45648,13 @@ Or simply whenever you know the full input shape.</p>
 <span class="normal">3689</span>
 <span class="normal">3690</span>
 <span class="normal">3691</span>
-<span class="normal">3692</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">3692</span>
+<span class="normal">3693</span>
+<span class="normal">3694</span>
+<span class="normal">3695</span>
+<span class="normal">3696</span>
+<span class="normal">3697</span>
+<span class="normal">3698</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_batch_size</span><span class="p">(</span><span class="n">tensor_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">tensor_with_batchsize</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TensorId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -45693,8 +45696,8 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3652</span>
-<span class="normal">3653</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3658</span>
+<span class="normal">3659</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -45724,13 +45727,7 @@ such that the valid input size is &gt;= the given input size</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3706</span>
-<span class="normal">3707</span>
-<span class="normal">3708</span>
-<span class="normal">3709</span>
-<span class="normal">3710</span>
-<span class="normal">3711</span>
-<span class="normal">3712</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3712</span>
 <span class="normal">3713</span>
 <span class="normal">3714</span>
 <span class="normal">3715</span>
@@ -45739,7 +45736,13 @@ such that the valid input size is &gt;= the given input size</p>
 <span class="normal">3718</span>
 <span class="normal">3719</span>
 <span class="normal">3720</span>
-<span class="normal">3721</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]):</span>
+<span class="normal">3721</span>
+<span class="normal">3722</span>
+<span class="normal">3723</span>
+<span class="normal">3724</span>
+<span class="normal">3725</span>
+<span class="normal">3726</span>
+<span class="normal">3727</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;get parameter `n` for each parameterized axis</span>
 <span class="sd">    such that the valid input size is &gt;= the given input size&quot;&quot;&quot;</span>
     <span class="n">ret</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -45784,17 +45787,17 @@ Otherwise it might be larger than the actual (valid) output</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3694</span>
-<span class="normal">3695</span>
-<span class="normal">3696</span>
-<span class="normal">3697</span>
-<span class="normal">3698</span>
-<span class="normal">3699</span>
-<span class="normal">3700</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3700</span>
 <span class="normal">3701</span>
 <span class="normal">3702</span>
 <span class="normal">3703</span>
-<span class="normal">3704</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_tensor_sizes</span><span class="p">(</span>
+<span class="normal">3704</span>
+<span class="normal">3705</span>
+<span class="normal">3706</span>
+<span class="normal">3707</span>
+<span class="normal">3708</span>
+<span class="normal">3709</span>
+<span class="normal">3710</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_tensor_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">_DataDepSize</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the tensor output sizes for given **input_sizes**.</span>
@@ -45828,8 +45831,8 @@ Otherwise it might be larger than the actual (valid) output</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3655</span>
-<span class="normal">3656</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3661</span>
+<span class="normal">3662</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -45917,13 +45920,7 @@ Otherwise it might be larger than the actual (valid) output</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3723</span>
-<span class="normal">3724</span>
-<span class="normal">3725</span>
-<span class="normal">3726</span>
-<span class="normal">3727</span>
-<span class="normal">3728</span>
-<span class="normal">3729</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3729</span>
 <span class="normal">3730</span>
 <span class="normal">3731</span>
 <span class="normal">3732</span>
@@ -45938,7 +45935,13 @@ Otherwise it might be larger than the actual (valid) output</p>
 <span class="normal">3741</span>
 <span class="normal">3742</span>
 <span class="normal">3743</span>
-<span class="normal">3744</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_tensor_sizes</span><span class="p">(</span>
+<span class="normal">3744</span>
+<span class="normal">3745</span>
+<span class="normal">3746</span>
+<span class="normal">3747</span>
+<span class="normal">3748</span>
+<span class="normal">3749</span>
+<span class="normal">3750</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_tensor_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TensorSizes</span><span class="p">:</span>
     <span class="n">axis_sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_axis_sizes</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
@@ -46527,13 +46530,7 @@ This includes checks of tensor shapes and dtypes, but not of the actual values.<
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3401</span>
-<span class="normal">3402</span>
-<span class="normal">3403</span>
-<span class="normal">3404</span>
-<span class="normal">3405</span>
-<span class="normal">3406</span>
-<span class="normal">3407</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3407</span>
 <span class="normal">3408</span>
 <span class="normal">3409</span>
 <span class="normal">3410</span>
@@ -46542,7 +46539,13 @@ This includes checks of tensor shapes and dtypes, but not of the actual values.<
 <span class="normal">3413</span>
 <span class="normal">3414</span>
 <span class="normal">3415</span>
-<span class="normal">3416</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_input_tensors</span><span class="p">(</span>
+<span class="normal">3416</span>
+<span class="normal">3417</span>
+<span class="normal">3418</span>
+<span class="normal">3419</span>
+<span class="normal">3420</span>
+<span class="normal">3421</span>
+<span class="normal">3422</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_input_tensors</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">sources</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
         <span class="n">Sequence</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span>
@@ -48949,7 +48952,7 @@ need to have this field.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;BinarizeDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Binarize the tensor with a fixed threshold.\n\nValues above [BinarizeKwargs.threshold][]/[BinarizeAlongAxisKwargs.threshold][]\nwill be set to one, values below the threshold to zero.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: binarize\n        kwargs:\n          axis: &#39;channel&#39;\n          threshold: [0.25, 0.5, 0.75]\n    ```\n- in Python:\n    &gt;&gt;&gt; postprocessing = [BinarizeDescr(\n    ...   kwargs=BinarizeAlongAxisKwargs(\n    ...       axis=AxisId(&#39;channel&#39;),\n    ...       threshold=[0.25, 0.5, 0.75],\n    ...   )\n    ... )]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Binarize the tensor with a fixed threshold.\n\nValues above [BinarizeKwargs.threshold][]/[BinarizeAlongAxisKwargs.threshold][]\nwill be set to one, values below the threshold to zero.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: binarize\n        kwargs:\n          axis: &#39;channel&#39;\n          threshold: [0.25, 0.5, 0.75]\n    ```\n- in Python:\n\n    &gt;&gt;&gt; postprocessing = [BinarizeDescr(\n    ...   kwargs=BinarizeAlongAxisKwargs(\n    ...       axis=AxisId(&#39;channel&#39;),\n    ...       threshold=[0.25, 0.5, 0.75],\n    ...   )\n    ... )]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;binarize&quot;</span><span class="p">,</span>
@@ -49664,7 +49667,7 @@ need to have this field.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;ScaleLinearDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fixed linear scaling.\n\nExamples:\n  1. Scale with scalar gain and offset\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          gain: 2.0\n          offset: 3.0\n    ```\n    - in Python:\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))\n    ... ]\n\n  2. Independent scaling along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          axis: &#39;channel&#39;\n          gain: [1.0, 2.0, 3.0]\n    ```\n    - in Python:\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(\n    ...         kwargs=ScaleLinearAlongAxisKwargs(\n    ...             axis=AxisId(\&quot;channel\&quot;),\n    ...             gain=[1.0, 2.0, 3.0],\n    ...         )\n    ...     )\n    ... ]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fixed linear scaling.\n\nExamples:\n  1. Scale with scalar gain and offset\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          gain: 2.0\n          offset: 3.0\n    ```\n    - in Python:\n\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))\n    ... ]\n\n  2. Independent scaling along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          axis: &#39;channel&#39;\n          gain: [1.0, 2.0, 3.0]\n    ```\n    - in Python:\n\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(\n    ...         kwargs=ScaleLinearAlongAxisKwargs(\n    ...             axis=AxisId(\&quot;channel\&quot;),\n    ...             gain=[1.0, 2.0, 3.0],\n    ...         )\n    ...     )\n    ... ]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;scale_linear&quot;</span><span class="p">,</span>
@@ -49784,7 +49787,7 @@ need to have this field.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;ScaleRangeDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Scale with percentiles.\n\nExamples:\n1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n    ```\n    - in Python\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleRangeDescr(\n    ...         kwargs=ScaleRangeKwargs(\n    ...           axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...           max_percentile= 99.8,\n    ...           min_percentile= 5.0,\n    ...         )\n    ...     )\n    ... ]\n\n  2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n              - id: scale_range\n       - id: clip\n         kwargs:\n          min: 0.0\n          max: 1.0\n    ```\n    - in Python\n    &gt;&gt;&gt; preprocessing = [\n    ...   ScaleRangeDescr(\n    ...     kwargs=ScaleRangeKwargs(\n    ...       axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...       max_percentile= 99.8,\n    ...       min_percentile= 5.0,\n    ...     )\n    ...   ),\n    ...   ClipDescr(\n    ...     kwargs=ClipKwargs(\n    ...       min=0.0,\n    ...       max=1.0,\n    ...     )\n    ...   ),\n    ... ]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Scale with percentiles.\n\nExamples:\n1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n    ```\n    - in Python\n\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleRangeDescr(\n    ...         kwargs=ScaleRangeKwargs(\n    ...           axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...           max_percentile= 99.8,\n    ...           min_percentile= 5.0,\n    ...         )\n    ...     )\n    ... ]\n\n  2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n       - id: clip\n         kwargs:\n          min: 0.0\n          max: 1.0\n    ```\n    - in Python\n\n    &gt;&gt;&gt; preprocessing = [\n    ...   ScaleRangeDescr(\n    ...     kwargs=ScaleRangeKwargs(\n    ...       axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...       max_percentile= 99.8,\n    ...       min_percentile= 5.0,\n    ...     )\n    ...   ),\n    ...   ClipDescr(\n    ...     kwargs=ClipKwargs(\n    ...       min=0.0,\n    ...       max=1.0,\n    ...     )\n    ...   ),\n    ... ]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;scale_range&quot;</span><span class="p">,</span>
@@ -49877,7 +49880,7 @@ need to have this field.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;SigmoidDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The logistic sigmoid function, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n    &gt;&gt;&gt; postprocessing = [SigmoidDescr()]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The logistic sigmoid function, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n\n    &gt;&gt;&gt; postprocessing = [SigmoidDescr()]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sigmoid&quot;</span><span class="p">,</span>
@@ -49924,7 +49927,7 @@ need to have this field.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;SoftmaxDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The softmax function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: softmax\n        kwargs:\n          axis: channel\n    ```\n- in Python:\n    &gt;&gt;&gt; postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId(\&quot;channel\&quot;)))]&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The softmax function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: softmax\n        kwargs:\n          axis: channel\n    ```\n- in Python:\n\n    &gt;&gt;&gt; postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId(\&quot;channel\&quot;)))]&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;softmax&quot;</span><span class="p">,</span>
@@ -51243,13 +51246,13 @@ The file extension must be '.npy'.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1828</span>
-<span class="normal">1829</span>
-<span class="normal">1830</span>
-<span class="normal">1831</span>
-<span class="normal">1832</span>
-<span class="normal">1833</span>
-<span class="normal">1834</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes_for_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1834</span>
+<span class="normal">1835</span>
+<span class="normal">1836</span>
+<span class="normal">1837</span>
+<span class="normal">1838</span>
+<span class="normal">1839</span>
+<span class="normal">1840</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes_for_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Dimension mismatch: array shape </span><span class="si">{</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (#</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
@@ -55792,8 +55795,8 @@ may still lead to numerical differences.</p>
 <span class="w">      </span><span class="nt">gain</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span>
 <span class="w">      </span><span class="nt">offset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.0</span>
 </code></pre></div></li>
-<li>
-<p>in Python:</p>
+<li>in Python:</li>
+</ol>
 <blockquote>
 <blockquote>
 <blockquote>
@@ -55803,10 +55806,8 @@ may still lead to numerical differences.</p>
 </blockquote>
 </blockquote>
 </blockquote>
-</li>
-<li>
-<p>Independent scaling along an axis</p>
-</li>
+<ol>
+<li>Independent scaling along an axis</li>
 <li>in YAML
   <div class="language-yaml highlight"><pre><span></span><code><span class="nt">preprocessing</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scale_linear</span>
@@ -55814,7 +55815,9 @@ may still lead to numerical differences.</p>
 <span class="w">      </span><span class="nt">axis</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;channel&#39;</span>
 <span class="w">      </span><span class="nt">gain</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.0</span><span class="p p-Indicator">]</span>
 </code></pre></div></li>
-<li>in Python:<blockquote>
+<li>in Python:</li>
+</ol>
+<blockquote>
 <blockquote>
 <blockquote>
 <p>preprocessing = [
@@ -55828,8 +55831,6 @@ may still lead to numerical differences.</p>
 </blockquote>
 </blockquote>
 </blockquote>
-</li>
-</ol>
 
       <details><summary>Show JSON schema:</summary>
         <div class="language-json highlight"><pre><span></span><code><span class="p">{</span>
@@ -55911,7 +55912,7 @@ may still lead to numerical differences.</p>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fixed linear scaling.\n\nExamples:\n  1. Scale with scalar gain and offset\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          gain: 2.0\n          offset: 3.0\n    ```\n    - in Python:\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))\n    ... ]\n\n  2. Independent scaling along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          axis: &#39;channel&#39;\n          gain: [1.0, 2.0, 3.0]\n    ```\n    - in Python:\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(\n    ...         kwargs=ScaleLinearAlongAxisKwargs(\n    ...             axis=AxisId(\&quot;channel\&quot;),\n    ...             gain=[1.0, 2.0, 3.0],\n    ...         )\n    ...     )\n    ... ]&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fixed linear scaling.\n\nExamples:\n  1. Scale with scalar gain and offset\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          gain: 2.0\n          offset: 3.0\n    ```\n    - in Python:\n\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))\n    ... ]\n\n  2. Independent scaling along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          axis: &#39;channel&#39;\n          gain: [1.0, 2.0, 3.0]\n    ```\n    - in Python:\n\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleLinearDescr(\n    ...         kwargs=ScaleLinearAlongAxisKwargs(\n    ...             axis=AxisId(\&quot;channel\&quot;),\n    ...             gain=[1.0, 2.0, 3.0],\n    ...         )\n    ...     )\n    ... ]&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;scale_linear&quot;</span><span class="p">,</span>
@@ -58085,23 +58086,18 @@ Default: Scale all axes jointly.</p>
 <span class="w">      </span><span class="nt">max_percentile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">99.8</span>
 <span class="w">      </span><span class="nt">min_percentile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span>
 </code></pre></div></li>
-<li>in Python<blockquote>
-<blockquote>
-<blockquote>
-<p>preprocessing = [
-...     ScaleRangeDescr(
-...         kwargs=ScaleRangeKwargs(
-...           axes= (AxisId('y'), AxisId('x')),
-...           max_percentile= 99.8,
-...           min_percentile= 5.0,
-...         )
-...     )
-... ]</p>
-</blockquote>
-</blockquote>
-</blockquote>
-</li>
+<li>in Python</li>
 </ul>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">preprocessing</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="n">ScaleRangeDescr</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">kwargs</span><span class="o">=</span><span class="n">ScaleRangeKwargs</span><span class="p">(</span>
+<span class="gp">... </span>          <span class="n">axes</span><span class="o">=</span> <span class="p">(</span><span class="n">AxisId</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">AxisId</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)),</span>
+<span class="gp">... </span>          <span class="n">max_percentile</span><span class="o">=</span> <span class="mf">99.8</span><span class="p">,</span>
+<span class="gp">... </span>          <span class="n">min_percentile</span><span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="p">)</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">... </span><span class="p">]</span>
+</code></pre></div>
 </li>
 <li>
 <p>Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.</p>
@@ -58113,35 +58109,29 @@ Default: Scale all axes jointly.</p>
 <span class="w">      </span><span class="nt">axes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;y&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;x&#39;</span><span class="p p-Indicator">]</span>
 <span class="w">      </span><span class="nt">max_percentile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">99.8</span>
 <span class="w">      </span><span class="nt">min_percentile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5.0</span>
-<span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">- id</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scale_range</span>
 <span class="w">  </span><span class="w w-Error"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">clip</span>
 <span class="w">     </span><span class="nt">kwargs</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
 <span class="w">      </span><span class="nt">max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
 </code></pre></div></li>
-<li>in Python<blockquote>
-<blockquote>
-<blockquote>
-<p>preprocessing = [
-...   ScaleRangeDescr(
-...     kwargs=ScaleRangeKwargs(
-...       axes= (AxisId('y'), AxisId('x')),
-...       max_percentile= 99.8,
-...       min_percentile= 5.0,
-...     )
-...   ),
-...   ClipDescr(
-...     kwargs=ClipKwargs(
-...       min=0.0,
-...       max=1.0,
-...     )
-...   ),
-... ]</p>
-</blockquote>
-</blockquote>
-</blockquote>
-</li>
+<li>in Python</li>
 </ul>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">preprocessing</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>  <span class="n">ScaleRangeDescr</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">kwargs</span><span class="o">=</span><span class="n">ScaleRangeKwargs</span><span class="p">(</span>
+<span class="gp">... </span>      <span class="n">axes</span><span class="o">=</span> <span class="p">(</span><span class="n">AxisId</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="n">AxisId</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)),</span>
+<span class="gp">... </span>      <span class="n">max_percentile</span><span class="o">=</span> <span class="mf">99.8</span><span class="p">,</span>
+<span class="gp">... </span>      <span class="n">min_percentile</span><span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">... </span>  <span class="p">),</span>
+<span class="gp">... </span>  <span class="n">ClipDescr</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">kwargs</span><span class="o">=</span><span class="n">ClipKwargs</span><span class="p">(</span>
+<span class="gp">... </span>      <span class="nb">min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+<span class="gp">... </span>      <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">... </span>  <span class="p">),</span>
+<span class="gp">... </span><span class="p">]</span>
+</code></pre></div>
 </li>
 </ol>
 
@@ -58224,7 +58214,7 @@ Default: Scale all axes jointly.</p>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Scale with percentiles.\n\nExamples:\n1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n    ```\n    - in Python\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleRangeDescr(\n    ...         kwargs=ScaleRangeKwargs(\n    ...           axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...           max_percentile= 99.8,\n    ...           min_percentile= 5.0,\n    ...         )\n    ...     )\n    ... ]\n\n  2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n              - id: scale_range\n       - id: clip\n         kwargs:\n          min: 0.0\n          max: 1.0\n    ```\n    - in Python\n    &gt;&gt;&gt; preprocessing = [\n    ...   ScaleRangeDescr(\n    ...     kwargs=ScaleRangeKwargs(\n    ...       axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...       max_percentile= 99.8,\n    ...       min_percentile= 5.0,\n    ...     )\n    ...   ),\n    ...   ClipDescr(\n    ...     kwargs=ClipKwargs(\n    ...       min=0.0,\n    ...       max=1.0,\n    ...     )\n    ...   ),\n    ... ]&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Scale with percentiles.\n\nExamples:\n1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n    ```\n    - in Python\n\n    &gt;&gt;&gt; preprocessing = [\n    ...     ScaleRangeDescr(\n    ...         kwargs=ScaleRangeKwargs(\n    ...           axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...           max_percentile= 99.8,\n    ...           min_percentile= 5.0,\n    ...         )\n    ...     )\n    ... ]\n\n  2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: [&#39;y&#39;, &#39;x&#39;]\n          max_percentile: 99.8\n          min_percentile: 5.0\n       - id: clip\n         kwargs:\n          min: 0.0\n          max: 1.0\n    ```\n    - in Python\n\n    &gt;&gt;&gt; preprocessing = [\n    ...   ScaleRangeDescr(\n    ...     kwargs=ScaleRangeKwargs(\n    ...       axes= (AxisId(&#39;y&#39;), AxisId(&#39;x&#39;)),\n    ...       max_percentile= 99.8,\n    ...       min_percentile= 5.0,\n    ...     )\n    ...   ),\n    ...   ClipDescr(\n    ...     kwargs=ClipKwargs(\n    ...       min=0.0,\n    ...       max=1.0,\n    ...     )\n    ...   ),\n    ... ]&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;scale_range&quot;</span><span class="p">,</span>
@@ -59141,13 +59131,13 @@ Default: The tensor itself.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1532</span>
-<span class="normal">1533</span>
-<span class="normal">1534</span>
-<span class="normal">1535</span>
-<span class="normal">1536</span>
-<span class="normal">1537</span>
-<span class="normal">1538</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;max_percentile&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1537</span>
+<span class="normal">1538</span>
+<span class="normal">1539</span>
+<span class="normal">1540</span>
+<span class="normal">1541</span>
+<span class="normal">1542</span>
+<span class="normal">1543</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;max_percentile&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
 <span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">min_smaller_max</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">ValidationInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">min_p</span> <span class="o">:=</span> <span class="n">info</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;min_percentile&quot;</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">value</span><span class="p">:</span>
@@ -60120,14 +60110,17 @@ Default: The tensor itself.</p>
     <div class="language-yaml highlight"><pre><span></span><code><span class="nt">postprocessing</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sigmoid</span>
 </code></pre></div></li>
-<li>in Python:
-    &gt;&gt;&gt; postprocessing = [SigmoidDescr()]</li>
+<li>
+<p>in Python:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">postprocessing</span> <span class="o">=</span> <span class="p">[</span><span class="n">SigmoidDescr</span><span class="p">()]</span>
+</code></pre></div>
+</li>
 </ul>
 
       <details><summary>Show JSON schema:</summary>
         <div class="language-json highlight"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The logistic sigmoid function, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n    &gt;&gt;&gt; postprocessing = [SigmoidDescr()]&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The logistic sigmoid function, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n\n    &gt;&gt;&gt; postprocessing = [SigmoidDescr()]&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sigmoid&quot;</span><span class="p">,</span>
@@ -61386,8 +61379,11 @@ and no fixed <strong>ref_size</strong> is given,
 <span class="w">    </span><span class="nt">kwargs</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">axis</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">channel</span>
 </code></pre></div></li>
-<li>in Python:
-    &gt;&gt;&gt; postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId("channel")))]</li>
+<li>
+<p>in Python:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">postprocessing</span> <span class="o">=</span> <span class="p">[</span><span class="n">SoftmaxDescr</span><span class="p">(</span><span class="n">kwargs</span><span class="o">=</span><span class="n">SoftmaxKwargs</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">AxisId</span><span class="p">(</span><span class="s2">&quot;channel&quot;</span><span class="p">)))]</span>
+</code></pre></div>
+</li>
 </ul>
 
       <details><summary>Show JSON schema:</summary>
@@ -61414,7 +61410,7 @@ and no fixed <strong>ref_size</strong> is given,
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The softmax function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: softmax\n        kwargs:\n          axis: channel\n    ```\n- in Python:\n    &gt;&gt;&gt; postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId(\&quot;channel\&quot;)))]&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The softmax function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: softmax\n        kwargs:\n          axis: channel\n    ```\n- in Python:\n\n    &gt;&gt;&gt; postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId(\&quot;channel\&quot;)))]&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;softmax&quot;</span><span class="p">,</span>
@@ -69183,13 +69179,13 @@ The file extension must be '.npy'.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1828</span>
-<span class="normal">1829</span>
-<span class="normal">1830</span>
-<span class="normal">1831</span>
-<span class="normal">1832</span>
-<span class="normal">1833</span>
-<span class="normal">1834</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes_for_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1834</span>
+<span class="normal">1835</span>
+<span class="normal">1836</span>
+<span class="normal">1837</span>
+<span class="normal">1838</span>
+<span class="normal">1839</span>
+<span class="normal">1840</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes_for_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Dimension mismatch: array shape </span><span class="si">{</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (#</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
@@ -79424,13 +79420,7 @@ post-release suffixes.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2677</span>
-<span class="normal">2678</span>
-<span class="normal">2679</span>
-<span class="normal">2680</span>
-<span class="normal">2681</span>
-<span class="normal">2682</span>
-<span class="normal">2683</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2683</span>
 <span class="normal">2684</span>
 <span class="normal">2685</span>
 <span class="normal">2686</span>
@@ -79448,7 +79438,13 @@ post-release suffixes.</p>
 <span class="normal">2698</span>
 <span class="normal">2699</span>
 <span class="normal">2700</span>
-<span class="normal">2701</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span>
+<span class="normal">2701</span>
+<span class="normal">2702</span>
+<span class="normal">2703</span>
+<span class="normal">2704</span>
+<span class="normal">2705</span>
+<span class="normal">2706</span>
+<span class="normal">2707</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="n">WeightsFormat</span><span class="p">,</span>
 <span class="p">):</span>
@@ -79528,13 +79524,7 @@ post-release suffixes.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2736</span>
-<span class="normal">2737</span>
-<span class="normal">2738</span>
-<span class="normal">2739</span>
-<span class="normal">2740</span>
-<span class="normal">2741</span>
-<span class="normal">2742</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2742</span>
 <span class="normal">2743</span>
 <span class="normal">2744</span>
 <span class="normal">2745</span>
@@ -79580,7 +79570,13 @@ post-release suffixes.</p>
 <span class="normal">2785</span>
 <span class="normal">2786</span>
 <span class="normal">2787</span>
-<span class="normal">2788</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span>
+<span class="normal">2788</span>
+<span class="normal">2789</span>
+<span class="normal">2790</span>
+<span class="normal">2791</span>
+<span class="normal">2792</span>
+<span class="normal">2793</span>
+<span class="normal">2794</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="n">WeightsFormat</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SpecificWeightsDescr</span><span class="p">],</span>
@@ -79660,13 +79656,7 @@ post-release suffixes.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2637</span>
-<span class="normal">2638</span>
-<span class="normal">2639</span>
-<span class="normal">2640</span>
-<span class="normal">2641</span>
-<span class="normal">2642</span>
-<span class="normal">2643</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2643</span>
 <span class="normal">2644</span>
 <span class="normal">2645</span>
 <span class="normal">2646</span>
@@ -79698,7 +79688,13 @@ post-release suffixes.</p>
 <span class="normal">2672</span>
 <span class="normal">2673</span>
 <span class="normal">2674</span>
-<span class="normal">2675</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+<span class="normal">2675</span>
+<span class="normal">2676</span>
+<span class="normal">2677</span>
+<span class="normal">2678</span>
+<span class="normal">2679</span>
+<span class="normal">2680</span>
+<span class="normal">2681</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
     <span class="n">entries</span> <span class="o">=</span> <span class="p">{</span><span class="n">wtype</span> <span class="k">for</span> <span class="n">wtype</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
 
@@ -82578,13 +82574,7 @@ Default: Scale all axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1899</span>
-<span class="normal">1900</span>
-<span class="normal">1901</span>
-<span class="normal">1902</span>
-<span class="normal">1903</span>
-<span class="normal">1904</span>
-<span class="normal">1905</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1905</span>
 <span class="normal">1906</span>
 <span class="normal">1907</span>
 <span class="normal">1908</span>
@@ -82689,7 +82679,13 @@ Default: Scale all axes jointly.</p>
 <span class="normal">2007</span>
 <span class="normal">2008</span>
 <span class="normal">2009</span>
-<span class="normal">2010</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">convert_axes</span><span class="p">(</span>
+<span class="normal">2010</span>
+<span class="normal">2011</span>
+<span class="normal">2012</span>
+<span class="normal">2013</span>
+<span class="normal">2014</span>
+<span class="normal">2015</span>
+<span class="normal">2016</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">convert_axes</span><span class="p">(</span>
     <span class="n">axes</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">shape</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -82829,13 +82825,7 @@ Default: Scale all axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4139</span>
-<span class="normal">4140</span>
-<span class="normal">4141</span>
-<span class="normal">4142</span>
-<span class="normal">4143</span>
-<span class="normal">4144</span>
-<span class="normal">4145</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4145</span>
 <span class="normal">4146</span>
 <span class="normal">4147</span>
 <span class="normal">4148</span>
@@ -83014,7 +83004,13 @@ Default: Scale all axes jointly.</p>
 <span class="normal">4321</span>
 <span class="normal">4322</span>
 <span class="normal">4323</span>
-<span class="normal">4324</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_covers</span><span class="p">(</span>
+<span class="normal">4324</span>
+<span class="normal">4325</span>
+<span class="normal">4326</span>
+<span class="normal">4327</span>
+<span class="normal">4328</span>
+<span class="normal">4329</span>
+<span class="normal">4330</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_covers</span><span class="p">(</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">InputTensorDescr</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">OutputTensorDescr</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
@@ -83230,13 +83226,7 @@ Default: Scale all axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2269</span>
-<span class="normal">2270</span>
-<span class="normal">2271</span>
-<span class="normal">2272</span>
-<span class="normal">2273</span>
-<span class="normal">2274</span>
-<span class="normal">2275</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2275</span>
 <span class="normal">2276</span>
 <span class="normal">2277</span>
 <span class="normal">2278</span>
@@ -83341,7 +83331,13 @@ Default: Scale all axes jointly.</p>
 <span class="normal">2377</span>
 <span class="normal">2378</span>
 <span class="normal">2379</span>
-<span class="normal">2380</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_tensors</span><span class="p">(</span>
+<span class="normal">2380</span>
+<span class="normal">2381</span>
+<span class="normal">2382</span>
+<span class="normal">2383</span>
+<span class="normal">2384</span>
+<span class="normal">2385</span>
+<span class="normal">2386</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_tensors</span><span class="p">(</span>
     <span class="n">tensors</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">TensorDescr</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]],</span>
     <span class="n">tensor_origin</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
         <span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;test_tensor&quot;</span>
