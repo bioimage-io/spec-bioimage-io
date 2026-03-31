@@ -315,7 +315,7 @@
     },
     "BinarizeDescr": {
       "additionalProperties": false,
-      "description": "Binarize the tensor with a fixed threshold.\n\nValues above `BinarizeKwargs.threshold`/`BinarizeAlongAxisKwargs.threshold`\nwill be set to one, values below the threshold to zero.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: binarize\n        kwargs:\n          axis: 'channel'\n          threshold: [0.25, 0.5, 0.75]\n    ```\n- in Python:\n    >>> postprocessing = [BinarizeDescr(\n    ...   kwargs=BinarizeAlongAxisKwargs(\n    ...       axis=AxisId('channel'),\n    ...       threshold=[0.25, 0.5, 0.75],\n    ...   )\n    ... )]",
+      "description": "Binarize the tensor with a fixed threshold.\n\nValues above `BinarizeKwargs.threshold`/`BinarizeAlongAxisKwargs.threshold`\nwill be set to one, values below the threshold to zero.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: binarize\n        kwargs:\n          axis: 'channel'\n          threshold: [0.25, 0.5, 0.75]\n    ```\n- in Python:\n\n    >>> postprocessing = [BinarizeDescr(\n    ...   kwargs=BinarizeAlongAxisKwargs(\n    ...       axis=AxisId('channel'),\n    ...       threshold=[0.25, 0.5, 0.75],\n    ...   )\n    ... )]",
       "properties": {
         "id": {
           "const": "binarize",
@@ -2335,7 +2335,7 @@
     },
     "ScaleLinearDescr": {
       "additionalProperties": false,
-      "description": "Fixed linear scaling.\n\nExamples:\n  1. Scale with scalar gain and offset\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          gain: 2.0\n          offset: 3.0\n    ```\n    - in Python:\n    >>> preprocessing = [\n    ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))\n    ... ]\n\n  2. Independent scaling along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          axis: 'channel'\n          gain: [1.0, 2.0, 3.0]\n    ```\n    - in Python:\n    >>> preprocessing = [\n    ...     ScaleLinearDescr(\n    ...         kwargs=ScaleLinearAlongAxisKwargs(\n    ...             axis=AxisId(\"channel\"),\n    ...             gain=[1.0, 2.0, 3.0],\n    ...         )\n    ...     )\n    ... ]",
+      "description": "Fixed linear scaling.\n\nExamples:\n  1. Scale with scalar gain and offset\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          gain: 2.0\n          offset: 3.0\n    ```\n    - in Python:\n\n    >>> preprocessing = [\n    ...     ScaleLinearDescr(kwargs=ScaleLinearKwargs(gain= 2.0, offset=3.0))\n    ... ]\n\n  2. Independent scaling along an axis\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_linear\n        kwargs:\n          axis: 'channel'\n          gain: [1.0, 2.0, 3.0]\n    ```\n    - in Python:\n\n    >>> preprocessing = [\n    ...     ScaleLinearDescr(\n    ...         kwargs=ScaleLinearAlongAxisKwargs(\n    ...             axis=AxisId(\"channel\"),\n    ...             gain=[1.0, 2.0, 3.0],\n    ...         )\n    ...     )\n    ... ]",
       "properties": {
         "id": {
           "const": "scale_linear",
@@ -2455,7 +2455,7 @@
     },
     "ScaleRangeDescr": {
       "additionalProperties": false,
-      "description": "Scale with percentiles.\n\nExamples:\n1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: ['y', 'x']\n          max_percentile: 99.8\n          min_percentile: 5.0\n    ```\n    - in Python\n    >>> preprocessing = [\n    ...     ScaleRangeDescr(\n    ...         kwargs=ScaleRangeKwargs(\n    ...           axes= (AxisId('y'), AxisId('x')),\n    ...           max_percentile= 99.8,\n    ...           min_percentile= 5.0,\n    ...         )\n    ...     )\n    ... ]\n\n  2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: ['y', 'x']\n          max_percentile: 99.8\n          min_percentile: 5.0\n              - id: scale_range\n       - id: clip\n         kwargs:\n          min: 0.0\n          max: 1.0\n    ```\n    - in Python\n    >>> preprocessing = [\n    ...   ScaleRangeDescr(\n    ...     kwargs=ScaleRangeKwargs(\n    ...       axes= (AxisId('y'), AxisId('x')),\n    ...       max_percentile= 99.8,\n    ...       min_percentile= 5.0,\n    ...     )\n    ...   ),\n    ...   ClipDescr(\n    ...     kwargs=ClipKwargs(\n    ...       min=0.0,\n    ...       max=1.0,\n    ...     )\n    ...   ),\n    ... ]",
+      "description": "Scale with percentiles.\n\nExamples:\n1. Scale linearly to map 5th percentile to 0 and 99.8th percentile to 1.0\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: ['y', 'x']\n          max_percentile: 99.8\n          min_percentile: 5.0\n    ```\n    - in Python\n\n    >>> preprocessing = [\n    ...     ScaleRangeDescr(\n    ...         kwargs=ScaleRangeKwargs(\n    ...           axes= (AxisId('y'), AxisId('x')),\n    ...           max_percentile= 99.8,\n    ...           min_percentile= 5.0,\n    ...         )\n    ...     )\n    ... ]\n\n  2. Combine the above scaling with additional clipping to clip values outside the range given by the percentiles.\n    - in YAML\n    ```yaml\n    preprocessing:\n      - id: scale_range\n        kwargs:\n          axes: ['y', 'x']\n          max_percentile: 99.8\n          min_percentile: 5.0\n       - id: clip\n         kwargs:\n          min: 0.0\n          max: 1.0\n    ```\n    - in Python\n\n    >>> preprocessing = [\n    ...   ScaleRangeDescr(\n    ...     kwargs=ScaleRangeKwargs(\n    ...       axes= (AxisId('y'), AxisId('x')),\n    ...       max_percentile= 99.8,\n    ...       min_percentile= 5.0,\n    ...     )\n    ...   ),\n    ...   ClipDescr(\n    ...     kwargs=ClipKwargs(\n    ...       min=0.0,\n    ...       max=1.0,\n    ...     )\n    ...   ),\n    ... ]",
       "properties": {
         "id": {
           "const": "scale_range",
@@ -2548,7 +2548,7 @@
     },
     "SigmoidDescr": {
       "additionalProperties": false,
-      "description": "The logistic sigmoid function, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n    >>> postprocessing = [SigmoidDescr()]",
+      "description": "The logistic sigmoid function, a.k.a. expit function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: sigmoid\n    ```\n- in Python:\n\n    >>> postprocessing = [SigmoidDescr()]",
       "properties": {
         "id": {
           "const": "sigmoid",
@@ -2595,7 +2595,7 @@
     },
     "SoftmaxDescr": {
       "additionalProperties": false,
-      "description": "The softmax function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: softmax\n        kwargs:\n          axis: channel\n    ```\n- in Python:\n    >>> postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId(\"channel\")))]",
+      "description": "The softmax function.\n\nExamples:\n- in YAML\n    ```yaml\n    postprocessing:\n      - id: softmax\n        kwargs:\n          axis: channel\n    ```\n- in Python:\n\n    >>> postprocessing = [SoftmaxDescr(kwargs=SoftmaxKwargs(axis=AxisId(\"channel\")))]",
       "properties": {
         "id": {
           "const": "softmax",
