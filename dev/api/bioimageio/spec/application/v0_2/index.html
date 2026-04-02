@@ -3900,7 +3900,9 @@ Do not set this field in a YAML file.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">397</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
 <span class="normal">398</span>
 <span class="normal">399</span>
 <span class="normal">400</span>
@@ -3913,9 +3915,7 @@ Do not set this field in a YAML file.</p>
 <span class="normal">407</span>
 <span class="normal">408</span>
 <span class="normal">409</span>
-<span class="normal">410</span>
-<span class="normal">411</span>
-<span class="normal">412</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_package_content</span><span class="p">(</span>
+<span class="normal">410</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_package_content</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">FileName</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">FileDescr</span><span class="p">,</span> <span class="n">BioimageioYamlContent</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns package content without creating the package.&quot;&quot;&quot;</span>
@@ -4002,9 +4002,7 @@ Do not set this field in a YAML file.</p>
 <span class="normal">268</span>
 <span class="normal">269</span>
 <span class="normal">270</span>
-<span class="normal">271</span>
-<span class="normal">272</span>
-<span class="normal">273</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">271</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">IncompleteDescrView</span><span class="p">,</span>
@@ -4039,11 +4037,9 @@ Do not set this field in a YAML file.</p>
             <span class="n">status</span><span class="o">=</span><span class="n">format_status</span><span class="p">,</span>
             <span class="n">warnings</span><span class="o">=</span><span class="n">val_warnings</span><span class="p">,</span>
         <span class="p">),</span>
-        <span class="n">update_status</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># avoid updating status from &#39;valid-format&#39; to &#39;passed&#39;, but ...</span>
+        <span class="n">update_status</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># this special validation detail needs manual format updating below</span>
     <span class="p">)</span>
-    <span class="k">if</span> <span class="n">format_status</span> <span class="o">==</span> <span class="s2">&quot;failed&quot;</span><span class="p">:</span>
-        <span class="c1"># ... update status in case of failure</span>
-        <span class="n">rd</span><span class="o">.</span><span class="n">validation_summary</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;failed&quot;</span>
+    <span class="k">assert</span> <span class="n">format_status</span> <span class="o">!=</span> <span class="s2">&quot;failed&quot;</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rd</span><span class="p">,</span> <span class="n">InvalidDescr</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">rd</span>
 </code></pre></div></td></tr></table></div>
@@ -4410,7 +4406,9 @@ Do not set this field in a YAML file.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">367</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
 <span class="normal">368</span>
 <span class="normal">369</span>
 <span class="normal">370</span>
@@ -4436,9 +4434,7 @@ Do not set this field in a YAML file.</p>
 <span class="normal">390</span>
 <span class="normal">391</span>
 <span class="normal">392</span>
-<span class="normal">393</span>
-<span class="normal">394</span>
-<span class="normal">395</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">package</span><span class="p">(</span>
+<span class="normal">393</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">package</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ZipFile</span><span class="p">,</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ZipFile</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;package the described resource as a zip archive</span>

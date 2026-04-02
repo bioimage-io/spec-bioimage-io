@@ -3365,11 +3365,7 @@ description is valid and of type 'dataset'.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">199</span>
 <span class="normal">200</span>
 <span class="normal">201</span>
 <span class="normal">202</span>
@@ -3384,7 +3380,11 @@ description is valid and of type 'dataset'.</p>
 <span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
-<span class="normal">214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_dataset_description</span><span class="p">(</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_dataset_description</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PermissiveFileSource</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -3542,14 +3542,14 @@ absolute file paths is still being checked.</p>
             <td>
               <div class="doc-md-description">
                 <p>Allows to bypass download and hashing of referenced files
-(even if perform_io_checks is True).
-Keys should be file paths or URL strings as they appear in the
-bioimageio.yaml file.
-Values are Sha256 values compared to hash values in the description.
-For <code>None</code> values no hash value comparison is performed.
-If <code>perfrom_io_checks</code> is True, checked files will be added to
-this dictionary with their SHA-256 value.
-If <code>perform_io_checks</code> is False and <code>known_files</code> is not empty,
+(even if perform_io_checks is True).</p>
+<p>Keys should be file paths or URL strings as they appear in the
+bioimageio.yaml file.</p>
+<p>Values are Sha256 values compared to hash values in the description.
+For <code>None</code> values no hash value comparison is performed.</p>
+<p>If <code>perfrom_io_checks</code> is True, checked files will be added to
+this dictionary with their SHA-256 value.</p>
+<p>If <code>perform_io_checks</code> is False and <code>known_files</code> is not empty,
 missing, 'unknown' file references are considered invalid.</p>
               </div>
             </td>
@@ -3690,7 +3690,11 @@ missing, 'unknown' file references are considered invalid.</p>
 <span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
-<span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_description</span><span class="p">(</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_description</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PermissiveFileSource</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -3720,12 +3724,16 @@ missing, 'unknown' file references are considered invalid.</p>
 <span class="sd">        known_files:</span>
 <span class="sd">            Allows to bypass download and hashing of referenced files</span>
 <span class="sd">            (even if perform_io_checks is True).</span>
+
 <span class="sd">            Keys should be file paths or URL strings as they appear in the</span>
 <span class="sd">            bioimageio.yaml file.</span>
+
 <span class="sd">            Values are Sha256 values compared to hash values in the description.</span>
 <span class="sd">            For `None` values no hash value comparison is performed.</span>
+
 <span class="sd">            If `perfrom_io_checks` is True, checked files will be added to</span>
 <span class="sd">            this dictionary with their SHA-256 value.</span>
+
 <span class="sd">            If `perform_io_checks` is False and `known_files` is not empty,</span>
 <span class="sd">            missing, &#39;unknown&#39; file references are considered invalid.</span>
 <span class="sd">        sha256:</span>
@@ -3815,11 +3823,7 @@ missing, 'unknown' file references are considered invalid.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">247</span>
-<span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">251</span>
 <span class="normal">252</span>
 <span class="normal">253</span>
 <span class="normal">254</span>
@@ -3838,7 +3842,11 @@ missing, 'unknown' file references are considered invalid.</p>
 <span class="normal">267</span>
 <span class="normal">268</span>
 <span class="normal">269</span>
-<span class="normal">270</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_description_and_validate_format_only</span><span class="p">(</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_description_and_validate_format_only</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PermissiveFileSource</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -3972,11 +3980,7 @@ description is valid and of type 'model'.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span>
 <span class="normal">153</span>
@@ -3994,7 +3998,11 @@ description is valid and of type 'model'.</p>
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span>
-<span class="normal">168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_model_description</span><span class="p">(</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_model_description</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PermissiveFileSource</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -5039,11 +5047,7 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">221</span>
 <span class="normal">222</span>
 <span class="normal">223</span>
 <span class="normal">224</span>
@@ -5066,7 +5070,11 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
 <span class="normal">241</span>
 <span class="normal">242</span>
 <span class="normal">243</span>
-<span class="normal">244</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_yaml_only</span><span class="p">(</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_yaml_only</span><span class="p">(</span>
     <span class="n">rd</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ResourceDescr</span><span class="p">,</span> <span class="n">BioimageioYamlContent</span><span class="p">,</span> <span class="n">InvalidDescr</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">NewPath</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">],</span>
@@ -5135,11 +5143,7 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">273</span>
-<span class="normal">274</span>
-<span class="normal">275</span>
-<span class="normal">276</span>
-<span class="normal">277</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
 <span class="normal">280</span>
@@ -5181,7 +5185,11 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
 <span class="normal">316</span>
 <span class="normal">317</span>
 <span class="normal">318</span>
-<span class="normal">319</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_format</span><span class="p">(</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_format</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
         <span class="n">ResourceDescr</span><span class="p">,</span>
         <span class="n">PermissiveFileSource</span><span class="p">,</span>
@@ -5260,11 +5268,7 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">322</span>
-<span class="normal">323</span>
-<span class="normal">324</span>
-<span class="normal">325</span>
-<span class="normal">326</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">326</span>
 <span class="normal">327</span>
 <span class="normal">328</span>
 <span class="normal">329</span>
@@ -5278,7 +5282,11 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
 <span class="normal">337</span>
 <span class="normal">338</span>
 <span class="normal">339</span>
-<span class="normal">340</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_hashes</span><span class="p">(</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_hashes</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PermissiveFileSource</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">,</span> <span class="n">ResourceDescr</span><span class="p">,</span> <span class="n">BioimageioYamlContent</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ResourceDescr</span><span class="p">,</span> <span class="n">InvalidDescr</span><span class="p">]:</span>
