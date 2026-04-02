@@ -410,15 +410,20 @@ class ValidationSummary(BaseModel, extra="allow"):
             include_conda_list=include_conda_list,
         )
 
-    def add_detail(self, detail: ValidationDetail, update_status: bool = True) -> None:
-        if update_status:
-            if self.status == "valid-format" and detail.status == "passed":
-                # once status is 'valid-format' we can only improve to 'passed'
-                self.status = "passed"
-            elif self.status == "passed" and detail.status == "failed":
-                # once status is 'passed' it can only degrade to 'valid-format'
-                self.status = "valid-format"
-            # once format is 'failed' it cannot improve
+    def add_detail(
+        self,
+        detail: ValidationDetail,
+        update_status: bool = True,
+    ) -> None:
+        """add a validation detail to the summary and, if `update_status` is True,
+        possibly downgrade the overall status from "passed" to "valid-format"
+        """
+        # An overall status 'passed' can degrade to 'valid-format'
+        # The status can not be upgraded here as we do not know if it has been downgraded before or not yet tested.
+        # Once status is 'failed' it cannot change anymore.
+        if update_status and self.status == "passed" and detail.status == "failed":
+            # "passed" -> "valid-format"
+            self.status = "valid-format"
 
         self.details.append(detail)
 

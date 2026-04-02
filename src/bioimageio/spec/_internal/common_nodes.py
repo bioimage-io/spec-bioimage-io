@@ -264,11 +264,9 @@ class ResourceDescrBase(
                 status=format_status,
                 warnings=val_warnings,
             ),
-            update_status=False,  # avoid updating status from 'valid-format' to 'passed', but ...
+            update_status=False,  # this special validation detail needs manual format updating below
         )
-        if format_status == "failed":
-            # ... update status in case of failure
-            rd.validation_summary.status = "failed"
+        assert format_status != "failed" or isinstance(rd, InvalidDescr)
 
         return rd
 

@@ -110,6 +110,9 @@ def build_description_impl(
                 context=context.summary,
             )
         )
+        assert ret.validation_summary.status == "failed", (
+            "expected invalid description to have a failed validation summary status"
+        )
         return ret
 
     typ = content["type"]
