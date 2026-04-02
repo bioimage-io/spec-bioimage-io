@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for src/bioimageio/spec/_description_impl.py: 91%</title>
+    <title>Coverage for src/bioimageio/spec/_description_impl.py: 92%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_c827f16f.png">
     <link rel="stylesheet" href="style_cb_9ff733b0.css" type="text/css">
     <script src="coverage_html_cb_dd2e7eb5.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>src&#8201;/&#8201;bioimageio&#8201;/&#8201;spec&#8201;/&#8201;_description_impl.py</b>:
-            <span class="pc_cov">91%</span>
+            <span class="pc_cov">92%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">58 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">53<span class="text"> run</span></button>
+            <span class="text">59 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">54<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">5<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_6eb2f4490968ce7f__get_conda_env_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.5">coverage.py v7.13.5</a>,
-            created at 2026-03-31 13:09 +0000
+            created at 2026-04-02 15:09 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -192,27 +192,30 @@
     <p class="run run2"><span class="n"><a id="t110" href="#t110">110</a></span><span class="t">                <span class="nam">context</span><span class="op">=</span><span class="nam">context</span><span class="op">.</span><span class="nam">summary</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t112" href="#t112">112</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">        <span class="key">return</span> <span class="nam">ret</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">    <span class="nam">typ</span> <span class="op">=</span> <span class="nam">content</span><span class="op">[</span><span class="str">"type"</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t116" href="#t116">116</a></span><span class="t">    <span class="com"># check format_version argument before loading as 'discover'</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t117" href="#t117">117</a></span><span class="t">    <span class="com"># to throw an exception for an invalid format_version early</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t118" href="#t118">118</a></span><span class="t">    <span class="key">if</span> <span class="nam">str</span><span class="op">(</span><span class="nam">format_version</span><span class="op">)</span><span class="op">.</span><span class="nam">lower</span><span class="op">(</span><span class="op">)</span> <span class="op">!=</span> <span class="nam">DISCOVER</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t119" href="#t119">119</a></span><span class="t">        <span class="nam">as_rd_class</span> <span class="op">=</span> <span class="nam">get_rd_class</span><span class="op">(</span><span class="nam">typ</span><span class="op">,</span> <span class="nam">format_version</span><span class="op">,</span> <span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t120" href="#t120">120</a></span><span class="t">    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t121" href="#t121">121</a></span><span class="t">        <span class="nam">as_rd_class</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t122" href="#t122">122</a></span><span class="t">    <span class="com"># always load with discovered format_version first</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t123" href="#t123">123</a></span><span class="t">    <span class="nam">rd_class</span> <span class="op">=</span> <span class="nam">get_rd_class</span><span class="op">(</span><span class="nam">typ</span><span class="op">,</span> <span class="nam">content</span><span class="op">[</span><span class="str">"format_version"</span><span class="op">]</span><span class="op">,</span> <span class="key">True</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t124" href="#t124">124</a></span><span class="t">    <span class="nam">rd</span> <span class="op">=</span> <span class="nam">rd_class</span><span class="op">.</span><span class="nam">load</span><span class="op">(</span><span class="nam">content</span><span class="op">,</span> <span class="nam">context</span><span class="op">=</span><span class="nam">context</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t125" href="#t125">125</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t126" href="#t126">126</a></span><span class="t">    <span class="key">if</span> <span class="nam">as_rd_class</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span> <span class="key">and</span> <span class="nam">as_rd_class</span> <span class="key">is</span> <span class="key">not</span> <span class="nam">rd_class</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t127" href="#t127">127</a></span><span class="t">        <span class="com"># load with requested format_version</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t128" href="#t128">128</a></span><span class="t">        <span class="nam">discover_details</span> <span class="op">=</span> <span class="nam">rd</span><span class="op">.</span><span class="nam">validation_summary</span><span class="op">.</span><span class="nam">details</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t129" href="#t129">129</a></span><span class="t">        <span class="nam">rd</span> <span class="op">=</span> <span class="nam">as_rd_class</span><span class="op">.</span><span class="nam">load</span><span class="op">(</span><span class="nam">content</span><span class="op">,</span> <span class="nam">context</span><span class="op">=</span><span class="nam">context</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t130" href="#t130">130</a></span><span class="t">        <span class="key">assert</span> <span class="nam">rd</span><span class="op">.</span><span class="nam">validation_summary</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t131" href="#t131">131</a></span><span class="t">        <span class="nam">rd</span><span class="op">.</span><span class="nam">validation_summary</span><span class="op">.</span><span class="nam">details</span><span class="op">[</span><span class="op">:</span><span class="num">0</span><span class="op">]</span> <span class="op">=</span> <span class="nam">discover_details</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t">    <span class="key">return</span> <span class="nam">rd</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">        <span class="key">assert</span> <span class="nam">ret</span><span class="op">.</span><span class="nam">validation_summary</span><span class="op">.</span><span class="nam">status</span> <span class="op">==</span> <span class="str">"failed"</span><span class="op">,</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">            <span class="str">"expected invalid description to have a failed validation summary status"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run run2"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t116" href="#t116">116</a></span><span class="t">        <span class="key">return</span> <span class="nam">ret</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t117" href="#t117">117</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t118" href="#t118">118</a></span><span class="t">    <span class="nam">typ</span> <span class="op">=</span> <span class="nam">content</span><span class="op">[</span><span class="str">"type"</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t119" href="#t119">119</a></span><span class="t">    <span class="com"># check format_version argument before loading as 'discover'</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t120" href="#t120">120</a></span><span class="t">    <span class="com"># to throw an exception for an invalid format_version early</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t121" href="#t121">121</a></span><span class="t">    <span class="key">if</span> <span class="nam">str</span><span class="op">(</span><span class="nam">format_version</span><span class="op">)</span><span class="op">.</span><span class="nam">lower</span><span class="op">(</span><span class="op">)</span> <span class="op">!=</span> <span class="nam">DISCOVER</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t122" href="#t122">122</a></span><span class="t">        <span class="nam">as_rd_class</span> <span class="op">=</span> <span class="nam">get_rd_class</span><span class="op">(</span><span class="nam">typ</span><span class="op">,</span> <span class="nam">format_version</span><span class="op">,</span> <span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t123" href="#t123">123</a></span><span class="t">    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t124" href="#t124">124</a></span><span class="t">        <span class="nam">as_rd_class</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t125" href="#t125">125</a></span><span class="t">    <span class="com"># always load with discovered format_version first</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t126" href="#t126">126</a></span><span class="t">    <span class="nam">rd_class</span> <span class="op">=</span> <span class="nam">get_rd_class</span><span class="op">(</span><span class="nam">typ</span><span class="op">,</span> <span class="nam">content</span><span class="op">[</span><span class="str">"format_version"</span><span class="op">]</span><span class="op">,</span> <span class="key">True</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t127" href="#t127">127</a></span><span class="t">    <span class="nam">rd</span> <span class="op">=</span> <span class="nam">rd_class</span><span class="op">.</span><span class="nam">load</span><span class="op">(</span><span class="nam">content</span><span class="op">,</span> <span class="nam">context</span><span class="op">=</span><span class="nam">context</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t128" href="#t128">128</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t129" href="#t129">129</a></span><span class="t">    <span class="key">if</span> <span class="nam">as_rd_class</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span> <span class="key">and</span> <span class="nam">as_rd_class</span> <span class="key">is</span> <span class="key">not</span> <span class="nam">rd_class</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t130" href="#t130">130</a></span><span class="t">        <span class="com"># load with requested format_version</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t131" href="#t131">131</a></span><span class="t">        <span class="nam">discover_details</span> <span class="op">=</span> <span class="nam">rd</span><span class="op">.</span><span class="nam">validation_summary</span><span class="op">.</span><span class="nam">details</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">        <span class="nam">rd</span> <span class="op">=</span> <span class="nam">as_rd_class</span><span class="op">.</span><span class="nam">load</span><span class="op">(</span><span class="nam">content</span><span class="op">,</span> <span class="nam">context</span><span class="op">=</span><span class="nam">context</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t">        <span class="key">assert</span> <span class="nam">rd</span><span class="op">.</span><span class="nam">validation_summary</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t134" href="#t134">134</a></span><span class="t">        <span class="nam">rd</span><span class="op">.</span><span class="nam">validation_summary</span><span class="op">.</span><span class="nam">details</span><span class="op">[</span><span class="op">:</span><span class="num">0</span><span class="op">]</span> <span class="op">=</span> <span class="nam">discover_details</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t135" href="#t135">135</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t136" href="#t136">136</a></span><span class="t">    <span class="key">return</span> <span class="nam">rd</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -222,7 +225,7 @@
             <a class="nav" href="z_6eb2f4490968ce7f__get_conda_env_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.5">coverage.py v7.13.5</a>,
-            created at 2026-03-31 13:09 +0000
+            created at 2026-04-02 15:09 +0000
         </p>
     </div>
 </footer>
