@@ -2169,7 +2169,7 @@ It also provides download/upload to/from the BioImage.IO Model Zoo at <a href="h
             <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/model/#bioimageio.spec.model.ModelDescr">ModelDescr</a></span><span class="p">,</span>
             <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/notebook/#bioimageio.spec.notebook.NotebookDescr">NotebookDescr</a></span><span class="p">,</span>
         <span class="p">],</span>
-        <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Discriminator&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.Discriminator">Discriminator</a></span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
+        <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Discriminator&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.Discriminator">Discriminator</a></span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
     <span class="p">],</span>
     <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/generic/#bioimageio.spec.generic.GenericDescr">GenericDescr</a></span><span class="p">,</span>
 <span class="p">]</span>
@@ -2538,7 +2538,7 @@ It also provides download/upload to/from the BioImage.IO Model Zoo at <a href="h
         <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/model/#bioimageio.spec.model.AnyModelDescr">AnyModelDescr</a></span><span class="p">,</span>
         <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/notebook/#bioimageio.spec.notebook.AnyNotebookDescr">AnyNotebookDescr</a></span><span class="p">,</span>
     <span class="p">],</span>
-    <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Discriminator&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.Discriminator">Discriminator</a></span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
+    <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Discriminator&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.Discriminator">Discriminator</a></span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
 <span class="p">]</span>
 </code></pre></div>
 
@@ -4045,7 +4045,7 @@ description is valid and of type 'model'.</p>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package(compression)">compression</a></span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="n"><span title="zipfile.ZIP_DEFLATED">ZIP_DEFLATED</span></span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package(compression_level)">compression_level</a></span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package(output_path)">output_path</a></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.NewPath">NewPath</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.FilePath">FilePath</a></span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package(output_path)">output_path</a></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.NewPath">NewPath</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.FilePath">FilePath</a></span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package(weights_priority_order)">weights_priority_order</a></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span>
         <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span>
             <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span>
@@ -4059,7 +4059,7 @@ description is valid and of type 'model'.</p>
         <span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.save_bioimageio_package(allow_invalid)">allow_invalid</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.FilePath">FilePath</a></span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.FilePath">FilePath</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4132,7 +4132,7 @@ description is valid and of type 'model'.</p>
 <h3 id="bioimageio.spec.save_bioimageio_package(output_path)" class="doc doc-heading doc-heading-parameter">                  <code>output_path</code>
 <a href="#bioimageio.spec.save_bioimageio_package(output_path)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
             <td>
-                  <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.NewPath">NewPath</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.FilePath">FilePath</a>, None]</code>
+                  <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.NewPath">NewPath</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.FilePath">FilePath</a>, None]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -4175,7 +4175,7 @@ description is valid and of type 'model'.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.FilePath">FilePath</a></code>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.FilePath">FilePath</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -4352,7 +4352,7 @@ description is valid and of type 'model'.</p>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package_as_folder(source)">source</a></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.BioimageioYamlSource">BioimageioYamlSource</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.ResourceDescr">ResourceDescr</a></span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package_as_folder(output_path)">output_path</a></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.NewPath">NewPath</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package_as_folder(output_path)">output_path</a></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.NewPath">NewPath</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package_as_folder(weights_priority_order)">weights_priority_order</a></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span>
         <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span>
             <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span>
@@ -4365,7 +4365,7 @@ description is valid and of type 'model'.</p>
             <span class="p">]</span>
         <span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4405,7 +4405,7 @@ description is valid and of type 'model'.</p>
 <h3 id="bioimageio.spec.save_bioimageio_package_as_folder(output_path)" class="doc doc-heading doc-heading-parameter">                  <code>output_path</code>
 <a href="#bioimageio.spec.save_bioimageio_package_as_folder(output_path)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
             <td>
-                  <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.NewPath">NewPath</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.DirectoryPath">DirectoryPath</a>, None]</code>
+                  <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.NewPath">NewPath</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.DirectoryPath">DirectoryPath</a>, None]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -4448,7 +4448,7 @@ description is valid and of type 'model'.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.DirectoryPath">DirectoryPath</a></code>
+                  <code><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.DirectoryPath">DirectoryPath</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -4927,7 +4927,7 @@ description is valid and of type 'model'.</p>
         <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.ResourceDescr">ResourceDescr</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.InvalidDescr">InvalidDescr</a></span>
     <span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_yaml_only(file)">file</a></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.NewPath">NewPath</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.FilePath">FilePath</a></span><span class="p">,</span> <span class="n"><span title="typing.TextIO">TextIO</span></span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_yaml_only(file)">file</a></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.NewPath">NewPath</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.FilePath">FilePath</a></span><span class="p">,</span> <span class="n"><span title="typing.TextIO">TextIO</span></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_yaml_only(exclude_unset)">exclude_unset</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_yaml_only(exclude_defaults)">exclude_defaults</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -4972,7 +4972,7 @@ without writing any of the referenced files in it.</p>
 <h3 id="bioimageio.spec.save_bioimageio_yaml_only(file)" class="doc doc-heading doc-heading-parameter">                  <code>file</code>
 <a href="#bioimageio.spec.save_bioimageio_yaml_only(file)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
             <td>
-                  <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.NewPath">NewPath</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/types/#pydantic.types.FilePath">FilePath</a>, <span title="typing.TextIO">TextIO</span>]</code>
+                  <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.NewPath">NewPath</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.FilePath">FilePath</a>, <span title="typing.TextIO">TextIO</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
