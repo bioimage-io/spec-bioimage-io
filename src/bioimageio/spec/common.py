@@ -17,6 +17,7 @@ from ._internal.io_basics import (
     Sha256,
     ZipPath,
 )
+from ._internal.progress import ProgressbarLike
 from ._internal.root_url import RootHttpUrl
 from ._internal.types import (
     FilePath,
@@ -39,6 +40,7 @@ __all__ = [
     "HttpUrl",
     "InvalidDescr",
     "PermissiveFileSource",
+    "ProgressbarLike",
     "RelativeFilePath",
     "RootHttpUrl",
     "Sha256",

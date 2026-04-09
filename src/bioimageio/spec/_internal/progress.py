@@ -1,23 +1,28 @@
+from abc import abstractmethod
 from typing import Any, Optional, Protocol
 
 from rich.progress import Progress
 
 
-class Progressbar(Protocol):
+class ProgressbarLike(Protocol):
     """Progressbar protocol modeled after tqdm"""
 
     total: Optional[int]
 
+    @abstractmethod
     def update(self, increment: int, /) -> Any: ...
 
+    @abstractmethod
     def reset(self): ...
 
+    @abstractmethod
     def close(self): ...
 
+    @abstractmethod
     def set_description(self, description: str, /, refresh: bool = True): ...
 
 
-class RichTaskBar:
+class RichTaskBar(ProgressbarLike):
     def __init__(self, description: str, *, parent: Progress, total: Optional[int]):
         super().__init__()
         self.task_id = parent.add_task(description, total=total)

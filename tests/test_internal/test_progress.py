@@ -1,7 +1,7 @@
-from bioimageio.spec._internal.progress import Progressbar
+from bioimageio.spec._internal.progress import ProgressbarLike
 
 
-def _test_progress_impl(pbar: Progressbar):
+def _test_progress_impl(pbar: ProgressbarLike):
     pbar.total = 10
     pbar.set_description("round 1")
     for _ in range(3):

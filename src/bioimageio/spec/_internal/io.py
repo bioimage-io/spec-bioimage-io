@@ -80,7 +80,7 @@ from .io_basics import (
     get_sha256,
 )
 from .node import Node
-from .progress import Progressbar
+from .progress import ProgressbarLike
 from .root_url import RootHttpUrl
 from .type_guards import is_dict, is_list, is_mapping, is_sequence
 from .url import HttpUrl
@@ -106,7 +106,9 @@ class LightHttpFileDescr(Node):
     def get_reader(
         self,
         *,
-        progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+        progressbar: Union[
+            ProgressbarLike, Callable[[], ProgressbarLike], bool, None
+        ] = None,
     ) -> BytesReader:
         """open the file source (download if needed)"""
         return get_reader(self.source, sha256=self.sha256, progressbar=progressbar)
@@ -308,7 +310,9 @@ class FileDescr(Node):
     def get_reader(
         self,
         *,
-        progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+        progressbar: Union[
+            ProgressbarLike, Callable[[], ProgressbarLike], bool, None
+        ] = None,
     ):
         """open the file source (download if needed)"""
         return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
@@ -316,7 +320,9 @@ class FileDescr(Node):
     def download(
         self,
         *,
-        progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+        progressbar: Union[
+            ProgressbarLike, Callable[[], ProgressbarLike], bool, None
+        ] = None,
     ):
         """alias for `.get_reader`"""
         return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
@@ -707,7 +713,9 @@ def extract(
 def get_reader(
     source: Union[PermissiveFileSource, FileDescr, ZipPath],
     /,
-    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None] = None,
+    progressbar: Union[
+        ProgressbarLike, Callable[[], ProgressbarLike], bool, None
+    ] = None,
     **kwargs: Unpack[HashKwargs],
 ) -> BytesReader:
     """Open a file `source` (download if needed)"""
@@ -774,7 +782,7 @@ download = get_reader
 def _open_url(
     source: HttpUrl,
     /,
-    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None],
+    progressbar: Union[ProgressbarLike, Callable[[], ProgressbarLike], bool, None],
     **kwargs: Unpack[HashKwargs],
 ) -> BytesReader:
     cache = (
@@ -808,7 +816,7 @@ def _open_url(
 def _fetch_url(
     source: RootHttpUrl,
     *,
-    progressbar: Union[Progressbar, Callable[[], Progressbar], bool, None],
+    progressbar: Union[ProgressbarLike, Callable[[], ProgressbarLike], bool, None],
 ):
     if source.scheme not in ("http", "https"):
         raise NotImplementedError(source.scheme)
