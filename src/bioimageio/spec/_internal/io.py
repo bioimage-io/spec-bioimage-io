@@ -256,7 +256,6 @@ FileSource = Annotated[
     Union[HttpUrl, RelativeFilePath, FilePath],
     Field(union_mode="left_to_right"),
 ]
-PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl]
 
 
 class FileDescr(Node):
@@ -330,6 +329,9 @@ class FileDescr(Node):
     @property
     def suffix(self) -> str:
         return self.source.suffix
+
+
+PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl, FileDescr, ZipPath]
 
 
 path_or_url_adapter: "TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]]" = (
@@ -538,17 +540,19 @@ def _deepcopy_incomplete_descr_impl(
     elif isinstance(
         data,
         (
-            bool,
-            int,
-            float,
-            type(None),
+            HttpUrl,
+            Path,
+            PurePath,
+            RelativeFilePath,
+            Version,
             _date,
             _datetime,
-            Version,
-            RelativeFilePath,
-            PurePath,
-            HttpUrl,
+            bool,
+            float,
+            int,
             pydantic.HttpUrl,
+            type(None),
+            ZipPath,
         ),
     ):
         return data
