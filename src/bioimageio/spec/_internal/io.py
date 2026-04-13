@@ -627,7 +627,9 @@ _file_source_adapter: TypeAdapter[Union[HttpUrl, RelativeFilePath, FilePath]] = 
 )
 
 
-def interprete_file_source(file_source: PermissiveFileSource) -> FileSource:
+def interprete_file_source(
+    file_source: Union[FileSource, str, pydantic.HttpUrl],
+) -> FileSource:
     if isinstance(file_source, Path):
         if file_source.is_dir():
             raise FileNotFoundError(

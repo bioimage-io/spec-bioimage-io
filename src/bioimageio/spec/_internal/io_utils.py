@@ -171,7 +171,9 @@ def open_bioimageio_yaml(
         )
 
     try:
-        if isinstance(source, (Path, str)) and (source_dir := Path(source)).is_dir():
+        if isinstance(source, (FileDescr, ZipPath)):
+            src = source
+        elif isinstance(source, (Path, str)) and (source_dir := Path(source)).is_dir():
             # open bioimageio yaml from a folder
             src = source_dir / find_bioimageio_yaml_file_name(source_dir)
         else:
@@ -258,6 +260,12 @@ def open_bioimageio_yaml(
 
     if isinstance(src, ZipPath):
         root = src.root
+    elif isinstance(src, FileDescr):
+        file_source = src.source.absolute()
+        if isinstance(file_source, ZipPath):
+            root = file_source.root
+        else:
+            root = file_source.parent
     else:
         root = src.parent
 
