@@ -63,3 +63,17 @@ class RootHttpUrl(ValidatedString):
         for _ in range(100):
             current = current.parent
             yield current
+
+    def __truediv__(self, other: str) -> RootHttpUrl:
+        parsed = urlsplit(str(self))
+        return RootHttpUrl(
+            urlunsplit(
+                (
+                    parsed.scheme,
+                    parsed.netloc,
+                    f"{parsed.path.strip('/')}/{other.strip('/')}",
+                    parsed.query,
+                    parsed.fragment,
+                )
+            )
+        )
