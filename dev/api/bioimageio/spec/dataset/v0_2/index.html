@@ -4748,6 +4748,28 @@ processing.</p>
             </li>
         </ul>
 
+        <p>Validators:</p>
+        <ul>
+            <li>
+              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.dataset.v0_2.DatasetDescr.accept_author_strings">accept_author_strings</a></code>
+                &rarr;
+                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.authors">authors</a></code>            </li>
+            <li>
+              <code><span title="bioimageio.spec.dataset.v0_2.DatasetDescr._warn_empty_cite">_warn_empty_cite</span></code>
+                &rarr;
+                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.cite">cite</a></code>            </li>
+            <li>
+              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.dataset.v0_2.DatasetDescr.warn_about_tag_categories">warn_about_tag_categories</a></code>
+                &rarr;
+                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.tags">tags</a></code>            </li>
+            <li>
+              <code><span title="bioimageio.spec.dataset.v0_2.DatasetDescr._convert_from_older_format">_convert_from_older_format</span></code>
+            </li>
+            <li>
+              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.dataset.v0_2.DatasetDescr.deprecated_spdx_license">deprecated_spdx_license</a></code>
+                &rarr;
+                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericDescrBase.license">license</a></code>            </li>
+        </ul>
 
 
 
@@ -5679,7 +5701,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
   </span>
 
 <a href="#bioimageio.spec.dataset.v0_2.DatasetDescr.accept_author_strings" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -5731,7 +5753,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
   </span>
 
 <a href="#bioimageio.spec.dataset.v0_2.DatasetDescr.deprecated_spdx_license" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -6441,7 +6463,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
   </span>
 
 <a href="#bioimageio.spec.dataset.v0_2.DatasetDescr.warn_about_tag_categories" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -7382,6 +7404,14 @@ Do not set this field in a YAML file.</p>
               </td>
             </tr>
             <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.dataset.v0_2.HttpUrl.__truediv__">__truediv__</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
               <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.dataset.v0_2.HttpUrl.absolute">absolute</a></code></td>
               <td>
                 <div class="doc-md-description">
@@ -7786,6 +7816,54 @@ Do not set this field in a YAML file.</p>
     <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_validated</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_validated</span> <span class="o">=</span> <span class="n">_validated</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_after_validator</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bioimageio.spec.dataset.v0_2.HttpUrl.__truediv__" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">__truediv__</span>
+
+
+<a href="#bioimageio.spec.dataset.v0_2.HttpUrl.__truediv__" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">__truediv__</span><span class="p">(</span><span class="n"><span title="bioimageio.spec.dataset.v0_2.HttpUrl.__truediv__(other)">other</span></span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+          
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/bioimageio/spec/_internal/root_url.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RootHttpUrl</span><span class="p">:</span>
+    <span class="n">parsed</span> <span class="o">=</span> <span class="n">urlsplit</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">RootHttpUrl</span><span class="p">(</span>
+        <span class="n">urlunsplit</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span>
+                <span class="n">parsed</span><span class="o">.</span><span class="n">netloc</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parsed</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">parsed</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
+                <span class="n">parsed</span><span class="o">.</span><span class="n">fragment</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>

@@ -9799,6 +9799,28 @@ processing.</p>
             </li>
         </ul>
 
+        <p>Validators:</p>
+        <ul>
+            <li>
+              <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.accept_author_strings">accept_author_strings</a></code>
+                &rarr;
+                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.authors">authors</a></code>            </li>
+            <li>
+              <code><span title="bioimageio.spec.dataset.v0_2.DatasetDescr._warn_empty_cite">_warn_empty_cite</span></code>
+                &rarr;
+                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.cite">cite</a></code>            </li>
+            <li>
+              <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.warn_about_tag_categories">warn_about_tag_categories</a></code>
+                &rarr;
+                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.tags">tags</a></code>            </li>
+            <li>
+              <code><span title="bioimageio.spec.dataset.v0_2.DatasetDescr._convert_from_older_format">_convert_from_older_format</span></code>
+            </li>
+            <li>
+              <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.deprecated_spdx_license">deprecated_spdx_license</a></code>
+                &rarr;
+                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericDescrBase.license">license</a></code>            </li>
+        </ul>
 
 
 
@@ -10730,7 +10752,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DatasetDescr.accept_author_strings" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -10782,7 +10804,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DatasetDescr.deprecated_spdx_license" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -11492,7 +11514,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DatasetDescr.warn_about_tag_categories" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -12892,6 +12914,12 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
             </li>
         </ul>
 
+        <p>Validators:</p>
+        <ul>
+            <li>
+              <code><span title="bioimageio.spec._internal.io.FileDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
+        </ul>
 
 
 
@@ -13046,15 +13074,15 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
+<span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -13096,15 +13124,15 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
+<span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -13392,7 +13420,8 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
+<span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -13423,8 +13452,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -13751,6 +13779,14 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
             </tr>
             <tr class="doc-section-item">
               <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.HttpUrl.__new__">__new__</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.HttpUrl.__truediv__">__truediv__</a></code></td>
               <td>
                 <div class="doc-md-description">
                   
@@ -14162,6 +14198,54 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
     <span class="bp">self</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_validated</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_validated</span> <span class="o">=</span> <span class="n">_validated</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_after_validator</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bioimageio.spec.model.v0_4.HttpUrl.__truediv__" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">__truediv__</span>
+
+
+<a href="#bioimageio.spec.model.v0_4.HttpUrl.__truediv__" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">__truediv__</span><span class="p">(</span><span class="n"><span title="bioimageio.spec.model.v0_4.HttpUrl.__truediv__(other)">other</span></span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+          
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/bioimageio/spec/_internal/root_url.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RootHttpUrl</span><span class="p">:</span>
+    <span class="n">parsed</span> <span class="o">=</span> <span class="n">urlsplit</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">RootHttpUrl</span><span class="p">(</span>
+        <span class="n">urlunsplit</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">parsed</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span>
+                <span class="n">parsed</span><span class="o">.</span><span class="n">netloc</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parsed</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">parsed</span><span class="o">.</span><span class="n">query</span><span class="p">,</span>
+                <span class="n">parsed</span><span class="o">.</span><span class="n">fragment</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -16685,6 +16769,9 @@ The data flow in bioimage.io models is explained
         <p>Validators:</p>
         <ul>
             <li>
+              <code><span title="bioimageio.spec.model.v0_4.KerasHdf5WeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
+            <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.KerasHdf5WeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
             <li>
@@ -17087,15 +17174,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
+<span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -17137,15 +17224,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
+<span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -17433,7 +17520,8 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
+<span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -17464,8 +17552,7 @@ need to have this field.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -24370,6 +24457,18 @@ need to have this field.</p>
         <p>Validators:</p>
         <ul>
             <li>
+              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.accept_author_strings">accept_author_strings</a></code>
+                &rarr;
+                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.authors">authors</a></code>            </li>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.ModelDescr._warn_empty_cite">_warn_empty_cite</span></code>
+                &rarr;
+                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.cite">cite</a></code>            </li>
+            <li>
+              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.warn_about_tag_categories">warn_about_tag_categories</a></code>
+                &rarr;
+                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.tags">tags</a></code>            </li>
+            <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.unique_tensor_descr_names">unique_tensor_descr_names</a></code>
                 &rarr;
                   <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.inputs">inputs</a></code>,                   <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.outputs">outputs</a></code>            </li>
@@ -25611,7 +25710,7 @@ The available weight formats determine which consumers can use this model.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.accept_author_strings" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -26709,7 +26808,7 @@ The available weight formats determine which consumers can use this model.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.warn_about_tag_categories" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -27380,6 +27479,9 @@ The available weight formats determine which consumers can use this model.</p>
         <p>Validators:</p>
         <ul>
             <li>
+              <code><span title="bioimageio.spec.model.v0_4.OnnxWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
+            <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.OnnxWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
             <li>
@@ -27782,15 +27884,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
+<span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -27832,15 +27934,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
+<span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -28128,7 +28230,8 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
+<span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -28159,8 +28262,7 @@ need to have this field.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -30729,6 +30831,9 @@ To document a <code>halo</code> that is already cropped by the model <code>shape
         <p>Validators:</p>
         <ul>
             <li>
+              <code><span title="bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
+            <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
             <li>
@@ -31276,15 +31381,15 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
+<span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -31326,15 +31431,15 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
+<span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -31622,7 +31727,8 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
+<span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -31653,8 +31759,7 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -38703,6 +38808,9 @@ If not specified, the full data range that can be expressed in <code>data_type</
         <p>Validators:</p>
         <ul>
             <li>
+              <code><span title="bioimageio.spec.model.v0_4.TensorflowJsWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
+            <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorflowJsWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
             <li>
@@ -39106,15 +39214,15 @@ All required files/folders should be a zip archive.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
+<span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -39156,15 +39264,15 @@ All required files/folders should be a zip archive.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
+<span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -39452,7 +39560,8 @@ All required files/folders should be a zip archive.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
+<span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -39483,8 +39592,7 @@ All required files/folders should be a zip archive.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -39848,6 +39956,9 @@ All required files/folders should be a zip archive.</p>
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -40251,15 +40362,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
+<span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -40301,15 +40412,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
+<span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -40597,7 +40708,8 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
+<span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -40628,8 +40740,7 @@ need to have this field.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -40993,6 +41104,9 @@ need to have this field.</p>
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.TorchscriptWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TorchscriptWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -41396,15 +41510,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
+<span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -41446,15 +41560,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
+<span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -41742,7 +41856,8 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
+<span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -41773,8 +41888,7 @@ need to have this field.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -45195,6 +45309,9 @@ post-release suffixes.</p>
         <p>Validators:</p>
         <ul>
             <li>
+              <code><span title="bioimageio.spec.model.v0_4.WeightsEntryDescrBase._validate_sha256">_validate_sha256</span></code>
+            </li>
+            <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.WeightsEntryDescrBase.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
         </ul>
@@ -45568,15 +45685,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
+<span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -45618,15 +45735,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
+<span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -45914,7 +46031,8 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
+<span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -45945,8 +46063,7 @@ need to have this field.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
