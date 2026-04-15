@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../../../images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
     
     
       
@@ -1917,6 +1917,7 @@ diagnostics.</p>
 <span class="w">            </span><span class="s2">&quot;string_too_short&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;string_too_long&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;string_pattern_mismatch&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;string_not_ascii&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;enum&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;dict_type&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;mapping_type&quot;</span><span class="p">,</span>
@@ -2538,7 +2539,7 @@ diagnostics.</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.BaseModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel">BaseModel</a></code></p>
+              Bases: <code><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.BaseModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel">BaseModel</a></code></p>
 
         <p>a detail in a validation summary</p>
 
@@ -2643,6 +2644,7 @@ diagnostics.</p>
 <span class="w">                </span><span class="s2">&quot;string_too_short&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;string_too_long&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;string_pattern_mismatch&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;string_not_ascii&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;enum&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;dict_type&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;mapping_type&quot;</span><span class="p">,</span>
@@ -2762,6 +2764,7 @@ diagnostics.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;ValidationContextSummary&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Summary of the validation context without internally used context fields.&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;file_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -2899,6 +2902,7 @@ diagnostics.</p>
 <span class="w">                </span><span class="s2">&quot;string_too_short&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;string_too_long&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;string_pattern_mismatch&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;string_not_ascii&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;enum&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;dict_type&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;mapping_type&quot;</span><span class="p">,</span>
@@ -3405,7 +3409,7 @@ diagnostics.</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.BaseModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel">BaseModel</a></code></p>
+              Bases: <code><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.BaseModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel">BaseModel</a></code></p>
 
         <p>Base of <code>ErrorEntry</code> and <code>WarningEntry</code></p>
 
@@ -3468,6 +3472,7 @@ diagnostics.</p>
 <span class="w">            </span><span class="s2">&quot;string_too_short&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;string_too_long&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;string_pattern_mismatch&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;string_not_ascii&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;enum&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;dict_type&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;mapping_type&quot;</span><span class="p">,</span>
@@ -3684,7 +3689,7 @@ diagnostics.</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.BaseModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel">BaseModel</a></code></p>
+              Bases: <code><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.BaseModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/base_model/#pydantic.BaseModel">BaseModel</a></code></p>
 
         <p>Summarizes output of all bioimageio validations and tests
 for one specific <code>ResourceDescr</code> instance.</p>
@@ -3790,6 +3795,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">                </span><span class="s2">&quot;string_too_short&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;string_too_long&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;string_pattern_mismatch&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;string_not_ascii&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;enum&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;dict_type&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;mapping_type&quot;</span><span class="p">,</span>
@@ -3934,6 +3940,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;ValidationContextSummary&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Summary of the validation context without internally used context fields.&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;file_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -4173,6 +4180,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">                </span><span class="s2">&quot;string_too_short&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;string_too_long&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;string_pattern_mismatch&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;string_not_ascii&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;enum&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;dict_type&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">&quot;mapping_type&quot;</span><span class="p">,</span>
@@ -5569,6 +5577,7 @@ save it to disk. See <code>save</code> for details.</p>
 <span class="w">            </span><span class="s2">&quot;string_too_short&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;string_too_long&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;string_pattern_mismatch&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;string_not_ascii&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;enum&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;dict_type&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">&quot;mapping_type&quot;</span><span class="p">,</span>
