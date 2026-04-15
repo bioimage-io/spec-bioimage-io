@@ -14,7 +14,7 @@ from typing_extensions import Self
 
 from ._settings import settings
 from .io_basics import FileName, Sha256
-from .progress import Progressbar
+from .progress import ProgressbarLike
 from .root_url import RootHttpUrl
 from .utils import SLOTS
 from .warning_levels import WarningLevel
@@ -107,7 +107,7 @@ class ValidationContext(ValidationContextBase):
         of a generated `bioimageio.spec.ValidationSummary`.
     """
 
-    progressbar: Union[None, bool, Callable[[], Progressbar]] = None
+    progressbar: Union[None, bool, Callable[[], ProgressbarLike]] = None
     """Control any progressbar.
     (Currently this is only used for file downloads.)
 
