@@ -1485,15 +1485,11 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
     def _require_sha256_with_source(self) -> "CustomPostprocessingDescr":
         if self.source is not None and self.sha256 is None:
             raise ValueError(
-                "'sha256' is required when 'source' is provided. "
-                "Run: python -c \"import hashlib; "
-                "print(hashlib.sha256(open('<source>', 'rb').read()).hexdigest())\""
+                "'sha256' is required when 'source' is provided."
+                + " Run: python -c \"import hashlib;"
+                + " print(hashlib.sha256(open('<source>', 'rb').read()).hexdigest())\""
             )
         return self
-
-    @model_serializer(mode="wrap", when_used="unless-none")
-    def _serialize(self, nxt: SerializerFunctionWrapHandler, info: SerializationInfo):
-        return package_file_descr_serializer(self, nxt, info)
 
 
 class FixedZeroMeanUnitVarianceKwargs(KwargsNode):
@@ -2294,7 +2290,12 @@ class _InputTensorConv(
         for p in src.preprocessing:
             cp = _convert_proc(p, src.axes)
             assert not isinstance(
-                cp, (ScaleMeanVarianceDescr, StardistPostprocessingDescr)
+                cp,
+                (
+                    ScaleMeanVarianceDescr,
+                    StardistPostprocessingDescr,
+                    CustomPostprocessingDescr,
+                ),
             )
             prep.append(cp)
 

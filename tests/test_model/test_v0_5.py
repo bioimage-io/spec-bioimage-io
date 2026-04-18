@@ -1,7 +1,7 @@
 from copy import deepcopy
 from datetime import datetime
 from types import MappingProxyType
-from typing import Any, Dict, Mapping, Union
+from typing import Any, Callable, Dict, Mapping, Union
 
 import pytest
 from pydantic import RootModel, ValidationError
@@ -669,7 +669,7 @@ def test_custom_postprocessing_source_requires_sha256():
 
     with pytest.raises(ValidationError, match="sha256"):
         with ValidationContext(perform_io_checks=False):
-            CustomPostprocessingDescr.model_validate(
+            _ = CustomPostprocessingDescr.model_validate(
                 {
                     "id": "custom",
                     "callable": "my_postprocess",
@@ -716,28 +716,33 @@ def test_custom_postprocessing_in_union():
 def test_custom_op_class_style():
     """Both callable class and factory function work as custom ops."""
     import numpy as np
+    from numpy.typing import NDArray
 
     # -- class style --
     class MyClassOp:
-        def __init__(self, threshold=0.5):
+        def __init__(self, threshold: float = 0.5) -> None:
+            super().__init__()
             self.threshold = threshold
-        def __call__(self, *arrays):
-            return (arrays[0] > self.threshold).astype(np.uint8)
+
+        def __call__(self, *arrays: "NDArray[np.generic]") -> "NDArray[np.generic]":
+            return (arrays[0] > self.threshold).astype(np.uint8)  # type: ignore[return-value]
 
     op = MyClassOp(threshold=0.3)
-    arr = np.array([0.1, 0.4])
+    arr: NDArray[np.float64] = np.array([0.1, 0.4])
     result = op(arr)
-    assert result.tolist() == [0, 1]
+    assert list(result) == [0, 1]
 
     # -- factory function style --
-    def my_factory_op(threshold=0.5):
-        def run(*arrays):
-            return (arrays[0] > threshold).astype(np.uint8)
+    def my_factory_op(
+        threshold: float = 0.5,
+    ) -> "Callable[..., NDArray[np.generic]]":
+        def run(*arrays: "NDArray[np.generic]") -> "NDArray[np.generic]":
+            return (arrays[0] > threshold).astype(np.uint8)  # type: ignore[return-value]
         return run
 
     op2 = my_factory_op(threshold=0.3)
     result2 = op2(arr)
-    assert result2.tolist() == [0, 1]
+    assert list(result2) == [0, 1]
 
     # Both produce the same result — they are runtime-equivalent
-    np.testing.assert_array_equal(result, result2)
+    assert list(result) == list(result2)
