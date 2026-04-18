@@ -1,82 +1,112 @@
 # Custom Ops Library
 
-Pre-built postprocessing and preprocessing factory functions for the BioImage Model Zoo.
+Pre-built postprocessing (and preprocessing) factory functions for the BioImage Model Zoo.
 
-## How to use a built-in op
+Contributors ship their op **inline** with the model package during development, then
+promote it here as a built-in once it is ready to be shared — **without changing anything
+else in `rdf.yaml`**.
 
-In your `rdf.yaml`, set `id: custom` and name the op in `callable` — no `source` needed:
+---
 
-```yaml
-postprocessing:
-  - id: custom
-    callable: cellpose_flow_dynamics
-    kwargs:
-      cellprob_threshold: 0.0
-      flow_threshold: 0.4
-```
+## Workflow: inline → built-in
 
-`bioimageio.core` will look up `callable` in this folder automatically.
+### Step 1 — Develop inline (source shipped with model package)
 
-## How to write your own op
-
-Two styles are supported — pick whichever feels natural:
-
-**Style 1 — callable class** (recommended for ops with configuration):
-
-```python
-# my_op.py
-import numpy as np
-
-class my_op:
-    def __init__(self, threshold=0.5):
-        self.threshold = threshold          # kwargs land here
-
-    def __call__(self, *arrays):
-        # arrays = model output tensors in rdf.yaml declaration order
-        return (arrays[0] > self.threshold).astype(np.uint8)
-```
-
-**Style 2 — factory function** (closure over kwargs):
-
-```python
-# my_op.py
-import numpy as np
-
-def my_op(threshold=0.5):
-    """Called once with kwargs; returns the per-image function."""
-    def run(*arrays):
-        # arrays = model output tensors in rdf.yaml declaration order
-        return (arrays[0] > threshold).astype(np.uint8)
-    return run
-```
-
-Both are used identically in `rdf.yaml` — the runtime handles either.
-
-2. Point to it from `rdf.yaml`:
+Write a Python file and put it alongside your weights.
+Reference it in `rdf.yaml`:
 
 ```yaml
 postprocessing:
   - id: custom
-    callable: my_op
-    source: my_op.py
-    sha256: <sha256 of my_op.py>
+    callable: my_postprocess        # class or function name
+    source: my_postprocess.py       # packaged with the model
+    sha256: <sha256 of the file>    # required — see below
+    kwargs:                         # all optional
+      threshold: 0.5
+```
+
+Compute the sha256:
+```bash
+python -c "import hashlib; print(hashlib.sha256(open('my_postprocess.py','rb').read()).hexdigest())"
+```
+
+### Step 2 — Promote to built-in (optional, for sharing)
+
+1. Open a PR adding `my_postprocess.py` to this folder
+2. Once merged, drop `source` and `sha256` from `rdf.yaml` — everything else stays the same:
+
+```yaml
+postprocessing:
+  - id: custom
+    callable: my_postprocess        # now resolved from custom_ops/
     kwargs:
       threshold: 0.5
 ```
 
-3. To share it as a built-in: open a PR adding your file to this folder.
+`callable` name, `kwargs`, and runtime behaviour are **identical** in both stages.
+
+---
+
+## Writing an op — two supported styles
+
+### Style 1 — Callable class (recommended for ops with configuration)
+
+```python
+# my_postprocess.py
+import numpy as np
+
+class my_postprocess:
+    def __init__(self, threshold=0.5):
+        """kwargs from rdf.yaml arrive here."""
+        self.threshold = threshold
+
+    def __call__(self, *arrays):
+        """
+        Model output tensors arrive here in rdf.yaml declaration order.
+        Each array is a numpy.ndarray.
+        Must return a single numpy.ndarray.
+        """
+        return (arrays[0] > self.threshold).astype(np.uint8)
+```
+
+### Style 2 — Factory function (closure over kwargs)
+
+```python
+# my_postprocess.py
+import numpy as np
+
+def my_postprocess(threshold=0.5):
+    """kwargs from rdf.yaml arrive here. Return the per-image function."""
+    def run(*arrays):
+        """
+        Model output tensors in rdf.yaml declaration order.
+        Return a single numpy.ndarray.
+        """
+        return (arrays[0] > threshold).astype(np.uint8)
+    return run
+```
+
+Both styles work identically. The runtime does:
+```python
+op = callable(**kwargs)   # __init__ or factory called once
+result = op(*tensors)     # __call__ or inner function called per image
+```
+
+---
 
 ## Rules for contributed ops
 
-- One file per op, filename = callable name (e.g. `cellpose_flow_dynamics.py`)
-- Only import from: `numpy`, `scipy`, `scikit-image`, `torch`, `tensorflow`,
-  `onnxruntime`, `bioimageio.core` — no custom packages
-- Factory signature: `def op_name(**kwargs) -> Callable[..., np.ndarray]`
-- Inner function signature: `def run(*arrays: np.ndarray) -> np.ndarray`
-- Include a docstring explaining what the op does and what tensors it expects
+- **One file per op**, filename = callable name (e.g. `cellpose_flow_dynamics.py`)
+- **Imports**: only `numpy`, `scipy`, `scikit-image`, `torch`, `torchvision`,
+  `tensorflow`, `onnxruntime`, `bioimageio.core` — no custom packages
+- **Signature**: `callable(**kwargs)` returns something that accepts `*arrays` and returns `np.ndarray`
+- **Docstring**: explain what the op does, expected tensor order, and what it returns
+- **No side effects**: the op must be stateless across images (state held in `self` or closure is fine)
 
-## Available ops
+---
+
+## Available built-in ops
 
 | File | Callable | Description |
 |------|----------|-------------|
-| `cellpose_flow_dynamics.py` | `cellpose_flow_dynamics` | Decode Cellpose flow fields into instance labels |
+| [`cellpose_flow_dynamics.py`](cellpose_flow_dynamics.py) | `cellpose_flow_dynamics` | Decode Cellpose/Cellpose-SAM flow fields into instance labels |

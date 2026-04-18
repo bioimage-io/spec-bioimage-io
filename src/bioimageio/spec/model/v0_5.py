@@ -1364,28 +1364,21 @@ class StardistPostprocessingDescr(NodeWithExplicitlySetFields):
 
 
 class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
-    """Custom postprocessing — function factory or callable class.
+    """Custom postprocessing — inline source file or shared built-in op.
 
-    The simplest way to ship postprocessing that cannot be expressed by the
-    named operations (watershed, flow dynamics, NMS on polygons, etc.).
+    Supports postprocessing that cannot be expressed by named operations
+    (watershed, flow dynamics, NMS, etc.) using a simple Python interface.
+    The op ships **inline** with the model package during development, and
+    can be **promoted to a shared built-in** without changing anything in
+    ``rdf.yaml`` except removing ``source`` and ``sha256``.
 
-    Two equivalent styles are supported — pick whichever feels natural:
+    ---
 
-    **Style 1 — factory function** (closure over kwargs):
+    **Step 1 — develop inline (ship source with the package):**
 
-    .. code-block:: python
+    Write a ``.py`` file alongside the weights.  Two styles are supported:
 
-        # my_postprocess.py
-        import numpy as np
-
-        def my_postprocess(threshold=0.5):
-            \"\"\"Called once with kwargs; returns the per-image function.\"\"\"
-            def run(*arrays):
-                # arrays = model output tensors in rdf.yaml declaration order
-                return (arrays[0] > threshold).astype(np.uint8)
-            return run
-
-    **Style 2 — callable class** (kwargs become constructor args):
+    *Callable class* — kwargs go to ``__init__``, tensors arrive in ``__call__``:
 
     .. code-block:: python
 
@@ -1395,32 +1388,55 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
         class my_postprocess:
             def __init__(self, threshold=0.5):
                 self.threshold = threshold
-
             def __call__(self, *arrays):
                 # arrays = model output tensors in rdf.yaml declaration order
                 return (arrays[0] > self.threshold).astype(np.uint8)
 
-    Both styles are used identically in ``rdf.yaml``:
+    *Factory function* — alternative closure style, identical behaviour:
+
+    .. code-block:: python
+
+        # my_postprocess.py
+        import numpy as np
+
+        def my_postprocess(threshold=0.5):
+            def run(*arrays):
+                return (arrays[0] > threshold).astype(np.uint8)
+            return run
+
+    Reference it in ``rdf.yaml`` with the source file included in the package:
 
     .. code-block:: yaml
 
         postprocessing:
           - id: custom
-            callable: my_postprocess   # function or class name
-            source: my_postprocess.py  # omit to use a built-in from custom_ops/
-            sha256: <hash>             # required when source is given
-            kwargs:                    # forwarded to factory/__init__ — all optional
+            callable: my_postprocess   # class or function name in source
+            source: my_postprocess.py  # packaged alongside weights
+            sha256: <hash>             # sha256 of the source file
+            kwargs:                    # forwarded to __init__ / factory
               threshold: 0.5
 
-    The runtime resolves ``callable`` from the source file (or built-in library),
-    calls ``op = callable(**kwargs)``, then ``result = op(*output_tensors)``
-    for each image.  A function factory and a class instance are both valid
-    because both produce a callable after instantiation.
+    ---
 
-    **Built-in ops** (``source`` omitted): ready-made ops live in the
-    ``custom_ops/`` folder of this repository.  See
-    ``custom_ops/cellpose_flow_dynamics.py`` for a worked example with both
-    styles documented.  Contributors can add new ops there via PR.
+    **Step 2 — promote to a shared built-in (optional):**
+
+    Submit ``my_postprocess.py`` to the ``custom_ops/`` folder of the
+    spec repository as a pull request.  Once merged, simply drop ``source``
+    and ``sha256`` from ``rdf.yaml`` — ``callable`` and ``kwargs`` stay the
+    same:
+
+    .. code-block:: yaml
+
+        postprocessing:
+          - id: custom
+            callable: my_postprocess   # now resolved from custom_ops/
+            kwargs:
+              threshold: 0.5
+
+    The transition is seamless: the callable name, kwargs, and runtime
+    behaviour are identical in both stages.
+
+    ---
 
     **Security:** source files are SHA-256 verified before execution.
     Execution requires ``allow_custom_postprocessing=True`` in bioimageio.core
@@ -1439,27 +1455,41 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
         str,
         Field(examples=["cellpose_flow_dynamics", "stardist_nms", "my_postprocess"]),
     ]
-    """Name of the factory function or callable class.
+    """Name of the callable class or factory function.
 
-    The runtime resolves this name from ``source`` (or the built-in library),
-    instantiates it with ``op = callable(**kwargs)``, then calls
-    ``result = op(*output_tensors)`` for each image.
-    Both a function that returns a callable and a class with ``__call__``
-    are valid."""
+    When ``source`` is given: loaded from that file.
+    When ``source`` is absent: looked up in the built-in ``custom_ops/`` library.
+
+    At runtime: ``op = callable(**kwargs)``, then ``result = op(*output_tensors)``
+    per image.  Both a class with ``__call__`` and a function returning a callable
+    satisfy this protocol."""
 
     source: Optional[Annotated[FileSource, AfterValidator(wo_special_file_name)]] = None
-    """Path or URL to a Python file containing the factory function.
+    """Python source file packaged inline with the model.
 
-    Omit to use a built-in op from ``custom_ops/`` by the same name as
-    ``callable``.  When provided, ``sha256`` is required."""
+    Include the file alongside the weights in the model package.
+    When present, ``sha256`` is required.
+    Omit once the op has been accepted into ``custom_ops/``."""
 
     sha256: Optional[Sha256] = None
-    """SHA-256 hash of the source file. Required when ``source`` is given."""
+    """SHA-256 hash of ``source``. Required when ``source`` is given.
+    Drop together with ``source`` when promoting to a built-in op."""
 
     kwargs: Dict[str, YamlValue] = Field(
         default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
     )
-    """Keyword arguments passed to the factory function (all optional)."""
+    """Keyword arguments forwarded to the callable (``__init__`` or factory).
+    These remain unchanged across the inline → built-in transition."""
+
+    @model_validator(mode="after")
+    def _require_sha256_with_source(self) -> "CustomPostprocessingDescr":
+        if self.source is not None and self.sha256 is None:
+            raise ValueError(
+                "'sha256' is required when 'source' is provided. "
+                "Run: python -c \"import hashlib; "
+                "print(hashlib.sha256(open('<source>', 'rb').read()).hexdigest())\""
+            )
+        return self
 
     @model_serializer(mode="wrap", when_used="unless-none")
     def _serialize(self, nxt: SerializerFunctionWrapHandler, info: SerializationInfo):
