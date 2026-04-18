@@ -620,3 +620,83 @@ def test_get_set_weights_descr(model: ModelDescr):
             source=HttpUrl(root_url + "weights_js"), tensorflow_version=Version("2.10")
         )
         model.weights.onnx = None
+
+
+# --- postprocessing tests ---
+
+
+def test_cellpose_flow_dynamics_defaults():
+    from bioimageio.spec.model.v0_5 import CellposeFlowDynamicsDescr
+
+    descr = CellposeFlowDynamicsDescr.model_validate({"id": "cellpose_flow_dynamics"})
+    assert descr.id == "cellpose_flow_dynamics"
+    assert descr.kwargs.cellprob_threshold == 0.0
+    assert descr.kwargs.flow_threshold == 0.4
+    assert descr.kwargs.interp is True
+    assert descr.kwargs.do_3D is False
+
+
+def test_cellpose_flow_dynamics_custom_kwargs():
+    from bioimageio.spec.model.v0_5 import CellposeFlowDynamicsDescr
+
+    descr = CellposeFlowDynamicsDescr.model_validate(
+        {
+            "id": "cellpose_flow_dynamics",
+            "kwargs": {"cellprob_threshold": -1.0, "flow_threshold": 0.8, "do_3D": True},
+        }
+    )
+    assert descr.kwargs.cellprob_threshold == -1.0
+    assert descr.kwargs.flow_threshold == 0.8
+    assert descr.kwargs.do_3D is True
+
+
+def test_cellpose_flow_dynamics_in_postprocessing_union():
+    from pydantic import RootModel
+
+    from bioimageio.spec.model.v0_5 import PostprocessingDescr
+
+    class _M(RootModel[PostprocessingDescr]):
+        pass
+
+    result = _M.model_validate({"id": "cellpose_flow_dynamics"})
+    assert result.root.id == "cellpose_flow_dynamics"
+
+
+def test_custom_postprocessing_from_library():
+    from bioimageio.spec.model.v0_5 import CustomPostprocessingDescr
+
+    with ValidationContext(perform_io_checks=False):
+        descr = CustomPostprocessingDescr.model_validate(
+            {
+                "id": "custom",
+                "postprocessing": {
+                    "import_from": "my_package.postproc",
+                    "callable": "decode_instances",
+                    "kwargs": {"threshold": 0.5},
+                },
+            }
+        )
+    assert descr.id == "custom"
+    assert descr.postprocessing.callable == "decode_instances"
+    assert descr.postprocessing.kwargs == {"threshold": 0.5}
+
+
+def test_custom_postprocessing_in_union():
+    from pydantic import RootModel
+
+    from bioimageio.spec.model.v0_5 import PostprocessingDescr
+
+    class _M(RootModel[PostprocessingDescr]):
+        pass
+
+    with ValidationContext(perform_io_checks=False):
+        result = _M.model_validate(
+            {
+                "id": "custom",
+                "postprocessing": {
+                    "import_from": "my_package.postproc",
+                    "callable": "decode_instances",
+                },
+            }
+        )
+    assert result.root.id == "custom"
