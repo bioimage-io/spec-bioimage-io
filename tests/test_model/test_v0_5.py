@@ -625,60 +625,39 @@ def test_get_set_weights_descr(model: ModelDescr):
 # --- postprocessing tests ---
 
 
-def test_cellpose_flow_dynamics_defaults():
-    from bioimageio.spec.model.v0_5 import CellposeFlowDynamicsDescr
+def test_custom_postprocessing_builtin_name():
+    """Using a built-in op by name — no source needed."""
+    from bioimageio.spec.model.v0_5 import CustomPostprocessingDescr
 
-    descr = CellposeFlowDynamicsDescr.model_validate({"id": "cellpose_flow_dynamics"})
-    assert descr.id == "cellpose_flow_dynamics"
-    assert descr.kwargs.cellprob_threshold == 0.0
-    assert descr.kwargs.flow_threshold == 0.4
-    assert descr.kwargs.interp is True
-    assert descr.kwargs.do_3D is False
-
-
-def test_cellpose_flow_dynamics_custom_kwargs():
-    from bioimageio.spec.model.v0_5 import CellposeFlowDynamicsDescr
-
-    descr = CellposeFlowDynamicsDescr.model_validate(
+    descr = CustomPostprocessingDescr.model_validate(
         {
-            "id": "cellpose_flow_dynamics",
-            "kwargs": {"cellprob_threshold": -1.0, "flow_threshold": 0.8, "do_3D": True},
+            "id": "custom",
+            "callable": "cellpose_flow_dynamics",
+            "kwargs": {"cellprob_threshold": 0.0, "flow_threshold": 0.4},
         }
     )
-    assert descr.kwargs.cellprob_threshold == -1.0
-    assert descr.kwargs.flow_threshold == 0.8
-    assert descr.kwargs.do_3D is True
+    assert descr.id == "custom"
+    assert descr.callable == "cellpose_flow_dynamics"
+    assert descr.source is None
+    assert descr.kwargs == {"cellprob_threshold": 0.0, "flow_threshold": 0.4}
 
 
-def test_cellpose_flow_dynamics_in_postprocessing_union():
-    from pydantic import RootModel
-
-    from bioimageio.spec.model.v0_5 import PostprocessingDescr
-
-    class _M(RootModel[PostprocessingDescr]):
-        pass
-
-    result = _M.model_validate({"id": "cellpose_flow_dynamics"})
-    assert result.root.id == "cellpose_flow_dynamics"
-
-
-def test_custom_postprocessing_from_library():
+def test_custom_postprocessing_with_source():
+    """Using a custom source file."""
     from bioimageio.spec.model.v0_5 import CustomPostprocessingDescr
 
     with ValidationContext(perform_io_checks=False):
         descr = CustomPostprocessingDescr.model_validate(
             {
                 "id": "custom",
-                "postprocessing": {
-                    "import_from": "my_package.postproc",
-                    "callable": "decode_instances",
-                    "kwargs": {"threshold": 0.5},
-                },
+                "callable": "my_postprocess",
+                "source": "my_postprocess.py",
+                "sha256": "a" * 64,
+                "kwargs": {"threshold": 0.5},
             }
         )
-    assert descr.id == "custom"
-    assert descr.postprocessing.callable == "decode_instances"
-    assert descr.postprocessing.kwargs == {"threshold": 0.5}
+    assert descr.callable == "my_postprocess"
+    assert descr.kwargs == {"threshold": 0.5}
 
 
 def test_custom_postprocessing_in_union():
@@ -689,14 +668,10 @@ def test_custom_postprocessing_in_union():
     class _M(RootModel[PostprocessingDescr]):
         pass
 
-    with ValidationContext(perform_io_checks=False):
-        result = _M.model_validate(
-            {
-                "id": "custom",
-                "postprocessing": {
-                    "import_from": "my_package.postproc",
-                    "callable": "decode_instances",
-                },
-            }
-        )
+    result = _M.model_validate(
+        {
+            "id": "custom",
+            "callable": "cellpose_flow_dynamics",
+        }
+    )
     assert result.root.id == "custom"

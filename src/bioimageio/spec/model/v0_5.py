@@ -283,7 +283,6 @@ PreprocessingId = Literal[
 ]
 PostprocessingId = Literal[
     "binarize",
-    "cellpose_flow_dynamics",
     "clip",
     "custom",
     "ensure_dtype",
@@ -1364,125 +1363,48 @@ class StardistPostprocessingDescr(NodeWithExplicitlySetFields):
     kwargs: Union[StardistPostprocessingKwargs2D, StardistPostprocessingKwargs3D]
 
 
-class CellposeFlowDynamicsKwargs(KwargsNode):
-    """key word arguments for [CellposeFlowDynamicsDescr][]"""
-
-    cellprob_threshold: float = 0.0
-    """Threshold on the cell-probability output. Pixels with probability above this
-    value seed the flow-dynamics integration. Lower values include more pixels."""
-
-    flow_threshold: float = 0.4
-    """Maximum allowed error of the flows for each mask. Increase to accept more
-    masks; decrease to discard masks with inconsistent flows."""
-
-    interp: bool = True
-    """Whether to interpolate flow field during dynamics integration."""
-
-    do_3D: bool = False
-    """Set to True for volumetric (Z, Y, X) inputs."""
-
-
-class CellposeFlowDynamicsDescr(NodeWithExplicitlySetFields):
-    """Cellpose flow-dynamics postprocessing: integrates predicted flow fields to
-    produce per-object instance labels.
-
-    Decodes the three output tensors produced by a Cellpose-family model
-    (horizontal flow, vertical flow, cell probability) into a label image where
-    each unique integer value identifies one object instance.
-
-    Algorithm reference:
-    - Stringer, C., Wang, T., Michaelos, M. & Pachitariu, M.
-      [*Cellpose: a generalist algorithm for cellular segmentation*](https://doi.org/10.1038/s41592-020-01018-x).
-      Nature Methods 18, 100-106 (2021).
-    - Pachitariu, M. & Stringer, C.
-      [*Cellpose 2.0: how to train your own model*](https://doi.org/10.1038/s41592-022-01663-4).
-      Nature Methods 19, 1634-1641 (2022).
-
-    Note: requires `cellpose>=3.0` to be installed.
-    Expected output tensor order: ``[flow_y, flow_x, cellprob]`` (2D) or
-    ``[flow_z, flow_y, flow_x, cellprob]`` (3D).
-    """
-
-    implemented_id: ClassVar[Literal["cellpose_flow_dynamics"]] = (
-        "cellpose_flow_dynamics"
-    )
-    if TYPE_CHECKING:
-        id: Literal["cellpose_flow_dynamics"] = "cellpose_flow_dynamics"
-    else:
-        id: Literal["cellpose_flow_dynamics"]
-
-    kwargs: CellposeFlowDynamicsKwargs = Field(
-        default_factory=CellposeFlowDynamicsKwargs.model_construct
-    )
-
-
-class _CustomPostprocessingCallableDescr(Node):
-    callable: Annotated[Identifier, Field(examples=["postprocess", "decode_instances"])]
-    """Name of the callable (function or class) to invoke.
-
-    The callable must accept one or more ``numpy.ndarray`` positional arguments
-    (the model output tensors, in declaration order) followed by any ``kwargs``
-    defined below, and return a single ``numpy.ndarray``."""
-
-    kwargs: Dict[str, YamlValue] = Field(
-        default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
-    )
-    """Keyword arguments forwarded to the callable at runtime."""
-
-
-class CustomPostprocessingFromFileDescr(_CustomPostprocessingCallableDescr, FileDescr):
-    """Custom postprocessing loaded from a local source file.
-
-    The source file must be a self-contained Python module that imports only
-    from the standard library, ``numpy``, ``scipy``, or ``scikit-image``.
-    It is SHA-256 verified before execution and requires explicit curator approval.
-    """
-
-    source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
-    """Path or URL to the Python source file containing the postprocessing callable."""
-
-    @model_serializer(mode="wrap", when_used="unless-none")
-    def _serialize(self, nxt: SerializerFunctionWrapHandler, info: SerializationInfo):
-        return package_file_descr_serializer(self, nxt, info)
-
-
-class CustomPostprocessingFromLibraryDescr(_CustomPostprocessingCallableDescr):
-    """Custom postprocessing imported from an installed Python package.
-
-    Use this when the postprocessing is already distributed as part of a
-    published package (e.g. ``my_package.postproc``). The package must be
-    available in the execution environment.
-    """
-
-    import_from: str
-    """Dotted module path to import the callable from.
-    e.g. ``my_package.postproc`` → ``from my_package.postproc import <callable>``"""
-
-
-CustomPostprocessingDescr_ = Annotated[
-    Union[CustomPostprocessingFromFileDescr, CustomPostprocessingFromLibraryDescr],
-    Field(discriminator="source"),
-]
-
-
 class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
-    """Arbitrary postprocessing defined in a user-supplied Python callable.
+    """Custom postprocessing via a factory function.
 
-    Enables instance-segmentation models (and any model whose output cannot be
-    decoded by the named operations in the postprocessing registry) to ship
-    their decoding logic alongside the weights file.
+    The simplest way to ship postprocessing that cannot be expressed by the
+    named operations (watershed, flow dynamics, NMS on polygons, etc.).
 
-    **Trust and security:** the ``source`` file is SHA-256 verified on every
-    load. Execution requires an explicit opt-in flag in ``bioimageio.core``
-    (``allow_custom_postprocessing=True``) and curator review before a model
-    using this field is published to the Zoo. The trust model is identical to
-    ``pytorch_state_dict.architecture``.
+    **Contributor interface — just write one Python function:**
 
-    **Dependency constraint:** the callable may only import from the packages
-    pre-installed in the BioEngine runtime environment:
-    ``numpy``, ``scipy``, ``scikit-image``, ``torch``, ``torchvision``,
-    ``tensorflow``, ``onnxruntime``, ``bioimageio.core``.
-    No additional ``conda_env`` or ``pip`` dependencies are accepted.
+    .. code-block:: python
+
+        # my_postprocess.py
+        import numpy as np
+
+        def my_postprocess(threshold=0.5):
+            \"\"\"Factory: called once with kwargs, returns the processing function.\"\"\"
+            def run(*arrays):
+                # arrays = model output tensors in rdf.yaml declaration order
+                # each is a numpy.ndarray
+                return (arrays[0] > threshold).astype(np.uint8)
+            return run
+
+    Point to it in ``rdf.yaml``:
+
+    .. code-block:: yaml
+
+        postprocessing:
+          - id: custom
+            callable: my_postprocess   # name of the factory function
+            source: my_postprocess.py  # omit to use a built-in op from custom_ops/
+            sha256: <hash>             # required when source is given
+            kwargs:                    # forwarded to the factory — all optional
+              threshold: 0.5
+
+    **Built-in ops** (``source`` omitted): ready-made factories live in the
+    ``custom_ops/`` folder of this repository.  See ``custom_ops/cellpose.py``
+    for a full worked example.  Contributors can add new ops there via PR.
+
+    **Security:** source files are SHA-256 verified before execution.
+    Execution requires ``allow_custom_postprocessing=True`` in bioimageio.core
+    and curator review before Zoo publication.
+    Only packages in the BioEngine pre-installed environment may be imported
+    (numpy, scipy, scikit-image, torch, tensorflow, onnxruntime, bioimageio.core).
     """
 
     implemented_id: ClassVar[Literal["custom"]] = "custom"
@@ -1491,10 +1413,32 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
     else:
         id: Literal["custom"]
 
-    postprocessing: Union[
-        CustomPostprocessingFromFileDescr, CustomPostprocessingFromLibraryDescr
+    callable: Annotated[
+        str,
+        Field(examples=["cellpose_flow_dynamics", "stardist_nms", "my_postprocess"]),
     ]
-    """The postprocessing callable — either loaded from a file or imported from a library."""
+    """Name of the factory function in the source file (or built-in op name).
+
+    The runtime calls ``factory = callable(**kwargs)`` once, then
+    ``result = factory(*output_tensors)`` for each image."""
+
+    source: Optional[Annotated[FileSource, AfterValidator(wo_special_file_name)]] = None
+    """Path or URL to a Python file containing the factory function.
+
+    Omit to use a built-in op from ``custom_ops/`` by the same name as
+    ``callable``.  When provided, ``sha256`` is required."""
+
+    sha256: Optional[Sha256] = None
+    """SHA-256 hash of the source file. Required when ``source`` is given."""
+
+    kwargs: Dict[str, YamlValue] = Field(
+        default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
+    )
+    """Keyword arguments passed to the factory function (all optional)."""
+
+    @model_serializer(mode="wrap", when_used="unless-none")
+    def _serialize(self, nxt: SerializerFunctionWrapHandler, info: SerializationInfo):
+        return package_file_descr_serializer(self, nxt, info)
 
 
 class FixedZeroMeanUnitVarianceKwargs(KwargsNode):
@@ -1796,7 +1740,6 @@ PreprocessingDescr = Annotated[
 PostprocessingDescr = Annotated[
     Union[
         BinarizeDescr,
-        CellposeFlowDynamicsDescr,
         ClipDescr,
         CustomPostprocessingDescr,
         EnsureDtypeDescr,
