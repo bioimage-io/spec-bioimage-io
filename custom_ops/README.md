@@ -19,23 +19,38 @@ postprocessing:
 
 ## How to write your own op
 
-1. Write a Python file with a single factory function:
+Two styles are supported — pick whichever feels natural:
+
+**Style 1 — callable class** (recommended for ops with configuration):
+
+```python
+# my_op.py
+import numpy as np
+
+class my_op:
+    def __init__(self, threshold=0.5):
+        self.threshold = threshold          # kwargs land here
+
+    def __call__(self, *arrays):
+        # arrays = model output tensors in rdf.yaml declaration order
+        return (arrays[0] > self.threshold).astype(np.uint8)
+```
+
+**Style 2 — factory function** (closure over kwargs):
 
 ```python
 # my_op.py
 import numpy as np
 
 def my_op(threshold=0.5):
-    """
-    Factory function — called once with kwargs.
-    Returns the function that processes tensors.
-    """
+    """Called once with kwargs; returns the per-image function."""
     def run(*arrays):
         # arrays = model output tensors in rdf.yaml declaration order
-        # each is a numpy.ndarray
         return (arrays[0] > threshold).astype(np.uint8)
     return run
 ```
+
+Both are used identically in `rdf.yaml` — the runtime handles either.
 
 2. Point to it from `rdf.yaml`:
 

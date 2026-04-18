@@ -1364,12 +1364,14 @@ class StardistPostprocessingDescr(NodeWithExplicitlySetFields):
 
 
 class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
-    """Custom postprocessing via a factory function.
+    """Custom postprocessing — function factory or callable class.
 
     The simplest way to ship postprocessing that cannot be expressed by the
     named operations (watershed, flow dynamics, NMS on polygons, etc.).
 
-    **Contributor interface — just write one Python function:**
+    Two equivalent styles are supported — pick whichever feels natural:
+
+    **Style 1 — factory function** (closure over kwargs):
 
     .. code-block:: python
 
@@ -1377,28 +1379,48 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
         import numpy as np
 
         def my_postprocess(threshold=0.5):
-            \"\"\"Factory: called once with kwargs, returns the processing function.\"\"\"
+            \"\"\"Called once with kwargs; returns the per-image function.\"\"\"
             def run(*arrays):
                 # arrays = model output tensors in rdf.yaml declaration order
-                # each is a numpy.ndarray
                 return (arrays[0] > threshold).astype(np.uint8)
             return run
 
-    Point to it in ``rdf.yaml``:
+    **Style 2 — callable class** (kwargs become constructor args):
+
+    .. code-block:: python
+
+        # my_postprocess.py
+        import numpy as np
+
+        class my_postprocess:
+            def __init__(self, threshold=0.5):
+                self.threshold = threshold
+
+            def __call__(self, *arrays):
+                # arrays = model output tensors in rdf.yaml declaration order
+                return (arrays[0] > self.threshold).astype(np.uint8)
+
+    Both styles are used identically in ``rdf.yaml``:
 
     .. code-block:: yaml
 
         postprocessing:
           - id: custom
-            callable: my_postprocess   # name of the factory function
-            source: my_postprocess.py  # omit to use a built-in op from custom_ops/
+            callable: my_postprocess   # function or class name
+            source: my_postprocess.py  # omit to use a built-in from custom_ops/
             sha256: <hash>             # required when source is given
-            kwargs:                    # forwarded to the factory — all optional
+            kwargs:                    # forwarded to factory/__init__ — all optional
               threshold: 0.5
 
-    **Built-in ops** (``source`` omitted): ready-made factories live in the
-    ``custom_ops/`` folder of this repository.  See ``custom_ops/cellpose.py``
-    for a full worked example.  Contributors can add new ops there via PR.
+    The runtime resolves ``callable`` from the source file (or built-in library),
+    calls ``op = callable(**kwargs)``, then ``result = op(*output_tensors)``
+    for each image.  A function factory and a class instance are both valid
+    because both produce a callable after instantiation.
+
+    **Built-in ops** (``source`` omitted): ready-made ops live in the
+    ``custom_ops/`` folder of this repository.  See
+    ``custom_ops/cellpose_flow_dynamics.py`` for a worked example with both
+    styles documented.  Contributors can add new ops there via PR.
 
     **Security:** source files are SHA-256 verified before execution.
     Execution requires ``allow_custom_postprocessing=True`` in bioimageio.core
@@ -1417,10 +1439,13 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
         str,
         Field(examples=["cellpose_flow_dynamics", "stardist_nms", "my_postprocess"]),
     ]
-    """Name of the factory function in the source file (or built-in op name).
+    """Name of the factory function or callable class.
 
-    The runtime calls ``factory = callable(**kwargs)`` once, then
-    ``result = factory(*output_tensors)`` for each image."""
+    The runtime resolves this name from ``source`` (or the built-in library),
+    instantiates it with ``op = callable(**kwargs)``, then calls
+    ``result = op(*output_tensors)`` for each image.
+    Both a function that returns a callable and a class with ``__call__``
+    are valid."""
 
     source: Optional[Annotated[FileSource, AfterValidator(wo_special_file_name)]] = None
     """Path or URL to a Python file containing the factory function.

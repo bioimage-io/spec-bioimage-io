@@ -675,3 +675,34 @@ def test_custom_postprocessing_in_union():
         }
     )
     assert result.root.id == "custom"
+
+
+def test_custom_op_class_style():
+    """Both callable class and factory function work as custom ops."""
+    import numpy as np
+    import sys, types
+
+    # -- class style --
+    class MyClassOp:
+        def __init__(self, threshold=0.5):
+            self.threshold = threshold
+        def __call__(self, *arrays):
+            return (arrays[0] > self.threshold).astype(np.uint8)
+
+    op = MyClassOp(threshold=0.3)
+    arr = np.array([0.1, 0.4])
+    result = op(arr)
+    assert result.tolist() == [0, 1]
+
+    # -- factory function style --
+    def my_factory_op(threshold=0.5):
+        def run(*arrays):
+            return (arrays[0] > threshold).astype(np.uint8)
+        return run
+
+    op2 = my_factory_op(threshold=0.3)
+    result2 = op2(arr)
+    assert result2.tolist() == [0, 1]
+
+    # Both produce the same result — they are runtime-equivalent
+    np.testing.assert_array_equal(result, result2)
