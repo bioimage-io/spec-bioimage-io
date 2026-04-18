@@ -716,7 +716,6 @@ def test_custom_postprocessing_in_union():
 def test_custom_op_class_style():
     """Both callable class and factory function work as custom ops."""
     import numpy as np
-    import sys, types
 
     # -- class style --
     class MyClassOp:
