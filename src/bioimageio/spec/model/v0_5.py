@@ -2334,7 +2334,7 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     def _validate_postprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.postprocessing:
-            kwargs_axes: Optional[Sequence[Any]] = p.kwargs.get("axes")
+            kwargs_axes = p.kwargs.get("axes")
             if kwargs_axes is None:
                 continue
 
