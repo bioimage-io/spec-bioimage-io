@@ -353,6 +353,80 @@
       "title": "model.v0_5.ChannelAxis",
       "type": "object"
     },
+    "CustomPostprocessingDescr": {
+      "additionalProperties": false,
+      "description": "Custom postprocessing op — source file shipped inline with the model.\n\nSupports postprocessing that cannot be expressed by the built-in named\noperations (watershed, flow dynamics, NMS, connected components, etc.)\nusing a simple Python callable interface.\n\nThe op is implemented in a ``.py`` file packaged alongside the model weights.\nTwo styles are supported:\n\n*Callable class* — kwargs go to ``__init__``, tensors arrive in ``__call__``:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    class my_postprocess:\n        def __init__(self, threshold: float = 0.5) -> None:\n            self.threshold = threshold\n        def __call__(self, *arrays: np.ndarray) -> np.ndarray:\n            # arrays = model output tensors in rdf.yaml declaration order\n            return (arrays[0] > self.threshold).astype(np.uint8)\n\n*Factory function* — alternative closure style, identical runtime behaviour:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    def my_postprocess(threshold: float = 0.5):\n        def run(*arrays: np.ndarray) -> np.ndarray:\n            return (arrays[0] > threshold).astype(np.uint8)\n        return run\n\nReference it in ``rdf.yaml`` with the source file included in the package:\n\n.. code-block:: yaml\n\n    postprocessing:\n      - id: custom\n        callable: my_postprocess   # class or function name in source\n        source: my_postprocess.py  # packaged alongside weights\n        sha256: <hash>             # sha256 of the source file\n        kwargs:                    # forwarded to __init__ / factory\n          threshold: 0.5\n\nTo contribute the op as a shared built-in, open a PR adding the file to\n``bioimageio.core`` — it will then receive its own named ``id`` and\nmodels can drop ``source``/``sha256``/``callable`` in favour of that id.\n\n**Security:** source files are SHA-256 verified before execution.\nExecution requires explicit opt-in in bioimageio.core and curator\nreview before Zoo publication.",
+      "properties": {
+        "source": {
+          "anyOf": [
+            {
+              "description": "A URL with the HTTP or HTTPS scheme.",
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "title": "HttpUrl",
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/RelativeFilePath"
+            },
+            {
+              "format": "file-path",
+              "title": "FilePath",
+              "type": "string"
+            }
+          ],
+          "description": "Python source file packaged inline with the model.\n\nMust be included alongside the weights in the model package.\n``sha256`` (inherited from FileDescr) is required for integrity verification.",
+          "title": "Source"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "description": "A SHA-256 hash value",
+              "maxLength": 64,
+              "minLength": 64,
+              "title": "Sha256",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SHA256 hash value of the **source** file.",
+          "title": "Sha256"
+        },
+        "id": {
+          "const": "custom",
+          "title": "Id",
+          "type": "string"
+        },
+        "callable": {
+          "description": "Name of the callable class or factory function defined in ``source``.\n\nAt runtime: ``op = callable(**kwargs)``, then ``result = op(*output_tensors)``\nper image.  Both a class with ``__call__`` and a factory function returning\na callable satisfy this protocol.",
+          "examples": [
+            "my_postprocess",
+            "CellposeFlowDynamics"
+          ],
+          "title": "Callable",
+          "type": "string"
+        },
+        "kwargs": {
+          "additionalProperties": {
+            "$ref": "#/$defs/YamlValue"
+          },
+          "description": "Keyword arguments forwarded to the callable (``__init__`` or factory).",
+          "title": "Kwargs",
+          "type": "object"
+        }
+      },
+      "required": [
+        "source",
+        "id",
+        "callable"
+      ],
+      "title": "model.v0_5.CustomPostprocessingDescr",
+      "type": "object"
+    },
     "DataDependentSize": {
       "additionalProperties": false,
       "properties": {
@@ -1020,7 +1094,7 @@
             {
               "description": "An SI unit",
               "minLength": 1,
-              "pattern": "^(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?((\u00b7(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?)|(/(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^+?[1-9]\\d*)?))*$",
+              "pattern": "^(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|Ω|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?((·(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|Ω|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?)|(/(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|Ω|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^+?[1-9]\\d*)?))*$",
               "title": "SiUnit",
               "type": "string"
             }
@@ -1245,7 +1319,7 @@
             {
               "description": "An SI unit",
               "minLength": 1,
-              "pattern": "^(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?((\u00b7(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?)|(/(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|\u00b5|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|\u03a9|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^+?[1-9]\\d*)?))*$",
+              "pattern": "^(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|Ω|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?((·(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|Ω|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^[+-]?[1-9]\\d*)?)|(/(Q|R|Y|Z|E|P|T|G|M|k|h|da|d|c|m|µ|n|p|f|a|z|y|r|q)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|Ω|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L)(\\^+?[1-9]\\d*)?))*$",
               "title": "SiUnit",
               "type": "string"
             },
@@ -1329,14 +1403,14 @@
           "default": 0.001,
           "description": "Maximum relative tolerance of reproduced test tensor.",
           "maximum": 0.01,
-          "minimum": 0,
+          "minimum": 0.0,
           "title": "Relative Tolerance",
           "type": "number"
         },
         "absolute_tolerance": {
           "default": 0.001,
           "description": "Maximum absolute tolerance of reproduced test tensor.",
-          "minimum": 0,
+          "minimum": 0.0,
           "title": "Absolute Tolerance",
           "type": "number"
         },
@@ -1399,7 +1473,6 @@
           "title": "Name"
         },
         "kwargs": {
-          "additionalProperties": true,
           "description": "Run mode specific key word arguments",
           "title": "Kwargs",
           "type": "object"
@@ -1468,7 +1541,7 @@
     },
     "SizeReference": {
       "additionalProperties": false,
-      "description": "A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.\n\n`axis.size = reference.size * reference.scale / axis.scale + offset`\n\nNote:\n1. The axis and the referenced axis need to have the same unit (or no unit).\n2. Batch axes may not be referenced.\n3. Fractions are rounded down.\n4. If the reference axis is `concatenable` the referencing axis is assumed to be\n    `concatenable` as well with the same block order.\n\nExample:\nAn unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm\u00b2.\nLet's assume that we want to express the image height h in relation to its width w\ninstead of only accepting input images of exactly 100*49 pixels\n(for example to express a range of valid image shapes by parametrizing w, see `ParameterizedSize`).\n\n>>> w = SpaceInputAxis(id=AxisId(\"w\"), size=100, unit=\"millimeter\", scale=2)\n>>> h = SpaceInputAxis(\n...     id=AxisId(\"h\"),\n...     size=SizeReference(tensor_id=TensorId(\"input\"), axis_id=AxisId(\"w\"), offset=-1),\n...     unit=\"millimeter\",\n...     scale=4,\n... )\n>>> print(h.size.get_size(h, w))\n49\n\n\u21d2 h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49",
+      "description": "A tensor axis size (extent in pixels/frames) defined in relation to a reference axis.\n\n`axis.size = reference.size * reference.scale / axis.scale + offset`\n\nNote:\n1. The axis and the referenced axis need to have the same unit (or no unit).\n2. Batch axes may not be referenced.\n3. Fractions are rounded down.\n4. If the reference axis is `concatenable` the referencing axis is assumed to be\n    `concatenable` as well with the same block order.\n\nExample:\nAn unisotropic input image of w*h=100*49 pixels depicts a phsical space of 200*196mm².\nLet's assume that we want to express the image height h in relation to its width w\ninstead of only accepting input images of exactly 100*49 pixels\n(for example to express a range of valid image shapes by parametrizing w, see `ParameterizedSize`).\n\n>>> w = SpaceInputAxis(id=AxisId(\"w\"), size=100, unit=\"millimeter\", scale=2)\n>>> h = SpaceInputAxis(\n...     id=AxisId(\"h\"),\n...     size=SizeReference(tensor_id=TensorId(\"input\"), axis_id=AxisId(\"w\"), offset=-1),\n...     unit=\"millimeter\",\n...     scale=4,\n... )\n>>> print(h.size.get_size(h, w))\n49\n\n⇒ h = w * w.scale / h.scale + offset = 100 * 2mm / 4mm - 1 = 49",
       "properties": {
         "tensor_id": {
           "description": "tensor id of the reference axis",
@@ -1632,7 +1705,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "title": "Scale",
           "type": "number"
         },
@@ -1740,7 +1813,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "title": "Scale",
           "type": "number"
         }
@@ -1839,7 +1912,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "title": "Scale",
           "type": "number"
         }
@@ -2183,7 +2256,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "title": "Scale",
           "type": "number"
         },
@@ -2283,7 +2356,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "title": "Scale",
           "type": "number"
         }
@@ -2374,7 +2447,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "title": "Scale",
           "type": "number"
         }
@@ -2658,8 +2731,8 @@
           "anyOf": [
             {
               "examples": [
-                "\ud83e\udd88",
-                "\ud83e\udda5"
+                "🦈",
+                "🦥"
               ],
               "maxLength": 1,
               "minLength": 1,
@@ -3771,8 +3844,8 @@
           "anyOf": [
             {
               "examples": [
-                "\ud83e\udd88",
-                "\ud83e\udda5"
+                "🦈",
+                "🦥"
               ],
               "maxLength": 2,
               "minLength": 1,
@@ -4836,8 +4909,8 @@
           "anyOf": [
             {
               "examples": [
-                "\ud83e\udd88",
-                "\ud83e\udda5"
+                "🦈",
+                "🦥"
               ],
               "maxLength": 1,
               "minLength": 1,
@@ -5971,8 +6044,8 @@
           "anyOf": [
             {
               "examples": [
-                "\ud83e\udd88",
-                "\ud83e\udda5"
+                "🦈",
+                "🦥"
               ],
               "maxLength": 2,
               "minLength": 1,
@@ -7835,8 +7908,8 @@
           "anyOf": [
             {
               "examples": [
-                "\ud83e\udd88",
-                "\ud83e\udda5"
+                "🦈",
+                "🦥"
               ],
               "maxLength": 1,
               "minLength": 1,
@@ -8961,7 +9034,8 @@
           "type": "array"
         },
         "timestamp": {
-          "$ref": "#/$defs/Datetime"
+          "$ref": "#/$defs/Datetime",
+          "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."
         },
         "training_data": {
           "anyOf": [
@@ -9432,7 +9506,6 @@
           "title": "Architecture Sha256"
         },
         "kwargs": {
-          "additionalProperties": true,
           "description": "key word arguments for the `architecture` callable",
           "title": "Kwargs",
           "type": "object"
@@ -9591,7 +9664,7 @@
         "eps": {
           "default": 1e-06,
           "description": "Epsilon for numeric stability:\n\"`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.",
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -9678,7 +9751,7 @@
         "eps": {
           "default": 1e-06,
           "description": "Epsilon for numeric stability.\n`out = (tensor - v_lower) / (v_upper - v_lower + eps)`;\nwith `v_lower,v_upper` values at the respective percentiles.",
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -10294,7 +10367,7 @@
         "eps": {
           "default": 1e-06,
           "description": "epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.",
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -10580,8 +10653,8 @@
         "min_percentile": {
           "anyOf": [
             {
-              "exclusiveMaximum": 100,
-              "minimum": 0,
+              "exclusiveMaximum": 100.0,
+              "minimum": 0.0,
               "type": "number"
             },
             {
@@ -10608,8 +10681,8 @@
         "max_percentile": {
           "anyOf": [
             {
-              "exclusiveMinimum": 1,
-              "maximum": 100,
+              "exclusiveMinimum": 1.0,
+              "maximum": 100.0,
               "type": "number"
             },
             {
@@ -11022,8 +11095,8 @@
           "anyOf": [
             {
               "examples": [
-                "\ud83e\udd88",
-                "\ud83e\udda5"
+                "🦈",
+                "🦥"
               ],
               "maxLength": 2,
               "minLength": 1,
@@ -12342,6 +12415,7 @@
               "mapping": {
                 "binarize": "#/$defs/bioimageio__spec__model__v0_5__BinarizeDescr",
                 "clip": "#/$defs/bioimageio__spec__model__v0_5__ClipDescr",
+                "custom": "#/$defs/CustomPostprocessingDescr",
                 "ensure_dtype": "#/$defs/EnsureDtypeDescr",
                 "fixed_zero_mean_unit_variance": "#/$defs/FixedZeroMeanUnitVarianceDescr",
                 "scale_linear": "#/$defs/bioimageio__spec__model__v0_5__ScaleLinearDescr",
@@ -12360,6 +12434,9 @@
               },
               {
                 "$ref": "#/$defs/bioimageio__spec__model__v0_5__ClipDescr"
+              },
+              {
+                "$ref": "#/$defs/CustomPostprocessingDescr"
               },
               {
                 "$ref": "#/$defs/EnsureDtypeDescr"
@@ -12638,7 +12715,7 @@
         "eps": {
           "default": 1e-06,
           "description": "Epsilon for numeric stability:\n`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`",
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -12702,23 +12779,23 @@
         "min_percentile": {
           "default": 0.0,
           "description": "The lower percentile used to determine the value to align with zero.",
-          "exclusiveMaximum": 100,
-          "minimum": 0,
+          "exclusiveMaximum": 100.0,
+          "minimum": 0.0,
           "title": "Min Percentile",
           "type": "number"
         },
         "max_percentile": {
           "default": 100.0,
           "description": "The upper percentile used to determine the value to align with one.\nHas to be bigger than `min_percentile`.\nThe range is 1 to 100 instead of 0 to 100 to avoid mistakenly\naccepting percentiles specified in the range 0.0 to 1.0.",
-          "exclusiveMinimum": 1,
-          "maximum": 100,
+          "exclusiveMinimum": 1.0,
+          "maximum": 100.0,
           "title": "Max Percentile",
           "type": "number"
         },
         "eps": {
           "default": 1e-06,
           "description": "Epsilon for numeric stability.\n`out = (tensor - v_lower) / (v_upper - v_lower + eps)`;\nwith `v_lower,v_upper` values at the respective percentiles.",
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -13215,7 +13292,7 @@
         "eps": {
           "default": 1e-06,
           "description": "epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.",
-          "exclusiveMinimum": 0,
+          "exclusiveMinimum": 0.0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -13272,8 +13349,8 @@
           "anyOf": [
             {
               "examples": [
-                "\ud83e\udd88",
-                "\ud83e\udda5"
+                "🦈",
+                "🦥"
               ],
               "maxLength": 1,
               "minLength": 1,
@@ -14309,7 +14386,6 @@
             },
             {
               "format": "file-path",
-              "title": "FilePath",
               "type": "string"
             },
             {
@@ -14382,8 +14458,8 @@
           "anyOf": [
             {
               "examples": [
-                "\ud83e\udd88",
-                "\ud83e\udda5"
+                "🦈",
+                "🦥"
               ],
               "maxLength": 2,
               "minLength": 1,
@@ -15376,7 +15452,6 @@
             },
             {
               "format": "file-path",
-              "title": "FilePath",
               "type": "string"
             },
             {
