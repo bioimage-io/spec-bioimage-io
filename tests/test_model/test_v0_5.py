@@ -625,25 +625,8 @@ def test_get_set_weights_descr(model: ModelDescr):
 # --- postprocessing tests ---
 
 
-def test_custom_postprocessing_builtin_name():
-    """Using a built-in op by name — no source needed."""
-    from bioimageio.spec.model.v0_5 import CustomPostprocessingDescr
-
-    descr = CustomPostprocessingDescr.model_validate(
-        {
-            "id": "custom",
-            "callable": "cellpose_flow_dynamics",
-            "kwargs": {"cellprob_threshold": 0.0, "flow_threshold": 0.4},
-        }
-    )
-    assert descr.id == "custom"
-    assert descr.callable == "cellpose_flow_dynamics"
-    assert descr.source is None
-    assert descr.kwargs == {"cellprob_threshold": 0.0, "flow_threshold": 0.4}
-
-
-def test_custom_postprocessing_inline_with_source():
-    """Inline op: source + sha256 packaged with the model."""
+def test_custom_postprocessing_with_source():
+    """Custom op: source + sha256 packaged with the model."""
     from bioimageio.spec.model.v0_5 import CustomPostprocessingDescr
 
     with ValidationContext(perform_io_checks=False):
@@ -656,7 +639,9 @@ def test_custom_postprocessing_inline_with_source():
                 "kwargs": {"threshold": 0.5},
             }
         )
+    assert descr.id == "custom"
     assert descr.callable == "my_postprocess"
+    assert descr.source is not None
     assert descr.sha256 is not None
     assert descr.kwargs == {"threshold": 0.5}
 
@@ -667,7 +652,7 @@ def test_custom_postprocessing_source_requires_sha256():
     from pydantic import ValidationError
     from bioimageio.spec.model.v0_5 import CustomPostprocessingDescr
 
-    with pytest.raises(ValidationError, match="sha256"):
+    with pytest.raises(ValidationError):
         with ValidationContext(perform_io_checks=False):
             _ = CustomPostprocessingDescr.model_validate(
                 {
@@ -679,21 +664,20 @@ def test_custom_postprocessing_source_requires_sha256():
             )
 
 
-def test_custom_postprocessing_transition_drop_source():
-    """Transition: drop source+sha256 to promote inline op to built-in."""
+def test_custom_postprocessing_source_required():
+    """source is a required field — omitting it raises a validation error."""
+    import pytest
+    from pydantic import ValidationError
     from bioimageio.spec.model.v0_5 import CustomPostprocessingDescr
 
-    # After promotion: callable and kwargs unchanged, source/sha256 gone
-    descr = CustomPostprocessingDescr.model_validate(
-        {
-            "id": "custom",
-            "callable": "my_postprocess",   # same name as before
-            "kwargs": {"threshold": 0.5},   # same kwargs as before
-        }
-    )
-    assert descr.source is None
-    assert descr.sha256 is None
-    assert descr.kwargs == {"threshold": 0.5}
+    with pytest.raises(ValidationError):
+        _ = CustomPostprocessingDescr.model_validate(
+            {
+                "id": "custom",
+                "callable": "my_postprocess",
+                # source intentionally omitted
+            }
+        )
 
 
 def test_custom_postprocessing_in_union():
@@ -704,12 +688,15 @@ def test_custom_postprocessing_in_union():
     class _M(RootModel[PostprocessingDescr]):
         pass
 
-    result = _M.model_validate(
-        {
-            "id": "custom",
-            "callable": "cellpose_flow_dynamics",
-        }
-    )
+    with ValidationContext(perform_io_checks=False):
+        result = _M.model_validate(
+            {
+                "id": "custom",
+                "callable": "my_postprocess",
+                "source": "my_postprocess.py",
+                "sha256": "b" * 64,
+            }
+        )
     assert result.root.id == "custom"
 
 

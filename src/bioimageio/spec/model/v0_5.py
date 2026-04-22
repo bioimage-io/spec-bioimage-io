@@ -1363,20 +1363,15 @@ class StardistPostprocessingDescr(NodeWithExplicitlySetFields):
     kwargs: Union[StardistPostprocessingKwargs2D, StardistPostprocessingKwargs3D]
 
 
-class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
-    """Custom postprocessing — inline source file or shared built-in op.
+class CustomPostprocessingDescr(NodeWithExplicitlySetFields, FileDescr):
+    """Custom postprocessing op — source file shipped inline with the model.
 
-    Supports postprocessing that cannot be expressed by named operations
-    (watershed, flow dynamics, NMS, etc.) using a simple Python interface.
-    The op ships **inline** with the model package during development, and
-    can be **promoted to a shared built-in** without changing anything in
-    ``rdf.yaml`` except removing ``source`` and ``sha256``.
+    Supports postprocessing that cannot be expressed by the built-in named
+    operations (watershed, flow dynamics, NMS, connected components, etc.)
+    using a simple Python callable interface.
 
-    ---
-
-    **Step 1 — develop inline (ship source with the package):**
-
-    Write a ``.py`` file alongside the weights.  Two styles are supported:
+    The op is implemented in a ``.py`` file packaged alongside the model weights.
+    Two styles are supported:
 
     *Callable class* — kwargs go to ``__init__``, tensors arrive in ``__call__``:
 
@@ -1386,21 +1381,21 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
         import numpy as np
 
         class my_postprocess:
-            def __init__(self, threshold=0.5):
+            def __init__(self, threshold: float = 0.5) -> None:
                 self.threshold = threshold
-            def __call__(self, *arrays):
+            def __call__(self, *arrays: np.ndarray) -> np.ndarray:
                 # arrays = model output tensors in rdf.yaml declaration order
                 return (arrays[0] > self.threshold).astype(np.uint8)
 
-    *Factory function* — alternative closure style, identical behaviour:
+    *Factory function* — alternative closure style, identical runtime behaviour:
 
     .. code-block:: python
 
         # my_postprocess.py
         import numpy as np
 
-        def my_postprocess(threshold=0.5):
-            def run(*arrays):
+        def my_postprocess(threshold: float = 0.5):
+            def run(*arrays: np.ndarray) -> np.ndarray:
                 return (arrays[0] > threshold).astype(np.uint8)
             return run
 
@@ -1416,33 +1411,13 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
             kwargs:                    # forwarded to __init__ / factory
               threshold: 0.5
 
-    ---
-
-    **Step 2 — promote to a shared built-in (optional):**
-
-    Submit ``my_postprocess.py`` to the ``custom_ops/`` folder of the
-    spec repository as a pull request.  Once merged, simply drop ``source``
-    and ``sha256`` from ``rdf.yaml`` — ``callable`` and ``kwargs`` stay the
-    same:
-
-    .. code-block:: yaml
-
-        postprocessing:
-          - id: custom
-            callable: my_postprocess   # now resolved from custom_ops/
-            kwargs:
-              threshold: 0.5
-
-    The transition is seamless: the callable name, kwargs, and runtime
-    behaviour are identical in both stages.
-
-    ---
+    To contribute the op as a shared built-in, open a PR adding the file to
+    ``bioimageio.core`` — it will then receive its own named ``id`` and
+    models can drop ``source``/``sha256``/``callable`` in favour of that id.
 
     **Security:** source files are SHA-256 verified before execution.
-    Execution requires ``allow_custom_postprocessing=True`` in bioimageio.core
-    and curator review before Zoo publication.
-    Only packages in the BioEngine pre-installed environment may be imported
-    (numpy, scipy, scikit-image, torch, tensorflow, onnxruntime, bioimageio.core).
+    Execution requires explicit opt-in in bioimageio.core and curator
+    review before Zoo publication.
     """
 
     implemented_id: ClassVar[Literal["custom"]] = "custom"
@@ -1453,43 +1428,32 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields):
 
     callable: Annotated[
         str,
-        Field(examples=["cellpose_flow_dynamics", "stardist_nms", "my_postprocess"]),
+        Field(examples=["my_postprocess", "CellposeFlowDynamics"]),
     ]
-    """Name of the callable class or factory function.
-
-    When ``source`` is given: loaded from that file.
-    When ``source`` is absent: looked up in the built-in ``custom_ops/`` library.
+    """Name of the callable class or factory function defined in ``source``.
 
     At runtime: ``op = callable(**kwargs)``, then ``result = op(*output_tensors)``
-    per image.  Both a class with ``__call__`` and a function returning a callable
-    satisfy this protocol."""
+    per image.  Both a class with ``__call__`` and a factory function returning
+    a callable satisfy this protocol."""
 
-    source: Optional[Annotated[FileSource, AfterValidator(wo_special_file_name)]] = None
+    source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
     """Python source file packaged inline with the model.
 
-    Include the file alongside the weights in the model package.
-    When present, ``sha256`` is required.
-    Omit once the op has been accepted into ``custom_ops/``."""
+    Must be included alongside the weights in the model package."""
 
-    sha256: Optional[Sha256] = None
-    """SHA-256 hash of ``source``. Required when ``source`` is given.
-    Drop together with ``source`` when promoting to a built-in op."""
+    sha256: Sha256  # required (overrides Optional[Sha256] in FileDescr)
+    """SHA-256 hash of ``source``. Required for integrity verification."""
 
     kwargs: Dict[str, YamlValue] = Field(
         default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
     )
-    """Keyword arguments forwarded to the callable (``__init__`` or factory).
-    These remain unchanged across the inline → built-in transition."""
+    """Keyword arguments forwarded to the callable (``__init__`` or factory)."""
 
-    @model_validator(mode="after")
-    def _require_sha256_with_source(self) -> "CustomPostprocessingDescr":
-        if self.source is not None and self.sha256 is None:
-            raise ValueError(
-                "'sha256' is required when 'source' is provided."
-                + " Run: python -c \"import hashlib;"
-                + " print(hashlib.sha256(open('<source>', 'rb').read()).hexdigest())\""
-            )
-        return self
+    @model_serializer(mode="wrap", when_used="unless-none")
+    def _serialize(
+        self, nxt: SerializerFunctionWrapHandler, info: SerializationInfo
+    ) -> Dict[str, YamlValue]:
+        return package_file_descr_serializer(self, nxt, info)
 
 
 class FixedZeroMeanUnitVarianceKwargs(KwargsNode):
@@ -2290,12 +2254,7 @@ class _InputTensorConv(
         for p in src.preprocessing:
             cp = _convert_proc(p, src.axes)
             assert not isinstance(
-                cp,
-                (
-                    ScaleMeanVarianceDescr,
-                    StardistPostprocessingDescr,
-                    CustomPostprocessingDescr,
-                ),
+                cp, (ScaleMeanVarianceDescr, StardistPostprocessingDescr)
             )
             prep.append(cp)
 
