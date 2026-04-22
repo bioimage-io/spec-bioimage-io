@@ -1452,8 +1452,8 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields, FileDescr):
         if self.sha256 is None:
             raise ValueError(
                 "'sha256' is required for CustomPostprocessingDescr."
-                " Compute with: python -c \"import hashlib;"
-                " print(hashlib.sha256(open('<source>','rb').read()).hexdigest())\""
+                + " Compute with: python -c \"import hashlib;"
+                + " print(hashlib.sha256(open('<source>','rb').read()).hexdigest())\""
             )
         return self
 
