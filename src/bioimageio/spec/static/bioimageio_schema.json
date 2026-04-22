@@ -1403,14 +1403,14 @@
           "default": 0.001,
           "description": "Maximum relative tolerance of reproduced test tensor.",
           "maximum": 0.01,
-          "minimum": 0.0,
+          "minimum": 0,
           "title": "Relative Tolerance",
           "type": "number"
         },
         "absolute_tolerance": {
           "default": 0.001,
           "description": "Maximum absolute tolerance of reproduced test tensor.",
-          "minimum": 0.0,
+          "minimum": 0,
           "title": "Absolute Tolerance",
           "type": "number"
         },
@@ -1473,6 +1473,7 @@
           "title": "Name"
         },
         "kwargs": {
+          "additionalProperties": true,
           "description": "Run mode specific key word arguments",
           "title": "Kwargs",
           "type": "object"
@@ -1705,7 +1706,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0.0,
+          "exclusiveMinimum": 0,
           "title": "Scale",
           "type": "number"
         },
@@ -1813,7 +1814,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0.0,
+          "exclusiveMinimum": 0,
           "title": "Scale",
           "type": "number"
         }
@@ -1912,7 +1913,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0.0,
+          "exclusiveMinimum": 0,
           "title": "Scale",
           "type": "number"
         }
@@ -2256,7 +2257,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0.0,
+          "exclusiveMinimum": 0,
           "title": "Scale",
           "type": "number"
         },
@@ -2356,7 +2357,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0.0,
+          "exclusiveMinimum": 0,
           "title": "Scale",
           "type": "number"
         }
@@ -2447,7 +2448,7 @@
         },
         "scale": {
           "default": 1.0,
-          "exclusiveMinimum": 0.0,
+          "exclusiveMinimum": 0,
           "title": "Scale",
           "type": "number"
         }
@@ -9034,8 +9035,7 @@
           "type": "array"
         },
         "timestamp": {
-          "$ref": "#/$defs/Datetime",
-          "description": "Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format\nwith a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."
+          "$ref": "#/$defs/Datetime"
         },
         "training_data": {
           "anyOf": [
@@ -9506,6 +9506,7 @@
           "title": "Architecture Sha256"
         },
         "kwargs": {
+          "additionalProperties": true,
           "description": "key word arguments for the `architecture` callable",
           "title": "Kwargs",
           "type": "object"
@@ -9664,7 +9665,7 @@
         "eps": {
           "default": 1e-06,
           "description": "Epsilon for numeric stability:\n\"`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.",
-          "exclusiveMinimum": 0.0,
+          "exclusiveMinimum": 0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -9751,7 +9752,7 @@
         "eps": {
           "default": 1e-06,
           "description": "Epsilon for numeric stability.\n`out = (tensor - v_lower) / (v_upper - v_lower + eps)`;\nwith `v_lower,v_upper` values at the respective percentiles.",
-          "exclusiveMinimum": 0.0,
+          "exclusiveMinimum": 0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -10367,7 +10368,7 @@
         "eps": {
           "default": 1e-06,
           "description": "epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.",
-          "exclusiveMinimum": 0.0,
+          "exclusiveMinimum": 0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -10653,8 +10654,8 @@
         "min_percentile": {
           "anyOf": [
             {
-              "exclusiveMaximum": 100.0,
-              "minimum": 0.0,
+              "exclusiveMaximum": 100,
+              "minimum": 0,
               "type": "number"
             },
             {
@@ -10681,8 +10682,8 @@
         "max_percentile": {
           "anyOf": [
             {
-              "exclusiveMinimum": 1.0,
-              "maximum": 100.0,
+              "exclusiveMinimum": 1,
+              "maximum": 100,
               "type": "number"
             },
             {
@@ -12415,7 +12416,6 @@
               "mapping": {
                 "binarize": "#/$defs/bioimageio__spec__model__v0_5__BinarizeDescr",
                 "clip": "#/$defs/bioimageio__spec__model__v0_5__ClipDescr",
-                "custom": "#/$defs/CustomPostprocessingDescr",
                 "ensure_dtype": "#/$defs/EnsureDtypeDescr",
                 "fixed_zero_mean_unit_variance": "#/$defs/FixedZeroMeanUnitVarianceDescr",
                 "scale_linear": "#/$defs/bioimageio__spec__model__v0_5__ScaleLinearDescr",
@@ -12424,7 +12424,8 @@
                 "sigmoid": "#/$defs/bioimageio__spec__model__v0_5__SigmoidDescr",
                 "softmax": "#/$defs/SoftmaxDescr",
                 "stardist_postprocessing": "#/$defs/StardistPostprocessingDescr",
-                "zero_mean_unit_variance": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr"
+                "zero_mean_unit_variance": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr",
+                "custom": "#/$defs/CustomPostprocessingDescr"
               },
               "propertyName": "id"
             },
@@ -12434,9 +12435,6 @@
               },
               {
                 "$ref": "#/$defs/bioimageio__spec__model__v0_5__ClipDescr"
-              },
-              {
-                "$ref": "#/$defs/CustomPostprocessingDescr"
               },
               {
                 "$ref": "#/$defs/EnsureDtypeDescr"
@@ -12464,6 +12462,9 @@
               },
               {
                 "$ref": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr"
+              },
+              {
+                "$ref": "#/$defs/CustomPostprocessingDescr"
               }
             ]
           },
@@ -12715,7 +12716,7 @@
         "eps": {
           "default": 1e-06,
           "description": "Epsilon for numeric stability:\n`out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`",
-          "exclusiveMinimum": 0.0,
+          "exclusiveMinimum": 0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -12779,23 +12780,23 @@
         "min_percentile": {
           "default": 0.0,
           "description": "The lower percentile used to determine the value to align with zero.",
-          "exclusiveMaximum": 100.0,
-          "minimum": 0.0,
+          "exclusiveMaximum": 100,
+          "minimum": 0,
           "title": "Min Percentile",
           "type": "number"
         },
         "max_percentile": {
           "default": 100.0,
           "description": "The upper percentile used to determine the value to align with one.\nHas to be bigger than `min_percentile`.\nThe range is 1 to 100 instead of 0 to 100 to avoid mistakenly\naccepting percentiles specified in the range 0.0 to 1.0.",
-          "exclusiveMinimum": 1.0,
-          "maximum": 100.0,
+          "exclusiveMinimum": 1,
+          "maximum": 100,
           "title": "Max Percentile",
           "type": "number"
         },
         "eps": {
           "default": 1e-06,
           "description": "Epsilon for numeric stability.\n`out = (tensor - v_lower) / (v_upper - v_lower + eps)`;\nwith `v_lower,v_upper` values at the respective percentiles.",
-          "exclusiveMinimum": 0.0,
+          "exclusiveMinimum": 0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -13292,7 +13293,7 @@
         "eps": {
           "default": 1e-06,
           "description": "epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.",
-          "exclusiveMinimum": 0.0,
+          "exclusiveMinimum": 0,
           "maximum": 0.1,
           "title": "Eps",
           "type": "number"
@@ -14386,6 +14387,7 @@
             },
             {
               "format": "file-path",
+              "title": "FilePath",
               "type": "string"
             },
             {
@@ -15452,6 +15454,7 @@
             },
             {
               "format": "file-path",
+              "title": "FilePath",
               "type": "string"
             },
             {
