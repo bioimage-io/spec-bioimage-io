@@ -12437,6 +12437,9 @@
                 "$ref": "#/$defs/bioimageio__spec__model__v0_5__ClipDescr"
               },
               {
+                "$ref": "#/$defs/CustomPostprocessingDescr"
+              },
+              {
                 "$ref": "#/$defs/EnsureDtypeDescr"
               },
               {
@@ -12462,9 +12465,6 @@
               },
               {
                 "$ref": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr"
-              },
-              {
-                "$ref": "#/$defs/CustomPostprocessingDescr"
               }
             ]
           },
