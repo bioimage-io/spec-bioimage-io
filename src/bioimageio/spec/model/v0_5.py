@@ -1441,7 +1441,7 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields, FileDescr):
 
     Must be included alongside the weights in the model package."""
 
-    sha256: Sha256  # required (overrides Optional[Sha256] in FileDescr)
+    sha256: Sha256  # pyright: ignore[reportGeneralTypeIssues]  # required (narrows Optional[Sha256] from FileDescr)
     """SHA-256 hash of ``source``. Required for integrity verification."""
 
     kwargs: Dict[str, YamlValue] = Field(
@@ -2254,7 +2254,12 @@ class _InputTensorConv(
         for p in src.preprocessing:
             cp = _convert_proc(p, src.axes)
             assert not isinstance(
-                cp, (ScaleMeanVarianceDescr, StardistPostprocessingDescr)
+                cp,
+                (
+                    ScaleMeanVarianceDescr,
+                    StardistPostprocessingDescr,
+                    CustomPostprocessingDescr,
+                ),
             )
             prep.append(cp)
 
@@ -2302,7 +2307,8 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
                     f"expected `axes` sequence, but got {type(kwargs_axes)}"
                 )
 
-            if any(a not in axes_ids for a in kwargs_axes):
+            kwargs_axes_seq: Sequence[Any] = kwargs_axes  # pyright: ignore[reportAssignmentType]
+            if any(a not in axes_ids for a in kwargs_axes_seq):
                 raise ValueError("`kwargs.axes` needs to be subset of axes ids")
 
         if isinstance(self.data, (NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr)):
