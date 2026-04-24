@@ -12416,6 +12416,7 @@
               "mapping": {
                 "binarize": "#/$defs/bioimageio__spec__model__v0_5__BinarizeDescr",
                 "clip": "#/$defs/bioimageio__spec__model__v0_5__ClipDescr",
+                "custom": "#/$defs/CustomPostprocessingDescr",
                 "ensure_dtype": "#/$defs/EnsureDtypeDescr",
                 "fixed_zero_mean_unit_variance": "#/$defs/FixedZeroMeanUnitVarianceDescr",
                 "scale_linear": "#/$defs/bioimageio__spec__model__v0_5__ScaleLinearDescr",
@@ -12424,8 +12425,7 @@
                 "sigmoid": "#/$defs/bioimageio__spec__model__v0_5__SigmoidDescr",
                 "softmax": "#/$defs/SoftmaxDescr",
                 "stardist_postprocessing": "#/$defs/StardistPostprocessingDescr",
-                "zero_mean_unit_variance": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr",
-                "custom": "#/$defs/CustomPostprocessingDescr"
+                "zero_mean_unit_variance": "#/$defs/bioimageio__spec__model__v0_5__ZeroMeanUnitVarianceDescr"
               },
               "propertyName": "id"
             },

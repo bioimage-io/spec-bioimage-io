@@ -15,7 +15,7 @@ def main():
         Path(__file__).parent / "../src/bioimageio/spec/static/bioimageio_schema.json"
     )
     with path.open("w") as f:
-        json.dump(schema, f, indent=2)
+        json.dump(schema, f, indent=2, ensure_ascii=False)
 
     print(f"written `{path}")
 

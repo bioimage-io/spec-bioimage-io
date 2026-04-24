@@ -1447,16 +1447,6 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields, FileDescr):
     )
     """Keyword arguments forwarded to the callable (``__init__`` or factory)."""
 
-    @model_validator(mode="after")
-    def _sha256_is_required(self) -> "CustomPostprocessingDescr":
-        if self.sha256 is None:
-            raise ValueError(
-                "'sha256' is required for CustomPostprocessingDescr."
-                + " Compute with: python -c \"import hashlib;"
-                + " print(hashlib.sha256(open('<source>','rb').read()).hexdigest())\""
-            )
-        return self
-
     @model_serializer(mode="wrap", when_used="unless-none")
     def _serialize(
         self, nxt: SerializerFunctionWrapHandler, info: SerializationInfo
