@@ -8587,7 +8587,16 @@ otherwise (the default) it may be chosen arbitrarily depending on available memo
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3035</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3026</span>
+<span class="normal">3027</span>
+<span class="normal">3028</span>
+<span class="normal">3029</span>
+<span class="normal">3030</span>
+<span class="normal">3031</span>
+<span class="normal">3032</span>
+<span class="normal">3033</span>
+<span class="normal">3034</span>
+<span class="normal">3035</span>
 <span class="normal">3036</span>
 <span class="normal">3037</span>
 <span class="normal">3038</span>
@@ -8596,16 +8605,7 @@ otherwise (the default) it may be chosen arbitrarily depending on available memo
 <span class="normal">3041</span>
 <span class="normal">3042</span>
 <span class="normal">3043</span>
-<span class="normal">3044</span>
-<span class="normal">3045</span>
-<span class="normal">3046</span>
-<span class="normal">3047</span>
-<span class="normal">3048</span>
-<span class="normal">3049</span>
-<span class="normal">3050</span>
-<span class="normal">3051</span>
-<span class="normal">3052</span>
-<span class="normal">3053</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">3044</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">limitations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">limitations_header</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -15980,8 +15980,9 @@ To clip samples independently, leave out the 'batch' axis.</p>
 
         <p>Custom postprocessing op — source file shipped inline with the model.</p>
 <p>Supports postprocessing that cannot be expressed by the built-in named
-operations (watershed, flow dynamics, NMS, connected components, etc.)
-using a simple Python callable interface.</p>
+operations (watershed, flow dynamics, connected components, etc.)
+using a simple Python callable interface.
+Currently no extra dependencies beyond Python and numpy are supported.</p>
 <p>The op is implemented in a <code>.py</code> file packaged alongside the model weights.
 Two styles are supported:</p>
 <p><em>Callable class</em> — kwargs go to <code>__init__</code>, tensors arrive in <code>__call__</code>:</p>
@@ -16073,7 +16074,7 @@ review before Zoo publication.</p>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">},</span>
 <span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Custom postprocessing op \u2014 source file shipped inline with the model.\n\nSupports postprocessing that cannot be expressed by the built-in named\noperations (watershed, flow dynamics, NMS, connected components, etc.)\nusing a simple Python callable interface.\n\nThe op is implemented in a ``.py`` file packaged alongside the model weights.\nTwo styles are supported:\n\n*Callable class* \u2014 kwargs go to ``__init__``, tensors arrive in ``__call__``:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    class my_postprocess:\n        def __init__(self, threshold: float = 0.5) -&gt; None:\n            self.threshold = threshold\n        def __call__(self, *arrays: np.ndarray) -&gt; np.ndarray:\n            # arrays = model output tensors in rdf.yaml declaration order\n            return (arrays[0] &gt; self.threshold).astype(np.uint8)\n\n*Factory function* \u2014 alternative closure style, identical runtime behaviour:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    def my_postprocess(threshold: float = 0.5):\n        def run(*arrays: np.ndarray) -&gt; np.ndarray:\n            return (arrays[0] &gt; threshold).astype(np.uint8)\n        return run\n\nReference it in ``rdf.yaml`` with the source file included in the package:\n\n.. code-block:: yaml\n\n    postprocessing:\n      - id: custom\n        callable: my_postprocess   # class or function name in source\n        source: my_postprocess.py  # packaged alongside weights\n        sha256: &lt;hash&gt;             # sha256 of the source file\n        kwargs:                    # forwarded to __init__ / factory\n          threshold: 0.5\n\nTo contribute the op as a shared built-in, open a PR adding the file to\n``bioimageio.core`` \u2014 it will then receive its own named ``id`` and\nmodels can drop ``source``/``sha256``/``callable`` in favour of that id.\n\n**Security:** source files are SHA-256 verified before execution.\nExecution requires explicit opt-in in bioimageio.core and curator\nreview before Zoo publication.&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Custom postprocessing op \u2014 source file shipped inline with the model.\n\nSupports postprocessing that cannot be expressed by the built-in named\noperations (watershed, flow dynamics, connected components, etc.)\nusing a simple Python callable interface.\nCurrently no extra dependencies beyond Python and numpy are supported.\n\nThe op is implemented in a ``.py`` file packaged alongside the model weights.\nTwo styles are supported:\n\n*Callable class* \u2014 kwargs go to ``__init__``, tensors arrive in ``__call__``:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    class my_postprocess:\n        def __init__(self, threshold: float = 0.5) -&gt; None:\n            self.threshold = threshold\n        def __call__(self, *arrays: np.ndarray) -&gt; np.ndarray:\n            # arrays = model output tensors in rdf.yaml declaration order\n            return (arrays[0] &gt; self.threshold).astype(np.uint8)\n\n*Factory function* \u2014 alternative closure style, identical runtime behaviour:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    def my_postprocess(threshold: float = 0.5):\n        def run(*arrays: np.ndarray) -&gt; np.ndarray:\n            return (arrays[0] &gt; threshold).astype(np.uint8)\n        return run\n\nReference it in ``rdf.yaml`` with the source file included in the package:\n\n.. code-block:: yaml\n\n    postprocessing:\n      - id: custom\n        callable: my_postprocess   # class or function name in source\n        source: my_postprocess.py  # packaged alongside weights\n        sha256: &lt;hash&gt;             # sha256 of the source file\n        kwargs:                    # forwarded to __init__ / factory\n          threshold: 0.5\n\nTo contribute the op as a shared built-in, open a PR adding the file to\n``bioimageio.core`` \u2014 it will then receive its own named ``id`` and\nmodels can drop ``source``/``sha256``/``callable`` in favour of that id.\n\n**Security:** source files are SHA-256 verified before execution.\nExecution requires explicit opt-in in bioimageio.core and curator\nreview before Zoo publication.&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -16177,9 +16178,6 @@ review before Zoo publication.</p>
         <ul>
             <li>
               <code><span title="bioimageio.spec.model.v0_5.CustomPostprocessingDescr._validate_sha256">_validate_sha256</span></code>
-            </li>
-            <li>
-              <code><span title="bioimageio.spec.model.v0_5.CustomPostprocessingDescr._sha256_is_required">_sha256_is_required</span></code>
             </li>
         </ul>
 
@@ -23034,7 +23032,16 @@ casts it to uint8, which is what the neural network in this example expects.
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3247</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3238</span>
+<span class="normal">3239</span>
+<span class="normal">3240</span>
+<span class="normal">3241</span>
+<span class="normal">3242</span>
+<span class="normal">3243</span>
+<span class="normal">3244</span>
+<span class="normal">3245</span>
+<span class="normal">3246</span>
+<span class="normal">3247</span>
 <span class="normal">3248</span>
 <span class="normal">3249</span>
 <span class="normal">3250</span>
@@ -23042,16 +23049,7 @@ casts it to uint8, which is what the neural network in this example expects.
 <span class="normal">3252</span>
 <span class="normal">3253</span>
 <span class="normal">3254</span>
-<span class="normal">3255</span>
-<span class="normal">3256</span>
-<span class="normal">3257</span>
-<span class="normal">3258</span>
-<span class="normal">3259</span>
-<span class="normal">3260</span>
-<span class="normal">3261</span>
-<span class="normal">3262</span>
-<span class="normal">3263</span>
-<span class="normal">3264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">3255</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Filled Markdown template section following [Hugging Face Model Card Template](https://huggingface.co/docs/hub/en/model-card-annotated).&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">():</span>
         <span class="k">return</span> <span class="s2">&quot;&quot;</span>
@@ -23914,7 +23912,16 @@ An 'overall' factor may be included to summarize performance across all conditio
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3177</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3168</span>
+<span class="normal">3169</span>
+<span class="normal">3170</span>
+<span class="normal">3171</span>
+<span class="normal">3172</span>
+<span class="normal">3173</span>
+<span class="normal">3174</span>
+<span class="normal">3175</span>
+<span class="normal">3176</span>
+<span class="normal">3177</span>
 <span class="normal">3178</span>
 <span class="normal">3179</span>
 <span class="normal">3180</span>
@@ -23948,16 +23955,7 @@ An 'overall' factor may be included to summarize performance across all conditio
 <span class="normal">3208</span>
 <span class="normal">3209</span>
 <span class="normal">3210</span>
-<span class="normal">3211</span>
-<span class="normal">3212</span>
-<span class="normal">3213</span>
-<span class="normal">3214</span>
-<span class="normal">3215</span>
-<span class="normal">3216</span>
-<span class="normal">3217</span>
-<span class="normal">3218</span>
-<span class="normal">3219</span>
-<span class="normal">3220</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">3211</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">results_header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Metric&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_factors</span>
         <span class="n">results_table_cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">results_header</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;---&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_header</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span>
             <span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span>
@@ -31787,13 +31785,13 @@ The file extension must be '.npy'.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1937</span>
-<span class="normal">1938</span>
-<span class="normal">1939</span>
-<span class="normal">1940</span>
-<span class="normal">1941</span>
-<span class="normal">1942</span>
-<span class="normal">1943</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes_for_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1928</span>
+<span class="normal">1929</span>
+<span class="normal">1930</span>
+<span class="normal">1931</span>
+<span class="normal">1932</span>
+<span class="normal">1933</span>
+<span class="normal">1934</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes_for_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Dimension mismatch: array shape </span><span class="si">{</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (#</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
@@ -37500,7 +37498,7 @@ These fields are typically stored in a YAML file which we call a model resource 
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;CustomPostprocessingDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Custom postprocessing op \u2014 source file shipped inline with the model.\n\nSupports postprocessing that cannot be expressed by the built-in named\noperations (watershed, flow dynamics, NMS, connected components, etc.)\nusing a simple Python callable interface.\n\nThe op is implemented in a ``.py`` file packaged alongside the model weights.\nTwo styles are supported:\n\n*Callable class* \u2014 kwargs go to ``__init__``, tensors arrive in ``__call__``:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    class my_postprocess:\n        def __init__(self, threshold: float = 0.5) -&gt; None:\n            self.threshold = threshold\n        def __call__(self, *arrays: np.ndarray) -&gt; np.ndarray:\n            # arrays = model output tensors in rdf.yaml declaration order\n            return (arrays[0] &gt; self.threshold).astype(np.uint8)\n\n*Factory function* \u2014 alternative closure style, identical runtime behaviour:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    def my_postprocess(threshold: float = 0.5):\n        def run(*arrays: np.ndarray) -&gt; np.ndarray:\n            return (arrays[0] &gt; threshold).astype(np.uint8)\n        return run\n\nReference it in ``rdf.yaml`` with the source file included in the package:\n\n.. code-block:: yaml\n\n    postprocessing:\n      - id: custom\n        callable: my_postprocess   # class or function name in source\n        source: my_postprocess.py  # packaged alongside weights\n        sha256: &lt;hash&gt;             # sha256 of the source file\n        kwargs:                    # forwarded to __init__ / factory\n          threshold: 0.5\n\nTo contribute the op as a shared built-in, open a PR adding the file to\n``bioimageio.core`` \u2014 it will then receive its own named ``id`` and\nmodels can drop ``source``/``sha256``/``callable`` in favour of that id.\n\n**Security:** source files are SHA-256 verified before execution.\nExecution requires explicit opt-in in bioimageio.core and curator\nreview before Zoo publication.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Custom postprocessing op \u2014 source file shipped inline with the model.\n\nSupports postprocessing that cannot be expressed by the built-in named\noperations (watershed, flow dynamics, connected components, etc.)\nusing a simple Python callable interface.\nCurrently no extra dependencies beyond Python and numpy are supported.\n\nThe op is implemented in a ``.py`` file packaged alongside the model weights.\nTwo styles are supported:\n\n*Callable class* \u2014 kwargs go to ``__init__``, tensors arrive in ``__call__``:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    class my_postprocess:\n        def __init__(self, threshold: float = 0.5) -&gt; None:\n            self.threshold = threshold\n        def __call__(self, *arrays: np.ndarray) -&gt; np.ndarray:\n            # arrays = model output tensors in rdf.yaml declaration order\n            return (arrays[0] &gt; self.threshold).astype(np.uint8)\n\n*Factory function* \u2014 alternative closure style, identical runtime behaviour:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    def my_postprocess(threshold: float = 0.5):\n        def run(*arrays: np.ndarray) -&gt; np.ndarray:\n            return (arrays[0] &gt; threshold).astype(np.uint8)\n        return run\n\nReference it in ``rdf.yaml`` with the source file included in the package:\n\n.. code-block:: yaml\n\n    postprocessing:\n      - id: custom\n        callable: my_postprocess   # class or function name in source\n        source: my_postprocess.py  # packaged alongside weights\n        sha256: &lt;hash&gt;             # sha256 of the source file\n        kwargs:                    # forwarded to __init__ / factory\n          threshold: 0.5\n\nTo contribute the op as a shared built-in, open a PR adding the file to\n``bioimageio.core`` \u2014 it will then receive its own named ``id`` and\nmodels can drop ``source``/``sha256``/``callable`` in favour of that id.\n\n**Security:** source files are SHA-256 verified before execution.\nExecution requires explicit opt-in in bioimageio.core and curator\nreview before Zoo publication.&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -46336,7 +46334,16 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3997</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3988</span>
+<span class="normal">3989</span>
+<span class="normal">3990</span>
+<span class="normal">3991</span>
+<span class="normal">3992</span>
+<span class="normal">3993</span>
+<span class="normal">3994</span>
+<span class="normal">3995</span>
+<span class="normal">3996</span>
+<span class="normal">3997</span>
 <span class="normal">3998</span>
 <span class="normal">3999</span>
 <span class="normal">4000</span>
@@ -46367,16 +46374,7 @@ without validating the result.</p>
 <span class="normal">4025</span>
 <span class="normal">4026</span>
 <span class="normal">4027</span>
-<span class="normal">4028</span>
-<span class="normal">4029</span>
-<span class="normal">4030</span>
-<span class="normal">4031</span>
-<span class="normal">4032</span>
-<span class="normal">4033</span>
-<span class="normal">4034</span>
-<span class="normal">4035</span>
-<span class="normal">4036</span>
-<span class="normal">4037</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">4028</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_from_old_format_wo_validation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert metadata following an older format version to this classes&#39; format</span>
 <span class="sd">    without validating the result.</span>
@@ -46586,7 +46584,16 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3861</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3852</span>
+<span class="normal">3853</span>
+<span class="normal">3854</span>
+<span class="normal">3855</span>
+<span class="normal">3856</span>
+<span class="normal">3857</span>
+<span class="normal">3858</span>
+<span class="normal">3859</span>
+<span class="normal">3860</span>
+<span class="normal">3861</span>
 <span class="normal">3862</span>
 <span class="normal">3863</span>
 <span class="normal">3864</span>
@@ -46705,16 +46712,7 @@ Or simply whenever you know the full input shape.</p>
 <span class="normal">3977</span>
 <span class="normal">3978</span>
 <span class="normal">3979</span>
-<span class="normal">3980</span>
-<span class="normal">3981</span>
-<span class="normal">3982</span>
-<span class="normal">3983</span>
-<span class="normal">3984</span>
-<span class="normal">3985</span>
-<span class="normal">3986</span>
-<span class="normal">3987</span>
-<span class="normal">3988</span>
-<span class="normal">3989</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes</span><span class="p">(</span>
+<span class="normal">3980</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">ns</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">],</span>
     <span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -46872,7 +46870,16 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3789</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3780</span>
+<span class="normal">3781</span>
+<span class="normal">3782</span>
+<span class="normal">3783</span>
+<span class="normal">3784</span>
+<span class="normal">3785</span>
+<span class="normal">3786</span>
+<span class="normal">3787</span>
+<span class="normal">3788</span>
+<span class="normal">3789</span>
 <span class="normal">3790</span>
 <span class="normal">3791</span>
 <span class="normal">3792</span>
@@ -46881,16 +46888,7 @@ Or simply whenever you know the full input shape.</p>
 <span class="normal">3795</span>
 <span class="normal">3796</span>
 <span class="normal">3797</span>
-<span class="normal">3798</span>
-<span class="normal">3799</span>
-<span class="normal">3800</span>
-<span class="normal">3801</span>
-<span class="normal">3802</span>
-<span class="normal">3803</span>
-<span class="normal">3804</span>
-<span class="normal">3805</span>
-<span class="normal">3806</span>
-<span class="normal">3807</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">3798</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_batch_size</span><span class="p">(</span><span class="n">tensor_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">tensor_with_batchsize</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TensorId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -46932,8 +46930,8 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3767</span>
-<span class="normal">3768</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3758</span>
+<span class="normal">3759</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -46963,22 +46961,22 @@ such that the valid input size is &gt;= the given input size</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3821</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3812</span>
+<span class="normal">3813</span>
+<span class="normal">3814</span>
+<span class="normal">3815</span>
+<span class="normal">3816</span>
+<span class="normal">3817</span>
+<span class="normal">3818</span>
+<span class="normal">3819</span>
+<span class="normal">3820</span>
+<span class="normal">3821</span>
 <span class="normal">3822</span>
 <span class="normal">3823</span>
 <span class="normal">3824</span>
 <span class="normal">3825</span>
 <span class="normal">3826</span>
-<span class="normal">3827</span>
-<span class="normal">3828</span>
-<span class="normal">3829</span>
-<span class="normal">3830</span>
-<span class="normal">3831</span>
-<span class="normal">3832</span>
-<span class="normal">3833</span>
-<span class="normal">3834</span>
-<span class="normal">3835</span>
-<span class="normal">3836</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]):</span>
+<span class="normal">3827</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;get parameter `n` for each parameterized axis</span>
 <span class="sd">    such that the valid input size is &gt;= the given input size&quot;&quot;&quot;</span>
     <span class="n">ret</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -47023,17 +47021,17 @@ Otherwise it might be larger than the actual (valid) output</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3809</span>
-<span class="normal">3810</span>
-<span class="normal">3811</span>
-<span class="normal">3812</span>
-<span class="normal">3813</span>
-<span class="normal">3814</span>
-<span class="normal">3815</span>
-<span class="normal">3816</span>
-<span class="normal">3817</span>
-<span class="normal">3818</span>
-<span class="normal">3819</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_tensor_sizes</span><span class="p">(</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3800</span>
+<span class="normal">3801</span>
+<span class="normal">3802</span>
+<span class="normal">3803</span>
+<span class="normal">3804</span>
+<span class="normal">3805</span>
+<span class="normal">3806</span>
+<span class="normal">3807</span>
+<span class="normal">3808</span>
+<span class="normal">3809</span>
+<span class="normal">3810</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_tensor_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">_DataDepSize</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the tensor output sizes for given **input_sizes**.</span>
@@ -47067,8 +47065,8 @@ Otherwise it might be larger than the actual (valid) output</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3770</span>
-<span class="normal">3771</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3761</span>
+<span class="normal">3762</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -47156,7 +47154,16 @@ Otherwise it might be larger than the actual (valid) output</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3838</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3829</span>
+<span class="normal">3830</span>
+<span class="normal">3831</span>
+<span class="normal">3832</span>
+<span class="normal">3833</span>
+<span class="normal">3834</span>
+<span class="normal">3835</span>
+<span class="normal">3836</span>
+<span class="normal">3837</span>
+<span class="normal">3838</span>
 <span class="normal">3839</span>
 <span class="normal">3840</span>
 <span class="normal">3841</span>
@@ -47168,16 +47175,7 @@ Otherwise it might be larger than the actual (valid) output</p>
 <span class="normal">3847</span>
 <span class="normal">3848</span>
 <span class="normal">3849</span>
-<span class="normal">3850</span>
-<span class="normal">3851</span>
-<span class="normal">3852</span>
-<span class="normal">3853</span>
-<span class="normal">3854</span>
-<span class="normal">3855</span>
-<span class="normal">3856</span>
-<span class="normal">3857</span>
-<span class="normal">3858</span>
-<span class="normal">3859</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_tensor_sizes</span><span class="p">(</span>
+<span class="normal">3850</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_tensor_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TensorSizes</span><span class="p">:</span>
     <span class="n">axis_sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_axis_sizes</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
@@ -47762,22 +47760,22 @@ This includes checks of tensor shapes and dtypes, but not of the actual values.<
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3516</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3507</span>
+<span class="normal">3508</span>
+<span class="normal">3509</span>
+<span class="normal">3510</span>
+<span class="normal">3511</span>
+<span class="normal">3512</span>
+<span class="normal">3513</span>
+<span class="normal">3514</span>
+<span class="normal">3515</span>
+<span class="normal">3516</span>
 <span class="normal">3517</span>
 <span class="normal">3518</span>
 <span class="normal">3519</span>
 <span class="normal">3520</span>
 <span class="normal">3521</span>
-<span class="normal">3522</span>
-<span class="normal">3523</span>
-<span class="normal">3524</span>
-<span class="normal">3525</span>
-<span class="normal">3526</span>
-<span class="normal">3527</span>
-<span class="normal">3528</span>
-<span class="normal">3529</span>
-<span class="normal">3530</span>
-<span class="normal">3531</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_input_tensors</span><span class="p">(</span>
+<span class="normal">3522</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_input_tensors</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">sources</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
         <span class="n">Sequence</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span>
@@ -50395,7 +50393,7 @@ need to have this field.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;CustomPostprocessingDescr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Custom postprocessing op \u2014 source file shipped inline with the model.\n\nSupports postprocessing that cannot be expressed by the built-in named\noperations (watershed, flow dynamics, NMS, connected components, etc.)\nusing a simple Python callable interface.\n\nThe op is implemented in a ``.py`` file packaged alongside the model weights.\nTwo styles are supported:\n\n*Callable class* \u2014 kwargs go to ``__init__``, tensors arrive in ``__call__``:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    class my_postprocess:\n        def __init__(self, threshold: float = 0.5) -&gt; None:\n            self.threshold = threshold\n        def __call__(self, *arrays: np.ndarray) -&gt; np.ndarray:\n            # arrays = model output tensors in rdf.yaml declaration order\n            return (arrays[0] &gt; self.threshold).astype(np.uint8)\n\n*Factory function* \u2014 alternative closure style, identical runtime behaviour:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    def my_postprocess(threshold: float = 0.5):\n        def run(*arrays: np.ndarray) -&gt; np.ndarray:\n            return (arrays[0] &gt; threshold).astype(np.uint8)\n        return run\n\nReference it in ``rdf.yaml`` with the source file included in the package:\n\n.. code-block:: yaml\n\n    postprocessing:\n      - id: custom\n        callable: my_postprocess   # class or function name in source\n        source: my_postprocess.py  # packaged alongside weights\n        sha256: &lt;hash&gt;             # sha256 of the source file\n        kwargs:                    # forwarded to __init__ / factory\n          threshold: 0.5\n\nTo contribute the op as a shared built-in, open a PR adding the file to\n``bioimageio.core`` \u2014 it will then receive its own named ``id`` and\nmodels can drop ``source``/``sha256``/``callable`` in favour of that id.\n\n**Security:** source files are SHA-256 verified before execution.\nExecution requires explicit opt-in in bioimageio.core and curator\nreview before Zoo publication.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Custom postprocessing op \u2014 source file shipped inline with the model.\n\nSupports postprocessing that cannot be expressed by the built-in named\noperations (watershed, flow dynamics, connected components, etc.)\nusing a simple Python callable interface.\nCurrently no extra dependencies beyond Python and numpy are supported.\n\nThe op is implemented in a ``.py`` file packaged alongside the model weights.\nTwo styles are supported:\n\n*Callable class* \u2014 kwargs go to ``__init__``, tensors arrive in ``__call__``:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    class my_postprocess:\n        def __init__(self, threshold: float = 0.5) -&gt; None:\n            self.threshold = threshold\n        def __call__(self, *arrays: np.ndarray) -&gt; np.ndarray:\n            # arrays = model output tensors in rdf.yaml declaration order\n            return (arrays[0] &gt; self.threshold).astype(np.uint8)\n\n*Factory function* \u2014 alternative closure style, identical runtime behaviour:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    def my_postprocess(threshold: float = 0.5):\n        def run(*arrays: np.ndarray) -&gt; np.ndarray:\n            return (arrays[0] &gt; threshold).astype(np.uint8)\n        return run\n\nReference it in ``rdf.yaml`` with the source file included in the package:\n\n.. code-block:: yaml\n\n    postprocessing:\n      - id: custom\n        callable: my_postprocess   # class or function name in source\n        source: my_postprocess.py  # packaged alongside weights\n        sha256: &lt;hash&gt;             # sha256 of the source file\n        kwargs:                    # forwarded to __init__ / factory\n          threshold: 0.5\n\nTo contribute the op as a shared built-in, open a PR adding the file to\n``bioimageio.core`` \u2014 it will then receive its own named ``id`` and\nmodels can drop ``source``/``sha256``/``callable`` in favour of that id.\n\n**Security:** source files are SHA-256 verified before execution.\nExecution requires explicit opt-in in bioimageio.core and curator\nreview before Zoo publication.&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -52612,13 +52610,13 @@ The file extension must be '.npy'.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1937</span>
-<span class="normal">1938</span>
-<span class="normal">1939</span>
-<span class="normal">1940</span>
-<span class="normal">1941</span>
-<span class="normal">1942</span>
-<span class="normal">1943</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes_for_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1928</span>
+<span class="normal">1929</span>
+<span class="normal">1930</span>
+<span class="normal">1931</span>
+<span class="normal">1932</span>
+<span class="normal">1933</span>
+<span class="normal">1934</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes_for_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Dimension mismatch: array shape </span><span class="si">{</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (#</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
@@ -60514,13 +60512,13 @@ Default: The tensor itself.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1639</span>
-<span class="normal">1640</span>
-<span class="normal">1641</span>
-<span class="normal">1642</span>
-<span class="normal">1643</span>
-<span class="normal">1644</span>
-<span class="normal">1645</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;max_percentile&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1630</span>
+<span class="normal">1631</span>
+<span class="normal">1632</span>
+<span class="normal">1633</span>
+<span class="normal">1634</span>
+<span class="normal">1635</span>
+<span class="normal">1636</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;max_percentile&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
 <span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">min_smaller_max</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">ValidationInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">min_p</span> <span class="o">:=</span> <span class="n">info</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;min_percentile&quot;</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">value</span><span class="p">:</span>
@@ -70562,13 +70560,13 @@ The file extension must be '.npy'.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1937</span>
-<span class="normal">1938</span>
-<span class="normal">1939</span>
-<span class="normal">1940</span>
-<span class="normal">1941</span>
-<span class="normal">1942</span>
-<span class="normal">1943</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes_for_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1928</span>
+<span class="normal">1929</span>
+<span class="normal">1930</span>
+<span class="normal">1931</span>
+<span class="normal">1932</span>
+<span class="normal">1933</span>
+<span class="normal">1934</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes_for_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Dimension mismatch: array shape </span><span class="si">{</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (#</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
@@ -80854,7 +80852,16 @@ post-release suffixes.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2792</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2783</span>
+<span class="normal">2784</span>
+<span class="normal">2785</span>
+<span class="normal">2786</span>
+<span class="normal">2787</span>
+<span class="normal">2788</span>
+<span class="normal">2789</span>
+<span class="normal">2790</span>
+<span class="normal">2791</span>
+<span class="normal">2792</span>
 <span class="normal">2793</span>
 <span class="normal">2794</span>
 <span class="normal">2795</span>
@@ -80869,16 +80876,7 @@ post-release suffixes.</p>
 <span class="normal">2804</span>
 <span class="normal">2805</span>
 <span class="normal">2806</span>
-<span class="normal">2807</span>
-<span class="normal">2808</span>
-<span class="normal">2809</span>
-<span class="normal">2810</span>
-<span class="normal">2811</span>
-<span class="normal">2812</span>
-<span class="normal">2813</span>
-<span class="normal">2814</span>
-<span class="normal">2815</span>
-<span class="normal">2816</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span>
+<span class="normal">2807</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="n">WeightsFormat</span><span class="p">,</span>
 <span class="p">):</span>
@@ -80958,7 +80956,16 @@ post-release suffixes.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2851</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2842</span>
+<span class="normal">2843</span>
+<span class="normal">2844</span>
+<span class="normal">2845</span>
+<span class="normal">2846</span>
+<span class="normal">2847</span>
+<span class="normal">2848</span>
+<span class="normal">2849</span>
+<span class="normal">2850</span>
+<span class="normal">2851</span>
 <span class="normal">2852</span>
 <span class="normal">2853</span>
 <span class="normal">2854</span>
@@ -81001,16 +81008,7 @@ post-release suffixes.</p>
 <span class="normal">2891</span>
 <span class="normal">2892</span>
 <span class="normal">2893</span>
-<span class="normal">2894</span>
-<span class="normal">2895</span>
-<span class="normal">2896</span>
-<span class="normal">2897</span>
-<span class="normal">2898</span>
-<span class="normal">2899</span>
-<span class="normal">2900</span>
-<span class="normal">2901</span>
-<span class="normal">2902</span>
-<span class="normal">2903</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span>
+<span class="normal">2894</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="n">WeightsFormat</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SpecificWeightsDescr</span><span class="p">],</span>
@@ -81090,7 +81088,16 @@ post-release suffixes.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2752</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2743</span>
+<span class="normal">2744</span>
+<span class="normal">2745</span>
+<span class="normal">2746</span>
+<span class="normal">2747</span>
+<span class="normal">2748</span>
+<span class="normal">2749</span>
+<span class="normal">2750</span>
+<span class="normal">2751</span>
+<span class="normal">2752</span>
 <span class="normal">2753</span>
 <span class="normal">2754</span>
 <span class="normal">2755</span>
@@ -81119,16 +81126,7 @@ post-release suffixes.</p>
 <span class="normal">2778</span>
 <span class="normal">2779</span>
 <span class="normal">2780</span>
-<span class="normal">2781</span>
-<span class="normal">2782</span>
-<span class="normal">2783</span>
-<span class="normal">2784</span>
-<span class="normal">2785</span>
-<span class="normal">2786</span>
-<span class="normal">2787</span>
-<span class="normal">2788</span>
-<span class="normal">2789</span>
-<span class="normal">2790</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+<span class="normal">2781</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
     <span class="n">entries</span> <span class="o">=</span> <span class="p">{</span><span class="n">wtype</span> <span class="k">for</span> <span class="n">wtype</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
 
@@ -84025,7 +84023,16 @@ Default: Scale all axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2008</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1999</span>
+<span class="normal">2000</span>
+<span class="normal">2001</span>
+<span class="normal">2002</span>
+<span class="normal">2003</span>
+<span class="normal">2004</span>
+<span class="normal">2005</span>
+<span class="normal">2006</span>
+<span class="normal">2007</span>
+<span class="normal">2008</span>
 <span class="normal">2009</span>
 <span class="normal">2010</span>
 <span class="normal">2011</span>
@@ -84127,16 +84134,7 @@ Default: Scale all axes jointly.</p>
 <span class="normal">2107</span>
 <span class="normal">2108</span>
 <span class="normal">2109</span>
-<span class="normal">2110</span>
-<span class="normal">2111</span>
-<span class="normal">2112</span>
-<span class="normal">2113</span>
-<span class="normal">2114</span>
-<span class="normal">2115</span>
-<span class="normal">2116</span>
-<span class="normal">2117</span>
-<span class="normal">2118</span>
-<span class="normal">2119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">convert_axes</span><span class="p">(</span>
+<span class="normal">2110</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">convert_axes</span><span class="p">(</span>
     <span class="n">axes</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">shape</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -84276,7 +84274,16 @@ Default: Scale all axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4254</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4245</span>
+<span class="normal">4246</span>
+<span class="normal">4247</span>
+<span class="normal">4248</span>
+<span class="normal">4249</span>
+<span class="normal">4250</span>
+<span class="normal">4251</span>
+<span class="normal">4252</span>
+<span class="normal">4253</span>
+<span class="normal">4254</span>
 <span class="normal">4255</span>
 <span class="normal">4256</span>
 <span class="normal">4257</span>
@@ -84452,16 +84459,7 @@ Default: Scale all axes jointly.</p>
 <span class="normal">4427</span>
 <span class="normal">4428</span>
 <span class="normal">4429</span>
-<span class="normal">4430</span>
-<span class="normal">4431</span>
-<span class="normal">4432</span>
-<span class="normal">4433</span>
-<span class="normal">4434</span>
-<span class="normal">4435</span>
-<span class="normal">4436</span>
-<span class="normal">4437</span>
-<span class="normal">4438</span>
-<span class="normal">4439</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_covers</span><span class="p">(</span>
+<span class="normal">4430</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_covers</span><span class="p">(</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">InputTensorDescr</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">OutputTensorDescr</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
@@ -84677,7 +84675,16 @@ Default: Scale all axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2384</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2375</span>
+<span class="normal">2376</span>
+<span class="normal">2377</span>
+<span class="normal">2378</span>
+<span class="normal">2379</span>
+<span class="normal">2380</span>
+<span class="normal">2381</span>
+<span class="normal">2382</span>
+<span class="normal">2383</span>
+<span class="normal">2384</span>
 <span class="normal">2385</span>
 <span class="normal">2386</span>
 <span class="normal">2387</span>
@@ -84779,16 +84786,7 @@ Default: Scale all axes jointly.</p>
 <span class="normal">2483</span>
 <span class="normal">2484</span>
 <span class="normal">2485</span>
-<span class="normal">2486</span>
-<span class="normal">2487</span>
-<span class="normal">2488</span>
-<span class="normal">2489</span>
-<span class="normal">2490</span>
-<span class="normal">2491</span>
-<span class="normal">2492</span>
-<span class="normal">2493</span>
-<span class="normal">2494</span>
-<span class="normal">2495</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_tensors</span><span class="p">(</span>
+<span class="normal">2486</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_tensors</span><span class="p">(</span>
     <span class="n">tensors</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">TensorDescr</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]],</span>
     <span class="n">tensor_origin</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
         <span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;test_tensor&quot;</span>
