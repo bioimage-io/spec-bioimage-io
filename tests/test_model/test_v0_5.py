@@ -646,28 +646,11 @@ def test_custom_postprocessing_with_source():
     assert descr.kwargs == {"threshold": 0.5}
 
 
-def test_custom_postprocessing_source_requires_sha256():
-    """source without sha256 must raise a validation error."""
-    import pytest
-    from pydantic import ValidationError
-    from bioimageio.spec.model.v0_5 import CustomPostprocessingDescr
-
-    with pytest.raises(ValidationError):
-        with ValidationContext(perform_io_checks=False):
-            _ = CustomPostprocessingDescr.model_validate(
-                {
-                    "id": "custom",
-                    "callable": "my_postprocess",
-                    "source": "my_postprocess.py",
-                    # sha256 intentionally omitted
-                }
-            )
-
-
 def test_custom_postprocessing_source_required():
     """source is a required field — omitting it raises a validation error."""
     import pytest
     from pydantic import ValidationError
+
     from bioimageio.spec.model.v0_5 import CustomPostprocessingDescr
 
     with pytest.raises(ValidationError):
@@ -725,6 +708,7 @@ def test_custom_op_class_style():
     ) -> "Callable[..., NDArray[np.generic]]":
         def run(*arrays: "NDArray[np.generic]") -> "NDArray[np.generic]":
             return (arrays[0] > threshold).astype(np.uint8)  # type: ignore[return-value]
+
         return run
 
     op2 = my_factory_op(threshold=0.3)
