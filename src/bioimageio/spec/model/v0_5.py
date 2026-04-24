@@ -1367,8 +1367,9 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields, FileDescr):
     """Custom postprocessing op — source file shipped inline with the model.
 
     Supports postprocessing that cannot be expressed by the built-in named
-    operations (watershed, flow dynamics, NMS, connected components, etc.)
+    operations (watershed, flow dynamics, connected components, etc.)
     using a simple Python callable interface.
+    Currently no extra dependencies beyond Python and numpy are supported.
 
     The op is implemented in a ``.py`` file packaged alongside the model weights.
     Two styles are supported:
