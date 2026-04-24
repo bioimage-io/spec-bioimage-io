@@ -1363,13 +1363,38 @@ class StardistPostprocessingDescr(NodeWithExplicitlySetFields):
     kwargs: Union[StardistPostprocessingKwargs2D, StardistPostprocessingKwargs3D]
 
 
+class CellposeFlowDynamicsKwargs(KwargsNode):
+    """key word arguments for [CellposeFlowDynamicsDescr][]"""
+
+    cellprob_threshold: float
+    flow_threshold: float
+    do_3D: bool
+
+
+class CellposeFlowDynamicsDescr(NodeWithExplicitlySetFields):
+    """Cellpose flow dynamics postprocessing as described in:
+    - Carsen Stringer and Marius Pachitariu. [*Cellpose: a generalist algorithm for cellular segmentation*](https://www.nature.com/articles/s41592-020-01018-x). Nature Methods, 2021.
+
+    Note: Only available if the `cellpose` package is installed.
+    """
+
+    implemented_id: ClassVar[Literal["cellpose_flow_dynamics"]] = (
+        "cellpose_flow_dynamics"
+    )
+    if TYPE_CHECKING:
+        id: Literal["cellpose_flow_dynamics"] = "cellpose_flow_dynamics"
+    else:
+        id: Literal["cellpose_flow_dynamics"]
+
+    kwargs: CellposeFlowDynamicsKwargs
+
+
 class CustomPostprocessingDescr(NodeWithExplicitlySetFields, FileDescr):
     """Custom postprocessing op — source file shipped inline with the model.
 
     Supports postprocessing that cannot be expressed by the built-in named
-    operations (watershed, flow dynamics, connected components, etc.)
+    operations (watershed, flow dynamics, NMS, connected components, etc.)
     using a simple Python callable interface.
-    Currently no extra dependencies beyond Python and numpy are supported.
 
     The op is implemented in a ``.py`` file packaged alongside the model weights.
     Two styles are supported:
@@ -1429,7 +1454,7 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields, FileDescr):
 
     callable: Annotated[
         str,
-        Field(examples=["my_postprocess", "CellposeFlowDynamics"]),
+        Field(examples=["my_postprocess_factory", "MyPostprocessClass"]),
     ]
     """Name of the callable class or factory function defined in ``source``.
 
@@ -1754,6 +1779,7 @@ PreprocessingDescr = Annotated[
 PostprocessingDescr = Annotated[
     Union[
         BinarizeDescr,
+        CellposeFlowDynamicsDescr,
         ClipDescr,
         CustomPostprocessingDescr,
         EnsureDtypeDescr,
@@ -2255,9 +2281,10 @@ class _InputTensorConv(
             assert not isinstance(
                 cp,
                 (
+                    CellposeFlowDynamicsDescr,
+                    CustomPostprocessingDescr,
                     ScaleMeanVarianceDescr,
                     StardistPostprocessingDescr,
-                    CustomPostprocessingDescr,
                 ),
             )
             prep.append(cp)
