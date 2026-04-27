@@ -1369,6 +1369,7 @@ class CellposeFlowDynamicsKwargs(KwargsNode):
     cellprob_threshold: float
     flow_threshold: float
     do_3D: bool
+    output_dtype: Literal["uint16", "uint32"] = "uint16"
 
 
 class CellposeFlowDynamicsDescr(NodeWithExplicitlySetFields):

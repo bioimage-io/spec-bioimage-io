@@ -348,6 +348,15 @@
         "do_3D": {
           "title": "Do 3D",
           "type": "boolean"
+        },
+        "output_dtype": {
+          "default": "uint16",
+          "enum": [
+            "uint16",
+            "uint32"
+          ],
+          "title": "Output Dtype",
+          "type": "string"
         }
       },
       "required": [
