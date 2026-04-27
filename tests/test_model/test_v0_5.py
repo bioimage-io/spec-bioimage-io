@@ -627,10 +627,10 @@ def test_get_set_weights_descr(model: ModelDescr):
 
 def test_custom_postprocessing_with_source():
     """Custom op: source + sha256 packaged with the model."""
-    from bioimageio.spec.model.v0_5 import CustomPostprocessingDescr
+    from bioimageio.spec.model.v0_5 import CustomProcessingDescr
 
     with ValidationContext(perform_io_checks=False):
-        descr = CustomPostprocessingDescr.model_validate(
+        descr = CustomProcessingDescr.model_validate(
             {
                 "id": "custom",
                 "callable": "my_postprocess",
@@ -651,10 +651,10 @@ def test_custom_postprocessing_source_required():
     import pytest
     from pydantic import ValidationError
 
-    from bioimageio.spec.model.v0_5 import CustomPostprocessingDescr
+    from bioimageio.spec.model.v0_5 import CustomProcessingDescr
 
     with pytest.raises(ValidationError):
-        _ = CustomPostprocessingDescr.model_validate(
+        _ = CustomProcessingDescr.model_validate(
             {
                 "id": "custom",
                 "callable": "my_postprocess",

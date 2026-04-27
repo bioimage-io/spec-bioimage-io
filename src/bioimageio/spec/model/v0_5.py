@@ -1389,11 +1389,11 @@ class CellposeFlowDynamicsDescr(NodeWithExplicitlySetFields):
     kwargs: CellposeFlowDynamicsKwargs
 
 
-class CustomPostprocessingDescr(NodeWithExplicitlySetFields, FileDescr):
-    """Custom postprocessing op — source file shipped inline with the model.
+class CustomProcessingDescr(NodeWithExplicitlySetFields, FileDescr):
+    """Custom (post)processing op — source file shipped inline with the model.
 
-    Supports postprocessing that cannot be expressed by the built-in named
-    operations (watershed, flow dynamics, NMS, connected components, etc.)
+    Supports (post)processing that cannot be expressed by the built-in named
+    operations (watershed, connected components, etc.)
     using a simple Python callable interface.
 
     The op is implemented in a ``.py`` file packaged alongside the model weights.
@@ -1437,10 +1437,6 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields, FileDescr):
             kwargs:                    # forwarded to __init__ / factory
               threshold: 0.5
 
-    To contribute the op as a shared built-in, open a PR adding the file to
-    ``bioimageio.core`` — it will then receive its own named ``id`` and
-    models can drop ``source``/``sha256``/``callable`` in favour of that id.
-
     **Security:** source files are SHA-256 verified before execution.
     Execution requires explicit opt-in in bioimageio.core and curator
     review before Zoo publication.
@@ -1463,10 +1459,7 @@ class CustomPostprocessingDescr(NodeWithExplicitlySetFields, FileDescr):
     a callable satisfy this protocol."""
 
     source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
-    """Python source file packaged inline with the model.
-
-    Must be included alongside the weights in the model package.
-    ``sha256`` (inherited from FileDescr) is required for integrity verification."""
+    """Python source file (included when packaging the model)."""
 
     kwargs: Dict[str, YamlValue] = Field(
         default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
@@ -1781,7 +1774,7 @@ PostprocessingDescr = Annotated[
         BinarizeDescr,
         CellposeFlowDynamicsDescr,
         ClipDescr,
-        CustomPostprocessingDescr,
+        CustomProcessingDescr,
         EnsureDtypeDescr,
         FixedZeroMeanUnitVarianceDescr,
         ScaleLinearDescr,
@@ -2282,7 +2275,7 @@ class _InputTensorConv(
                 cp,
                 (
                     CellposeFlowDynamicsDescr,
-                    CustomPostprocessingDescr,
+                    CustomProcessingDescr,
                     ScaleMeanVarianceDescr,
                     StardistPostprocessingDescr,
                 ),
@@ -2710,6 +2703,8 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     The conda environment file should include pytorch and any version pinning has to be compatible with
     **pytorch_version**.
     """
+    strict: bool = True
+    """Whether to allow missing or unexpected keys or to be strict about the architecture matching the state dict weights."""
 
 
 class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
