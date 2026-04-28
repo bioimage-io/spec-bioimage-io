@@ -1369,6 +1369,8 @@ class CellposeFlowDynamicsKwargs(KwargsNode):
     cellprob_threshold: float
     flow_threshold: float
     do_3D: bool
+    min_size: int = 15
+    """Minimum size of objects to keep, in pixels. Default is 15, which is the default in Cellpose. Set to 0 to disable filtering by size."""
     output_dtype: Literal["uint16", "uint32"] = "uint16"
 
 
