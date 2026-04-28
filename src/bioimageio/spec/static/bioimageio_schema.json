@@ -12052,7 +12052,7 @@
           "title": "Version Comment"
         },
         "format_version": {
-          "const": "0.5.9",
+          "const": "0.5.10",
           "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
           "title": "Format Version",
           "type": "string"
@@ -12201,7 +12201,7 @@
         "outputs",
         "weights"
       ],
-      "title": "model 0.5.9",
+      "title": "model 0.5.10",
       "type": "object"
     },
     "bioimageio__spec__model__v0_5__OnnxWeightsDescr": {
@@ -15591,7 +15591,7 @@
         "discriminator": {
           "mapping": {
             "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-            "0.5.9": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+            "0.5.10": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
           },
           "propertyName": "format_version"
         },
@@ -15675,7 +15675,7 @@
       "discriminator": {
         "mapping": {
           "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-          "0.5.9": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+          "0.5.10": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
         },
         "propertyName": "format_version"
       },
