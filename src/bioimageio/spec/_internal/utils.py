@@ -10,6 +10,8 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Iterable,
+    List,
     Set,
     Tuple,
     Type,
@@ -18,6 +20,7 @@ from typing import (
 )
 
 import pydantic
+from exceptiongroup import ExceptionGroup
 from ruyaml import Optional
 from typing_extensions import ParamSpec
 
@@ -175,3 +178,59 @@ class PrettyPlainSerializer(pydantic.PlainSerializer, _PrettyDataClassReprMixin)
 
 class PrettyWrapSerializer(pydantic.WrapSerializer, _PrettyDataClassReprMixin):
     pass
+
+
+def try_all(
+    funcs: Iterable[Callable[P, T]],
+    *args: P.args,
+    **kwargs: P.kwargs,
+) -> T:
+    ret, errors = _try_all(funcs, False, *args, **kwargs)
+    if errors:
+        raise ExceptionGroup("All functions raised", errors)
+
+    assert not isinstance(ret, _AllFailedSentinel)
+    return ret
+
+
+def try_all_raise_last(
+    funcs: Iterable[Callable[P, T]],
+    *args: P.args,
+    **kwargs: P.kwargs,
+) -> T:
+    ret, errors = _try_all(funcs, True, *args, **kwargs)
+    if errors:
+        raise errors[-1]
+
+    assert not isinstance(ret, _AllFailedSentinel)
+    return ret
+
+
+class _AllFailedSentinel:
+    pass
+
+
+def _try_all(
+    funcs: Iterable[Callable[P, T]],
+    raise_last_only: bool,
+    *args: P.args,
+    **kwargs: P.kwargs,
+) -> Tuple[Union[_AllFailedSentinel, T], List[Exception]]:
+    """Try to call each of the functions `funcs` with the given arguments.
+
+    If all raise, raise an exception group (or the last).
+
+    Returns:
+        Result of the first successful call.
+    """
+    errors: List[Exception] = []
+    for c in funcs:
+        try:
+            return c(*args, **kwargs), []
+        except Exception as e:
+            errors.append(e)
+
+    if errors:
+        errors.append(RuntimeError("No functions provided to try."))
+
+    return _AllFailedSentinel(), errors

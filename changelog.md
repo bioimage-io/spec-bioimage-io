@@ -13,6 +13,8 @@ This changelog includes implementation details and might reference [changes to t
 ### bioimageio.spec 0.5.10.0
 
 - [model 0.5.10](#model-0510)
+- `update_format` saves updated description packages for output path without .yaml (or.yml) suffix (not just the bioimageio.yaml)
+- tensor/test inputs are expected to be padded according to related output halos, which chnages input size expectations. Test tensors are patched on-the-fly.
 
 ### bioimageio.spec 0.5.9.1
 
@@ -386,7 +388,8 @@ If the changes also apply to `type` model, the coresponding model format version
 
 - Non-breaking changes:
   - add cellpose postprocessing `CellposeFlowDynamicsDescr`
-
+  - Input test tensors may be smaller than the valid network input shape by the padding required to crop any related output halos.
+  - (For backwards compatibility) test output tensors may include the halo region that is cropped before comparing to the actual (cropped) outputs.
 
 ### model 0.5.9
 

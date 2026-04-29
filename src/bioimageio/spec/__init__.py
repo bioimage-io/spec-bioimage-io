@@ -41,8 +41,6 @@ from ._io import (
 )
 from ._io import load_model_description as load_model_description
 from ._io import save_bioimageio_yaml_only as save_bioimageio_yaml_only
-from ._io import update_format as update_format
-from ._io import update_hashes as update_hashes
 from ._package import get_resource_package_content as get_resource_package_content
 from ._package import save_bioimageio_package as save_bioimageio_package
 from ._package import (
@@ -54,6 +52,8 @@ from ._package import (
 from ._pretty_validation_errors import (
     PRETTY_VALIDATION_ERRORS_IN_IPYNB_ENABLED as PRETTY_VALIDATION_ERRORS_IN_IPYNB_ENABLED,
 )
+from ._update import update_format as update_format
+from ._update import update_hashes as update_hashes
 from ._upload import upload as upload
 
 __version__ = _version.VERSION

@@ -1,5 +1,3 @@
-import collections.abc
-from pathlib import Path
 from typing import Dict, Literal, Optional, TextIO, Union, cast, overload
 from zipfile import ZipFile
 
@@ -8,7 +6,6 @@ from pydantic import FilePath, NewPath
 
 from ._description import (
     DISCOVER,
-    LATEST,
     InvalidDescr,
     LatestResourceDescr,
     ResourceDescr,
@@ -272,73 +269,3 @@ def load_description_and_validate_format_only(
     )
     assert rd.validation_summary is not None
     return rd.validation_summary
-
-
-def update_format(
-    source: Union[
-        ResourceDescr,
-        PermissiveFileSource,
-        ZipFile,
-        BioimageioYamlContent,
-        InvalidDescr,
-    ],
-    /,
-    *,
-    output: Union[Path, TextIO, None] = None,
-    exclude_defaults: bool = True,
-    perform_io_checks: Optional[bool] = None,
-) -> Union[LatestResourceDescr, InvalidDescr]:
-    """Update a resource description.
-
-    Notes:
-    - Invalid **source** descriptions may fail to update.
-    - The updated description might be invalid (even if the **source** was valid).
-    """
-
-    if isinstance(source, ResourceDescrBase):
-        root = source.root
-        source = dump_description(source)
-    else:
-        root = None
-
-    if isinstance(source, collections.abc.Mapping):
-        descr = build_description(
-            source,
-            context=get_validation_context().replace(
-                root=root, perform_io_checks=perform_io_checks
-            ),
-            format_version=LATEST,
-        )
-
-    else:
-        descr = load_description(
-            source,
-            perform_io_checks=perform_io_checks,
-            format_version=LATEST,
-        )
-
-    if output is not None:
-        save_bioimageio_yaml_only(descr, file=output, exclude_defaults=exclude_defaults)
-
-    return descr
-
-
-def update_hashes(
-    source: Union[PermissiveFileSource, ZipFile, ResourceDescr, BioimageioYamlContent],
-    /,
-) -> Union[ResourceDescr, InvalidDescr]:
-    """Update hash values of the files referenced in **source**."""
-    if isinstance(source, ResourceDescrBase):
-        root = source.root
-        source = dump_description(source)
-    else:
-        root = None
-
-    context = get_validation_context().replace(
-        update_hashes=True, root=root, perform_io_checks=True
-    )
-    with context:
-        if isinstance(source, collections.abc.Mapping):
-            return build_description(source)
-        else:
-            return load_description(source, perform_io_checks=True)
