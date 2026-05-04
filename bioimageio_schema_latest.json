@@ -413,6 +413,31 @@
       "title": "model.v0_5.ChannelAxis",
       "type": "object"
     },
+    "ConstantPadding": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "constant",
+          "default": "constant",
+          "title": "Mode",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "default": 0,
+          "title": "Value"
+        }
+      },
+      "title": "model.v0_5.ConstantPadding",
+      "type": "object"
+    },
     "CustomProcessingDescr": {
       "additionalProperties": false,
       "description": "Custom (post)processing op — source file shipped inline with the model.\n\nSupports (post)processing that cannot be expressed by the built-in named\noperations (watershed, connected components, etc.)\nusing a simple Python callable interface.\n\nThe op is implemented in a ``.py`` file packaged alongside the model weights.\nTwo styles are supported:\n\n*Callable class* — kwargs go to ``__init__``, tensors arrive in ``__call__``:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    class my_postprocess:\n        def __init__(self, threshold: float = 0.5) -> None:\n            self.threshold = threshold\n        def __call__(self, *arrays: np.ndarray) -> np.ndarray:\n            # arrays = model output tensors in rdf.yaml declaration order\n            return (arrays[0] > self.threshold).astype(np.uint8)\n\n*Factory function* — alternative closure style, identical runtime behaviour:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    def my_postprocess(threshold: float = 0.5):\n        def run(*arrays: np.ndarray) -> np.ndarray:\n            return (arrays[0] > threshold).astype(np.uint8)\n        return run\n\nReference it in ``rdf.yaml`` with the source file included in the package:\n\n.. code-block:: yaml\n\n    postprocessing:\n      - id: custom\n        callable: my_postprocess   # class or function name in source\n        source: my_postprocess.py  # packaged alongside weights\n        sha256: <hash>             # sha256 of the source file\n        kwargs:                    # forwarded to __init__ / factory\n          threshold: 0.5\n\n**Security:** source files are SHA-256 verified before execution.\nExecution requires explicit opt-in in bioimageio.core and curator\nreview before Zoo publication.",
@@ -518,6 +543,19 @@
       "format": "date-time",
       "title": "Datetime",
       "type": "string"
+    },
+    "EdgePadding": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "edge",
+          "default": "edge",
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "title": "model.v0_5.EdgePadding",
+      "type": "object"
     },
     "EnsureDtypeDescr": {
       "additionalProperties": false,
@@ -1449,6 +1487,19 @@
       "title": "model.v0_5.ParameterizedSize",
       "type": "object"
     },
+    "ReflectPadding": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "reflect",
+          "default": "reflect",
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "title": "model.v0_5.ReflectPadding",
+      "type": "object"
+    },
     "RelativeFilePath": {
       "description": "A path relative to the `rdf.yaml` file (also if the RDF source is a URL).",
       "format": "path",
@@ -2226,6 +2277,19 @@
         "anisotropy"
       ],
       "title": "model.v0_5.StardistPostprocessingKwargs3D",
+      "type": "object"
+    },
+    "SymmetricPadding": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "symmetric",
+          "default": "symmetric",
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "title": "model.v0_5.SymmetricPadding",
       "type": "object"
     },
     "TimeInputAxis": {
@@ -10916,6 +10980,28 @@
           "description": "indicates that this tensor may be `None`",
           "title": "Optional",
           "type": "boolean"
+        },
+        "pad": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ConstantPadding"
+            },
+            {
+              "$ref": "#/$defs/EdgePadding"
+            },
+            {
+              "$ref": "#/$defs/ReflectPadding"
+            },
+            {
+              "$ref": "#/$defs/SymmetricPadding"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Explicitly specify how to pad this input tensor.\n\nUse `axes[i].pad` to specify padding width.\n\nNote:\n  Non-blockwise sample prediction only applies padding for axes with a `pad` specification.",
+          "title": "Pad"
         },
         "preprocessing": {
           "description": "Description of how this input should be preprocessed.\n\nnotes:\n- If preprocessing does not start with an 'ensure_dtype' entry, it is added\n  to ensure an input tensor's data type matches the input tensor's data description.\n- If preprocessing does not end with an 'ensure_dtype' or 'binarize' entry, an\n  'ensure_dtype' step is added to ensure preprocessing steps are not unintentionally\n  changing the data type.",
