@@ -739,6 +739,8 @@ In this file we log both:</p>
 <h3 id="bioimageiospec-05100">bioimageio.spec 0.5.10.0<a class="headerlink" href="#bioimageiospec-05100" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
 <li><a href="#model-0510">model 0.5.10</a></li>
+<li><code>update_format</code> saves updated description packages for output path without .yaml (or.yml) suffix (not just the bioimageio.yaml)</li>
+<li>tensor/test inputs are expected to be padded according to related output halos, which chnages input size expectations. Test tensors are patched on-the-fly.</li>
 </ul>
 <h3 id="bioimageiospec-0591">bioimageio.spec 0.5.9.1<a class="headerlink" href="#bioimageiospec-0591" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
@@ -1127,6 +1129,8 @@ If the changes also apply to <code>type</code> model, the coresponding model for
 <ul>
 <li>Non-breaking changes:</li>
 <li>add cellpose postprocessing <code>CellposeFlowDynamicsDescr</code></li>
+<li>Input test tensors may be smaller than the valid network input shape by the padding required to crop any related output halos.</li>
+<li>(For backwards compatibility) test output tensors may include the halo region that is cropped before comparing to the actual (cropped) outputs.</li>
 </ul>
 <h3 id="model-059">model 0.5.9<a class="headerlink" href="#model-059" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
