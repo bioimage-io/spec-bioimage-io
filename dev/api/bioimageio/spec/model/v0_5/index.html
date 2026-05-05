@@ -3072,7 +3072,7 @@
               <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.validate_tensors">validate_tensors</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  
+                  <p>Validate all inputs (and optionally output tensors) against their tensor descriptions.</p>
                 </div>
               </td>
             </tr>
@@ -8795,25 +8795,25 @@ otherwise (the default) it may be chosen arbitrarily depending on available memo
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3132</span>
-<span class="normal">3133</span>
-<span class="normal">3134</span>
-<span class="normal">3135</span>
-<span class="normal">3136</span>
-<span class="normal">3137</span>
-<span class="normal">3138</span>
-<span class="normal">3139</span>
-<span class="normal">3140</span>
-<span class="normal">3141</span>
-<span class="normal">3142</span>
-<span class="normal">3143</span>
-<span class="normal">3144</span>
-<span class="normal">3145</span>
-<span class="normal">3146</span>
-<span class="normal">3147</span>
-<span class="normal">3148</span>
-<span class="normal">3149</span>
-<span class="normal">3150</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3157</span>
+<span class="normal">3158</span>
+<span class="normal">3159</span>
+<span class="normal">3160</span>
+<span class="normal">3161</span>
+<span class="normal">3162</span>
+<span class="normal">3163</span>
+<span class="normal">3164</span>
+<span class="normal">3165</span>
+<span class="normal">3166</span>
+<span class="normal">3167</span>
+<span class="normal">3168</span>
+<span class="normal">3169</span>
+<span class="normal">3170</span>
+<span class="normal">3171</span>
+<span class="normal">3172</span>
+<span class="normal">3173</span>
+<span class="normal">3174</span>
+<span class="normal">3175</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">limitations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">limitations_header</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -25202,24 +25202,24 @@ casts it to uint8, which is what the neural network in this example expects.
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3344</span>
-<span class="normal">3345</span>
-<span class="normal">3346</span>
-<span class="normal">3347</span>
-<span class="normal">3348</span>
-<span class="normal">3349</span>
-<span class="normal">3350</span>
-<span class="normal">3351</span>
-<span class="normal">3352</span>
-<span class="normal">3353</span>
-<span class="normal">3354</span>
-<span class="normal">3355</span>
-<span class="normal">3356</span>
-<span class="normal">3357</span>
-<span class="normal">3358</span>
-<span class="normal">3359</span>
-<span class="normal">3360</span>
-<span class="normal">3361</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3369</span>
+<span class="normal">3370</span>
+<span class="normal">3371</span>
+<span class="normal">3372</span>
+<span class="normal">3373</span>
+<span class="normal">3374</span>
+<span class="normal">3375</span>
+<span class="normal">3376</span>
+<span class="normal">3377</span>
+<span class="normal">3378</span>
+<span class="normal">3379</span>
+<span class="normal">3380</span>
+<span class="normal">3381</span>
+<span class="normal">3382</span>
+<span class="normal">3383</span>
+<span class="normal">3384</span>
+<span class="normal">3385</span>
+<span class="normal">3386</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Filled Markdown template section following [Hugging Face Model Card Template](https://huggingface.co/docs/hub/en/model-card-annotated).&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">():</span>
         <span class="k">return</span> <span class="s2">&quot;&quot;</span>
@@ -26082,32 +26082,7 @@ An 'overall' factor may be included to summarize performance across all conditio
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3274</span>
-<span class="normal">3275</span>
-<span class="normal">3276</span>
-<span class="normal">3277</span>
-<span class="normal">3278</span>
-<span class="normal">3279</span>
-<span class="normal">3280</span>
-<span class="normal">3281</span>
-<span class="normal">3282</span>
-<span class="normal">3283</span>
-<span class="normal">3284</span>
-<span class="normal">3285</span>
-<span class="normal">3286</span>
-<span class="normal">3287</span>
-<span class="normal">3288</span>
-<span class="normal">3289</span>
-<span class="normal">3290</span>
-<span class="normal">3291</span>
-<span class="normal">3292</span>
-<span class="normal">3293</span>
-<span class="normal">3294</span>
-<span class="normal">3295</span>
-<span class="normal">3296</span>
-<span class="normal">3297</span>
-<span class="normal">3298</span>
-<span class="normal">3299</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3299</span>
 <span class="normal">3300</span>
 <span class="normal">3301</span>
 <span class="normal">3302</span>
@@ -26125,7 +26100,32 @@ An 'overall' factor may be included to summarize performance across all conditio
 <span class="normal">3314</span>
 <span class="normal">3315</span>
 <span class="normal">3316</span>
-<span class="normal">3317</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">3317</span>
+<span class="normal">3318</span>
+<span class="normal">3319</span>
+<span class="normal">3320</span>
+<span class="normal">3321</span>
+<span class="normal">3322</span>
+<span class="normal">3323</span>
+<span class="normal">3324</span>
+<span class="normal">3325</span>
+<span class="normal">3326</span>
+<span class="normal">3327</span>
+<span class="normal">3328</span>
+<span class="normal">3329</span>
+<span class="normal">3330</span>
+<span class="normal">3331</span>
+<span class="normal">3332</span>
+<span class="normal">3333</span>
+<span class="normal">3334</span>
+<span class="normal">3335</span>
+<span class="normal">3336</span>
+<span class="normal">3337</span>
+<span class="normal">3338</span>
+<span class="normal">3339</span>
+<span class="normal">3340</span>
+<span class="normal">3341</span>
+<span class="normal">3342</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">results_header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Metric&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_factors</span>
         <span class="n">results_table_cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">results_header</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;---&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_header</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span>
             <span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span>
@@ -48781,47 +48781,47 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4094</span>
-<span class="normal">4095</span>
-<span class="normal">4096</span>
-<span class="normal">4097</span>
-<span class="normal">4098</span>
-<span class="normal">4099</span>
-<span class="normal">4100</span>
-<span class="normal">4101</span>
-<span class="normal">4102</span>
-<span class="normal">4103</span>
-<span class="normal">4104</span>
-<span class="normal">4105</span>
-<span class="normal">4106</span>
-<span class="normal">4107</span>
-<span class="normal">4108</span>
-<span class="normal">4109</span>
-<span class="normal">4110</span>
-<span class="normal">4111</span>
-<span class="normal">4112</span>
-<span class="normal">4113</span>
-<span class="normal">4114</span>
-<span class="normal">4115</span>
-<span class="normal">4116</span>
-<span class="normal">4117</span>
-<span class="normal">4118</span>
-<span class="normal">4119</span>
-<span class="normal">4120</span>
-<span class="normal">4121</span>
-<span class="normal">4122</span>
-<span class="normal">4123</span>
-<span class="normal">4124</span>
-<span class="normal">4125</span>
-<span class="normal">4126</span>
-<span class="normal">4127</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4127</span>
 <span class="normal">4128</span>
 <span class="normal">4129</span>
 <span class="normal">4130</span>
 <span class="normal">4131</span>
 <span class="normal">4132</span>
 <span class="normal">4133</span>
-<span class="normal">4134</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">4134</span>
+<span class="normal">4135</span>
+<span class="normal">4136</span>
+<span class="normal">4137</span>
+<span class="normal">4138</span>
+<span class="normal">4139</span>
+<span class="normal">4140</span>
+<span class="normal">4141</span>
+<span class="normal">4142</span>
+<span class="normal">4143</span>
+<span class="normal">4144</span>
+<span class="normal">4145</span>
+<span class="normal">4146</span>
+<span class="normal">4147</span>
+<span class="normal">4148</span>
+<span class="normal">4149</span>
+<span class="normal">4150</span>
+<span class="normal">4151</span>
+<span class="normal">4152</span>
+<span class="normal">4153</span>
+<span class="normal">4154</span>
+<span class="normal">4155</span>
+<span class="normal">4156</span>
+<span class="normal">4157</span>
+<span class="normal">4158</span>
+<span class="normal">4159</span>
+<span class="normal">4160</span>
+<span class="normal">4161</span>
+<span class="normal">4162</span>
+<span class="normal">4163</span>
+<span class="normal">4164</span>
+<span class="normal">4165</span>
+<span class="normal">4166</span>
+<span class="normal">4167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_from_old_format_wo_validation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert metadata following an older format version to this classes&#39; format</span>
 <span class="sd">    without validating the result.</span>
@@ -49031,40 +49031,7 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3958</span>
-<span class="normal">3959</span>
-<span class="normal">3960</span>
-<span class="normal">3961</span>
-<span class="normal">3962</span>
-<span class="normal">3963</span>
-<span class="normal">3964</span>
-<span class="normal">3965</span>
-<span class="normal">3966</span>
-<span class="normal">3967</span>
-<span class="normal">3968</span>
-<span class="normal">3969</span>
-<span class="normal">3970</span>
-<span class="normal">3971</span>
-<span class="normal">3972</span>
-<span class="normal">3973</span>
-<span class="normal">3974</span>
-<span class="normal">3975</span>
-<span class="normal">3976</span>
-<span class="normal">3977</span>
-<span class="normal">3978</span>
-<span class="normal">3979</span>
-<span class="normal">3980</span>
-<span class="normal">3981</span>
-<span class="normal">3982</span>
-<span class="normal">3983</span>
-<span class="normal">3984</span>
-<span class="normal">3985</span>
-<span class="normal">3986</span>
-<span class="normal">3987</span>
-<span class="normal">3988</span>
-<span class="normal">3989</span>
-<span class="normal">3990</span>
-<span class="normal">3991</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3991</span>
 <span class="normal">3992</span>
 <span class="normal">3993</span>
 <span class="normal">3994</span>
@@ -49159,7 +49126,40 @@ Or simply whenever you know the full input shape.</p>
 <span class="normal">4083</span>
 <span class="normal">4084</span>
 <span class="normal">4085</span>
-<span class="normal">4086</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes</span><span class="p">(</span>
+<span class="normal">4086</span>
+<span class="normal">4087</span>
+<span class="normal">4088</span>
+<span class="normal">4089</span>
+<span class="normal">4090</span>
+<span class="normal">4091</span>
+<span class="normal">4092</span>
+<span class="normal">4093</span>
+<span class="normal">4094</span>
+<span class="normal">4095</span>
+<span class="normal">4096</span>
+<span class="normal">4097</span>
+<span class="normal">4098</span>
+<span class="normal">4099</span>
+<span class="normal">4100</span>
+<span class="normal">4101</span>
+<span class="normal">4102</span>
+<span class="normal">4103</span>
+<span class="normal">4104</span>
+<span class="normal">4105</span>
+<span class="normal">4106</span>
+<span class="normal">4107</span>
+<span class="normal">4108</span>
+<span class="normal">4109</span>
+<span class="normal">4110</span>
+<span class="normal">4111</span>
+<span class="normal">4112</span>
+<span class="normal">4113</span>
+<span class="normal">4114</span>
+<span class="normal">4115</span>
+<span class="normal">4116</span>
+<span class="normal">4117</span>
+<span class="normal">4118</span>
+<span class="normal">4119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">ns</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">],</span>
     <span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -49317,25 +49317,25 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3886</span>
-<span class="normal">3887</span>
-<span class="normal">3888</span>
-<span class="normal">3889</span>
-<span class="normal">3890</span>
-<span class="normal">3891</span>
-<span class="normal">3892</span>
-<span class="normal">3893</span>
-<span class="normal">3894</span>
-<span class="normal">3895</span>
-<span class="normal">3896</span>
-<span class="normal">3897</span>
-<span class="normal">3898</span>
-<span class="normal">3899</span>
-<span class="normal">3900</span>
-<span class="normal">3901</span>
-<span class="normal">3902</span>
-<span class="normal">3903</span>
-<span class="normal">3904</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3919</span>
+<span class="normal">3920</span>
+<span class="normal">3921</span>
+<span class="normal">3922</span>
+<span class="normal">3923</span>
+<span class="normal">3924</span>
+<span class="normal">3925</span>
+<span class="normal">3926</span>
+<span class="normal">3927</span>
+<span class="normal">3928</span>
+<span class="normal">3929</span>
+<span class="normal">3930</span>
+<span class="normal">3931</span>
+<span class="normal">3932</span>
+<span class="normal">3933</span>
+<span class="normal">3934</span>
+<span class="normal">3935</span>
+<span class="normal">3936</span>
+<span class="normal">3937</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_batch_size</span><span class="p">(</span><span class="n">tensor_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">tensor_with_batchsize</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TensorId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -49377,8 +49377,8 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3864</span>
-<span class="normal">3865</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3897</span>
+<span class="normal">3898</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -49408,22 +49408,22 @@ such that the valid input size is &gt;= the given input size</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3918</span>
-<span class="normal">3919</span>
-<span class="normal">3920</span>
-<span class="normal">3921</span>
-<span class="normal">3922</span>
-<span class="normal">3923</span>
-<span class="normal">3924</span>
-<span class="normal">3925</span>
-<span class="normal">3926</span>
-<span class="normal">3927</span>
-<span class="normal">3928</span>
-<span class="normal">3929</span>
-<span class="normal">3930</span>
-<span class="normal">3931</span>
-<span class="normal">3932</span>
-<span class="normal">3933</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]):</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3951</span>
+<span class="normal">3952</span>
+<span class="normal">3953</span>
+<span class="normal">3954</span>
+<span class="normal">3955</span>
+<span class="normal">3956</span>
+<span class="normal">3957</span>
+<span class="normal">3958</span>
+<span class="normal">3959</span>
+<span class="normal">3960</span>
+<span class="normal">3961</span>
+<span class="normal">3962</span>
+<span class="normal">3963</span>
+<span class="normal">3964</span>
+<span class="normal">3965</span>
+<span class="normal">3966</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;get parameter `n` for each parameterized axis</span>
 <span class="sd">    such that the valid input size is &gt;= the given input size&quot;&quot;&quot;</span>
     <span class="n">ret</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -49468,17 +49468,17 @@ Otherwise it might be larger than the actual (valid) output</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3906</span>
-<span class="normal">3907</span>
-<span class="normal">3908</span>
-<span class="normal">3909</span>
-<span class="normal">3910</span>
-<span class="normal">3911</span>
-<span class="normal">3912</span>
-<span class="normal">3913</span>
-<span class="normal">3914</span>
-<span class="normal">3915</span>
-<span class="normal">3916</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_tensor_sizes</span><span class="p">(</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3939</span>
+<span class="normal">3940</span>
+<span class="normal">3941</span>
+<span class="normal">3942</span>
+<span class="normal">3943</span>
+<span class="normal">3944</span>
+<span class="normal">3945</span>
+<span class="normal">3946</span>
+<span class="normal">3947</span>
+<span class="normal">3948</span>
+<span class="normal">3949</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_tensor_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">_DataDepSize</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the tensor output sizes for given **input_sizes**.</span>
@@ -49512,8 +49512,8 @@ Otherwise it might be larger than the actual (valid) output</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3867</span>
-<span class="normal">3868</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3900</span>
+<span class="normal">3901</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -49601,28 +49601,28 @@ Otherwise it might be larger than the actual (valid) output</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3935</span>
-<span class="normal">3936</span>
-<span class="normal">3937</span>
-<span class="normal">3938</span>
-<span class="normal">3939</span>
-<span class="normal">3940</span>
-<span class="normal">3941</span>
-<span class="normal">3942</span>
-<span class="normal">3943</span>
-<span class="normal">3944</span>
-<span class="normal">3945</span>
-<span class="normal">3946</span>
-<span class="normal">3947</span>
-<span class="normal">3948</span>
-<span class="normal">3949</span>
-<span class="normal">3950</span>
-<span class="normal">3951</span>
-<span class="normal">3952</span>
-<span class="normal">3953</span>
-<span class="normal">3954</span>
-<span class="normal">3955</span>
-<span class="normal">3956</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_tensor_sizes</span><span class="p">(</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3968</span>
+<span class="normal">3969</span>
+<span class="normal">3970</span>
+<span class="normal">3971</span>
+<span class="normal">3972</span>
+<span class="normal">3973</span>
+<span class="normal">3974</span>
+<span class="normal">3975</span>
+<span class="normal">3976</span>
+<span class="normal">3977</span>
+<span class="normal">3978</span>
+<span class="normal">3979</span>
+<span class="normal">3980</span>
+<span class="normal">3981</span>
+<span class="normal">3982</span>
+<span class="normal">3983</span>
+<span class="normal">3984</span>
+<span class="normal">3985</span>
+<span class="normal">3986</span>
+<span class="normal">3987</span>
+<span class="normal">3988</span>
+<span class="normal">3989</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_tensor_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TensorSizes</span><span class="p">:</span>
     <span class="n">axis_sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_axis_sizes</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
@@ -50195,6 +50195,9 @@ Otherwise it might be larger than the actual (valid) output</p>
         <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]],</span>
         <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.TensorId">TensorId</a></span><span class="p">,</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]]],</span>
     <span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.model.v0_5.ModelDescr.validate_input_tensors(pad_inputs)">pad_inputs</span></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="bool">bool</span></span><span class="p">,</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;allow&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.model.v0_5.ModelDescr.validate_input_tensors(crop_outputs)">crop_outputs</span></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="bool">bool</span></span><span class="p">,</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;allow&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.TensorId">TensorId</a></span><span class="p">,</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]]]</span>
 </code></pre></div>
 
@@ -50207,26 +50210,32 @@ This includes checks of tensor shapes and dtypes, but not of the actual values.<
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3613</span>
-<span class="normal">3614</span>
-<span class="normal">3615</span>
-<span class="normal">3616</span>
-<span class="normal">3617</span>
-<span class="normal">3618</span>
-<span class="normal">3619</span>
-<span class="normal">3620</span>
-<span class="normal">3621</span>
-<span class="normal">3622</span>
-<span class="normal">3623</span>
-<span class="normal">3624</span>
-<span class="normal">3625</span>
-<span class="normal">3626</span>
-<span class="normal">3627</span>
-<span class="normal">3628</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_input_tensors</span><span class="p">(</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3638</span>
+<span class="normal">3639</span>
+<span class="normal">3640</span>
+<span class="normal">3641</span>
+<span class="normal">3642</span>
+<span class="normal">3643</span>
+<span class="normal">3644</span>
+<span class="normal">3645</span>
+<span class="normal">3646</span>
+<span class="normal">3647</span>
+<span class="normal">3648</span>
+<span class="normal">3649</span>
+<span class="normal">3650</span>
+<span class="normal">3651</span>
+<span class="normal">3652</span>
+<span class="normal">3653</span>
+<span class="normal">3654</span>
+<span class="normal">3655</span>
+<span class="normal">3656</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_input_tensors</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">sources</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
         <span class="n">Sequence</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span>
     <span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">pad_inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;allow&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">crop_outputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;allow&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the given input tensors match the model&#39;s input tensor descriptions.</span>
 <span class="sd">    This includes checks of tensor shapes and dtypes, but not of the actual values.</span>
@@ -50235,7 +50244,7 @@ This includes checks of tensor shapes and dtypes, but not of the actual values.<
         <span class="n">sources</span> <span class="o">=</span> <span class="p">{</span><span class="n">descr</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="n">tensor</span> <span class="k">for</span> <span class="n">descr</span><span class="p">,</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">,</span> <span class="n">sources</span><span class="p">)}</span>
 
     <span class="n">tensors</span> <span class="o">=</span> <span class="p">{</span><span class="n">descr</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="p">(</span><span class="n">descr</span><span class="p">,</span> <span class="n">sources</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">descr</span><span class="o">.</span><span class="n">id</span><span class="p">))</span> <span class="k">for</span> <span class="n">descr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">}</span>
-    <span class="n">validate_tensors</span><span class="p">(</span><span class="n">tensors</span><span class="p">)</span>
+    <span class="n">validate_tensors</span><span class="p">(</span><span class="n">tensors</span><span class="p">,</span> <span class="n">pad_inputs</span><span class="o">=</span><span class="n">pad_inputs</span><span class="p">,</span> <span class="n">crop_outputs</span><span class="o">=</span><span class="n">crop_outputs</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">sources</span>
 </code></pre></div></td></tr></table></div>
@@ -84197,31 +84206,31 @@ post-release suffixes.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2889</span>
-<span class="normal">2890</span>
-<span class="normal">2891</span>
-<span class="normal">2892</span>
-<span class="normal">2893</span>
-<span class="normal">2894</span>
-<span class="normal">2895</span>
-<span class="normal">2896</span>
-<span class="normal">2897</span>
-<span class="normal">2898</span>
-<span class="normal">2899</span>
-<span class="normal">2900</span>
-<span class="normal">2901</span>
-<span class="normal">2902</span>
-<span class="normal">2903</span>
-<span class="normal">2904</span>
-<span class="normal">2905</span>
-<span class="normal">2906</span>
-<span class="normal">2907</span>
-<span class="normal">2908</span>
-<span class="normal">2909</span>
-<span class="normal">2910</span>
-<span class="normal">2911</span>
-<span class="normal">2912</span>
-<span class="normal">2913</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2914</span>
+<span class="normal">2915</span>
+<span class="normal">2916</span>
+<span class="normal">2917</span>
+<span class="normal">2918</span>
+<span class="normal">2919</span>
+<span class="normal">2920</span>
+<span class="normal">2921</span>
+<span class="normal">2922</span>
+<span class="normal">2923</span>
+<span class="normal">2924</span>
+<span class="normal">2925</span>
+<span class="normal">2926</span>
+<span class="normal">2927</span>
+<span class="normal">2928</span>
+<span class="normal">2929</span>
+<span class="normal">2930</span>
+<span class="normal">2931</span>
+<span class="normal">2932</span>
+<span class="normal">2933</span>
+<span class="normal">2934</span>
+<span class="normal">2935</span>
+<span class="normal">2936</span>
+<span class="normal">2937</span>
+<span class="normal">2938</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="n">WeightsFormat</span><span class="p">,</span>
 <span class="p">):</span>
@@ -84301,32 +84310,7 @@ post-release suffixes.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2948</span>
-<span class="normal">2949</span>
-<span class="normal">2950</span>
-<span class="normal">2951</span>
-<span class="normal">2952</span>
-<span class="normal">2953</span>
-<span class="normal">2954</span>
-<span class="normal">2955</span>
-<span class="normal">2956</span>
-<span class="normal">2957</span>
-<span class="normal">2958</span>
-<span class="normal">2959</span>
-<span class="normal">2960</span>
-<span class="normal">2961</span>
-<span class="normal">2962</span>
-<span class="normal">2963</span>
-<span class="normal">2964</span>
-<span class="normal">2965</span>
-<span class="normal">2966</span>
-<span class="normal">2967</span>
-<span class="normal">2968</span>
-<span class="normal">2969</span>
-<span class="normal">2970</span>
-<span class="normal">2971</span>
-<span class="normal">2972</span>
-<span class="normal">2973</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2973</span>
 <span class="normal">2974</span>
 <span class="normal">2975</span>
 <span class="normal">2976</span>
@@ -84353,7 +84337,32 @@ post-release suffixes.</p>
 <span class="normal">2997</span>
 <span class="normal">2998</span>
 <span class="normal">2999</span>
-<span class="normal">3000</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span>
+<span class="normal">3000</span>
+<span class="normal">3001</span>
+<span class="normal">3002</span>
+<span class="normal">3003</span>
+<span class="normal">3004</span>
+<span class="normal">3005</span>
+<span class="normal">3006</span>
+<span class="normal">3007</span>
+<span class="normal">3008</span>
+<span class="normal">3009</span>
+<span class="normal">3010</span>
+<span class="normal">3011</span>
+<span class="normal">3012</span>
+<span class="normal">3013</span>
+<span class="normal">3014</span>
+<span class="normal">3015</span>
+<span class="normal">3016</span>
+<span class="normal">3017</span>
+<span class="normal">3018</span>
+<span class="normal">3019</span>
+<span class="normal">3020</span>
+<span class="normal">3021</span>
+<span class="normal">3022</span>
+<span class="normal">3023</span>
+<span class="normal">3024</span>
+<span class="normal">3025</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="n">WeightsFormat</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SpecificWeightsDescr</span><span class="p">],</span>
@@ -84433,32 +84442,7 @@ post-release suffixes.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2849</span>
-<span class="normal">2850</span>
-<span class="normal">2851</span>
-<span class="normal">2852</span>
-<span class="normal">2853</span>
-<span class="normal">2854</span>
-<span class="normal">2855</span>
-<span class="normal">2856</span>
-<span class="normal">2857</span>
-<span class="normal">2858</span>
-<span class="normal">2859</span>
-<span class="normal">2860</span>
-<span class="normal">2861</span>
-<span class="normal">2862</span>
-<span class="normal">2863</span>
-<span class="normal">2864</span>
-<span class="normal">2865</span>
-<span class="normal">2866</span>
-<span class="normal">2867</span>
-<span class="normal">2868</span>
-<span class="normal">2869</span>
-<span class="normal">2870</span>
-<span class="normal">2871</span>
-<span class="normal">2872</span>
-<span class="normal">2873</span>
-<span class="normal">2874</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2874</span>
 <span class="normal">2875</span>
 <span class="normal">2876</span>
 <span class="normal">2877</span>
@@ -84471,7 +84455,32 @@ post-release suffixes.</p>
 <span class="normal">2884</span>
 <span class="normal">2885</span>
 <span class="normal">2886</span>
-<span class="normal">2887</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+<span class="normal">2887</span>
+<span class="normal">2888</span>
+<span class="normal">2889</span>
+<span class="normal">2890</span>
+<span class="normal">2891</span>
+<span class="normal">2892</span>
+<span class="normal">2893</span>
+<span class="normal">2894</span>
+<span class="normal">2895</span>
+<span class="normal">2896</span>
+<span class="normal">2897</span>
+<span class="normal">2898</span>
+<span class="normal">2899</span>
+<span class="normal">2900</span>
+<span class="normal">2901</span>
+<span class="normal">2902</span>
+<span class="normal">2903</span>
+<span class="normal">2904</span>
+<span class="normal">2905</span>
+<span class="normal">2906</span>
+<span class="normal">2907</span>
+<span class="normal">2908</span>
+<span class="normal">2909</span>
+<span class="normal">2910</span>
+<span class="normal">2911</span>
+<span class="normal">2912</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
     <span class="n">entries</span> <span class="o">=</span> <span class="p">{</span><span class="n">wtype</span> <span class="k">for</span> <span class="n">wtype</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
 
@@ -87619,40 +87628,7 @@ Default: Scale all axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4351</span>
-<span class="normal">4352</span>
-<span class="normal">4353</span>
-<span class="normal">4354</span>
-<span class="normal">4355</span>
-<span class="normal">4356</span>
-<span class="normal">4357</span>
-<span class="normal">4358</span>
-<span class="normal">4359</span>
-<span class="normal">4360</span>
-<span class="normal">4361</span>
-<span class="normal">4362</span>
-<span class="normal">4363</span>
-<span class="normal">4364</span>
-<span class="normal">4365</span>
-<span class="normal">4366</span>
-<span class="normal">4367</span>
-<span class="normal">4368</span>
-<span class="normal">4369</span>
-<span class="normal">4370</span>
-<span class="normal">4371</span>
-<span class="normal">4372</span>
-<span class="normal">4373</span>
-<span class="normal">4374</span>
-<span class="normal">4375</span>
-<span class="normal">4376</span>
-<span class="normal">4377</span>
-<span class="normal">4378</span>
-<span class="normal">4379</span>
-<span class="normal">4380</span>
-<span class="normal">4381</span>
-<span class="normal">4382</span>
-<span class="normal">4383</span>
-<span class="normal">4384</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4384</span>
 <span class="normal">4385</span>
 <span class="normal">4386</span>
 <span class="normal">4387</span>
@@ -87804,7 +87780,40 @@ Default: Scale all axes jointly.</p>
 <span class="normal">4533</span>
 <span class="normal">4534</span>
 <span class="normal">4535</span>
-<span class="normal">4536</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_covers</span><span class="p">(</span>
+<span class="normal">4536</span>
+<span class="normal">4537</span>
+<span class="normal">4538</span>
+<span class="normal">4539</span>
+<span class="normal">4540</span>
+<span class="normal">4541</span>
+<span class="normal">4542</span>
+<span class="normal">4543</span>
+<span class="normal">4544</span>
+<span class="normal">4545</span>
+<span class="normal">4546</span>
+<span class="normal">4547</span>
+<span class="normal">4548</span>
+<span class="normal">4549</span>
+<span class="normal">4550</span>
+<span class="normal">4551</span>
+<span class="normal">4552</span>
+<span class="normal">4553</span>
+<span class="normal">4554</span>
+<span class="normal">4555</span>
+<span class="normal">4556</span>
+<span class="normal">4557</span>
+<span class="normal">4558</span>
+<span class="normal">4559</span>
+<span class="normal">4560</span>
+<span class="normal">4561</span>
+<span class="normal">4562</span>
+<span class="normal">4563</span>
+<span class="normal">4564</span>
+<span class="normal">4565</span>
+<span class="normal">4566</span>
+<span class="normal">4567</span>
+<span class="normal">4568</span>
+<span class="normal">4569</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_covers</span><span class="p">(</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">InputTensorDescr</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">OutputTensorDescr</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
@@ -88107,16 +88116,100 @@ Default: Scale all axes jointly.</p>
 
 <a href="#bioimageio.spec.model.v0_5.validate_tensors" class="headerlink" title="Anchor link to this section for reference">¤</a></h2>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">validate_tensors</span><span class="p">(</span>
-    <span class="n"><span title="bioimageio.spec.model.v0_5.validate_tensors(tensors)">tensors</span></span><span class="p">:</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.validate_tensors(tensors)">tensors</a></span><span class="p">:</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span>
         <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.TensorId">TensorId</a></span><span class="p">,</span> <span class="n"><span title="typing.Tuple">Tuple</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.TensorDescr">TensorDescr</a></span><span class="p">,</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="numpy.typing.NDArray">NDArray</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]]]</span>
     <span class="p">],</span>
-    <span class="n"><span title="bioimageio.spec.model.v0_5.validate_tensors(tensor_origin)">tensor_origin</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.validate_tensors(tensor_origin)">tensor_origin</a></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span>
         <span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;test_tensor&quot;</span>
     <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.validate_tensors(pad_inputs)">pad_inputs</a></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="bool">bool</span></span><span class="p">,</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;allow&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.validate_tensors(crop_outputs)">crop_outputs</a></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="bool">bool</span></span><span class="p">,</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;allow&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
+
+        <p>Validate all inputs (and optionally output tensors) against their tensor descriptions.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.model.v0_5.validate_tensors(tensors)" class="doc doc-heading doc-heading-parameter">                  <code>tensors</code>
+<a href="#bioimageio.spec.model.v0_5.validate_tensors(tensors)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><span title="typing.Mapping">Mapping</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.TensorId">TensorId</a>, <span title="typing.Tuple">Tuple</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.TensorDescr">TensorDescr</a>, <span title="typing.Optional">Optional</span>[<span title="numpy.typing.NDArray">NDArray</span>[<span title="typing.Any">Any</span>]]]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Mapping of tensor id to a tuple of tensor description and optional numpy array.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.model.v0_5.validate_tensors(tensor_origin)" class="doc doc-heading doc-heading-parameter">                  <code>tensor_origin</code>
+<a href="#bioimageio.spec.model.v0_5.validate_tensors(tensor_origin)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><span title="typing.Literal">Literal</span>[&#39;source&#39;, &#39;test_tensor&#39;]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>String to use in error messages to indicate the origin of the tensors being validated.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;source&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.model.v0_5.validate_tensors(pad_inputs)" class="doc doc-heading doc-heading-parameter">                  <code>pad_inputs</code>
+<a href="#bioimageio.spec.model.v0_5.validate_tensors(pad_inputs)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><span title="typing.Union">Union</span>[<span title="bool">bool</span>, <span title="typing.Literal">Literal</span>[&#39;allow&#39;]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Wether to apply/allow padding of inputs before shape comparison</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.model.v0_5.validate_tensors(crop_outputs)" class="doc doc-heading doc-heading-parameter">                  <code>crop_outputs</code>
+<a href="#bioimageio.spec.model.v0_5.validate_tensors(crop_outputs)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><span title="typing.Union">Union</span>[<span title="bool">bool</span>, <span title="typing.Literal">Literal</span>[&#39;allow&#39;]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Wether to apply/allow cropping of outputs before shape comparison.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
           
 
@@ -88248,12 +88341,48 @@ Default: Scale all axes jointly.</p>
 <span class="normal">2587</span>
 <span class="normal">2588</span>
 <span class="normal">2589</span>
-<span class="normal">2590</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_tensors</span><span class="p">(</span>
+<span class="normal">2590</span>
+<span class="normal">2591</span>
+<span class="normal">2592</span>
+<span class="normal">2593</span>
+<span class="normal">2594</span>
+<span class="normal">2595</span>
+<span class="normal">2596</span>
+<span class="normal">2597</span>
+<span class="normal">2598</span>
+<span class="normal">2599</span>
+<span class="normal">2600</span>
+<span class="normal">2601</span>
+<span class="normal">2602</span>
+<span class="normal">2603</span>
+<span class="normal">2604</span>
+<span class="normal">2605</span>
+<span class="normal">2606</span>
+<span class="normal">2607</span>
+<span class="normal">2608</span>
+<span class="normal">2609</span>
+<span class="normal">2610</span>
+<span class="normal">2611</span>
+<span class="normal">2612</span>
+<span class="normal">2613</span>
+<span class="normal">2614</span>
+<span class="normal">2615</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_tensors</span><span class="p">(</span>
     <span class="n">tensors</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">TensorDescr</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]],</span>
     <span class="n">tensor_origin</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
         <span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;test_tensor&quot;</span>
     <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;source&quot;</span><span class="p">,</span>  <span class="c1"># for more precise error messages</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">pad_inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;allow&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">crop_outputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;allow&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate all inputs (and optionally output tensors) against their tensor descriptions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensors: Mapping of tensor id to a tuple of tensor description and optional numpy array.</span>
+<span class="sd">        tensor_origin: String to use in error messages to indicate the origin of the tensors being validated.</span>
+<span class="sd">        pad_inputs: Wether to apply/allow padding of inputs before shape comparison</span>
+<span class="sd">        crop_outputs: Wether to apply/allow cropping of outputs before shape comparison.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">all_tensor_axes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">AnyAxis</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">e_msg_location</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="n">TensorDescr</span><span class="p">):</span>
@@ -88270,7 +88399,8 @@ Default: Scale all axes jointly.</p>
 
         <span class="n">all_tensor_axes</span><span class="p">[</span><span class="n">descr</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis_sizes</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">id</span><span class="p">])</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">descr</span><span class="o">.</span><span class="n">axes</span><span class="p">}</span>
 
-    <span class="n">halos</span> <span class="o">=</span> <span class="n">get_halos</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tensors</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+    <span class="c1"># get halos to be padded/cropped to validate against halo-adjusted sizes</span>
+    <span class="n">io_halos</span> <span class="o">=</span> <span class="n">get_halos</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tensors</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
 
     <span class="k">for</span> <span class="n">descr</span><span class="p">,</span> <span class="n">array</span> <span class="ow">in</span> <span class="n">tensors</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">array</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -88313,32 +88443,45 @@ Default: Scale all axes jointly.</p>
             <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="n">actual_size_unchanged</span> <span class="o">=</span> <span class="n">actual_size</span>
             <span class="c1"># add padding width to actual tensor size</span>
-            <span class="n">total_axis_halo</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">halos</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">descr</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+            <span class="n">total_axis_halo</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">io_halos</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">descr</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">descr</span><span class="p">,</span> <span class="n">InputTensorDescr</span><span class="p">):</span>
                 <span class="c1"># pad input halos</span>
                 <span class="n">actual_size_with_halo</span> <span class="o">=</span> <span class="n">actual_size</span> <span class="o">+</span> <span class="n">total_axis_halo</span>
+                <span class="k">if</span> <span class="n">pad_inputs</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">check_sizes</span> <span class="o">=</span> <span class="p">{</span><span class="n">actual_size_with_halo</span><span class="p">}</span>
+                <span class="k">elif</span> <span class="n">pad_inputs</span> <span class="o">==</span> <span class="s2">&quot;allow&quot;</span><span class="p">:</span>
+                    <span class="n">check_sizes</span> <span class="o">=</span> <span class="p">{</span><span class="n">actual_size</span><span class="p">,</span> <span class="n">actual_size_with_halo</span><span class="p">}</span>
+                <span class="k">elif</span> <span class="n">pad_inputs</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="n">check_sizes</span> <span class="o">=</span> <span class="p">{</span><span class="n">actual_size</span><span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">assert_never</span><span class="p">(</span><span class="n">pad_inputs</span><span class="p">)</span>
+
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">descr</span><span class="p">,</span> <span class="n">OutputTensorDescr</span><span class="p">):</span>
                 <span class="c1"># crop output halos</span>
                 <span class="n">actual_size_with_halo</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">actual_size</span> <span class="o">-</span> <span class="n">total_axis_halo</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">crop_outputs</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">check_sizes</span> <span class="o">=</span> <span class="p">{</span><span class="n">actual_size_with_halo</span><span class="p">}</span>
+                <span class="k">elif</span> <span class="n">crop_outputs</span> <span class="o">==</span> <span class="s2">&quot;allow&quot;</span><span class="p">:</span>
+                    <span class="n">check_sizes</span> <span class="o">=</span> <span class="p">{</span><span class="n">actual_size</span><span class="p">,</span> <span class="n">actual_size_with_halo</span><span class="p">}</span>
+                <span class="k">elif</span> <span class="n">crop_outputs</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="n">check_sizes</span> <span class="o">=</span> <span class="p">{</span><span class="n">actual_size</span><span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">assert_never</span><span class="p">(</span><span class="n">crop_outputs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">assert_never</span><span class="p">(</span><span class="n">descr</span><span class="p">)</span>
 
             <span class="k">del</span> <span class="n">actual_size</span>  <span class="c1"># make sure we explicitly use unchanged or halo-adjusted size from here on</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">actual_size_with_halo</span><span class="p">,</span> <span class="n">actual_size_unchanged</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">check_sizes</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e_msg_location</span><span class="p">(</span><span class="n">descr</span><span class="p">)</span><span class="si">}</span><span class="s2">.axes[</span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="n">tensor_origin</span><span class="si">}</span><span class="s2"> axis &quot;</span>
-                        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;has incompatible size </span><span class="si">{</span><span class="n">actual_size_unchanged</span><span class="si">}</span><span class="s2">, expected </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;has incompatible size </span><span class="si">{</span><span class="n">check_sizes</span><span class="si">}</span><span class="s2">, expected </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="p">(</span><span class="n">ParameterizedSize</span><span class="p">,</span> <span class="n">DataDependentSize</span><span class="p">)):</span>
                 <span class="n">_</span> <span class="o">=</span> <span class="n">try_all_raise_last</span><span class="p">(</span>
-                    <span class="p">(</span>
-                        <span class="n">partial</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">validate_size</span><span class="p">,</span> <span class="n">actual_size_with_halo</span><span class="p">),</span>
-                        <span class="n">partial</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">validate_size</span><span class="p">,</span> <span class="n">actual_size_unchanged</span><span class="p">),</span>
-                    <span class="p">),</span>
+                    <span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">validate_size</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">check_sizes</span><span class="p">),</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e_msg_location</span><span class="p">(</span><span class="n">descr</span><span class="p">)</span><span class="si">}</span><span class="s2">.axes[</span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="n">tensor_origin</span><span class="si">}</span><span class="s2"> axis &quot;</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">SizeReference</span><span class="p">):</span>
@@ -88367,10 +88510,10 @@ Default: Scale all axes jointly.</p>
                     <span class="n">expected_size</span> <span class="o">:=</span> <span class="p">(</span>
                         <span class="n">ref_size</span> <span class="o">*</span> <span class="n">ref_axis</span><span class="o">.</span><span class="n">scale</span> <span class="o">/</span> <span class="n">a</span><span class="o">.</span><span class="n">scale</span> <span class="o">+</span> <span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">offset</span>
                     <span class="p">)</span>
-                <span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">actual_size_with_halo</span><span class="p">,</span> <span class="n">actual_size_unchanged</span><span class="p">):</span>
+                <span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">check_sizes</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e_msg_location</span><span class="p">(</span><span class="n">descr</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">tensor_origin</span><span class="si">}</span><span class="s2">: axis &#39;</span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&#39; of size&quot;</span>
-                        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">actual_size_unchanged</span><span class="si">}</span><span class="s2"> invalid for referenced size </span><span class="si">{</span><span class="n">ref_size</span><span class="si">}</span><span class="s2">;&quot;</span>
+                        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">check_sizes</span><span class="si">}</span><span class="s2"> invalid for referenced size </span><span class="si">{</span><span class="n">ref_size</span><span class="si">}</span><span class="s2">;&quot;</span>
                         <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; expected </span><span class="si">{</span><span class="n">expected_size</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
