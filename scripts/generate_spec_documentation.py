@@ -475,14 +475,15 @@ def export_documentation(folder: Path, rd_class: Type[ResourceDescr]) -> Path:
     if footnotes:
         md += "\n"
 
-    for file_path in [
+    file_paths = [
         folder / get_documentation_file_name(rd_class, minor=True),
         folder / get_documentation_file_name(rd_class),
-    ]:
+    ]
+    for file_path in file_paths:
         _ = file_path.write_text(md, encoding="utf-8")
         print(f"written {file_path}")
 
-    return file_path  # type: ignore
+    return file_paths[-1]
 
 
 def export_module_documentations(folder: Path, module: ModuleType):

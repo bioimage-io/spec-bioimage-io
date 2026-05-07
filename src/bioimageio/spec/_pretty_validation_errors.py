@@ -1,7 +1,7 @@
 import warnings
 from pprint import pformat
 from types import TracebackType
-from typing import Any, List, Type, Union
+from typing import Any, List, Type
 
 from pydantic import ValidationError
 
@@ -48,8 +48,7 @@ try:
         assert issubclass(etype, ValidationError), type(etype)
         assert isinstance(evalue, ValidationError), type(etype)
 
-        stb: Union[Any, List[Union[str, Any]]]
-        stb = self.InteractiveTB.structured_traceback(
+        stb = self.InteractiveTB.structured_traceback(  # pyright: ignore
             etype, PrettyValidationError(evalue), tb, tb_offset=tb_offset
         )
 
