@@ -5143,7 +5143,9 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_update.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span>
@@ -5207,11 +5209,7 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
 <span class="normal">86</span>
 <span class="normal">87</span>
 <span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_format</span><span class="p">(</span>
+<span class="normal">89</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_format</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
         <span class="n">ResourceDescr</span><span class="p">,</span>
         <span class="n">PermissiveFileSource</span><span class="p">,</span>
@@ -5274,10 +5272,8 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
             <span class="n">_</span> <span class="o">=</span> <span class="n">save_bioimageio_package_as_folder</span><span class="p">(</span><span class="n">descr</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_</span> <span class="o">=</span> <span class="n">save_bioimageio_package</span><span class="p">(</span><span class="n">descr</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">):</span>
-        <span class="n">save_bioimageio_yaml_only</span><span class="p">(</span><span class="n">descr</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">assert_never</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="n">save_bioimageio_yaml_only</span><span class="p">(</span><span class="n">descr</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">descr</span>
 </code></pre></div></td></tr></table></div>
@@ -5312,7 +5308,11 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_update.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 96</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
 <span class="normal"> 97</span>
 <span class="normal"> 98</span>
 <span class="normal"> 99</span>
@@ -5326,11 +5326,7 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
 <span class="normal">107</span>
 <span class="normal">108</span>
 <span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_hashes</span><span class="p">(</span>
+<span class="normal">110</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_hashes</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PermissiveFileSource</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">,</span> <span class="n">ResourceDescr</span><span class="p">,</span> <span class="n">BioimageioYamlContent</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ResourceDescr</span><span class="p">,</span> <span class="n">InvalidDescr</span><span class="p">]:</span>
