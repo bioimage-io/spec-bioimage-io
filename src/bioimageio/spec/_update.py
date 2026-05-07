@@ -4,8 +4,6 @@ from pathlib import Path
 from typing import Optional, TextIO, Union
 from zipfile import ZipFile
 
-from typing_extensions import assert_never
-
 from ._description import (
     LATEST,
     InvalidDescr,
@@ -85,10 +83,8 @@ def update_format(
             _ = save_bioimageio_package_as_folder(descr, output_path=output)
         else:
             _ = save_bioimageio_package(descr, output_path=output)
-    elif isinstance(output, TextIO):
-        save_bioimageio_yaml_only(descr, file=output, exclude_defaults=exclude_defaults)
     else:
-        assert_never(output)
+        save_bioimageio_yaml_only(descr, file=output, exclude_defaults=exclude_defaults)
 
     return descr
 
