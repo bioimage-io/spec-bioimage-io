@@ -357,6 +357,66 @@
       "title": "model.v0_5.BinarizeKwargs",
       "type": "object"
     },
+    "CellposeFlowDynamicsDescr": {
+      "additionalProperties": false,
+      "description": "Cellpose flow dynamics postprocessing as described in:\n- Carsen Stringer and Marius Pachitariu. [*Cellpose: a generalist algorithm for cellular segmentation*](https://www.nature.com/articles/s41592-020-01018-x). Nature Methods, 2021.\n\nNote: Only available if the `cellpose` package is installed.",
+      "properties": {
+        "id": {
+          "const": "cellpose_flow_dynamics",
+          "title": "Id",
+          "type": "string"
+        },
+        "kwargs": {
+          "$ref": "#/$defs/CellposeFlowDynamicsKwargs"
+        }
+      },
+      "required": [
+        "id",
+        "kwargs"
+      ],
+      "title": "model.v0_5.CellposeFlowDynamicsDescr",
+      "type": "object"
+    },
+    "CellposeFlowDynamicsKwargs": {
+      "additionalProperties": false,
+      "description": "key word arguments for `CellposeFlowDynamicsDescr`",
+      "properties": {
+        "cellprob_threshold": {
+          "title": "Cellprob Threshold",
+          "type": "number"
+        },
+        "flow_threshold": {
+          "title": "Flow Threshold",
+          "type": "number"
+        },
+        "do_3D": {
+          "title": "Do 3D",
+          "type": "boolean"
+        },
+        "min_size": {
+          "default": 15,
+          "description": "Minimum size of objects to keep, in pixels. Default is 15, which is the default in Cellpose. Set to 0 to disable filtering by size.",
+          "title": "Min Size",
+          "type": "integer"
+        },
+        "output_dtype": {
+          "default": "uint16",
+          "enum": [
+            "uint16",
+            "uint32"
+          ],
+          "title": "Output Dtype",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cellprob_threshold",
+        "flow_threshold",
+        "do_3D"
+      ],
+      "title": "model.v0_5.CellposeFlowDynamicsKwargs",
+      "type": "object"
+    },
     "ChannelAxis": {
       "additionalProperties": false,
       "properties": {
@@ -507,6 +567,105 @@
       "title": "model.v0_5.ClipKwargs",
       "type": "object"
     },
+    "ConstantPadding": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "constant",
+          "default": "constant",
+          "title": "Mode",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "default": 0,
+          "title": "Value"
+        }
+      },
+      "title": "model.v0_5.ConstantPadding",
+      "type": "object"
+    },
+    "CustomProcessingDescr": {
+      "additionalProperties": false,
+      "description": "Custom (post)processing op \u2014 source file shipped inline with the model.\n\nSupports (post)processing that cannot be expressed by the built-in named\noperations (watershed, connected components, etc.)\nusing a simple Python callable interface.\n\nThe op is implemented in a ``.py`` file packaged alongside the model weights.\nTwo styles are supported:\n\n*Callable class* \u2014 kwargs go to ``__init__``, tensors arrive in ``__call__``:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    class my_postprocess:\n        def __init__(self, threshold: float = 0.5) -> None:\n            self.threshold = threshold\n        def __call__(self, *arrays: np.ndarray) -> np.ndarray:\n            # arrays = model output tensors in rdf.yaml declaration order\n            return (arrays[0] > self.threshold).astype(np.uint8)\n\n*Factory function* \u2014 alternative closure style, identical runtime behaviour:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    def my_postprocess(threshold: float = 0.5):\n        def run(*arrays: np.ndarray) -> np.ndarray:\n            return (arrays[0] > threshold).astype(np.uint8)\n        return run\n\nReference it in ``rdf.yaml`` with the source file included in the package:\n\n.. code-block:: yaml\n\n    postprocessing:\n      - id: custom\n        callable: my_postprocess   # class or function name in source\n        source: my_postprocess.py  # packaged alongside weights\n        sha256: <hash>             # sha256 of the source file\n        kwargs:                    # forwarded to __init__ / factory\n          threshold: 0.5\n\n**Security:** source files are SHA-256 verified before execution.\nExecution requires explicit opt-in in bioimageio.core and curator\nreview before Zoo publication.",
+      "properties": {
+        "source": {
+          "anyOf": [
+            {
+              "description": "A URL with the HTTP or HTTPS scheme.",
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "title": "HttpUrl",
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/RelativeFilePath"
+            },
+            {
+              "format": "file-path",
+              "title": "FilePath",
+              "type": "string"
+            }
+          ],
+          "description": "Python source file (included when packaging the model).",
+          "title": "Source"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "description": "A SHA-256 hash value",
+              "maxLength": 64,
+              "minLength": 64,
+              "title": "Sha256",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SHA256 hash value of the **source** file.",
+          "title": "Sha256"
+        },
+        "id": {
+          "const": "custom",
+          "title": "Id",
+          "type": "string"
+        },
+        "callable": {
+          "description": "Name of the callable class or factory function defined in ``source``.\n\nAt runtime: ``op = callable(**kwargs)``, then ``result = op(*output_tensors)``\nper image.  Both a class with ``__call__`` and a factory function returning\na callable satisfy this protocol.",
+          "examples": [
+            "my_postprocess_factory",
+            "MyPostprocessClass"
+          ],
+          "title": "Callable",
+          "type": "string"
+        },
+        "kwargs": {
+          "additionalProperties": {
+            "$ref": "#/$defs/YamlValue"
+          },
+          "description": "Keyword arguments forwarded to the callable (``__init__`` or factory).",
+          "title": "Kwargs",
+          "type": "object"
+        }
+      },
+      "required": [
+        "source",
+        "id",
+        "callable"
+      ],
+      "title": "model.v0_5.CustomProcessingDescr",
+      "type": "object"
+    },
     "DataDependentSize": {
       "additionalProperties": false,
       "properties": {
@@ -538,6 +697,19 @@
       "format": "date-time",
       "title": "Datetime",
       "type": "string"
+    },
+    "EdgePadding": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "edge",
+          "default": "edge",
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "title": "model.v0_5.EdgePadding",
+      "type": "object"
     },
     "EnsureDtypeDescr": {
       "additionalProperties": false,
@@ -1172,6 +1344,28 @@
           "description": "indicates that this tensor may be `None`",
           "title": "Optional",
           "type": "boolean"
+        },
+        "pad": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ConstantPadding"
+            },
+            {
+              "$ref": "#/$defs/EdgePadding"
+            },
+            {
+              "$ref": "#/$defs/ReflectPadding"
+            },
+            {
+              "$ref": "#/$defs/SymmetricPadding"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Explicitly specify how to pad this input tensor.\n\nUse `axes[i].pad` to specify padding width.\n\nNote:\n  Non-blockwise sample prediction only applies padding for axes with a `pad` specification.",
+          "title": "Pad"
         },
         "preprocessing": {
           "description": "Description of how this input should be preprocessed.\n\nnotes:\n- If preprocessing does not start with an 'ensure_dtype' entry, it is added\n  to ensure an input tensor's data type matches the input tensor's data description.\n- If preprocessing does not end with an 'ensure_dtype' or 'binarize' entry, an\n  'ensure_dtype' step is added to ensure preprocessing steps are not unintentionally\n  changing the data type.",
@@ -1971,7 +2165,9 @@
             "discriminator": {
               "mapping": {
                 "binarize": "#/$defs/BinarizeDescr",
+                "cellpose_flow_dynamics": "#/$defs/CellposeFlowDynamicsDescr",
                 "clip": "#/$defs/ClipDescr",
+                "custom": "#/$defs/CustomProcessingDescr",
                 "ensure_dtype": "#/$defs/EnsureDtypeDescr",
                 "fixed_zero_mean_unit_variance": "#/$defs/FixedZeroMeanUnitVarianceDescr",
                 "scale_linear": "#/$defs/ScaleLinearDescr",
@@ -1989,7 +2185,13 @@
                 "$ref": "#/$defs/BinarizeDescr"
               },
               {
+                "$ref": "#/$defs/CellposeFlowDynamicsDescr"
+              },
+              {
                 "$ref": "#/$defs/ClipDescr"
+              },
+              {
+                "$ref": "#/$defs/CustomProcessingDescr"
               },
               {
                 "$ref": "#/$defs/EnsureDtypeDescr"
@@ -2172,6 +2374,12 @@
           ],
           "default": null,
           "description": "Custom depencies beyond pytorch described in a Conda environment file.\nAllows to specify custom dependencies, see conda docs:\n- [Exporting an environment file across platforms](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#exporting-an-environment-file-across-platforms)\n- [Creating an environment file manually](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-file-manually)\n\nThe conda environment file should include pytorch and any version pinning has to be compatible with\n**pytorch_version**."
+        },
+        "strict": {
+          "default": true,
+          "description": "Whether to allow missing or unexpected keys or to be strict about the architecture matching the state dict weights.",
+          "title": "Strict",
+          "type": "boolean"
         }
       },
       "required": [
@@ -2180,6 +2388,19 @@
         "pytorch_version"
       ],
       "title": "model.v0_5.PytorchStateDictWeightsDescr",
+      "type": "object"
+    },
+    "ReflectPadding": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "reflect",
+          "default": "reflect",
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "title": "model.v0_5.ReflectPadding",
       "type": "object"
     },
     "RelativeFilePath": {
@@ -3188,6 +3409,19 @@
         "anisotropy"
       ],
       "title": "model.v0_5.StardistPostprocessingKwargs3D",
+      "type": "object"
+    },
+    "SymmetricPadding": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "symmetric",
+          "default": "symmetric",
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "title": "model.v0_5.SymmetricPadding",
       "type": "object"
     },
     "TensorflowJsWeightsDescr": {
@@ -7881,7 +8115,7 @@
       "title": "Version Comment"
     },
     "format_version": {
-      "const": "0.5.9",
+      "const": "0.5.10",
       "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
       "title": "Format Version",
       "type": "string"
@@ -8030,6 +8264,6 @@
     "outputs",
     "weights"
   ],
-  "title": "model 0.5.9",
+  "title": "model 0.5.10",
   "type": "object"
 }
