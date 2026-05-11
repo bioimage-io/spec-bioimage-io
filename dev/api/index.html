@@ -4058,7 +4058,7 @@ description is valid and of type 'model'.</p>
             <span class="p">]</span>
         <span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n"><span title="bioimageio.spec.save_bioimageio_package(allow_invalid)">allow_invalid</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package(allow_invalid)">allow_invalid</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.FilePath">FilePath</a></span>
 </code></pre></div>
 
@@ -4158,6 +4158,22 @@ description is valid and of type 'model'.</p>
             </td>
             <td>
                   <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.save_bioimageio_package(allow_invalid)" class="doc doc-heading doc-heading-parameter">                  <code>allow_invalid</code>
+<a href="#bioimageio.spec.save_bioimageio_package(allow_invalid)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True, do not raise an error if the exported package is invalid, but log an error instead.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
             </td>
           </tr>
       </tbody>
@@ -4273,7 +4289,8 @@ description is valid and of type 'model'.</p>
 <span class="normal">275</span>
 <span class="normal">276</span>
 <span class="normal">277</span>
-<span class="normal">278</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package</span><span class="p">(</span>
+<span class="normal">278</span>
+<span class="normal">279</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BioimageioYamlSource</span><span class="p">,</span> <span class="n">ResourceDescr</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -4304,6 +4321,7 @@ description is valid and of type 'model'.</p>
 <span class="sd">        output_path: file path to write package to</span>
 <span class="sd">        weights_priority_order: If given only the first weights format present in the model is included.</span>
 <span class="sd">                                If none of the prioritized weights formats is found all are included.</span>
+<span class="sd">        allow_invalid: If True, do not raise an error if the exported package is invalid, but log an error instead.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        path to zipped bioimageio package</span>
@@ -4805,8 +4823,7 @@ description is valid and of type 'model'.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_package.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">281</span>
-<span class="normal">282</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">282</span>
 <span class="normal">283</span>
 <span class="normal">284</span>
 <span class="normal">285</span>
@@ -4856,7 +4873,8 @@ description is valid and of type 'model'.</p>
 <span class="normal">329</span>
 <span class="normal">330</span>
 <span class="normal">331</span>
-<span class="normal">332</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package_to_stream</span><span class="p">(</span>
+<span class="normal">332</span>
+<span class="normal">333</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package_to_stream</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BioimageioYamlSource</span><span class="p">,</span> <span class="n">ResourceDescr</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
