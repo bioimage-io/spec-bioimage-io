@@ -246,6 +246,7 @@ def save_bioimageio_package(
         output_path: file path to write package to
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
+        allow_invalid: If True, do not raise an error if the exported package is invalid, but log an error instead.
 
     Returns:
         path to zipped bioimageio package

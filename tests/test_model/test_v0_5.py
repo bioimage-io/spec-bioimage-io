@@ -1,7 +1,7 @@
 from copy import deepcopy
 from datetime import datetime
 from types import MappingProxyType
-from typing import Any, Dict, Mapping, Union
+from typing import Any, Callable, Dict, Mapping, Union
 
 import pytest
 from pydantic import RootModel, ValidationError
@@ -620,3 +620,100 @@ def test_get_set_weights_descr(model: ModelDescr):
             source=HttpUrl(root_url + "weights_js"), tensorflow_version=Version("2.10")
         )
         model.weights.onnx = None
+
+
+# --- postprocessing tests ---
+
+
+def test_custom_postprocessing_with_source():
+    """Custom op: source + sha256 packaged with the model."""
+    from bioimageio.spec.model.v0_5 import CustomProcessingDescr
+
+    with ValidationContext(perform_io_checks=False):
+        descr = CustomProcessingDescr.model_validate(
+            {
+                "id": "custom",
+                "callable": "my_postprocess",
+                "source": "my_postprocess.py",
+                "sha256": "a" * 64,
+                "kwargs": {"threshold": 0.5},
+            }
+        )
+    assert descr.id == "custom"
+    assert descr.callable == "my_postprocess"
+    assert descr.source is not None
+    assert descr.sha256 is not None
+    assert descr.kwargs == {"threshold": 0.5}
+
+
+def test_custom_postprocessing_source_required():
+    """source is a required field — omitting it raises a validation error."""
+    import pytest
+    from pydantic import ValidationError
+
+    from bioimageio.spec.model.v0_5 import CustomProcessingDescr
+
+    with pytest.raises(ValidationError):
+        _ = CustomProcessingDescr.model_validate(
+            {
+                "id": "custom",
+                "callable": "my_postprocess",
+                # source intentionally omitted
+            }
+        )
+
+
+def test_custom_postprocessing_in_union():
+    from pydantic import RootModel
+
+    from bioimageio.spec.model.v0_5 import PostprocessingDescr
+
+    class _M(RootModel[PostprocessingDescr]):
+        pass
+
+    with ValidationContext(perform_io_checks=False):
+        result = _M.model_validate(
+            {
+                "id": "custom",
+                "callable": "my_postprocess",
+                "source": "my_postprocess.py",
+                "sha256": "b" * 64,
+            }
+        )
+    assert result.root.id == "custom"
+
+
+def test_custom_op_class_style():
+    """Both callable class and factory function work as custom ops."""
+    import numpy as np
+    from numpy.typing import NDArray
+
+    # -- class style --
+    class MyClassOp:
+        def __init__(self, threshold: float = 0.5) -> None:
+            super().__init__()
+            self.threshold = threshold
+
+        def __call__(self, *arrays: "NDArray[np.generic]") -> "NDArray[np.generic]":
+            return (arrays[0] > self.threshold).astype(np.uint8)  # type: ignore[return-value]
+
+    op = MyClassOp(threshold=0.3)
+    arr: NDArray[np.float64] = np.array([0.1, 0.4])
+    result = op(arr)
+    assert list(result) == [0, 1]
+
+    # -- factory function style --
+    def my_factory_op(
+        threshold: float = 0.5,
+    ) -> "Callable[..., NDArray[np.generic]]":
+        def run(*arrays: "NDArray[np.generic]") -> "NDArray[np.generic]":
+            return (arrays[0] > threshold).astype(np.uint8)  # type: ignore[return-value]
+
+        return run
+
+    op2 = my_factory_op(threshold=0.3)
+    result2 = op2(arr)
+    assert list(result2) == [0, 1]
+
+    # Both produce the same result — they are runtime-equivalent
+    assert list(result) == list(result2)

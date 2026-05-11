@@ -5,6 +5,7 @@ import re
 import string
 import warnings
 from copy import deepcopy
+from functools import partial
 from itertools import chain
 from math import ceil
 from pathlib import Path, PurePosixPath
@@ -94,6 +95,7 @@ from .._internal.types import Identifier as Identifier
 from .._internal.types import NotEmpty as NotEmpty
 from .._internal.types import SiUnit as SiUnit
 from .._internal.url import HttpUrl as HttpUrl
+from .._internal.utils import try_all_raise_last
 from .._internal.validation_context import get_validation_context
 from .._internal.validator_annotations import RestrictCharacters
 from .._internal.version_type import Version as Version
@@ -284,6 +286,7 @@ PreprocessingId = Literal[
 PostprocessingId = Literal[
     "binarize",
     "clip",
+    "custom",
     "ensure_dtype",
     "fixed_zero_mean_unit_variance",
     "scale_linear",
@@ -571,24 +574,6 @@ class ChannelAxis(AxisBase):
         return None
 
 
-class IndexAxisBase(AxisBase):
-    implemented_type: ClassVar[Literal["index"]] = "index"
-    if TYPE_CHECKING:
-        type: Literal["index"] = "index"
-    else:
-        type: Literal["index"]
-
-    id: NonBatchAxisId = AxisId("index")
-
-    @property
-    def scale(self) -> float:
-        return 1.0
-
-    @property
-    def unit(self):
-        return None
-
-
 class _WithInputAxisSize(Node):
     size: Annotated[
         Union[Annotated[int, Gt(0)], ParameterizedSize, SizeReference],
@@ -607,6 +592,24 @@ class _WithInputAxisSize(Node):
     - parameterized series of valid sizes ([ParameterizedSize][])
     - reference to another axis with an optional offset ([SizeReference][])
     """
+
+
+class IndexAxisBase(AxisBase):
+    implemented_type: ClassVar[Literal["index"]] = "index"
+    if TYPE_CHECKING:
+        type: Literal["index"] = "index"
+    else:
+        type: Literal["index"]
+
+    id: NonBatchAxisId = AxisId("index")
+
+    @property
+    def scale(self) -> float:
+        return 1.0
+
+    @property
+    def unit(self):
+        return None
 
 
 class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
@@ -1362,6 +1365,119 @@ class StardistPostprocessingDescr(NodeWithExplicitlySetFields):
     kwargs: Union[StardistPostprocessingKwargs2D, StardistPostprocessingKwargs3D]
 
 
+class CellposeFlowDynamicsKwargs(KwargsNode):
+    """key word arguments for [CellposeFlowDynamicsDescr][]"""
+
+    cellprob_threshold: float
+    flow_threshold: float
+    do_3D: bool
+    min_size: int = 15
+    """Minimum size of objects to keep, in pixels. Default is 15, which is the default in Cellpose. Set to 0 to disable filtering by size."""
+    output_dtype: Literal["uint16", "uint32"] = "uint16"
+
+
+class CellposeFlowDynamicsDescr(NodeWithExplicitlySetFields):
+    """Cellpose flow dynamics postprocessing as described in:
+    - Carsen Stringer and Marius Pachitariu. [*Cellpose: a generalist algorithm for cellular segmentation*](https://www.nature.com/articles/s41592-020-01018-x). Nature Methods, 2021.
+
+    Note: Only available if the `cellpose` package is installed.
+    """
+
+    implemented_id: ClassVar[Literal["cellpose_flow_dynamics"]] = (
+        "cellpose_flow_dynamics"
+    )
+    if TYPE_CHECKING:
+        id: Literal["cellpose_flow_dynamics"] = "cellpose_flow_dynamics"
+    else:
+        id: Literal["cellpose_flow_dynamics"]
+
+    kwargs: CellposeFlowDynamicsKwargs
+
+
+class CustomProcessingDescr(NodeWithExplicitlySetFields, FileDescr):
+    """Custom (post)processing op — source file shipped inline with the model.
+
+    Supports (post)processing that cannot be expressed by the built-in named
+    operations (watershed, connected components, etc.)
+    using a simple Python callable interface.
+
+    The op is implemented in a ``.py`` file packaged alongside the model weights.
+    Two styles are supported:
+
+    *Callable class* — kwargs go to ``__init__``, tensors arrive in ``__call__``:
+
+    .. code-block:: python
+
+        # my_postprocess.py
+        import numpy as np
+
+        class my_postprocess:
+            def __init__(self, threshold: float = 0.5) -> None:
+                self.threshold = threshold
+            def __call__(self, *arrays: np.ndarray) -> np.ndarray:
+                # arrays = model output tensors in rdf.yaml declaration order
+                return (arrays[0] > self.threshold).astype(np.uint8)
+
+    *Factory function* — alternative closure style, identical runtime behaviour:
+
+    .. code-block:: python
+
+        # my_postprocess.py
+        import numpy as np
+
+        def my_postprocess(threshold: float = 0.5):
+            def run(*arrays: np.ndarray) -> np.ndarray:
+                return (arrays[0] > threshold).astype(np.uint8)
+            return run
+
+    Reference it in ``rdf.yaml`` with the source file included in the package:
+
+    .. code-block:: yaml
+
+        postprocessing:
+          - id: custom
+            callable: my_postprocess   # class or function name in source
+            source: my_postprocess.py  # packaged alongside weights
+            sha256: <hash>             # sha256 of the source file
+            kwargs:                    # forwarded to __init__ / factory
+              threshold: 0.5
+
+    **Security:** source files are SHA-256 verified before execution.
+    Execution requires explicit opt-in in bioimageio.core and curator
+    review before Zoo publication.
+    """
+
+    implemented_id: ClassVar[Literal["custom"]] = "custom"
+    if TYPE_CHECKING:
+        id: Literal["custom"] = "custom"
+    else:
+        id: Literal["custom"]
+
+    callable: Annotated[
+        str,
+        Field(examples=["my_postprocess_factory", "MyPostprocessClass"]),
+    ]
+    """Name of the callable class or factory function defined in ``source``.
+
+    At runtime: ``op = callable(**kwargs)``, then ``result = op(*output_tensors)``
+    per image.  Both a class with ``__call__`` and a factory function returning
+    a callable satisfy this protocol."""
+
+    source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
+    """Python source file (included when packaging the model)."""
+
+    kwargs: Dict[str, YamlValue] = Field(
+        default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
+    )
+    """Keyword arguments forwarded to the callable (``__init__`` or factory)."""
+
+    @model_serializer(mode="wrap", when_used="unless-none")
+    def _serialize(
+        self, nxt: SerializerFunctionWrapHandler, info: SerializationInfo
+    ) -> Dict[str, YamlValue]:
+        return package_file_descr_serializer(self, nxt, info)
+
+
 class FixedZeroMeanUnitVarianceKwargs(KwargsNode):
     """key word arguments for [FixedZeroMeanUnitVarianceDescr][]"""
 
@@ -1661,7 +1777,9 @@ PreprocessingDescr = Annotated[
 PostprocessingDescr = Annotated[
     Union[
         BinarizeDescr,
+        CellposeFlowDynamicsDescr,
         ClipDescr,
+        CustomProcessingDescr,
         EnsureDtypeDescr,
         FixedZeroMeanUnitVarianceDescr,
         ScaleLinearDescr,
@@ -1840,6 +1958,26 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
         return {a.id: array.shape[i] for i, a in enumerate(self.axes)}
 
 
+class ConstantPadding(Node):
+    mode: Literal["constant"] = "constant"
+    value: Union[int, float] = 0
+
+
+class EdgePadding(Node):
+    mode: Literal["edge"] = "edge"
+
+
+class ReflectPadding(Node):
+    mode: Literal["reflect"] = "reflect"
+
+
+class SymmetricPadding(Node):
+    mode: Literal["symmetric"] = "symmetric"
+
+
+Padding = Union[ConstantPadding, EdgePadding, ReflectPadding, SymmetricPadding]
+
+
 class InputTensorDescr(TensorDescrBase[InputAxis]):
     id: TensorId = TensorId("input")
     """Input tensor id.
@@ -1848,10 +1986,18 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     optional: bool = False
     """indicates that this tensor may be `None`"""
 
+    pad: Optional[Padding] = None
+    """Explicitly specify how to pad this input tensor.
+
+    Use `axes[i].pad` to specify padding width.
+
+    Note:
+      Non-blockwise sample prediction only applies padding for axes with a `pad` specification.
+    """
+
     preprocessing: List[PreprocessingDescr] = Field(
         default_factory=cast(Callable[[], List[PreprocessingDescr]], list)
     )
-
     """Description of how this input should be preprocessed.
 
     notes:
@@ -2159,7 +2305,13 @@ class _InputTensorConv(
         for p in src.preprocessing:
             cp = _convert_proc(p, src.axes)
             assert not isinstance(
-                cp, (ScaleMeanVarianceDescr, StardistPostprocessingDescr)
+                cp,
+                (
+                    CellposeFlowDynamicsDescr,
+                    CustomProcessingDescr,
+                    ScaleMeanVarianceDescr,
+                    StardistPostprocessingDescr,
+                ),
             )
             prep.append(cp)
 
@@ -2198,7 +2350,7 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     def _validate_postprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.postprocessing:
-            kwargs_axes: Optional[Sequence[Any]] = p.kwargs.get("axes")
+            kwargs_axes = p.kwargs.get("axes")
             if kwargs_axes is None:
                 continue
 
@@ -2207,7 +2359,8 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
                     f"expected `axes` sequence, but got {type(kwargs_axes)}"
                 )
 
-            if any(a not in axes_ids for a in kwargs_axes):
+            kwargs_axes_seq: Sequence[Any] = cast(Sequence[Any], kwargs_axes)
+            if any(a not in axes_ids for a in kwargs_axes_seq):
                 raise ValueError("`kwargs.axes` needs to be subset of axes ids")
 
         if isinstance(self.data, (NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr)):
@@ -2272,12 +2425,59 @@ _output_tensor_conv = _OutputTensorConv(_OutputTensorDescr_v0_4, OutputTensorDes
 TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
 
 
+def get_halos(
+    tensors: Mapping[TensorId, TensorDescr],
+    /,
+) -> Dict[TensorId, Dict[AxisId, Tuple[int, int]]]:
+    """Get all input and output halos from tensor descriptions.
+
+    Note:
+        - Input halos are to be padded
+        - Output halos are to be cropped
+    """
+    halos: Dict[TensorId, Dict[AxisId, Tuple[int, int]]] = {}
+    for descr in tensors.values():
+        if isinstance(descr, InputTensorDescr):
+            continue
+        for axis in descr.axes:
+            if not isinstance(axis, WithHalo):
+                continue
+
+            ref_scale = next(
+                a
+                for a in tensors[axis.size.tensor_id].axes
+                if a.id == axis.size.axis_id
+            ).scale
+
+            # set output halo (to be cropped)
+            halos.setdefault(descr.id, {})[axis.id] = (axis.halo, axis.halo)
+            # set input halo (to be padded)
+            pad_width = int(axis.halo / axis.scale * ref_scale)
+            halos.setdefault(axis.size.tensor_id, {})[axis.size.axis_id] = (
+                pad_width,
+                pad_width,
+            )
+
+    return halos
+
+
 def validate_tensors(
     tensors: Mapping[TensorId, Tuple[TensorDescr, Optional[NDArray[Any]]]],
     tensor_origin: Literal[
         "source", "test_tensor"
     ] = "source",  # for more precise error messages
+    *,
+    pad_inputs: Union[bool, Literal["allow"]] = True,
+    crop_outputs: Union[bool, Literal["allow"]] = True,
 ):
+    """Validate all inputs (and optionally output tensors) against their tensor descriptions.
+
+    Args:
+        tensors: Mapping of tensor id to a tuple of tensor description and optional numpy array.
+        tensor_origin: String to use in error messages to indicate the origin of the tensors being validated.
+        pad_inputs: Wether to apply/allow padding of inputs before shape comparison
+        crop_outputs: Wether to apply/allow cropping of outputs before shape comparison.
+    """
     all_tensor_axes: Dict[TensorId, Dict[AxisId, Tuple[AnyAxis, Optional[int]]]] = {}
 
     def e_msg_location(d: TensorDescr):
@@ -2293,6 +2493,9 @@ def validate_tensors(
                 raise ValueError(f"{e_msg_location(descr)} {e}")
 
         all_tensor_axes[descr.id] = {a.id: (a, axis_sizes[a.id]) for a in descr.axes}
+
+    # get halos to be padded/cropped to validate against halo-adjusted sizes
+    io_halos = get_halos({k: v[0] for k, v in tensors.items()})
 
     for descr, array in tensors.values():
         if array is None:
@@ -2328,26 +2531,52 @@ def validate_tensors(
 
         for a in descr.axes:
             actual_size = all_tensor_axes[descr.id][a.id][1]
+
             if actual_size is None:
                 continue
 
             if a.size is None:
                 continue
 
+            # add padding width to actual tensor size
+            total_axis_halo = sum(io_halos.get(descr.id, {}).get(a.id, (0, 0)))
+            if isinstance(descr, InputTensorDescr):
+                # pad input halos
+                actual_size_with_halo = actual_size + total_axis_halo
+                if pad_inputs is True:
+                    check_sizes = {actual_size_with_halo}
+                elif pad_inputs == "allow":
+                    check_sizes = {actual_size, actual_size_with_halo}
+                elif pad_inputs is False:
+                    check_sizes = {actual_size}
+                else:
+                    assert_never(pad_inputs)
+
+            elif isinstance(descr, OutputTensorDescr):
+                # crop output halos
+                actual_size_with_halo = max(0, actual_size - total_axis_halo)
+                if crop_outputs is True:
+                    check_sizes = {actual_size_with_halo}
+                elif crop_outputs == "allow":
+                    check_sizes = {actual_size, actual_size_with_halo}
+                elif crop_outputs is False:
+                    check_sizes = {actual_size}
+                else:
+                    assert_never(crop_outputs)
+            else:
+                assert_never(descr)
+
+            del actual_size  # make sure we explicitly use unchanged or halo-adjusted size from here on
+
             if isinstance(a.size, int):
-                if actual_size != a.size:
+                if a.size not in check_sizes:
                     raise ValueError(
                         f"{e_msg_location(descr)}.axes[{a.id}]: {tensor_origin} axis "
-                        + f"has incompatible size {actual_size}, expected {a.size}"
+                        + f"has incompatible size {check_sizes}, expected {a.size}"
                     )
-            elif isinstance(a.size, ParameterizedSize):
-                _ = a.size.validate_size(
-                    actual_size,
-                    f"{e_msg_location(descr)}.axes[{a.id}]: {tensor_origin} axis ",
-                )
-            elif isinstance(a.size, DataDependentSize):
-                _ = a.size.validate_size(
-                    actual_size,
+            elif isinstance(a.size, (ParameterizedSize, DataDependentSize)):
+                _ = try_all_raise_last(
+                    (partial(a.size.validate_size, s) for s in check_sizes),
                     f"{e_msg_location(descr)}.axes[{a.id}]: {tensor_origin} axis ",
                 )
             elif isinstance(a.size, SizeReference):
@@ -2372,14 +2601,14 @@ def validate_tensors(
                         + f" {a.unit}!={ref_axis.unit}"
                     )
 
-                if actual_size != (
+                if (
                     expected_size := (
                         ref_size * ref_axis.scale / a.scale + a.size.offset
                     )
-                ):
+                ) not in check_sizes:
                     raise ValueError(
                         f"{e_msg_location(descr)}.{tensor_origin}: axis '{a.id}' of size"
-                        + f" {actual_size} invalid for referenced size {ref_size};"
+                        + f" {check_sizes} invalid for referenced size {ref_size};"
                         + f" expected {expected_size}"
                     )
             else:
@@ -2583,6 +2812,8 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     The conda environment file should include pytorch and any version pinning has to be compatible with
     **pytorch_version**.
     """
+    strict: bool = True
+    """Whether to allow missing or unexpected keys or to be strict about the architecture matching the state dict weights."""
 
 
 class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
@@ -3239,11 +3470,11 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    implemented_format_version: ClassVar[Literal["0.5.9"]] = "0.5.9"
+    implemented_format_version: ClassVar[Literal["0.5.10"]] = "0.5.10"
     if TYPE_CHECKING:
-        format_version: Literal["0.5.9"] = "0.5.9"
+        format_version: Literal["0.5.10"] = "0.5.10"
     else:
-        format_version: Literal["0.5.9"]
+        format_version: Literal["0.5.10"]
         """Version of the bioimage.io model description specification used.
         When creating a new model always use the latest micro/patch version described here.
         The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -3409,6 +3640,9 @@ class ModelDescr(GenericModelDescrBase):
         sources: Union[
             Sequence[NDArray[Any]], Mapping[TensorId, Optional[NDArray[Any]]]
         ],
+        *,
+        pad_inputs: Union[bool, Literal["allow"]] = True,
+        crop_outputs: Union[bool, Literal["allow"]] = True,
     ) -> Mapping[TensorId, Optional[NDArray[Any]]]:
         """Check if the given input tensors match the model's input tensor descriptions.
         This includes checks of tensor shapes and dtypes, but not of the actual values.
@@ -3417,7 +3651,7 @@ class ModelDescr(GenericModelDescrBase):
             sources = {descr.id: tensor for descr, tensor in zip(self.inputs, sources)}
 
         tensors = {descr.id: (descr, sources.get(descr.id)) for descr in self.inputs}
-        validate_tensors(tensors)
+        validate_tensors(tensors, pad_inputs=pad_inputs, crop_outputs=crop_outputs)
 
         return sources
 
@@ -3441,7 +3675,12 @@ class ModelDescr(GenericModelDescrBase):
             for descr in self.outputs
         }
 
-        validate_tensors({**test_inputs, **test_outputs}, tensor_origin="test_tensor")
+        validate_tensors(
+            {**test_inputs, **test_outputs},
+            tensor_origin="test_tensor",
+            pad_inputs="allow",
+            crop_outputs="allow",
+        )
 
         for rep_tol in self.config.bioimageio.reproducibility_tolerance:
             if not rep_tol.absolute_tolerance:
@@ -3986,7 +4225,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             covers=src.covers,
             description=src.description,
             documentation=src.documentation,
-            format_version="0.5.9",
+            format_version="0.5.10",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon=src.icon,
             id=None if src.id is None else ModelId(src.id),

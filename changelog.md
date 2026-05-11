@@ -10,6 +10,12 @@ In this file we log both:
 
 This changelog includes implementation details and might reference [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+### bioimageio.spec 0.5.10.0
+
+- [model 0.5.10](#model-0510)
+- `update_format` saves updated description packages for output path without .yaml (or.yml) suffix (not just the bioimageio.yaml)
+- tensor/test inputs are expected to be padded according to related output halos, which chnages input size expectations. Test tensors are patched on-the-fly.
+
 ### bioimageio.spec 0.5.9.1
 
 - improve summary status handling
@@ -377,6 +383,13 @@ Which fields a resource description field has and how they are to be interpreted
 Here is a list of changes for each `type` and `format_version`.
 Note that 'generic' changes apply to `type` application, dataset and notebook of the same `format_versions`.
 If the changes also apply to `type` model, the coresponding model format version is noted, e.g. [generic 0.3.1 and model 0.5.3](#generic-031-and-model-053).
+
+### model 0.5.10
+
+- Non-breaking changes:
+  - add cellpose postprocessing `CellposeFlowDynamicsDescr`
+  - Input test tensors may be smaller than the valid network input shape by the padding required to crop any related output halos.
+  - (For backwards compatibility) test output tensors may include the halo region that is cropped before comparing to the actual (cropped) outputs.
 
 ### model 0.5.9
 
