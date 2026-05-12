@@ -2545,10 +2545,13 @@ def validate_tensors(
                 actual_size_with_halo = actual_size + total_axis_halo
                 if pad_inputs is True:
                     check_sizes = {actual_size_with_halo}
+                    size_hint = " (after padding input halo)"
                 elif pad_inputs == "allow":
                     check_sizes = {actual_size, actual_size_with_halo}
+                    size_hint = " (with or without padding input halo)"
                 elif pad_inputs is False:
                     check_sizes = {actual_size}
+                    size_hint = ""
                 else:
                     assert_never(pad_inputs)
 
@@ -2557,10 +2560,13 @@ def validate_tensors(
                 actual_size_with_halo = max(0, actual_size - total_axis_halo)
                 if crop_outputs is True:
                     check_sizes = {actual_size_with_halo}
+                    size_hint = " (after cropping output halo)"
                 elif crop_outputs == "allow":
                     check_sizes = {actual_size, actual_size_with_halo}
+                    size_hint = " (with or without cropping output halo)"
                 elif crop_outputs is False:
                     check_sizes = {actual_size}
+                    size_hint = ""
                 else:
                     assert_never(crop_outputs)
             else:
@@ -2572,7 +2578,7 @@ def validate_tensors(
                 if a.size not in check_sizes:
                     raise ValueError(
                         f"{e_msg_location(descr)}.axes[{a.id}]: {tensor_origin} axis "
-                        + f"has incompatible size {check_sizes}, expected {a.size}"
+                        + f"has incompatible size {check_sizes}{size_hint}, expected {a.size}"
                     )
             elif isinstance(a.size, (ParameterizedSize, DataDependentSize)):
                 _ = try_all_raise_last(
@@ -3650,7 +3656,12 @@ class ModelDescr(GenericModelDescrBase):
         if not isinstance(sources, collections.abc.Mapping):
             sources = {descr.id: tensor for descr, tensor in zip(self.inputs, sources)}
 
-        tensors = {descr.id: (descr, sources.get(descr.id)) for descr in self.inputs}
+        tensors = {
+            **{descr.id: (descr, sources.get(descr.id)) for descr in self.inputs},
+            **{  # outputs are required for halo
+                descr.id: (descr, None) for descr in self.outputs
+            },
+        }
         validate_tensors(tensors, pad_inputs=pad_inputs, crop_outputs=crop_outputs)
 
         return sources
