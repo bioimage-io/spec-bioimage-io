@@ -1314,6 +1314,9 @@ class _StardistPostprocessingKwargsBase(KwargsNode):
     nms_threshold: float
     """The IoU threshold for non-maximum suppression."""
 
+    n_rays: int
+    """Number of radial lines (rays) cast from the center of an object to its boundary."""
+
 
 class StardistPostprocessingKwargs2D(_StardistPostprocessingKwargsBase):
     grid: Tuple[int, int]
@@ -1329,9 +1332,6 @@ class StardistPostprocessingKwargs3D(_StardistPostprocessingKwargsBase):
 
     b: Union[int, Tuple[Tuple[int, int], Tuple[int, int], Tuple[int, int]]]
     """Border region in which object probability is set to zero."""
-
-    n_rays: int
-    """Number of rays for 3D star-convex polyhedra."""
 
     anisotropy: Tuple[float, float, float]
     """Anisotropy factors for 3D star-convex polyhedra, i.e. the physical pixel size along each spatial axis."""

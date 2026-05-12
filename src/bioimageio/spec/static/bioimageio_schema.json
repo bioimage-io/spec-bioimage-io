@@ -2078,6 +2078,11 @@
           "title": "Nms Threshold",
           "type": "number"
         },
+        "n_rays": {
+          "description": "Number of radial lines (rays) cast from the center of an object to its boundary.",
+          "title": "N Rays",
+          "type": "integer"
+        },
         "grid": {
           "description": "Grid size of network predictions.",
           "maxItems": 2,
@@ -2139,6 +2144,7 @@
       "required": [
         "prob_threshold",
         "nms_threshold",
+        "n_rays",
         "grid",
         "b"
       ],
@@ -2157,6 +2163,11 @@
           "description": "The IoU threshold for non-maximum suppression.",
           "title": "Nms Threshold",
           "type": "number"
+        },
+        "n_rays": {
+          "description": "Number of radial lines (rays) cast from the center of an object to its boundary.",
+          "title": "N Rays",
+          "type": "integer"
         },
         "grid": {
           "description": "Grid size of network predictions.",
@@ -2231,11 +2242,6 @@
           "description": "Border region in which object probability is set to zero.",
           "title": "B"
         },
-        "n_rays": {
-          "description": "Number of rays for 3D star-convex polyhedra.",
-          "title": "N Rays",
-          "type": "integer"
-        },
         "anisotropy": {
           "description": "Anisotropy factors for 3D star-convex polyhedra, i.e. the physical pixel size along each spatial axis.",
           "maxItems": 3,
@@ -2271,9 +2277,9 @@
       "required": [
         "prob_threshold",
         "nms_threshold",
+        "n_rays",
         "grid",
         "b",
-        "n_rays",
         "anisotropy"
       ],
       "title": "model.v0_5.StardistPostprocessingKwargs3D",
