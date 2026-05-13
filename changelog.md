@@ -10,6 +10,10 @@ In this file we log both:
 
 This changelog includes implementation details and might reference [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+### bioimageio.spec 0.5.10.2
+
+- allow for more mismatched elements per million
+
 ### bioimageio.spec 0.5.10.1
 
 - patch model.v0_5.ModelDescr.validate_input_tensors so that it correctly accocunts for output halos.
