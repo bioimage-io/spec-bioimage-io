@@ -2431,7 +2431,7 @@
         "mismatched_elements_per_million": {
           "default": 100,
           "description": "Maximum number of mismatched elements/pixels per million to tolerate.",
-          "maximum": 1000,
+          "maximum": 5000,
           "minimum": 0,
           "title": "Mismatched Elements Per Million",
           "type": "integer"
