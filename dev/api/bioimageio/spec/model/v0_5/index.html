@@ -4811,12 +4811,6 @@
             </li>
         </ul>
 
-        <p>Validators:</p>
-        <ul>
-            <li>
-              <code><span title="bioimageio.spec.model.v0_5.ArchitectureFromFileDescr._validate_sha256">_validate_sha256</span></code>
-            </li>
-        </ul>
 
 
 
@@ -8795,7 +8789,11 @@ otherwise (the default) it may be chosen arbitrarily depending on available memo
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3163</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3159</span>
+<span class="normal">3160</span>
+<span class="normal">3161</span>
+<span class="normal">3162</span>
+<span class="normal">3163</span>
 <span class="normal">3164</span>
 <span class="normal">3165</span>
 <span class="normal">3166</span>
@@ -8809,11 +8807,7 @@ otherwise (the default) it may be chosen arbitrarily depending on available memo
 <span class="normal">3174</span>
 <span class="normal">3175</span>
 <span class="normal">3176</span>
-<span class="normal">3177</span>
-<span class="normal">3178</span>
-<span class="normal">3179</span>
-<span class="normal">3180</span>
-<span class="normal">3181</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">3177</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">limitations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">limitations_header</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -13830,8 +13824,6 @@ Only the first entry matching tensor id and weights format is considered.</p>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nt">&quot;channel_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
 <span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
@@ -13866,7 +13858,7 @@ Only the first entry matching tensor id and weights format is considered.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.ChannelAxis.channel_names">channel_names</a></code>
-                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.NotEmpty">NotEmpty</a>[<span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.Identifier">Identifier</a>]]</code>)
+                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.NotEmpty">NotEmpty</a>[<span title="typing.List">List</span>[<span title="str">str</span>]]</code>)
             </li>
         </ul>
 
@@ -13894,7 +13886,7 @@ Only the first entry matching tensor id and weights format is considered.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_5.ChannelAxis.channel_names" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">channel_names</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.NotEmpty">NotEmpty</a></span><span class="p">[</span><span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.Identifier">Identifier</a></span><span class="p">]]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">channel_names</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_5.NotEmpty">NotEmpty</a></span><span class="p">[</span><span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -17959,12 +17951,6 @@ review before Zoo publication.</p>
             </li>
         </ul>
 
-        <p>Validators:</p>
-        <ul>
-            <li>
-              <code><span title="bioimageio.spec.model.v0_5.CustomProcessingDescr._validate_sha256">_validate_sha256</span></code>
-            </li>
-        </ul>
 
 
 
@@ -25202,7 +25188,11 @@ casts it to uint8, which is what the neural network in this example expects.
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3375</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3371</span>
+<span class="normal">3372</span>
+<span class="normal">3373</span>
+<span class="normal">3374</span>
+<span class="normal">3375</span>
 <span class="normal">3376</span>
 <span class="normal">3377</span>
 <span class="normal">3378</span>
@@ -25215,11 +25205,7 @@ casts it to uint8, which is what the neural network in this example expects.
 <span class="normal">3385</span>
 <span class="normal">3386</span>
 <span class="normal">3387</span>
-<span class="normal">3388</span>
-<span class="normal">3389</span>
-<span class="normal">3390</span>
-<span class="normal">3391</span>
-<span class="normal">3392</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">3388</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Filled Markdown template section following [Hugging Face Model Card Template](https://huggingface.co/docs/hub/en/model-card-annotated).&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">():</span>
         <span class="k">return</span> <span class="s2">&quot;&quot;</span>
@@ -26082,7 +26068,11 @@ An 'overall' factor may be included to summarize performance across all conditio
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3305</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3301</span>
+<span class="normal">3302</span>
+<span class="normal">3303</span>
+<span class="normal">3304</span>
+<span class="normal">3305</span>
 <span class="normal">3306</span>
 <span class="normal">3307</span>
 <span class="normal">3308</span>
@@ -26121,11 +26111,7 @@ An 'overall' factor may be included to summarize performance across all conditio
 <span class="normal">3341</span>
 <span class="normal">3342</span>
 <span class="normal">3343</span>
-<span class="normal">3344</span>
-<span class="normal">3345</span>
-<span class="normal">3346</span>
-<span class="normal">3347</span>
-<span class="normal">3348</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">3344</span></pre></div></td><td class="code"><div><pre><span></span><code>    <span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">results_header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Metric&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_factors</span>
         <span class="n">results_table_cells</span> <span class="o">=</span> <span class="p">[</span><span class="n">results_header</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;---&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_header</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span>
             <span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span>
@@ -26533,12 +26519,6 @@ An 'overall' factor may be included to summarize performance across all conditio
             </li>
         </ul>
 
-        <p>Validators:</p>
-        <ul>
-            <li>
-              <code><span title="bioimageio.spec._internal.io.FileDescr._validate_sha256">_validate_sha256</span></code>
-            </li>
-        </ul>
 
 
 
@@ -32205,8 +32185,6 @@ input axis.</p>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="nt">&quot;channel_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
 <span class="w">          </span><span class="p">},</span>
 <span class="w">          </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
@@ -35208,9 +35186,6 @@ The file extension must be '.npy'.</p>
         <p>Validators:</p>
         <ul>
             <li>
-              <code><span title="bioimageio.spec.model.v0_5.KerasHdf5WeightsDescr._validate_sha256">_validate_sha256</span></code>
-            </li>
-            <li>
               <code><span title="bioimageio.spec.model.v0_5.KerasHdf5WeightsDescr._validate">_validate</span></code>
             </li>
         </ul>
@@ -36227,9 +36202,6 @@ need to have this field.</p>
 
         <p>Validators:</p>
         <ul>
-            <li>
-              <code><span title="bioimageio.spec.model.v0_5.KerasV3WeightsDescr._validate_sha256">_validate_sha256</span></code>
-            </li>
             <li>
               <code><span title="bioimageio.spec.model.v0_5.KerasV3WeightsDescr._validate">_validate</span></code>
             </li>
@@ -39721,8 +39693,6 @@ These fields are typically stored in a YAML file which we call a model resource 
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="nt">&quot;channel_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
 <span class="w">          </span><span class="p">},</span>
 <span class="w">          </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
@@ -48787,7 +48757,12 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4138</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4133</span>
+<span class="normal">4134</span>
+<span class="normal">4135</span>
+<span class="normal">4136</span>
+<span class="normal">4137</span>
+<span class="normal">4138</span>
 <span class="normal">4139</span>
 <span class="normal">4140</span>
 <span class="normal">4141</span>
@@ -48822,12 +48797,7 @@ without validating the result.</p>
 <span class="normal">4170</span>
 <span class="normal">4171</span>
 <span class="normal">4172</span>
-<span class="normal">4173</span>
-<span class="normal">4174</span>
-<span class="normal">4175</span>
-<span class="normal">4176</span>
-<span class="normal">4177</span>
-<span class="normal">4178</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">4173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_from_old_format_wo_validation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert metadata following an older format version to this classes&#39; format</span>
 <span class="sd">    without validating the result.</span>
@@ -49037,7 +49007,12 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4002</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3997</span>
+<span class="normal">3998</span>
+<span class="normal">3999</span>
+<span class="normal">4000</span>
+<span class="normal">4001</span>
+<span class="normal">4002</span>
 <span class="normal">4003</span>
 <span class="normal">4004</span>
 <span class="normal">4005</span>
@@ -49160,12 +49135,7 @@ Or simply whenever you know the full input shape.</p>
 <span class="normal">4122</span>
 <span class="normal">4123</span>
 <span class="normal">4124</span>
-<span class="normal">4125</span>
-<span class="normal">4126</span>
-<span class="normal">4127</span>
-<span class="normal">4128</span>
-<span class="normal">4129</span>
-<span class="normal">4130</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes</span><span class="p">(</span>
+<span class="normal">4125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">ns</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">],</span>
     <span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -49323,7 +49293,12 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3930</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3925</span>
+<span class="normal">3926</span>
+<span class="normal">3927</span>
+<span class="normal">3928</span>
+<span class="normal">3929</span>
+<span class="normal">3930</span>
 <span class="normal">3931</span>
 <span class="normal">3932</span>
 <span class="normal">3933</span>
@@ -49336,12 +49311,7 @@ Or simply whenever you know the full input shape.</p>
 <span class="normal">3940</span>
 <span class="normal">3941</span>
 <span class="normal">3942</span>
-<span class="normal">3943</span>
-<span class="normal">3944</span>
-<span class="normal">3945</span>
-<span class="normal">3946</span>
-<span class="normal">3947</span>
-<span class="normal">3948</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">3943</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_batch_size</span><span class="p">(</span><span class="n">tensor_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">tensor_with_batchsize</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TensorId</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -49383,8 +49353,8 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3908</span>
-<span class="normal">3909</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3903</span>
+<span class="normal">3904</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -49414,7 +49384,12 @@ such that the valid input size is &gt;= the given input size</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3962</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3957</span>
+<span class="normal">3958</span>
+<span class="normal">3959</span>
+<span class="normal">3960</span>
+<span class="normal">3961</span>
+<span class="normal">3962</span>
 <span class="normal">3963</span>
 <span class="normal">3964</span>
 <span class="normal">3965</span>
@@ -49424,12 +49399,7 @@ such that the valid input size is &gt;= the given input size</p>
 <span class="normal">3969</span>
 <span class="normal">3970</span>
 <span class="normal">3971</span>
-<span class="normal">3972</span>
-<span class="normal">3973</span>
-<span class="normal">3974</span>
-<span class="normal">3975</span>
-<span class="normal">3976</span>
-<span class="normal">3977</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]):</span>
+<span class="normal">3972</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;get parameter `n` for each parameterized axis</span>
 <span class="sd">    such that the valid input size is &gt;= the given input size&quot;&quot;&quot;</span>
     <span class="n">ret</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -49474,17 +49444,17 @@ Otherwise it might be larger than the actual (valid) output</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3950</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3945</span>
+<span class="normal">3946</span>
+<span class="normal">3947</span>
+<span class="normal">3948</span>
+<span class="normal">3949</span>
+<span class="normal">3950</span>
 <span class="normal">3951</span>
 <span class="normal">3952</span>
 <span class="normal">3953</span>
 <span class="normal">3954</span>
-<span class="normal">3955</span>
-<span class="normal">3956</span>
-<span class="normal">3957</span>
-<span class="normal">3958</span>
-<span class="normal">3959</span>
-<span class="normal">3960</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_tensor_sizes</span><span class="p">(</span>
+<span class="normal">3955</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_tensor_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">_DataDepSize</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the tensor output sizes for given **input_sizes**.</span>
@@ -49518,8 +49488,8 @@ Otherwise it might be larger than the actual (valid) output</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3911</span>
-<span class="normal">3912</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3906</span>
+<span class="normal">3907</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -49607,7 +49577,12 @@ Otherwise it might be larger than the actual (valid) output</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3979</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3974</span>
+<span class="normal">3975</span>
+<span class="normal">3976</span>
+<span class="normal">3977</span>
+<span class="normal">3978</span>
+<span class="normal">3979</span>
 <span class="normal">3980</span>
 <span class="normal">3981</span>
 <span class="normal">3982</span>
@@ -49623,12 +49598,7 @@ Otherwise it might be larger than the actual (valid) output</p>
 <span class="normal">3992</span>
 <span class="normal">3993</span>
 <span class="normal">3994</span>
-<span class="normal">3995</span>
-<span class="normal">3996</span>
-<span class="normal">3997</span>
-<span class="normal">3998</span>
-<span class="normal">3999</span>
-<span class="normal">4000</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_tensor_sizes</span><span class="p">(</span>
+<span class="normal">3995</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_tensor_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TensorSizes</span><span class="p">:</span>
     <span class="n">axis_sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_axis_sizes</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
@@ -50216,7 +50186,12 @@ This includes checks of tensor shapes and dtypes, but not of the actual values.<
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3644</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">3639</span>
+<span class="normal">3640</span>
+<span class="normal">3641</span>
+<span class="normal">3642</span>
+<span class="normal">3643</span>
+<span class="normal">3644</span>
 <span class="normal">3645</span>
 <span class="normal">3646</span>
 <span class="normal">3647</span>
@@ -50234,12 +50209,7 @@ This includes checks of tensor shapes and dtypes, but not of the actual values.<
 <span class="normal">3659</span>
 <span class="normal">3660</span>
 <span class="normal">3661</span>
-<span class="normal">3662</span>
-<span class="normal">3663</span>
-<span class="normal">3664</span>
-<span class="normal">3665</span>
-<span class="normal">3666</span>
-<span class="normal">3667</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_input_tensors</span><span class="p">(</span>
+<span class="normal">3662</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_input_tensors</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">sources</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
         <span class="n">Sequence</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]</span>
@@ -51511,9 +51481,6 @@ nominal values should be given as a sequence (aka list/array) as well.</p>
 
         <p>Validators:</p>
         <ul>
-            <li>
-              <code><span title="bioimageio.spec.model.v0_5.OnnxWeightsDescr._validate_sha256">_validate_sha256</span></code>
-            </li>
             <li>
               <code><span title="bioimageio.spec.model.v0_5.OnnxWeightsDescr._validate">_validate</span></code>
             </li>
@@ -52797,8 +52764,6 @@ need to have this field.</p>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="nt">&quot;channel_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
 <span class="w">          </span><span class="p">},</span>
 <span class="w">          </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
@@ -56475,9 +56440,6 @@ The file extension must be '.npy'.</p>
 
         <p>Validators:</p>
         <ul>
-            <li>
-              <code><span title="bioimageio.spec.model.v0_5.PytorchStateDictWeightsDescr._validate_sha256">_validate_sha256</span></code>
-            </li>
             <li>
               <code><span title="bioimageio.spec.model.v0_5.PytorchStateDictWeightsDescr._validate">_validate</span></code>
             </li>
@@ -72350,8 +72312,6 @@ The IEEE Winter Conference on Applications of Computer Vision (WACV), Snowmass V
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="nt">&quot;channel_names&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">            </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span>
 <span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
 <span class="w">          </span><span class="p">},</span>
 <span class="w">          </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
@@ -74812,9 +74772,6 @@ The file extension must be '.npy'.</p>
         <p>Validators:</p>
         <ul>
             <li>
-              <code><span title="bioimageio.spec.model.v0_5.TensorflowJsWeightsDescr._validate_sha256">_validate_sha256</span></code>
-            </li>
-            <li>
               <code><span title="bioimageio.spec.model.v0_5.TensorflowJsWeightsDescr._validate">_validate</span></code>
             </li>
         </ul>
@@ -75877,9 +75834,6 @@ All required files/folders should be a zip archive.</p>
 
         <p>Validators:</p>
         <ul>
-            <li>
-              <code><span title="bioimageio.spec.model.v0_5.TensorflowSavedModelBundleWeightsDescr._validate_sha256">_validate_sha256</span></code>
-            </li>
             <li>
               <code><span title="bioimageio.spec.model.v0_5.TensorflowSavedModelBundleWeightsDescr._validate">_validate</span></code>
             </li>
@@ -79846,9 +79800,6 @@ To document a halo that is already cropped by the model use <code>size.offset</c
 
         <p>Validators:</p>
         <ul>
-            <li>
-              <code><span title="bioimageio.spec.model.v0_5.TorchscriptWeightsDescr._validate_sha256">_validate_sha256</span></code>
-            </li>
             <li>
               <code><span title="bioimageio.spec.model.v0_5.TorchscriptWeightsDescr._validate">_validate</span></code>
             </li>
@@ -84269,7 +84220,11 @@ post-release suffixes.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2920</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2916</span>
+<span class="normal">2917</span>
+<span class="normal">2918</span>
+<span class="normal">2919</span>
+<span class="normal">2920</span>
 <span class="normal">2921</span>
 <span class="normal">2922</span>
 <span class="normal">2923</span>
@@ -84289,11 +84244,7 @@ post-release suffixes.</p>
 <span class="normal">2937</span>
 <span class="normal">2938</span>
 <span class="normal">2939</span>
-<span class="normal">2940</span>
-<span class="normal">2941</span>
-<span class="normal">2942</span>
-<span class="normal">2943</span>
-<span class="normal">2944</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span>
+<span class="normal">2940</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="n">WeightsFormat</span><span class="p">,</span>
 <span class="p">):</span>
@@ -84373,7 +84324,11 @@ post-release suffixes.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2979</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2975</span>
+<span class="normal">2976</span>
+<span class="normal">2977</span>
+<span class="normal">2978</span>
+<span class="normal">2979</span>
 <span class="normal">2980</span>
 <span class="normal">2981</span>
 <span class="normal">2982</span>
@@ -84421,11 +84376,7 @@ post-release suffixes.</p>
 <span class="normal">3024</span>
 <span class="normal">3025</span>
 <span class="normal">3026</span>
-<span class="normal">3027</span>
-<span class="normal">3028</span>
-<span class="normal">3029</span>
-<span class="normal">3030</span>
-<span class="normal">3031</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span>
+<span class="normal">3027</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="n">WeightsFormat</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SpecificWeightsDescr</span><span class="p">],</span>
@@ -84505,7 +84456,11 @@ post-release suffixes.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2880</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2876</span>
+<span class="normal">2877</span>
+<span class="normal">2878</span>
+<span class="normal">2879</span>
+<span class="normal">2880</span>
 <span class="normal">2881</span>
 <span class="normal">2882</span>
 <span class="normal">2883</span>
@@ -84539,11 +84494,7 @@ post-release suffixes.</p>
 <span class="normal">2911</span>
 <span class="normal">2912</span>
 <span class="normal">2913</span>
-<span class="normal">2914</span>
-<span class="normal">2915</span>
-<span class="normal">2916</span>
-<span class="normal">2917</span>
-<span class="normal">2918</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+<span class="normal">2914</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
     <span class="n">entries</span> <span class="o">=</span> <span class="p">{</span><span class="n">wtype</span> <span class="k">for</span> <span class="n">wtype</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
 
@@ -85115,9 +85066,6 @@ post-release suffixes.</p>
 
         <p>Validators:</p>
         <ul>
-            <li>
-              <code><span title="bioimageio.spec.model.v0_5.WeightsEntryDescrBase._validate_sha256">_validate_sha256</span></code>
-            </li>
             <li>
               <code><span title="bioimageio.spec.model.v0_5.WeightsEntryDescrBase._validate">_validate</span></code>
             </li>
@@ -87547,11 +87495,7 @@ Default: Scale all axes jointly.</p>
 <span class="normal">2155</span>
 <span class="normal">2156</span>
 <span class="normal">2157</span>
-<span class="normal">2158</span>
-<span class="normal">2159</span>
-<span class="normal">2160</span>
-<span class="normal">2161</span>
-<span class="normal">2162</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">convert_axes</span><span class="p">(</span>
+<span class="normal">2158</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">convert_axes</span><span class="p">(</span>
     <span class="n">axes</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">shape</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -87633,16 +87577,12 @@ Default: Scale all axes jointly.</p>
                 <span class="p">)</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">ChannelAxis</span><span class="p">(</span>
-                        <span class="n">channel_names</span><span class="o">=</span><span class="p">[</span>
-                            <span class="n">Identifier</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;channel</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span>
-                        <span class="p">]</span>
+                        <span class="n">channel_names</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;channel</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">offset</span><span class="p">)]</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="n">ChannelAxis</span><span class="p">(</span>
-                        <span class="n">channel_names</span><span class="o">=</span><span class="p">[</span><span class="n">Identifier</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;channel</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)]</span>
-                    <span class="p">)</span>
+                    <span class="n">ChannelAxis</span><span class="p">(</span><span class="n">channel_names</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;channel</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)])</span>
                 <span class="p">)</span>
         <span class="k">elif</span> <span class="n">axis_type</span> <span class="o">==</span> <span class="s2">&quot;space&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">tensor_type</span> <span class="o">==</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span>
@@ -87691,7 +87631,12 @@ Default: Scale all axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4395</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4390</span>
+<span class="normal">4391</span>
+<span class="normal">4392</span>
+<span class="normal">4393</span>
+<span class="normal">4394</span>
+<span class="normal">4395</span>
 <span class="normal">4396</span>
 <span class="normal">4397</span>
 <span class="normal">4398</span>
@@ -87871,12 +87816,7 @@ Default: Scale all axes jointly.</p>
 <span class="normal">4572</span>
 <span class="normal">4573</span>
 <span class="normal">4574</span>
-<span class="normal">4575</span>
-<span class="normal">4576</span>
-<span class="normal">4577</span>
-<span class="normal">4578</span>
-<span class="normal">4579</span>
-<span class="normal">4580</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_covers</span><span class="p">(</span>
+<span class="normal">4575</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_covers</span><span class="p">(</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">InputTensorDescr</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">OutputTensorDescr</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
@@ -87996,7 +87936,7 @@ Default: Scale all axes jointly.</p>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">has_c_axis</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">],</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-            <span class="n">axes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ChannelAxis</span><span class="p">(</span><span class="n">channel_names</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">Identifier</span><span class="p">,</span> <span class="s2">&quot;RGB&quot;</span><span class="p">))))</span>
+            <span class="n">axes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ChannelAxis</span><span class="p">(</span><span class="n">channel_names</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)))</span>
             <span class="n">ndim</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">assert</span> <span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span>
@@ -88097,7 +88037,11 @@ Default: Scale all axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2428</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2424</span>
+<span class="normal">2425</span>
+<span class="normal">2426</span>
+<span class="normal">2427</span>
+<span class="normal">2428</span>
 <span class="normal">2429</span>
 <span class="normal">2430</span>
 <span class="normal">2431</span>
@@ -88126,11 +88070,7 @@ Default: Scale all axes jointly.</p>
 <span class="normal">2454</span>
 <span class="normal">2455</span>
 <span class="normal">2456</span>
-<span class="normal">2457</span>
-<span class="normal">2458</span>
-<span class="normal">2459</span>
-<span class="normal">2460</span>
-<span class="normal">2461</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_halos</span><span class="p">(</span>
+<span class="normal">2457</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_halos</span><span class="p">(</span>
     <span class="n">tensors</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">TensorDescr</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
@@ -88278,7 +88218,11 @@ Default: Scale all axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2464</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2460</span>
+<span class="normal">2461</span>
+<span class="normal">2462</span>
+<span class="normal">2463</span>
+<span class="normal">2464</span>
 <span class="normal">2465</span>
 <span class="normal">2466</span>
 <span class="normal">2467</span>
@@ -88431,11 +88375,7 @@ Default: Scale all axes jointly.</p>
 <span class="normal">2614</span>
 <span class="normal">2615</span>
 <span class="normal">2616</span>
-<span class="normal">2617</span>
-<span class="normal">2618</span>
-<span class="normal">2619</span>
-<span class="normal">2620</span>
-<span class="normal">2621</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_tensors</span><span class="p">(</span>
+<span class="normal">2617</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_tensors</span><span class="p">(</span>
     <span class="n">tensors</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">TensorDescr</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]],</span>
     <span class="n">tensor_origin</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
         <span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;test_tensor&quot;</span>
