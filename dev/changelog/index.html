@@ -736,6 +736,20 @@ In this file we log both:</p>
 </ul>
 <h2 id="changes-to-the-bioimageiospec-python-package">Changes to the bioimageio.spec Python package<a class="headerlink" href="#changes-to-the-bioimageiospec-python-package" title="Anchor link to this section for reference">¤</a></h2>
 <p>This changelog includes implementation details and might reference <a href="#changes-to-the-resource-description-format">changes to the Resource Description Format</a>, e.g. in entry <a href="#bioimageiospec-052">bioimageio.spec 0.5.2</a>.</p>
+<h3 id="bioimageiospec-05102">bioimageio.spec 0.5.10.2<a class="headerlink" href="#bioimageiospec-05102" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>allow for more mismatched elements per million</li>
+</ul>
+<h3 id="bioimageiospec-05101">bioimageio.spec 0.5.10.1<a class="headerlink" href="#bioimageiospec-05101" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>patch model.v0_5.ModelDescr.validate_input_tensors so that it correctly accocunts for output halos.</li>
+</ul>
+<h3 id="bioimageiospec-05100">bioimageio.spec 0.5.10.0<a class="headerlink" href="#bioimageiospec-05100" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li><a href="#model-0510">model 0.5.10</a></li>
+<li><code>update_format</code> saves updated description packages for output path without .yaml (or.yml) suffix (not just the bioimageio.yaml)</li>
+<li>tensor/test inputs are expected to be padded according to related output halos, which chnages input size expectations. Test tensors are patched on-the-fly.</li>
+</ul>
 <h3 id="bioimageiospec-0591">bioimageio.spec 0.5.9.1<a class="headerlink" href="#bioimageiospec-0591" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
 <li>improve summary status handling</li>
@@ -1119,6 +1133,13 @@ To keep this relation, but avoid overbearing post releases a library version num
 Here is a list of changes for each <code>type</code> and <code>format_version</code>.
 Note that 'generic' changes apply to <code>type</code> application, dataset and notebook of the same <code>format_versions</code>.
 If the changes also apply to <code>type</code> model, the coresponding model format version is noted, e.g. <a href="#generic-031-and-model-053">generic 0.3.1 and model 0.5.3</a>.</p>
+<h3 id="model-0510">model 0.5.10<a class="headerlink" href="#model-0510" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes:</li>
+<li>add cellpose postprocessing <code>CellposeFlowDynamicsDescr</code></li>
+<li>Input test tensors may be smaller than the valid network input shape by the padding required to crop any related output halos.</li>
+<li>(For backwards compatibility) test output tensors may include the halo region that is cropped before comparing to the actual (cropped) outputs.</li>
+</ul>
 <h3 id="model-059">model 0.5.9<a class="headerlink" href="#model-059" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
 <li>Non-breaking changes:</li>
