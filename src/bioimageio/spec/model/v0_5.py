@@ -555,7 +555,7 @@ class ChannelAxis(AxisBase):
 
     id: NonBatchAxisId = AxisId("channel")
 
-    channel_names: NotEmpty[List[Identifier]]
+    channel_names: NotEmpty[List[str]]
 
     @property
     def size(self) -> int:
@@ -2130,16 +2130,12 @@ def convert_axes(
                 )
                 ret.append(
                     ChannelAxis(
-                        channel_names=[
-                            Identifier(f"channel{i}") for i in range(size.offset)
-                        ]
+                        channel_names=[f"channel{i}" for i in range(size.offset)]
                     )
                 )
             else:
                 ret.append(
-                    ChannelAxis(
-                        channel_names=[Identifier(f"channel{i}") for i in range(size)]
-                    )
+                    ChannelAxis(channel_names=[f"channel{i}" for i in range(size)])
                 )
         elif axis_type == "space":
             if tensor_type == "input":
@@ -3605,8 +3601,7 @@ class ModelDescr(GenericModelDescrBase):
                     + " size"
                 )
                 generated_channel_names = [
-                    Identifier(axis.channel_names.format(i=i))
-                    for i in range(1, ref_size + 1)
+                    axis.channel_names.format(i=i) for i in range(1, ref_size + 1)
                 ]
                 axis.channel_names = generated_channel_names
 
@@ -4512,7 +4507,7 @@ def generate_covers(
         if not has_c_axis:
             assert ndim == 2
             data = np.repeat(data[:, :, None], 3, axis=2)
-            axes.append(ChannelAxis(channel_names=list(map(Identifier, "RGB"))))
+            axes.append(ChannelAxis(channel_names=list("RGB")))
             ndim += 1
 
         assert ndim == 3
