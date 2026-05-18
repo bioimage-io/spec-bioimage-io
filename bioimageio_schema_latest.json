@@ -397,8 +397,6 @@
         },
         "channel_names": {
           "items": {
-            "minLength": 1,
-            "title": "Identifier",
             "type": "string"
           },
           "minItems": 1,
