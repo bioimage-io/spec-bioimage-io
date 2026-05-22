@@ -113,6 +113,9 @@ def test_documentation_source():
     assert valid.source == doc_src["source"]
 
 
+@pytest.mark.filterwarnings(
+    "ignore:dumping with mode='python' is currently not fully supported for fields that are included when packaging; returned objects are standard python objects"
+)
 def test_documentation_source_abs_path():
     from bioimageio.spec.generic.v0_3 import FileDescr_documentation
 
