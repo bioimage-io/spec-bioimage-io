@@ -1225,20 +1225,7 @@
           "type": "string"
         },
         {
-          "description": "A URL with the HTTP or HTTPS scheme.",
-          "format": "uri",
-          "maxLength": 2083,
-          "minLength": 1,
-          "title": "HttpUrl",
-          "type": "string"
-        },
-        {
-          "$ref": "#/$defs/RelativeFilePath"
-        },
-        {
-          "format": "file-path",
-          "title": "FilePath",
-          "type": "string"
+          "$ref": "#/$defs/FileDescr"
         },
         {
           "type": "null"
