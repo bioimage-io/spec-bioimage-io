@@ -2361,25 +2361,6 @@
     <div class="doc doc-contents ">
 
           
-
-
-  <div class="doc doc-backlinks">
-        <b class="doc doc-backlink-type">Used by:</b>
-          <ul class="doc doc-backlink-list">
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../../generic/v0_2/#bioimageio.spec.generic.v0_2"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;v0_2</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb last">
-      <a href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.FileSource_cover"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;FileSource_cover</a>
-  </span>
-
-      </li>
-  </ul>
-
-  </div>
-
     </div>
 
 </div>
@@ -2511,7 +2492,7 @@
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.AttachmentsDescr.files">files</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>]</code>)
+                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>]</code>)
             </li>
         </ul>
 
@@ -2539,7 +2520,7 @@
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.AttachmentsDescr.files" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">files</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">files</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -9707,7 +9688,7 @@ processing.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.covers">covers</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.FileSource_cover">FileSource_cover</a>]</code>)
+                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec.generic.v0_2._FileSource_cover">_FileSource_cover</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.id_emoji">id_emoji</a></code>
@@ -10002,7 +9983,7 @@ an altered rdf.yaml file with local references to the downloaded files)</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DatasetDescr.covers" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">covers</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.FileSource_cover">FileSource_cover</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">covers</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec.generic.v0_2._FileSource_cover">_FileSource_cover</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -11689,9 +11670,9 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/types.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">now</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
@@ -12158,7 +12139,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.DependenciesNode.file">file</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
         </ul>
 
@@ -12186,7 +12167,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DependenciesNode.file" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">file</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">file</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -16732,7 +16713,7 @@ The data flow in bioimage.io models is explained
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.KerasHdf5WeightsDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.KerasHdf5WeightsDescr.sha256">sha256</a></code>
@@ -16951,7 +16932,7 @@ need to have this field.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.KerasHdf5WeightsDescr.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -24309,7 +24290,7 @@ need to have this field.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.covers">covers</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.FileSource_cover">FileSource_cover</a>]</code>)
+                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec.generic.v0_2._FileSource_cover">_FileSource_cover</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.id_emoji">id_emoji</a></code>
@@ -24385,7 +24366,7 @@ need to have this field.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.documentation">documentation</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</code>)
+                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.inputs">inputs</a></code>
@@ -24417,19 +24398,19 @@ need to have this field.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.sample_inputs">sample_inputs</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>]</code>)
+                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.sample_outputs">sample_outputs</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>]</code>)
+                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.test_inputs">test_inputs</a></code>
-                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="typing.List">List</span>[<span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>, <span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span>(&#39;.npy&#39;, <span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span>=True)]]]</code>)
+                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="typing.List">List</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>, <span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span>(&#39;.npy&#39;, <span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span>=True)]]]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.test_outputs">test_outputs</a></code>
-                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="typing.List">List</span>[<span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>, <span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span>(&#39;.npy&#39;, <span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span>=True)]]]</code>)
+                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="typing.List">List</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>, <span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span>(&#39;.npy&#39;, <span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span>=True)]]]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.timestamp">timestamp</a></code>
@@ -24639,7 +24620,7 @@ an altered rdf.yaml file with local references to the downloaded files)</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.covers" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">covers</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.FileSource_cover">FileSource_cover</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">covers</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec.generic.v0_2._FileSource_cover">_FileSource_cover</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -24688,7 +24669,7 @@ an altered rdf.yaml file with local references to the downloaded files)</p>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.documentation" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">documentation</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span>
         <span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span>
             <span class="s2">&quot;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&quot;</span><span class="p">,</span>
@@ -25290,7 +25271,7 @@ No standard run modes are defined yet.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.sample_inputs" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">sample_inputs</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">sample_inputs</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -25317,7 +25298,7 @@ The sample files primarily serve to inform a human user about an example use cas
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.sample_outputs" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">sample_outputs</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">sample_outputs</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -25383,7 +25364,7 @@ The sample files primarily serve to inform a human user about an example use cas
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">test_inputs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a></span><span class="p">[</span>
     <span class="n"><span title="typing.List">List</span></span><span class="p">[</span>
         <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-            <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">,</span>
+            <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">,</span>
             <span class="n"><span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span></span><span class="p">(</span><span class="s2">&quot;.npy&quot;</span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span></span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="p">]</span>
     <span class="p">]</span>
@@ -25419,7 +25400,7 @@ The extension must be '.npy'.</p>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">test_outputs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a></span><span class="p">[</span>
     <span class="n"><span title="typing.List">List</span></span><span class="p">[</span>
         <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-            <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">,</span>
+            <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">,</span>
             <span class="n"><span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span></span><span class="p">(</span><span class="s2">&quot;.npy&quot;</span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span></span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="p">]</span>
     <span class="p">]</span>
@@ -27439,7 +27420,7 @@ The available weight formats determine which consumers can use this model.</p>
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.OnnxWeightsDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.OnnxWeightsDescr.sha256">sha256</a></code>
@@ -27683,7 +27664,7 @@ need to have this field.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.OnnxWeightsDescr.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -30776,7 +30757,7 @@ To document a <code>halo</code> that is already cropped by the model <code>shape
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr.sha256">sha256</a></code>
@@ -31121,7 +31102,7 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -38786,7 +38767,7 @@ If not specified, the full data range that can be expressed in <code>data_type</
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorflowJsWeightsDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
         </ul>
 
@@ -38981,7 +38962,7 @@ need to have this field.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.TensorflowJsWeightsDescr.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -39908,7 +39889,7 @@ All required files/folders should be a zip archive.</p>
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr.sha256">sha256</a></code>
@@ -40127,7 +40108,7 @@ need to have this field.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -41053,7 +41034,7 @@ need to have this field.</p>
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TorchscriptWeightsDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TorchscriptWeightsDescr.sha256">sha256</a></code>
@@ -41297,7 +41278,7 @@ need to have this field.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.TorchscriptWeightsDescr.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -45262,7 +45243,7 @@ post-release suffixes.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.WeightsEntryDescrBase.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.WeightsEntryDescrBase.attachments">attachments</a></code>
@@ -45469,7 +45450,7 @@ need to have this field.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.WeightsEntryDescrBase.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">

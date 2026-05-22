@@ -8777,20 +8777,7 @@ or if you think such a field should exist.</p>
 <span class="w">          </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A URL with the HTTP or HTTPS scheme.&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uri&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;maxLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2083</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;HttpUrl&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/RelativeFilePath&quot;</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;file-path&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FilePath&quot;</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/FileDescr&quot;</span>
 <span class="w">        </span><span class="p">},</span>
 <span class="w">        </span><span class="p">{</span>
 <span class="w">          </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;null&quot;</span>
@@ -8983,7 +8970,7 @@ or if you think such a field should exist.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.covers">covers</a></code>
-                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec.generic.v0_3.FileDescr_cover">FileDescr_cover</span>]</code>)
+                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec.generic.v0_3._FileDescr_cover">_FileDescr_cover</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.documentation">documentation</a></code>
@@ -8999,7 +8986,7 @@ or if you think such a field should exist.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.attachments">attachments</a></code>
-                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec._internal.io_packaging.FileDescr_">FileDescr_</span>]</code>)
+                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec._internal.io_packaging.FileDescr_package">FileDescr_package</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.cite">cite</a></code>
@@ -9007,7 +8994,7 @@ or if you think such a field should exist.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.license">license</a></code>
-                (<code><span title="bioimageio.spec._internal.types.FAIR">FAIR</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LicenseId">LicenseId</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.DeprecatedLicenseId">DeprecatedLicenseId</a>, None, <span title="bioimageio.spec._internal.io_packaging.FileDescr_">FileDescr_</span>], <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(union_mode)">union_mode</span>=&#39;left_to_right&#39;, <span title="pydantic.Field(examples)">examples</span>=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]]</code>)
+                (<code><span title="bioimageio.spec._internal.types.FAIR">FAIR</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LicenseId">LicenseId</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.DeprecatedLicenseId">DeprecatedLicenseId</a>, None, <span title="bioimageio.spec._internal.io_packaging.FileDescr_package">FileDescr_package</span>], <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(union_mode)">union_mode</span>=&#39;left_to_right&#39;, <span title="pydantic.Field(examples)">examples</span>=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.git_repo">git_repo</a></code>
@@ -9015,7 +9002,7 @@ or if you think such a field should exist.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.icon">icon</a></code>
-                (<code><span title="typing.Union">Union</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span>, <span title="annotated_types.Len">Len</span>(<span title="annotated_types.Len(min_length)">min_length</span>=1, <span title="annotated_types.Len(max_length)">max_length</span>=2)], <a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>, None]</code>)
+                (<code><span title="typing.Union">Union</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span>, <span title="annotated_types.Len">Len</span>(<span title="annotated_types.Len(min_length)">min_length</span>=1, <span title="annotated_types.Len(max_length)">max_length</span>=2)], <span title="bioimageio.spec._internal.io_packaging.FileDescr_package">FileDescr_package</span>, None]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.links">links</a></code>
@@ -9115,7 +9102,7 @@ or if you think such a field should exist.</p>
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.attachments" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">attachments</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.io_packaging.FileDescr_">FileDescr_</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">attachments</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.io_packaging.FileDescr_package">FileDescr_package</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -9256,7 +9243,7 @@ an altered rdf.yaml file with local references to the downloaded files.)</p>
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.covers" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">covers</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec.generic.v0_3.FileDescr_cover">FileDescr_cover</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">covers</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec.generic.v0_3._FileDescr_cover">_FileDescr_cover</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -9425,7 +9412,7 @@ The recommended documentation source file name is <code>README.md</code>. An <co
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.icon" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">icon</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span>
     <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="annotated_types.Len">Len</span></span><span class="p">(</span><span class="n"><span title="annotated_types.Len(min_length)">min_length</span></span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n"><span title="annotated_types.Len(max_length)">max_length</span></span><span class="o">=</span><span class="mi">2</span><span class="p">)],</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileDescr_package">FileDescr_package</span></span><span class="p">,</span>
     <span class="kc">None</span><span class="p">,</span>
 <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
@@ -9581,7 +9568,10 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">license</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.types.FAIR">FAIR</span></span><span class="p">[</span>
     <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span>
-            <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LicenseId">LicenseId</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.DeprecatedLicenseId">DeprecatedLicenseId</a></span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileDescr_">FileDescr_</span></span>
+            <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LicenseId">LicenseId</a></span><span class="p">,</span>
+            <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.DeprecatedLicenseId">DeprecatedLicenseId</a></span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileDescr_package">FileDescr_package</span></span><span class="p">,</span>
         <span class="p">],</span>
         <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span>
             <span class="n"><span title="pydantic.Field(union_mode)">union_mode</span></span><span class="o">=</span><span class="s2">&quot;left_to_right&quot;</span><span class="p">,</span>
