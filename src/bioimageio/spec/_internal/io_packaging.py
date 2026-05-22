@@ -131,14 +131,14 @@ include_when_packaging = WrapSerializer(
 """Pydantic serializer that marks the annotated `FileDescr` to be included when packaging
 (saving a bioimageio zip package)."""
 
-FileSource_ = Annotated[
+FileSource_package = Annotated[
     FileSource,
     AfterValidator(wo_special_file_name),
     include_in_package,
 ]
 """A file source that is included when packaging the resource."""
 
-FileDescr_ = Annotated[
+FileDescr_package = Annotated[
     FileDescr, AfterValidator(wo_special_file_name), include_when_packaging
 ]
 """A `FileDescr` whose **source** is included when packaging the resource."""

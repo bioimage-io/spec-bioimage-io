@@ -12,7 +12,9 @@ This changelog includes implementation details and might reference [changes to t
 
 ### bioimageio.spec 0.5.11.0 (not yet released)
 
-- allow arbitrary channel names
+- [model spec 0.5.11](#model-0511)
+- [generic spec 0.3.4](#generic-034)
+- remove deprecated `ImportantFileSource`
 
 ### bioimageio.spec 0.5.10.2
 
@@ -395,6 +397,20 @@ Which fields a resource description field has and how they are to be interpreted
 Here is a list of changes for each `type` and `format_version`.
 Note that 'generic' changes apply to `type` application, dataset and notebook of the same `format_versions`.
 If the changes also apply to `type` model, the coresponding model format version is noted, e.g. [generic 0.3.1 and model 0.5.3](#generic-031-and-model-053).
+
+### model 0.5.11
+
+- Non-breaking changes:
+  - allow arbitrary channel names
+- All changes from [generic 0.3.4](#generic-034)
+
+### generic 0.3.4
+
+- Non-breaking changes:
+  - allow custom license file (not considered FAIR)
+- Breaking canges that are fully auto-convertible
+  - documentation field changed from plain source to a file description with source and optional sha256 value
+  - cover field changed from plain sources to a list of file descriptions with source and optional sha256 values
 
 ### model 0.5.10
 

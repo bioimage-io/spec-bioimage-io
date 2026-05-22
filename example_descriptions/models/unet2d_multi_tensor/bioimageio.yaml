@@ -13,10 +13,11 @@ config:
     reproducibility_tolerance:
       - absolute_tolerance: 1e-05
 covers:
-  - cover.jpg
+  - source: cover.jpg
 description: Multi tensor
-documentation: documentation.md
-format_version: 0.5.4
+documentation:
+  source: documentation.md
+format_version: 0.5.11
 git_repo: https://github.com/constantinpape/torch-em.git
 inputs:
   - axes:

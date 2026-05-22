@@ -3,7 +3,7 @@
 name: UNet 2D Nuclei Broad
 description: A 2d U-Net trained on the nuclei broad dataset.
 covers:
-  - cover0.png
+  - source: cover0.png
 authors:
   - affiliation: EMBL Heidelberg
     orcid: 0000-0001-6562-7187
@@ -31,9 +31,10 @@ tags:
   - nucleus
   - segmentation
   - dsb2018
-format_version: 0.5.4
+format_version: 0.5.11
 type: model
-documentation: README.md
+documentation:
+  source: README.md
 inputs:
   - id: raw
     description: raw input

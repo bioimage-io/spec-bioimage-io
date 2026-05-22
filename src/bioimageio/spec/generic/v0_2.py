@@ -38,7 +38,7 @@ from .._internal.io import (
     YamlValue,
     wo_special_file_name,
 )
-from .._internal.io_packaging import FileSource_, include_in_package
+from .._internal.io_packaging import FileSource_package, include_in_package
 from .._internal.type_guards import is_sequence
 from .._internal.types import (
     DeprecatedLicenseId,
@@ -89,8 +89,8 @@ VALID_COVER_IMAGE_EXTENSIONS = (
 )
 
 
-FileSource_cover = Annotated[
-    FileSource_,
+_FileSource_cover = Annotated[
+    FileSource_package,
     WithSuffix(VALID_COVER_IMAGE_EXTENSIONS, case_sensitive=False),
 ]
 
@@ -99,8 +99,8 @@ class AttachmentsDescr(Node):
     model_config = {**Node.model_config, "extra": "allow"}
     """update pydantic model config to allow additional unknown keys"""
 
-    files: List[FileSource_] = Field(
-        default_factory=cast(Callable[[], List[FileSource_]], list)
+    files: List[FileSource_package] = Field(
+        default_factory=cast(Callable[[], List[FileSource]], list)
     )
     """File attachments"""
 
@@ -221,8 +221,8 @@ class GenericModelDescrBase(ResourceDescrBase):
 
     description: str
 
-    covers: List[FileSource_cover] = Field(
-        default_factory=cast(Callable[[], List[FileSource_cover]], list),
+    covers: List[_FileSource_cover] = Field(
+        default_factory=cast(Callable[[], List[_FileSource_cover]], list),
         examples=[["cover.png"]],
         description=(
             "Cover images. Please use an image smaller than 500KB and an aspect"

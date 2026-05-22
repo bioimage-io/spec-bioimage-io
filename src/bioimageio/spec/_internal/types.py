@@ -13,7 +13,6 @@ from .constants import DOI_REGEX, SI_UNIT_REGEX
 from .field_warning import AfterWarner
 from .io import FileSource, PermissiveFileSource, RelativeFilePath
 from .io_basics import AbsoluteDirectory, AbsoluteFilePath, FileName, FilePath, Sha256
-from .io_packaging import FileSource_
 from .license_id import DeprecatedLicenseId, LicenseId
 from .type_guards import is_sequence
 from .url import HttpUrl
@@ -34,8 +33,6 @@ __all__ = [
     "FileName",
     "FilePath",
     "FileSource",
-    "FileSource_",
-    "ImportantFileSource",
     "HttpUrl",
     "Identifier",
     "LicenseId",
@@ -65,9 +62,6 @@ FAIR = Annotated[
     A,
     AfterWarner(_validate_fair, severity=ALERT),
 ]
-
-ImportantFileSource = FileSource_
-"""DEPRECATED alias, use `FileSource` instead"""
 
 
 def _validate_identifier(s: str) -> str:

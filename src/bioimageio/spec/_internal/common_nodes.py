@@ -438,7 +438,10 @@ class InvalidDescr(
                     reasons.extend(
                         f"{loc}: {msg}"
                         for loc, msg in (
-                            (error.loc, error.msg.replace("\n", " "))
+                            (
+                                ".".join(map(str, error.loc)),
+                                error.msg.replace("\n", " "),
+                            )
                             for error in detail.errors
                         )
                     )

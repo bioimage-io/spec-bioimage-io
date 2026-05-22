@@ -20,7 +20,7 @@ from bioimageio.spec._internal.io_basics import AbsoluteFilePath
 from bioimageio.spec._internal.url import HttpUrl
 from bioimageio.spec._internal.validation_context import ValidationContext
 from bioimageio.spec._internal.warning_levels import WARNING
-from bioimageio.spec.generic.v0_3 import FileSource_documentation, GenericDescr
+from bioimageio.spec.generic.v0_3 import GenericDescr
 from tests.conftest import UNET2D_ROOT
 from tests.utils import check_node
 
@@ -43,7 +43,7 @@ EXAMPLE_COM_FILE = "https://example.com/file"
             version="1",
         ),
         dict(
-            attachments={"files": [EXAMPLE_COM_FILE], "something": 42},
+            attachments=[{"source": EXAMPLE_COM_FILE}],
             authors=[{"name": "Me"}],
             cite=[dict(text="lala", url=EXAMPLE_COM)],
             description="my description",
@@ -103,33 +103,33 @@ def test_generic_invalid(kwargs: Dict[str, Any], context: ValidationContext):
 
 # @pytest.mark.parametrize("src", [UNET2D_ROOT / "README.md", text_md_url])
 def test_documentation_source():
-    from bioimageio.spec.generic.v0_3 import FileSource_documentation
+    from bioimageio.spec.generic.v0_3 import FileDescr_documentation
 
-    doc_src = "https://example.com/away.md"
-    adapter: TypeAdapter[Any] = TypeAdapter(FileSource_documentation)
+    doc_src = {"source": "https://example.com/away.md"}
+    adapter: TypeAdapter[Any] = TypeAdapter(FileDescr_documentation)
     with ValidationContext(perform_io_checks=False):
         valid = adapter.validate_python(doc_src)
 
-    assert str(valid) == doc_src
+    assert valid.source == doc_src["source"]
 
 
 def test_documentation_source_abs_path():
-    from bioimageio.spec.generic.v0_3 import FileSource_documentation
+    from bioimageio.spec.generic.v0_3 import FileDescr_documentation
 
-    doc_src = UNET2D_ROOT / "README.md"
-    assert doc_src.exists(), doc_src
-    adapter: TypeAdapter[Any] = TypeAdapter(FileSource_documentation)
+    doc_src = {"source": UNET2D_ROOT / "README.md"}
+    assert doc_src["source"].exists(), doc_src
+    adapter: TypeAdapter[Any] = TypeAdapter(FileDescr_documentation)
 
     valid = adapter.validate_python(doc_src)
-    assert str(valid) == str(doc_src)
+    assert str(valid.source) == str(doc_src["source"])
 
     data = adapter.dump_python(valid, mode="python")
-    assert str(data) == str(doc_src)
+    assert str(data["source"]) == str(doc_src["source"])
     data = adapter.dump_python(valid, mode="json")
-    assert str(data) == str(doc_src)
+    assert str(data["source"]) == str(doc_src["source"])
 
-    doc_src = UNET2D_ROOT / "does_not_exist.md"
-    assert not doc_src.exists(), doc_src
+    doc_src["source"] = UNET2D_ROOT / "does_not_exist.md"
+    assert not doc_src["source"].exists(), doc_src
     with pytest.raises(ValidationError):
         _ = adapter.validate_python(doc_src)
 
@@ -155,10 +155,6 @@ _type_adapters_for_path: Sequence[TypeAdapter[Any]] = (
             WithSuffix(".md", case_sensitive=True),
         ]
     ),
-    TypeAdapter(FileSource_documentation),
-    TypeAdapter(
-        Annotated[FileSource_documentation, WithSuffix(".md", case_sensitive=True)]
-    ),
 )
 
 _type_adapters_for_url: Sequence[TypeAdapter[Any]] = (
@@ -171,10 +167,6 @@ _type_adapters_for_url: Sequence[TypeAdapter[Any]] = (
             Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
             WithSuffix(".md", case_sensitive=True),
         ]
-    ),
-    TypeAdapter(FileSource_documentation),
-    TypeAdapter(
-        Annotated[FileSource_documentation, WithSuffix(".md", case_sensitive=True)]
     ),
 )
 

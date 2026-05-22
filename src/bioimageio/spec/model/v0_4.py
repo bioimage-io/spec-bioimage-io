@@ -47,11 +47,11 @@ from .._internal.field_warning import issue_warning, warn
 from .._internal.io import BioimageioYamlContent, WithSuffix
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io_basics import Sha256 as Sha256
-from .._internal.io_packaging import include_in_package
+from .._internal.io_packaging import FileSource_package, include_in_package
 from .._internal.io_utils import load_array
 from .._internal.packaging_context import packaging_context_var
 from .._internal.types import Datetime as Datetime
-from .._internal.types import FileSource_, LowerCaseIdentifier
+from .._internal.types import FileSource, LowerCaseIdentifier
 from .._internal.types import Identifier as Identifier
 from .._internal.types import LicenseId as LicenseId
 from .._internal.types import NotEmpty as NotEmpty
@@ -199,7 +199,7 @@ class DependenciesNode(Node):
     manager: Annotated[NotEmpty[str], Field(examples=["conda", "maven", "pip"])]
     """Dependency manager"""
 
-    file: FileSource_
+    file: FileSource_package
     """Dependency file"""
 
 
@@ -242,7 +242,7 @@ class WeightsEntryDescrBase(FileDescr):
     type: ClassVar[WeightsFormat]
     weights_format_name: ClassVar[str]  # human readable
 
-    source: FileSource_
+    source: FileSource_package
     """The weights file."""
 
     attachments: Annotated[
@@ -436,7 +436,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
             )
         return value
 
-    source: FileSource_
+    source: FileSource_package
     """The multi-file weights.
     All required files/folders should be a zip archive."""
 
@@ -1100,7 +1100,7 @@ class ModelDescr(GenericModelDescrBase):
     """The authors are the creators of the model RDF and the primary points of contact."""
 
     documentation: Annotated[
-        FileSource_,
+        FileSource_package,
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
@@ -1295,20 +1295,20 @@ class ModelDescr(GenericModelDescrBase):
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    sample_inputs: List[FileSource_] = Field(
-        default_factory=cast(Callable[[], List[FileSource_]], list)
+    sample_inputs: List[FileSource_package] = Field(
+        default_factory=cast(Callable[[], List[FileSource]], list)
     )
     """URLs/relative paths to sample inputs to illustrate possible inputs for the model,
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
-    sample_outputs: List[FileSource_] = Field(
-        default_factory=cast(Callable[[], List[FileSource_]], list)
+    sample_outputs: List[FileSource_package] = Field(
+        default_factory=cast(Callable[[], List[FileSource]], list)
     )
     """URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
     test_inputs: NotEmpty[
-        List[Annotated[FileSource_, WithSuffix(".npy", case_sensitive=True)]]
+        List[Annotated[FileSource_package, WithSuffix(".npy", case_sensitive=True)]]
     ]
     """Test input tensors compatible with the `inputs` description for a **single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
@@ -1317,7 +1317,7 @@ class ModelDescr(GenericModelDescrBase):
     The extension must be '.npy'."""
 
     test_outputs: NotEmpty[
-        List[Annotated[FileSource_, WithSuffix(".npy", case_sensitive=True)]]
+        List[Annotated[FileSource_package, WithSuffix(".npy", case_sensitive=True)]]
     ]
     """Analog to `test_inputs`."""
 
