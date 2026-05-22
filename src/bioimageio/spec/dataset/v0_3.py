@@ -90,7 +90,7 @@ class DatasetDescr(GenericDescrBase):
                     else None,  # pyright: ignore[reportArgumentType]
                     format_version="0.3.4",
                     git_repo=old.git_repo,  # pyright: ignore[reportArgumentType]
-                    icon=old.icon,
+                    icon={"source": old.icon} if old.icon else None,  # pyright: ignore[reportArgumentType]
                     id=None if old.id is None else DatasetId(old.id),
                     license=old.license,  # type: ignore
                     links=old.links,
