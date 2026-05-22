@@ -738,7 +738,8 @@ In this file we log both:</p>
 <p>This changelog includes implementation details and might reference <a href="#changes-to-the-resource-description-format">changes to the Resource Description Format</a>, e.g. in entry <a href="#bioimageiospec-052">bioimageio.spec 0.5.2</a>.</p>
 <h3 id="bioimageiospec-05110-not-yet-released">bioimageio.spec 0.5.11.0 (not yet released)<a class="headerlink" href="#bioimageiospec-05110-not-yet-released" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
-<li>allow arbitrary channel names</li>
+<li><a href="#model-0511">model spec 0.5.11</a></li>
+<li><a href="#generic-034">generic spec 0.3.4</a></li>
 </ul>
 <h3 id="bioimageiospec-05102">bioimageio.spec 0.5.10.2<a class="headerlink" href="#bioimageiospec-05102" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
@@ -1137,6 +1138,20 @@ To keep this relation, but avoid overbearing post releases a library version num
 Here is a list of changes for each <code>type</code> and <code>format_version</code>.
 Note that 'generic' changes apply to <code>type</code> application, dataset and notebook of the same <code>format_versions</code>.
 If the changes also apply to <code>type</code> model, the coresponding model format version is noted, e.g. <a href="#generic-031-and-model-053">generic 0.3.1 and model 0.5.3</a>.</p>
+<h3 id="model-0511">model 0.5.11<a class="headerlink" href="#model-0511" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes:</li>
+<li>allow arbitrary channel names</li>
+<li>All changes from <a href="#generic-034">generic 0.3.4</a></li>
+</ul>
+<h3 id="generic-034">generic 0.3.4<a class="headerlink" href="#generic-034" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes:</li>
+<li>allow custom license file (not considered FAIR)</li>
+<li>Breaking canges that are fully auto-convertible</li>
+<li>documentation field changed from plain source to a file description with source and optional sha256 value</li>
+<li>cover field changed from plain sources to a list of file descriptions with source and optional sha256 values</li>
+</ul>
 <h3 id="model-0510">model 0.5.10<a class="headerlink" href="#model-0510" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
 <li>Non-breaking changes:</li>
