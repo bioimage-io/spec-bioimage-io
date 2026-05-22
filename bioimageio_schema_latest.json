@@ -3947,27 +3947,27 @@
             ]
           ],
           "items": {
-            "anyOf": [
-              {
-                "description": "A URL with the HTTP or HTTPS scheme.",
-                "format": "uri",
-                "maxLength": 2083,
-                "minLength": 1,
-                "title": "HttpUrl",
-                "type": "string"
-              },
-              {
-                "$ref": "#/$defs/RelativeFilePath"
-              },
-              {
-                "format": "file-path",
-                "title": "FilePath",
-                "type": "string"
-              }
-            ]
+            "$ref": "#/$defs/FileDescr"
           },
           "title": "Covers",
           "type": "array"
+        },
+        "documentation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FileDescr",
+              "examples": [
+                {
+                  "source": "README.md"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional model documentation.\nThe recommended documentation source file name is `README.md`. An `.md` suffix is mandatory."
         },
         "id_emoji": {
           "anyOf": [
@@ -4726,11 +4726,14 @@
               "type": "string"
             },
             {
+              "$ref": "#/$defs/FileDescr"
+            },
+            {
               "type": "null"
             }
           ],
           "default": null,
-          "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.",
+          "description": "A [SPDX license identifier](https://spdx.org/licenses/) or a custom license file.",
           "examples": [
             "CC0-1.0",
             "MIT",
@@ -4869,44 +4872,10 @@
           "title": "Version Comment"
         },
         "format_version": {
-          "const": "0.3.0",
+          "const": "0.3.4",
           "description": "The **format** version of this resource specification",
           "title": "Format Version",
           "type": "string"
-        },
-        "documentation": {
-          "anyOf": [
-            {
-              "anyOf": [
-                {
-                  "description": "A URL with the HTTP or HTTPS scheme.",
-                  "format": "uri",
-                  "maxLength": 2083,
-                  "minLength": 1,
-                  "title": "HttpUrl",
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/$defs/RelativeFilePath"
-                },
-                {
-                  "format": "file-path",
-                  "title": "FilePath",
-                  "type": "string"
-                }
-              ],
-              "examples": [
-                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
-                "README.md"
-              ]
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
-          "title": "Documentation"
         },
         "badges": {
           "description": "badges associated with this resource",
@@ -4987,7 +4956,7 @@
         "format_version",
         "type"
       ],
-      "title": "application 0.3.0",
+      "title": "application 0.3.4",
       "type": "object"
     },
     "bioimageio__spec__dataset__v0_2__DatasetDescr": {
@@ -6147,27 +6116,27 @@
             ]
           ],
           "items": {
-            "anyOf": [
-              {
-                "description": "A URL with the HTTP or HTTPS scheme.",
-                "format": "uri",
-                "maxLength": 2083,
-                "minLength": 1,
-                "title": "HttpUrl",
-                "type": "string"
-              },
-              {
-                "$ref": "#/$defs/RelativeFilePath"
-              },
-              {
-                "format": "file-path",
-                "title": "FilePath",
-                "type": "string"
-              }
-            ]
+            "$ref": "#/$defs/FileDescr"
           },
           "title": "Covers",
           "type": "array"
+        },
+        "documentation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FileDescr",
+              "examples": [
+                {
+                  "source": "README.md"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional model documentation.\nThe recommended documentation source file name is `README.md`. An `.md` suffix is mandatory."
         },
         "id_emoji": {
           "anyOf": [
@@ -6926,11 +6895,14 @@
               "type": "string"
             },
             {
+              "$ref": "#/$defs/FileDescr"
+            },
+            {
               "type": "null"
             }
           ],
           "default": null,
-          "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.",
+          "description": "A [SPDX license identifier](https://spdx.org/licenses/) or a custom license file.",
           "examples": [
             "CC0-1.0",
             "MIT",
@@ -7069,44 +7041,10 @@
           "title": "Version Comment"
         },
         "format_version": {
-          "const": "0.3.0",
+          "const": "0.3.4",
           "description": "The **format** version of this resource specification",
           "title": "Format Version",
           "type": "string"
-        },
-        "documentation": {
-          "anyOf": [
-            {
-              "anyOf": [
-                {
-                  "description": "A URL with the HTTP or HTTPS scheme.",
-                  "format": "uri",
-                  "maxLength": 2083,
-                  "minLength": 1,
-                  "title": "HttpUrl",
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/$defs/RelativeFilePath"
-                },
-                {
-                  "format": "file-path",
-                  "title": "FilePath",
-                  "type": "string"
-                }
-              ],
-              "examples": [
-                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
-                "README.md"
-              ]
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
-          "title": "Documentation"
         },
         "badges": {
           "description": "badges associated with this resource",
@@ -7179,7 +7117,7 @@
         "format_version",
         "type"
       ],
-      "title": "dataset 0.3.0",
+      "title": "dataset 0.3.4",
       "type": "object"
     },
     "bioimageio__spec__dataset__v0_3__LinkedDataset": {
@@ -11220,27 +11158,27 @@
             ]
           ],
           "items": {
-            "anyOf": [
-              {
-                "description": "A URL with the HTTP or HTTPS scheme.",
-                "format": "uri",
-                "maxLength": 2083,
-                "minLength": 1,
-                "title": "HttpUrl",
-                "type": "string"
-              },
-              {
-                "$ref": "#/$defs/RelativeFilePath"
-              },
-              {
-                "format": "file-path",
-                "title": "FilePath",
-                "type": "string"
-              }
-            ]
+            "$ref": "#/$defs/FileDescr"
           },
           "title": "Covers",
           "type": "array"
+        },
+        "documentation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FileDescr",
+              "examples": [
+                {
+                  "source": "README.md"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional model documentation.\nThe recommended documentation source file name is `README.md`. An `.md` suffix is mandatory.\nThe documentation should include a '#[#] Validation' (sub)section\nwith details on how to quantitatively validate the model on unseen data."
         },
         "id_emoji": {
           "anyOf": [
@@ -11999,11 +11937,14 @@
               "type": "string"
             },
             {
+              "$ref": "#/$defs/FileDescr"
+            },
+            {
               "type": "null"
             }
           ],
           "default": null,
-          "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.",
+          "description": "A [SPDX license identifier](https://spdx.org/licenses/) or a custom license file.",
           "examples": [
             "CC0-1.0",
             "MIT",
@@ -12142,7 +12083,7 @@
           "title": "Version Comment"
         },
         "format_version": {
-          "const": "0.5.10",
+          "const": "0.5.11",
           "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
           "title": "Format Version",
           "type": "string"
@@ -12167,40 +12108,6 @@
           "default": null,
           "description": "bioimage.io-wide unique resource identifier\nassigned by bioimage.io; version **un**specific.",
           "title": "Id"
-        },
-        "documentation": {
-          "anyOf": [
-            {
-              "anyOf": [
-                {
-                  "description": "A URL with the HTTP or HTTPS scheme.",
-                  "format": "uri",
-                  "maxLength": 2083,
-                  "minLength": 1,
-                  "title": "HttpUrl",
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/$defs/RelativeFilePath"
-                },
-                {
-                  "format": "file-path",
-                  "title": "FilePath",
-                  "type": "string"
-                }
-              ],
-              "examples": [
-                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
-                "README.md"
-              ]
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "URL or relative path to a markdown file with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.\nThe documentation should include a '#[#] Validation' (sub)section\nwith details on how to quantitatively validate the model on unseen data.",
-          "title": "Documentation"
         },
         "inputs": {
           "description": "Describes the input tensors expected by this model.",
@@ -12291,7 +12198,7 @@
         "outputs",
         "weights"
       ],
-      "title": "model 0.5.10",
+      "title": "model 0.5.11",
       "type": "object"
     },
     "bioimageio__spec__model__v0_5__OnnxWeightsDescr": {
@@ -14594,27 +14501,27 @@
             ]
           ],
           "items": {
-            "anyOf": [
-              {
-                "description": "A URL with the HTTP or HTTPS scheme.",
-                "format": "uri",
-                "maxLength": 2083,
-                "minLength": 1,
-                "title": "HttpUrl",
-                "type": "string"
-              },
-              {
-                "$ref": "#/$defs/RelativeFilePath"
-              },
-              {
-                "format": "file-path",
-                "title": "FilePath",
-                "type": "string"
-              }
-            ]
+            "$ref": "#/$defs/FileDescr"
           },
           "title": "Covers",
           "type": "array"
+        },
+        "documentation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FileDescr",
+              "examples": [
+                {
+                  "source": "README.md"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional model documentation.\nThe recommended documentation source file name is `README.md`. An `.md` suffix is mandatory."
         },
         "id_emoji": {
           "anyOf": [
@@ -15373,11 +15280,14 @@
               "type": "string"
             },
             {
+              "$ref": "#/$defs/FileDescr"
+            },
+            {
               "type": "null"
             }
           ],
           "default": null,
-          "description": "A [SPDX license identifier](https://spdx.org/licenses/).\nWe do not support custom license beyond the SPDX license list, if you need that please\n[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)\nto discuss your intentions with the community.",
+          "description": "A [SPDX license identifier](https://spdx.org/licenses/) or a custom license file.",
           "examples": [
             "CC0-1.0",
             "MIT",
@@ -15516,44 +15426,10 @@
           "title": "Version Comment"
         },
         "format_version": {
-          "const": "0.3.0",
+          "const": "0.3.4",
           "description": "The **format** version of this resource specification",
           "title": "Format Version",
           "type": "string"
-        },
-        "documentation": {
-          "anyOf": [
-            {
-              "anyOf": [
-                {
-                  "description": "A URL with the HTTP or HTTPS scheme.",
-                  "format": "uri",
-                  "maxLength": 2083,
-                  "minLength": 1,
-                  "title": "HttpUrl",
-                  "type": "string"
-                },
-                {
-                  "$ref": "#/$defs/RelativeFilePath"
-                },
-                {
-                  "format": "file-path",
-                  "title": "FilePath",
-                  "type": "string"
-                }
-              ],
-              "examples": [
-                "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
-                "README.md"
-              ]
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "URL or relative path to a markdown file encoded in UTF-8 with additional documentation.\nThe recommended documentation file name is `README.md`. An `.md` suffix is mandatory.",
-          "title": "Documentation"
         },
         "badges": {
           "description": "badges associated with this resource",
@@ -15631,7 +15507,7 @@
         "type",
         "source"
       ],
-      "title": "notebook 0.3.0",
+      "title": "notebook 0.3.4",
       "type": "object"
     }
   },
@@ -15641,7 +15517,7 @@
         "discriminator": {
           "mapping": {
             "0.2.4": "#/$defs/bioimageio__spec__application__v0_2__ApplicationDescr",
-            "0.3.0": "#/$defs/bioimageio__spec__application__v0_3__ApplicationDescr"
+            "0.3.4": "#/$defs/bioimageio__spec__application__v0_3__ApplicationDescr"
           },
           "propertyName": "format_version"
         },
@@ -15661,7 +15537,7 @@
         "discriminator": {
           "mapping": {
             "0.2.4": "#/$defs/bioimageio__spec__dataset__v0_2__DatasetDescr",
-            "0.3.0": "#/$defs/bioimageio__spec__dataset__v0_3__DatasetDescr"
+            "0.3.4": "#/$defs/bioimageio__spec__dataset__v0_3__DatasetDescr"
           },
           "propertyName": "format_version"
         },
@@ -15681,7 +15557,7 @@
         "discriminator": {
           "mapping": {
             "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-            "0.5.10": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+            "0.5.11": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
           },
           "propertyName": "format_version"
         },
@@ -15701,7 +15577,7 @@
         "discriminator": {
           "mapping": {
             "0.2.4": "#/$defs/bioimageio__spec__notebook__v0_2__NotebookDescr",
-            "0.3.0": "#/$defs/bioimageio__spec__notebook__v0_3__NotebookDescr"
+            "0.3.4": "#/$defs/bioimageio__spec__notebook__v0_3__NotebookDescr"
           },
           "propertyName": "format_version"
         },
@@ -15725,7 +15601,7 @@
       "discriminator": {
         "mapping": {
           "0.2.4": "#/$defs/bioimageio__spec__application__v0_2__ApplicationDescr",
-          "0.3.0": "#/$defs/bioimageio__spec__application__v0_3__ApplicationDescr"
+          "0.3.4": "#/$defs/bioimageio__spec__application__v0_3__ApplicationDescr"
         },
         "propertyName": "format_version"
       },
@@ -15745,7 +15621,7 @@
       "discriminator": {
         "mapping": {
           "0.2.4": "#/$defs/bioimageio__spec__dataset__v0_2__DatasetDescr",
-          "0.3.0": "#/$defs/bioimageio__spec__dataset__v0_3__DatasetDescr"
+          "0.3.4": "#/$defs/bioimageio__spec__dataset__v0_3__DatasetDescr"
         },
         "propertyName": "format_version"
       },
@@ -15765,7 +15641,7 @@
       "discriminator": {
         "mapping": {
           "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-          "0.5.10": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+          "0.5.11": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
         },
         "propertyName": "format_version"
       },
@@ -15785,7 +15661,7 @@
       "discriminator": {
         "mapping": {
           "0.2.4": "#/$defs/bioimageio__spec__notebook__v0_2__NotebookDescr",
-          "0.3.0": "#/$defs/bioimageio__spec__notebook__v0_3__NotebookDescr"
+          "0.3.4": "#/$defs/bioimageio__spec__notebook__v0_3__NotebookDescr"
         },
         "propertyName": "format_version"
       },

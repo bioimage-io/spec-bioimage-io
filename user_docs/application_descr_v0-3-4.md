@@ -1,10 +1,5 @@
 # 
-Specification of the fields used in a generic bioimage.io-compliant resource description file (RDF).
-
-An RDF is a YAML file that describes a resource such as a model, a dataset, or a notebook.
-Note that those resources are described with a type-specific RDF.
-Use this generic resource description, if none of the known specific types matches your resource.
-
+Bioimage.io description of an application.
 **General notes on this documentation:**
 | symbol | explanation |
 | --- | --- |
@@ -13,16 +8,16 @@ Use this generic resource description, if none of the known specific types match
 | Literal[a, b, ...] | indicates that a field value must be the specific value a or b, etc.|
 | Type* := Type (restrictions) | A field Type* followed by an asterisk indicates that annotations, e.g. value restriction apply. These are listed in parentheses in the expanded type description. They are not always intuitively understandable and merely a hint at more complex validation.|
 | \<type\>.v\<major\>_\<minor\>.\<sub spec\> | Subparts of a spec might be taken from another spec type or format version. |
-| `field` ≝ `default` | Default field values are indicated after '≝' and make a field optional. However, `type` and `format_version` alwyas need to be set for resource descriptions written as YAML files and determine which bioimage.io specification applies. They are optional only when creating a resource description in Python code using the appropriate, `type` and `format_version` specific class (here: [bioimageio.spec.generic.v0_3.GenericDescr](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/generic/v0_3.html#GenericDescr)).|
+| `field` ≝ `default` | Default field values are indicated after '≝' and make a field optional. However, `type` and `format_version` alwyas need to be set for resource descriptions written as YAML files and determine which bioimage.io specification applies. They are optional only when creating a resource description in Python code using the appropriate, `type` and `format_version` specific class (here: [bioimageio.spec.application.v0_3.ApplicationDescr](https://bioimage-io.github.io/spec-bioimage-io/bioimageio/spec/application/v0_3.html#ApplicationDescr)).|
 | `field` ≝ 🡇 | Default field value is not displayed in-line, but in the code block below. |
 are included when packaging the resource to a .zip archive. The resource description YAML file (RDF) is always included as well as 'rdf.yaml'. |
 
-## `type`<sub> str</sub>
-The resource type assigns a broad category to the resource.
+## `type`<sub> Literal[application]</sub>
 
 
 
-## `format_version`<sub> Literal[0.3.0]</sub>
+
+## `format_version`<sub> Literal[0.3.4]</sub>
 The **format** version of this resource specification
 
 
@@ -41,7 +36,7 @@ file attachments
 </summary>
 
 Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f99aa109e40>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fb3b3709e40>, return_type=PydanticUndefined, when_used='unless-none'))
 
 **_internal.io.FileDescr:**
 ### `attachments.i.source`<sub> Union</sub>
@@ -58,15 +53,15 @@ Optional[_internal.io_basics.Sha256]
 
 </details>
 
-## `authors`<sub> Sequence[Author]</sub> ≝ `[]`
+## `authors`<sub> Sequence[generic.v0_3.Author]</sub> ≝ `[]`
 The authors are the creators of this resource description and the primary points of contact.
 
-<details><summary>Sequence[Author]
+<details><summary>Sequence[generic.v0_3.Author]
 
 </summary>
 
 
-**Author:**
+**generic.v0_3.Author:**
 ### `authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
 Affiliation
 
@@ -124,7 +119,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f99aa108400>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fb3b3708400>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -140,15 +135,15 @@ target URL
 
 </details>
 
-## `cite`<sub> Sequence[CiteEntry]</sub> ≝ `[]`
+## `cite`<sub> Sequence[generic.v0_3.CiteEntry]</sub> ≝ `[]`
 citations
 
-<details><summary>Sequence[CiteEntry]
+<details><summary>Sequence[generic.v0_3.CiteEntry]
 
 </summary>
 
 
-**CiteEntry:**
+**generic.v0_3.CiteEntry:**
 ### `cite.i.text`<sub> str</sub>
 free text description
 
@@ -171,7 +166,7 @@ Note:
 
 </details>
 
-## `config`<sub> Config</sub> ≝ `bioimageio=BioimageioConfig()`
+## `config`<sub> generic.v0_3.Config</sub> ≝ `bioimageio=BioimageioConfig()`
 A field for custom configuration that can contain any keys not present in the RDF spec.
 This means you should not store, for example, a GitHub repo URL in `config` since there is a `git_repo` field.
 Keys in `config` may be very specific to a tool or consumer software. To avoid conflicting definitions,
@@ -191,13 +186,13 @@ You may want to list linked files additionally under `attachments` to include th
 (Packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
 an altered rdf.yaml file with local references to the downloaded files.)
 
-<details><summary>Config
+<details><summary>generic.v0_3.Config
 
 </summary>
 
 
-**Config:**
-### `config.bioimageio`<sub> BioimageioConfig</sub> ≝ ``
+**generic.v0_3.Config:**
+### `config.bioimageio`<sub> generic.v0_3.BioimageioConfig</sub> ≝ ``
 bioimage.io internal metadata.
 
 
@@ -209,12 +204,25 @@ Cover images. Please use an image smaller than 500KB and an aspect ratio width t
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 [*Example:*](#covers) ['cover.png']
 
-<details><summary>Sequence[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
+<details><summary>Sequence[_internal.io.FileDescr*]
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f99aa108400>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+Sequence of _internal.io.FileDescr
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fb3b3709e40>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False))
+
+**_internal.io.FileDescr:**
+### `covers.i.source`<sub> Union</sub>
+File source
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+### `covers.i.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -224,15 +232,28 @@ A string containing a brief description.
 
 
 ## `documentation`<sub> Optional</sub> ≝ `None`
-URL or relative path to a markdown file encoded in UTF-8 with additional documentation.
-The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
+Additional model documentation.
+The recommended documentation source file name is `README.md`. An `.md` suffix is mandatory.
 
-<details><summary>Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
+<details><summary>Optional[_internal.io.FileDescr*]
 
 </summary>
 
-Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f99aa108400>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+Optional[_internal.io.FileDescr
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fb3b3709e40>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+
+**_internal.io.FileDescr:**
+### `documentation.source`<sub> Union</sub>
+File source
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+### `documentation.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -252,13 +273,13 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f99aa108400>, return_type=PydanticUndefined, when_used='unless-none'))
+  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fb3b3708400>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
 </details>
 
-## `id`<sub> Optional[ResourceId ()]</sub> ≝ `None`
+## `id`<sub> Optional[ApplicationId]</sub> ≝ `None`
 bioimage.io-wide unique resource identifier
 assigned by bioimage.io; version **un**specific.
 
@@ -271,14 +292,35 @@ UTF-8 emoji for display alongside the `id`.
 Optional[str (Len(min_length=1, max_length=2); )]
 
 ## `license`<sub> Union</sub> ≝ `None`
-A [SPDX license identifier](https://spdx.org/licenses/).
-We do not support custom license beyond the SPDX license list, if you need that please
-[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
-to discuss your intentions with the community.
+A [SPDX license identifier](https://spdx.org/licenses/) or a custom license file.
 [*Examples:*](#license) ['CC0-1.0', 'MIT', 'BSD-2-Clause']
 
+<details><summary>Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, None, _internal.io.FileDescr*]
 
-Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, None]
+</summary>
+
+Union of
+- _internal.license_id.LicenseId
+- _internal.license_id.DeprecatedLicenseId
+- None
+- _internal.io.FileDescr
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fb3b3709e40>, return_type=PydanticUndefined, when_used='unless-none'))
+
+
+**_internal.io.FileDescr:**
+### `license.source`<sub> Union</sub>
+File source
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+### `license.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
+
+</details>
 
 ## `links`<sub> Sequence[str]</sub> ≝ `[]`
 IDs of other bioimage.io resources
@@ -286,16 +328,16 @@ IDs of other bioimage.io resources
 
 
 
-## `maintainers`<sub> Sequence[Maintainer]</sub> ≝ `[]`
+## `maintainers`<sub> Sequence</sub> ≝ `[]`
 Maintainers of this resource.
 If not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name
 
-<details><summary>Sequence[Maintainer]
+<details><summary>Sequence[generic.v0_3.Maintainer]
 
 </summary>
 
 
-**Maintainer:**
+**generic.v0_3.Maintainer:**
 ### `maintainers.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
 Affiliation
 
@@ -329,15 +371,22 @@ Optional[str (Predicate(_has_no_slash))]
 
 </details>
 
-## `parent`<sub> Optional[ResourceId]</sub> ≝ `None`
+## `parent`<sub> Optional[ApplicationId]</sub> ≝ `None`
 The description from which this one is derived
 
 
 
-## `source`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
-The primary source of the resource
+## `source`<sub> Optional</sub> ≝ `None`
+URL or path to the source of the application
 
+<details><summary>Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
 
+</summary>
+
+Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fb3b3708400>, return_type=PydanticUndefined, when_used='unless-none'))]
+
+</details>
 
 ## `tags`<sub> Sequence[str]</sub> ≝ `[]`
 Associated tags
