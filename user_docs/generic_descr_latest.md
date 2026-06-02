@@ -41,7 +41,7 @@ file attachments
 </summary>
 
 Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7ff1c39c2e80>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9804192e80>, return_type=PydanticUndefined, when_used='unless-none'))
 
 **_internal.io.FileDescr:**
 ### `attachments.i.source`<sub> Union</sub>
@@ -124,7 +124,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7ff1c39c2de0>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f9804192de0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -214,7 +214,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 </summary>
 
 Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7ff1c39c2e80>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False))
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9804192e80>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False))
 
 **_internal.io.FileDescr:**
 ### `covers.i.source`<sub> Union</sub>
@@ -245,7 +245,7 @@ The recommended documentation source file name is `README.md`. An `.md` suffix i
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7ff1c39c2e80>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9804192e80>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ### `documentation.source`<sub> Union</sub>
@@ -278,7 +278,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7ff1c39c2e80>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9804192e80>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -322,7 +322,7 @@ Union of
 - _internal.license_id.DeprecatedLicenseId
 - None
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7ff1c39c2e80>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9804192e80>, return_type=PydanticUndefined, when_used='unless-none'))
 
 
 **_internal.io.FileDescr:**
