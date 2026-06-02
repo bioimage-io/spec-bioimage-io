@@ -101,6 +101,12 @@ def _package(
             + "not allowed for a file to be packaged"
         )
 
+    if packaging_context.local_files_only:
+        # skip regular or "relative" URLs
+        absolute_source = source.absolute()
+        if isinstance(absolute_source, HttpUrl):
+            return absolute_source
+
     fsrcs = packaging_context.file_sources
     assert not any(fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES), (
         fname
