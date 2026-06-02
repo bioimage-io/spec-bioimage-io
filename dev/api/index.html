@@ -1164,6 +1164,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#bioimageio.spec.get_package_content" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_package_content
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#bioimageio.spec.get_resource_package_content" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1507,10 +1518,18 @@ It also provides download/upload to/from the BioImage.IO Model Zoo at <a href="h
               </td>
             </tr>
             <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.get_package_content">get_package_content</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Args:</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
               <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.get_resource_package_content">get_resource_package_content</a></code></td>
               <td>
                 <div class="doc-md-description">
-                  <p>Get the content of a bioimage.io resource package.</p>
+                  <p>DEPRECATED in favor of get_package_content: Get the content of a bioimage.io resource package.</p>
                 </div>
               </td>
             </tr>
@@ -2437,6 +2456,12 @@ It also provides download/upload to/from the BioImage.IO Model Zoo at <a href="h
       </li>
       <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb last">
+      <a href="#bioimageio.spec.get_package_content"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_package_content</a>
+  </span>
+
+      </li>
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb last">
       <a href="#bioimageio.spec.get_resource_package_content"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_resource_package_content</a>
   </span>
 
@@ -3195,6 +3220,199 @@ Note:
 <div class="doc doc-object doc-function">
 
 
+<h2 id="bioimageio.spec.get_package_content" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">get_package_content</span>
+
+
+<a href="#bioimageio.spec.get_package_content" class="headerlink" title="Anchor link to this section for reference">¤</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_package_content</span><span class="p">(</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.get_package_content(rd)">rd</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.ResourceDescr">ResourceDescr</a></span><span class="p">,</span>
+    <span class="o">/</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.get_package_content(bioimageio_yaml_file_name)">bioimageio_yaml_file_name</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.FileName">FileName</a></span> <span class="o">=</span> <span class="n"><span title="bioimageio.spec._internal.io_basics.BIOIMAGEIO_YAML">BIOIMAGEIO_YAML</span></span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.get_package_content(weights_priority_order)">weights_priority_order</a></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span>
+        <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/model/v0_4/#bioimageio.spec.model.v0_4.WeightsFormat">WeightsFormat</a></span><span class="p">]</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.get_package_content(local_files_only)">local_files_only</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">,</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.FileDescr">FileDescr</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">]</span>
+<span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.get_package_content(rd)" class="doc doc-heading doc-heading-parameter">                  <code>rd</code>
+<a href="#bioimageio.spec.get_package_content(rd)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.ResourceDescr">ResourceDescr</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>resource description</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.get_package_content(bioimageio_yaml_file_name)" class="doc doc-heading doc-heading-parameter">                  <code>bioimageio_yaml_file_name</code>
+<a href="#bioimageio.spec.get_package_content(bioimageio_yaml_file_name)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.FileName">FileName</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>RDF file name</p>
+              </div>
+            </td>
+            <td>
+                  <code><span title="bioimageio.spec._internal.io_basics.BIOIMAGEIO_YAML">BIOIMAGEIO_YAML</span></code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.get_package_content(weights_priority_order)" class="doc doc-heading doc-heading-parameter">                  <code>weights_priority_order</code>
+<a href="#bioimageio.spec.get_package_content(weights_priority_order)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><span title="typing.Optional">Optional</span>[<span title="typing.Sequence">Sequence</span>[<a class="autorefs autorefs-internal" href="bioimageio/spec/model/v0_4/#bioimageio.spec.model.v0_4.WeightsFormat">WeightsFormat</a>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>(for model resources only)
+If given, only the first weights format present in the model is included.
+If none of the prioritized weights formats is found a ValueError is raised.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.get_package_content(local_files_only)" class="doc doc-heading doc-heading-parameter">                  <code>local_files_only</code>
+<a href="#bioimageio.spec.get_package_content(local_files_only)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True, only local files are included in the package content. If False, remote files are also included.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+          
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/bioimageio/spec/_package.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_package_content</span><span class="p">(</span>
+    <span class="n">rd</span><span class="p">:</span> <span class="n">ResourceDescr</span><span class="p">,</span>
+    <span class="o">/</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">bioimageio_yaml_file_name</span><span class="p">:</span> <span class="n">FileName</span> <span class="o">=</span> <span class="n">BIOIMAGEIO_YAML</span><span class="p">,</span>
+    <span class="n">weights_priority_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">WeightsFormat</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># model only</span>
+    <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">FileName</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">FileDescr</span><span class="p">,</span> <span class="n">BioimageioYamlContent</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        rd: resource description</span>
+<span class="sd">        bioimageio_yaml_file_name: RDF file name</span>
+<span class="sd">        weights_priority_order: (for model resources only)</span>
+<span class="sd">            If given, only the first weights format present in the model is included.</span>
+<span class="sd">            If none of the prioritized weights formats is found a ValueError is raised.</span>
+<span class="sd">        local_files_only: If True, only local files are included in the package content. If False, remote files are also included.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">os_friendly_name</span> <span class="o">=</span> <span class="n">get_os_friendly_file_name</span><span class="p">(</span><span class="n">rd</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">bioimageio_yaml_file_name</span> <span class="o">=</span> <span class="n">bioimageio_yaml_file_name</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">os_friendly_name</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">rd</span><span class="o">.</span><span class="n">type</span>
+    <span class="p">)</span>
+
+    <span class="n">bioimageio_yaml_file_name</span> <span class="o">=</span> <span class="n">ensure_is_valid_bioimageio_yaml_name</span><span class="p">(</span>
+        <span class="n">bioimageio_yaml_file_name</span>
+    <span class="p">)</span>
+    <span class="n">content</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">FileName</span><span class="p">,</span> <span class="n">FileDescr</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="n">PackagingContext</span><span class="p">(</span>
+        <span class="n">bioimageio_yaml_file_name</span><span class="o">=</span><span class="n">bioimageio_yaml_file_name</span><span class="p">,</span>
+        <span class="n">file_sources</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+        <span class="n">weights_priority_order</span><span class="o">=</span><span class="n">weights_priority_order</span><span class="p">,</span>
+        <span class="n">local_files_only</span><span class="o">=</span><span class="n">local_files_only</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">rdf_content</span><span class="p">:</span> <span class="n">BioimageioYamlContent</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+    <span class="n">_</span> <span class="o">=</span> <span class="n">rdf_content</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;rdf_source&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">content</span><span class="p">,</span> <span class="n">bioimageio_yaml_file_name</span><span class="p">:</span> <span class="n">rdf_content</span><span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h2 id="bioimageio.spec.get_resource_package_content" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">get_resource_package_content</span>
 
@@ -3221,13 +3439,14 @@ Note:
 
     <div class="doc doc-contents ">
 
-        <p>Get the content of a bioimage.io resource package.</p>
+        <p>DEPRECATED in favor of get_package_content: Get the content of a bioimage.io resource package.</p>
 
           
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_package.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">38</span>
+<span class="normal">39</span>
 <span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
@@ -3251,15 +3470,14 @@ Note:
 <span class="normal">60</span>
 <span class="normal">61</span>
 <span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_resource_package_content</span><span class="p">(</span>
+<span class="normal">63</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_resource_package_content</span><span class="p">(</span>
     <span class="n">rd</span><span class="p">:</span> <span class="n">ResourceDescr</span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">bioimageio_yaml_file_name</span><span class="p">:</span> <span class="n">FileName</span> <span class="o">=</span> <span class="n">BIOIMAGEIO_YAML</span><span class="p">,</span>
     <span class="n">weights_priority_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">WeightsFormat</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># model only</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">FileName</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">,</span> <span class="n">AbsoluteFilePath</span><span class="p">,</span> <span class="n">BioimageioYamlContent</span><span class="p">,</span> <span class="n">ZipPath</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the content of a bioimage.io resource package.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DEPRECATED in favor of get_package_content: Get the content of a bioimage.io resource package.&quot;&quot;&quot;</span>
     <span class="n">ret</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span>
         <span class="n">FileName</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">,</span> <span class="n">AbsoluteFilePath</span><span class="p">,</span> <span class="n">BioimageioYamlContent</span><span class="p">,</span> <span class="n">ZipPath</span><span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -4059,6 +4277,7 @@ description is valid and of type 'model'.</p>
         <span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package(allow_invalid)">allow_invalid</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package(local_files_only)">local_files_only</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.FilePath">FilePath</a></span>
 </code></pre></div>
 
@@ -4176,6 +4395,22 @@ description is valid and of type 'model'.</p>
                   <code>False</code>
             </td>
           </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.save_bioimageio_package(local_files_only)" class="doc doc-heading doc-heading-parameter">                  <code>local_files_only</code>
+<a href="#bioimageio.spec.save_bioimageio_package(local_files_only)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True, only local files are included in the package. If False, remote files are also included.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
       </tbody>
     </table>
 
@@ -4229,15 +4464,7 @@ description is valid and of type 'model'.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_package.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">226</span>
 <span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span>
@@ -4290,7 +4517,18 @@ description is valid and of type 'model'.</p>
 <span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
-<span class="normal">279</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package</span><span class="p">(</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BioimageioYamlSource</span><span class="p">,</span> <span class="n">ResourceDescr</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -4310,6 +4548,7 @@ description is valid and of type 'model'.</p>
         <span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">allow_invalid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FilePath</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Package a bioimageio resource as a zip file.</span>
 
@@ -4322,6 +4561,7 @@ description is valid and of type 'model'.</p>
 <span class="sd">        weights_priority_order: If given only the first weights format present in the model is included.</span>
 <span class="sd">                                If none of the prioritized weights formats is found all are included.</span>
 <span class="sd">        allow_invalid: If True, do not raise an error if the exported package is invalid, but log an error instead.</span>
+<span class="sd">        local_files_only: If True, only local files are included in the package. If False, remote files are also included.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        path to zipped bioimageio package</span>
@@ -4329,6 +4569,7 @@ description is valid and of type 'model'.</p>
     <span class="n">package_content</span> <span class="o">=</span> <span class="n">_prepare_resource_package</span><span class="p">(</span>
         <span class="n">source</span><span class="p">,</span>
         <span class="n">weights_priority_order</span><span class="o">=</span><span class="n">weights_priority_order</span><span class="p">,</span>
+        <span class="n">local_files_only</span><span class="o">=</span><span class="n">local_files_only</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
@@ -4383,6 +4624,7 @@ description is valid and of type 'model'.</p>
             <span class="p">]</span>
         <span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package_as_folder(local_files_only)">local_files_only</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span>
 </code></pre></div>
 
@@ -4451,6 +4693,22 @@ description is valid and of type 'model'.</p>
                   <code>None</code>
             </td>
           </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.save_bioimageio_package_as_folder(local_files_only)" class="doc doc-heading doc-heading-parameter">                  <code>local_files_only</code>
+<a href="#bioimageio.spec.save_bioimageio_package_as_folder(local_files_only)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True, only local files are included in the package. If False, remote files are also included.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
       </tbody>
     </table>
 
@@ -4504,12 +4762,7 @@ description is valid and of type 'model'.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_package.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span>
-<span class="normal">154</span>
-<span class="normal">155</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">155</span>
 <span class="normal">156</span>
 <span class="normal">157</span>
 <span class="normal">158</span>
@@ -4569,7 +4822,15 @@ description is valid and of type 'model'.</p>
 <span class="normal">212</span>
 <span class="normal">213</span>
 <span class="normal">214</span>
-<span class="normal">215</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package_as_folder</span><span class="p">(</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package_as_folder</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BioimageioYamlSource</span><span class="p">,</span> <span class="n">ResourceDescr</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -4586,6 +4847,7 @@ description is valid and of type 'model'.</p>
             <span class="p">]</span>
         <span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DirectoryPath</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Write the content of a bioimage.io resource package to a folder.</span>
 
@@ -4594,6 +4856,7 @@ description is valid and of type 'model'.</p>
 <span class="sd">        output_path: file path to write package to</span>
 <span class="sd">        weights_priority_order: If given only the first weights format present in the model is included.</span>
 <span class="sd">                                If none of the prioritized weights formats is found all are included.</span>
+<span class="sd">        local_files_only: If True, only local files are included in the package. If False, remote files are also included.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        directory path to bioimageio package folder</span>
@@ -4601,6 +4864,7 @@ description is valid and of type 'model'.</p>
     <span class="n">package_content</span> <span class="o">=</span> <span class="n">_prepare_resource_package</span><span class="p">(</span>
         <span class="n">source</span><span class="p">,</span>
         <span class="n">weights_priority_order</span><span class="o">=</span><span class="n">weights_priority_order</span><span class="p">,</span>
+        <span class="n">local_files_only</span><span class="o">=</span><span class="n">local_files_only</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">mkdtemp</span><span class="p">())</span>
@@ -4668,6 +4932,7 @@ description is valid and of type 'model'.</p>
             <span class="p">]</span>
         <span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package_to_stream(local_files_only)">local_files_only</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.IO">IO</span></span><span class="p">[</span><span class="n"><span title="bytes">bytes</span></span><span class="p">]</span>
 </code></pre></div>
 
@@ -4769,6 +5034,22 @@ description is valid and of type 'model'.</p>
                   <code>None</code>
             </td>
           </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.save_bioimageio_package_to_stream(local_files_only)" class="doc doc-heading doc-heading-parameter">                  <code>local_files_only</code>
+<a href="#bioimageio.spec.save_bioimageio_package_to_stream(local_files_only)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True, only local files are included in the package. If False, remote files are also included.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
       </tbody>
     </table>
         <p>Note: this function bypasses safety checks and does not load/validate the model after writing.</p>
@@ -4823,18 +5104,7 @@ description is valid and of type 'model'.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_package.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">282</span>
-<span class="normal">283</span>
-<span class="normal">284</span>
-<span class="normal">285</span>
-<span class="normal">286</span>
-<span class="normal">287</span>
-<span class="normal">288</span>
-<span class="normal">289</span>
-<span class="normal">290</span>
-<span class="normal">291</span>
-<span class="normal">292</span>
-<span class="normal">293</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">293</span>
 <span class="normal">294</span>
 <span class="normal">295</span>
 <span class="normal">296</span>
@@ -4874,7 +5144,21 @@ description is valid and of type 'model'.</p>
 <span class="normal">330</span>
 <span class="normal">331</span>
 <span class="normal">332</span>
-<span class="normal">333</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package_to_stream</span><span class="p">(</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_bioimageio_package_to_stream</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BioimageioYamlSource</span><span class="p">,</span> <span class="n">ResourceDescr</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -4893,6 +5177,7 @@ description is valid and of type 'model'.</p>
             <span class="p">]</span>
         <span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Package a bioimageio resource into a stream.</span>
 
@@ -4904,6 +5189,7 @@ description is valid and of type 'model'.</p>
 <span class="sd">        output_stream: stream to write package to</span>
 <span class="sd">        weights_priority_order: If given only the first weights format present in the model is included.</span>
 <span class="sd">                                If none of the prioritized weights formats is found all are included.</span>
+<span class="sd">        local_files_only: If True, only local files are included in the package. If False, remote files are also included.</span>
 
 <span class="sd">    Note: this function bypasses safety checks and does not load/validate the model after writing.</span>
 
@@ -4916,6 +5202,7 @@ description is valid and of type 'model'.</p>
     <span class="n">package_content</span> <span class="o">=</span> <span class="n">_prepare_resource_package</span><span class="p">(</span>
         <span class="n">source</span><span class="p">,</span>
         <span class="n">weights_priority_order</span><span class="o">=</span><span class="n">weights_priority_order</span><span class="p">,</span>
+        <span class="n">local_files_only</span><span class="o">=</span><span class="n">local_files_only</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">write_zip</span><span class="p">(</span>
