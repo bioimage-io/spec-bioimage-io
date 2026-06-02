@@ -53,7 +53,7 @@ from pydantic import (
     model_serializer,
     model_validator,
 )
-from typing_extensions import Annotated, Self, assert_never, get_args
+from typing_extensions import Annotated, Self, TypeAlias, assert_never, get_args
 
 from .._internal.common_nodes import (
     InvalidDescr,
@@ -301,7 +301,7 @@ PostprocessingId = Literal[
 SAME_AS_TYPE = "<same as type>"
 
 
-ParameterizedSize_N = int
+ParameterizedSize_N: TypeAlias = int
 """
 Annotates an integer to calculate a concrete axis size from a `ParameterizedSize`.
 """

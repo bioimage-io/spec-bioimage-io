@@ -332,7 +332,9 @@ class FileDescr(Node):
         return self.source.suffix
 
 
-PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl, FileDescr, ZipPath]
+PermissiveFileSource: TypeAlias = Union[
+    FileSource, str, pydantic.HttpUrl, FileDescr, ZipPath
+]
 
 
 path_or_url_adapter: "TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]]" = (

@@ -7,7 +7,7 @@ Implementations of all released minor versions are available in submodules.
 from typing import Union
 
 from pydantic import Discriminator, Field
-from typing_extensions import Annotated
+from typing_extensions import Annotated, TypeAlias
 
 from . import v0_4, v0_5
 
@@ -15,7 +15,7 @@ ModelDescr = v0_5.ModelDescr
 ModelDescr_v0_4 = v0_4.ModelDescr
 ModelDescr_v0_5 = v0_5.ModelDescr
 
-AnyModelDescr = Annotated[
+AnyModelDescr: TypeAlias = Annotated[
     Union[
         Annotated[ModelDescr_v0_4, Field(title="model 0.4")],
         Annotated[ModelDescr_v0_5, Field(title="model 0.5")],
