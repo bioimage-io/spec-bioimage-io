@@ -83,12 +83,14 @@ class DatasetDescr(GenericDescrBase):
                         {"text": c.text, "doi": c.doi, "url": c.url} for c in old.cite
                     ],  # pyright: ignore[reportArgumentType]
                     config=old.config,  # pyright: ignore[reportArgumentType]
-                    covers=old.covers,
+                    covers=[{"source": c} for c in old.covers],  # pyright: ignore[reportArgumentType]
                     description=old.description,
-                    documentation=old.documentation,
-                    format_version="0.3.0",
+                    documentation={"source": old.documentation}
+                    if old.documentation
+                    else None,  # pyright: ignore[reportArgumentType]
+                    format_version="0.3.4",
                     git_repo=old.git_repo,  # pyright: ignore[reportArgumentType]
-                    icon=old.icon,
+                    icon={"source": old.icon} if old.icon else None,  # pyright: ignore[reportArgumentType]
                     id=None if old.id is None else DatasetId(old.id),
                     license=old.license,  # type: ignore
                     links=old.links,

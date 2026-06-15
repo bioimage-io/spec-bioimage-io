@@ -26,6 +26,9 @@ class PackagingContext:
     weights_priority_order: Optional[Sequence[str]] = None
     """set to select a single weights entry when packaging model resources"""
 
+    local_files_only: bool = False
+    """Whether to include only local files when packaging. If True, remote files will be excluded."""
+
     def replace(
         self,
         *,
@@ -34,6 +37,7 @@ class PackagingContext:
         weights_priority_order: Union[
             Optional[Sequence[str]], Literal["unchanged"]
         ] = "unchanged",
+        local_files_only: Optional[bool] = None,
     ) -> "PackagingContext":
         """return a modiefied copy"""
         return PackagingContext(
@@ -49,6 +53,9 @@ class PackagingContext:
                 self.weights_priority_order
                 if weights_priority_order == "unchanged"
                 else weights_priority_order
+            ),
+            local_files_only=(
+                self.local_files_only if local_files_only is None else local_files_only
             ),
         )
 

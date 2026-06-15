@@ -57,4 +57,6 @@ def test_load_dataset_description(covid_if_dataset_path: Path, tmp_path: Path):
     save_bioimageio_yaml_only(dataset_descr, tmp_path / "dataset.yaml")
     dataset_descr2 = load_dataset_description(tmp_path / "dataset.yaml")
     assert isinstance(dataset_descr2, DatasetDescr)  # we cannot expect
-    assert dataset_descr.model_dump() == dataset_descr2.model_dump()
+    assert dataset_descr.model_dump(mode="json") == dataset_descr2.model_dump(
+        mode="json"
+    )

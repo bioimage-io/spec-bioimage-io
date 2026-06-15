@@ -53,7 +53,7 @@ from pydantic import (
     model_serializer,
     model_validator,
 )
-from typing_extensions import Annotated, Self, assert_never, get_args
+from typing_extensions import Annotated, Self, TypeAlias, assert_never, get_args
 
 from .._internal.common_nodes import (
     InvalidDescr,
@@ -75,8 +75,7 @@ from .._internal.io import (
 )
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_packaging import (
-    FileDescr_,
-    FileSource_,
+    FileDescr_package,
     package_file_descr_serializer,
 )
 from .._internal.io_utils import load_array
@@ -106,6 +105,7 @@ from ..dataset.v0_3 import DatasetDescr as DatasetDescr
 from ..dataset.v0_3 import DatasetId as DatasetId
 from ..dataset.v0_3 import LinkedDataset as LinkedDataset
 from ..dataset.v0_3 import Uploader as Uploader
+from ..generic._v0_3_converter import convert_plain_covers_and_docs_and_icon
 from ..generic.v0_3 import (
     VALID_COVER_IMAGE_EXTENSIONS as VALID_COVER_IMAGE_EXTENSIONS,
 )
@@ -115,7 +115,7 @@ from ..generic.v0_3 import CiteEntry as CiteEntry
 from ..generic.v0_3 import DeprecatedLicenseId as DeprecatedLicenseId
 from ..generic.v0_3 import Doi as Doi
 from ..generic.v0_3 import (
-    FileSource_documentation,
+    FileDescr_documentation,
     GenericModelDescrBase,
     LinkedResourceBase,
     _author_conv,  # pyright: ignore[reportPrivateUsage]
@@ -301,7 +301,7 @@ PostprocessingId = Literal[
 SAME_AS_TYPE = "<same as type>"
 
 
-ParameterizedSize_N = int
+ParameterizedSize_N: TypeAlias = int
 """
 Annotates an integer to calculate a concrete axis size from a `ParameterizedSize`.
 """
@@ -1829,14 +1829,14 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
 
         return axes
 
-    test_tensor: FAIR[Optional[FileDescr_]] = None
+    test_tensor: FAIR[Optional[FileDescr_package]] = None
     """An example tensor to use for testing.
     Using the model with the test input tensors is expected to yield the test output tensors.
     Each test tensor has be a an ndarray in the
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The file extension must be '.npy'."""
 
-    sample_tensor: FAIR[Optional[FileDescr_]] = None
+    sample_tensor: FAIR[Optional[FileDescr_package]] = None
     """A sample tensor to illustrate a possible input/output for the model,
     The sample image primarily serves to inform a human user about an example use case
     and is typically stored as .hdf5, .png or .tiff.
@@ -2277,8 +2277,8 @@ class _InputTensorConv(
     Converter[
         _InputTensorDescr_v0_4,
         InputTensorDescr,
-        FileSource_,
-        Optional[FileSource_],
+        FileSource,
+        Optional[FileSource],
         Mapping[_TensorName_v0_4, Mapping[str, int]],
     ]
 ):
@@ -2286,8 +2286,8 @@ class _InputTensorConv(
         self,
         src: _InputTensorDescr_v0_4,
         tgt: "type[InputTensorDescr] | type[dict[str, Any]]",
-        test_tensor: FileSource_,
-        sample_tensor: Optional[FileSource_],
+        test_tensor: FileSource,
+        sample_tensor: Optional[FileSource],
         size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
     ) -> "InputTensorDescr | dict[str, Any]":
         axes: List[InputAxis] = convert_axes(  # pyright: ignore[reportAssignmentType]
@@ -2378,8 +2378,8 @@ class _OutputTensorConv(
     Converter[
         _OutputTensorDescr_v0_4,
         OutputTensorDescr,
-        FileSource_,
-        Optional[FileSource_],
+        FileSource,
+        Optional[FileSource],
         Mapping[_TensorName_v0_4, Mapping[str, int]],
     ]
 ):
@@ -2387,8 +2387,8 @@ class _OutputTensorConv(
         self,
         src: _OutputTensorDescr_v0_4,
         tgt: "type[OutputTensorDescr] | type[dict[str, Any]]",
-        test_tensor: FileSource_,
-        sample_tensor: Optional[FileSource_],
+        test_tensor: FileSource,
+        sample_tensor: Optional[FileSource],
         size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
     ) -> "OutputTensorDescr | dict[str, Any]":
         # TODO: split convert_axes into convert_output_axes and convert_input_axes
@@ -2618,7 +2618,7 @@ def validate_tensors(
 
 
 FileDescr_dependencies = Annotated[
-    FileDescr_,
+    FileDescr_package,
     WithSuffix((".yaml", ".yml"), case_sensitive=True),
     Field(examples=[dict(source="environment.yaml")]),
 ]
@@ -2673,7 +2673,7 @@ class _ArchFileConv(
             callable_ = str(src)
         return tgt(
             callable=Identifier(callable_),
-            source=cast(FileSource_, source),
+            source=cast(FileSource, source),
             sha256=sha256,
             kwargs=kwargs,
         )
@@ -2767,7 +2767,7 @@ class KerasV3WeightsDescr(WeightsEntryDescrBase):
 
 
 FileDescr_external_data = Annotated[
-    FileDescr_,
+    FileDescr_package,
     WithSuffix(".data", case_sensitive=True),
     Field(examples=[dict(source="weights.onnx.data")]),
 ]
@@ -3472,11 +3472,11 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    implemented_format_version: ClassVar[Literal["0.5.10"]] = "0.5.10"
+    implemented_format_version: ClassVar[Literal["0.5.11"]] = "0.5.11"
     if TYPE_CHECKING:
-        format_version: Literal["0.5.10"] = "0.5.10"
+        format_version: Literal["0.5.11"] = "0.5.11"
     else:
-        format_version: Literal["0.5.10"]
+        format_version: Literal["0.5.11"]
         """Version of the bioimage.io model description specification used.
         When creating a new model always use the latest micro/patch version described here.
         The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -3498,17 +3498,15 @@ class ModelDescr(GenericModelDescrBase):
     )
     """The authors are the creators of the model RDF and the primary points of contact."""
 
-    documentation: FAIR[Optional[FileSource_documentation]] = None
-    """URL or relative path to a markdown file with additional documentation.
-    The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
+    documentation: FAIR[Optional[FileDescr_documentation]] = None
+    """Additional model documentation.
+    The recommended documentation source file name is `README.md`. An `.md` suffix is mandatory.
     The documentation should include a '#[#] Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
     @field_validator("documentation", mode="after")
     @classmethod
-    def _validate_documentation(
-        cls, value: Optional[FileSource_documentation]
-    ) -> Optional[FileSource_documentation]:
+    def _validate_documentation(cls, value: Optional[FileDescr]) -> Optional[FileDescr]:
         if not get_validation_context().perform_io_checks or value is None:
             return value
 
@@ -4172,6 +4170,11 @@ class ModelDescr(GenericModelDescrBase):
                 # bump patch version
                 data["format_version"] = cls.implemented_format_version
 
+            if fv_tuple[:2] in ((0, 3), (0, 4)) or (
+                fv_tuple[:2] == (0, 5) and fv_tuple[2] < 11
+            ):
+                convert_plain_covers_and_docs_and_icon(data)
+
 
 class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
     def _convert(
@@ -4228,12 +4231,12 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             authors=[_author_conv.convert_as_dict(a) for a in src.authors],  # pyright: ignore[reportArgumentType]
             cite=[{"text": c.text, "doi": c.doi, "url": c.url} for c in src.cite],  # pyright: ignore[reportArgumentType]
             config=src.config,  # pyright: ignore[reportArgumentType]
-            covers=src.covers,
+            covers=[{"source": c} for c in src.covers],  # pyright: ignore[reportArgumentType]
             description=src.description,
-            documentation=src.documentation,
-            format_version="0.5.10",
+            documentation={"source": src.documentation} if src.documentation else None,  # pyright: ignore[reportArgumentType]
+            format_version="0.5.11",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
-            icon=src.icon,
+            icon={"source": src.icon} if src.icon else None,  # pyright: ignore[reportArgumentType]
             id=None if src.id is None else ModelId(src.id),
             id_emoji=src.id_emoji,
             license=src.license,  # type: ignore
@@ -4390,7 +4393,7 @@ _model_conv = _ModelConv(_ModelDescr_v0_4, ModelDescr)
 def generate_covers(
     inputs: Sequence[Tuple[InputTensorDescr, NDArray[Any]]],
     outputs: Sequence[Tuple[OutputTensorDescr, NDArray[Any]]],
-) -> List[Path]:
+) -> List[FileDescr]:
     def squeeze(
         data: NDArray[Any], axes: Sequence[AnyAxis]
     ) -> Tuple[NDArray[Any], List[AnyAxis]]:
@@ -4572,4 +4575,4 @@ def generate_covers(
         imwrite(covers[0], ipt_img)
         imwrite(covers[1], out_img)
 
-    return covers
+    return [FileDescr(source=c) for c in covers]

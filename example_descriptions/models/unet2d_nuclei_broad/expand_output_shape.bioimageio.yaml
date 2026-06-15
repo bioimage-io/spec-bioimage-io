@@ -15,10 +15,11 @@ cite:
   - text: 2018 Data Science Bowl
     url: https://www.kaggle.com/c/data-science-bowl-2018
 covers:
-  - cover0.png
+  - source: cover0.png
 description: A 2d U-Net trained on the nuclei broad dataset.
-documentation: README.md
-format_version: 0.5.4
+documentation:
+  source: README.md
+format_version: 0.5.11
 git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 inputs:
   - axes:

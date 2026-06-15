@@ -35,7 +35,6 @@ from ._io import load_description
 from .model.v0_4 import WeightsFormat
 
 
-# TODO: deprecate in favor of get_package_content
 def get_resource_package_content(
     rd: ResourceDescr,
     /,
@@ -43,7 +42,7 @@ def get_resource_package_content(
     bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
 ) -> Dict[FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]]:
-    """Get the content of a bioimage.io resource package."""
+    """DEPRECATED in favor of get_package_content: Get the content of a bioimage.io resource package."""
     ret: Dict[
         FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]
     ] = {}
@@ -70,6 +69,7 @@ def get_package_content(
     *,
     bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
+    local_files_only: bool = False,
 ) -> Dict[FileName, Union[FileDescr, BioimageioYamlContent]]:
     """
     Args:
@@ -78,6 +78,7 @@ def get_package_content(
         weights_priority_order: (for model resources only)
             If given, only the first weights format present in the model is included.
             If none of the prioritized weights formats is found a ValueError is raised.
+        local_files_only: If True, only local files are included in the package content. If False, remote files are also included.
     """
     os_friendly_name = get_os_friendly_file_name(rd.name)
     bioimageio_yaml_file_name = bioimageio_yaml_file_name.format(
@@ -92,6 +93,7 @@ def get_package_content(
         bioimageio_yaml_file_name=bioimageio_yaml_file_name,
         file_sources=content,
         weights_priority_order=weights_priority_order,
+        local_files_only=local_files_only,
     ):
         rdf_content: BioimageioYamlContent = rd.model_dump(
             mode="json", exclude_unset=True
@@ -107,6 +109,7 @@ def _prepare_resource_package(
     /,
     *,
     weights_priority_order: Optional[Sequence[WeightsFormat]] = None,
+    local_files_only: bool = False,
 ) -> Dict[FileName, Union[BioimageioYamlContent, BytesReader]]:
     """Prepare to package a resource description; downloads all required files.
 
@@ -115,6 +118,7 @@ def _prepare_resource_package(
         context: validation context
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
+        local_files_only: If True, only local files are included in the package. If False, remote files are also included.
     """
     context = get_validation_context()
     bioimageio_yaml_file_name = context.file_name
@@ -139,6 +143,7 @@ def _prepare_resource_package(
             descr,
             bioimageio_yaml_file_name=bioimageio_yaml_file_name or BIOIMAGEIO_YAML,
             weights_priority_order=weights_priority_order,
+            local_files_only=local_files_only,
         )
 
     return {
@@ -164,6 +169,7 @@ def save_bioimageio_package_as_folder(
             ]
         ]
     ] = None,
+    local_files_only: bool = False,
 ) -> DirectoryPath:
     """Write the content of a bioimage.io resource package to a folder.
 
@@ -172,6 +178,7 @@ def save_bioimageio_package_as_folder(
         output_path: file path to write package to
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
+        local_files_only: If True, only local files are included in the package. If False, remote files are also included.
 
     Returns:
         directory path to bioimageio package folder
@@ -179,6 +186,7 @@ def save_bioimageio_package_as_folder(
     package_content = _prepare_resource_package(
         source,
         weights_priority_order=weights_priority_order,
+        local_files_only=local_files_only,
     )
     if output_path is None:
         output_path = Path(mkdtemp())
@@ -235,6 +243,7 @@ def save_bioimageio_package(
         ]
     ] = None,
     allow_invalid: bool = False,
+    local_files_only: bool = False,
 ) -> FilePath:
     """Package a bioimageio resource as a zip file.
 
@@ -247,6 +256,7 @@ def save_bioimageio_package(
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
         allow_invalid: If True, do not raise an error if the exported package is invalid, but log an error instead.
+        local_files_only: If True, only local files are included in the package. If False, remote files are also included.
 
     Returns:
         path to zipped bioimageio package
@@ -254,6 +264,7 @@ def save_bioimageio_package(
     package_content = _prepare_resource_package(
         source,
         weights_priority_order=weights_priority_order,
+        local_files_only=local_files_only,
     )
     if output_path is None:
         output_path = Path(
@@ -298,6 +309,7 @@ def save_bioimageio_package_to_stream(
             ]
         ]
     ] = None,
+    local_files_only: bool = False,
 ) -> IO[bytes]:
     """Package a bioimageio resource into a stream.
 
@@ -309,6 +321,7 @@ def save_bioimageio_package_to_stream(
         output_stream: stream to write package to
         weights_priority_order: If given only the first weights format present in the model is included.
                                 If none of the prioritized weights formats is found all are included.
+        local_files_only: If True, only local files are included in the package. If False, remote files are also included.
 
     Note: this function bypasses safety checks and does not load/validate the model after writing.
 
@@ -321,6 +334,7 @@ def save_bioimageio_package_to_stream(
     package_content = _prepare_resource_package(
         source,
         weights_priority_order=weights_priority_order,
+        local_files_only=local_files_only,
     )
 
     write_zip(

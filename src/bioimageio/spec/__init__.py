@@ -12,6 +12,7 @@ Note:
 
 # ruff: noqa: E402
 from loguru import logger
+from typing_extensions import TypeAlias
 
 logger.disable("bioimageio.spec")
 
@@ -41,6 +42,7 @@ from ._io import (
 )
 from ._io import load_model_description as load_model_description
 from ._io import save_bioimageio_yaml_only as save_bioimageio_yaml_only
+from ._package import get_package_content as get_package_content
 from ._package import get_resource_package_content as get_resource_package_content
 from ._package import save_bioimageio_package as save_bioimageio_package
 from ._package import (
@@ -59,11 +61,11 @@ from ._upload import upload as upload
 __version__ = _version.VERSION
 
 # reexpose slected objects from submodules
-AnyApplicationDescr = application.AnyApplicationDescr
-AnyDatasetDescr = dataset.AnyDatasetDescr
-AnyGenericDescr = generic.AnyGenericDescr
-AnyModelDescr = model.AnyModelDescr
-AnyNotebookDescr = notebook.AnyNotebookDescr
+AnyApplicationDescr: TypeAlias = application.AnyApplicationDescr
+AnyDatasetDescr: TypeAlias = dataset.AnyDatasetDescr
+AnyGenericDescr: TypeAlias = generic.AnyGenericDescr
+AnyModelDescr: TypeAlias = model.AnyModelDescr
+AnyNotebookDescr: TypeAlias = notebook.AnyNotebookDescr
 ApplicationDescr = application.ApplicationDescr
 BioimageioCondaEnv = conda_env.BioimageioCondaEnv
 DatasetDescr = dataset.DatasetDescr

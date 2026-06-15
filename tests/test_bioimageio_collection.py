@@ -16,17 +16,59 @@ KNOWN_INVALID: Mapping[str, str] = {
 EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT: Collection[str] = {
     "version_number",  # deprecated field that gets dropped in favor of `version``
     "version",  # may be set from deprecated `version_number`
+    "documentation",  # plain source to FileDescr(source=...)
+    "covers",  # plain source to FileDescr(source=...)
 }
 EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
-    "affable-shark/1.1": {"inputs"},  # preprocessing ensure_dtype added
-    "affable-shark/1.2": {"inputs"},  # preprocessing ensure_dtype added
-    "charismatic-whale/1.0.1": {"inputs", "outputs"},  # int -> float
-    "dynamic-t-rex/1": {"inputs"},  # int -> float
-    "impartial-shrimp/1.1": {"inputs", "cite"},  # preprocessing ensure_dtype added
-    "philosophical-panda/0.0.11": {"outputs"},  # int -> float
-    "philosophical-panda/0.1.0": {"outputs"},  # int -> float
-    "polite-pig/1.1": {"inputs", "outputs"},
-    "charismatic-whale/1.0.2": {"inputs", "outputs"},  # int -> float
+    "affable-shark/1.1": {
+        "inputs",  # preprocessing ensure_dtype added
+        "documentation",  # plain source to FileDescr(source=...)
+        "covers",  # plain source to FileDescr(source=...)
+    },
+    "affable-shark/1.2": {
+        "inputs",  # preprocessing ensure_dtype added
+        "documentation",  # plain source to FileDescr(source=...)
+        "covers",  # plain source to FileDescr(source=...)
+    },
+    "charismatic-whale/1.0.1": {
+        "inputs",  # int -> float
+        "outputs",  # int -> float
+        "documentation",  # plain source to FileDescr(source=...)
+        "covers",  # plain source to FileDescr(source=...)
+    },
+    "dynamic-t-rex/1": {
+        "inputs",  # int -> float
+        "documentation",  # plain source to FileDescr(source=...)
+        "covers",  # plain source to FileDescr(source=...)
+    },
+    "impartial-shrimp/1.1": {
+        "inputs",  # preprocessing ensure_dtype added
+        "cite",
+        "documentation",  # plain source to FileDescr(source=...)
+        "covers",  # plain source to FileDescr(source=...)
+    },
+    "philosophical-panda/0.0.11": {
+        "outputs",  # int -> float
+        "documentation",  # plain source to FileDescr(source=...)
+        "covers",  # plain source to FileDescr(source=...)
+    },
+    "philosophical-panda/0.1.0": {
+        "outputs",
+        "documentation",  # plain source to FileDescr(source=...)
+        "covers",  # plain source to FileDescr(source=...)
+    },  # int -> float
+    "polite-pig/1.1": {
+        "inputs",
+        "outputs",
+        "documentation",  # plain source to FileDescr(source=...)
+        "covers",  # plain source to FileDescr(source=...)
+    },
+    "charismatic-whale/1.0.2": {
+        "inputs",
+        "outputs",
+        "documentation",  # plain source to FileDescr(source=...)
+        "covers",  # plain source to FileDescr(source=...)
+    },  # int -> float
     "dynamic-t-rex/1.1": {"inputs"},  # int -> float
 }
 

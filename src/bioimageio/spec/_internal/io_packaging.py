@@ -101,6 +101,12 @@ def _package(
             + "not allowed for a file to be packaged"
         )
 
+    if packaging_context.local_files_only:
+        # skip regular or "relative" URLs
+        absolute_source = source.absolute()
+        if isinstance(absolute_source, HttpUrl):
+            return absolute_source
+
     fsrcs = packaging_context.file_sources
     assert not any(fname.endswith(special) for special in ALL_BIOIMAGEIO_YAML_NAMES), (
         fname
@@ -131,14 +137,14 @@ include_when_packaging = WrapSerializer(
 """Pydantic serializer that marks the annotated `FileDescr` to be included when packaging
 (saving a bioimageio zip package)."""
 
-FileSource_ = Annotated[
+FileSource_package = Annotated[
     FileSource,
     AfterValidator(wo_special_file_name),
     include_in_package,
 ]
 """A file source that is included when packaging the resource."""
 
-FileDescr_ = Annotated[
+FileDescr_package = Annotated[
     FileDescr, AfterValidator(wo_special_file_name), include_when_packaging
 ]
 """A `FileDescr` whose **source** is included when packaging the resource."""

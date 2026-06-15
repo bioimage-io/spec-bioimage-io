@@ -238,7 +238,7 @@ def model():
     use only when not manipulating the model!"""
     with ValidationContext(perform_io_checks=False):
         return ModelDescr(
-            documentation=UNET2D_ROOT / "README.md",
+            documentation=FileDescr(source=UNET2D_ROOT / "README.md"),
             license=LicenseId("MIT"),
             git_repo=HttpUrl("https://github.com/bioimage-io/core-bioimage-io-python"),
             description="description",
@@ -304,7 +304,7 @@ def model():
 @pytest.fixture(scope="module")
 def const_model_data(model: ModelDescr):
     data = model.model_dump(mode="json")
-    assert data["documentation"] == str(UNET2D_ROOT / "README.md"), (
+    assert data["documentation"]["source"] == str(UNET2D_ROOT / "README.md"), (
         data["documentation"],
         str(UNET2D_ROOT / "README.md"),
     )

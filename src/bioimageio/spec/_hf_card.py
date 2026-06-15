@@ -12,6 +12,7 @@ from typing_extensions import assert_never
 
 from bioimageio.spec._internal.validation_context import get_validation_context
 from bioimageio.spec.model.v0_5 import (
+    FileDescr,
     IntervalOrRatioDataDescr,
     KerasHdf5WeightsDescr,
     KerasV3WeightsDescr,
@@ -295,6 +296,8 @@ def create_huggingface_model_card(
         A tuple of (markdown_string, images_dict) where images_dict maps
         filenames to PNG bytes that should be saved alongside the markdown.
     """
+    model = model.model_copy()
+
     if model.version is None:
         model_version = ""
     else:
@@ -305,9 +308,10 @@ def create_huggingface_model_card(
     else:
         doc_reader = get_reader(model.documentation)
         local_doc_path = f"package/{doc_reader.original_file_name}"
-        model = model.model_copy()
         with get_validation_context().replace(perform_io_checks=False):
-            model.documentation = RelativeFilePath(PurePosixPath(local_doc_path))
+            model.documentation = FileDescr(
+                source=RelativeFilePath(PurePosixPath(local_doc_path))
+            )
 
         additional_model_doc = f"\n- **Additional model documentation:** [{local_doc_path}]({local_doc_path})"
 
@@ -591,6 +595,14 @@ def create_huggingface_model_card(
 
     if model.license is None:
         license = "unknown"
+        license_meta = "unknown"
+    elif isinstance(model.license, FileDescr):
+        license_reader = get_reader(model.license)
+        local_license_path = f"package/{license_reader.original_file_name}"
+        with get_validation_context().replace(perform_io_checks=False):
+            model.license.source = RelativeFilePath(PurePosixPath(local_license_path))
+
+        license = f"[{local_license_path}]({local_license_path})"
         license_meta = "unknown"
     else:
         spdx_licenses = get_spdx_licenses()

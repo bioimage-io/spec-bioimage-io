@@ -4,41 +4,51 @@ from pathlib import Path
 
 import imageio
 from loguru import logger
+from packaging.version import Version
 
 from .._internal.io import (
     BioimageioYamlContent,
     extract_file_name,
     interprete_file_source,
 )
+from .._internal.type_guards import is_list
 from ._v0_2_converter import convert_from_older_format as convert_from_older_format_v0_2
 
 
 def convert_from_older_format(data: BioimageioYamlContent) -> None:
     """convert raw RDF data of an older format where possible"""
     # check if we have future format version
-    fv = data.get("format_version", "0.2.0")
-    if (
-        not isinstance(fv, str)
-        or fv.count(".") != 2
-        or tuple(map(int, fv.split(".")[:2])) > (0, 3)
-    ):
+    fv_raw = data.get("format_version", "0.2.0")
+    if fv_raw is None or not isinstance(fv_raw, str):
+        fv = None
+    else:
+        try:
+            fv = Version(fv_raw)
+        except Exception:
+            fv = None
+
+    if fv is None:
         return
 
-    convert_from_older_format_v0_2(data)
+    if fv < Version("0.3"):
+        convert_from_older_format_v0_2(data)
 
-    convert_attachments(data)
-    convert_cover_images(data)
+        convert_attachments(data)
+        convert_cover_images(data)
 
-    _ = data.pop("download_url", None)
-    _ = data.pop("rdf_source", None)
+        _ = data.pop("download_url", None)
+        _ = data.pop("rdf_source", None)
 
-    if "name" in data and isinstance(data["name"], str):
-        data["name"] = "".join(
-            c if c in string.ascii_letters + string.digits + "_+- ()" else " "
-            for c in data["name"]
-        )[:128]
+        if "name" in data and isinstance(data["name"], str):
+            data["name"] = "".join(
+                c if c in string.ascii_letters + string.digits + "_+- ()" else " "
+                for c in data["name"]
+            )[:128]
 
-    data["format_version"] = "0.3.0"
+    if fv < Version("0.3.4"):
+        convert_plain_covers_and_docs_and_icon(data)
+
+    data["format_version"] = "0.3.4"
 
 
 def convert_attachments(data: BioimageioYamlContent) -> None:
@@ -70,3 +80,20 @@ def convert_cover_images(data: BioimageioYamlContent) -> None:
             covers[i] = str(c_path.absolute())
         except Exception as e:
             logger.warning("failed to convert tif cover image: {}", e)
+
+
+def convert_plain_covers_and_docs_and_icon(data: BioimageioYamlContent) -> None:
+    doc = data.get("documentation")
+    if isinstance(doc, str):
+        data["documentation"] = {"source": doc}
+
+    covers = data.get("covers")
+    if is_list(covers):
+        for i in range(len(covers)):
+            c = covers[i]
+            if isinstance(c, str):
+                covers[i] = {"source": c}
+
+    icon = data.get("icon")
+    if isinstance(icon, str) and len(icon) > 2:
+        data["icon"] = {"source": icon}

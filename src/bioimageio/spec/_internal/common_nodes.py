@@ -363,7 +363,10 @@ class ResourceDescrBase(
         return rd, val_errors, val_warnings
 
     def package(
-        self, dest: Optional[Union[ZipFile, IO[bytes], Path, str]] = None, /
+        self,
+        dest: Optional[Union[ZipFile, IO[bytes], Path, str]] = None,
+        /,
+        local_files_only: bool = False,
     ) -> ZipFile:
         """package the described resource as a zip archive
 
@@ -388,18 +391,19 @@ class ResourceDescrBase(
                 str(getattr(self, "id", getattr(self, "name", "bioimageio"))) + ".zip"
             )
 
-        content = self.get_package_content()
+        content = self.get_package_content(local_files_only=local_files_only)
         write_content_to_zip(content, zip)
         return zip
 
     def get_package_content(
-        self,
+        self, local_files_only: bool = False
     ) -> Dict[FileName, Union[FileDescr, BioimageioYamlContent]]:
         """Returns package content without creating the package."""
         content: Dict[FileName, FileDescr] = {}
         with PackagingContext(
             bioimageio_yaml_file_name=BIOIMAGEIO_YAML,
             file_sources=content,
+            local_files_only=local_files_only,
         ):
             rdf_content: BioimageioYamlContent = self.model_dump(
                 mode="json", exclude_unset=True
@@ -438,7 +442,10 @@ class InvalidDescr(
                     reasons.extend(
                         f"{loc}: {msg}"
                         for loc, msg in (
-                            (error.loc, error.msg.replace("\n", " "))
+                            (
+                                ".".join(map(str, error.loc)),
+                                error.msg.replace("\n", " "),
+                            )
                             for error in detail.errors
                         )
                     )

@@ -59,6 +59,7 @@ from typing_extensions import (
     LiteralString,
     NotRequired,
     Self,
+    TypeAlias,
     TypeGuard,
     Unpack,
     assert_never,
@@ -331,7 +332,9 @@ class FileDescr(Node):
         return self.source.suffix
 
 
-PermissiveFileSource = Union[FileSource, str, pydantic.HttpUrl, FileDescr, ZipPath]
+PermissiveFileSource: TypeAlias = Union[
+    FileSource, str, pydantic.HttpUrl, FileDescr, ZipPath
+]
 
 
 path_or_url_adapter: "TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]]" = (
@@ -437,26 +440,28 @@ def ensure_is_valid_bioimageio_yaml_name(file_name: FileName) -> FileName:
 
 
 # types as loaded from YAML 1.2 (with ruyaml)
-YamlLeafValue = Union[
+YamlLeafValue: TypeAlias = Union[
     bool, _date, _datetime, int, float, str, None
 ]  # note: order relevant for deserializing
-YamlKey = Union[  # YAML Arrays are cast to tuples if used as key in mappings
+YamlKey: TypeAlias = Union[  # YAML Arrays are cast to tuples if used as key in mappings
     YamlLeafValue, Tuple[YamlLeafValue, ...]  # (nesting is not allowed though)
 ]
 if TYPE_CHECKING:
-    YamlValue = Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]]
-    YamlValueView = Union[
+    YamlValue: TypeAlias = Union[
+        YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]
+    ]
+    YamlValueView: TypeAlias = Union[
         YamlLeafValue, Sequence["YamlValueView"], Mapping[YamlKey, "YamlValueView"]
     ]
 else:
     # for pydantic validation we need to use `TypeAliasType`,
     # see https://docs.pydantic.dev/latest/concepts/types/#named-recursive-types
     # however this results in a partially unknown type with the current pyright 1.1.388
-    YamlValue = _TypeAliasType(
+    YamlValue: TypeAlias = _TypeAliasType(
         "YamlValue",
         Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]],
     )
-    YamlValueView = _TypeAliasType(
+    YamlValueView: TypeAlias = _TypeAliasType(
         "YamlValueView",
         Union[
             YamlLeafValue,

@@ -7,10 +7,12 @@ config:
   bioimageio:
     reproducibility_tolerance:
       - { absolute_tolerance: 0.0001 }
-covers: [cover.jpg]
+covers:
+  - source: cover.jpg
 description: Different output shape
-documentation: documentation.md
-format_version: 0.5.4
+documentation:
+  source: documentation.md
+format_version: 0.5.11
 git_repo: https://github.com/constantinpape/torch-em.git
 inputs:
   - axes:
@@ -59,7 +61,7 @@ outputs:
         source: test_output.npy,
       }
 tags: [segmentation]
-timestamp: "2021-09-12T14:18:58.389834+00:00"
+timestamp: '2021-09-12T14:18:58.389834+00:00'
 type: model
 weights:
   pytorch_state_dict:
