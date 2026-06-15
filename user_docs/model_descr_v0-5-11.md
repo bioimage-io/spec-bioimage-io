@@ -19,7 +19,7 @@ Specialized resource type 'model'
 
 
 
-## `format_version`<sub> Literal[0.5.10]</sub>
+## `format_version`<sub> Literal[0.5.11]</sub>
 Version of the bioimage.io model description specification used.
 When creating a new model always use the latest micro/patch version described here.
 The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -391,7 +391,7 @@ The file extension must be '.npy'.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f61fe00de40>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `inputs.test_tensor.source`<sub> Union</sub>
@@ -421,7 +421,7 @@ The image dimensionality has to match the number of axes specified in this tenso
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f61fe00de40>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `inputs.sample_tensor.source`<sub> Union</sub>
@@ -1033,11 +1033,11 @@ free text description
 ### `outputs.axes`<sub> Sequence</sub>
 tensor axes
 
-<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f61fdd76e80>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f61fdd76e80>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f9d2c086200>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f9d2c086200>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f61fdd76e80>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f61fdd76e80>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f9d2c086200>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f9d2c086200>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BatchAxis:**
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `batch`
@@ -1511,7 +1511,7 @@ The file extension must be '.npy'.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f61fe00de40>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `outputs.test_tensor.source`<sub> Union</sub>
@@ -1541,7 +1541,7 @@ The image dimensionality has to match the number of axes specified in this tenso
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f61fe00de40>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `outputs.sample_tensor.source`<sub> Union</sub>
@@ -2573,7 +2573,7 @@ Source of the external ONNX data file holding the weights.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f61fe00de40>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.data', case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.data', case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.onnx.external_data.source`<sub> Union</sub>
@@ -2750,7 +2750,7 @@ The conda environment file should include pytorch and any version pinning has to
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f61fe00de40>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.pytorch_state_dict.dependencies.source`<sub> Union</sub>
@@ -2971,7 +2971,7 @@ Should include tensorflow and any version pinning has to be compatible with **te
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f61fe00de40>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.tensorflow_saved_model_bundle.dependencies.source`<sub> Union</sub>
@@ -3094,7 +3094,7 @@ file attachments
 </summary>
 
 Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f61fe00de40>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'))
 
 **_internal.io.FileDescr:**
 ### `attachments.i.source`<sub> Union</sub>
@@ -3599,12 +3599,25 @@ Cover images. Please use an image smaller than 500KB and an aspect ratio width t
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 [*Example:*](#covers) ['cover.png']
 
-<details><summary>Sequence[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
+<details><summary>Sequence[_internal.io.FileDescr*]
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f61fe00c400>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+Sequence of _internal.io.FileDescr
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False))
+
+**_internal.io.FileDescr:**
+### `covers.i.source`<sub> Union</sub>
+File source
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+### `covers.i.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -3614,17 +3627,30 @@ A string containing a brief description.
 
 
 ## `documentation`<sub> Optional</sub> ≝ `None`
-URL or relative path to a markdown file with additional documentation.
-The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
+Additional model documentation.
+The recommended documentation source file name is `README.md`. An `.md` suffix is mandatory.
 The documentation should include a '#[#] Validation' (sub)section
 with details on how to quantitatively validate the model on unseen data.
 
-<details><summary>Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
+<details><summary>Optional[_internal.io.FileDescr*]
 
 </summary>
 
-Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f61fe00c400>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+Optional[_internal.io.FileDescr
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+
+**_internal.io.FileDescr:**
+### `documentation.source`<sub> Union</sub>
+File source
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+### `documentation.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -3637,16 +3663,29 @@ A URL to the Git repository where the resource is being developed.
 ## `icon`<sub> Union</sub> ≝ `None`
 An icon for illustration, e.g. on bioimage.io
 
-<details><summary>Union[str*, Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*, None]
+<details><summary>Union[str*, _internal.io.FileDescr*, None]
 
 </summary>
 
 Union of
 - str (Len(min_length=1, max_length=2))
-- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f61fe00c400>, return_type=PydanticUndefined, when_used='unless-none'))
+- _internal.io.FileDescr
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
+
+**_internal.io.FileDescr:**
+### `icon.source`<sub> Union</sub>
+File source
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+### `icon.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -3663,14 +3702,35 @@ UTF-8 emoji for display alongside the `id`.
 Optional[str (Len(min_length=1, max_length=2); )]
 
 ## `license`<sub> Union</sub> ≝ `None`
-A [SPDX license identifier](https://spdx.org/licenses/).
-We do not support custom license beyond the SPDX license list, if you need that please
-[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
-to discuss your intentions with the community.
+A [SPDX license identifier](https://spdx.org/licenses/) or a custom license file.
 [*Examples:*](#license) ['CC0-1.0', 'MIT', 'BSD-2-Clause']
 
+<details><summary>Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, None, _internal.io.FileDescr*]
 
-Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, None]
+</summary>
+
+Union of
+- _internal.license_id.LicenseId
+- _internal.license_id.DeprecatedLicenseId
+- None
+- _internal.io.FileDescr
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'))
+
+
+**_internal.io.FileDescr:**
+### `license.source`<sub> Union</sub>
+File source
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+### `license.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
+
+</details>
 
 ## `links`<sub> Sequence[str]</sub> ≝ `[]`
 IDs of other bioimage.io resources
@@ -3814,7 +3874,7 @@ Associated tags
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2026, 5, 18, 15, 24, 10, 311179, tzinfo=datetime.timezone.utc)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2026, 6, 15, 15, 11, 12, 941127, tzinfo=datetime.timezone.utc)`
 Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
 with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
 (In Python a datetime object is valid, too).
@@ -3858,12 +3918,51 @@ Cover images. Please use an image smaller than 500KB and an aspect ratio width t
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 [*Example:*](#training_datacovers) ['cover.png']
 
-<details><summary>Sequence[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
+<details><summary>Sequence[_internal.io.FileDescr*]
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f61fe00c400>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+Sequence of _internal.io.FileDescr
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False))
+
+**_internal.io.FileDescr:**
+#### `training_data.covers.i.source`<sub> Union</sub>
+File source
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+#### `training_data.covers.i.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
+
+</details>
+
+### `training_data.documentation`<sub> Optional</sub> ≝ `None`
+Additional model documentation.
+The recommended documentation source file name is `README.md`. An `.md` suffix is mandatory.
+
+<details><summary>Optional[_internal.io.FileDescr*]
+
+</summary>
+
+Optional[_internal.io.FileDescr
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+
+**_internal.io.FileDescr:**
+#### `training_data.documentation.source`<sub> Union</sub>
+File source
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+#### `training_data.documentation.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -3922,7 +4021,7 @@ file attachments
 </summary>
 
 Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f61fe00de40>, return_type=PydanticUndefined, when_used='unless-none'))
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'))
 
 **_internal.io.FileDescr:**
 #### `training_data.attachments.i.source`<sub> Union</sub>
@@ -3971,14 +4070,35 @@ Note:
 </details>
 
 ### `training_data.license`<sub> Union</sub> ≝ `None`
-A [SPDX license identifier](https://spdx.org/licenses/).
-We do not support custom license beyond the SPDX license list, if you need that please
-[open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose)
-to discuss your intentions with the community.
+A [SPDX license identifier](https://spdx.org/licenses/) or a custom license file.
 [*Examples:*](#training_datalicense) ['CC0-1.0', 'MIT', 'BSD-2-Clause']
 
+<details><summary>Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, None, _internal.io.FileDescr*]
 
-Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, None]
+</summary>
+
+Union of
+- _internal.license_id.LicenseId
+- _internal.license_id.DeprecatedLicenseId
+- None
+- _internal.io.FileDescr
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'))
+
+
+**_internal.io.FileDescr:**
+#### `training_data.license.source`<sub> Union</sub>
+File source
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+#### `training_data.license.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
+
+</details>
 
 ### `training_data.git_repo`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
 A URL to the Git repository where the resource is being developed.
@@ -3989,16 +4109,29 @@ A URL to the Git repository where the resource is being developed.
 ### `training_data.icon`<sub> Union</sub> ≝ `None`
 An icon for illustration, e.g. on bioimage.io
 
-<details><summary>Union[str*, Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*, None]
+<details><summary>Union[str*, _internal.io.FileDescr*, None]
 
 </summary>
 
 Union of
 - str (Len(min_length=1, max_length=2))
-- Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-  (union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f61fe00c400>, return_type=PydanticUndefined, when_used='unless-none'))
+- _internal.io.FileDescr
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f9d2c3a0040>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
+
+**_internal.io.FileDescr:**
+#### `training_data.icon.source`<sub> Union</sub>
+File source
+
+
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+
+#### `training_data.icon.sha256`<sub> Optional</sub> ≝ `None`
+SHA256 hash value of the **source** file.
+
+
+Optional[_internal.io_basics.Sha256]
 
 </details>
 
@@ -4091,23 +4224,10 @@ A comment on the version of the resource.
 
 Optional[str (MaxLen(max_length=512))]
 
-### `training_data.format_version`<sub> Literal[0.3.0]</sub>
+### `training_data.format_version`<sub> Literal[0.3.4]</sub>
 The **format** version of this resource specification
 
 
-
-### `training_data.documentation`<sub> Optional</sub> ≝ `None`
-URL or relative path to a markdown file encoded in UTF-8 with additional documentation.
-The recommended documentation file name is `README.md`. An `.md` suffix is mandatory.
-
-<details><summary>Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
-
-</summary>
-
-Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f61fe00c400>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
-
-</details>
 
 ### `training_data.badges`<sub> Sequence</sub> ≝ `[]`
 badges associated with this resource
@@ -4134,7 +4254,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f61fe00c400>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f9d3afeb420>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -4225,7 +4345,7 @@ The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f61fe00c400>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f9d3afeb420>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
 
 </details>
 
@@ -4293,7 +4413,7 @@ File attachments
 </summary>
 
 Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f61fe00c400>, return_type=PydanticUndefined, when_used='unless-none'))
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f9d3afeb420>, return_type=PydanticUndefined, when_used='unless-none'))
 
 </details>
 
@@ -4511,7 +4631,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f61fe00c400>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f9d3afeb420>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
