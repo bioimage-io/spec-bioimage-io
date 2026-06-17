@@ -10,7 +10,11 @@ In this file we log both:
 
 This changelog includes implementation details and might reference [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
-### bioimageio.spec 0.5.11.0 (not yet released)
+### bioimageio.spec 0.5.11.1 (not yet released)
+
+- ignore duplicate details when adding details to a ValidationSummary
+
+### bioimageio.spec 0.5.11.0
 
 - [model spec 0.5.11](#model-0511)
 - [generic spec 0.3.4](#generic-034)

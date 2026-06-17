@@ -418,6 +418,9 @@ class ValidationSummary(BaseModel, extra="allow"):
         """add a validation detail to the summary and, if `update_status` is True,
         possibly downgrade the overall status from "passed" to "valid-format"
         """
+        if detail in self.details:
+            return
+
         # An overall status 'passed' can degrade to 'valid-format'
         # The status can not be upgraded here as we do not know if it has been downgraded before or not yet tested.
         # Once status is 'failed' it cannot change anymore.
