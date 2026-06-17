@@ -9791,28 +9791,6 @@ processing.</p>
             </li>
         </ul>
 
-        <p>Validators:</p>
-        <ul>
-            <li>
-              <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.accept_author_strings">accept_author_strings</a></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.authors">authors</a></code>            </li>
-            <li>
-              <code><span title="bioimageio.spec.dataset.v0_2.DatasetDescr._warn_empty_cite">_warn_empty_cite</span></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.cite">cite</a></code>            </li>
-            <li>
-              <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.warn_about_tag_categories">warn_about_tag_categories</a></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.tags">tags</a></code>            </li>
-            <li>
-              <code><span title="bioimageio.spec.dataset.v0_2.DatasetDescr._convert_from_older_format">_convert_from_older_format</span></code>
-            </li>
-            <li>
-              <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.deprecated_spdx_license">deprecated_spdx_license</a></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericDescrBase.license">license</a></code>            </li>
-        </ul>
 
 
 
@@ -10744,7 +10722,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DatasetDescr.accept_author_strings" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -10796,7 +10774,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DatasetDescr.deprecated_spdx_license" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -11518,7 +11496,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DatasetDescr.warn_about_tag_categories" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -12918,6 +12896,12 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
             </li>
         </ul>
 
+        <p>Validators:</p>
+        <ul>
+            <li>
+              <code><span title="bioimageio.spec._internal.io.FileDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
+        </ul>
 
 
 
@@ -16766,6 +16750,9 @@ The data flow in bioimage.io models is explained
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.KerasHdf5WeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.KerasHdf5WeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -24452,18 +24439,6 @@ need to have this field.</p>
         <p>Validators:</p>
         <ul>
             <li>
-              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.accept_author_strings">accept_author_strings</a></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.authors">authors</a></code>            </li>
-            <li>
-              <code><span title="bioimageio.spec.model.v0_4.ModelDescr._warn_empty_cite">_warn_empty_cite</span></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.cite">cite</a></code>            </li>
-            <li>
-              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.warn_about_tag_categories">warn_about_tag_categories</a></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.tags">tags</a></code>            </li>
-            <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.unique_tensor_descr_names">unique_tensor_descr_names</a></code>
                 &rarr;
                   <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.inputs">inputs</a></code>,                   <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.outputs">outputs</a></code>            </li>
@@ -25705,7 +25680,7 @@ The available weight formats determine which consumers can use this model.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.accept_author_strings" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -26815,7 +26790,7 @@ The available weight formats determine which consumers can use this model.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.warn_about_tag_categories" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -27485,6 +27460,9 @@ The available weight formats determine which consumers can use this model.</p>
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.OnnxWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.OnnxWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -30834,6 +30812,9 @@ To document a <code>halo</code> that is already cropped by the model <code>shape
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -38809,6 +38790,9 @@ If not specified, the full data range that can be expressed in <code>data_type</
         <p>Validators:</p>
         <ul>
             <li>
+              <code><span title="bioimageio.spec.model.v0_4.TensorflowJsWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
+            <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorflowJsWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
             <li>
@@ -39955,6 +39939,9 @@ All required files/folders should be a zip archive.</p>
         <p>Validators:</p>
         <ul>
             <li>
+              <code><span title="bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
+            <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
             <li>
@@ -41099,6 +41086,9 @@ need to have this field.</p>
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.TorchscriptWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TorchscriptWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -45300,6 +45290,9 @@ post-release suffixes.</p>
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.WeightsEntryDescrBase._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.WeightsEntryDescrBase.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
