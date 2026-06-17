@@ -2361,25 +2361,6 @@
     <div class="doc doc-contents ">
 
           
-
-
-  <div class="doc doc-backlinks">
-        <b class="doc doc-backlink-type">Used by:</b>
-          <ul class="doc doc-backlink-list">
-      <li class="doc doc-backlink">
-            <span class="doc doc-backlink-crumb">
-      <a href="../../generic/v0_2/#bioimageio.spec.generic.v0_2"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;v0_2</a>
-  </span>
-
-            <span class="doc doc-backlink-crumb last">
-      <a href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.FileSource_cover"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;FileSource_cover</a>
-  </span>
-
-      </li>
-  </ul>
-
-  </div>
-
     </div>
 
 </div>
@@ -2424,9 +2405,20 @@
       <a href="../../../../#bioimageio.spec"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;spec</a>
   </span>
 
+            <ul class="doc doc-backlink-list">
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../../../#bioimageio.spec.get_package_content"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_package_content</a>
+  </span>
+
+      </li>
+      <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb last">
       <a href="../../../../#bioimageio.spec.get_resource_package_content"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;get_resource_package_content</a>
   </span>
+
+      </li>
+  </ul>
 
       </li>
   </ul>
@@ -2511,7 +2503,7 @@
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.AttachmentsDescr.files">files</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>]</code>)
+                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>]</code>)
             </li>
         </ul>
 
@@ -2539,7 +2531,7 @@
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.AttachmentsDescr.files" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">files</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">files</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4599,8 +4591,8 @@ Values above the threshold will be set to one, values below the threshold to zer
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">459</span>
-<span class="normal">460</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">466</span>
+<span class="normal">467</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">model_fields</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -4625,11 +4617,11 @@ Values above the threshold will be set to one, values below the threshold to zer
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -4697,8 +4689,8 @@ Values above the threshold will be set to one, values below the threshold to zer
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">450</span>
-<span class="normal">451</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">457</span>
+<span class="normal">458</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">else</span> <span class="n">default</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7819,8 +7811,8 @@ and above <code>ClipKwargs.max</code> to <code>ClipKwargs.max</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">459</span>
-<span class="normal">460</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">466</span>
+<span class="normal">467</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">model_fields</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7845,11 +7837,11 @@ and above <code>ClipKwargs.max</code> to <code>ClipKwargs.max</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -7917,8 +7909,8 @@ and above <code>ClipKwargs.max</code> to <code>ClipKwargs.max</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">450</span>
-<span class="normal">451</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">457</span>
+<span class="normal">458</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">else</span> <span class="n">default</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9707,7 +9699,7 @@ processing.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.covers">covers</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.FileSource_cover">FileSource_cover</a>]</code>)
+                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec.generic.v0_2._FileSource_cover">_FileSource_cover</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.id_emoji">id_emoji</a></code>
@@ -9799,28 +9791,6 @@ processing.</p>
             </li>
         </ul>
 
-        <p>Validators:</p>
-        <ul>
-            <li>
-              <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.accept_author_strings">accept_author_strings</a></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.authors">authors</a></code>            </li>
-            <li>
-              <code><span title="bioimageio.spec.dataset.v0_2.DatasetDescr._warn_empty_cite">_warn_empty_cite</span></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.cite">cite</a></code>            </li>
-            <li>
-              <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.warn_about_tag_categories">warn_about_tag_categories</a></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.tags">tags</a></code>            </li>
-            <li>
-              <code><span title="bioimageio.spec.dataset.v0_2.DatasetDescr._convert_from_older_format">_convert_from_older_format</span></code>
-            </li>
-            <li>
-              <code><a class="autorefs autorefs-internal" href="../../dataset/v0_2/#bioimageio.spec.dataset.v0_2.DatasetDescr.deprecated_spdx_license">deprecated_spdx_license</a></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericDescrBase.license">license</a></code>            </li>
-        </ul>
 
 
 
@@ -10002,7 +9972,7 @@ an altered rdf.yaml file with local references to the downloaded files)</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DatasetDescr.covers" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">covers</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.FileSource_cover">FileSource_cover</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">covers</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec.generic.v0_2._FileSource_cover">_FileSource_cover</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -10752,7 +10722,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DatasetDescr.accept_author_strings" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -10804,7 +10774,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DatasetDescr.deprecated_spdx_license" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -10924,7 +10894,9 @@ Do not set this field in a YAML file.</p>
 
 
 <a href="#bioimageio.spec.model.v0_4.DatasetDescr.get_package_content" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_package_content</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_package_content</span><span class="p">(</span>
+    <span class="n"><span title="bioimageio.spec.model.v0_4.DatasetDescr.get_package_content(local_files_only)">local_files_only</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span>
     <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">,</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.FileDescr">FileDescr</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="../v0_5/#bioimageio.spec.model.v0_5.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">]</span>
 <span class="p">]</span>
 </code></pre></div>
@@ -10937,10 +10909,7 @@ Do not set this field in a YAML file.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">395</span>
-<span class="normal">396</span>
-<span class="normal">397</span>
-<span class="normal">398</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">398</span>
 <span class="normal">399</span>
 <span class="normal">400</span>
 <span class="normal">401</span>
@@ -10952,14 +10921,19 @@ Do not set this field in a YAML file.</p>
 <span class="normal">407</span>
 <span class="normal">408</span>
 <span class="normal">409</span>
-<span class="normal">410</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_package_content</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_package_content</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">FileName</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">FileDescr</span><span class="p">,</span> <span class="n">BioimageioYamlContent</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns package content without creating the package.&quot;&quot;&quot;</span>
     <span class="n">content</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">FileName</span><span class="p">,</span> <span class="n">FileDescr</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">with</span> <span class="n">PackagingContext</span><span class="p">(</span>
         <span class="n">bioimageio_yaml_file_name</span><span class="o">=</span><span class="n">BIOIMAGEIO_YAML</span><span class="p">,</span>
         <span class="n">file_sources</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+        <span class="n">local_files_only</span><span class="o">=</span><span class="n">local_files_only</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">rdf_content</span><span class="p">:</span> <span class="n">BioimageioYamlContent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
             <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span>
@@ -11401,6 +11375,8 @@ Do not set this field in a YAML file.</p>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.DatasetDescr.package(dest)">dest</a></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span>
         <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="zipfile.ZipFile">ZipFile</span></span><span class="p">,</span> <span class="n"><span title="typing.IO">IO</span></span><span class="p">[</span><span class="n"><span title="bytes">bytes</span></span><span class="p">],</span> <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">,</span> <span class="n"><span title="str">str</span></span><span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">/</span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.model.v0_4.DatasetDescr.package(local_files_only)">local_files_only</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="zipfile.ZipFile">ZipFile</span></span>
 </code></pre></div>
 
@@ -11471,8 +11447,14 @@ Do not set this field in a YAML file.</p>
 <span class="normal">390</span>
 <span class="normal">391</span>
 <span class="normal">392</span>
-<span class="normal">393</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">package</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ZipFile</span><span class="p">,</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">package</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">dest</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ZipFile</span><span class="p">,</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">/</span><span class="p">,</span>
+    <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ZipFile</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;package the described resource as a zip archive</span>
 
@@ -11497,7 +11479,7 @@ Do not set this field in a YAML file.</p>
             <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;bioimageio&quot;</span><span class="p">)))</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
         <span class="p">)</span>
 
-    <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_package_content</span><span class="p">()</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_package_content</span><span class="p">(</span><span class="n">local_files_only</span><span class="o">=</span><span class="n">local_files_only</span><span class="p">)</span>
     <span class="n">write_content_to_zip</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">zip</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">zip</span>
 </code></pre></div></td></tr></table></div>
@@ -11514,7 +11496,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DatasetDescr.warn_about_tag_categories" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -11689,9 +11671,9 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/types.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">now</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
@@ -12158,7 +12140,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.DependenciesNode.file">file</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
         </ul>
 
@@ -12186,7 +12168,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.DependenciesNode.file" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">file</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">file</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -12914,6 +12896,12 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
             </li>
         </ul>
 
+        <p>Validators:</p>
+        <ul>
+            <li>
+              <code><span title="bioimageio.spec._internal.io.FileDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
+        </ul>
 
 
 
@@ -13068,15 +13056,15 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
-<span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span>
+<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -13118,15 +13106,15 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
-<span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span>
+<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -13414,8 +13402,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
-<span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -13446,7 +13433,8 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -16732,7 +16720,7 @@ The data flow in bioimage.io models is explained
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.KerasHdf5WeightsDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.KerasHdf5WeightsDescr.sha256">sha256</a></code>
@@ -16762,6 +16750,9 @@ The data flow in bioimage.io models is explained
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.KerasHdf5WeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.KerasHdf5WeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -16951,7 +16942,7 @@ need to have this field.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.KerasHdf5WeightsDescr.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -17165,15 +17156,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
-<span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span>
+<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -17215,15 +17206,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
-<span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span>
+<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -17511,8 +17502,7 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
-<span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -17543,7 +17533,8 @@ need to have this field.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -24309,7 +24300,7 @@ need to have this field.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.covers">covers</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.FileSource_cover">FileSource_cover</a>]</code>)
+                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec.generic.v0_2._FileSource_cover">_FileSource_cover</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.id_emoji">id_emoji</a></code>
@@ -24385,7 +24376,7 @@ need to have this field.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.documentation">documentation</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</code>)
+                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.inputs">inputs</a></code>
@@ -24417,19 +24408,19 @@ need to have this field.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.sample_inputs">sample_inputs</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>]</code>)
+                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.sample_outputs">sample_outputs</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>]</code>)
+                (<code><span title="typing.List">List</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.test_inputs">test_inputs</a></code>
-                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="typing.List">List</span>[<span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>, <span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span>(&#39;.npy&#39;, <span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span>=True)]]]</code>)
+                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="typing.List">List</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>, <span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span>(&#39;.npy&#39;, <span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span>=True)]]]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.test_outputs">test_outputs</a></code>
-                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="typing.List">List</span>[<span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a>, <span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span>(&#39;.npy&#39;, <span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span>=True)]]]</code>)
+                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="typing.List">List</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>, <span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span>(&#39;.npy&#39;, <span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span>=True)]]]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.timestamp">timestamp</a></code>
@@ -24447,18 +24438,6 @@ need to have this field.</p>
 
         <p>Validators:</p>
         <ul>
-            <li>
-              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.accept_author_strings">accept_author_strings</a></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.authors">authors</a></code>            </li>
-            <li>
-              <code><span title="bioimageio.spec.model.v0_4.ModelDescr._warn_empty_cite">_warn_empty_cite</span></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.cite">cite</a></code>            </li>
-            <li>
-              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.warn_about_tag_categories">warn_about_tag_categories</a></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericModelDescrBase.tags">tags</a></code>            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.unique_tensor_descr_names">unique_tensor_descr_names</a></code>
                 &rarr;
@@ -24639,7 +24618,7 @@ an altered rdf.yaml file with local references to the downloaded files)</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.covers" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">covers</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.FileSource_cover">FileSource_cover</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">covers</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec.generic.v0_2._FileSource_cover">_FileSource_cover</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -24688,7 +24667,7 @@ an altered rdf.yaml file with local references to the downloaded files)</p>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.documentation" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">documentation</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span>
         <span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span>
             <span class="s2">&quot;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&quot;</span><span class="p">,</span>
@@ -25290,7 +25269,7 @@ No standard run modes are defined yet.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.sample_inputs" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">sample_inputs</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">sample_inputs</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -25317,7 +25296,7 @@ The sample files primarily serve to inform a human user about an example use cas
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.sample_outputs" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">sample_outputs</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">sample_outputs</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -25383,7 +25362,7 @@ The sample files primarily serve to inform a human user about an example use cas
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">test_inputs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a></span><span class="p">[</span>
     <span class="n"><span title="typing.List">List</span></span><span class="p">[</span>
         <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-            <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">,</span>
+            <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">,</span>
             <span class="n"><span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span></span><span class="p">(</span><span class="s2">&quot;.npy&quot;</span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span></span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="p">]</span>
     <span class="p">]</span>
@@ -25419,7 +25398,7 @@ The extension must be '.npy'.</p>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">test_outputs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a></span><span class="p">[</span>
     <span class="n"><span title="typing.List">List</span></span><span class="p">[</span>
         <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-            <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span><span class="p">,</span>
+            <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">,</span>
             <span class="n"><span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span></span><span class="p">(</span><span class="s2">&quot;.npy&quot;</span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span></span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="p">]</span>
     <span class="p">]</span>
@@ -25701,7 +25680,7 @@ The available weight formats determine which consumers can use this model.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.accept_author_strings" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -25853,7 +25832,9 @@ The available weight formats determine which consumers can use this model.</p>
 
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.get_package_content" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_package_content</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_package_content</span><span class="p">(</span>
+    <span class="n"><span title="bioimageio.spec.model.v0_4.ModelDescr.get_package_content(local_files_only)">local_files_only</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span>
     <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FileName">FileName</a></span><span class="p">,</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.FileDescr">FileDescr</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="../v0_5/#bioimageio.spec.model.v0_5.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">]</span>
 <span class="p">]</span>
 </code></pre></div>
@@ -25866,10 +25847,7 @@ The available weight formats determine which consumers can use this model.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">395</span>
-<span class="normal">396</span>
-<span class="normal">397</span>
-<span class="normal">398</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">398</span>
 <span class="normal">399</span>
 <span class="normal">400</span>
 <span class="normal">401</span>
@@ -25881,14 +25859,19 @@ The available weight formats determine which consumers can use this model.</p>
 <span class="normal">407</span>
 <span class="normal">408</span>
 <span class="normal">409</span>
-<span class="normal">410</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_package_content</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_package_content</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">FileName</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">FileDescr</span><span class="p">,</span> <span class="n">BioimageioYamlContent</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns package content without creating the package.&quot;&quot;&quot;</span>
     <span class="n">content</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">FileName</span><span class="p">,</span> <span class="n">FileDescr</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">with</span> <span class="n">PackagingContext</span><span class="p">(</span>
         <span class="n">bioimageio_yaml_file_name</span><span class="o">=</span><span class="n">BIOIMAGEIO_YAML</span><span class="p">,</span>
         <span class="n">file_sources</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+        <span class="n">local_files_only</span><span class="o">=</span><span class="n">local_files_only</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">rdf_content</span><span class="p">:</span> <span class="n">BioimageioYamlContent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
             <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span>
@@ -26480,6 +26463,8 @@ The available weight formats determine which consumers can use this model.</p>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.package(dest)">dest</a></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span>
         <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="zipfile.ZipFile">ZipFile</span></span><span class="p">,</span> <span class="n"><span title="typing.IO">IO</span></span><span class="p">[</span><span class="n"><span title="bytes">bytes</span></span><span class="p">],</span> <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">,</span> <span class="n"><span title="str">str</span></span><span class="p">]</span>
     <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">/</span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.model.v0_4.ModelDescr.package(local_files_only)">local_files_only</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="zipfile.ZipFile">ZipFile</span></span>
 </code></pre></div>
 
@@ -26550,8 +26535,14 @@ The available weight formats determine which consumers can use this model.</p>
 <span class="normal">390</span>
 <span class="normal">391</span>
 <span class="normal">392</span>
-<span class="normal">393</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">package</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ZipFile</span><span class="p">,</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">package</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">dest</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">ZipFile</span><span class="p">,</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">/</span><span class="p">,</span>
+    <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ZipFile</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;package the described resource as a zip archive</span>
 
@@ -26576,7 +26567,7 @@ The available weight formats determine which consumers can use this model.</p>
             <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;bioimageio&quot;</span><span class="p">)))</span> <span class="o">+</span> <span class="s2">&quot;.zip&quot;</span>
         <span class="p">)</span>
 
-    <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_package_content</span><span class="p">()</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_package_content</span><span class="p">(</span><span class="n">local_files_only</span><span class="o">=</span><span class="n">local_files_only</span><span class="p">)</span>
     <span class="n">write_content_to_zip</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">zip</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">zip</span>
 </code></pre></div></td></tr></table></div>
@@ -26799,7 +26790,7 @@ The available weight formats determine which consumers can use this model.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.warn_about_tag_categories" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -27439,7 +27430,7 @@ The available weight formats determine which consumers can use this model.</p>
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.OnnxWeightsDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.OnnxWeightsDescr.sha256">sha256</a></code>
@@ -27469,6 +27460,9 @@ The available weight formats determine which consumers can use this model.</p>
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.OnnxWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.OnnxWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -27683,7 +27677,7 @@ need to have this field.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.OnnxWeightsDescr.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -27872,15 +27866,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
-<span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span>
+<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -27922,15 +27916,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
-<span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span>
+<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -28218,8 +28212,7 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
-<span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -28250,7 +28243,8 @@ need to have this field.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -30776,7 +30770,7 @@ To document a <code>halo</code> that is already cropped by the model <code>shape
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr.sha256">sha256</a></code>
@@ -30818,6 +30812,9 @@ To document a <code>halo</code> that is already cropped by the model <code>shape
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -31121,7 +31118,7 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.PytorchStateDictWeightsDescr.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -31366,15 +31363,15 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
-<span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span>
+<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -31416,15 +31413,15 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
-<span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span>
+<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -31712,8 +31709,7 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
-<span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -31744,7 +31740,8 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -32081,8 +32078,8 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">152</span>
-<span class="normal">153</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
+<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;RelativePath(&#39;</span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -32107,8 +32104,8 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">149</span>
-<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">150</span>
+<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -32136,14 +32133,14 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">127</span>
-<span class="normal">128</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
 <span class="normal">133</span>
-<span class="normal">134</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">absolute</span><span class="p">(</span>  <span class="c1"># method not property analog to `pathlib.Path.absolute()`</span>
+<span class="normal">134</span>
+<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">absolute</span><span class="p">(</span>  <span class="c1"># method not property analog to `pathlib.Path.absolute()`</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbsolutePathT</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;get the absolute path/url</span>
@@ -32174,9 +32171,9 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">155</span>
-<span class="normal">156</span>
-<span class="normal">157</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@model_serializer</span><span class="p">()</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@model_serializer</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -32204,8 +32201,7 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">219</span>
-<span class="normal">220</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">220</span>
 <span class="normal">221</span>
 <span class="normal">222</span>
 <span class="normal">223</span>
@@ -32216,7 +32212,8 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 <span class="normal">228</span>
 <span class="normal">229</span>
 <span class="normal">230</span>
-<span class="normal">231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_absolute</span><span class="p">(</span>
+<span class="normal">231</span>
+<span class="normal">232</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_absolute</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="s2">&quot;RootHttpUrl | Path | AnyUrl | ZipFile&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AbsoluteFilePath | HttpUrl | ZipPath&quot;</span><span class="p">:</span>
     <span class="n">absolute</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_absolute_impl</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
@@ -32254,12 +32251,12 @@ If <code>depencencies</code> is specified it should include pytorch and the veri
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">212</span>
-<span class="normal">213</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">213</span>
 <span class="normal">214</span>
 <span class="normal">215</span>
 <span class="normal">216</span>
-<span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">217</span>
+<span class="normal">218</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;add validation @private&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>  <span class="c1"># an empty path can only be a directory</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2"> is not a valid file path.&quot;</span><span class="p">)</span>
@@ -33833,8 +33830,8 @@ For example xy to scale the two image axes for 2d data jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">459</span>
-<span class="normal">460</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">466</span>
+<span class="normal">467</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">model_fields</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -33859,11 +33856,11 @@ For example xy to scale the two image axes for 2d data jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -33991,8 +33988,8 @@ For example xy to scale the two image axes for 2d data jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">450</span>
-<span class="normal">451</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">457</span>
+<span class="normal">458</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">else</span> <span class="n">default</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -35057,8 +35054,8 @@ Default: scale all non-batch axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">459</span>
-<span class="normal">460</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">466</span>
+<span class="normal">467</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">model_fields</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -35083,11 +35080,11 @@ Default: scale all non-batch axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -35155,8 +35152,8 @@ Default: scale all non-batch axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">450</span>
-<span class="normal">451</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">457</span>
+<span class="normal">458</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">else</span> <span class="n">default</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -36357,8 +36354,8 @@ For a tensor in <code>outputs</code> only input tensor refereences are allowed i
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">459</span>
-<span class="normal">460</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">466</span>
+<span class="normal">467</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">model_fields</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -36383,11 +36380,11 @@ For a tensor in <code>outputs</code> only input tensor refereences are allowed i
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -36455,8 +36452,8 @@ For a tensor in <code>outputs</code> only input tensor refereences are allowed i
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">450</span>
-<span class="normal">451</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">457</span>
+<span class="normal">458</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">else</span> <span class="n">default</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -38786,12 +38783,15 @@ If not specified, the full data range that can be expressed in <code>data_type</
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorflowJsWeightsDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
         </ul>
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.TensorflowJsWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorflowJsWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -38981,7 +38981,7 @@ need to have this field.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.TensorflowJsWeightsDescr.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -39196,15 +39196,15 @@ All required files/folders should be a zip archive.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
-<span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span>
+<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -39246,15 +39246,15 @@ All required files/folders should be a zip archive.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
-<span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span>
+<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -39542,8 +39542,7 @@ All required files/folders should be a zip archive.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
-<span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -39574,7 +39573,8 @@ All required files/folders should be a zip archive.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -39908,7 +39908,7 @@ All required files/folders should be a zip archive.</p>
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr.sha256">sha256</a></code>
@@ -39938,6 +39938,9 @@ All required files/folders should be a zip archive.</p>
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -40127,7 +40130,7 @@ need to have this field.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.TensorflowSavedModelBundleWeightsDescr.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -40341,15 +40344,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
-<span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span>
+<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -40391,15 +40394,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
-<span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span>
+<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -40687,8 +40690,7 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
-<span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -40719,7 +40721,8 @@ need to have this field.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -41053,7 +41056,7 @@ need to have this field.</p>
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TorchscriptWeightsDescr.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TorchscriptWeightsDescr.sha256">sha256</a></code>
@@ -41083,6 +41086,9 @@ need to have this field.</p>
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.TorchscriptWeightsDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TorchscriptWeightsDescr.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -41297,7 +41303,7 @@ need to have this field.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.TorchscriptWeightsDescr.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -41486,15 +41492,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
-<span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span>
+<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -41536,15 +41542,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
-<span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span>
+<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -41832,8 +41838,7 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
-<span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -41864,7 +41869,8 @@ need to have this field.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -45262,7 +45268,7 @@ post-release suffixes.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.WeightsEntryDescrBase.source">source</a></code>
-                (<code><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></code>)
+                (<code><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.WeightsEntryDescrBase.attachments">attachments</a></code>
@@ -45284,6 +45290,9 @@ post-release suffixes.</p>
 
         <p>Validators:</p>
         <ul>
+            <li>
+              <code><span title="bioimageio.spec.model.v0_4.WeightsEntryDescrBase._validate_sha256">_validate_sha256</span></code>
+            </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.WeightsEntryDescrBase.check_parent_is_not_self">check_parent_is_not_self</a></code>
             </li>
@@ -45469,7 +45478,7 @@ need to have this field.</p>
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.WeightsEntryDescrBase.source" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../application/v0_2/#bioimageio.spec.application.v0_2.FileSource_">FileSource_</a></span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">source</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -45658,15 +45667,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
-<span class="normal">320</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">320</span>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+<span class="normal">327</span>
+<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -45708,15 +45717,15 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
-<span class="normal">310</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">317</span>
+<span class="normal">318</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
@@ -46004,8 +46013,7 @@ need to have this field.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">275</span>
-<span class="normal">276</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">276</span>
 <span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
@@ -46036,7 +46044,8 @@ need to have this field.</p>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;validate the sha256 hash value of the **source** file&quot;&quot;&quot;</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -47003,8 +47012,8 @@ For example <code>[1.1, 2.2, 3.3]</code> in the case of a 3 channel image with <
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">459</span>
-<span class="normal">460</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">466</span>
+<span class="normal">467</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">model_fields</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -47029,11 +47038,11 @@ For example <code>[1.1, 2.2, 3.3]</code> in the case of a 3 channel image with <
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">model_fields</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -47101,8 +47110,8 @@ For example <code>[1.1, 2.2, 3.3]</code> in the case of a 3 channel image with <
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">450</span>
-<span class="normal">451</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">457</span>
+<span class="normal">458</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">else</span> <span class="n">default</span>
 </code></pre></div></td></tr></table></div>
             </details>
