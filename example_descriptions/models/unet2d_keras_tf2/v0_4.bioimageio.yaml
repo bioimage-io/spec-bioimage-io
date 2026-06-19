@@ -28,6 +28,10 @@ config:
     status: accepted
     version_id: "7261975"
     version_name: version 1
+    reproducibility_tolerance:
+      - mismatched_elements_per_million: 100
+        relative_tolerance: 0.01
+        absolute_tolerance: 0.01
   deepimagej:
     allow_tiling: true
     model_keys: null
