@@ -78,7 +78,7 @@ from .._internal.io_packaging import (
     FileDescr_package,
     package_file_descr_serializer,
 )
-from .._internal.io_utils import load_array
+from .._internal.io_utils import load_array, open_bioimageio_yaml
 from .._internal.node_converter import Converter
 from .._internal.type_guards import is_dict, is_sequence
 from .._internal.types import (
@@ -127,6 +127,7 @@ from ..generic.v0_3 import Maintainer as Maintainer
 from ..generic.v0_3 import OrcidId as OrcidId
 from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
 from ..generic.v0_3 import ResourceId as ResourceId
+from . import v0_4
 from .v0_4 import Author as _Author_v0_4
 from .v0_4 import BinarizeDescr as _BinarizeDescr_v0_4
 from .v0_4 import CallableFromDepencency as CallableFromDepencency
@@ -1998,9 +1999,14 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
             return self
 
         try:
-            from .._io import load_model_description
-
-            ref_model = load_model_description(self.output_of, perform_io_checks=False)
+            with get_validation_context().replace(perform_io_checks=False):
+                opened_ref_model = open_bioimageio_yaml(self.output_of)
+                format_version = opened_ref_model.content["format_version"]
+                assert isinstance(format_version, str)
+                if format_version.startswith("0.4"):
+                    ref_model = v0_4.ModelDescr.model_validate(opened_ref_model.content)
+                else:
+                    ref_model = ModelDescr.model_validate(opened_ref_model.content)
         except Exception as e:
             raise ValueError(
                 f"Failed to load model '{self.output_of}' referenced under output_of: {e}"
