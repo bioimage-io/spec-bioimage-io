@@ -5681,6 +5681,8 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
         <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.ResourceDescr">ResourceDescr</a></span><span class="p">,</span>
         <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">,</span>
     <span class="p">],</span>
+    <span class="o">/</span><span class="p">,</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.upload(keep_remote_files_as_references)">keep_remote_files_as_references</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.HttpUrl">HttpUrl</a></span>
 </code></pre></div>
 
@@ -5721,6 +5723,22 @@ To edit an existing resource <strong>version</strong>, please login to <a href="
                 <em>required</em>
             </td>
           </tr>
+          <tr class="doc-section-item">
+            <td>
+<h3 id="bioimageio.spec.upload(keep_remote_files_as_references)" class="doc doc-heading doc-heading-parameter">                  <code>keep_remote_files_as_references</code>
+<a href="#bioimageio.spec.upload(keep_remote_files_as_references)" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>If True, remote files will be kept as references and not downloaded and uploaded to the server.</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
       </tbody>
     </table>
 
@@ -5752,7 +5770,12 @@ Note: It might take some time until the resource is processed and available for 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_upload.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 27</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
 <span class="normal"> 28</span>
 <span class="normal"> 29</span>
 <span class="normal"> 30</span>
@@ -5897,6 +5920,7 @@ Note: It might take some time until the resource is processed and available for 
 <span class="normal">169</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">upload</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PermissiveFileSource</span><span class="p">,</span> <span class="n">ZipFile</span><span class="p">,</span> <span class="n">ResourceDescr</span><span class="p">,</span> <span class="n">BioimageioYamlContent</span><span class="p">],</span>
     <span class="o">/</span><span class="p">,</span>
+    <span class="n">keep_remote_files_as_references</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpUrl</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a new resource description (version) to the hypha server to be shared at bioimage.io.</span>
 <span class="sd">    To edit an existing resource **version**, please login to https://bioimage.io and use the web interface.</span>
@@ -5905,6 +5929,7 @@ Note: It might take some time until the resource is processed and available for 
 
 <span class="sd">    Args:</span>
 <span class="sd">        source: The resource description to upload.</span>
+<span class="sd">        keep_remote_files_as_references: If True, remote files will be kept as references and not downloaded and uploaded to the server.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A URL to the uploaded resource description.</span>
@@ -5944,7 +5969,9 @@ Note: It might take some time until the resource is processed and available for 
             <span class="s2">&quot;You cannot upload a resource with an id. Please remove the id from the description and make sure to upload a new non-existing resource. To edit an existing resource, please use the web interface at https://bioimage.io.&quot;</span>
         <span class="p">)</span>
 
-    <span class="n">content</span> <span class="o">=</span> <span class="n">get_resource_package_content</span><span class="p">(</span><span class="n">descr</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">get_package_content</span><span class="p">(</span>
+        <span class="n">descr</span><span class="p">,</span> <span class="n">local_files_only</span><span class="o">=</span><span class="n">keep_remote_files_as_references</span>
+    <span class="p">)</span>
 
     <span class="n">metadata</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="n">BIOIMAGEIO_YAML</span><span class="p">]</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
@@ -6002,6 +6029,7 @@ Note: It might take some time until the resource is processed and available for 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_source</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
             <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
             <span class="n">write_yaml</span><span class="p">(</span><span class="n">file_source</span><span class="p">,</span> <span class="n">buf</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">files</span> <span class="o">=</span> <span class="p">{</span><span class="n">file_name</span><span class="p">:</span> <span class="n">buf</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">files</span> <span class="o">=</span> <span class="p">{</span><span class="n">file_name</span><span class="p">:</span> <span class="n">get_reader</span><span class="p">(</span><span class="n">file_source</span><span class="p">)}</span>
