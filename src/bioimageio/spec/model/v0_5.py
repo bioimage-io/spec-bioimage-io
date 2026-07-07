@@ -127,7 +127,7 @@ from ..generic.v0_3 import Maintainer as Maintainer
 from ..generic.v0_3 import OrcidId as OrcidId
 from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
 from ..generic.v0_3 import ResourceId as ResourceId
-from . import v0_4
+from .v0_4 import ModelDescr as _ModelDescr04
 from .v0_4 import Author as _Author_v0_4
 from .v0_4 import BinarizeDescr as _BinarizeDescr_v0_4
 from .v0_4 import CallableFromDepencency as CallableFromDepencency
@@ -2004,7 +2004,7 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
                 format_version = opened_ref_model.content["format_version"]
                 assert isinstance(format_version, str)
                 if format_version.startswith("0.4"):
-                    ref_model = v0_4.ModelDescr.model_validate(opened_ref_model.content)
+                    ref_model = _ModelDescr04.model_validate(opened_ref_model.content)
                 else:
                     ref_model = ModelDescr.model_validate(opened_ref_model.content)
         except Exception as e:
