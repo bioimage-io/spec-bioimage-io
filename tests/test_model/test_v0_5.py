@@ -6,7 +6,11 @@ from typing import Any, Callable, Dict, Mapping, Union
 import pytest
 from pydantic import RootModel, ValidationError
 
-from bioimageio.spec import build_description, validate_format
+from bioimageio.spec import (
+    build_description,
+    load_model_description,
+    validate_format,
+)
 from bioimageio.spec._internal.io import FileDescr
 from bioimageio.spec._internal.license_id import LicenseId
 from bioimageio.spec._internal.url import HttpUrl
@@ -26,6 +30,7 @@ from bioimageio.spec.model.v0_5 import (
     KerasHdf5WeightsDescr,
     Maintainer,
     ModelDescr,
+    ModelId,
     OnnxWeightsDescr,
     OutputTensorDescr,
     ParameterizedSize,
@@ -717,3 +722,14 @@ def test_custom_op_class_style():
 
     # Both produce the same result — they are runtime-equivalent
     assert list(result) == list(result2)
+
+
+def test_input_is_output_of(model: ModelDescr):
+    affable_shark = load_model_description(
+        "affable-shark", perform_io_checks=False, format_version="latest"
+    )
+    with pytest.raises(ValidationError):
+        model.inputs[0].output_of = ModelId("affable-shark")
+
+    model.inputs[0].id = affable_shark.outputs[0].id
+    model.inputs[0].output_of = ModelId("affable-shark")

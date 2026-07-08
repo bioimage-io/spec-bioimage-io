@@ -78,7 +78,7 @@ from .._internal.io_packaging import (
     FileDescr_package,
     package_file_descr_serializer,
 )
-from .._internal.io_utils import load_array
+from .._internal.io_utils import load_array, open_bioimageio_yaml
 from .._internal.node_converter import Converter
 from .._internal.type_guards import is_dict, is_sequence
 from .._internal.types import (
@@ -127,6 +127,7 @@ from ..generic.v0_3 import Maintainer as Maintainer
 from ..generic.v0_3 import OrcidId as OrcidId
 from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
 from ..generic.v0_3 import ResourceId as ResourceId
+from .v0_4 import ModelDescr as _ModelDescr04
 from .v0_4 import Author as _Author_v0_4
 from .v0_4 import BinarizeDescr as _BinarizeDescr_v0_4
 from .v0_4 import CallableFromDepencency as CallableFromDepencency
@@ -1978,10 +1979,55 @@ class SymmetricPadding(Node):
 Padding = Union[ConstantPadding, EdgePadding, ReflectPadding, SymmetricPadding]
 
 
+class ModelId(ResourceId):
+    pass
+
+
 class InputTensorDescr(TensorDescrBase[InputAxis]):
     id: TensorId = TensorId("input")
     """Input tensor id.
     No duplicates are allowed across all inputs and outputs."""
+
+    output_of: Optional[ModelId] = None
+    """If this input tensor is the output of another model, specify the model id here.
+    This model's input id must match the output id of the referenced model.
+    """
+
+    @model_validator(mode="after")
+    def _validate_output_of(self) -> Self:
+        if self.output_of is None:
+            return self
+
+        try:
+            with get_validation_context().replace(perform_io_checks=False):
+                opened_ref_model = open_bioimageio_yaml(self.output_of)
+                format_version = opened_ref_model.content["format_version"]
+                assert isinstance(format_version, str)
+                if format_version.startswith("0.4"):
+                    ref_model = _ModelDescr04.model_validate(opened_ref_model.content)
+                else:
+                    ref_model = ModelDescr.model_validate(opened_ref_model.content)
+        except Exception as e:
+            raise ValueError(
+                f"Failed to load model '{self.output_of}' referenced under output_of: {e}"
+            )
+
+        try:
+            ref_model_outputs = {
+                t.id if isinstance(t, OutputTensorDescr) else TensorId(t.name)
+                for t in ref_model.outputs
+            }
+        except Exception as e:
+            raise ValueError(
+                f"Failed to read output IDs of model '{self.output_of}' referenced under output_of: {e}"
+            )
+
+        if self.id not in ref_model_outputs:
+            raise ValueError(
+                f"Input tensor '{self.id}' is specified as output of model '{self.output_of}', "
+                + f"but that model's outputs are {ref_model_outputs}."
+            )
+        return self
 
     optional: bool = False
     """indicates that this tensor may be `None`"""
@@ -3059,10 +3105,6 @@ class WeightsDescr(Node):
         }
 
 
-class ModelId(ResourceId):
-    pass
-
-
 class LinkedModel(LinkedResourceBase):
     """Reference to a bioimage.io model."""
 
@@ -3472,11 +3514,11 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    implemented_format_version: ClassVar[Literal["0.5.11"]] = "0.5.11"
+    implemented_format_version: ClassVar[Literal["0.5.12"]] = "0.5.12"
     if TYPE_CHECKING:
-        format_version: Literal["0.5.11"] = "0.5.11"
+        format_version: Literal["0.5.12"] = "0.5.12"
     else:
-        format_version: Literal["0.5.11"]
+        format_version: Literal["0.5.12"]
         """Version of the bioimage.io model description specification used.
         When creating a new model always use the latest micro/patch version described here.
         The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -4234,7 +4276,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             covers=[{"source": c} for c in src.covers],  # pyright: ignore[reportArgumentType]
             description=src.description,
             documentation={"source": src.documentation} if src.documentation else None,  # pyright: ignore[reportArgumentType]
-            format_version="0.5.11",
+            format_version="0.5.12",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon={"source": src.icon} if src.icon else None,  # pyright: ignore[reportArgumentType]
             id=None if src.id is None else ModelId(src.id),

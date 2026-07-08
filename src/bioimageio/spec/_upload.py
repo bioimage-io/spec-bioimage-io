@@ -6,20 +6,15 @@ from zipfile import ZipFile
 import httpx
 from loguru import logger
 
-from bioimageio.spec._io import load_description
-
-from ._description import (
-    InvalidDescr,
-    ResourceDescr,
-    build_description,
-)
+from ._description import InvalidDescr, ResourceDescr, build_description
 from ._internal._settings import settings
 from ._internal.common_nodes import ResourceDescrBase
 from ._internal.io import BioimageioYamlContent, get_reader
 from ._internal.io_basics import BIOIMAGEIO_YAML
 from ._internal.io_utils import write_yaml
 from ._internal.validation_context import get_validation_context
-from ._package import get_resource_package_content
+from ._io import load_description
+from ._package import get_package_content
 from .common import HttpUrl, PermissiveFileSource
 
 
@@ -27,6 +22,7 @@ from .common import HttpUrl, PermissiveFileSource
 def upload(
     source: Union[PermissiveFileSource, ZipFile, ResourceDescr, BioimageioYamlContent],
     /,
+    keep_remote_files_as_references: bool = False,
 ) -> HttpUrl:
     """Upload a new resource description (version) to the hypha server to be shared at bioimage.io.
     To edit an existing resource **version**, please login to https://bioimage.io and use the web interface.
@@ -35,6 +31,7 @@ def upload(
 
     Args:
         source: The resource description to upload.
+        keep_remote_files_as_references: If True, remote files will be kept as references and not downloaded and uploaded to the server.
 
     Returns:
         A URL to the uploaded resource description.
@@ -74,7 +71,9 @@ How to obtain a token:
             "You cannot upload a resource with an id. Please remove the id from the description and make sure to upload a new non-existing resource. To edit an existing resource, please use the web interface at https://bioimage.io."
         )
 
-    content = get_resource_package_content(descr)
+    content = get_package_content(
+        descr, local_files_only=keep_remote_files_as_references
+    )
 
     metadata = content[BIOIMAGEIO_YAML]
     assert isinstance(metadata, dict)
@@ -132,6 +131,7 @@ How to obtain a token:
         if isinstance(file_source, collections.abc.Mapping):
             buf = io.BytesIO()
             write_yaml(file_source, buf)
+            _ = buf.seek(0)
             files = {file_name: buf}
         else:
             files = {file_name: get_reader(file_source)}
