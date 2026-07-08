@@ -10891,6 +10891,21 @@
           "description": "Description of the tensor's data values, optionally per channel.\nIf specified per channel, the data `type` needs to match across channels.",
           "title": "Data"
         },
+        "output_of": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "title": "ModelId",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If this input tensor is the output of another model, specify the model id here.\nThis model's input id must match the output id of the referenced model.",
+          "title": "Output Of"
+        },
         "optional": {
           "default": false,
           "description": "indicates that this tensor may be `None`",
@@ -12044,7 +12059,7 @@
           "title": "Version Comment"
         },
         "format_version": {
-          "const": "0.5.11",
+          "const": "0.5.12",
           "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
           "title": "Format Version",
           "type": "string"
@@ -12159,7 +12174,7 @@
         "outputs",
         "weights"
       ],
-      "title": "model 0.5.11",
+      "title": "model 0.5.12",
       "type": "object"
     },
     "bioimageio__spec__model__v0_5__OnnxWeightsDescr": {
@@ -15505,7 +15520,7 @@
         "discriminator": {
           "mapping": {
             "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-            "0.5.11": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+            "0.5.12": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
           },
           "propertyName": "format_version"
         },
@@ -15589,7 +15604,7 @@
       "discriminator": {
         "mapping": {
           "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-          "0.5.11": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+          "0.5.12": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
         },
         "propertyName": "format_version"
       },
