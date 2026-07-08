@@ -10,6 +10,11 @@ In this file we log both:
 
 This changelog includes implementation details and might reference [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+### bioimageio.spec 0.5.13.0 (not yet released)
+
+- increase max allowed `MismatchedElementsPerMillion`
+
+
 ### bioimageio.spec 0.5.12.0
 
 - ignore duplicate details when adding details to a ValidationSummary

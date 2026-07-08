@@ -187,4 +187,4 @@ class SiUnit(ValidatedString):
 
 RelativeTolerance = Annotated[float, annotated_types.Interval(ge=0, le=1e-2)]
 AbsoluteTolerance = Annotated[float, annotated_types.Interval(ge=0)]
-MismatchedElementsPerMillion = Annotated[int, annotated_types.Interval(ge=0, le=5000)]
+MismatchedElementsPerMillion = Annotated[int, annotated_types.Interval(ge=0, le=30000)]
