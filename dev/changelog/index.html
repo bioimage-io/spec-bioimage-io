@@ -736,9 +736,10 @@ In this file we log both:</p>
 </ul>
 <h2 id="changes-to-the-bioimageiospec-python-package">Changes to the bioimageio.spec Python package<a class="headerlink" href="#changes-to-the-bioimageiospec-python-package" title="Anchor link to this section for reference">¤</a></h2>
 <p>This changelog includes implementation details and might reference <a href="#changes-to-the-resource-description-format">changes to the Resource Description Format</a>, e.g. in entry <a href="#bioimageiospec-052">bioimageio.spec 0.5.2</a>.</p>
-<h3 id="bioimageiospec-05111-not-yet-released">bioimageio.spec 0.5.11.1 (not yet released)<a class="headerlink" href="#bioimageiospec-05111-not-yet-released" title="Anchor link to this section for reference">¤</a></h3>
+<h3 id="bioimageiospec-05120">bioimageio.spec 0.5.12.0<a class="headerlink" href="#bioimageiospec-05120" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
 <li>ignore duplicate details when adding details to a ValidationSummary</li>
+<li><a href="#model-0512">model spec 0.5.12</a></li>
 </ul>
 <h3 id="bioimageiospec-05110">bioimageio.spec 0.5.11.0<a class="headerlink" href="#bioimageiospec-05110" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
@@ -1143,6 +1144,11 @@ To keep this relation, but avoid overbearing post releases a library version num
 Here is a list of changes for each <code>type</code> and <code>format_version</code>.
 Note that 'generic' changes apply to <code>type</code> application, dataset and notebook of the same <code>format_versions</code>.
 If the changes also apply to <code>type</code> model, the coresponding model format version is noted, e.g. <a href="#generic-031-and-model-053">generic 0.3.1 and model 0.5.3</a>.</p>
+<h3 id="model-0512">model 0.5.12<a class="headerlink" href="#model-0512" title="Anchor link to this section for reference">¤</a></h3>
+<ul>
+<li>Non-breaking changes:</li>
+<li>added input[i].output_of field to semantically link a model's input to another's output.</li>
+</ul>
 <h3 id="model-0511">model 0.5.11<a class="headerlink" href="#model-0511" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
 <li>Non-breaking changes:</li>
