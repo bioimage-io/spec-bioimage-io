@@ -2,7 +2,7 @@
 
 import json
 import shutil
-from typing import Any, Dict, List, TypedDict, Union
+from typing import TYPE_CHECKING, Any, Dict, List, TypedDict, Union
 
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from loguru import logger
@@ -30,6 +30,9 @@ from ._internal.io_utils import write_yaml as write_yaml
 from ._internal.type_guards import is_ndarray
 from ._internal.types import PermissiveFileSource, RelativeFilePath
 from ._internal.utils import files
+
+if TYPE_CHECKING:
+    import dask.array
 
 get_file_name = extract_file_name
 
@@ -69,7 +72,9 @@ def get_bioimageio_json_schema() -> Dict[str, Any]:
         return json.load(f)
 
 
-def load_image(source: Union[FileDescr, ZipPath, PermissiveFileSource]) -> NDArray[Any]:
+def load_image(
+    source: Union[FileDescr, ZipPath, PermissiveFileSource],
+) -> "NDArray[Any] | dask.array.Array":
     """load a single image as numpy array
 
     Args:

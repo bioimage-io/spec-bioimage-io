@@ -225,7 +225,7 @@ def _get_io_description(
             img_bytes = None
             if inp.sample_tensor is not None:
                 try:
-                    arr = load_image(inp.sample_tensor)
+                    arr = np.asarray(load_image(inp.sample_tensor))
                     img_bytes = _generate_png_from_tensor(arr)
                 except Exception as e:
                     logger.error("failed to generate input sample image: {}", e)
@@ -265,7 +265,7 @@ def _get_io_description(
             img_bytes = None
             if out.sample_tensor is not None:
                 try:
-                    arr = load_image(out.sample_tensor)
+                    arr = np.asarray(load_image(out.sample_tensor))
                     img_bytes = _generate_png_from_tensor(arr)
                 except Exception as e:
                     logger.error("failed to generate output sample image: {}", e)
