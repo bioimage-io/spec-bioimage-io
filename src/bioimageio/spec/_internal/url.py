@@ -88,9 +88,7 @@ def _validate_url_impl(
             msg_context={"error": str(e)},
         )
     else:
-        if status_code == 200:  # ok
-            pass
-        elif status_code in (302, 303):  # found
+        if status_code == 200 or status_code in (302, 303):  # ok
             pass
         elif status_code in (301, 308):
             issue_warning(

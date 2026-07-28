@@ -12,6 +12,7 @@ from typing import (
     Dict,
     Final,
     ForwardRef,
+    List,
     Literal,
     Optional,
     Tuple,
@@ -29,7 +30,7 @@ from annotated_types import Predicate
 from pydantic import BaseModel
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined, PydanticUndefinedType
-from typing_extensions import List, TypeAlias, TypeAliasType, assert_never
+from typing_extensions import TypeAlias, TypeAliasType, assert_never
 
 from bioimageio.spec._internal.io import YamlValue, is_yaml_leaf_value, is_yaml_value
 from bioimageio.spec._internal.validated_string import ValidatedString
@@ -177,7 +178,7 @@ class Hint(ABC):
     ) -> "Hint | Unrecognized | ParsingError":
         # if raw_hint in cls.hint_cache:
         # return cls.hint_cache[raw_hint] #FIXME: maybe move this into the individual do_parse impls?
-        hint: "Hint | Unrecognized | Exception" = Unrecognized(raw_hint=raw_hint)
+        hint: Hint | Unrecognized | Exception = Unrecognized(raw_hint=raw_hint)
         for subclass in Hint.get_subclasses():
             hint = subclass.do_parse(
                 raw_hint, parent_raw_hints=parent_raw_hints, discriminator=discriminator
@@ -309,7 +310,7 @@ class StringNodeHint(Hint):  # TODO: remove and add `ValidatedStringHint` instea
         ):
             return Unrecognized(raw_hint=raw_hint)
         return StringNodeHint(
-            pattern=getattr(raw_hint, "_pattern")
+            pattern=raw_hint._pattern
         )  # FIXME: use types from spec
 
     def short_description(self, extra: Sequence["Widget"] = ()) -> "Widget":
@@ -376,7 +377,7 @@ class AnnotatedHint(Hint):
         if raw_hint.__class__ != typing_extensions.Annotated[int, None].__class__:
             return Unrecognized(raw_hint)
 
-        inner_hint: "Hint | Unrecognized | ParsingError"
+        inner_hint: Hint | Unrecognized | ParsingError
         discri: Optional[pydantic.Discriminator] = discriminator
         for md in raw_hint.__metadata__:
             if not isinstance(md, pydantic.Discriminator):
@@ -718,7 +719,7 @@ class MappingHint(Hint):
     ) -> "MappingHint | Unrecognized | ParsingError":
         if not cls.is_mapping_hint(raw_hint):
             return Unrecognized(raw_hint)
-        type_args: Tuple[Type[Any], Type[Any]] = getattr(raw_hint, "__args__")
+        type_args: Tuple[Type[Any], Type[Any]] = raw_hint.__args__
         key_type = type_args[0]
         if (
             key_type is not str

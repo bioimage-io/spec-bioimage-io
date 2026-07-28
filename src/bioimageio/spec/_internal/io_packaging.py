@@ -63,9 +63,7 @@ def _package(
         #   returning the 'root' attribute, which is incorrect.
         #   see https://github.com/pydantic/pydantic/issues/8963
         #   TODO: follow up on https://github.com/pydantic/pydantic/issues/8963
-        if isinstance(source, Path):
-            unpackaged = source
-        elif isinstance(source, HttpUrl):
+        if isinstance(source, Path) or isinstance(source, HttpUrl):
             unpackaged = source
         elif isinstance(source, RelativeFilePath):
             unpackaged = Path(source.path)

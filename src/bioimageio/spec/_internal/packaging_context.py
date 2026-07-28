@@ -11,7 +11,7 @@ from .utils import SLOTS
 
 @dataclass(frozen=True, **SLOTS)
 class PackagingContext:
-    _context_tokens: "List[Token[Optional[PackagingContext]]]" = field(
+    _context_tokens: List[Token[Optional[PackagingContext]]] = field(
         init=False,
         default_factory=cast(
             "Callable[[], List[Token[Optional[PackagingContext]]]]", list
@@ -38,7 +38,7 @@ class PackagingContext:
             Optional[Sequence[str]], Literal["unchanged"]
         ] = "unchanged",
         local_files_only: Optional[bool] = None,
-    ) -> "PackagingContext":
+    ) -> PackagingContext:
         """return a modiefied copy"""
         return PackagingContext(
             bioimageio_yaml_file_name=(

@@ -127,7 +127,6 @@ from ..generic.v0_3 import Maintainer as Maintainer
 from ..generic.v0_3 import OrcidId as OrcidId
 from ..generic.v0_3 import RelativeFilePath as RelativeFilePath
 from ..generic.v0_3 import ResourceId as ResourceId
-from .v0_4 import ModelDescr as _ModelDescr04
 from .v0_4 import Author as _Author_v0_4
 from .v0_4 import BinarizeDescr as _BinarizeDescr_v0_4
 from .v0_4 import CallableFromDepencency as CallableFromDepencency
@@ -137,6 +136,7 @@ from .v0_4 import ClipDescr as _ClipDescr_v0_4
 from .v0_4 import ImplicitOutputShape as _ImplicitOutputShape_v0_4
 from .v0_4 import InputTensorDescr as _InputTensorDescr_v0_4
 from .v0_4 import KnownRunMode as KnownRunMode
+from .v0_4 import ModelDescr as _ModelDescr04
 from .v0_4 import ModelDescr as _ModelDescr_v0_4
 from .v0_4 import OutputTensorDescr as _OutputTensorDescr_v0_4
 from .v0_4 import ParameterizedInputShape as _ParameterizedInputShape_v0_4
@@ -2331,11 +2331,11 @@ class _InputTensorConv(
     def _convert(
         self,
         src: _InputTensorDescr_v0_4,
-        tgt: "type[InputTensorDescr] | type[dict[str, Any]]",
+        tgt: type[InputTensorDescr | dict[str, Any]],
         test_tensor: FileSource,
         sample_tensor: Optional[FileSource],
         size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
-    ) -> "InputTensorDescr | dict[str, Any]":
+    ) -> InputTensorDescr | dict[str, Any]:
         axes: List[InputAxis] = convert_axes(  # pyright: ignore[reportAssignmentType]
             src.axes,
             shape=src.shape,
@@ -2432,11 +2432,11 @@ class _OutputTensorConv(
     def _convert(
         self,
         src: _OutputTensorDescr_v0_4,
-        tgt: "type[OutputTensorDescr] | type[dict[str, Any]]",
+        tgt: type[OutputTensorDescr | dict[str, Any]],
         test_tensor: FileSource,
         sample_tensor: Optional[FileSource],
         size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
-    ) -> "OutputTensorDescr | dict[str, Any]":
+    ) -> OutputTensorDescr | dict[str, Any]:
         # TODO: split convert_axes into convert_output_axes and convert_input_axes
         axes: List[OutputAxis] = convert_axes(  # pyright: ignore[reportAssignmentType]
             src.axes,
@@ -2705,10 +2705,10 @@ class _ArchFileConv(
     def _convert(
         self,
         src: _CallableFromFile_v0_4,
-        tgt: "type[ArchitectureFromFileDescr | dict[str, Any]]",
+        tgt: type[ArchitectureFromFileDescr | dict[str, Any]],
         sha256: Optional[Sha256],
         kwargs: Dict[str, Any],
-    ) -> "ArchitectureFromFileDescr | dict[str, Any]":
+    ) -> ArchitectureFromFileDescr | dict[str, Any]:
         if src.startswith("http") and src.count(":") == 2:
             http, source, callable_ = src.split(":")
             source = ":".join((http, source))
@@ -2736,9 +2736,9 @@ class _ArchLibConv(
     def _convert(
         self,
         src: _CallableFromDepencency_v0_4,
-        tgt: "type[ArchitectureFromLibraryDescr | dict[str, Any]]",
+        tgt: type[ArchitectureFromLibraryDescr | dict[str, Any]],
         kwargs: Dict[str, Any],
-    ) -> "ArchitectureFromLibraryDescr | dict[str, Any]":
+    ) -> ArchitectureFromLibraryDescr | dict[str, Any]:
         *mods, callable_ = src.split(".")
         import_from = ".".join(mods)
         return tgt(
@@ -4220,8 +4220,8 @@ class ModelDescr(GenericModelDescrBase):
 
 class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
     def _convert(
-        self, src: _ModelDescr_v0_4, tgt: "type[ModelDescr] | type[dict[str, Any]]"
-    ) -> "ModelDescr | dict[str, Any]":
+        self, src: _ModelDescr_v0_4, tgt: type[ModelDescr | dict[str, Any]]
+    ) -> ModelDescr | dict[str, Any]:
         name = "".join(
             c if c in string.ascii_letters + string.digits + "_+- ()" else " "
             for c in src.name

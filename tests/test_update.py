@@ -1,6 +1,6 @@
 from io import StringIO
 from pathlib import Path
-from typing import Literal, Optional, Union
+from typing import Literal, Union
 
 import pytest
 
@@ -10,7 +10,7 @@ import pytest
 )
 def test_update_format(
     unet2d_path: str,
-    output: Optional[Union[None, StringIO, Literal["path"]]],
+    output: Union[None, StringIO, Literal["path"]],
     preload: bool,
     tmp_path: Path,
 ):

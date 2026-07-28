@@ -26,6 +26,7 @@ dependencies = [
     "tqdm",
     "typing-extensions",
     "zipp",
+    'eval-type-backport;python_version<"3.10"', # TODO: remove when py3.10 is lowest supported version
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",

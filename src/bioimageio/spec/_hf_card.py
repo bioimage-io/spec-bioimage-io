@@ -336,7 +336,7 @@ def create_huggingface_model_card(
     if model.authors:
         shared_by = "\n- **Shared by:** " + (
             "".join(
-                (
+                
                     f"\n    - {a.name}"
                     + (f", {a.affiliation}" if a.affiliation else "")
                     + (
@@ -350,7 +350,7 @@ def create_huggingface_model_card(
                         else ""
                     )
                     for a in model.authors
-                )
+                
             )
         )
     else:
@@ -546,7 +546,7 @@ def create_huggingface_model_card(
 
     speeds_sizes_times = "### Speeds, Sizes, Times\n\n"
     if model.config.bioimageio.training.training_duration is not None:
-        speeds_sizes_times += f"- **Training time:** {'{:.2f}'.format(model.config.bioimageio.training.training_duration)}\n"
+        speeds_sizes_times += f"- **Training time:** {f'{model.config.bioimageio.training.training_duration:.2f}'}\n"
 
     speeds_sizes_times += f"- **Model size:** {model_size}\n"
     if model.config.bioimageio.inference_time:

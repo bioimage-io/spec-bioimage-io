@@ -31,6 +31,7 @@ from typing import (
     Set,
     Tuple,
     Union,
+    cast,
 )
 
 import annotated_types
@@ -47,7 +48,7 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core.core_schema import ErrorType
-from typing_extensions import Annotated, Self, assert_never, cast
+from typing_extensions import Annotated, Self, assert_never
 
 from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml

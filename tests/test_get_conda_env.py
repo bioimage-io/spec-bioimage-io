@@ -29,7 +29,7 @@ from bioimageio.spec.model.v0_5 import (
                 architecture=dict(
                     callable="UNet2d",
                     source="unet2d.py",
-                    sha256="7cdd8332dc3e3735e71c328f81b63a9ac86c028f80522312484ca9a4027d4ce1",
+                    sha256="68e34520084afde3b160b8774a863ccf2934169838217ace376d6a244c53422b",
                     kwargs=dict(input_channels=1, output_channels=1),
                 ),
                 dependencies=dict(

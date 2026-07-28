@@ -4,6 +4,7 @@ import collections.abc
 import warnings
 from typing import (
     Any,
+    Callable,
     Dict,
     Literal,
     Mapping,
@@ -13,7 +14,7 @@ from typing import (
 )
 
 import pydantic
-from typing_extensions import Callable, ParamSpec, Self, TypeVar
+from typing_extensions import ParamSpec, Self, TypeVar
 
 from .type_guards import is_kwargs
 from .validation_context import ValidationContext, get_validation_context

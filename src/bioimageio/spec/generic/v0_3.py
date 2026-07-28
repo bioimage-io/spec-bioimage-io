@@ -52,6 +52,8 @@ from .v0_2 import BadgeDescr, Doi, OrcidId, Uploader
 from .v0_2 import Maintainer as _Maintainer_v0_2
 
 __all__ = [
+    "KNOWN_SPECIFIC_RESOURCE_TYPES",
+    "VALID_COVER_IMAGE_EXTENSIONS",
     "Author",
     "BadgeDescr",
     "CiteEntry",
@@ -60,7 +62,6 @@ __all__ = [
     "FileDescr",
     "GenericDescr",
     "HttpUrl",
-    "KNOWN_SPECIFIC_RESOURCE_TYPES",
     "LicenseId",
     "LinkedResource",
     "Maintainer",
@@ -69,7 +70,6 @@ __all__ = [
     "ResourceId",
     "Sha256",
     "Uploader",
-    "VALID_COVER_IMAGE_EXTENSIONS",
     "Version",
 ]
 
@@ -130,8 +130,8 @@ class Author(_Author_v0_2):
 
 class _AuthorConv(Converter[_Author_v0_2, Author]):
     def _convert(
-        self, src: _Author_v0_2, tgt: "type[Author] | type[dict[str, Any]]"
-    ) -> "Author | dict[str, Any]":
+        self, src: _Author_v0_2, tgt: type[Author | dict[str, Any]]
+    ) -> Author | dict[str, Any]:
         return tgt(
             name=src.name,
             github_user=src.github_user,
@@ -155,8 +155,8 @@ class Maintainer(_Maintainer_v0_2):
 
 class _MaintainerConv(Converter[_Maintainer_v0_2, Maintainer]):
     def _convert(
-        self, src: _Maintainer_v0_2, tgt: "type[Maintainer | dict[str, Any]]"
-    ) -> "Maintainer | dict[str, Any]":
+        self, src: _Maintainer_v0_2, tgt: type[Maintainer | dict[str, Any]]
+    ) -> Maintainer | dict[str, Any]:
         return tgt(
             name=src.name,
             github_user=src.github_user,

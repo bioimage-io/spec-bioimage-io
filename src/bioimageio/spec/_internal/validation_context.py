@@ -79,7 +79,7 @@ class ValidationContext(ValidationContextBase):
     if it matches its expected SHA256 hash value.
     """
 
-    _context_tokens: "List[Token[Optional[ValidationContext]]]" = field(
+    _context_tokens: List[Token[Optional[ValidationContext]]] = field(
         init=False,
         default_factory=cast(
             "Callable[[], List[Token[Optional[ValidationContext]]]]", list

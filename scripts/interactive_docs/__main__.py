@@ -1,7 +1,8 @@
 import sys
 from pathlib import Path
+from typing import Final
 
-from typing_extensions import Final, assert_never
+from typing_extensions import assert_never
 
 from bioimageio.spec import SpecificResourceDescr, __version__
 

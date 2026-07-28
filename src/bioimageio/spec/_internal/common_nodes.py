@@ -9,6 +9,7 @@ from typing import (
     IO,
     TYPE_CHECKING,
     Any,
+    Callable,
     ClassVar,
     Dict,
     Iterable,
@@ -26,7 +27,7 @@ from zipfile import ZipFile
 import pydantic
 from pydantic import DirectoryPath, PrivateAttr, model_validator
 from pydantic_core import PydanticUndefined
-from typing_extensions import Callable, ParamSpec, Self
+from typing_extensions import ParamSpec, Self
 
 from ..summary import (
     WARNING_LEVEL_TO_NAME,

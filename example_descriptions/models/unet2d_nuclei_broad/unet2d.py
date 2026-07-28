@@ -1,6 +1,6 @@
 # type: ignore
 import torch
-import torch.nn as nn
+from torch import nn
 
 
 class Upsample(nn.Module):

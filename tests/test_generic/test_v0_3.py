@@ -196,9 +196,7 @@ def test_with_suffix(src: Union[Path, HttpUrl], adapter: TypeAdapter[Any]):
     #     assert_never(src)
 
     json_obj = adapter.dump_python(valid, mode="json")
-    if isinstance(src, Path):
-        assert json_obj == str(src)
-    elif isinstance(src, HttpUrl):
+    if isinstance(src, Path) or isinstance(src, HttpUrl):
         assert json_obj == str(src)
     else:
         assert_never(src)

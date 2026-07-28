@@ -1,4 +1,5 @@
 from typing import Any, List
+
 from .hint import Hint, Unrecognized, Widget
 
 

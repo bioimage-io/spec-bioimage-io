@@ -25,7 +25,7 @@ class Version(RootModel[Union[str, int, float]]):
 
         return self._version < other._version
 
-    def __eq__(self, other: Any):
+    def __eq__(self, other: object):
         if not isinstance(other, Version):
             return NotImplemented
         return self._version == other._version

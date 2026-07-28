@@ -218,8 +218,8 @@ class RelativeFilePath(
         super().model_post_init(__context)
 
     def get_absolute(
-        self, root: "RootHttpUrl | Path | AnyUrl | ZipFile"
-    ) -> "AbsoluteFilePath | HttpUrl | ZipPath":
+        self, root: RootHttpUrl | Path | AnyUrl | ZipFile
+    ) -> AbsoluteFilePath | HttpUrl | ZipPath:
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
@@ -240,8 +240,8 @@ class RelativeDirectory(
     RelativePathBase[Union[AbsoluteDirectory, HttpUrl, ZipPath]], frozen=True
 ):
     def get_absolute(
-        self, root: "RootHttpUrl | Path | AnyUrl | ZipFile"
-    ) -> "AbsoluteDirectory | HttpUrl | ZipPath":
+        self, root: RootHttpUrl | Path | AnyUrl | ZipFile
+    ) -> AbsoluteDirectory | HttpUrl | ZipPath:
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
@@ -337,7 +337,7 @@ PermissiveFileSource: TypeAlias = Union[
 ]
 
 
-path_or_url_adapter: "TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]]" = (
+path_or_url_adapter: TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]] = (
     TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl])
 )
 

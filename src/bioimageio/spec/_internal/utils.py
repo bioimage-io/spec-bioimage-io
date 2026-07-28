@@ -83,7 +83,7 @@ FirstK = TypeVar("FirstK")
 
 def nest_dict_with_narrow_first_key(
     flat_dict: Dict[Tuple[K, ...], V], first_k: Type[FirstK]
-) -> Dict[FirstK, "NestedDict[K, V] | V"]:
+) -> Dict[FirstK, NestedDict[K, V] | V]:
     """convenience function to annotate a special version of a NestedDict.
     Root level keys are of a narrower type than the nested keys. If not a ValueError is raisd.
     """

@@ -69,7 +69,7 @@ weights:
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
     source: http://files.ilastik.org/bioimageio_test/unet2d_nuclei_broad_weights.torch
     architecture: unet2d_expand_output_shape.py:UNet2d
-    architecture_sha256: 1441e8cfaf387a98a1c0bb937d59a2e9d6c311a8912cd88b39c11ecff503ccfe
+    architecture_sha256: 5eb82517389b4cc63298edaf77b52178898c87f8a3f1398bd0e2f98a2d245089
     kwargs: { input_channels: 1, output_channels: 1 }
     dependencies: conda:environment.yaml
 
