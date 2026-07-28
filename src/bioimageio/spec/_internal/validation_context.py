@@ -86,7 +86,9 @@ class ValidationContext(ValidationContextBase):
         ),
     )
 
-    cache: DiskCache[RootHttpUrl] | MemoryCache[RootHttpUrl] | NoopCache[RootHttpUrl] = field(default=settings.disk_cache)
+    cache: (
+        DiskCache[RootHttpUrl] | MemoryCache[RootHttpUrl] | NoopCache[RootHttpUrl]
+    ) = field(default=settings.disk_cache)
     disable_cache: bool = False
     """Disable caching downloads to `settings.cache_path`
     and (re)download them to memory instead."""

@@ -1,6 +1,7 @@
 # pragma: no cover
 # type: ignore
 """ImJoy plugin parser module."""
+
 from __future__ import annotations
 
 import copy

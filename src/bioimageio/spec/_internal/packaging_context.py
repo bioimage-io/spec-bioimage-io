@@ -34,7 +34,9 @@ class PackagingContext:
         *,
         bioimageio_yaml_file_name: FileName | None = None,
         file_sources: dict[FileName, FileDescr] | None = None,
-        weights_priority_order: Sequence[str] | None | Literal["unchanged"] = "unchanged",
+        weights_priority_order: Sequence[str]
+        | None
+        | Literal["unchanged"] = "unchanged",
         local_files_only: bool | None = None,
     ) -> PackagingContext:
         """return a modiefied copy"""

@@ -1,5 +1,6 @@
 """use these type guards with caution!
 They widen the type to T[Any], which is not always correct."""
+
 from __future__ import annotations
 
 import collections.abc

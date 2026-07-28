@@ -5,6 +5,7 @@ and summaries for BioImage.IO resource descriptions, along with helpers to
 format these results as plain text, Markdown, or HTML for reporting and
 diagnostics.
 """
+
 from __future__ import annotations
 
 import html

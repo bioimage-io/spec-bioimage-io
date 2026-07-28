@@ -273,9 +273,9 @@ class WeightsEntryDescrBase(FileDescr):
     ] = None
     """Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`."""
 
-    parent: Annotated[
-        WeightsFormat | None, Field(examples=["pytorch_state_dict"])
-    ] = None
+    parent: Annotated[WeightsFormat | None, Field(examples=["pytorch_state_dict"])] = (
+        None
+    )
     """The source weights these weights were converted from.
     For example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,
     The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
@@ -463,9 +463,7 @@ class WeightsDescr(Node):
     onnx: OnnxWeightsDescr | None = None
     pytorch_state_dict: PytorchStateDictWeightsDescr | None = None
     tensorflow_js: TensorflowJsWeightsDescr | None = None
-    tensorflow_saved_model_bundle: TensorflowSavedModelBundleWeightsDescr | None = (
-        None
-    )
+    tensorflow_saved_model_bundle: TensorflowSavedModelBundleWeightsDescr | None = None
     torchscript: TorchscriptWeightsDescr | None = None
 
     @model_validator(mode="after")
@@ -611,7 +609,10 @@ class TensorDescrBase(Node):
     |  x  |  spatial dimension x |
     """
 
-    data_range: tuple[Annotated[float, AllowInfNan(True)], Annotated[float, AllowInfNan(True)]] | None = None
+    data_range: (
+        tuple[Annotated[float, AllowInfNan(True)], Annotated[float, AllowInfNan(True)]]
+        | None
+    ) = None
     """Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
     If not specified, the full data range that can be expressed in `data_type` is allowed."""
 
@@ -1154,9 +1155,9 @@ class ModelDescr(GenericModelDescrBase):
 
     @model_validator(mode="after")
     def minimum_shape2valid_output(self) -> Self:
-        tensors_by_name: dict[
-            TensorName, InputTensorDescr | OutputTensorDescr
-        ] = {t.name: t for t in self.inputs + self.outputs}
+        tensors_by_name: dict[TensorName, InputTensorDescr | OutputTensorDescr] = {
+            t.name: t for t in self.inputs + self.outputs
+        }
 
         for out in self.outputs:
             if isinstance(out.shape, ImplicitOutputShape):

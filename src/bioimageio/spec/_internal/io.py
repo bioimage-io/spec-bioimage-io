@@ -104,7 +104,10 @@ class LightHttpFileDescr(Node):
     def get_reader(
         self,
         *,
-        progressbar: ProgressbarLike | Callable[[], ProgressbarLike] | bool | None = None,
+        progressbar: ProgressbarLike
+        | Callable[[], ProgressbarLike]
+        | bool
+        | None = None,
     ) -> BytesReader:
         """open the file source (download if needed)"""
         return get_reader(self.source, sha256=self.sha256, progressbar=progressbar)
@@ -303,7 +306,10 @@ class FileDescr(Node):
     def get_reader(
         self,
         *,
-        progressbar: ProgressbarLike | Callable[[], ProgressbarLike] | bool | None = None,
+        progressbar: ProgressbarLike
+        | Callable[[], ProgressbarLike]
+        | bool
+        | None = None,
     ):
         """open the file source (download if needed)"""
         return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
@@ -311,7 +317,10 @@ class FileDescr(Node):
     def download(
         self,
         *,
-        progressbar: ProgressbarLike | Callable[[], ProgressbarLike] | bool | None = None,
+        progressbar: ProgressbarLike
+        | Callable[[], ProgressbarLike]
+        | bool
+        | None = None,
     ):
         """alias for `.get_reader`"""
         return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
@@ -348,9 +357,7 @@ class WithSuffix:
             schema,
         )
 
-    def validate(
-        self, value: FileSource | FileDescr
-    ) -> FileSource | FileDescr:
+    def validate(self, value: FileSource | FileDescr) -> FileSource | FileDescr:
         return validate_suffix(value, self.suffix, case_sensitive=self.case_sensitive)
 
 
@@ -616,8 +623,8 @@ class HashKwargs(TypedDict):
     sha256: NotRequired[Sha256 | None]
 
 
-_file_source_adapter: TypeAdapter[HttpUrl | RelativeFilePath | FilePath] = (
-    TypeAdapter(FileSource)
+_file_source_adapter: TypeAdapter[HttpUrl | RelativeFilePath | FilePath] = TypeAdapter(
+    FileSource
 )
 
 
@@ -892,7 +899,12 @@ def _fetch_url(
 
 
 def extract_file_name(
-    src: pydantic.HttpUrl | RootHttpUrl | PurePath | RelativeFilePath | ZipPath | FileDescr,
+    src: pydantic.HttpUrl
+    | RootHttpUrl
+    | PurePath
+    | RelativeFilePath
+    | ZipPath
+    | FileDescr,
 ) -> FileName:
     if isinstance(src, FileDescr):
         src = src.source
@@ -968,9 +980,7 @@ def _extract_file_descrs_impl(
 F = TypeVar("F", bound=Union[FileSource, FileDescr])
 
 
-def validate_suffix(
-    value: F, suffix: str | Sequence[str], case_sensitive: bool
-) -> F:
+def validate_suffix(value: F, suffix: str | Sequence[str], case_sensitive: bool) -> F:
     """check final suffix"""
     if isinstance(suffix, str):
         suffixes = [suffix]

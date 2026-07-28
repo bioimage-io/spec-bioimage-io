@@ -143,7 +143,14 @@ class BadgeDescr(Node):
     """badge label to display on hover"""
 
     icon: Annotated[
-        Annotated[FilePath | RelativeFilePath, AfterValidator(wo_special_file_name), include_in_package] | HttpUrl | pydantic.HttpUrl | None,
+        Annotated[
+            FilePath | RelativeFilePath,
+            AfterValidator(wo_special_file_name),
+            include_in_package,
+        ]
+        | HttpUrl
+        | pydantic.HttpUrl
+        | None,
         Field(examples=["https://colab.research.google.com/assets/colab-badge.svg"]),
     ] = None
     """badge icon (included in bioimage.io package if not a URL)"""
@@ -218,7 +225,10 @@ class GenericModelDescrBase(ResourceDescrBase):
     )
     """Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
 
-    id_emoji: Annotated[str, Len(min_length=1, max_length=1), Field(examples=["🦈", "🦥"])] | None = None
+    id_emoji: (
+        Annotated[str, Len(min_length=1, max_length=1), Field(examples=["🦈", "🦥"])]
+        | None
+    ) = None
     """UTF-8 emoji for display alongside the `id`."""
 
     authors: list[Author] = Field(  # pyright: ignore[reportUnknownVariableType]
@@ -301,9 +311,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Annotated[str, Len(min_length=1, max_length=2)] | FileSource | None = (
-        None
-    )
+    icon: Annotated[str, Len(min_length=1, max_length=2)] | FileSource | None = None
     """An icon for illustration"""
 
     links: Annotated[
@@ -455,7 +463,10 @@ class GenericDescr(GenericDescrBase, extra="ignore"):
     type: Annotated[str, LowerCase, Field(frozen=True)] = "generic"
     """The resource type assigns a broad category to the resource."""
 
-    id: Annotated[ResourceId, Field(examples=["affable-shark", "ambitious-sloth"])] | None = None
+    id: (
+        Annotated[ResourceId, Field(examples=["affable-shark", "ambitious-sloth"])]
+        | None
+    ) = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 

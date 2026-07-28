@@ -23,7 +23,11 @@ from ._package import save_bioimageio_package, save_bioimageio_package_as_folder
 
 
 def update_format(
-    source: ResourceDescr | PermissiveFileSource | ZipFile | BioimageioYamlContent | InvalidDescr,
+    source: ResourceDescr
+    | PermissiveFileSource
+    | ZipFile
+    | BioimageioYamlContent
+    | InvalidDescr,
     /,
     *,
     output: Path | TextIO | None = None,

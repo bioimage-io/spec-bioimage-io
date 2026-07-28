@@ -179,7 +179,9 @@ def _get_io_description(
     output_ids: list[TensorId] = []
 
     def format_data_descr(
-        d: NominalOrOrdinalDataDescr | IntervalOrRatioDataDescr | Sequence[NominalOrOrdinalDataDescr | IntervalOrRatioDataDescr],
+        d: NominalOrOrdinalDataDescr
+        | IntervalOrRatioDataDescr
+        | Sequence[NominalOrOrdinalDataDescr | IntervalOrRatioDataDescr],
     ) -> str:
         ret = ""
         if isinstance(d, NominalOrOrdinalDataDescr):

@@ -62,7 +62,9 @@ from bioimageio.spec.model.v0_5 import (
     ],
 )
 def test_get_conda_env(
-    descr_class: PytorchStateDictWeightsDescr | OnnxWeightsDescr | TorchscriptWeightsDescr,
+    descr_class: PytorchStateDictWeightsDescr
+    | OnnxWeightsDescr
+    | TorchscriptWeightsDescr,
     w: Mapping[str, Any],
     unet2d_path: Path,
 ):

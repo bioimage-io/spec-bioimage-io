@@ -1,4 +1,5 @@
 """Utility functions for bioimage.io specifications (mostly IO)."""
+
 from __future__ import annotations
 
 import json

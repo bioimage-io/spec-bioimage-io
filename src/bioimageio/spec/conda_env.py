@@ -1,4 +1,5 @@
 """Representation of conda environment.yaml files for bioimageio specifications."""
+
 from __future__ import annotations
 
 import warnings

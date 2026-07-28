@@ -305,7 +305,10 @@ class GenericModelDescrBase(ResourceDescrBase):
         """
         convert_from_older_format(data)
 
-    id_emoji: Annotated[str, Len(min_length=1, max_length=2), Field(examples=["🦈", "🦥"])] | None = None
+    id_emoji: (
+        Annotated[str, Len(min_length=1, max_length=2), Field(examples=["🦈", "🦥"])]
+        | None
+    ) = None
     """UTF-8 emoji for display alongside the `id`."""
 
     authors: FAIR[list[Author]] = Field(
@@ -361,7 +364,9 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Annotated[str, Len(min_length=1, max_length=2)] | FileDescr_package | None = None
+    icon: Annotated[str, Len(min_length=1, max_length=2)] | FileDescr_package | None = (
+        None
+    )
     """An icon for illustration, e.g. on bioimage.io"""
 
     links: Annotated[
@@ -512,7 +517,10 @@ class GenericDescr(GenericDescrBase, extra="ignore"):
         type: Annotated[str, LowerCase]
         """The resource type assigns a broad category to the resource."""
 
-    id: Annotated[ResourceId, Field(examples=["affable-shark", "ambitious-sloth"])] | None = None
+    id: (
+        Annotated[ResourceId, Field(examples=["affable-shark", "ambitious-sloth"])]
+        | None
+    ) = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 

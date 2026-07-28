@@ -1,4 +1,5 @@
 """implementation details for building a bioimage.io resource description"""
+
 from __future__ import annotations
 
 import collections.abc

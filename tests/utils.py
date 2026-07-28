@@ -1,4 +1,5 @@
 """utils to test bioimageio.spec"""
+
 from __future__ import annotations
 
 import os

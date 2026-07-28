@@ -159,7 +159,17 @@ def save_bioimageio_package_as_folder(
     /,
     *,
     output_path: NewPath | DirectoryPath | None = None,
-    weights_priority_order: Sequence[Literal["keras_hdf5", "onnx", "pytorch_state_dict", "tensorflow_js", "tensorflow_saved_model_bundle", "torchscript"]] | None = None,
+    weights_priority_order: Sequence[
+        Literal[
+            "keras_hdf5",
+            "onnx",
+            "pytorch_state_dict",
+            "tensorflow_js",
+            "tensorflow_saved_model_bundle",
+            "torchscript",
+        ]
+    ]
+    | None = None,
     local_files_only: bool = False,
 ) -> DirectoryPath:
     """Write the content of a bioimage.io resource package to a folder.
@@ -221,7 +231,17 @@ def save_bioimageio_package(
     compression: int = ZIP_DEFLATED,
     compression_level: int = 1,
     output_path: NewPath | FilePath | None = None,
-    weights_priority_order: Sequence[Literal["keras_hdf5", "onnx", "pytorch_state_dict", "tensorflow_js", "tensorflow_saved_model_bundle", "torchscript"]] | None = None,
+    weights_priority_order: Sequence[
+        Literal[
+            "keras_hdf5",
+            "onnx",
+            "pytorch_state_dict",
+            "tensorflow_js",
+            "tensorflow_saved_model_bundle",
+            "torchscript",
+        ]
+    ]
+    | None = None,
     allow_invalid: bool = False,
     local_files_only: bool = False,
 ) -> FilePath:
@@ -277,7 +297,17 @@ def save_bioimageio_package_to_stream(
     compression: int = ZIP_DEFLATED,
     compression_level: int = 1,
     output_stream: IO[bytes] | None = None,
-    weights_priority_order: Sequence[Literal["keras_hdf5", "onnx", "pytorch_state_dict", "tensorflow_js", "tensorflow_saved_model_bundle", "torchscript"]] | None = None,
+    weights_priority_order: Sequence[
+        Literal[
+            "keras_hdf5",
+            "onnx",
+            "pytorch_state_dict",
+            "tensorflow_js",
+            "tensorflow_saved_model_bundle",
+            "torchscript",
+        ]
+    ]
+    | None = None,
     local_files_only: bool = False,
 ) -> IO[bytes]:
     """Package a bioimageio resource into a stream.

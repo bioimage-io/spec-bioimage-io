@@ -75,9 +75,7 @@ class NodeWithExplicitlySetFields(Node):
 
     @model_validator(mode="before")
     @classmethod
-    def _set_fields_explicitly(
-        cls, data: Any | dict[str, Any]
-    ) -> Any | dict[str, Any]:
+    def _set_fields_explicitly(cls, data: Any | dict[str, Any]) -> Any | dict[str, Any]:
         if isinstance(data, dict):
             for name, default in cls._fields_to_set_explicitly.items():
                 if name not in data:

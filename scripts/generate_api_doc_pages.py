@@ -1,6 +1,7 @@
 """Generate the code reference pages.
 (adapted from https://mkdocstrings.github.io/recipes/#bind-pages-to-sections-themselves)
 """
+
 from __future__ import annotations
 
 from pathlib import Path
