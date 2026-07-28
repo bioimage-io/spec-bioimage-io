@@ -71,7 +71,7 @@ TGT = TypeVar("TGT", bound=Node)
 CArgs = TypeVarTuple("CArgs")
 
 
-class Converter(Generic[SRC, TGT, Unpack[CArgs]], ABC):
+class Converter(ABC, Generic[SRC, TGT, Unpack[CArgs]]):
     # src: ClassVar[Type[SRC]]
     # tgt: ClassVar[Type[TGT]]
     # note: the above is not yet possible, see https://github.com/python/typing/discussions/1424

@@ -14,7 +14,7 @@ class Version(RootModel[Union[str, int, float]]):
     def __str__(self):
         return str(self._version)
 
-    def model_post_init(self, __context: Any) -> None:
+    def model_post_init(self, __context: Any, /) -> None:
         """set `_version` attribute @private"""
         self._version = packaging.version.Version(str(self.root))
         return super().model_post_init(__context)

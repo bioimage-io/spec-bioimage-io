@@ -26,8 +26,8 @@ class NestedDummyNode(Node):
 
 
 DUMMY_INPUT: Dict[str, Any] = {"a": -1, "b": -1}
-NESTED_DICT_DUMMY_INPUT = dict(dummy=DUMMY_INPUT)
-NESTED_NODE_DUMMY_INPUT = dict(dummy=DummyNode(**DUMMY_INPUT))
+NESTED_DICT_DUMMY_INPUT = {"dummy": DUMMY_INPUT}
+NESTED_NODE_DUMMY_INPUT = {"dummy": DummyNode(**DUMMY_INPUT)}
 
 
 @pytest.mark.parametrize(

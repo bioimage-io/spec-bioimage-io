@@ -148,7 +148,7 @@ class ResourceDescrBase(
             issue_warning(
                 "future format_version '{value}' treated as '{implemented}'",
                 value=value,
-                msg_context=dict(implemented=cls.implemented_format_version),
+                msg_context={"implemented": cls.implemented_format_version},
                 severity=ALERT,
             )
             data["format_version"] = cls.implemented_format_version
@@ -313,7 +313,7 @@ class ResourceDescrBase(
                         )
                     )
                 elif context.raise_errors:
-                    raise e
+                    raise
                 else:
                     val_errors.append(
                         ErrorEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"])
@@ -333,7 +333,7 @@ class ResourceDescrBase(
                 )
         except Exception as e:
             if context.raise_errors:
-                raise e
+                raise
 
             try:
                 msg = str(e)
@@ -352,9 +352,9 @@ class ResourceDescrBase(
         if rd is None:
             try:
                 rd = InvalidDescr.model_validate(data)
-            except Exception as e:
+            except Exception:
                 if context.raise_errors:
-                    raise e
+                    raise
                 resource_type = cls.model_fields["type"].default
                 format_version = cls.implemented_format_version
                 rd = InvalidDescr(type=resource_type, format_version=format_version)
@@ -456,7 +456,7 @@ class InvalidDescr(
 
 class KwargsNode(Node):
     def get(self, item: str, default: Any = None) -> Any:
-        return self[item] if item in self else default
+        return self[item] if item in self else default  # ruff: ignore[SIM401]
 
     def __getitem__(self, item: str) -> Any:
         if item in self.__class__.model_fields:

@@ -60,9 +60,8 @@ def validate_unique_entries(seq: Sequence[Hashable]):
 def validate_github_user(
     username: str, hotfix_known_errorenous_names: bool = True
 ) -> str:
-    if hotfix_known_errorenous_names:
-        if username == "Constantin Pape":
-            return "constantinpape"
+    if hotfix_known_errorenous_names and username == "Constantin Pape":
+        return "constantinpape"
 
     if (
         username.lower() in KNOWN_GITHUB_USERS

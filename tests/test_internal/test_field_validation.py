@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import ClassVar, Literal, Optional
 
 import pytest
@@ -18,7 +18,7 @@ def test_is_valid_yaml_value():
 
     assert not is_valid_yaml_value(invalid)
 
-    valid = {"a": 1, "b": ["1", 2], ("c", 1): ("a", "b", datetime.now())}
+    valid = {"a": 1, "b": ["1", 2], ("c", 1): ("a", "b", datetime.now(timezone.utc))}
     assert is_valid_yaml_value(valid)
 
 

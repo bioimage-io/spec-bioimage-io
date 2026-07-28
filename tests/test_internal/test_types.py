@@ -13,7 +13,7 @@ UTC = timezone.utc
 
 TYPE_ARGS = {
     types.Datetime: (2024, 2, 14),
-    types.Datetime: datetime.now().astimezone(UTC).isoformat(timespec="seconds"),
+    types.Datetime: datetime.now(timezone.utc).isoformat(timespec="seconds"),
     types.DeprecatedLicenseId: "AGPL-1.0",
     types.Doi: "10.5281/zenodo.5764892",
     types.Identifier: "id",

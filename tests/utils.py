@@ -121,7 +121,7 @@ def check_type(
 
     node = create_model("DummyNode", value=(type_, ...), __base__=DummyNodeBase)
     with error_context:
-        actual_node = node.model_validate(dict(value=value))
+        actual_node = node.model_validate({"value": value})
 
     if expected is not unset:
         assert actual_node.value == expected, (actual_node.value, expected)

@@ -7,7 +7,6 @@ diagnostics.
 """
 
 import html
-import os
 import platform
 import subprocess
 from dataclasses import dataclass
@@ -110,12 +109,12 @@ class ErrorEntry(ValidationEntry):
     def traceback_rich(self) -> Optional[rich.traceback.Traceback]:
         return self._traceback_rich
 
-    def model_post_init(self, __context: Any):
+    def model_post_init(self, __context: Any, /):
         if self.with_traceback and not (self.traceback_md or self.traceback_html):
             self._traceback_rich = rich.traceback.Traceback()
             console = rich.console.Console(
                 record=True,
-                file=open(os.devnull, "wt", encoding="utf-8"),
+                file=StringIO(),
                 color_system="truecolor",
                 width=120,
                 tab_size=4,
@@ -232,6 +231,7 @@ class ValidationDetail(BaseModel, extra="allow"):
                             stderr=subprocess.STDOUT,
                             shell=False,
                             text=True,
+                            check=False,
                         )
                     except Exception as e:
                         self.saved_conda_compare = f"Failed to run `conda compare`: {e}"
@@ -315,6 +315,7 @@ class ValidationSummary(BaseModel, extra="allow"):
                     stderr=subprocess.STDOUT,
                     shell=False,
                     text=True,
+                    check=False,
                 )
             except Exception as e:
                 self.saved_conda_list = f"Failed to run `conda list`: {e}"

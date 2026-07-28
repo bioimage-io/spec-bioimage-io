@@ -6,7 +6,7 @@ from torch import nn
 
 
 class UNetBase(nn.Module):
-    """ """
+    """Base class for U-Net architectures."""
 
     def __init__(self, encoder, base, decoder, out_conv=None, final_activation=None):
         super().__init__()

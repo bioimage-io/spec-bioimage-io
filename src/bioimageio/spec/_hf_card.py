@@ -210,10 +210,7 @@ def _get_io_description(
         for inp in model.inputs:
             input_ids.append(inp.id)
             axes_str = ", ".join(str(a.id) for a in inp.axes)
-            shape_str = " × ".join(
-                str(a.size) if isinstance(a.size, int) else str(a.size)
-                for a in inp.axes
-            )
+            shape_str = " × ".join(str(a.size) for a in inp.axes)
 
             markdown_string += f"  `{inp.id}`: {inp.description or ''}\n\n"
             markdown_string += f"  - Axes: `{axes_str}`\n"
@@ -250,10 +247,7 @@ def _get_io_description(
         for out in model.outputs:
             output_ids.append(out.id)
             axes_str = ", ".join(str(a.id) for a in out.axes)
-            shape_str = " × ".join(
-                str(a.size) if isinstance(a.size, int) else str(a.size)
-                for a in out.axes
-            )
+            shape_str = " × ".join(str(a.size) for a in out.axes)
 
             markdown_string += f"  `{out.id}`: {out.description or ''}\n"
             markdown_string += f"  - Axes: `{axes_str}`\n"
@@ -336,21 +330,19 @@ def create_huggingface_model_card(
     if model.authors:
         shared_by = "\n- **Shared by:** " + (
             "".join(
-                
-                    f"\n    - {a.name}"
-                    + (f", {a.affiliation}" if a.affiliation else "")
-                    + (
-                        f", [https://orcid.org/{a.orcid}](https://orcid.org/{a.orcid})"
-                        if a.orcid
-                        else ""
-                    )
-                    + (
-                        f", [https://github.com/{a.github_user}](https://github.com/{a.github_user})"
-                        if a.github_user
-                        else ""
-                    )
-                    for a in model.authors
-                
+                f"\n    - {a.name}"
+                + (f", {a.affiliation}" if a.affiliation else "")
+                + (
+                    f", [https://orcid.org/{a.orcid}](https://orcid.org/{a.orcid})"
+                    if a.orcid
+                    else ""
+                )
+                + (
+                    f", [https://github.com/{a.github_user}](https://github.com/{a.github_user})"
+                    if a.github_user
+                    else ""
+                )
+                for a in model.authors
             )
         )
     else:

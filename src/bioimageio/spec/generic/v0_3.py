@@ -397,15 +397,18 @@ class GenericModelDescrBase(ResourceDescrBase):
 
     @model_validator(mode="after")
     def _check_maintainers_exist(self):
-        if not self.maintainers and self.authors:
-            if all(a.github_user is None for a in self.authors):
-                issue_warning(
-                    "Missing `maintainers` or any author in `authors` with a specified"
-                    + " `github_user` name.",
-                    value=self.authors,
-                    field="authors",
-                    severity=ALERT,
-                )
+        if (
+            not self.maintainers
+            and self.authors
+            and all(a.github_user is None for a in self.authors)
+        ):
+            issue_warning(
+                "Missing `maintainers` or any author in `authors` with a specified"
+                + " `github_user` name.",
+                value=self.authors,
+                field="authors",
+                severity=ALERT,
+            )
 
         return self
 

@@ -184,7 +184,7 @@ def open_bioimageio_yaml(
     except Exception as e:
         # check if `source` is a collection id
         if not isinstance(source, str):
-            raise e
+            raise
 
         if settings.collection_http_pattern:
             with ValidationContext(perform_io_checks=False):

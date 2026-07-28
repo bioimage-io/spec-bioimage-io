@@ -1,5 +1,5 @@
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timezone
 from types import MappingProxyType
 from typing import Any, Callable, Dict, Mapping, Union
 
@@ -54,42 +54,44 @@ from tests.utils import check_node, check_type
 @pytest.mark.parametrize(
     "kwargs",
     [
-        dict(
-            id="t0",
-            test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
-            data={"values": ["cat", "dog", "parrot"]},
-            axes=[{"type": "channel", "channel_names": ["animal"]}],
-        ),
-        dict(
-            id="t1",
-            test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
-            data=[
+        {
+            "id": "t0",
+            "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
+            "data": {"values": ["cat", "dog", "parrot"]},
+            "axes": [{"type": "channel", "channel_names": ["animal"]}],
+        },
+        {
+            "id": "t1",
+            "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
+            "data": [
                 {"values": ["cat", "dog", "parrot"]},
                 {"values": ["mouse", "zebra", "elephant"]},
             ],
-            axes=[{"type": "channel", "channel_names": ["animal", "other_animal"]}],
-        ),
-        dict(
-            id="t2",
-            test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
-            data=[
+            "axes": [{"type": "channel", "channel_names": ["animal", "other_animal"]}],
+        },
+        {
+            "id": "t2",
+            "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
+            "data": [
                 {"values": [1, 2, 3]},
                 {"type": "uint8"},
             ],
-            axes=[
+            "axes": [
                 {"type": "channel", "channel_names": ["animal_code", "animal_count"]}
             ],
-        ),
+        },
         pytest.param(
-            dict(
-                id="t3",
-                test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
-                data=[
+            {
+                "id": "t3",
+                "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
+                "data": [
                     {"values": ["mouse", "zebra", "elephant"]},
                     {"type": "uint8"},
                 ],
-                axes=[{"type": "channel", "channel_names": ["animal_code", "count"]}],
-            ),
+                "axes": [
+                    {"type": "channel", "channel_names": ["animal_code", "count"]}
+                ],
+            },
             id="string values and uint data type",
         ),
     ],
@@ -104,25 +106,25 @@ def test_tensor_base(kwargs: Dict[str, Any]):
     "kwargs",
     [
         pytest.param(
-            dict(
-                id="t5",
-                test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
-                data=[
+            {
+                "id": "t5",
+                "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
+                "data": [
                     {"values": ["cat", "dog", "parrot"]},
                     {"values": [1.1, 2.2, 3.3]},
                 ],
-            ),
+            },
             id="str and float values",
         ),
         pytest.param(
-            dict(
-                id="t7",
-                test_tensor={"source": UNET2D_ROOT / "test.npy"},
-                data=[
+            {
+                "id": "t7",
+                "test_tensor": {"source": UNET2D_ROOT / "test.npy"},
+                "data": [
                     {"values": ["mouse", "zebra", "elephant"]},
                     {"type": "int8"},
                 ],
-            ),
+            },
             id="string values and int data type",
         ),
     ],
@@ -144,9 +146,9 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
             "description": "Input 1",
             "data": {"type": "float32", "range": ["-inf", float("inf")]},
             "axes": [
-                dict(type="space", id="x", size=10),
-                dict(type="space", id="y", size=11),
-                dict(type="channel", channel_names=tuple("abc")),
+                {"type": "space", "id": "x", "size": 10},
+                {"type": "space", "id": "y", "size": 11},
+                {"type": "channel", "channel_names": tuple("abc")},
             ],
             "preprocessing": [
                 {
@@ -172,15 +174,15 @@ def test_input_tensor(kwargs: Dict[str, Any]):
     "kwargs",
     [
         pytest.param(
-            dict(
-                id="input_2",
-                test_tensor={"source": UNET2D_ROOT / "test.npy"},
-                data=[
+            {
+                "id": "input_2",
+                "test_tensor": {"source": UNET2D_ROOT / "test.npy"},
+                "data": [
                     {"values": ["cat", "dog", "parrot"]},
                     {"values": ["mouse", "zebra", "elephant"]},
                 ],
-                axes=[{"type": "channel", "channel_names": ["a", "b", "c"]}],
-            ),
+                "axes": [{"type": "channel", "channel_names": ["a", "b", "c"]}],
+            },
             id="channel mismatch",
         ),
     ],
@@ -259,7 +261,7 @@ def model():
                 ),
                 Maintainer(github_user="githubuser2"),
             ],
-            timestamp=Datetime(datetime.now()),
+            timestamp=Datetime(datetime.now(timezone.utc)),
             cite=[CiteEntry(text="Paper title", url=HttpUrl("https://example.com/"))],
             inputs=[
                 InputTensorDescr(
@@ -324,46 +326,46 @@ def model_data(const_model_data: Mapping[str, Any]):
 @pytest.mark.parametrize(
     "update",
     [
-        dict(run_mode={"name": "special_run_mode", "kwargs": dict(marathon=True)}),
-        dict(
-            weights={
+        {"run_mode": {"name": "special_run_mode", "kwargs": {"marathon": True}}},
+        {
+            "weights": {
                 "torchscript": {
                     "source": UNET2D_ROOT / "weights.onnx",
                     "pytorch_version": 1.15,
                 }
             }
-        ),
-        dict(
-            weights={
+        },
+        {
+            "weights": {
                 "keras_hdf5": {
                     "source": UNET2D_ROOT / "weights.onnx",
                     "tensorflow_version": 1.10,
                 }
             }
-        ),
-        dict(
-            weights={
+        },
+        {
+            "weights": {
                 "tensorflow_js": {
                     "source": UNET2D_ROOT / "weights.onnx",
                     "tensorflow_version": 1.10,
                 }
             }
-        ),
-        dict(
-            weights={
+        },
+        {
+            "weights": {
                 "tensorflow_saved_model_bundle": {
                     "source": UNET2D_ROOT / "weights.onnx",
                     "tensorflow_version": 1.10,
                 }
             }
-        ),
-        dict(
-            weights={
+        },
+        {
+            "weights": {
                 "onnx": {"source": UNET2D_ROOT / "weights.onnx", "opset_version": 15}
             }
-        ),
-        dict(
-            weights={
+        },
+        {
+            "weights": {
                 "pytorch_state_dict": {
                     "source": UNET2D_ROOT / "weights.onnx",
                     "pytorch_version": "1.15",
@@ -374,7 +376,7 @@ def model_data(const_model_data: Mapping[str, Any]):
                     },
                 },
             }
-        ),
+        },
     ],
 )
 def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
@@ -486,7 +488,7 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
 
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):
-    model_data["parent"] = dict(id="10.5281/zenodo.5764892/6647674")
+    model_data["parent"] = {"id": "10.5281/zenodo.5764892/6647674"}
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )

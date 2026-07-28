@@ -11,7 +11,7 @@ def main():
         if typ is None:
             continue
 
-        for format_version in format_versions_map.keys():
+        for format_version in format_versions_map:
             schema = generate_json_schema(type_format=(typ, format_version))
             path = Path(f"dist/bioimageio_schema_{typ}_{format_version}.json")
             with path.open("w") as f:

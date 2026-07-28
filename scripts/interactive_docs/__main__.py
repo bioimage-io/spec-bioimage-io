@@ -16,7 +16,7 @@ html_result: "str | Exception" = generate_docs(
 )
 if isinstance(html_result, Exception):
     print(f"Could not generate docs: {html_result}", file=sys.stderr)
-    exit(1)
+    sys.exit(1)
 elif isinstance(html_result, str):
     docs_output_path = (
         Path(__file__).parent.parent.parent

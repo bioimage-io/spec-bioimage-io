@@ -32,7 +32,7 @@ def parse_args():
     _ = p.add_argument("tag", nargs="?", default="v3.27.0")
 
     args = p.parse_args()
-    return dict(tag=args.tag)
+    return {"tag": args.tag}
 
 
 def main(*, tag: str):

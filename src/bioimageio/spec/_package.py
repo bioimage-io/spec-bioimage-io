@@ -268,7 +268,7 @@ def save_bioimageio_package(
     )
     if output_path is None:
         output_path = Path(
-            NamedTemporaryFile(suffix=".bioimageio.zip", delete=False).name
+            NamedTemporaryFile(suffix=".bioimageio.zip", delete=False).name  # ruff: ignore[SIM115]
         )
     else:
         output_path = Path(output_path)

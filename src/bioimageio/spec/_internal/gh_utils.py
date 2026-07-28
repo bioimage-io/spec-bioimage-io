@@ -15,7 +15,6 @@ def set_github_warning(title: str, message: str):
         return
 
     frameinfo = inspect.getframeinfo(caller_frame)
-    frameinfo.lineno
 
     # log according to
     # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#setting-a-warning-message

@@ -134,7 +134,7 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
         """
         return self._absolute
 
-    def model_post_init(self, __context: Any) -> None:
+    def model_post_init(self, __context: Any, /) -> None:
         """set `_absolute` property with validation context at creation time. @private"""
         if self.root.is_absolute():
             raise ValueError(f"{self.root} is an absolute path.")
@@ -197,9 +197,7 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
 
     @classmethod
     def _validate(cls, value: Union[PurePath, str]):
-        if isinstance(value, str) and (
-            value.startswith("https://") or value.startswith("http://")
-        ):
+        if isinstance(value, str) and value.startswith(("https://", "http://")):
             raise ValueError(f"{value} looks like a URL, not a relative path")
 
         return cls(PurePath(value))
@@ -210,7 +208,7 @@ class RelativeFilePath(
 ):
     """A path relative to the `rdf.yaml` file (also if the RDF source is a URL)."""
 
-    def model_post_init(self, __context: Any) -> None:
+    def model_post_init(self, __context: Any, /) -> None:
         """add validation @private"""
         if not self.root.parts:  # an empty path can only be a directory
             raise ValueError(f"{self.root} is not a valid file path.")
@@ -337,8 +335,8 @@ PermissiveFileSource: TypeAlias = Union[
 ]
 
 
-path_or_url_adapter: TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]] = (
-    TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl])
+path_or_url_adapter: TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]] = TypeAdapter(
+    Union[FilePath, DirectoryPath, HttpUrl]
 )
 
 
@@ -954,14 +952,14 @@ def _extract_file_descrs_impl(
         if "source" in data and "sha256" in data:
             try:
                 fd = FileDescr.model_validate(
-                    dict(source=data["source"], sha256=data["sha256"])
+                    {"source": data["source"], "sha256": data["sha256"]}
                 )
             except Exception:
                 warnings.warn(
                     "Found mapping with 'source' and 'sha256' keys, but could not parse it as a FileDescr. Ignoring `sha256`."
                 )
                 try:
-                    fd = FileDescr.model_validate(dict(source=data["source"]))
+                    fd = FileDescr.model_validate({"source": data["source"]})
                 except Exception:
                     warnings.warn(
                         f"Found mapping with 'source' and `sha256' keys , but could not parse it as a FileDescr, evning when ignoring 'sha256'. Ignoring `source`: {data['source']}."

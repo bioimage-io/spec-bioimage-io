@@ -95,10 +95,7 @@ _FileSource_cover = Annotated[
 ]
 
 
-class AttachmentsDescr(Node):
-    model_config = {**Node.model_config, "extra": "allow"}
-    """update pydantic model config to allow additional unknown keys"""
-
+class AttachmentsDescr(Node, extra="allow"):
     files: List[FileSource_package] = Field(
         default_factory=cast(Callable[[], List[FileSource]], list)
     )
@@ -274,13 +271,13 @@ class GenericModelDescrBase(ResourceDescrBase):
         Dict[str, YamlValue],
         Field(
             examples=[
-                dict(
-                    bioimageio={
+                {
+                    "bioimageio": {
                         "my_custom_key": 3837283,
                         "another_key": {"nested": "value"},
                     },
-                    imagej={"macro_dir": "path/to/macro/file"},
-                )
+                    "imagej": {"macro_dir": "path/to/macro/file"},
+                }
             ],
         ),
     ] = Field(default_factory=dict)

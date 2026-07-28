@@ -1,5 +1,4 @@
 import ast
-import sys
 import warnings
 from typing import Literal
 from urllib.parse import urlparse
@@ -51,10 +50,7 @@ def get_ref_url(
             if d.name == name:
                 assert hasattr(d, "decorator_list")
                 start = d.decorator_list[0].lineno if d.decorator_list else d.lineno
-                if sys.version_info >= (3, 8):
-                    stop = d.end_lineno
-                else:
-                    stop = d.lineno + 1
+                stop = d.end_lineno
                 break
     else:
         raise ValueError(f"{type_} {name} not found in {github_file_url}")

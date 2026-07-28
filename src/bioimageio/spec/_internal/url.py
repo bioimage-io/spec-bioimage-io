@@ -31,7 +31,7 @@ def _validate_url_impl(
 
     val_url = url
 
-    if url.startswith("http://example.com") or url.startswith("https://example.com"):
+    if url.startswith(("http://example.com", "https://example.com")):
         return pydantic.HttpUrl(url)
 
     if url.startswith("https://colab.research.google.com/github/"):
@@ -133,12 +133,11 @@ class HttpUrl(RootHttpUrl):
     _exists: Optional[bool] = None
 
     def _after_validator(self):
-        self = super()._after_validator()
-        context = get_validation_context()
-        if context.perform_io_checks:
-            _ = self.exists()
+        value = super()._after_validator()
+        if get_validation_context().perform_io_checks:
+            _ = value.exists()
 
-        return self
+        return value
 
     def exists(self):
         """True if URL is available"""

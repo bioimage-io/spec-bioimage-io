@@ -136,9 +136,8 @@ def assert_all_params_set_explicitly(fn: Callable[P, T]) -> Callable[P, T]:
                     n_args -= 1  # 'use' positional arg
             elif p.kind in (p.VAR_POSITIONAL, p.VAR_KEYWORD):
                 pass
-            elif p.kind == p.KEYWORD_ONLY:
-                if p.name not in kwargs:
-                    missing.add(p.name)
+            elif p.kind == p.KEYWORD_ONLY and p.name not in kwargs:
+                missing.add(p.name)
 
         assert not missing, f"parameters {missing} of {fn} are not set explicitly"
 

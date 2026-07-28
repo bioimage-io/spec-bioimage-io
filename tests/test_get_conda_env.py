@@ -16,46 +16,46 @@ from bioimageio.spec.model.v0_5 import (
     [
         (
             PytorchStateDictWeightsDescr,
-            dict(
-                authors=[
-                    dict(
-                        name="Constantin Pape;@bioimage-io",
-                        affiliation="EMBL Heidelberg",
-                        orcid="0000-0001-6562-7187",
-                    )
+            {
+                "authors": [
+                    {
+                        "name": "Constantin Pape;@bioimage-io",
+                        "affiliation": "EMBL Heidelberg",
+                        "orcid": "0000-0001-6562-7187",
+                    }
                 ],
-                sha256="e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2",
-                source="http://files.ilastik.org/bioimageio_test/unet2d_nuclei_broad_weights.torch",
-                architecture=dict(
-                    callable="UNet2d",
-                    source="unet2d.py",
-                    sha256="68e34520084afde3b160b8774a863ccf2934169838217ace376d6a244c53422b",
-                    kwargs=dict(input_channels=1, output_channels=1),
-                ),
-                dependencies=dict(
-                    source="environment.yaml",
-                    sha256="129d589d2ec801398719b1a6d1bf20ea36b3632f14ccb56a24700df7d719fd10",
-                ),
-                pytorch_version="1.5.1",
-            ),
+                "sha256": "e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2",
+                "source": "http://files.ilastik.org/bioimageio_test/unet2d_nuclei_broad_weights.torch",
+                "architecture": {
+                    "callable": "UNet2d",
+                    "source": "unet2d.py",
+                    "sha256": "68e34520084afde3b160b8774a863ccf2934169838217ace376d6a244c53422b",
+                    "kwargs": {"input_channels": 1, "output_channels": 1},
+                },
+                "dependencies": {
+                    "source": "environment.yaml",
+                    "sha256": "129d589d2ec801398719b1a6d1bf20ea36b3632f14ccb56a24700df7d719fd10",
+                },
+                "pytorch_version": "1.5.1",
+            },
         ),
         (
             OnnxWeightsDescr,
-            dict(
-                sha256="f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c",
-                source="weights.onnx",
-                opset_version=12,
-                parent="pytorch_state_dict",
-            ),
+            {
+                "sha256": "f1f086d5e340f9d4d7001a1b62a2b835f9b87a2fb5452c4fe7d8cc821bdf539c",
+                "source": "weights.onnx",
+                "opset_version": 12,
+                "parent": "pytorch_state_dict",
+            },
         ),
         (
             TorchscriptWeightsDescr,
-            dict(
-                sha256="62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210",
-                source="weights.pt",
-                parent="pytorch_state_dict",
-                pytorch_version="1.5.1",
-            ),
+            {
+                "sha256": "62fa1c39923bee7d58a192277e0dd58f2da9ee810662addadd0f44a3784d9210",
+                "source": "weights.pt",
+                "parent": "pytorch_state_dict",
+                "pytorch_version": "1.5.1",
+            },
         ),
     ],
 )

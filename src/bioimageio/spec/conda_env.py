@@ -110,8 +110,7 @@ class BioimageioCondaEnv(CondaEnv):
             pip_section is None
             or not any(pd.startswith("bioimageio.core") for pd in pip_section.pip)
         ) and not any(
-            d.startswith("bioimageio.core")
-            or d.startswith("conda-forge::bioimageio.core")
+            d.startswith(("bioimageio.core", "conda-forge::bioimageio.core"))
             for d in self.dependencies
             if not isinstance(d, PipDeps)
         ):

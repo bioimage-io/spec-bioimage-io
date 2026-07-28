@@ -46,7 +46,8 @@ class Node(
     validate_default=True,
     validate_return=True,
 ):
-    """"""  # empty docstring to remove all pydantic docstrings from the pdoc spec docs
+    # empty docstring to remove all pydantic docstrings from the pdoc spec docs
+    """"""  # ruff: ignore[D419]
 
     @classmethod
     def model_validate(

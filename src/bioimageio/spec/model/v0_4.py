@@ -141,7 +141,7 @@ class CallableFromDepencency(ValidatedStringWithInnerNode[CallableFromDepencency
     @classmethod
     def _get_data(cls, valid_string_data: str):
         *mods, callname = valid_string_data.split(".")
-        return dict(module_name=".".join(mods), callable_name=callname)
+        return {"module_name": ".".join(mods), "callable_name": callname}
 
     @property
     def module_name(self):
@@ -177,7 +177,7 @@ class CallableFromFile(ValidatedStringWithInnerNode[CallableFromFileNode]):
     @classmethod
     def _get_data(cls, valid_string_data: str):
         *file_parts, callname = valid_string_data.split(":")
-        return dict(source_file=":".join(file_parts), callable_name=callname)
+        return {"source_file": ":".join(file_parts), "callable_name": callname}
 
     @property
     def source_file(self):
@@ -215,7 +215,7 @@ class Dependencies(ValidatedStringWithInnerNode[DependenciesNode]):
     @classmethod
     def _get_data(cls, valid_string_data: str):
         manager, *file_parts = valid_string_data.split(":")
-        return dict(manager=manager, file=":".join(file_parts))
+        return {"manager": manager, "file": ":".join(file_parts)}
 
     @property
     def manager(self):
@@ -913,7 +913,7 @@ class InputTensorDescr(TensorDescrBase):
     shape: Annotated[
         Union[Sequence[int], ParameterizedInputShape],
         Field(
-            examples=[(1, 512, 512, 1), dict(min=(1, 64, 64, 1), step=(0, 32, 32, 0))]
+            examples=[(1, 512, 512, 1), {"min": (1, 64, 64, 1), "step": (0, 32, 32, 0)}]
         ),
     ]
     """Specification of input tensor shape."""
@@ -1191,7 +1191,7 @@ class ModelDescr(GenericModelDescrBase):
                 halo = [0] * len(min_out_shape)
                 halo_msg = ""
 
-            if any([s - 2 * h < 1 for s, h in zip(min_out_shape, halo)]):
+            if any(s - 2 * h < 1 for s, h in zip(min_out_shape, halo)):
                 raise ValueError(
                     f"Minimal shape {min_out_shape} of output {out.name} is too"
                     + f" small{halo_msg}."

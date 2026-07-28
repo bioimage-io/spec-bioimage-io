@@ -68,7 +68,7 @@ def parse_imjoy_plugin(source, overwrite_config=None):
     elif plugin_comp.config[0].attrs.lang == "json":
         config = json.loads(plugin_comp.config[0].content)
     else:
-        raise Exception(
+        raise RuntimeError(
             "Unsupported config language: " + plugin_comp.config[0].attrs.lang
         )
 
@@ -118,7 +118,7 @@ def parse_imjoy_plugin(source, overwrite_config=None):
                         + config.get("tag")
                     )
             else:
-                raise Exception("You must use 'tags' with configurable fields.")
+                raise RuntimeError("You must use 'tags' with configurable fields.")
     config["lang"] = config.get("lang") or "javascript"
     return config
 
@@ -240,10 +240,11 @@ def enrich_partial_rdf_with_imjoy_plugin(
         assert isinstance(rdf_source, dict)
         enriched_rdf.update(rdf_source)
 
-    if "source" in partial_rdf:
-        if partial_rdf["source"].split("?")[0].endswith(".imjoy.html"):
-            rdf_from_source = get_plugin_as_rdf(partial_rdf["source"])
-            enriched_rdf.update(rdf_from_source)
+    if "source" in partial_rdf and partial_rdf["source"].split("?")[0].endswith(
+        ".imjoy.html"
+    ):
+        rdf_from_source = get_plugin_as_rdf(partial_rdf["source"])
+        enriched_rdf.update(rdf_from_source)
 
     enriched_rdf.update(
         partial_rdf

@@ -87,7 +87,7 @@ POSTPROCESSING = {
 
 
 class UNetBase(nn.Module):
-    """ """
+    """Base class for U-Net architectures."""
 
     def __init__(
         self,

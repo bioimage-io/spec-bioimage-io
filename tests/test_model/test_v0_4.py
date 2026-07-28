@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, Union
 
 import pytest
@@ -33,17 +33,17 @@ from tests.utils import check_node, check_type, unset
 def test_linked_model_lala():
     check_node(
         LinkedModel,
-        dict(id="lala"),
-        expected_dump_json=dict(id="lala"),
-        expected_dump_python=dict(id="lala"),
+        {"id": "lala"},
+        expected_dump_json={"id": "lala"},
+        expected_dump_python={"id": "lala"},
     )
 
 
 @pytest.mark.parametrize(
     "kwargs",
     [
-        dict(url="https://example.com"),
-        dict(id="lala", uri="https://example.com"),
+        {"url": "https://example.com"},
+        {"id": "lala", "uri": "https://example.com"},
     ],
 )
 def test_linked_model_invalid(kwargs: Dict[str, Any]):
@@ -54,15 +54,19 @@ def test_linked_model_invalid(kwargs: Dict[str, Any]):
     "kwargs,expected",
     [
         (
-            dict(source=UNET2D_ROOT / "weights.onnx", sha256="s" * 64),
-            dict(source=UNET2D_ROOT / "weights.onnx", sha256="s" * 64),
+            {"source": UNET2D_ROOT / "weights.onnx", "sha256": "s" * 64},
+            {"source": UNET2D_ROOT / "weights.onnx", "sha256": "s" * 64},
         ),
         (
-            dict(opset_version=5, source=UNET2D_ROOT / "weights.onnx", sha256="s" * 64),
+            {
+                "opset_version": 5,
+                "source": UNET2D_ROOT / "weights.onnx",
+                "sha256": "s" * 64,
+            },
             ValidationError,
         ),
         (
-            dict(source=UNET2D_ROOT / "weights.onnx", sha256="s"),
+            {"source": UNET2D_ROOT / "weights.onnx", "sha256": "s"},
             ValidationError,
         ),
     ],
@@ -78,47 +82,47 @@ def test_onnx_entry(kwargs: Dict[str, Any], expected: Union[Dict[str, Any], bool
 
 
 VALID_PRE_AND_POSTPROCESSING = [
-    dict(name="binarize", kwargs={"threshold": 0.5}),
-    dict(name="clip", kwargs={"min": 0.2, "max": 0.5}),
-    dict(name="scale_linear", kwargs={"gain": 2.0, "offset": 0.5, "axes": "xy"}),
-    dict(name="sigmoid"),
-    dict(
-        name="zero_mean_unit_variance",
-        kwargs={"mode": "fixed", "mean": 1.0, "std": 2.0, "axes": "xy"},
-    ),
-    dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
-    dict(
-        name="scale_range",
-        kwargs={
+    {"name": "binarize", "kwargs": {"threshold": 0.5}},
+    {"name": "clip", "kwargs": {"min": 0.2, "max": 0.5}},
+    {"name": "scale_linear", "kwargs": {"gain": 2.0, "offset": 0.5, "axes": "xy"}},
+    {"name": "sigmoid"},
+    {
+        "name": "zero_mean_unit_variance",
+        "kwargs": {"mode": "fixed", "mean": 1.0, "std": 2.0, "axes": "xy"},
+    },
+    {"name": "scale_range", "kwargs": {"mode": "per_sample", "axes": "xy"}},
+    {
+        "name": "scale_range",
+        "kwargs": {
             "mode": "per_sample",
             "axes": "xy",
             "min_percentile": 5,
             "max_percentile": 50,
         },
-    ),
+    },
 ]
 
 INVALID_PRE_AND_POSTPROCESSING = [
-    dict(kwargs={"threshold": 0.5}),
-    dict(name="binarize", kwargs={"mode": "fixed", "threshold": 0.5}),
-    dict(name="clip", kwargs={"min": "min", "max": 0.5}),
-    dict(name="scale_linear", kwargs={"gain": 2.0, "offset": 0.5, "axes": "b"}),
-    dict(name="sigmoid", kwargs={"axes": "x"}),
-    dict(
-        name="zero_mean_unit_variance",
-        kwargs={"mode": "unknown", "mean": 1.0, "std": 2.0, "axes": "xy"},
-    ),
-    dict(name="scale_range", kwargs={"mode": "fixed", "axes": "xy"}),
-    dict(
-        name="scale_range",
-        kwargs={
+    {"kwargs": {"threshold": 0.5}},
+    {"name": "binarize", "kwargs": {"mode": "fixed", "threshold": 0.5}},
+    {"name": "clip", "kwargs": {"min": "min", "max": 0.5}},
+    {"name": "scale_linear", "kwargs": {"gain": 2.0, "offset": 0.5, "axes": "b"}},
+    {"name": "sigmoid", "kwargs": {"axes": "x"}},
+    {
+        "name": "zero_mean_unit_variance",
+        "kwargs": {"mode": "unknown", "mean": 1.0, "std": 2.0, "axes": "xy"},
+    },
+    {"name": "scale_range", "kwargs": {"mode": "fixed", "axes": "xy"}},
+    {
+        "name": "scale_range",
+        "kwargs": {
             "mode": "per_sample",
             "axes": "xy",
             "min_percentile": 50,
             "max_percentile": 50,
         },
-    ),
-    dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy", "min": 0}),
+    },
+    {"name": "scale_range", "kwargs": {"mode": "per_sample", "axes": "xy", "min": 0}},
 ]
 
 
@@ -126,14 +130,14 @@ INVALID_PRE_AND_POSTPROCESSING = [
     "kwargs",
     VALID_PRE_AND_POSTPROCESSING
     + [
-        dict(
-            name="scale_range",
-            kwargs={
+        {
+            "name": "scale_range",
+            "kwargs": {
                 "mode": "per_dataset",
                 "axes": "xy",
                 "reference_tensor": "some_input_tensor_name",
             },
-        ),
+        },
     ],
 )
 def test_preprocessing(kwargs: Dict[str, Any]):
@@ -149,23 +153,23 @@ def test_invalid_preprocessing(kwargs: Dict[str, Any]):
     "kwargs",
     VALID_PRE_AND_POSTPROCESSING
     + [
-        dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
-        dict(
-            name="scale_range",
-            kwargs={
+        {"name": "scale_range", "kwargs": {"mode": "per_sample", "axes": "xy"}},
+        {
+            "name": "scale_range",
+            "kwargs": {
                 "mode": "per_dataset",
                 "axes": "xy",
                 "reference_tensor": "some_input_tensor_name",
             },
-        ),
-        dict(
-            name="scale_mean_variance",
-            kwargs={"mode": "per_sample", "reference_tensor": "some_tensor_name"},
-        ),
-        dict(
-            name="scale_mean_variance",
-            kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"},
-        ),
+        },
+        {
+            "name": "scale_mean_variance",
+            "kwargs": {"mode": "per_sample", "reference_tensor": "some_tensor_name"},
+        },
+        {
+            "name": "scale_mean_variance",
+            "kwargs": {"mode": "per_dataset", "reference_tensor": "some_tensor_name"},
+        },
     ],
 )
 def test_postprocessing(kwargs: Dict[str, Any]):
@@ -177,16 +181,19 @@ def test_postprocessing(kwargs: Dict[str, Any]):
     [
         (
             ScaleRangeDescr(kwargs=ScaleRangeKwargs(mode="per_sample", axes="xy")),
-            dict(name="scale_range", kwargs={"mode": "per_sample", "axes": "xy"}),
+            {"name": "scale_range", "kwargs": {"mode": "per_sample", "axes": "xy"}},
         ),
         (
             ScaleMeanVarianceDescr(
                 kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"}  # type: ignore
             ),
-            dict(
-                name="scale_mean_variance",
-                kwargs={"mode": "per_dataset", "reference_tensor": "some_tensor_name"},
-            ),
+            {
+                "name": "scale_mean_variance",
+                "kwargs": {
+                    "mode": "per_dataset",
+                    "reference_tensor": "some_tensor_name",
+                },
+            },
         ),
     ],
 )
@@ -198,8 +205,8 @@ def test_postprocessing_node_input(node: Any, expected: Dict[str, Any]):
     "kwargs",
     INVALID_PRE_AND_POSTPROCESSING
     + [
-        dict(name="scale_mean_variance", kwargs={"mode": "per_sample"}),
-        dict(name="scale_mean_variance", kwargs={"mode": "per_dataset"}),
+        {"name": "scale_mean_variance", "kwargs": {"mode": "per_sample"}},
+        {"name": "scale_mean_variance", "kwargs": {"mode": "per_dataset"}},
     ],
 )
 def test_invalid_postprocessing(kwargs: Dict[str, Any]):
@@ -209,14 +216,14 @@ def test_invalid_postprocessing(kwargs: Dict[str, Any]):
 @pytest.mark.parametrize(
     "kwargs,valid",
     [
-        (dict(axes="xy", gain=2.0, offset=0.5), True),
-        (dict(offset=2.0), True),
-        (dict(gain=2.0), True),
-        (dict(axes="xy", gain=[1.0, 2.0], offset=[0.5, 0.3]), True),
-        (dict(gain=2.0, offset=0.5), True),
-        (dict(), False),  # type: ignore
-        (dict(gain=1.0), False),
-        (dict(offset=0.0), False),
+        ({"axes": "xy", "gain": 2.0, "offset": 0.5}, True),
+        ({"offset": 2.0}, True),
+        ({"gain": 2.0}, True),
+        ({"axes": "xy", "gain": [1.0, 2.0], "offset": [0.5, 0.3]}, True),
+        ({"gain": 2.0, "offset": 0.5}, True),
+        ({}, False),
+        ({"gain": 1.0}, False),
+        ({"offset": 0.0}, False),
     ],
 )
 def test_scale_linear_kwargs(kwargs: Dict[str, Any], valid: bool):
@@ -323,7 +330,7 @@ def model_data():
                 ),
                 Maintainer(github_user="constantinpape"),
             ],
-            timestamp=Datetime(datetime.now()),
+            timestamp=Datetime(datetime.now(timezone.utc)),
             cite=[CiteEntry(text="Paper title", url="https://example.com/")],
             inputs=[
                 InputTensorDescr(
@@ -357,22 +364,22 @@ def model_data():
 @pytest.mark.parametrize(
     "update",
     [
-        dict(run_mode={"name": "special_run_mode", "kwargs": dict(marathon=True)}),
-        dict(name="µ-unicode-model!"),
-        dict(weights={"torchscript": {"source": "local_weights"}}),
-        dict(weights={"keras_hdf5": {"source": "local_weights"}}),
-        dict(weights={"tensorflow_js": {"source": "local_weights"}}),
-        dict(weights={"tensorflow_saved_model_bundle": {"source": "local_weights"}}),
-        dict(weights={"onnx": {"source": "local_weights"}}),
-        dict(
-            weights={
+        {"run_mode": {"name": "special_run_mode", "kwargs": {"marathon": True}}},
+        {"name": "µ-unicode-model!"},
+        {"weights": {"torchscript": {"source": "local_weights"}}},
+        {"weights": {"keras_hdf5": {"source": "local_weights"}}},
+        {"weights": {"tensorflow_js": {"source": "local_weights"}}},
+        {"weights": {"tensorflow_saved_model_bundle": {"source": "local_weights"}}},
+        {"weights": {"onnx": {"source": "local_weights"}}},
+        {
+            "weights": {
                 "pytorch_state_dict": {
                     "source": "local_weights",
                     "architecture": "file.py:Model",
                     "architecture_sha256": "0" * 64,
                 }
             }
-        ),
+        },
     ],
 )
 def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
@@ -476,7 +483,7 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
 
 
 def test_model_has_parent_with_id(model_data: Dict[str, Any]):
-    model_data["parent"] = dict(id="10.5281/zenodo.5764892")
+    model_data["parent"] = {"id": "10.5281/zenodo.5764892"}
     summary = validate_format(
         model_data,
         context=ValidationContext(
@@ -493,11 +500,11 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
             "description": "Output 1",
             "data_type": "float32",
             "axes": "xyzc",
-            "shape": dict(
-                scale=[1, 1, None, 1],
-                offset=[0, 0, 7, 0],
-                reference_tensor="input_1",
-            ),
+            "shape": {
+                "scale": [1, 1, None, 1],
+                "offset": [0, 0, 7, 0],
+                "reference_tensor": "input_1",
+            },
         }
     ]
 
