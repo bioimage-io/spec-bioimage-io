@@ -403,8 +403,24 @@ class SizeReference(Node):
 
     def get_size(
         self,
-        axis: ChannelAxis | IndexInputAxis | IndexOutputAxis | TimeInputAxis | SpaceInputAxis | TimeOutputAxis | TimeOutputAxisWithHalo | SpaceOutputAxis | SpaceOutputAxisWithHalo,
-        ref_axis: ChannelAxis | IndexInputAxis | IndexOutputAxis | TimeInputAxis | SpaceInputAxis | TimeOutputAxis | TimeOutputAxisWithHalo | SpaceOutputAxis | SpaceOutputAxisWithHalo,
+        axis: ChannelAxis
+        | IndexInputAxis
+        | IndexOutputAxis
+        | TimeInputAxis
+        | SpaceInputAxis
+        | TimeOutputAxis
+        | TimeOutputAxisWithHalo
+        | SpaceOutputAxis
+        | SpaceOutputAxisWithHalo,
+        ref_axis: ChannelAxis
+        | IndexInputAxis
+        | IndexOutputAxis
+        | TimeInputAxis
+        | SpaceInputAxis
+        | TimeOutputAxis
+        | TimeOutputAxisWithHalo
+        | SpaceOutputAxis
+        | SpaceOutputAxisWithHalo,
         n: ParameterizedSize_N = 0,
         ref_size: int | None = None,
     ):
@@ -453,7 +469,15 @@ class SizeReference(Node):
 
     @staticmethod
     def _get_unit(
-        axis: ChannelAxis | IndexInputAxis | IndexOutputAxis | TimeInputAxis | SpaceInputAxis | TimeOutputAxis | TimeOutputAxisWithHalo | SpaceOutputAxis | SpaceOutputAxisWithHalo,
+        axis: ChannelAxis
+        | IndexInputAxis
+        | IndexOutputAxis
+        | TimeInputAxis
+        | SpaceInputAxis
+        | TimeOutputAxis
+        | TimeOutputAxisWithHalo
+        | SpaceOutputAxis
+        | SpaceOutputAxisWithHalo,
     ):
         return axis.unit
 
@@ -971,9 +995,9 @@ class ClipKwargs(KwargsNode):
     In range (1, 100].
     """
 
-    axes: Annotated[
-        Sequence[AxisId] | None, Field(examples=[("batch", "x", "y")])
-    ] = None
+    axes: Annotated[Sequence[AxisId] | None, Field(examples=[("batch", "x", "y")])] = (
+        None
+    )
     """The subset of axes to determine percentiles jointly,
 
     i.e. axes to reduce to compute min/max from `min_percentile`/`max_percentile`.
@@ -1537,9 +1561,9 @@ class FixedZeroMeanUnitVarianceDescr(NodeWithExplicitlySetFields):
 class ZeroMeanUnitVarianceKwargs(KwargsNode):
     """key word arguments for [ZeroMeanUnitVarianceDescr][]"""
 
-    axes: Annotated[
-        Sequence[AxisId] | None, Field(examples=[("batch", "x", "y")])
-    ] = None
+    axes: Annotated[Sequence[AxisId] | None, Field(examples=[("batch", "x", "y")])] = (
+        None
+    )
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -1587,9 +1611,9 @@ class ScaleRangeKwargs(KwargsNode):
     normalized values to a range.
     """
 
-    axes: Annotated[
-        Sequence[AxisId] | None, Field(examples=[("batch", "x", "y")])
-    ] = None
+    axes: Annotated[Sequence[AxisId] | None, Field(examples=[("batch", "x", "y")])] = (
+        None
+    )
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -1698,9 +1722,9 @@ class ScaleMeanVarianceKwargs(KwargsNode):
     reference_tensor: TensorId
     """ID of unprocessed input tensor to match."""
 
-    axes: Annotated[
-        Sequence[AxisId] | None, Field(examples=[("batch", "x", "y")])
-    ] = None
+    axes: Annotated[Sequence[AxisId] | None, Field(examples=[("batch", "x", "y")])] = (
+        None
+    )
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -2728,9 +2752,9 @@ class WeightsEntryDescrBase(FileDescr):
         (If this is a child weight, i.e. it has a `parent` field)
     """
 
-    parent: Annotated[
-        WeightsFormat | None, Field(examples=["pytorch_state_dict"])
-    ] = None
+    parent: Annotated[WeightsFormat | None, Field(examples=["pytorch_state_dict"])] = (
+        None
+    )
     """The source weights these weights were converted from.
     For example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,
     The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
@@ -2876,9 +2900,7 @@ class WeightsDescr(Node):
     onnx: OnnxWeightsDescr | None = None
     pytorch_state_dict: PytorchStateDictWeightsDescr | None = None
     tensorflow_js: TensorflowJsWeightsDescr | None = None
-    tensorflow_saved_model_bundle: TensorflowSavedModelBundleWeightsDescr | None = (
-        None
-    )
+    tensorflow_saved_model_bundle: TensorflowSavedModelBundleWeightsDescr | None = None
     torchscript: TorchscriptWeightsDescr | None = None
 
     @model_validator(mode="after")

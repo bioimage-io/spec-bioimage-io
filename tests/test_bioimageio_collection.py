@@ -1,4 +1,6 @@
-from typing import Any, Collection, Dict, Iterable, Mapping, Tuple
+from __future__ import annotations
+
+from typing import Any, Collection, Iterable, Mapping
 
 import httpx
 import pytest
@@ -75,7 +77,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
 
 def _get_rdf_sources(only_latest: bool = True):
     entries: Any = httpx.get(BASE_URL + "all_versions.json").json()["entries"]
-    ret: Dict[str, Tuple[HttpUrl, Sha256]] = {}
+    ret: dict[str, tuple[HttpUrl, Sha256]] = {}
     for entry in entries:
         for version in entry["versions"]:
             ret[f"{entry['concept']}/{version['v']}"] = (
@@ -88,7 +90,7 @@ def _get_rdf_sources(only_latest: bool = True):
     return ret
 
 
-ALL_RDF_SOURCES: Mapping[str, Tuple[HttpUrl, Sha256]] = _get_rdf_sources()
+ALL_RDF_SOURCES: Mapping[str, tuple[HttpUrl, Sha256]] = _get_rdf_sources()
 
 
 def yield_bioimageio_yaml_urls() -> Iterable[ParameterSet]:

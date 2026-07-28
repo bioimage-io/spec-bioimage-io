@@ -1,4 +1,6 @@
-from typing import Any, Dict
+from __future__ import annotations
+
+from typing import Any
 
 import pytest
 from annotated_types import Ge
@@ -25,7 +27,7 @@ class NestedDummyNode(Node):
     dummy: DummyNode
 
 
-DUMMY_INPUT: Dict[str, Any] = {"a": -1, "b": -1}
+DUMMY_INPUT: dict[str, Any] = {"a": -1, "b": -1}
 NESTED_DICT_DUMMY_INPUT = {"dummy": DUMMY_INPUT}
 NESTED_NODE_DUMMY_INPUT = {"dummy": DummyNode(**DUMMY_INPUT)}
 
@@ -40,7 +42,7 @@ NESTED_NODE_DUMMY_INPUT = {"dummy": DummyNode(**DUMMY_INPUT)}
         (DUMMY_INPUT, {WARNING_LEVEL_CONTEXT_KEY: INFO}, False),
     ],
 )
-def test_warn(kwargs: Dict[str, Any], context: ValidationContext, valid: bool):
+def test_warn(kwargs: dict[str, Any], context: ValidationContext, valid: bool):
     check_node(DummyNode, kwargs, context=context, is_invalid=not valid)
 
 
@@ -67,5 +69,5 @@ def test_warn(kwargs: Dict[str, Any], context: ValidationContext, valid: bool):
         ),
     ],
 )
-def test_warn_nested(kwargs: Dict[str, Any], context: ValidationContext, valid: bool):
+def test_warn_nested(kwargs: dict[str, Any], context: ValidationContext, valid: bool):
     check_node(NestedDummyNode, kwargs, context=context, is_invalid=not valid)

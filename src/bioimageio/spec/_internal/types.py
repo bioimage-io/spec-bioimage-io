@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from keyword import iskeyword
-from typing import Any, ClassVar, Sequence, Type, TypeVar, Union
+from typing import Any, ClassVar, Sequence, TypeVar
 
 import annotated_types
 from dateutil.parser import isoparse
@@ -82,7 +82,7 @@ def _validate_is_not_keyword(s: str) -> str:
     return s
 
 
-def _validate_datetime(dt: Union[datetime, str, Any]) -> datetime:
+def _validate_datetime(dt: datetime | str | Any) -> datetime:
     if isinstance(dt, datetime):
         return dt
     elif isinstance(dt, str):
@@ -134,7 +134,7 @@ class Datetime(
 class Doi(ValidatedString):
     """A digital object identifier, see https://www.doi.org/"""
 
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[
         Annotated[str, StringConstraints(pattern=DOI_REGEX)]
     ]
 
@@ -148,25 +148,25 @@ IdentifierAnno = Annotated[
 
 
 class Identifier(ValidatedString):
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[IdentifierAnno]
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[IdentifierAnno]
 
 
 LowerCaseIdentifierAnno = Annotated[IdentifierAnno, annotated_types.LowerCase]
 
 
 class LowerCaseIdentifier(ValidatedString):
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[LowerCaseIdentifierAnno]
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[LowerCaseIdentifierAnno]
 
 
 class OrcidId(ValidatedString):
     """An ORCID identifier, see https://orcid.org/"""
 
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[
         Annotated[str, AfterValidator(_validate_orcid_id)]
     ]
 
 
-def _normalize_multiplication(si_unit: Union[Any, str]) -> Union[Any, str]:
+def _normalize_multiplication(si_unit: Any | str) -> Any | str:
     if isinstance(si_unit, str):
         return si_unit.replace("×", "·").replace("*", "·").replace(" ", "·")
     else:
@@ -176,7 +176,7 @@ def _normalize_multiplication(si_unit: Union[Any, str]) -> Union[Any, str]:
 class SiUnit(ValidatedString):
     """An SI unit"""
 
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[
         Annotated[
             str,
             StringConstraints(min_length=1, pattern=SI_UNIT_REGEX),

@@ -11,13 +11,9 @@ from dataclasses import dataclass
 from typing import (
     Any,
     ClassVar,
-    Dict,
     Final,
     ForwardRef,
-    List,
     Literal,
-    Optional,
-    Tuple,
     Type,
     Union,
     cast,
@@ -84,7 +80,7 @@ class ParsingError(Exception):
         return ParsingError(message=message, cause=self)
 
 
-def any_is_subclass(child: Any, parent: Type[Any]) -> bool:
+def any_is_subclass(child: Any, parent: type[Any]) -> bool:
     return inspect.isclass(child) and issubclass(child, parent)
 
 
@@ -145,7 +141,7 @@ def field_has_default_value(info: FieldInfo) -> bool:
 
 class Hint(ABC):
     @staticmethod
-    def get_subclasses() -> Sequence[Type[Hint]]:
+    def get_subclasses() -> Sequence[type[Hint]]:
         return [
             YamlValueHint,
             RecursionHint,
@@ -174,7 +170,7 @@ class Hint(ABC):
         *,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         # if raw_hint in cls.hint_cache:
         # return cls.hint_cache[raw_hint] #FIXME: maybe move this into the individual do_parse impls?
@@ -200,13 +196,13 @@ class Hint(ABC):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         raise NotImplementedError
 
     @abstractmethod
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         raise NotImplementedError
 
@@ -225,7 +221,7 @@ class YamlValueHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         # FIXME: since the spec is yaml, "Any" mostly translates to YamlValue.... but is this always true?
         if raw_hint == typing.Any:
@@ -249,7 +245,7 @@ class YamlValueHint(Hint):
         # fmt: on
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         return self.short_description(extra=extra_summary)
 
@@ -267,7 +263,7 @@ class RecursionHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         if raw_hint not in parent_raw_hints:
             return Unrecognized(raw_hint=raw_hint)
@@ -285,7 +281,7 @@ class RecursionHint(Hint):
         return Example("... RECURSE ...")
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         # fmt: off
         return Widget("span", css_classes=[FieldsWidget.FIELD_TYPE_CSS_CLASS], children=[
@@ -303,7 +299,7 @@ class RootModelHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         from pydantic import RootModel
 
@@ -327,7 +323,7 @@ class AnnotatedHint(Hint):
     inner_hint: Hint
     restrictions: Sequence[Any]
 
-    def __init__(self, inner_hint: Hint, restrictions: List[str]) -> None:
+    def __init__(self, inner_hint: Hint, restrictions: list[str]) -> None:
         self.inner_hint = inner_hint
         self.restrictions = restrictions
         super().__init__()
@@ -337,13 +333,13 @@ class AnnotatedHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         if raw_hint.__class__ != typing_extensions.Annotated[int, None].__class__:
             return Unrecognized(raw_hint)
 
         inner_hint: Hint | Unrecognized | ParsingError
-        discri: Optional[pydantic.Discriminator] = discriminator
+        discri: pydantic.Discriminator | None = discriminator
         for md in raw_hint.__metadata__:
             if not isinstance(md, pydantic.Discriminator):
                 continue
@@ -360,7 +356,7 @@ class AnnotatedHint(Hint):
             raw_hint.__metadata__[0], pydantic.Discriminator
         ):
             return inner_hint  # "discriminator" is onl helpful for the parser, not for the user
-        metadata: List[str] = []
+        metadata: list[str] = []
         for md in raw_hint.__metadata__:
             # pydantic.Discriminator and pydantic.PlainSerializer are not useful for consumers.
             # A FieldInfo can appear if in types like Annotated[int, pydantic.Field(...)]. It usually has nothing useful
@@ -417,7 +413,7 @@ class AnnotatedHint(Hint):
         return self.inner_hint.get_example()
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         inner_widget = self.inner_hint.to_type_widget(
             path=path,
@@ -460,7 +456,7 @@ class TypeAliasHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         if not isinstance(raw_hint, TypeAliasType):
             return Unrecognized(raw_hint=raw_hint)
@@ -491,7 +487,7 @@ class TypeAliasHint(Hint):
         return inner_example
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         # fmt: off
         return Widget("details", children=[
@@ -511,7 +507,7 @@ class DatetimeHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         if raw_hint != datetime.datetime:
             return Unrecognized(raw_hint=raw_hint)
@@ -529,7 +525,7 @@ class DatetimeHint(Hint):
         return Example(datetime.datetime.now(datetime.timezone.utc).isoformat())
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         return self.short_description(extra=extra_summary)
 
@@ -540,7 +536,7 @@ class DateHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         if raw_hint != datetime.date:
             return Unrecognized(raw_hint=raw_hint)
@@ -558,7 +554,7 @@ class DateHint(Hint):
         return Example("2024-12-31")
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         return self.short_description(extra=extra_summary)
 
@@ -569,7 +565,7 @@ class PathHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         from pathlib import Path, PurePath
 
@@ -589,7 +585,7 @@ class PathHint(Hint):
         return Example("/some/path")
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         return self.short_description(extra=extra_summary)
 
@@ -600,7 +596,7 @@ class EmailHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         from pydantic.networks import EmailStr
 
@@ -620,7 +616,7 @@ class EmailHint(Hint):
         return Example("john.doe@example.com")
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         return self.short_description(extra=extra_summary)
 
@@ -631,7 +627,7 @@ class UrlHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         from pydantic import AnyUrl
 
@@ -651,7 +647,7 @@ class UrlHint(Hint):
         return Example("https://example.com/some/path")
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         return self.short_description(extra=extra_summary)
 
@@ -680,11 +676,11 @@ class MappingHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> MappingHint | Unrecognized | ParsingError:
         if not cls.is_mapping_hint(raw_hint):
             return Unrecognized(raw_hint)
-        type_args: Tuple[Type[Any], Type[Any]] = raw_hint.__args__
+        type_args: tuple[type[Any], type[Any]] = raw_hint.__args__
         key_type = type_args[0]
         if (
             key_type is not str
@@ -718,7 +714,7 @@ class MappingHint(Hint):
         # fmt: on
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         field_name = "[...]"  # FIXME: clearer key type?
         return FieldsWidget(
@@ -756,7 +752,7 @@ class LiteralHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> LiteralHint | Unrecognized | ParsingError:
         some_dummy_literal_hint = Literal["a"]
         if raw_hint.__class__ != some_dummy_literal_hint.__class__:
@@ -768,7 +764,7 @@ class LiteralHint(Hint):
         return LiteralHint(values=raw_hint.__args__)
 
     def short_description(self, extra: Sequence[Widget] = ()) -> Widget:
-        widgets: List[Widget] = []
+        widgets: list[Widget] = []
 
         if len(self.values) > LiteralHint.LIMIT:
             for part in self.values[0 : LiteralHint.LIMIT]:
@@ -790,7 +786,7 @@ class LiteralHint(Hint):
         return Example(self.values[0])
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         if len(self.values) <= LiteralHint.LIMIT:
             # fmt: off
@@ -821,9 +817,9 @@ class LiteralHint(Hint):
 class ModelHint(Hint):
     def __init__(
         self,
-        model: Type[BaseModel],
-        fields: Mapping[str, Tuple[Hint, Example]],
-        discriminator: Optional[pydantic.Discriminator],
+        model: type[BaseModel],
+        fields: Mapping[str, tuple[Hint, Example]],
+        discriminator: pydantic.Discriminator | None,
     ):
         self.model = model
         self.fields = fields
@@ -835,12 +831,12 @@ class ModelHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> Hint | Unrecognized | ParsingError:
         if not inspect.isclass(raw_hint) or not issubclass(raw_hint, BaseModel):
             return Unrecognized(raw_hint)
 
-        fields: Dict[str, Tuple[Hint, Example]] = {}
+        fields: dict[str, tuple[Hint, Example]] = {}
 
         required_fields_first = sorted(
             raw_hint.model_fields.items(),
@@ -898,9 +894,9 @@ class ModelHint(Hint):
         )
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
-        fields: List[FieldData] = []
+        fields: list[FieldData] = []
         for field_name, (hint, example) in self.fields.items():
             field_info = self.model.model_fields[field_name]
             field_default = field_info.default
@@ -945,7 +941,7 @@ class PrimitiveHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> PrimitiveHint | Unrecognized | ParsingError:
         if raw_hint is None:
             raw_hint = type(None)
@@ -964,7 +960,7 @@ class PrimitiveHint(Hint):
         # fmt: on
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         return self.short_description(extra=extra_summary)
 
@@ -998,7 +994,7 @@ class NTuple(Hint):
 
     def __init__(
         self,
-        generic_args: Sequence[Tuple[Hint, Example]],
+        generic_args: Sequence[tuple[Hint, Example]],
     ):
         self.generic_args = generic_args
         super().__init__()
@@ -1008,11 +1004,11 @@ class NTuple(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> NTuple | Unrecognized | ParsingError:
         if not is_tuple_hint(raw_hint) or (... in raw_hint.__args__):
             return Unrecognized(raw_hint)
-        generic_args: List[Tuple[Hint, Example]] = []
+        generic_args: list[tuple[Hint, Example]] = []
         for arg_inx, arg in enumerate(raw_hint.__args__):
             hint = Hint.parse(
                 raw_hint=arg, parent_raw_hints=[*parent_raw_hints, raw_hint]
@@ -1030,7 +1026,7 @@ class NTuple(Hint):
         return NTuple(generic_args=generic_args)
 
     def short_description(self, extra: Sequence[Widget] = ()) -> Widget:
-        children: List[Widget] = []
+        children: list[Widget] = []
         for arg_idx, (arg, _example) in enumerate(self.generic_args):
             children.append(arg.short_description())
             if arg_idx < len(self.generic_args) - 1:
@@ -1046,7 +1042,7 @@ class NTuple(Hint):
         # fmt: on
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         return FieldsWidget(
             base_path=path,
@@ -1079,7 +1075,7 @@ class VarLenTuple(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> VarLenTuple | Unrecognized | ParsingError:
         if not is_tuple_hint(raw_hint):
             return Unrecognized(raw_hint=raw_hint)
@@ -1104,7 +1100,7 @@ class VarLenTuple(Hint):
         return VarLenTuple(element_type=element_hint, element_example=element_example)
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         field_name = "[...]"
         return FieldsWidget(
@@ -1159,7 +1155,7 @@ class ListHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> ListHint | Unrecognized | ParsingError:
         if not cls.is_list_hint(raw_hint):
             return Unrecognized(raw_hint=raw_hint)
@@ -1177,7 +1173,7 @@ class ListHint(Hint):
         return ListHint(element_type=element_hint, element_example=element_example)
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
         field_name = "[...]"
         return FieldsWidget(
@@ -1210,7 +1206,7 @@ class ListHint(Hint):
 
 
 class UnionHint(Hint):
-    def __init__(self, args: Sequence[Tuple[Hint, Example]]):
+    def __init__(self, args: Sequence[tuple[Hint, Example]]):
         self.variant_hints = args
         super().__init__()
 
@@ -1219,13 +1215,13 @@ class UnionHint(Hint):
         cls,
         raw_hint: Any,
         parent_raw_hints: Sequence[Any],
-        discriminator: Optional[pydantic.Discriminator] = None,
+        discriminator: pydantic.Discriminator | None = None,
     ) -> UnionHint | Unrecognized | ParsingError:
         some_dummy_union = Union[int, str]
         if raw_hint.__class__ != some_dummy_union.__class__:
             return Unrecognized(raw_hint=raw_hint)
 
-        union_args: List[Tuple[Hint, Example]] = []
+        union_args: list[tuple[Hint, Example]] = []
         for arg_idx, arg in enumerate(raw_hint.__args__):
             hint = Hint.parse(
                 raw_hint=arg,
@@ -1248,9 +1244,9 @@ class UnionHint(Hint):
         return UnionHint(args=union_args)
 
     def to_type_widget(
-        self, path: List[str], extra_summary: Sequence[Widget] = ()
+        self, path: list[str], extra_summary: Sequence[Widget] = ()
     ) -> Widget:
-        variant_widgets: List[Widget] = []
+        variant_widgets: list[Widget] = []
         for variant_index, (variant_hint, variant_example) in enumerate(
             self.variant_hints
         ):
@@ -1292,7 +1288,7 @@ class UnionHint(Hint):
         # fmt: on
 
     def short_description(self, extra: Sequence[Widget] = ()) -> Widget:
-        children: List[Widget] = []
+        children: list[Widget] = []
         if len(extra) > 0:
             children.append(InlinePre(text="("))
         for arg_idx, (arg_hint, _) in enumerate(self.variant_hints):
@@ -1312,15 +1308,15 @@ class Widget:
 
     tag: Final[str]
     element: Final[et.Element]
-    subclasses: ClassVar[List[Type[Widget]]] = []
+    subclasses: ClassVar[list[type[Widget]]] = []
 
     def __init__(
         self,
         tag: str,
         *,
-        text: Optional[str] = None,
+        text: str | None = None,
         children: Sequence[Widget] = (),
-        css_classes: Optional[List[str]] = None,
+        css_classes: list[str] | None = None,
         title: str = "",
         style: str = "",
         element_id: str = "",
@@ -1478,9 +1474,9 @@ class InlinePre(Widget):
     def __init__(
         self,
         *,
-        text: Optional[str] = None,
+        text: str | None = None,
         children: Sequence[Widget] = (),
-        css_classes: Optional[List[str]] = None,
+        css_classes: list[str] | None = None,
     ):
         super().__init__(
             "span",
@@ -1550,10 +1546,10 @@ class CheckboxWidget(Widget):
     def __init__(
         self,
         *,
-        text: Optional[str] = None,
+        text: str | None = None,
         children: Sequence[Widget] = (),
         on_click: str = "",
-        css_classes: Optional[List[str]] = None,
+        css_classes: list[str] | None = None,
         title: str = "",
         style: str = "",
     ):
@@ -1605,7 +1601,7 @@ class FragmentAnchorWidget(Widget):
         *,
         text: str = "",
         children: Sequence[Widget] = (),
-        path: List[str],
+        path: list[str],
     ):
         fragment_contents = ".".join(path)
         super().__init__(
@@ -1678,9 +1674,9 @@ class ColumnControls(Widget):
 @dataclass
 class FieldData:
     name: str
-    description: Optional[str]
+    description: str | None
     type_widget: Widget
-    example: Optional[Example]
+    example: Example | None
     default: Example | PydanticUndefinedType = PydanticUndefined
 
 
@@ -1719,7 +1715,7 @@ class FieldsWidget(Widget):
 
     def __init__(
         self,
-        base_path: List[str],
+        base_path: list[str],
         short_description: Widget,
         fields: Sequence[FieldData],
     ) -> None:

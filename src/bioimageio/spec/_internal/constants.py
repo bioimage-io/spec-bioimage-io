@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from types import MappingProxyType
-from typing import Mapping, NamedTuple, Sequence, Set, Union
+from typing import Mapping, NamedTuple, Sequence
 
 from .utils import files
 
@@ -33,8 +33,8 @@ SI_UNIT_REGEX = f"^{_unit_ap}((·{_unit_ap})|(/{_unit_pp}))*$"
 
 
 class _DtypeLimit(NamedTuple):
-    min: Union[int, float]
-    max: Union[int, float]
+    min: int | float
+    max: int | float
 
 
 # numpy.dtype limits; see scripts/generate_dtype_limits.py
@@ -54,7 +54,7 @@ DTYPE_LIMITS = MappingProxyType(
 )
 
 # TODO: cache/store known GitHub users in file
-KNOWN_GITHUB_USERS: Set[str] = {
+KNOWN_GITHUB_USERS: set[str] = {
     "aaitorg",
     "anwai98",
     "bioimageiobot",
@@ -79,5 +79,5 @@ KNOWN_GITHUB_USERS: Set[str] = {
 }
 
 N_KNOWN_GITHUB_USERS = len(KNOWN_GITHUB_USERS)
-KNOWN_INVALID_GITHUB_USERS: Set[str] = {"arratemunoz", "lmescu"}
+KNOWN_INVALID_GITHUB_USERS: set[str] = {"arratemunoz", "lmescu"}
 N_KNOWN_INVALID_GITHUB_USERS = len(KNOWN_INVALID_GITHUB_USERS)

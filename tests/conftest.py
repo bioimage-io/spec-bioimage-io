@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from pathlib import Path
 from pprint import pprint
 from types import MappingProxyType
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 from dotenv import load_dotenv
@@ -26,7 +28,7 @@ UNET2D_ROOT = EXAMPLE_DESCRIPTIONS / "models/unet2d_nuclei_broad"
 
 
 @pytest.fixture(scope="session")
-def bioimageio_json_schema() -> Dict[str, Any]:
+def bioimageio_json_schema() -> dict[str, Any]:
     return get_bioimageio_json_schema()
 
 

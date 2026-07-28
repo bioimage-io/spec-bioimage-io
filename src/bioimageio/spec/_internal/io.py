@@ -24,11 +24,8 @@ from typing import (
     Iterable,
     List,
     Mapping,
-    Optional,
     Sequence,
-    Set,
     Tuple,
-    Type,
     TypedDict,
     TypeVar,
     Union,
@@ -107,9 +104,7 @@ class LightHttpFileDescr(Node):
     def get_reader(
         self,
         *,
-        progressbar: Union[
-            ProgressbarLike, Callable[[], ProgressbarLike], bool, None
-        ] = None,
+        progressbar: ProgressbarLike | Callable[[], ProgressbarLike] | bool | None = None,
     ) -> BytesReader:
         """open the file source (download if needed)"""
         return get_reader(self.source, sha256=self.sha256, progressbar=progressbar)
@@ -159,12 +154,12 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
 
     @abstractmethod
     def get_absolute(
-        self, root: Union[RootHttpUrl, AbsoluteDirectory, pydantic.AnyUrl, ZipFile]
+        self, root: RootHttpUrl | AbsoluteDirectory | pydantic.AnyUrl | ZipFile
     ) -> AbsolutePathT: ...
 
     def _get_absolute_impl(
-        self, root: Union[RootHttpUrl, AbsoluteDirectory, pydantic.AnyUrl, ZipFile]
-    ) -> Union[Path, HttpUrl, ZipPath]:
+        self, root: RootHttpUrl | AbsoluteDirectory | pydantic.AnyUrl | ZipFile
+    ) -> Path | HttpUrl | ZipPath:
         if isinstance(root, Path):
             return (root / self.root).absolute()
 
@@ -196,7 +191,7 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
         )
 
     @classmethod
-    def _validate(cls, value: Union[PurePath, str]):
+    def _validate(cls, value: PurePath | str):
         if isinstance(value, str) and value.startswith(("https://", "http://")):
             raise ValueError(f"{value} looks like a URL, not a relative path")
 
@@ -263,7 +258,7 @@ class FileDescr(Node):
     source: FileSource
     """File source"""
 
-    sha256: Optional[Sha256] = None
+    sha256: Sha256 | None = None
     """SHA256 hash value of the **source** file."""
 
     @model_validator(mode="after")
@@ -308,9 +303,7 @@ class FileDescr(Node):
     def get_reader(
         self,
         *,
-        progressbar: Union[
-            ProgressbarLike, Callable[[], ProgressbarLike], bool, None
-        ] = None,
+        progressbar: ProgressbarLike | Callable[[], ProgressbarLike] | bool | None = None,
     ):
         """open the file source (download if needed)"""
         return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
@@ -318,9 +311,7 @@ class FileDescr(Node):
     def download(
         self,
         *,
-        progressbar: Union[
-            ProgressbarLike, Callable[[], ProgressbarLike], bool, None
-        ] = None,
+        progressbar: ProgressbarLike | Callable[[], ProgressbarLike] | bool | None = None,
     ):
         """alias for `.get_reader`"""
         return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
@@ -335,18 +326,18 @@ PermissiveFileSource: TypeAlias = Union[
 ]
 
 
-path_or_url_adapter: TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]] = TypeAdapter(
+path_or_url_adapter: TypeAdapter[FilePath | DirectoryPath | HttpUrl] = TypeAdapter(
     Union[FilePath, DirectoryPath, HttpUrl]
 )
 
 
 @dataclass(frozen=True, **SLOTS)
 class WithSuffix:
-    suffix: Union[LiteralString, Tuple[LiteralString, ...]]
+    suffix: LiteralString | tuple[LiteralString, ...]
     case_sensitive: bool
 
     def __get_pydantic_core_schema__(
-        self, source: Type[Any], handler: GetCoreSchemaHandler
+        self, source: type[Any], handler: GetCoreSchemaHandler
     ):
         if not self.suffix:
             raise ValueError("suffix may not be empty")
@@ -358,8 +349,8 @@ class WithSuffix:
         )
 
     def validate(
-        self, value: Union[FileSource, FileDescr]
-    ) -> Union[FileSource, FileDescr]:
+        self, value: FileSource | FileDescr
+    ) -> FileSource | FileDescr:
         return validate_suffix(value, self.suffix, case_sensitive=self.case_sensitive)
 
 
@@ -373,7 +364,7 @@ def wo_special_file_name(src: F) -> F:
     return src
 
 
-def has_valid_bioimageio_yaml_name(src: Union[FileSource, FileDescr]) -> bool:
+def has_valid_bioimageio_yaml_name(src: FileSource | FileDescr) -> bool:
     return is_valid_bioimageio_yaml_name(extract_file_name(src))
 
 
@@ -402,7 +393,7 @@ def identify_bioimageio_yaml_file_name(file_names: Iterable[FileName]) -> FileNa
     )
 
 
-def find_bioimageio_yaml_file_name(path: Union[Path, ZipFile]) -> FileName:
+def find_bioimageio_yaml_file_name(path: Path | ZipFile) -> FileName:
     if isinstance(path, ZipFile):
         file_names = path.namelist()
     elif path.is_file():
@@ -515,8 +506,8 @@ def deepcopy_yaml_value(value: YamlValueView) -> YamlValue: ...
 
 
 def deepcopy_yaml_value(
-    value: Union[BioimageioYamlContentView, YamlValueView],
-) -> Union[BioimageioYamlContent, YamlValue]:
+    value: BioimageioYamlContentView | YamlValueView,
+) -> BioimageioYamlContent | YamlValue:
     if isinstance(value, collections.abc.Mapping):
         return {key: deepcopy_yaml_value(val) for key, val in value.items()}
     elif isinstance(value, collections.abc.Sequence):
@@ -567,11 +558,11 @@ def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
     return isinstance(value, (bool, _date, _datetime, int, float, str, type(None)))
 
 
-def is_yaml_list(value: Any) -> TypeGuard[List[YamlValue]]:
+def is_yaml_list(value: Any) -> TypeGuard[list[YamlValue]]:
     return is_list(value) and all(is_yaml_value(item) for item in value)
 
 
-def is_yaml_sequence(value: Any) -> TypeGuard[List[YamlValueView]]:
+def is_yaml_sequence(value: Any) -> TypeGuard[list[YamlValueView]]:
     return is_sequence(value) and all(is_yaml_value(item) for item in value)
 
 
@@ -601,8 +592,8 @@ def is_yaml_value_read_only(value: Any) -> TypeGuard[YamlValueView]:
 @dataclass(frozen=True, **SLOTS)
 class OpenedBioimageioYaml:
     content: BioimageioYamlContent = field(repr=False)
-    original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
-    original_source_name: Optional[str]
+    original_root: AbsoluteDirectory | RootHttpUrl | ZipFile
+    original_source_name: str | None
     original_file_name: FileName
     unparsed_content: str = field(repr=False)
 
@@ -610,28 +601,28 @@ class OpenedBioimageioYaml:
 @dataclass(frozen=True, **SLOTS)
 class LocalFile:
     path: FilePath
-    original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
+    original_root: AbsoluteDirectory | RootHttpUrl | ZipFile
     original_file_name: FileName
 
 
 @dataclass(frozen=True, **SLOTS)
 class FileInZip:
     path: ZipPath
-    original_root: Union[RootHttpUrl, ZipFile]
+    original_root: RootHttpUrl | ZipFile
     original_file_name: FileName
 
 
 class HashKwargs(TypedDict):
-    sha256: NotRequired[Optional[Sha256]]
+    sha256: NotRequired[Sha256 | None]
 
 
-_file_source_adapter: TypeAdapter[Union[HttpUrl, RelativeFilePath, FilePath]] = (
+_file_source_adapter: TypeAdapter[HttpUrl | RelativeFilePath | FilePath] = (
     TypeAdapter(FileSource)
 )
 
 
 def interprete_file_source(
-    file_source: Union[FileSource, str, pydantic.HttpUrl],
+    file_source: FileSource | str | pydantic.HttpUrl,
 ) -> FileSource:
     if isinstance(file_source, Path):
         if file_source.is_dir():
@@ -655,8 +646,8 @@ def interprete_file_source(
 
 
 def extract(
-    source: Union[FilePath, ZipFile, ZipPath],
-    folder: Optional[DirectoryPath] = None,
+    source: FilePath | ZipFile | ZipPath,
+    folder: DirectoryPath | None = None,
     overwrite: bool = False,
 ) -> DirectoryPath:
     extract_member = None
@@ -720,11 +711,9 @@ def extract(
 
 
 def get_reader(
-    source: Union[PermissiveFileSource, FileDescr, ZipPath],
+    source: PermissiveFileSource | FileDescr | ZipPath,
     /,
-    progressbar: Union[
-        ProgressbarLike, Callable[[], ProgressbarLike], bool, None
-    ] = None,
+    progressbar: ProgressbarLike | Callable[[], ProgressbarLike] | bool | None = None,
     **kwargs: Unpack[HashKwargs],
 ) -> BytesReader:
     """Open a file `source` (download if needed)"""
@@ -791,7 +780,7 @@ download = get_reader
 def _open_url(
     source: HttpUrl,
     /,
-    progressbar: Union[ProgressbarLike, Callable[[], ProgressbarLike], bool, None],
+    progressbar: ProgressbarLike | Callable[[], ProgressbarLike] | bool | None,
     **kwargs: Unpack[HashKwargs],
 ) -> BytesReader:
     cache = (
@@ -825,7 +814,7 @@ def _open_url(
 def _fetch_url(
     source: RootHttpUrl,
     *,
-    progressbar: Union[ProgressbarLike, Callable[[], ProgressbarLike], bool, None],
+    progressbar: ProgressbarLike | Callable[[], ProgressbarLike] | bool | None,
 ):
     if source.scheme not in ("http", "https"):
         raise NotImplementedError(source.scheme)
@@ -853,7 +842,7 @@ def _fetch_url(
     if progressbar is not False:
         progressbar.set_description(f"Downloading {extract_file_name(source)}")
 
-    headers: Dict[str, str] = {}
+    headers: dict[str, str] = {}
     if settings.user_agent is not None:
         headers["User-Agent"] = settings.user_agent
     elif settings.CI:
@@ -903,9 +892,7 @@ def _fetch_url(
 
 
 def extract_file_name(
-    src: Union[
-        pydantic.HttpUrl, RootHttpUrl, PurePath, RelativeFilePath, ZipPath, FileDescr
-    ],
+    src: pydantic.HttpUrl | RootHttpUrl | PurePath | RelativeFilePath | ZipPath | FileDescr,
 ) -> FileName:
     if isinstance(src, FileDescr):
         src = src.source
@@ -931,8 +918,8 @@ def extract_file_name(
 
 def extract_file_descrs(
     data: IncompleteDescrView,
-) -> List[FileDescr]:
-    collected: List[FileDescr] = []
+) -> list[FileDescr]:
+    collected: list[FileDescr] = []
     with get_validation_context().replace(perform_io_checks=False, log_warnings=False):
         _extract_file_descrs_impl(data, collected)
 
@@ -940,8 +927,8 @@ def extract_file_descrs(
 
 
 def _extract_file_descrs_impl(
-    data: Union[IncompleteDescrView, IncompleteDescrInnerView],
-    collected: List[FileDescr],
+    data: IncompleteDescrView | IncompleteDescrInnerView,
+    collected: list[FileDescr],
 ) -> None:
     if isinstance(data, FileDescr):
         collected.append(data)
@@ -982,7 +969,7 @@ F = TypeVar("F", bound=Union[FileSource, FileDescr])
 
 
 def validate_suffix(
-    value: F, suffix: Union[str, Sequence[str]], case_sensitive: bool
+    value: F, suffix: str | Sequence[str], case_sensitive: bool
 ) -> F:
     """check final suffix"""
     if isinstance(suffix, str):
@@ -1042,8 +1029,8 @@ def validate_suffix(
     return o_value
 
 
-def populate_cache(sources: Sequence[Union[FileDescr, LightHttpFileDescr]]):
-    unique: Set[str] = set()
+def populate_cache(sources: Sequence[FileDescr | LightHttpFileDescr]):
+    unique: set[str] = set()
     for src in sources:
         if src.sha256 is None:
             continue  # not caching without known SHA

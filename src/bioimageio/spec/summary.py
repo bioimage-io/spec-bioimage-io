@@ -5,6 +5,7 @@ and summaries for BioImage.IO resource descriptions, along with helpers to
 format these results as plain text, Markdown, or HTML for reporting and
 diagnostics.
 """
+from __future__ import annotations
 
 import html
 import platform
@@ -20,14 +21,11 @@ from types import MappingProxyType
 from typing import (
     Any,
     Callable,
-    Dict,
     List,
     Literal,
     Mapping,
     NamedTuple,
-    Optional,
     Sequence,
-    Set,
     Tuple,
     Union,
     cast,
@@ -93,7 +91,7 @@ class ValidationEntry(BaseModel):
 
     loc: Loc
     msg: str
-    type: Union[ErrorType, str]
+    type: ErrorType | str
 
 
 class ErrorEntry(ValidationEntry):
@@ -103,10 +101,10 @@ class ErrorEntry(ValidationEntry):
     traceback_md: str = ""
     traceback_html: str = ""
     # private rich traceback that is not serialized
-    _traceback_rich: Optional[rich.traceback.Traceback] = None
+    _traceback_rich: rich.traceback.Traceback | None = None
 
     @property
-    def traceback_rich(self) -> Optional[rich.traceback.Traceback]:
+    def traceback_rich(self) -> rich.traceback.Traceback | None:
         return self._traceback_rich
 
     def model_post_init(self, __context: Any, /):
@@ -139,7 +137,7 @@ class WarningEntry(ValidationEntry):
 
 
 def format_loc(
-    loc: Loc, target: Union[Literal["md", "html", "plain"], rich.console.Console]
+    loc: Loc, target: Literal["md", "html", "plain"] | rich.console.Console
 ) -> str:
     """helper to format a location tuple **loc**"""
     loc_str = ".".join(f"({x})" if x[0].isupper() else x for x in map(str, loc))
@@ -180,23 +178,23 @@ class ValidationDetail(BaseModel, extra="allow"):
     status: Literal["passed", "failed"]
     loc: Loc = ()
     """location in the RDF that this detail applies to"""
-    errors: List[ErrorEntry] = Field(
+    errors: list[ErrorEntry] = Field(
         default_factory=cast(Callable[[], List[ErrorEntry]], list)
     )
-    warnings: List[WarningEntry] = Field(
+    warnings: list[WarningEntry] = Field(
         default_factory=cast(Callable[[], List[WarningEntry]], list)
     )
 
-    context: Optional[ValidationContextSummary] = None
+    context: ValidationContextSummary | None = None
 
-    recommended_env: Optional[CondaEnv] = None
+    recommended_env: CondaEnv | None = None
     """recommended conda environemnt for this validation detail"""
 
-    saved_conda_compare: Optional[str] = None
+    saved_conda_compare: str | None = None
     """output of `conda compare <recommended env>`"""
 
     @field_serializer("saved_conda_compare")
-    def _save_conda_compare(self, value: Optional[str]):
+    def _save_conda_compare(self, value: str | None):
         return self.conda_compare
 
     @model_validator(mode="before")
@@ -212,7 +210,7 @@ class ValidationDetail(BaseModel, extra="allow"):
         return data
 
     @property
-    def conda_compare(self) -> Optional[str]:
+    def conda_compare(self) -> str | None:
         if self.recommended_env is None:
             return None
 
@@ -265,10 +263,10 @@ class ValidationSummary(BaseModel, extra="allow"):
     source_name: str
     """Source of the validated bioimageio description"""
 
-    id: Optional[str] = None
+    id: str | None = None
     """ID of the validated resource"""
 
-    version: Optional[Version] = None
+    version: Version | None = None
     """Version of the validated resource"""
 
     type: str
@@ -287,9 +285,9 @@ class ValidationSummary(BaseModel, extra="allow"):
         and should be considered bioimageio.spec version specific.
     """
 
-    details: List[ValidationDetail]
+    details: list[ValidationDetail]
     """List of validation details"""
-    env: Set[InstalledPackage] = Field(
+    env: set[InstalledPackage] = Field(
         default_factory=lambda: {
             InstalledPackage(
                 name="bioimageio.spec",
@@ -299,10 +297,10 @@ class ValidationSummary(BaseModel, extra="allow"):
     )
     """List of selected, relevant package versions"""
 
-    saved_conda_list: Optional[str] = None
+    saved_conda_list: str | None = None
 
     @field_serializer("saved_conda_list")
-    def _save_conda_list(self, value: Optional[str]):
+    def _save_conda_list(self, value: str | None):
         return self.conda_list
 
     @property
@@ -336,17 +334,17 @@ class ValidationSummary(BaseModel, extra="allow"):
             return "❌"
 
     @property
-    def errors(self) -> List[ErrorEntry]:
+    def errors(self) -> list[ErrorEntry]:
         return list(chain.from_iterable(d.errors for d in self.details))
 
     @property
-    def warnings(self) -> List[WarningEntry]:
+    def warnings(self) -> list[WarningEntry]:
         return list(chain.from_iterable(d.warnings for d in self.details))
 
     def format(
         self,
         *,
-        width: Optional[int] = None,
+        width: int | None = None,
         include_conda_list: bool = False,
     ) -> str:
         """Format summary as Markdown string (alias to `format_md`)"""
@@ -355,7 +353,7 @@ class ValidationSummary(BaseModel, extra="allow"):
     def format_md(
         self,
         *,
-        width: Optional[int] = None,
+        width: int | None = None,
         include_conda_list: bool = False,
     ) -> str:
         """Format summary as Markdown string"""
@@ -366,7 +364,7 @@ class ValidationSummary(BaseModel, extra="allow"):
     def format_html(
         self,
         *,
-        width: Optional[int] = None,
+        width: int | None = None,
         include_conda_list: bool = False,
     ) -> str:
         md_with_html = self._format(
@@ -379,7 +377,7 @@ class ValidationSummary(BaseModel, extra="allow"):
     def display(
         self,
         *,
-        width: Optional[int] = None,
+        width: int | None = None,
         include_conda_list: bool = False,
         tab_size: int = 4,
         soft_wrap: bool = True,
@@ -434,8 +432,8 @@ class ValidationSummary(BaseModel, extra="allow"):
 
     def log(
         self,
-        to: Union[Literal["display"], Path, Sequence[Union[Literal["display"], Path]]],
-    ) -> List[Path]:
+        to: Literal["display"] | Path | Sequence[Literal["display"] | Path],
+    ) -> list[Path]:
         """Convenience method to display the validation summary in the terminal and/or
         save it to disk. See `save` for details."""
         if to == "display":
@@ -454,8 +452,8 @@ class ValidationSummary(BaseModel, extra="allow"):
         return self.save(save_to)
 
     def save(
-        self, path: Union[Path, Sequence[Path]] = Path("{id}_summary_{now}")
-    ) -> List[Path]:
+        self, path: Path | Sequence[Path] = Path("{id}_summary_{now}")
+    ) -> list[Path]:
         """Save the validation/test summary in JSON, Markdown or HTML format.
 
         Returns:
@@ -470,7 +468,7 @@ class ValidationSummary(BaseModel, extra="allow"):
             path = [Path(path)]
 
         # folder to file paths
-        file_paths: List[Path] = []
+        file_paths: list[Path] = []
         for p in path:
             if p.suffix:
                 file_paths.append(p)
@@ -498,7 +496,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         return file_paths
 
     def save_json(
-        self, path: Path = Path("summary.json"), *, indent: Optional[int] = 2
+        self, path: Path = Path("summary.json"), *, indent: int | None = 2
     ) -> None:
         """Save validation/test summary as JSON file."""
         json_str = self.model_dump_json(indent=indent)
@@ -528,7 +526,7 @@ class ValidationSummary(BaseModel, extra="allow"):
         return cls.model_validate_json(json_str)
 
     @field_validator("env", mode="before")
-    def _convert_old_env(cls, value: List[Union[List[str], Dict[str, str]]]):
+    def _convert_old_env(cls, value: list[list[str] | dict[str, str]]):
         """convert old style dict values of `env` for backwards compatibility"""
         if isinstance(value, list):
             return [
@@ -545,8 +543,8 @@ class ValidationSummary(BaseModel, extra="allow"):
     def _format(
         self,
         *,
-        target: Union[rich.console.Console, Literal["html", "md"]],
-        width: Optional[int],
+        target: rich.console.Console | Literal["html", "md"],
+        width: int | None,
         include_conda_list: bool,
     ) -> str:
         return _format_summary(
@@ -563,13 +561,13 @@ def _format_summary(
     hide_tracebacks: bool = False,  # TODO: remove?
     hide_source: bool = False,  # TODO: remove?
     hide_env: bool = False,  # TODO: remove?
-    target: Union[rich.console.Console, Literal["html", "md"]] = "md",
+    target: rich.console.Console | Literal["html", "md"] = "md",
     include_conda_list: bool,
     width: int,
 ) -> str:
-    parts: List[str] = []
+    parts: list[str] = []
     format_table = _format_html_table if target == "html" else _format_md_table
-    details_below: Dict[str, Union[str, Tuple[str, rich.traceback.Traceback]]] = {}
+    details_below: dict[str, str | tuple[str, rich.traceback.Traceback]] = {}
     left_out_details: int = 0
     left_out_details_header = "Left out details"
 
@@ -596,7 +594,7 @@ def _format_summary(
         )
 
     def add_as_details_below(
-        title: str, text: Union[str, Tuple[str, rich.traceback.Traceback]]
+        title: str, text: str | tuple[str, rich.traceback.Traceback]
     ):
         """returns a header and its tag to link to details below"""
 
@@ -638,7 +636,7 @@ def _format_summary(
         title: str = "Details",
         cell_line_limit: int = 15,
         cell_width_limit: int = 120,
-    ) -> Union[CodeRef, CodeCell]:
+    ) -> CodeRef | CodeCell:
         if not code.strip():
             return CodeCell("")
 
@@ -710,7 +708,7 @@ def _format_summary(
         details = [["", "Location", "Details"]]
 
         def append_detail(
-            status: str, loc: Loc, text: str, code: Union[CodeRef, CodeCell, None]
+            status: str, loc: Loc, text: str, code: CodeRef | CodeCell | None
         ):
             text_lines = format_text(text)
             status_lines = [""] * len(text_lines)
@@ -794,7 +792,7 @@ def _format_summary(
     return "".join(parts)
 
 
-def _format_md_table(rows: List[List[str]]) -> str:
+def _format_md_table(rows: list[list[str]]) -> str:
     """format `rows` as markdown table"""
     n_cols = len(rows[0])
     assert all(len(row) == n_cols for row in rows)
@@ -814,10 +812,10 @@ def _format_md_table(rows: List[List[str]]) -> str:
     return "\n| " + " |\n| ".join(lines) + " |\n"
 
 
-def _format_html_table(rows: List[List[str]]) -> str:
+def _format_html_table(rows: list[list[str]]) -> str:
     """format `rows` as HTML table"""
 
-    def get_line(cells: List[str], cell_tag: Literal["th", "td"] = "td"):
+    def get_line(cells: list[str], cell_tag: Literal["th", "td"] = "td"):
         return (
             ["  <tr>"]
             + [

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import os
 from copy import deepcopy
@@ -5,7 +7,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
 from types import SimpleNamespace
-from typing import Any, Dict, List, Protocol
+from typing import Any, Protocol
 from unittest import SkipTest
 
 import pytest
@@ -22,7 +24,7 @@ def test_upload_keeps_remote_files_as_references(monkeypatch: MonkeyPatch) -> No
     from bioimageio.spec._internal._settings import settings
     from bioimageio.spec._internal.io_basics import BIOIMAGEIO_YAML
 
-    posts: List[Dict[str, Any]] = []
+    posts: list[dict[str, Any]] = []
     descr = SimpleNamespace(id=None, name="Test Model", type="model", version=None)
 
     class Response:
@@ -35,7 +37,7 @@ def test_upload_keeps_remote_files_as_references(monkeypatch: MonkeyPatch) -> No
         def json(self) -> Any:
             return self.payload
 
-        def raise_for_status(self) -> "Response":
+        def raise_for_status(self) -> Response:
             return self
 
     def load_description(source: object) -> SimpleNamespace:
@@ -44,7 +46,7 @@ def test_upload_keeps_remote_files_as_references(monkeypatch: MonkeyPatch) -> No
 
     def get_package_content(
         given_descr: object, *, local_files_only: bool
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         assert given_descr is descr
         assert local_files_only is True
         return {
@@ -101,7 +103,7 @@ def test_upload_with_local_http_traffic(monkeypatch: MonkeyPatch) -> None:
     from bioimageio.spec._internal._settings import settings
     from bioimageio.spec._internal.io_basics import BIOIMAGEIO_YAML
 
-    requests: List[Dict[str, Any]] = []
+    requests: list[dict[str, Any]] = []
     base_url = ""
     descr = SimpleNamespace(id=None, name="Test Model", type="model", version=None)
 
@@ -111,7 +113,7 @@ def test_upload_with_local_http_traffic(monkeypatch: MonkeyPatch) -> None:
 
     def get_package_content(
         given_descr: object, *, local_files_only: bool
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         assert given_descr is descr
         assert local_files_only is True
         return {

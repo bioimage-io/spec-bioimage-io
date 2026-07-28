@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from contextlib import nullcontext
-from typing import Any, Dict, Tuple
+from typing import Any
 
 import pytest
 
@@ -21,7 +23,7 @@ import pytest
     ],
 )
 def test_assert_all_params_set_explicitly(
-    args: Tuple[int, ...], kwargs: Dict[str, int], valid: bool
+    args: tuple[int, ...], kwargs: dict[str, int], valid: bool
 ):
     from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 

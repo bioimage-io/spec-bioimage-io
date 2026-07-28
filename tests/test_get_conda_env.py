@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Mapping
 
 import pytest
 
@@ -60,9 +62,7 @@ from bioimageio.spec.model.v0_5 import (
     ],
 )
 def test_get_conda_env(
-    descr_class: Union[
-        PytorchStateDictWeightsDescr, OnnxWeightsDescr, TorchscriptWeightsDescr
-    ],
+    descr_class: PytorchStateDictWeightsDescr | OnnxWeightsDescr | TorchscriptWeightsDescr,
     w: Mapping[str, Any],
     unet2d_path: Path,
 ):
@@ -83,7 +83,7 @@ def test_get_default_pytorch_env():
     )
     from bioimageio.spec._internal.version_type import Version
 
-    versions: Dict[str, List[Optional[str]]] = {
+    versions: dict[str, list[str | None]] = {
         "pytorch": [
             "1.5.1",
             "1.6.0",

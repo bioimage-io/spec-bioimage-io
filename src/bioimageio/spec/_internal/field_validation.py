@@ -6,7 +6,6 @@ from typing import (
     Hashable,
     Mapping,
     Sequence,
-    Union,
 )
 
 import httpx
@@ -22,7 +21,7 @@ def is_valid_yaml_leaf_value(value: Any) -> bool:
     return value is None or isinstance(value, (bool, date, datetime, int, float, str))
 
 
-def is_valid_yaml_key(value: Union[Any, Sequence[Any]]) -> bool:
+def is_valid_yaml_key(value: Any | Sequence[Any]) -> bool:
     return (
         is_valid_yaml_leaf_value(value)
         or is_tuple(value)
@@ -30,13 +29,13 @@ def is_valid_yaml_key(value: Union[Any, Sequence[Any]]) -> bool:
     )
 
 
-def is_valid_yaml_mapping(value: Union[Any, Mapping[Any, Any]]) -> bool:
+def is_valid_yaml_mapping(value: Any | Mapping[Any, Any]) -> bool:
     return is_mapping(value) and all(
         is_valid_yaml_key(k) and is_valid_yaml_value(v) for k, v in value.items()
     )
 
 
-def is_valid_yaml_sequence(value: Union[Any, Sequence[Any]]) -> bool:
+def is_valid_yaml_sequence(value: Any | Sequence[Any]) -> bool:
     return is_sequence(value) and all(is_valid_yaml_value(v) for v in value)
 
 

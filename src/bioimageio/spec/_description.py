@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from types import MappingProxyType
-from typing import Any, Literal, Optional, TypeVar, Union, overload
+from typing import Any, Literal, TypeVar, Union, overload
 
 from pydantic import Discriminator
 from typing_extensions import Annotated, TypeAlias
@@ -61,7 +63,7 @@ ResourceDescr: TypeAlias = Union[SpecificResourceDescr, AnyGenericDescr]
 
 
 def dump_description(
-    rd: Union[ResourceDescr, InvalidDescr],
+    rd: ResourceDescr | InvalidDescr,
     /,
     *,
     exclude_unset: bool = True,
@@ -154,9 +156,9 @@ def build_description(
     content: BioimageioYamlContentView,
     /,
     *,
-    context: Optional[ValidationContext] = None,
+    context: ValidationContext | None = None,
     format_version: Literal["latest"],
-) -> Union[LatestResourceDescr, InvalidDescr]: ...
+) -> LatestResourceDescr | InvalidDescr: ...
 
 
 @overload
@@ -164,18 +166,18 @@ def build_description(
     content: BioimageioYamlContentView,
     /,
     *,
-    context: Optional[ValidationContext] = None,
-    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-) -> Union[ResourceDescr, InvalidDescr]: ...
+    context: ValidationContext | None = None,
+    format_version: FormatVersionPlaceholder | str = DISCOVER,
+) -> ResourceDescr | InvalidDescr: ...
 
 
 def build_description(
     content: BioimageioYamlContentView,
     /,
     *,
-    context: Optional[ValidationContext] = None,
-    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-) -> Union[ResourceDescr, InvalidDescr]:
+    context: ValidationContext | None = None,
+    format_version: FormatVersionPlaceholder | str = DISCOVER,
+) -> ResourceDescr | InvalidDescr:
     """build a bioimage.io resource description from an RDF's content.
 
     Use `load_description` if you want to build a resource description from an rdf.yaml
@@ -210,8 +212,8 @@ def validate_format(
     data: BioimageioYamlContent,
     /,
     *,
-    format_version: Union[Literal["discover", "latest"], str] = DISCOVER,
-    context: Optional[ValidationContext] = None,
+    format_version: Literal["discover", "latest"] | str = DISCOVER,
+    context: ValidationContext | None = None,
 ) -> ValidationSummary:
     """Validate a dictionary holding a bioimageio description.
     See `bioimagieo.spec.load_description_and_validate_format_only`
@@ -244,7 +246,7 @@ def validate_format(
 
 
 def ensure_description_is_model(
-    rd: Union[InvalidDescr, ResourceDescr],
+    rd: InvalidDescr | ResourceDescr,
 ) -> AnyModelDescr:
     """
     Raises:
@@ -270,7 +272,7 @@ def ensure_description_is_model(
 
 
 def ensure_description_is_dataset(
-    rd: Union[InvalidDescr, ResourceDescr],
+    rd: InvalidDescr | ResourceDescr,
 ) -> AnyDatasetDescr:
     if isinstance(rd, InvalidDescr):
         raise ValueError(f"Invalid {rd.type} description:\n{rd.get_reason()}")

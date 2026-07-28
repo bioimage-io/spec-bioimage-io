@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from datetime import datetime, timezone
-from typing import ClassVar, Literal, Optional
+from typing import ClassVar, Literal
 
 import pytest
 from pydantic import Field
@@ -59,7 +61,7 @@ def test_FAIR():
         format_version: Literal["1.0.0"]
 
         a_opt1: FAIR[int] = 0  # actual int value is considered FAIR
-        a_opt2: FAIR[Optional[str]] = None  # None is not FAIR (warning 1)
+        a_opt2: FAIR[str | None] = None  # None is not FAIR (warning 1)
         a_opt3: FAIR[str] = ""  # empty string is not FAIR (warning 2)
         nested: Nested = Field(default_factory=Nested.model_construct)
 

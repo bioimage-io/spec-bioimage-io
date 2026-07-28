@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Literal, Optional, Sequence, Union, cast
+from typing import Callable, List, Literal, Sequence, cast
 
 from .io import FileDescr
 from .io_basics import FileName
@@ -11,19 +11,19 @@ from .utils import SLOTS
 
 @dataclass(frozen=True, **SLOTS)
 class PackagingContext:
-    _context_tokens: List[Token[Optional[PackagingContext]]] = field(
+    _context_tokens: list[Token[PackagingContext | None]] = field(
         init=False,
         default_factory=cast(
-            "Callable[[], List[Token[Optional[PackagingContext]]]]", list
+            "Callable[[], List[Token[PackagingContext | None]]]", list
         ),
     )
 
     bioimageio_yaml_file_name: FileName
 
-    file_sources: Dict[FileName, FileDescr]
+    file_sources: dict[FileName, FileDescr]
     """File sources to include in the packaged resource"""
 
-    weights_priority_order: Optional[Sequence[str]] = None
+    weights_priority_order: Sequence[str] | None = None
     """set to select a single weights entry when packaging model resources"""
 
     local_files_only: bool = False
@@ -32,12 +32,10 @@ class PackagingContext:
     def replace(
         self,
         *,
-        bioimageio_yaml_file_name: Optional[FileName] = None,
-        file_sources: Optional[Dict[FileName, FileDescr]] = None,
-        weights_priority_order: Union[
-            Optional[Sequence[str]], Literal["unchanged"]
-        ] = "unchanged",
-        local_files_only: Optional[bool] = None,
+        bioimageio_yaml_file_name: FileName | None = None,
+        file_sources: dict[FileName, FileDescr] | None = None,
+        weights_priority_order: Sequence[str] | None | Literal["unchanged"] = "unchanged",
+        local_files_only: bool | None = None,
     ) -> PackagingContext:
         """return a modiefied copy"""
         return PackagingContext(
@@ -67,6 +65,6 @@ class PackagingContext:
         packaging_context_var.reset(self._context_tokens.pop(-1))
 
 
-packaging_context_var: ContextVar[Optional[PackagingContext]] = ContextVar(
+packaging_context_var: ContextVar[PackagingContext | None] = ContextVar(
     "packaging_context_var", default=None
 )

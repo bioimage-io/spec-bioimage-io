@@ -5,12 +5,8 @@ import warnings
 from typing import (
     Any,
     Callable,
-    Dict,
     Literal,
     Mapping,
-    Optional,
-    Type,
-    Union,
 )
 
 import pydantic
@@ -20,7 +16,7 @@ from .type_guards import is_kwargs
 from .validation_context import ValidationContext, get_validation_context
 
 
-def _node_title_generator(node: Type[Node]) -> str:
+def _node_title_generator(node: type[Node]) -> str:
     return (
         f"{node.implemented_type} {node.implemented_format_version}"  # pyright: ignore[reportAttributeAccessIssue]
         if hasattr(node, "implemented_type")
@@ -52,14 +48,14 @@ class Node(
     @classmethod
     def model_validate(
         cls,
-        obj: Union[Any, Mapping[str, Any]],
+        obj: Any | Mapping[str, Any],
         *,
-        strict: Optional[bool] = None,
-        extra: Optional[Literal["allow", "ignore", "forbid"]] = None,
-        from_attributes: Optional[bool] = None,
-        context: Union[ValidationContext, Mapping[str, Any], None] = None,
-        by_alias: Optional[bool] = None,
-        by_name: Optional[bool] = None,
+        strict: bool | None = None,
+        extra: Literal["allow", "ignore", "forbid"] | None = None,
+        from_attributes: bool | None = None,
+        context: ValidationContext | Mapping[str, Any] | None = None,
+        by_alias: bool | None = None,
+        by_name: bool | None = None,
     ) -> Self:
         """Validate a pydantic model instance.
 
@@ -97,6 +93,6 @@ class Node(
     @classmethod
     def dict_from_kwargs(
         cls: Callable[P, T], *args: P.args, **kwargs: P.kwargs
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         assert not args, "Did not expected any args"
         return dict(kwargs)

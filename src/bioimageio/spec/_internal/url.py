@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from contextlib import nullcontext
 from pathlib import PurePosixPath
-from typing import Any, ClassVar, Optional, Type, Union
+from typing import Any, ClassVar
 
 import httpx
 import pydantic
@@ -15,12 +17,12 @@ from .root_url import RootHttpUrl
 from .validation_context import get_validation_context
 
 
-def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.HttpUrl:
+def _validate_url(url: str | pydantic.HttpUrl) -> pydantic.HttpUrl:
     return _validate_url_impl(url, request_mode="head", timeout=settings.http_timeout)
 
 
 def _validate_url_impl(
-    url: Union[str, pydantic.HttpUrl],
+    url: str | pydantic.HttpUrl,
     request_mode: Literal["head", "get_stream", "get"],
     timeout: float,
 ) -> pydantic.HttpUrl:
@@ -129,8 +131,8 @@ def _validate_url_impl(
 class HttpUrl(RootHttpUrl):
     """A URL with the HTTP or HTTPS scheme."""
 
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
-    _exists: Optional[bool] = None
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
+    _exists: bool | None = None
 
     def _after_validator(self):
         value = super()._after_validator()

@@ -1,5 +1,5 @@
 # type: ignore
-from typing import Optional
+from __future__ import annotations
 
 import torch
 from torch import nn
@@ -357,7 +357,7 @@ class ResizeUNet(UNetBase):
                 out_channels = [out_channels] * depth
             if len(out_channels) != depth:
                 raise ValueError()
-            out_conv: Optional[nn.Module] = nn.ModuleList(
+            out_conv: nn.Module | None = nn.ModuleList(
                 [
                     nn.Conv2d(feat, outc, 1)
                     for feat, outc in zip(features_decoder[1:], out_channels)

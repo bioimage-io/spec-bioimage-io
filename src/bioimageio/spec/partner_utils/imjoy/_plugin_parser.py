@@ -1,13 +1,14 @@
 # pragma: no cover
 # type: ignore
 """ImJoy plugin parser module."""
+from __future__ import annotations
 
 import copy
 import json
 import uuid
 import warnings
 from pathlib import Path
-from typing import Any, Callable, Dict, Tuple, Union
+from typing import Any, Callable
 from urllib.parse import urljoin
 
 import httpx
@@ -180,7 +181,7 @@ def convert_config_to_rdf(plugin_config, source_url=None) -> dict:
     return rdf
 
 
-def get_plugin_as_rdf(source_url: str) -> Dict[Any, Any]:
+def get_plugin_as_rdf(source_url: str) -> dict[Any, Any]:
     """Get imjoy plugin config in RDF format."""
     req = httpx.get(source_url, timeout=5)
     source = req.text
@@ -190,18 +191,18 @@ def get_plugin_as_rdf(source_url: str) -> Dict[Any, Any]:
 
 
 def enrich_partial_rdf_with_imjoy_plugin(
-    partial_rdf: Dict[str, Any],
-    root: Union[HttpUrl, DirectoryPath],
+    partial_rdf: dict[str, Any],
+    root: HttpUrl | DirectoryPath,
     resolve_rdf_source: Callable[
-        [Union[HttpUrl, FilePath, str]],
-        Tuple[Dict[str, Any], str, Union[HttpUrl, DirectoryPath]],
+        [HttpUrl | FilePath | str],
+        tuple[dict[str, Any], str, HttpUrl | DirectoryPath],
     ],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     a (partial) rdf may have 'rdf_source' or 'source' which resolve to rdf data that may be overwritten.
     """
 
-    enriched_rdf: Dict[str, Any] = {}
+    enriched_rdf: dict[str, Any] = {}
     if "rdf_source" in partial_rdf:
         given_rdf_src = partial_rdf["rdf_source"]
         if isinstance(given_rdf_src, str) and given_rdf_src.split("?")[0].endswith(
@@ -212,7 +213,7 @@ def enrich_partial_rdf_with_imjoy_plugin(
         else:
             # given_rdf_src is an actual rdf
             if isinstance(given_rdf_src, dict):
-                rdf_source: Dict[str, Any] = given_rdf_src
+                rdf_source: dict[str, Any] = given_rdf_src
             else:
                 try:
                     rdf_source, _, rdf_source_root = resolve_rdf_source(given_rdf_src)

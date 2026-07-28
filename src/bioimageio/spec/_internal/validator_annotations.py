@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Any, Type
+from typing import Any
 
 import annotated_types
 from pydantic import GetCoreSchemaHandler, functional_validators
@@ -35,7 +37,7 @@ class RestrictCharacters:
     alphabet: str
 
     def __get_pydantic_core_schema__(
-        self, source: Type[Any], handler: GetCoreSchemaHandler
+        self, source: type[Any], handler: GetCoreSchemaHandler
     ) -> CoreSchema:
         if not self.alphabet:
             raise ValueError("Alphabet may not be empty")

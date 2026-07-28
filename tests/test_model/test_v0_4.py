@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from datetime import datetime, timezone
-from typing import Any, Dict, Union
+from typing import Any
 
 import pytest
 from pydantic import ValidationError
@@ -46,7 +48,7 @@ def test_linked_model_lala():
         {"id": "lala", "uri": "https://example.com"},
     ],
 )
-def test_linked_model_invalid(kwargs: Dict[str, Any]):
+def test_linked_model_invalid(kwargs: dict[str, Any]):
     check_node(LinkedModel, kwargs, is_invalid=True)
 
 
@@ -71,7 +73,7 @@ def test_linked_model_invalid(kwargs: Dict[str, Any]):
         ),
     ],
 )
-def test_onnx_entry(kwargs: Dict[str, Any], expected: Union[Dict[str, Any], bool]):
+def test_onnx_entry(kwargs: dict[str, Any], expected: dict[str, Any] | bool):
     check_node(
         OnnxWeightsDescr,
         kwargs,
@@ -140,12 +142,12 @@ INVALID_PRE_AND_POSTPROCESSING = [
         },
     ],
 )
-def test_preprocessing(kwargs: Dict[str, Any]):
+def test_preprocessing(kwargs: dict[str, Any]):
     check_type(PreprocessingDescr, kwargs, expected_deserialized=kwargs)
 
 
 @pytest.mark.parametrize("kwargs", INVALID_PRE_AND_POSTPROCESSING)
-def test_invalid_preprocessing(kwargs: Dict[str, Any]):
+def test_invalid_preprocessing(kwargs: dict[str, Any]):
     check_type(PreprocessingDescr, kwargs, is_invalid=True)
 
 
@@ -172,7 +174,7 @@ def test_invalid_preprocessing(kwargs: Dict[str, Any]):
         },
     ],
 )
-def test_postprocessing(kwargs: Dict[str, Any]):
+def test_postprocessing(kwargs: dict[str, Any]):
     check_type(PostprocessingDescr, kwargs, expected_deserialized=kwargs)
 
 
@@ -197,7 +199,7 @@ def test_postprocessing(kwargs: Dict[str, Any]):
         ),
     ],
 )
-def test_postprocessing_node_input(node: Any, expected: Dict[str, Any]):
+def test_postprocessing_node_input(node: Any, expected: dict[str, Any]):
     check_type(PostprocessingDescr, node, expected_deserialized=expected)
 
 
@@ -209,7 +211,7 @@ def test_postprocessing_node_input(node: Any, expected: Dict[str, Any]):
         {"name": "scale_mean_variance", "kwargs": {"mode": "per_dataset"}},
     ],
 )
-def test_invalid_postprocessing(kwargs: Dict[str, Any]):
+def test_invalid_postprocessing(kwargs: dict[str, Any]):
     check_type(PostprocessingDescr, kwargs, is_invalid=True)
 
 
@@ -226,7 +228,7 @@ def test_invalid_postprocessing(kwargs: Dict[str, Any]):
         ({"offset": 0.0}, False),
     ],
 )
-def test_scale_linear_kwargs(kwargs: Dict[str, Any], valid: bool):
+def test_scale_linear_kwargs(kwargs: dict[str, Any], valid: bool):
     check_node(ScaleLinearKwargs, kwargs, is_invalid=not valid)
 
 
@@ -266,7 +268,7 @@ def test_scale_linear_kwargs(kwargs: Dict[str, Any], valid: bool):
         },
     ],
 )
-def test_input_tensor(kwargs: Dict[str, Any]):
+def test_input_tensor(kwargs: dict[str, Any]):
     check_node(InputTensorDescr, kwargs)
 
 
@@ -306,7 +308,7 @@ def test_input_tensor(kwargs: Dict[str, Any]):
         },
     ],
 )
-def test_output_tensor(kwargs: Dict[str, Any]):
+def test_output_tensor(kwargs: dict[str, Any]):
     check_node(OutputTensorDescr, kwargs)
 
 
@@ -382,7 +384,7 @@ def model_data():
         },
     ],
 )
-def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
+def test_model(model_data: dict[str, Any], update: dict[str, Any]):
     model_data.update(update)
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
@@ -390,7 +392,7 @@ def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
     assert summary.status == "valid-format", summary.display()
 
 
-def test_warn_long_name(model_data: Dict[str, Any]):
+def test_warn_long_name(model_data: dict[str, Any]):
     model_data["name"] = (
         "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
     )
@@ -402,7 +404,7 @@ def test_warn_long_name(model_data: Dict[str, Any]):
     assert summary.details[1].warnings[0].msg == "Name longer than 64 characters."
 
 
-def test_model_schema_raises_invalid_input_name(model_data: Dict[str, Any]):
+def test_model_schema_raises_invalid_input_name(model_data: dict[str, Any]):
     model_data["inputs"][0]["name"] = "invalid/name"
     summary = validate_format(
         model_data,
@@ -413,7 +415,7 @@ def test_model_schema_raises_invalid_input_name(model_data: Dict[str, Any]):
     assert summary.status == "failed", summary.display()
 
 
-def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
+def test_output_fixed_shape_too_small(model_data: dict[str, Any]):
     model_data["outputs"] = [
         {
             "name": "output_1",
@@ -434,7 +436,7 @@ def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
     assert summary.status == "failed", summary.display()
 
 
-def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
+def test_output_ref_shape_mismatch(model_data: dict[str, Any]):
     model_data["outputs"] = [
         {
             "name": "output_1",
@@ -458,7 +460,7 @@ def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
     assert summary.status == "failed", summary.display()
 
 
-def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
+def test_output_ref_shape_too_small(model_data: dict[str, Any]):
     model_data["outputs"] = [
         {
             "name": "output_1",
@@ -482,7 +484,7 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
     assert summary.status == "failed", summary.display()
 
 
-def test_model_has_parent_with_id(model_data: Dict[str, Any]):
+def test_model_has_parent_with_id(model_data: dict[str, Any]):
     model_data["parent"] = {"id": "10.5281/zenodo.5764892"}
     summary = validate_format(
         model_data,
@@ -493,7 +495,7 @@ def test_model_has_parent_with_id(model_data: Dict[str, Any]):
     assert summary.status == "valid-format", summary.display()
 
 
-def test_model_with_expanded_output(model_data: Dict[str, Any]):
+def test_model_with_expanded_output(model_data: dict[str, Any]):
     model_data["outputs"] = [
         {
             "name": "output_1",
@@ -517,7 +519,7 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
     assert summary.status == "valid-format", summary.display()
 
 
-def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
+def test_model_rdf_is_valid_general_rdf(model_data: dict[str, Any]):
     model_data["type"] = "model_as_generic"
     model_data["format_version"] = "0.2.4"
     summary = validate_format(
@@ -529,7 +531,7 @@ def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
     assert summary.status == "valid-format", summary.display()
 
 
-def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
+def test_model_does_not_accept_unknown_fields(model_data: dict[str, Any]):
     model_data["unknown_additional_field"] = "shouldn't be here"
     summary = validate_format(
         model_data,

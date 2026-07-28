@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from types import ModuleType
-from typing import Any, Dict, Mapping
+from typing import Any, Mapping
 
 import pytest
 
@@ -123,7 +125,7 @@ GENERIC_v0_3_MEMBERS = get_members(generic.v0_3)
     ],
 )
 def test_specific_module_has_all_generic_symbols(
-    generic_members: Dict[str, Any], specific: ModuleType
+    generic_members: dict[str, Any], specific: ModuleType
 ):
     members = get_members(specific)
     missing = {k for k in generic_members if k not in members}

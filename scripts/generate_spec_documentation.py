@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from pprint import pformat
 from types import ModuleType
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Type, get_args
+from typing import Any, Iterator, Tuple, get_args
 
 from pydantic.alias_generators import to_pascal, to_snake
 from pydantic.fields import FieldInfo
@@ -85,7 +85,7 @@ def anchor_tag(heading: str):
     return "#" + a.replace(" ", "-")
 
 
-def get_subnodes(loc: Loc, annotation: Any) -> Iterator[Tuple[Loc, Type[Node]]]:
+def get_subnodes(loc: Loc, annotation: Any) -> Iterator[tuple[Loc, type[Node]]]:
     try:
         is_node = issubclass(annotation, Node)
     except TypeError:
@@ -110,10 +110,10 @@ class AnnotationName:
     footnotes: OrderedDict[str, str]
     full_maybe_multiline: str = field(init=False)
     full_inline: str = field(init=False)
-    abbreviated: Optional[str] = field(init=False)
+    abbreviated: str | None = field(init=False)
     kind: str = field(init=False)
 
-    annotation_map: Dict[str, str]
+    annotation_map: dict[str, str]
 
     def __post_init__(self):
         self.full_maybe_multiline = self.get_name(
@@ -264,7 +264,7 @@ class Field:
         *,
         footnotes: OrderedDict[str, str],
         rd_class: type[ResourceDescr],
-        all_examples: List[Tuple[str, List[Any]]],
+        all_examples: list[tuple[str, list[Any]]],
     ) -> None:
         super().__init__()
         assert loc
@@ -400,7 +400,7 @@ class Field:
 
 
 def get_documentation_file_name(
-    rd_class: Type[ResourceDescr], *, latest: bool = False, minor: bool = False
+    rd_class: type[ResourceDescr], *, latest: bool = False, minor: bool = False
 ):
     assert not (latest and minor)
     typ = to_snake(rd_class.__name__)
@@ -414,9 +414,9 @@ def get_documentation_file_name(
     return f"{typ}_{v}.md"
 
 
-def export_documentation(folder: Path, rd_class: Type[ResourceDescr]) -> Path:
+def export_documentation(folder: Path, rd_class: type[ResourceDescr]) -> Path:
     footnotes: OrderedDict[str, str] = OrderedDict()
-    all_examples: List[Tuple[str, List[Any]]] = []
+    all_examples: list[tuple[str, list[Any]]] = []
     md = (
         "# "
         + (rd_class.model_config.get("title") or "")
@@ -435,7 +435,7 @@ def export_documentation(folder: Path, rd_class: Type[ResourceDescr]) -> Path:
         if fn not in ("type", "format_version")
     ]
 
-    def field_sort_key(fn_info: Tuple[str, FieldInfo]) -> Tuple[bool, str]:
+    def field_sort_key(fn_info: tuple[str, FieldInfo]) -> tuple[bool, str]:
         fn, info = fn_info
         return (
             info.get_default(call_default_factory=True) is not PydanticUndefined,

@@ -1,4 +1,6 @@
-from typing import Any, ClassVar, Type
+from __future__ import annotations
+
+from typing import Any, ClassVar
 
 import annotated_types
 import pytest
@@ -10,7 +12,7 @@ def test_valid_validated_string():
     from bioimageio.spec._internal.validated_string import ValidatedString
 
     class V(ValidatedString):
-        root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+        root_model: ClassVar[type[RootModel[Any]]] = RootModel[
             Annotated[str, annotated_types.Predicate(str.islower)]
         ]
 

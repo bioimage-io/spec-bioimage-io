@@ -1,4 +1,5 @@
 """utils to test bioimageio.spec"""
+from __future__ import annotations
 
 import os
 from contextlib import nullcontext
@@ -9,13 +10,9 @@ from typing import (
     Any,
     Collection,
     ContextManager,
-    Dict,
     Mapping,
-    Optional,
     Protocol,
     Sequence,
-    Type,
-    Union,
 )
 from zipfile import ZipFile
 
@@ -52,10 +49,10 @@ expensive_test = pytest.mark.skipif(
 
 
 def check_node(
-    node_class: Type[Node],
-    kwargs: Union[Dict[str, Any], Node],
+    node_class: type[Node],
+    kwargs: dict[str, Any] | Node,
     *,
-    context: Optional[ValidationContext] = None,
+    context: ValidationContext | None = None,
     expected_dump_json: Any = unset,
     expected_dump_python: Any = unset,
     is_invalid: bool = False,
@@ -87,7 +84,7 @@ class DummyNodeBase(Node):
 
 
 def check_type(
-    type_: Union[Any, Type[Any]],
+    type_: Any | type[Any],
     value: Any,
     expected: Any = unset,
     expected_root: Any = unset,
@@ -142,15 +139,15 @@ def check_type(
 
 
 def check_bioimageio_yaml(
-    source: Union[Path, HttpUrl],
+    source: Path | HttpUrl,
     /,
     *,
-    sha: Optional[Sha256] = None,
-    root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path(),
+    sha: Sha256 | None = None,
+    root: RootHttpUrl | DirectoryPath | ZipFile = Path(),
     as_latest: bool,
     exclude_fields_from_roundtrip: Collection[str] = set(),
     is_invalid: bool = False,
-    bioimageio_json_schema: Optional[Mapping[Any, Any]],
+    bioimageio_json_schema: Mapping[Any, Any] | None,
     perform_io_checks: bool = True,
 ) -> None:
     opened_yaml = open_bioimageio_yaml(source, sha256=sha)
@@ -220,8 +217,8 @@ def check_bioimageio_yaml(
 
 
 def assert_rdf_dict_equal(
-    actual: Dict[Any, Any],
-    expected: Dict[Any, Any],
+    actual: dict[Any, Any],
+    expected: dict[Any, Any],
     msg: str = "",
     *,
     ignore_known_rdf_diffs: bool = False,

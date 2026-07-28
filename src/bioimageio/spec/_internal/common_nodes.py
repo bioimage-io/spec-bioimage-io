@@ -11,16 +11,11 @@ from typing import (
     Any,
     Callable,
     ClassVar,
-    Dict,
     Iterable,
-    List,
     Literal,
     Mapping,
-    Optional,
     Protocol,
-    Tuple,
     TypeVar,
-    Union,
 )
 from zipfile import ZipFile
 
@@ -62,7 +57,7 @@ class NodeWithExplicitlySetFields(Node):
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any) -> None:
-        explict_fields: Dict[str, Any] = {}
+        explict_fields: dict[str, Any] = {}
         for attr in dir(cls):
             if attr.startswith("implemented_"):
                 field_name = attr.replace("implemented_", "")
@@ -81,8 +76,8 @@ class NodeWithExplicitlySetFields(Node):
     @model_validator(mode="before")
     @classmethod
     def _set_fields_explicitly(
-        cls, data: Union[Any, Dict[str, Any]]
-    ) -> Union[Any, Dict[str, Any]]:
+        cls, data: Any | dict[str, Any]
+    ) -> Any | dict[str, Any]:
         if isinstance(data, dict):
             for name, default in cls._fields_to_set_explicitly.items():
                 if name not in data:
@@ -118,9 +113,9 @@ class ResourceDescrBase(
 ):
     """base class for all resource descriptions"""
 
-    _validation_summary: Optional[ValidationSummary] = None
+    _validation_summary: ValidationSummary | None = None
 
-    implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
+    implemented_format_version_tuple: ClassVar[tuple[int, int, int]]
 
     # @field_validator("format_version", mode="before", check_fields=False)
     # field_validator on "format_version" is not possible, because we want to use
@@ -187,21 +182,21 @@ class ResourceDescrBase(
         assert self._validation_summary is not None, "access only after initialization"
         return self._validation_summary
 
-    _root: Union[RootHttpUrl, DirectoryPath, ZipFile] = PrivateAttr(
+    _root: RootHttpUrl | DirectoryPath | ZipFile = PrivateAttr(
         default_factory=lambda: get_validation_context().root
     )
 
-    _file_name: Optional[FileName] = PrivateAttr(
+    _file_name: FileName | None = PrivateAttr(
         default_factory=lambda: get_validation_context().file_name
     )
 
     @property
-    def root(self) -> Union[RootHttpUrl, DirectoryPath, ZipFile]:
+    def root(self) -> RootHttpUrl | DirectoryPath | ZipFile:
         """The URL/Path prefix to resolve any relative paths with."""
         return self._root
 
     @property
-    def file_name(self) -> Optional[FileName]:
+    def file_name(self) -> FileName | None:
         """File name of the bioimageio.yaml file the description was loaded from."""
         return self._file_name
 
@@ -222,10 +217,10 @@ class ResourceDescrBase(
     @classmethod
     def load_from_kwargs(
         cls: Callable[P, T],
-        context: Optional[ValidationContext] = None,
+        context: ValidationContext | None = None,
         *args: P.args,
         **kwargs: P.kwargs,
-    ) -> Union[T, InvalidDescr]:
+    ) -> T | InvalidDescr:
         sig = signature(cls)
         bound = sig.bind_partial(*args, **kwargs)
         return cls.load(dict(bound.arguments), context=context)  # pyright: ignore[reportFunctionMemberAccess]
@@ -234,8 +229,8 @@ class ResourceDescrBase(
     def load(
         cls,
         data: IncompleteDescrView,
-        context: Optional[ValidationContext] = None,
-    ) -> Union[Self, InvalidDescr]:
+        context: ValidationContext | None = None,
+    ) -> Self | InvalidDescr:
         """factory method to create a resource description object"""
 
         context = context or get_validation_context()
@@ -278,7 +273,7 @@ class ResourceDescrBase(
         given = self.model_dump(mode="json", exclude_unset=True, exclude_defaults=False)
         full = self.model_dump(mode="json", exclude_unset=False, exclude_defaults=False)
 
-        def extract_flat_keys(d: Dict[Any, Any], key: str = "") -> Iterable[str]:
+        def extract_flat_keys(d: dict[Any, Any], key: str = "") -> Iterable[str]:
             for k, v in d.items():
                 if is_dict(v):
                     yield from extract_flat_keys(v, key=f"{key}.{k}" if key else k)
@@ -293,10 +288,10 @@ class ResourceDescrBase(
     @classmethod
     def _load_impl(
         cls, data: IncompleteDescr
-    ) -> Tuple[Union[Self, InvalidDescr], List[ErrorEntry], List[WarningEntry]]:
-        rd: Union[Self, InvalidDescr, None] = None
-        val_errors: List[ErrorEntry] = []
-        val_warnings: List[WarningEntry] = []
+    ) -> tuple[Self | InvalidDescr, list[ErrorEntry], list[WarningEntry]]:
+        rd: Self | InvalidDescr | None = None
+        val_errors: list[ErrorEntry] = []
+        val_warnings: list[WarningEntry] = []
 
         context = get_validation_context()
         try:
@@ -365,7 +360,7 @@ class ResourceDescrBase(
 
     def package(
         self,
-        dest: Optional[Union[ZipFile, IO[bytes], Path, str]] = None,
+        dest: ZipFile | IO[bytes] | Path | str | None = None,
         /,
         local_files_only: bool = False,
     ) -> ZipFile:
@@ -398,9 +393,9 @@ class ResourceDescrBase(
 
     def get_package_content(
         self, local_files_only: bool = False
-    ) -> Dict[FileName, Union[FileDescr, BioimageioYamlContent]]:
+    ) -> dict[FileName, FileDescr | BioimageioYamlContent]:
         """Returns package content without creating the package."""
-        content: Dict[FileName, FileDescr] = {}
+        content: dict[FileName, FileDescr] = {}
         with PackagingContext(
             bioimageio_yaml_file_name=BIOIMAGEIO_YAML,
             file_sources=content,
@@ -434,9 +429,9 @@ class InvalidDescr(
     else:
         format_version: Any
 
-    def get_reason(self) -> Optional[str]:
+    def get_reason(self) -> str | None:
         """Get the reason why the description is invalid, if available."""
-        reasons: List[str] = []
+        reasons: list[str] = []
         if self.validation_summary and self.validation_summary.details:
             for detail in self.validation_summary.details:
                 if detail.status == "failed" and detail.errors:

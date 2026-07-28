@@ -1,9 +1,9 @@
 """Generate the code reference pages.
 (adapted from https://mkdocstrings.github.io/recipes/#bind-pages-to-sections-themselves)
 """
+from __future__ import annotations
 
 from pathlib import Path
-from typing import Set
 
 import mkdocs_gen_files
 
@@ -13,7 +13,7 @@ root = Path(__file__).parent.parent
 src = root / "src"
 
 # Track flat nav entries we have added
-added_nav_labels: Set[str] = set()
+added_nav_labels: set[str] = set()
 
 for path in sorted(src.rglob("*.py")):
     module_path = path.relative_to(src).with_suffix("")

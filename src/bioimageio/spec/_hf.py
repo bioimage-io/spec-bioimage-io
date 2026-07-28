@@ -6,7 +6,6 @@ import warnings
 from contextlib import nullcontext
 from functools import cache
 from pathlib import Path
-from typing import Optional, Union
 
 from loguru import logger
 
@@ -29,9 +28,9 @@ def push_to_hub(
     descr: ModelDescr,
     username_or_org: str,
     *,
-    prep_dir: Optional[Union[os.PathLike[str], str]] = None,
+    prep_dir: os.PathLike[str] | str | None = None,
     prep_only_no_upload: bool = False,
-    create_pr: Optional[bool] = None,
+    create_pr: bool | None = None,
 ):
     """Push the model package described by `descr` to the Hugging Face Hub.
 
@@ -104,7 +103,7 @@ def _push_to_hub_impl(
     repo_id: str,
     prep_dir: Path,
     prep_only: bool,
-    create_pr: Optional[bool],
+    create_pr: bool | None,
 ):
     readme, referenced_files = create_huggingface_model_card(descr, repo_id=repo_id)
     referenced_files_subfolders = {"images"}

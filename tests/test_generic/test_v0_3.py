@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path, PurePath
-from typing import Any, Dict, Sequence, Union
+from typing import Any, Sequence, Union
 
 import pytest
 from pydantic import (
@@ -55,7 +55,7 @@ EXAMPLE_COM_FILE = "https://example.com/file"
         },
     ],
 )
-def test_generic_valid(kwargs: Dict[str, Any]):
+def test_generic_valid(kwargs: dict[str, Any]):
     check_node(GenericDescr, kwargs, context=ValidationContext(perform_io_checks=False))
 
 
@@ -97,7 +97,7 @@ def test_generic_valid(kwargs: Dict[str, Any]):
         ),
     ],
 )
-def test_generic_invalid(kwargs: Dict[str, Any], context: ValidationContext):
+def test_generic_invalid(kwargs: dict[str, Any], context: ValidationContext):
     check_node(GenericDescr, kwargs, context=context, is_invalid=True)
 
 
@@ -141,7 +141,7 @@ with ValidationContext(perform_io_checks=False):
     text_md_url = HttpUrl("https://example.com/text.md")
 
 
-def validate_md_suffix(value: Union[AbsoluteFilePath, RelativeFilePath, HttpUrl]):
+def validate_md_suffix(value: AbsoluteFilePath | RelativeFilePath | HttpUrl):
     return validate_suffix(value, ".md", case_sensitive=True)
 
 
@@ -179,7 +179,7 @@ _type_adapters_for_url: Sequence[TypeAdapter[Any]] = (
     [(UNET2D_ROOT / "README.md", a) for a in _type_adapters_for_path]
     + [(text_md_url, a) for a in _type_adapters_for_url],
 )
-def test_with_suffix(src: Union[Path, HttpUrl], adapter: TypeAdapter[Any]):
+def test_with_suffix(src: Path | HttpUrl, adapter: TypeAdapter[Any]):
     with ValidationContext(perform_io_checks=False):
         valid = adapter.validate_python(src)
 

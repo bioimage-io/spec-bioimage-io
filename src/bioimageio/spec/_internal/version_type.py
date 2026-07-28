@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Tuple, Union
+from typing import Any, Union
 
 import packaging.version
 from pydantic import PrivateAttr, RootModel
@@ -53,7 +53,7 @@ class Version(RootModel[Union[str, int, float]]):
         return self._version.epoch
 
     @property
-    def release(self) -> Tuple[int, ...]:
+    def release(self) -> tuple[int, ...]:
         """The components of the "release" segment of the version.
 
         >>> Version("1.2.3").release
@@ -69,7 +69,7 @@ class Version(RootModel[Union[str, int, float]]):
         return self._version.release
 
     @property
-    def pre(self) -> Optional[Tuple[str, int]]:
+    def pre(self) -> tuple[str, int] | None:
         """The pre-release segment of the version.
 
         >>> print(Version("1.2.3").pre)
@@ -84,7 +84,7 @@ class Version(RootModel[Union[str, int, float]]):
         return self._version.pre
 
     @property
-    def post(self) -> Optional[int]:
+    def post(self) -> int | None:
         """The post-release number of the version.
 
         >>> print(Version("1.2.3").post)
@@ -95,7 +95,7 @@ class Version(RootModel[Union[str, int, float]]):
         return self._version.post
 
     @property
-    def dev(self) -> Optional[int]:
+    def dev(self) -> int | None:
         """The development number of the version.
 
         >>> print(Version("1.2.3").dev)
@@ -106,7 +106,7 @@ class Version(RootModel[Union[str, int, float]]):
         return self._version.dev
 
     @property
-    def local(self) -> Optional[str]:
+    def local(self) -> str | None:
         """The local version segment of the version.
 
         >>> print(Version("1.2.3").local)

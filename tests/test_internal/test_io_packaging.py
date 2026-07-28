@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Dict
 
 
 def test_package_file_descr():
@@ -16,7 +17,7 @@ def test_package_file_descr():
     my_obj_serialized = my_obj.model_dump(mode="json", exclude_none=True)
     assert my_obj_serialized["important_file"]["source"] == str(Path(__file__))
 
-    file_sources: Dict[FileName, FileDescr] = {}
+    file_sources: dict[FileName, FileDescr] = {}
     with PackagingContext(
         bioimageio_yaml_file_name="bioimageio.yaml", file_sources=file_sources
     ):

@@ -1,4 +1,6 @@
-from typing import Any, ClassVar, Type
+from __future__ import annotations
+
+from typing import Any, ClassVar
 
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, RootModel
 from pydantic.json_schema import JsonSchemaValue
@@ -10,7 +12,7 @@ from typing_extensions import Self
 
 
 class ValidatedString(str):
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[str]
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[str]
     """the pydantic root model to validate the string"""
     # TODO: should we use a TypeAdapter instead?
     # TODO: with future py version:  RootModel[Any] -> RootModel[str | "literal string type"]

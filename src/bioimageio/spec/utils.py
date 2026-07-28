@@ -1,8 +1,9 @@
 """Utility functions for bioimage.io specifications (mostly IO)."""
+from __future__ import annotations
 
 import json
 import shutil
-from typing import TYPE_CHECKING, Any, Dict, List, TypedDict, Union
+from typing import TYPE_CHECKING, Any, TypedDict
 
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from loguru import logger
@@ -48,7 +49,7 @@ class SpdxLicenseEntry(TypedDict):
 
 class SpdxLicenses(TypedDict):
     licenseListVersion: str
-    licenses: List[SpdxLicenseEntry]
+    licenses: list[SpdxLicenseEntry]
     releaseDate: str
 
 
@@ -62,7 +63,7 @@ def get_spdx_licenses() -> SpdxLicenses:
         return json.load(f)
 
 
-def get_bioimageio_json_schema() -> Dict[str, Any]:
+def get_bioimageio_json_schema() -> dict[str, Any]:
     """get the bioimageio specification as a JSON schema"""
     with (
         files("bioimageio.spec")
@@ -73,8 +74,8 @@ def get_bioimageio_json_schema() -> Dict[str, Any]:
 
 
 def load_image(
-    source: Union[FileDescr, ZipPath, PermissiveFileSource],
-) -> "NDArray[Any] | dask.array.Array":
+    source: FileDescr | ZipPath | PermissiveFileSource,
+) -> NDArray[Any] | dask.array.Array:
     """load a single image as numpy array
 
     Args:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Type
+from typing import Any
 
 import pytest
 
@@ -162,7 +162,7 @@ EXAMPLE_COM = "https://example.com/"
         ),
     ],
 )
-def test_node(node_class: Type[Node], kwargs: Dict[str, Any], is_valid: bool):
+def test_node(node_class: type[Node], kwargs: dict[str, Any], is_valid: bool):
     check_node(
         node_class,
         kwargs,

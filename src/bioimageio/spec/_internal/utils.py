@@ -11,12 +11,7 @@ from typing import (
     Callable,
     Dict,
     Iterable,
-    List,
-    Set,
-    Tuple,
-    Type,
     TypeVar,
-    Union,
 )
 
 import pydantic
@@ -25,7 +20,7 @@ from ruyaml import Optional
 from typing_extensions import ParamSpec
 
 if sys.version_info < (3, 10):  # pragma: no cover
-    SLOTS: Dict[str, bool] = {}
+    SLOTS: dict[str, bool] = {}
 else:
     SLOTS = {"slots": True}
 
@@ -47,7 +42,7 @@ else:
     from importlib.resources import files as files
 
 
-def get_format_version_tuple(format_version: Any) -> Optional[Tuple[int, int, int]]:
+def get_format_version_tuple(format_version: Any) -> Optional[tuple[int, int, int]]:
     if (
         not isinstance(format_version, str)
         or format_version.count(".") != 2
@@ -60,10 +55,10 @@ def get_format_version_tuple(format_version: Any) -> Optional[Tuple[int, int, in
     return parsed
 
 
-def nest_dict(flat_dict: Dict[Tuple[K, ...], V]) -> NestedDict[K, V]:
+def nest_dict(flat_dict: dict[tuple[K, ...], V]) -> NestedDict[K, V]:
     res: NestedDict[K, V] = {}
     for k, v in flat_dict.items():
-        node: Union[Dict[K, Union[NestedDict[K, V], V]], NestedDict[K, V]] = res
+        node: dict[K, NestedDict[K, V] | V] | NestedDict[K, V] = res
         for kk in k[:-1]:
             if not isinstance(node, dict):
                 raise ValueError(f"nesting level collision for flat key {k} at {kk}")
@@ -82,8 +77,8 @@ FirstK = TypeVar("FirstK")
 
 
 def nest_dict_with_narrow_first_key(
-    flat_dict: Dict[Tuple[K, ...], V], first_k: Type[FirstK]
-) -> Dict[FirstK, NestedDict[K, V] | V]:
+    flat_dict: dict[tuple[K, ...], V], first_k: type[FirstK]
+) -> dict[FirstK, NestedDict[K, V] | V]:
     """convenience function to annotate a special version of a NestedDict.
     Root level keys are of a narrower type than the nested keys. If not a ValueError is raisd.
     """
@@ -120,7 +115,7 @@ def assert_all_params_set_explicitly(fn: Callable[P, T]) -> Callable[P, T]:
     @wraps(fn)
     def wrapper(*args: P.args, **kwargs: P.kwargs):
         n_args = len(args)
-        missing: Set[str] = set()
+        missing: set[str] = set()
 
         for p in signature(fn).parameters.values():
             if p.kind == p.POSITIONAL_ONLY:
@@ -214,7 +209,7 @@ def _try_all(
     raise_last_only: bool,
     *args: P.args,
     **kwargs: P.kwargs,
-) -> Tuple[Union[_AllFailedSentinel, T], List[Exception]]:
+) -> tuple[_AllFailedSentinel | T, list[Exception]]:
     """Try to call each of the functions `funcs` with the given arguments.
 
     If all raise, raise an exception group (or the last).
@@ -222,7 +217,7 @@ def _try_all(
     Returns:
         Result of the first successful call.
     """
-    errors: List[Exception] = []
+    errors: list[Exception] = []
     for c in funcs:
         try:
             return c(*args, **kwargs), []

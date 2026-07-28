@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import collections.abc
 import warnings
 from pathlib import Path
-from typing import Optional, TextIO, Union
+from typing import TextIO
 from zipfile import ZipFile
 
 from ._description import (
@@ -21,19 +23,13 @@ from ._package import save_bioimageio_package, save_bioimageio_package_as_folder
 
 
 def update_format(
-    source: Union[
-        ResourceDescr,
-        PermissiveFileSource,
-        ZipFile,
-        BioimageioYamlContent,
-        InvalidDescr,
-    ],
+    source: ResourceDescr | PermissiveFileSource | ZipFile | BioimageioYamlContent | InvalidDescr,
     /,
     *,
-    output: Union[Path, TextIO, None] = None,
+    output: Path | TextIO | None = None,
     exclude_defaults: bool = True,
-    perform_io_checks: Optional[bool] = None,
-) -> Union[LatestResourceDescr, InvalidDescr]:
+    perform_io_checks: bool | None = None,
+) -> LatestResourceDescr | InvalidDescr:
     """Update a resource description.
 
     Notes:
@@ -90,9 +86,9 @@ def update_format(
 
 
 def update_hashes(
-    source: Union[PermissiveFileSource, ZipFile, ResourceDescr, BioimageioYamlContent],
+    source: PermissiveFileSource | ZipFile | ResourceDescr | BioimageioYamlContent,
     /,
-) -> Union[ResourceDescr, InvalidDescr]:
+) -> ResourceDescr | InvalidDescr:
     """Update hash values of the files referenced in **source**."""
     if isinstance(source, ResourceDescrBase):
         root = source.root

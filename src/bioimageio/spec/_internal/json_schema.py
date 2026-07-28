@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import difflib
 import re
-from typing import Any, Dict, Optional, Tuple
+from typing import Any
 
 from loguru import logger
 from pydantic import ConfigDict
@@ -11,7 +13,7 @@ from .type_guards import is_dict, is_list
 
 
 def _patch_desccription(
-    json_schema: Dict[str, Any], path: Tuple[str, ...] = ()
+    json_schema: dict[str, Any], path: tuple[str, ...] = ()
 ) -> None:
     """Patch descriptions:
 
@@ -35,8 +37,8 @@ def _patch_desccription(
 
 
 def generate_json_schema(
-    type_format: Optional[Tuple[str, str]] = None,
-) -> Dict[str, Any]:
+    type_format: tuple[str, str] | None = None,
+) -> dict[str, Any]:
     """generate the bioimageio specification as a JSON schema"""
     from pydantic import TypeAdapter
 
