@@ -43,6 +43,7 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = [
+    "dask[array]",
     "deepdiff",
     "devtools",
     "griffe-inherited-docstrings",
