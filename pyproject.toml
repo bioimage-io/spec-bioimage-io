@@ -102,7 +102,7 @@ exclude = [
     "bioimageio_cache",
     "tests/old_*",
 ]
-include = ["src", "scripts", "tests"]
+include = ["src", "tests"]
 pythonPlatform = "All"
 pythonVersion = "3.8"
 reportDuplicateImport = "error"
