@@ -8,12 +8,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from pprint import pformat
 from types import ModuleType
-from typing import Any, get_args
+from typing import Any, TypeAlias, get_args
 
 from pydantic.alias_generators import to_pascal, to_snake
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
-from typing_extensions import TypeAlias
 
 from bioimageio.spec import (
     ResourceDescr,
