@@ -14,8 +14,7 @@ from typing import (
     Final,
     ForwardRef,
     Literal,
-    Type,
-    Union,
+    TypeAlias,
     cast,
     final,
 )
@@ -28,7 +27,7 @@ from annotated_types import Predicate
 from pydantic import BaseModel
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined, PydanticUndefinedType
-from typing_extensions import TypeAlias, TypeAliasType, assert_never
+from typing_extensions import TypeAliasType, assert_never
 
 from bioimageio.spec._internal.io import YamlValue, is_yaml_leaf_value, is_yaml_value
 from bioimageio.spec._internal.validated_string import ValidatedString
@@ -97,7 +96,7 @@ class Example:
             return Example(value=yaml_value)
         try:
             # FIXME: stricter typing here?
-            val_type = cast(Type[Any], type(val))
+            val_type = cast(type[Any], type(val))
             adapter = pydantic.TypeAdapter(val_type)
             dumped_value = json.loads(adapter.dump_json(val))
             return Example(value=dumped_value)
@@ -128,6 +127,7 @@ def get_field_annotation(field_info: FieldInfo) -> Any:
             field_info.metadata
         )
         return out
+
     else:
         return field_info.annotation
 
@@ -682,11 +682,7 @@ class MappingHint(Hint):
             return Unrecognized(raw_hint)
         type_args: tuple[type[Any], type[Any]] = raw_hint.__args__
         key_type = type_args[0]
-        if (
-            key_type is not str
-            and key_type is not int
-            and key_type != typing.Union[int, str]
-        ):
+        if key_type is not str and key_type is not int and key_type != int | str:
             return ParsingError(
                 f"Mappings with keys that are not ints or strings is not supported yet: {raw_hint}"
             )
@@ -926,9 +922,7 @@ class ModelHint(Hint):
         )
 
 
-PrimitiveType: TypeAlias = Union[
-    Type[int], Type[float], Type[bool], Type[str], Type[None]
-]
+PrimitiveType: TypeAlias = type[int] | type[float] | type[bool] | type[str] | type[None]
 
 
 class PrimitiveHint(Hint):
@@ -984,7 +978,7 @@ def is_tuple_hint(
 ) -> bool:  # FIXME: can't use TypeGuard[types.GenericAlias] in py 3.8
     if inspect.isclass(hint) and hint.__name__ == "tuple":
         return True
-    if issubclass(type(hint), type(typing.Tuple[int, str])):
+    if issubclass(type(hint), type(tuple[int, str])):
         return any_is_subclass(getattr(hint, "__origin__", None), tuple)
     return False
 
@@ -1217,7 +1211,7 @@ class UnionHint(Hint):
         parent_raw_hints: Sequence[Any],
         discriminator: pydantic.Discriminator | None = None,
     ) -> UnionHint | Unrecognized | ParsingError:
-        some_dummy_union = Union[int, str]
+        some_dummy_union = int | str
         if raw_hint.__class__ != some_dummy_union.__class__:
             return Unrecognized(raw_hint=raw_hint)
 

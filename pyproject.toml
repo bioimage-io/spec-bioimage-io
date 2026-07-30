@@ -145,6 +145,9 @@ exclude = [
     "scripts/pdoc/patched.py",
 ]
 
+[tool.ruff.per-file-target-version]
+"scripts/*.py" = "py310"
+
 [tool.ruff.lint]
 extend-select = ["NPY201", "E402"]
 ignore = ["PLC0414", "TRY004", "BLE001"]

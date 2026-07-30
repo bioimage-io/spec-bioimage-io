@@ -3,15 +3,17 @@ from __future__ import annotations
 import shutil
 from argparse import ArgumentParser
 from collections import OrderedDict
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 from pprint import pformat
 from types import ModuleType
-from typing import Any, Iterator, Tuple, get_args
+from typing import Any, get_args
 
 from pydantic.alias_generators import to_pascal, to_snake
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
+from typing_extensions import TypeAlias
 
 from bioimageio.spec import (
     ResourceDescr,
@@ -24,7 +26,7 @@ from bioimageio.spec import (
 from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.utils import unindent
 
-Loc = Tuple[str, ...]
+Loc: TypeAlias = "tuple[str, ...]"
 
 ANNOTATION_MAP = {
     "pydantic_core._pydantic_core.Url": "Url",
