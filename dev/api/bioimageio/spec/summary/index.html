@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../../../../images/favicon.ico">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2037,7 +2037,7 @@ diagnostics.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ErrorEntry.type">type</a></code>
-                (<code><span title="typing.Union">Union</span>[<span title="pydantic_core.core_schema.ErrorType">ErrorType</span>, <span title="str">str</span>]</code>)
+                (<code><span title="pydantic_core.core_schema.ErrorType">ErrorType</span> | <span title="str">str</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ErrorEntry.with_traceback">with_traceback</a></code>
@@ -2053,7 +2053,7 @@ diagnostics.</p>
             </li>
             <li>
               <code><span title="bioimageio.spec.summary.ErrorEntry._traceback_rich">_traceback_rich</span></code>
-                (<code><span title="typing.Optional">Optional</span>[<span title="rich">rich</span>.<span title="rich.traceback">traceback</span>.<span title="rich.traceback.Traceback">Traceback</span>]</code>)
+                (<code><span title="rich">rich</span>.<span title="rich.traceback">traceback</span>.<span title="rich.traceback.Traceback">Traceback</span> | None</code>)
             </li>
         </ul>
 
@@ -2173,7 +2173,7 @@ diagnostics.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ErrorEntry.traceback_rich" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">traceback_rich</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="rich">rich</span></span><span class="o">.</span><span class="n"><span title="rich.traceback">traceback</span></span><span class="o">.</span><span class="n"><span title="rich.traceback.Traceback">Traceback</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">traceback_rich</span><span class="p">:</span> <span class="n"><span title="rich">rich</span></span><span class="o">.</span><span class="n"><span title="rich.traceback">traceback</span></span><span class="o">.</span><span class="n"><span title="rich.traceback.Traceback">Traceback</span></span> <span class="o">|</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2196,7 +2196,7 @@ diagnostics.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ErrorEntry.type" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nb">type</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="pydantic_core.core_schema.ErrorType">ErrorType</span></span><span class="p">,</span> <span class="n"><span title="str">str</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nb">type</span><span class="p">:</span> <span class="n"><span title="pydantic_core.core_schema.ErrorType">ErrorType</span></span> <span class="o">|</span> <span class="n"><span title="str">str</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2249,7 +2249,8 @@ diagnostics.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">112</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">111</span>
+<span class="normal">112</span>
 <span class="normal">113</span>
 <span class="normal">114</span>
 <span class="normal">115</span>
@@ -2264,13 +2265,12 @@ diagnostics.</p>
 <span class="normal">124</span>
 <span class="normal">125</span>
 <span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="normal">127</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">with_traceback</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">traceback_md</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">traceback_html</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_traceback_rich</span> <span class="o">=</span> <span class="n">rich</span><span class="o">.</span><span class="n">traceback</span><span class="o">.</span><span class="n">Traceback</span><span class="p">()</span>
         <span class="n">console</span> <span class="o">=</span> <span class="n">rich</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">Console</span><span class="p">(</span>
             <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">file</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
+            <span class="n">file</span><span class="o">=</span><span class="n">StringIO</span><span class="p">(),</span>
             <span class="n">color_system</span><span class="o">=</span><span class="s2">&quot;truecolor&quot;</span><span class="p">,</span>
             <span class="n">width</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
             <span class="n">tab_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
@@ -3108,23 +3108,23 @@ diagnostics.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail.errors">errors</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ErrorEntry">ErrorEntry</a>]</code>)
+                (<code><span title="list">list</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ErrorEntry">ErrorEntry</a>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail.warnings">warnings</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningEntry">WarningEntry</a>]</code>)
+                (<code><span title="list">list</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningEntry">WarningEntry</a>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail.context">context</a></code>
-                (<code><span title="typing.Optional">Optional</span>[<span title="bioimageio.spec._internal.validation_context.ValidationContextSummary">ValidationContextSummary</span>]</code>)
+                (<code><span title="bioimageio.spec._internal.validation_context.ValidationContextSummary">ValidationContextSummary</span> | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail.recommended_env">recommended_env</a></code>
-                (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" href="../conda_env/#bioimageio.spec.conda_env.CondaEnv">CondaEnv</a>]</code>)
+                (<code><a class="autorefs autorefs-internal" href="../conda_env/#bioimageio.spec.conda_env.CondaEnv">CondaEnv</a> | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail.saved_conda_compare">saved_conda_compare</a></code>
-                (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+                (<code><span title="str">str</span> | None</code>)
             </li>
         </ul>
 
@@ -3158,7 +3158,7 @@ diagnostics.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationDetail.conda_compare" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">conda_compare</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">conda_compare</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3181,7 +3181,7 @@ diagnostics.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationDetail.context" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">context</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContextSummary">ValidationContextSummary</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">context</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContextSummary">ValidationContextSummary</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3204,7 +3204,7 @@ diagnostics.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationDetail.errors" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">errors</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ErrorEntry">ErrorEntry</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">errors</span><span class="p">:</span> <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ErrorEntry">ErrorEntry</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3275,7 +3275,7 @@ diagnostics.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationDetail.recommended_env" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">recommended_env</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../conda_env/#bioimageio.spec.conda_env.CondaEnv">CondaEnv</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">recommended_env</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../conda_env/#bioimageio.spec.conda_env.CondaEnv">CondaEnv</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3300,7 +3300,7 @@ diagnostics.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationDetail.saved_conda_compare" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">saved_conda_compare</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">saved_conda_compare</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3371,7 +3371,7 @@ diagnostics.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationDetail.warnings" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">warnings</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningEntry">WarningEntry</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">warnings</span><span class="p">:</span> <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningEntry">WarningEntry</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -3577,7 +3577,7 @@ diagnostics.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationEntry.type">type</a></code>
-                (<code><span title="typing.Union">Union</span>[<span title="pydantic_core.core_schema.ErrorType">ErrorType</span>, <span title="str">str</span>]</code>)
+                (<code><span title="pydantic_core.core_schema.ErrorType">ErrorType</span> | <span title="str">str</span></code>)
             </li>
         </ul>
 
@@ -3651,7 +3651,7 @@ diagnostics.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationEntry.type" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nb">type</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="pydantic_core.core_schema.ErrorType">ErrorType</span></span><span class="p">,</span> <span class="n"><span title="str">str</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nb">type</span><span class="p">:</span> <span class="n"><span title="pydantic_core.core_schema.ErrorType">ErrorType</span></span> <span class="o">|</span> <span class="n"><span title="str">str</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4393,11 +4393,11 @@ for one specific <code>ResourceDescr</code> instance.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationSummary.id">id</a></code>
-                (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+                (<code><span title="str">str</span> | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationSummary.version">version</a></code>
-                (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" href="../application/v0_2/#bioimageio.spec.application.v0_2.Version">Version</a>]</code>)
+                (<code><a class="autorefs autorefs-internal" href="../application/v0_2/#bioimageio.spec.application.v0_2.Version">Version</a> | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationSummary.type">type</a></code>
@@ -4417,15 +4417,15 @@ for one specific <code>ResourceDescr</code> instance.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationSummary.details">details</a></code>
-                (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail">ValidationDetail</a>]</code>)
+                (<code><span title="list">list</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail">ValidationDetail</a>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationSummary.env">env</a></code>
-                (<code><span title="typing.Set">Set</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage">InstalledPackage</a>]</code>)
+                (<code><span title="set">set</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage">InstalledPackage</a>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationSummary.saved_conda_list">saved_conda_list</a></code>
-                (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+                (<code><span title="str">str</span> | None</code>)
             </li>
         </ul>
 
@@ -4483,7 +4483,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationSummary.details" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">details</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail">ValidationDetail</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">details</span><span class="p">:</span> <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationDetail">ValidationDetail</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4508,7 +4508,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationSummary.env" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">env</span><span class="p">:</span> <span class="n"><span title="typing.Set">Set</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage">InstalledPackage</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">env</span><span class="p">:</span> <span class="n"><span title="set">set</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.InstalledPackage">InstalledPackage</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4533,7 +4533,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationSummary.errors" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">errors</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ErrorEntry">ErrorEntry</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">errors</span><span class="p">:</span> <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ErrorEntry">ErrorEntry</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4581,7 +4581,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationSummary.id" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nb">id</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nb">id</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4663,7 +4663,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationSummary.saved_conda_list" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">saved_conda_list</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">saved_conda_list</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4784,7 +4784,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationSummary.version" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">version</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../application/v0_2/#bioimageio.spec.application.v0_2.Version">Version</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">version</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../application/v0_2/#bioimageio.spec.application.v0_2.Version">Version</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4809,7 +4809,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationSummary.warnings" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">warnings</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningEntry">WarningEntry</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">warnings</span><span class="p">:</span> <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningEntry">WarningEntry</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4844,8 +4844,7 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">413</span>
-<span class="normal">414</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">414</span>
 <span class="normal">415</span>
 <span class="normal">416</span>
 <span class="normal">417</span>
@@ -4862,7 +4861,8 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 <span class="normal">428</span>
 <span class="normal">429</span>
 <span class="normal">430</span>
-<span class="normal">431</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_detail</span><span class="p">(</span>
+<span class="normal">431</span>
+<span class="normal">432</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_detail</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">detail</span><span class="p">:</span> <span class="n">ValidationDetail</span><span class="p">,</span>
     <span class="n">update_status</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -4897,7 +4897,7 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 <a href="#bioimageio.spec.summary.ValidationSummary.display" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">display</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.display(width)">width</span></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.display(width)">width</span></span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.display(include_conda_list)">include_conda_list</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.display(tab_size)">tab_size</span></span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.display(soft_wrap)">soft_wrap</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -4910,8 +4910,7 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">377</span>
-<span class="normal">378</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">378</span>
 <span class="normal">379</span>
 <span class="normal">380</span>
 <span class="normal">381</span>
@@ -4944,10 +4943,11 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 <span class="normal">408</span>
 <span class="normal">409</span>
 <span class="normal">410</span>
-<span class="normal">411</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span>
+<span class="normal">411</span>
+<span class="normal">412</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">include_conda_list</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">tab_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
     <span class="n">soft_wrap</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -4995,7 +4995,7 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 <a href="#bioimageio.spec.summary.ValidationSummary.format" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">format</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.format(width)">width</span></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.format(width)">width</span></span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.format(include_conda_list)">include_conda_list</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="str">str</span></span>
 </code></pre></div>
@@ -5008,17 +5008,17 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">344</span>
-<span class="normal">345</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">345</span>
 <span class="normal">346</span>
 <span class="normal">347</span>
 <span class="normal">348</span>
 <span class="normal">349</span>
 <span class="normal">350</span>
-<span class="normal">351</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
+<span class="normal">351</span>
+<span class="normal">352</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">include_conda_list</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Format summary as Markdown string (alias to `format_md`)&quot;&quot;&quot;</span>
@@ -5039,7 +5039,7 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 <a href="#bioimageio.spec.summary.ValidationSummary.format_html" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">format_html</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.format_html(width)">width</span></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.format_html(width)">width</span></span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.format_html(include_conda_list)">include_conda_list</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="str">str</span></span>
 </code></pre></div>
@@ -5050,8 +5050,7 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">364</span>
-<span class="normal">365</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">365</span>
 <span class="normal">366</span>
 <span class="normal">367</span>
 <span class="normal">368</span>
@@ -5061,10 +5060,11 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 <span class="normal">372</span>
 <span class="normal">373</span>
 <span class="normal">374</span>
-<span class="normal">375</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_html</span><span class="p">(</span>
+<span class="normal">375</span>
+<span class="normal">376</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_html</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">include_conda_list</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">md_with_html</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span>
@@ -5089,7 +5089,7 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 <a href="#bioimageio.spec.summary.ValidationSummary.format_md" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">format_md</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.format_md(width)">width</span></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.format_md(width)">width</span></span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.format_md(include_conda_list)">include_conda_list</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="str">str</span></span>
 </code></pre></div>
@@ -5102,8 +5102,7 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">353</span>
-<span class="normal">354</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">354</span>
 <span class="normal">355</span>
 <span class="normal">356</span>
 <span class="normal">357</span>
@@ -5111,10 +5110,11 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 <span class="normal">359</span>
 <span class="normal">360</span>
 <span class="normal">361</span>
-<span class="normal">362</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span>
+<span class="normal">362</span>
+<span class="normal">363</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_md</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">include_conda_list</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Format summary as Markdown string&quot;&quot;&quot;</span>
@@ -5150,11 +5150,11 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">522</span>
-<span class="normal">523</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">523</span>
 <span class="normal">524</span>
 <span class="normal">525</span>
-<span class="normal">526</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">526</span>
+<span class="normal">527</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load validation/test summary from a suitable JSON file&quot;&quot;&quot;</span>
     <span class="n">json_str</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
@@ -5174,12 +5174,10 @@ possibly downgrade the overall status from "passed" to "valid-format"</p>
 
 <a href="#bioimageio.spec.summary.ValidationSummary.log" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">log</span><span class="p">(</span>
-    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.log(to)">to</span></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span>
-        <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;display&quot;</span><span class="p">],</span>
-        <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">,</span>
-        <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;display&quot;</span><span class="p">],</span> <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">]],</span>
-    <span class="p">],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="pathlib.Path">Path</span></span><span class="p">]</span>
+    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.log(to)">to</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;display&quot;</span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="pathlib.Path">Path</span></span>
+    <span class="o">|</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;display&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><span title="pathlib.Path">Path</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5191,8 +5189,7 @@ save it to disk. See <code>save</code> for details.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">433</span>
-<span class="normal">434</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">434</span>
 <span class="normal">435</span>
 <span class="normal">436</span>
 <span class="normal">437</span>
@@ -5210,10 +5207,11 @@ save it to disk. See <code>save</code> for details.</p>
 <span class="normal">449</span>
 <span class="normal">450</span>
 <span class="normal">451</span>
-<span class="normal">452</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span>
+<span class="normal">452</span>
+<span class="normal">453</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">to</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;display&quot;</span><span class="p">],</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;display&quot;</span><span class="p">],</span> <span class="n">Path</span><span class="p">]]],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+    <span class="n">to</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;display&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;display&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="n">Path</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience method to display the validation summary in the terminal and/or</span>
 <span class="sd">    save it to disk. See `save` for details.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">to</span> <span class="o">==</span> <span class="s2">&quot;display&quot;</span><span class="p">:</span>
@@ -5245,10 +5243,10 @@ save it to disk. See <code>save</code> for details.</p>
 
 <a href="#bioimageio.spec.summary.ValidationSummary.save" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">save</span><span class="p">(</span>
-    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.save(path)">path</span></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="pathlib.Path">Path</span></span><span class="p">,</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="pathlib.Path">Path</span></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">(</span>
+    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.save(path)">path</span></span><span class="p">:</span> <span class="n"><span title="pathlib.Path">Path</span></span> <span class="o">|</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span><span class="n"><span title="pathlib.Path">Path</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">(</span>
         <span class="s2">&quot;</span><span class="si">{id}</span><span class="s2">_summary_</span><span class="si">{now}</span><span class="s2">&quot;</span>
     <span class="p">),</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="pathlib.Path">Path</span></span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><span title="pathlib.Path">Path</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5267,7 +5265,7 @@ save it to disk. See <code>save</code> for details.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="typing.List">List</span>[<span title="pathlib.Path">Path</span>]</code>
+                  <code><span title="list">list</span>[<span title="pathlib.Path">Path</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5286,8 +5284,7 @@ save it to disk. See <code>save</code> for details.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">454</span>
-<span class="normal">455</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">455</span>
 <span class="normal">456</span>
 <span class="normal">457</span>
 <span class="normal">458</span>
@@ -5328,9 +5325,10 @@ save it to disk. See <code>save</code> for details.</p>
 <span class="normal">493</span>
 <span class="normal">494</span>
 <span class="normal">495</span>
-<span class="normal">496</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Path</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{id}</span><span class="s2">_summary_</span><span class="si">{now}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<span class="normal">496</span>
+<span class="normal">497</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{id}</span><span class="s2">_summary_</span><span class="si">{now}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Save the validation/test summary in JSON, Markdown or HTML format.</span>
 
 <span class="sd">    Returns:</span>
@@ -5345,7 +5343,7 @@ save it to disk. See <code>save</code> for details.</p>
         <span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)]</span>
 
     <span class="c1"># folder to file paths</span>
-    <span class="n">file_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">file_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">suffix</span><span class="p">:</span>
             <span class="n">file_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
@@ -5396,13 +5394,13 @@ save it to disk. See <code>save</code> for details.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">514</span>
-<span class="normal">515</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">515</span>
 <span class="normal">516</span>
 <span class="normal">517</span>
 <span class="normal">518</span>
 <span class="normal">519</span>
-<span class="normal">520</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;summary.html&quot;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">520</span>
+<span class="normal">521</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;summary.html&quot;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Save rendered validation/test summary as HTML file.&quot;&quot;&quot;</span>
     <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -5426,7 +5424,7 @@ save it to disk. See <code>save</code> for details.</p>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">save_json</span><span class="p">(</span>
     <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.save_json(path)">path</span></span><span class="p">:</span> <span class="n"><span title="pathlib.Path">Path</span></span> <span class="o">=</span> <span class="n"><span title="pathlib.Path">Path</span></span><span class="p">(</span><span class="s2">&quot;summary.json&quot;</span><span class="p">),</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.save_json(indent)">indent</span></span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.summary.ValidationSummary.save_json(indent)">indent</span></span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 
@@ -5438,15 +5436,15 @@ save it to disk. See <code>save</code> for details.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">498</span>
-<span class="normal">499</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">499</span>
 <span class="normal">500</span>
 <span class="normal">501</span>
 <span class="normal">502</span>
 <span class="normal">503</span>
 <span class="normal">504</span>
-<span class="normal">505</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_json</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;summary.json&quot;</span><span class="p">),</span> <span class="o">*</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="normal">505</span>
+<span class="normal">506</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_json</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;summary.json&quot;</span><span class="p">),</span> <span class="o">*</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Save validation/test summary as JSON file.&quot;&quot;&quot;</span>
     <span class="n">json_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span>
@@ -5478,12 +5476,12 @@ save it to disk. See <code>save</code> for details.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">507</span>
-<span class="normal">508</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">508</span>
 <span class="normal">509</span>
 <span class="normal">510</span>
 <span class="normal">511</span>
-<span class="normal">512</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;summary.md&quot;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">512</span>
+<span class="normal">513</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_markdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;summary.md&quot;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Save rendered validation/test summary as Markdown file.&quot;&quot;&quot;</span>
     <span class="n">formatted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_md</span><span class="p">()</span>
     <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -5698,7 +5696,7 @@ save it to disk. See <code>save</code> for details.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningEntry.type">type</a></code>
-                (<code><span title="typing.Union">Union</span>[<span title="pydantic_core.core_schema.ErrorType">ErrorType</span>, <span title="str">str</span>]</code>)
+                (<code><span title="pydantic_core.core_schema.ErrorType">ErrorType</span> | <span title="str">str</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.WarningEntry.severity">severity</a></code>
@@ -5822,7 +5820,7 @@ save it to disk. See <code>save</code> for details.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.WarningEntry.type" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nb">type</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="pydantic_core.core_schema.ErrorType">ErrorType</span></span><span class="p">,</span> <span class="n"><span title="str">str</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nb">type</span><span class="p">:</span> <span class="n"><span title="pydantic_core.core_schema.ErrorType">ErrorType</span></span> <span class="o">|</span> <span class="n"><span title="str">str</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5854,9 +5852,8 @@ save it to disk. See <code>save</code> for details.</p>
 <a href="#bioimageio.spec.summary.format_loc" class="headerlink" title="Anchor link to this section for reference">¤</a></h2>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">format_loc</span><span class="p">(</span>
     <span class="n"><span title="bioimageio.spec.summary.format_loc(loc)">loc</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.Loc">Loc</a></span><span class="p">,</span>
-    <span class="n"><span title="bioimageio.spec.summary.format_loc(target)">target</span></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span>
-        <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">,</span> <span class="s2">&quot;plain&quot;</span><span class="p">],</span> <span class="n"><span title="rich">rich</span></span><span class="o">.</span><span class="n"><span title="rich.console">console</span></span><span class="o">.</span><span class="n"><span title="rich.console.Console">Console</span></span>
-    <span class="p">],</span>
+    <span class="n"><span title="bioimageio.spec.summary.format_loc(target)">target</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">,</span> <span class="s2">&quot;plain&quot;</span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="rich">rich</span></span><span class="o">.</span><span class="n"><span title="rich.console">console</span></span><span class="o">.</span><span class="n"><span title="rich.console.Console">Console</span></span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="str">str</span></span>
 </code></pre></div>
 
@@ -5868,7 +5865,8 @@ save it to disk. See <code>save</code> for details.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/summary.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">140</span>
+<span class="normal">141</span>
 <span class="normal">142</span>
 <span class="normal">143</span>
 <span class="normal">144</span>
@@ -5892,9 +5890,8 @@ save it to disk. See <code>save</code> for details.</p>
 <span class="normal">162</span>
 <span class="normal">163</span>
 <span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_loc</span><span class="p">(</span>
-    <span class="n">loc</span><span class="p">:</span> <span class="n">Loc</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">,</span> <span class="s2">&quot;plain&quot;</span><span class="p">],</span> <span class="n">rich</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">Console</span><span class="p">]</span>
+<span class="normal">165</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_loc</span><span class="p">(</span>
+    <span class="n">loc</span><span class="p">:</span> <span class="n">Loc</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">,</span> <span class="s2">&quot;plain&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="n">rich</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">Console</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;helper to format a location tuple **loc**&quot;&quot;&quot;</span>
     <span class="n">loc_str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">loc</span><span class="p">))</span>
@@ -6050,7 +6047,7 @@ save it to disk. See <code>save</code> for details.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../../../assets/_markdown_exec_pyodide.js"></script>
       

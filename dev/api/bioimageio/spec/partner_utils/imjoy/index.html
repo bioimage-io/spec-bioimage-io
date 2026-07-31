@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../../../../images/favicon.ico">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -728,17 +728,13 @@
 
 <a href="#bioimageio.spec.partner_utils.imjoy.enrich_partial_rdf_with_imjoy_plugin" class="headerlink" title="Anchor link to this section for reference">¤</a></h2>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">enrich_partial_rdf_with_imjoy_plugin</span><span class="p">(</span>
-    <span class="n"><span title="bioimageio.spec.partner_utils.imjoy.enrich_partial_rdf_with_imjoy_plugin(partial_rdf)">partial_rdf</span></span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
-    <span class="n"><span title="bioimageio.spec.partner_utils.imjoy.enrich_partial_rdf_with_imjoy_plugin(root)">root</span></span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.HttpUrl">HttpUrl</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span><span class="p">],</span>
+    <span class="n"><span title="bioimageio.spec.partner_utils.imjoy.enrich_partial_rdf_with_imjoy_plugin(partial_rdf)">partial_rdf</span></span><span class="p">:</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
+    <span class="n"><span title="bioimageio.spec.partner_utils.imjoy.enrich_partial_rdf_with_imjoy_plugin(root)">root</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.HttpUrl">HttpUrl</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.partner_utils.imjoy.enrich_partial_rdf_with_imjoy_plugin(resolve_rdf_source)">resolve_rdf_source</span></span><span class="p">:</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[</span>
-        <span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.HttpUrl">HttpUrl</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.FilePath">FilePath</a></span><span class="p">,</span> <span class="n"><span title="str">str</span></span><span class="p">]],</span>
-        <span class="n"><span title="typing.Tuple">Tuple</span></span><span class="p">[</span>
-            <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
-            <span class="n"><span title="str">str</span></span><span class="p">,</span>
-            <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.HttpUrl">HttpUrl</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span><span class="p">],</span>
-        <span class="p">],</span>
+        <span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.HttpUrl">HttpUrl</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.FilePath">FilePath</a></span> <span class="o">|</span> <span class="n"><span title="str">str</span></span><span class="p">],</span>
+        <span class="n"><span title="tuple">tuple</span></span><span class="p">[</span><span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.HttpUrl">HttpUrl</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span><span class="p">],</span>
     <span class="p">],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -749,9 +745,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/partner_utils/imjoy/_plugin_parser.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">194</span>
 <span class="normal">195</span>
 <span class="normal">196</span>
 <span class="normal">197</span>
@@ -808,19 +802,22 @@
 <span class="normal">248</span>
 <span class="normal">249</span>
 <span class="normal">250</span>
-<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">enrich_partial_rdf_with_imjoy_plugin</span><span class="p">(</span>
-    <span class="n">partial_rdf</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-    <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">,</span> <span class="n">DirectoryPath</span><span class="p">],</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">enrich_partial_rdf_with_imjoy_plugin</span><span class="p">(</span>
+    <span class="n">partial_rdf</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">root</span><span class="p">:</span> <span class="n">HttpUrl</span> <span class="o">|</span> <span class="n">DirectoryPath</span><span class="p">,</span>
     <span class="n">resolve_rdf_source</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
-        <span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">,</span> <span class="n">FilePath</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
-        <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">HttpUrl</span><span class="p">,</span> <span class="n">DirectoryPath</span><span class="p">]],</span>
+        <span class="p">[</span><span class="n">HttpUrl</span> <span class="o">|</span> <span class="n">FilePath</span> <span class="o">|</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">HttpUrl</span> <span class="o">|</span> <span class="n">DirectoryPath</span><span class="p">],</span>
     <span class="p">],</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    a (partial) rdf may have &#39;rdf_source&#39; or &#39;source&#39; which resolve to rdf data that may be overwritten.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">enriched_rdf</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">enriched_rdf</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">if</span> <span class="s2">&quot;rdf_source&quot;</span> <span class="ow">in</span> <span class="n">partial_rdf</span><span class="p">:</span>
         <span class="n">given_rdf_src</span> <span class="o">=</span> <span class="n">partial_rdf</span><span class="p">[</span><span class="s2">&quot;rdf_source&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">given_rdf_src</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">given_rdf_src</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
@@ -831,7 +828,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># given_rdf_src is an actual rdf</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">given_rdf_src</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="n">rdf_source</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">given_rdf_src</span>
+                <span class="n">rdf_source</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">given_rdf_src</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">rdf_source</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">rdf_source_root</span> <span class="o">=</span> <span class="n">resolve_rdf_source</span><span class="p">(</span><span class="n">given_rdf_src</span><span class="p">)</span>
@@ -859,10 +856,11 @@
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rdf_source</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="n">enriched_rdf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rdf_source</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="s2">&quot;source&quot;</span> <span class="ow">in</span> <span class="n">partial_rdf</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">partial_rdf</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.imjoy.html&quot;</span><span class="p">):</span>
-            <span class="n">rdf_from_source</span> <span class="o">=</span> <span class="n">get_plugin_as_rdf</span><span class="p">(</span><span class="n">partial_rdf</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">])</span>
-            <span class="n">enriched_rdf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rdf_from_source</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;source&quot;</span> <span class="ow">in</span> <span class="n">partial_rdf</span> <span class="ow">and</span> <span class="n">partial_rdf</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+        <span class="s2">&quot;.imjoy.html&quot;</span>
+    <span class="p">):</span>
+        <span class="n">rdf_from_source</span> <span class="o">=</span> <span class="n">get_plugin_as_rdf</span><span class="p">(</span><span class="n">partial_rdf</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">])</span>
+        <span class="n">enriched_rdf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rdf_from_source</span><span class="p">)</span>
 
     <span class="n">enriched_rdf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
         <span class="n">partial_rdf</span>
@@ -882,7 +880,7 @@
 
 
 <a href="#bioimageio.spec.partner_utils.imjoy.get_plugin_as_rdf" class="headerlink" title="Anchor link to this section for reference">¤</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_plugin_as_rdf</span><span class="p">(</span><span class="n"><span title="bioimageio.spec.partner_utils.imjoy.get_plugin_as_rdf(source_url)">source_url</span></span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_plugin_as_rdf</span><span class="p">(</span><span class="n"><span title="bioimageio.spec.partner_utils.imjoy.get_plugin_as_rdf(source_url)">source_url</span></span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -893,13 +891,13 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/partner_utils/imjoy/_plugin_parser.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">183</span>
-<span class="normal">184</span>
-<span class="normal">185</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">185</span>
 <span class="normal">186</span>
 <span class="normal">187</span>
 <span class="normal">188</span>
-<span class="normal">189</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_plugin_as_rdf</span><span class="p">(</span><span class="n">source_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_plugin_as_rdf</span><span class="p">(</span><span class="n">source_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get imjoy plugin config in RDF format.&quot;&quot;&quot;</span>
     <span class="n">req</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source_url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span>
@@ -999,7 +997,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "../../../../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../../../../assets/_markdown_exec_pyodide.js"></script>
       
