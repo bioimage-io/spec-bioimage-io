@@ -3994,9 +3994,19 @@ class ModelDescr(GenericModelDescrBase):
         return ret
 
     def get_tensor_sizes(
-        self, ns: Mapping[tuple[TensorId, AxisId], ParameterizedSize_N], batch_size: int
+        self,
+        ns: Mapping[tuple[TensorId, AxisId], ParameterizedSize_N],
+        batch_size: int,
+        max_input_shape: Mapping[TensorId, Mapping[AxisId, int]] | None = None,
     ) -> _TensorSizes:
-        axis_sizes = self.get_axis_sizes(ns, batch_size=batch_size)
+        max_axis_sizes: dict[tuple[TensorId, AxisId], int] = {}
+        for m, this_max_axis_sizes in (max_input_shape or {}).items():
+            for a, s in this_max_axis_sizes.items():
+                max_axis_sizes[(m, a)] = s
+
+        axis_sizes = self.get_axis_sizes(
+            ns, batch_size=batch_size, max_input_shape=max_axis_sizes
+        )
         return _TensorSizes(
             {
                 t: {
