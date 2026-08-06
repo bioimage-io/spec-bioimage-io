@@ -42,6 +42,7 @@ classifiers = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
+zarr = ["dask[array]", "zarr", "clearscale"]
 dev = [
     "dask[array]",
     "deepdiff",
