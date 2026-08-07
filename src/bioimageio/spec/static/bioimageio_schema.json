@@ -1948,7 +1948,6 @@
           "$ref": "#/$defs/SizeReference",
           "description": "reference to another axis with an optional offset (see `SizeReference`)",
           "examples": [
-            10,
             {
               "axis_id": "a",
               "offset": 5,
@@ -2510,7 +2509,6 @@
           "$ref": "#/$defs/SizeReference",
           "description": "reference to another axis with an optional offset (see `SizeReference`)",
           "examples": [
-            10,
             {
               "axis_id": "a",
               "offset": 5,

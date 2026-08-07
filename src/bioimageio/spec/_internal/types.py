@@ -64,7 +64,7 @@ FAIR = Annotated[
 ]
 
 
-def _validate_identifier(s: str) -> str:
+def validate_identifier(s: str) -> str:
     if not s.isidentifier():
         raise ValueError(
             f"'{s}' is not a valid (Python) identifier, see"
@@ -75,7 +75,7 @@ def _validate_identifier(s: str) -> str:
     return s
 
 
-def _validate_is_not_keyword(s: str) -> str:
+def validate_is_not_keyword(s: str) -> str:
     if iskeyword(s):
         raise ValueError(f"'{s}' is a Python keyword and not allowed here.")
 
@@ -142,8 +142,8 @@ class Doi(ValidatedString):
 FormatVersionPlaceholder = Literal["latest", "discover"]
 IdentifierAnno = Annotated[
     NotEmpty[str],
-    AfterValidator(_validate_identifier),
-    AfterValidator(_validate_is_not_keyword),
+    AfterValidator(validate_identifier),
+    AfterValidator(validate_is_not_keyword),
 ]
 
 

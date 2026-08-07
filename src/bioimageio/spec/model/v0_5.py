@@ -85,6 +85,8 @@ from .._internal.types import (
     LowerCaseIdentifierAnno,
     MismatchedElementsPerMillion,
     RelativeTolerance,
+    validate_identifier,
+    validate_is_not_keyword,
 )
 from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
@@ -242,8 +244,8 @@ class TensorId(LowerCaseIdentifier):
 
 
 def _normalize_axis_id(a: str):
-    a = str(a)
-    normalized = _AXIS_ID_MAP.get(a, a)
+    b = str(a).lower()
+    normalized = _AXIS_ID_MAP.get(b, b)
     if a != normalized:
         logger.opt(depth=3).warning(
             "Normalized axis id from '{}' to '{}'.", a, normalized
@@ -254,9 +256,11 @@ def _normalize_axis_id(a: str):
 class AxisId(LowerCaseIdentifier):
     root_model: ClassVar[type[RootModel[Any]]] = RootModel[
         Annotated[
-            LowerCaseIdentifierAnno,
-            MaxLen(16),
+            NotEmpty[str],
             AfterValidator(_normalize_axis_id),
+            MaxLen(16),
+            AfterValidator(validate_identifier),
+            AfterValidator(validate_is_not_keyword),
         ]
     ]
 
@@ -498,19 +502,16 @@ class WithHalo(Node):
 
     size: Annotated[
         SizeReference,
-        Field(
-            examples=[
-                10,
-                SizeReference(
-                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
-                ).model_dump(mode="json"),
-            ]
-        ),
+        Field(examples=[{"tensor_id": "t", "axis_id": "a", "offset": 5}]),
     ]
     """reference to another axis with an optional offset (see [SizeReference][])"""
 
 
 BATCH_AXIS_ID = AxisId("batch")
+CHANNEL_AXIS_ID = AxisId("channel")
+DEFAULT_SPACE_AXIS_ID = AxisId("x")
+DEFAULT_INDEX_AXIS_ID = AxisId("index")
+DEFAULT_TIME_AXIS_ID = AxisId("time")
 
 
 class BatchAxis(AxisBase):
@@ -545,7 +546,7 @@ class ChannelAxis(AxisBase):
     else:
         type: Literal["channel"]
 
-    id: NonBatchAxisId = AxisId("channel")
+    id: NonBatchAxisId = CHANNEL_AXIS_ID
 
     channel_names: NotEmpty[list[str]]
 
@@ -573,9 +574,7 @@ class _WithInputAxisSize(Node):
             examples=[
                 10,
                 ParameterizedSize(min=32, step=16).model_dump(mode="json"),
-                SizeReference(
-                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
-                ).model_dump(mode="json"),
+                {"tensor_id": "t", "axis_id": "a", "offset": 5},
             ]
         ),
     ]
@@ -593,7 +592,7 @@ class IndexAxisBase(AxisBase):
     else:
         type: Literal["index"]
 
-    id: NonBatchAxisId = AxisId("index")
+    id: NonBatchAxisId = DEFAULT_INDEX_AXIS_ID
 
     @property
     def scale(self) -> float:
@@ -616,14 +615,7 @@ class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
 class IndexOutputAxis(IndexAxisBase):
     size: Annotated[
         Annotated[int, Gt(0)] | SizeReference | DataDependentSize,
-        Field(
-            examples=[
-                10,
-                SizeReference(
-                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
-                ).model_dump(mode="json"),
-            ]
-        ),
+        Field(examples=[10, {"tensor_id": "t", "axis_id": "a", "offset": 5}]),
     ]
     """The size/length of this axis can be specified as
     - fixed integer
@@ -639,7 +631,7 @@ class TimeAxisBase(AxisBase):
     else:
         type: Literal["time"]
 
-    id: NonBatchAxisId = AxisId("time")
+    id: NonBatchAxisId = DEFAULT_TIME_AXIS_ID
     unit: TimeUnit | None = None
     scale: Annotated[float, Gt(0)] = 1.0
 
@@ -660,7 +652,9 @@ class SpaceAxisBase(AxisBase):
     else:
         type: Literal["space"]
 
-    id: Annotated[NonBatchAxisId, Field(examples=["x", "y", "z"])] = AxisId("x")
+    id: Annotated[NonBatchAxisId, Field(examples=["x", "y", "z"])] = (
+        DEFAULT_SPACE_AXIS_ID
+    )
     unit: SpaceUnit | None = None
     scale: Annotated[float, Gt(0)] = 1.0
 
@@ -692,14 +686,7 @@ InputAxis = Annotated[_InputAxisUnion, Discriminator("type")]
 class _WithOutputAxisSize(Node):
     size: Annotated[
         Annotated[int, Gt(0)] | SizeReference,
-        Field(
-            examples=[
-                10,
-                SizeReference(
-                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
-                ).model_dump(mode="json"),
-            ]
-        ),
+        Field(examples=[10, {"tensor_id": "t", "axis_id": "a", "offset": 5}]),
     ]
     """The size/length of this axis can be specified as
     - fixed integer
@@ -1262,7 +1249,7 @@ class SigmoidDescr(NodeWithExplicitlySetFields):
 class SoftmaxKwargs(KwargsNode):
     """key word arguments for [SoftmaxDescr][]"""
 
-    axis: Annotated[NonBatchAxisId, Field(examples=["channel"])] = AxisId("channel")
+    axis: Annotated[NonBatchAxisId, Field(examples=["channel"])] = CHANNEL_AXIS_ID
     """The axis to apply the softmax function along.
     Note:
         Defaults to 'channel' axis

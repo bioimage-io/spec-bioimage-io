@@ -737,3 +737,29 @@ def test_input_is_output_of(model: ModelDescr):
 
     model.inputs[0].id = affable_shark.outputs[0].id
     model.inputs[0].output_of = ModelId("affable-shark")
+
+
+@pytest.mark.parametrize(
+    "raw,norm",
+    [
+        ("b", "batch"),
+        ("B", "batch"),
+        ("c", "channel"),
+        ("C", "channel"),
+        ("x", "x"),
+        ("X", "x"),
+        ("y", "y"),
+        ("Y", "y"),
+        ("z", "z"),
+        ("Z", "z"),
+        ("I", "index"),
+        ("t", "time"),
+        ("Quannel", "quannel"),
+        ("Ind", "ind"),
+    ],
+)
+def test_normalize_axis_id(raw: str, norm: str):
+    from bioimageio.spec.model.v0_5 import AxisId
+
+    processed = str(AxisId(raw))
+    assert processed == norm, f"raw: {raw}, processed: {processed}, expected: {norm}"
