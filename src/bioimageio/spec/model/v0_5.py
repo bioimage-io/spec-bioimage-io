@@ -50,6 +50,7 @@ from pydantic import (
     model_serializer,
     model_validator,
 )
+from pydantic_extra_types.color import Color
 from typing_extensions import Annotated, Self, TypeAlias, assert_never, get_args
 
 from .._internal.common_nodes import (
@@ -77,7 +78,7 @@ from .._internal.io_packaging import (
 )
 from .._internal.io_utils import load_array, open_bioimageio_yaml
 from .._internal.node_converter import Converter
-from .._internal.type_guards import is_dict, is_sequence
+from .._internal.type_guards import is_dict, is_mapping, is_sequence
 from .._internal.types import (
     FAIR,
     AbsoluteTolerance,
@@ -549,6 +550,77 @@ class ChannelAxis(AxisBase):
     id: NonBatchAxisId = CHANNEL_AXIS_ID
 
     channel_names: NotEmpty[list[str]]
+
+    channel_colors: NotEmpty[list[Color]] = Field(
+        default_factory=list
+    )  # real default is set by _set_default_channel_colors()
+    """Colors for each channel for visualization purposes.
+    If not given, a default color palette is used:
+
+    - For < 8 channels: colorblind-friendly palette from https://www.nature.com/articles/nmeth.1618 (without black)
+    - For < 21 channels: discrete matplotlib colormap 'tab20b' (redistributed for more even color distribution < 20 channels)
+    - For >= 21 channels: sample colors from continuous matplotlib colormap 'cividis'
+
+    """
+
+    @model_validator(mode="before")
+    @classmethod
+    def _set_default_channel_colors(cls, data: Any):
+        if (
+            is_mapping(data)
+            and "channel_colors" not in data
+            and is_sequence(channel_names := data.get("channel_names"))
+        ):
+            n_channels = len(channel_names)
+            data = dict(data)
+            if n_channels < 8:
+                # use colorblind-friendly palette from https://www.nature.com/articles/nmeth.1618
+                # (without black)
+                data["channel_colors"] = [
+                    "#E69F00",
+                    "#56B4E9",
+                    "#009E73",
+                    "#F0E442",
+                    "#0072B2",
+                    "#D55E00",
+                    "#CC79A7",
+                ][:n_channels]
+            elif n_channels < 21:
+                # use discrete matplotlib colormap 'tab20b'
+                # (redistributed for more even color distribution < 20 channels)
+                data["channel_colors"] = [
+                    "#393b79",
+                    "#8ca252",
+                    "#e7ba52",
+                    "#e7969c",
+                    "#7b4173",
+                    "#5254a3",
+                    "#b5cf6b",
+                    "#e7cb94",
+                    "#843c39",
+                    "#a55194",
+                    "#6b6ecf",
+                    "#cedb9c",
+                    "#8c6d31",
+                    "#d6616b",
+                    "#ce6dbd",
+                    "#9c9ede",
+                    "#637939",
+                    "#bd9e39",
+                    "#ad494a",
+                    "#de9ed6",
+                ][:n_channels]
+            else:
+                # sample colors from continuous matplotlib colormap 'cividis'
+                import matplotlib.colors
+                import matplotlib.pyplot as plt
+
+                cmap = plt.colormaps["cividis"].resampled(n_channels)
+                data["channel_colors"] = [
+                    matplotlib.colors.to_hex(cmap(i)) for i in range(n_channels)
+                ]
+
+        return data
 
     @property
     def size(self) -> int:
