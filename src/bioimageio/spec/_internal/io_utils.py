@@ -38,7 +38,7 @@ from .io import (
     interprete_file_source,
 )
 from .io_basics import AbsoluteDirectory, FileName, ZipPath
-from .types import FileSource, PermissiveFileSource
+from .types import PermissiveFileSource
 from .url import HttpUrl, RootHttpUrl
 from .utils import cache
 from .validation_context import ValidationContext, get_validation_context
@@ -389,7 +389,7 @@ def write_zip(
         write_content_to_zip(content, zip)
 
 
-def load_array(source: FileSource | FileDescr | ZipPath) -> NDArray[Any]:
+def load_array(source: PermissiveFileSource) -> NDArray[Any]:
     """load a numpy ndarray from a .npy file"""
     reader = get_reader(source)
     if settings.allow_pickle:
