@@ -629,12 +629,16 @@ _file_source_adapter: TypeAdapter[HttpUrl | RelativeFilePath | FilePath] = TypeA
 
 
 def interprete_file_source(
-    file_source: FileSource | str | pydantic.HttpUrl,
-) -> FileSource:
+    file_source: HttpUrl | RelativeFilePath | Path | str | pydantic.HttpUrl,
+) -> HttpUrl | RelativeFilePath | Path:
     if isinstance(file_source, Path):
-        if file_source.is_dir():
+        if (
+            file_source.is_dir()
+            and not file_source.name.endswith(".zarr")
+            and not any(p.name.endswith(".zarr") for p in file_source.parents)
+        ):
             raise FileNotFoundError(
-                f"{file_source} is a directory, but expected a file."
+                f"{file_source} is a directory, but expected a file (or a '*.zarr' (sub)directory)."
             )
         return file_source
 
@@ -647,7 +651,9 @@ def interprete_file_source(
     with get_validation_context().replace(perform_io_checks=False):
         strict = _file_source_adapter.validate_python(file_source)
         if isinstance(strict, Path) and strict.is_dir():
-            raise FileNotFoundError(f"{strict} is a directory, but expected a file.")
+            raise FileNotFoundError(
+                f"{strict} is a directory, but expected a file (or a '*.zarr' (sub)directory)."
+            )
 
     return strict
 
