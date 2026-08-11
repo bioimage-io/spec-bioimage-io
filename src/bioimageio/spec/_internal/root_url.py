@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import PurePosixPath
 from typing import Any, ClassVar, Iterable
 from urllib.parse import urlsplit, urlunsplit
 
@@ -63,6 +64,13 @@ class RootHttpUrl(ValidatedString):
         for _ in range(100):
             current = current.parent
             yield current
+
+    @property
+    def suffix(self) -> str:
+        if self.path is None:
+            return ""
+        else:
+            return PurePosixPath(self.path).suffix
 
     def __truediv__(self, other: str) -> RootHttpUrl:
         parsed = urlsplit(str(self))
