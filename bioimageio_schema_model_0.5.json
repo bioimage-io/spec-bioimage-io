@@ -440,11 +440,22 @@
           "type": "string"
         },
         "channel_names": {
+          "description": "Name/label for each channel. The number of channels is given by `len(channel_names)`.",
           "items": {
             "type": "string"
           },
           "minItems": 1,
           "title": "Channel Names",
+          "type": "array"
+        },
+        "channel_colors": {
+          "description": "Colors for each channel for visualization purposes.\nIf not given, a default color palette is used:\n\n- For < 8 channels: colorblind-friendly palette from https://www.nature.com/articles/nmeth.1618 (without black)\n- For < 21 channels: discrete matplotlib colormap 'tab20b' (redistributed for more even color distribution < 20 channels)\n- For >= 21 channels: sample colors from continuous matplotlib colormap 'cividis'",
+          "items": {
+            "format": "color",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Channel Colors",
           "type": "array"
         }
       },
@@ -3095,7 +3106,6 @@
           "$ref": "#/$defs/SizeReference",
           "description": "reference to another axis with an optional offset (see `SizeReference`)",
           "examples": [
-            10,
             {
               "axis_id": "a",
               "offset": 5,
@@ -3876,7 +3886,6 @@
           "$ref": "#/$defs/SizeReference",
           "description": "reference to another axis with an optional offset (see `SizeReference`)",
           "examples": [
-            10,
             {
               "axis_id": "a",
               "offset": 5,
