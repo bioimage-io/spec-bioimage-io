@@ -12391,6 +12391,8 @@ Do not set this field in a YAML file.</p>
       <span>API Reference</span>
   </span>
 
+            <ul class="doc doc-backlink-list">
+      <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb">
       <a href="../../../../#bioimageio.spec"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;spec</a>
   </span>
@@ -12405,6 +12407,19 @@ Do not set this field in a YAML file.</p>
       <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb last">
       <a href="../../../../#bioimageio.spec.upload"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;upload</a>
+  </span>
+
+      </li>
+  </ul>
+
+      </li>
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb">
+      <a href="../../utils/#bioimageio.spec.utils"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;utils</a>
+  </span>
+
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../utils/#bioimageio.spec.utils.interprete_file_source"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;interprete_file_source</a>
   </span>
 
       </li>
@@ -12558,6 +12573,8 @@ Do not set this field in a YAML file.</p>
       <span>API Reference</span>
   </span>
 
+            <ul class="doc doc-backlink-list">
+      <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb">
       <a href="../../common/#bioimageio.spec.common"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;common</a>
   </span>
@@ -12565,6 +12582,19 @@ Do not set this field in a YAML file.</p>
             <span class="doc doc-backlink-crumb last">
       <a href="../../common/#bioimageio.spec.common.FileSource"><code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;FileSource</a>
   </span>
+
+      </li>
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb">
+      <a href="../../utils/#bioimageio.spec.utils"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;utils</a>
+  </span>
+
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../utils/#bioimageio.spec.utils.interprete_file_source"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;interprete_file_source</a>
+  </span>
+
+      </li>
+  </ul>
 
       </li>
   </ul>
@@ -13051,19 +13081,19 @@ Do not set this field in a YAML file.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/root_url.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">75</span>
 <span class="normal">76</span>
 <span class="normal">77</span>
 <span class="normal">78</span>
-<span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RootHttpUrl</span><span class="p">:</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RootHttpUrl</span><span class="p">:</span>
     <span class="n">parsed</span> <span class="o">=</span> <span class="n">urlsplit</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">RootHttpUrl</span><span class="p">(</span>
         <span class="n">urlunsplit</span><span class="p">(</span>
@@ -13101,9 +13131,9 @@ Do not set this field in a YAML file.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/root_url.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">absolute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">absolute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;analog to `absolute` method of pathlib.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span>
 </code></pre></div></td></tr></table></div>
@@ -13131,7 +13161,8 @@ Do not set this field in a YAML file.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/url.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">144</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">143</span>
+<span class="normal">144</span>
 <span class="normal">145</span>
 <span class="normal">146</span>
 <span class="normal">147</span>
@@ -13145,8 +13176,7 @@ Do not set this field in a YAML file.</p>
 <span class="normal">155</span>
 <span class="normal">156</span>
 <span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">158</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;True if URL is available&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exists</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ctxt</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
@@ -14506,6 +14536,24 @@ Do not set this field in a YAML file.</p>
 
 
   <div class="doc doc-backlinks">
+        <b class="doc doc-backlink-type">Returned by:</b>
+          <ul class="doc doc-backlink-list">
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb">
+      <span>API Reference</span>
+  </span>
+
+            <span class="doc doc-backlink-crumb">
+      <a href="../../utils/#bioimageio.spec.utils"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;utils</a>
+  </span>
+
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../utils/#bioimageio.spec.utils.interprete_file_source"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;interprete_file_source</a>
+  </span>
+
+      </li>
+  </ul>
+
         <b class="doc doc-backlink-type">Used by:</b>
           <ul class="doc doc-backlink-list">
       <li class="doc doc-backlink">
@@ -14549,9 +14597,20 @@ Do not set this field in a YAML file.</p>
       <a href="../../utils/#bioimageio.spec.utils"><code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;utils</a>
   </span>
 
+            <ul class="doc doc-backlink-list">
+      <li class="doc doc-backlink">
             <span class="doc doc-backlink-crumb last">
       <a href="../../utils/#bioimageio.spec.utils.extract_file_name"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;extract_file_name</a>
   </span>
+
+      </li>
+      <li class="doc doc-backlink">
+            <span class="doc doc-backlink-crumb last">
+      <a href="../../utils/#bioimageio.spec.utils.interprete_file_source"><code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;interprete_file_source</a>
+  </span>
+
+      </li>
+  </ul>
 
       </li>
   </ul>
