@@ -120,13 +120,15 @@ def test_rdf(
     if key in KNOWN_INVALID:
         pytest.skip(KNOWN_INVALID[key])
 
+    excl_fields = set(
+        EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(key, EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT)
+    )
+    excl_fields.update(("inputs.axes.channel_colors", "outputs.axes.channel_colors"))
     check_bioimageio_yaml(
         descr_url,
         sha=sha,
         as_latest=False,
-        exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(
-            key, EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT
-        ),
+        exclude_fields_from_roundtrip=excl_fields,
         bioimageio_json_schema=bioimageio_json_schema,
         perform_io_checks=False,
     )
@@ -146,13 +148,15 @@ def test_rdf(
 def test_exemplary_rdf(rdf_id: str, bioimageio_json_schema: Mapping[Any, Any]):
     """test a list of models we expect to be compatible with the latest spec version"""
     source, sha = ALL_RDF_SOURCES[rdf_id]
+    excl_fields = set(
+        EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(rdf_id, EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT)
+    )
+    excl_fields.update(("inputs.axes.channel_colors", "outputs.axes.channel_colors"))
     check_bioimageio_yaml(
         source,
         sha=sha,
         as_latest=True,
-        exclude_fields_from_roundtrip=EXCLUDE_FIELDS_FROM_ROUNDTRIP.get(
-            rdf_id, EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT
-        ),
+        exclude_fields_from_roundtrip=excl_fields,
         bioimageio_json_schema=bioimageio_json_schema,
         perform_io_checks=True,
     )

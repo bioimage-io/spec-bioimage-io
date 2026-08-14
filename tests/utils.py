@@ -32,7 +32,7 @@ from bioimageio.spec import InvalidDescr, ValidationContext, build_description
 from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml, read_yaml
 from bioimageio.spec._internal.root_url import RootHttpUrl
-from bioimageio.spec._internal.type_guards import is_kwargs
+from bioimageio.spec._internal.type_guards import is_kwargs, is_mapping, is_sequence
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
 from bioimageio.spec.common import HttpUrl, Sha256
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr02
@@ -189,7 +189,7 @@ def check_bioimageio_yaml(
     if as_latest:
         return
 
-    # check rountrip
+    # check roundtrip
     exclude_from_comp = {
         "format_version",
         "timestamp",
@@ -208,13 +208,25 @@ def check_bioimageio_yaml(
         # these fields may intentionally be manipulated
         exclude_from_comp |= {"version_number", "id_emoji", "id"}
 
-    deserialized = rd.model_dump(
-        mode="json", exclude=exclude_from_comp, exclude_unset=True
-    )
-    expect_back = {k: v for k, v in data.items() if k not in exclude_from_comp}
+    deserialized = rd.model_dump(mode="json", exclude_unset=True)
+    deserialized = _remove_field(deserialized, exclude_from_comp)
+    expect_back = _remove_field(data, exclude_from_comp)
     assert_rdf_dict_equal(
         deserialized, expect_back, f"roundtrip {source}\n", ignore_known_rdf_diffs=True
     )
+
+
+def _remove_field(data: Any, fields: Collection[str], root: str = "") -> Any:
+    if is_mapping(data):
+        return {
+            k: _remove_field(v, fields, root=current_field)
+            for k, v in data.items()
+            if (current_field := f"{root}.{k}" if root else k) not in fields
+        }
+    elif not isinstance(data, str) and is_sequence(data):
+        return [_remove_field(v, fields, root=root) for v in data]
+    else:
+        return data
 
 
 def assert_rdf_dict_equal(
