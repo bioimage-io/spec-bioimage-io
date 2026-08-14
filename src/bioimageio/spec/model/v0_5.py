@@ -225,6 +225,7 @@ _AXIS_ID_MAP = {
     "t": "time",
     "i": "index",
     "c": "channel",
+    "s": "channel",
 }
 
 WeightsFormat = Literal[
@@ -550,9 +551,10 @@ class ChannelAxis(AxisBase):
     id: NonBatchAxisId = CHANNEL_AXIS_ID
 
     channel_names: NotEmpty[list[str]]
+    """Name/label for each channel. The number of channels is given by `len(channel_names)`."""
 
     channel_colors: NotEmpty[list[Color]] = Field(
-        default_factory=list
+        default_factory=cast(Callable[[], list[Color]], list)
     )  # real default is set by _set_default_channel_colors()
     """Colors for each channel for visualization purposes.
     If not given, a default color palette is used:
@@ -568,7 +570,7 @@ class ChannelAxis(AxisBase):
     def _set_default_channel_colors(cls, data: Any):
         if (
             is_mapping(data)
-            and "channel_colors" not in data
+            and not data.get("channel_colors")
             and is_sequence(channel_names := data.get("channel_names"))
         ):
             n_channels = len(channel_names)

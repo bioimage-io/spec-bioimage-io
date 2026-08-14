@@ -396,6 +396,7 @@
           "type": "string"
         },
         "channel_names": {
+          "description": "Name/label for each channel. The number of channels is given by `len(channel_names)`.",
           "items": {
             "type": "string"
           },
