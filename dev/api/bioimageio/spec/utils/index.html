@@ -2275,11 +2275,11 @@
 <span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">empty_cache</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Empty the bioimageio disk cache.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Empty the bioimageio disk cache."""</span>
 
     <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span><span class="p">)</span>
     <span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Emptied cache at </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Emptied cache at </span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">cache_path</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2328,11 +2328,11 @@
     <span class="n">rd</span><span class="p">:</span> <span class="n">InvalidDescr</span> <span class="o">|</span> <span class="n">ResourceDescr</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnyDatasetDescr</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rd</span><span class="p">,</span> <span class="n">InvalidDescr</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid </span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"> description:</span><span class="se">\n</span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">get_reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid </span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"> description:</span><span class="se">\n</span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">get_reason</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">rd</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;dataset&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">rd</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">"dataset"</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Expected a dataset resource, but got resource type &#39;</span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="sa">f</span><span class="s2">"Expected a dataset resource, but got resource type '</span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">'"</span>
         <span class="p">)</span>
 
     <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
@@ -2419,16 +2419,16 @@
 <span class="normal">271</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ensure_description_is_model</span><span class="p">(</span>
     <span class="n">rd</span><span class="p">:</span> <span class="n">InvalidDescr</span> <span class="o">|</span> <span class="n">ResourceDescr</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnyModelDescr</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: for invalid or non-model resources</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rd</span><span class="p">,</span> <span class="n">InvalidDescr</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid </span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"> description:</span><span class="se">\n</span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">get_reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid </span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"> description:</span><span class="se">\n</span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">get_reason</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">rd</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">rd</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">"model"</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Expected a model resource, but got resource type &#39;</span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="sa">f</span><span class="s2">"Expected a model resource, but got resource type '</span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">'"</span>
         <span class="p">)</span>
 
     <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
@@ -2532,7 +2532,7 @@
         <span class="n">src</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">source</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">ZipPath</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">src</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">filename</span> <span class="ow">or</span> <span class="s2">&quot;bioimageio.zip&quot;</span>
+        <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">src</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">filename</span> <span class="ow">or</span> <span class="s2">"bioimageio.zip"</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">RelativeFilePath</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">src</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">name</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">PurePath</span><span class="p">):</span>
@@ -2540,14 +2540,14 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="p">))</span>
         <span class="k">if</span> <span class="p">(</span>
-            <span class="n">url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s2">&quot;https&quot;</span>
-            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">hostname</span> <span class="o">==</span> <span class="s2">&quot;zenodo.org&quot;</span>
-            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/api/records/&quot;</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/content&quot;</span><span class="p">)</span>
+            <span class="n">url</span><span class="o">.</span><span class="n">scheme</span> <span class="o">==</span> <span class="s2">"https"</span>
+            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">hostname</span> <span class="o">==</span> <span class="s2">"zenodo.org"</span>
+            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"/api/records/"</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"/content"</span><span class="p">)</span>
         <span class="p">):</span>
-            <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2581,11 +2581,11 @@
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_bioimageio_json_schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;get the bioimageio specification as a JSON schema&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""get the bioimageio specification as a JSON schema"""</span>
     <span class="k">with</span> <span class="p">(</span>
-        <span class="n">files</span><span class="p">(</span><span class="s2">&quot;bioimageio.spec&quot;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;static/bioimageio_schema.json&quot;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">files</span><span class="p">(</span><span class="s2">"bioimageio.spec"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"static/bioimageio_schema.json"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
     <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2711,10 +2711,10 @@
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">ProgressbarLike</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">ProgressbarLike</span><span class="p">]</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Unpack</span><span class="p">[</span><span class="n">HashKwargs</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BytesReader</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open a file `source` (download if needed)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Open a file `source` (download if needed)"""</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">FileDescr</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;sha256&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;sha256&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">sha256</span>
+        <span class="k">if</span> <span class="s2">"sha256"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">"sha256"</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">sha256</span>
 
         <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">source</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -2733,22 +2733,22 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
 
-        <span class="n">f</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"rb"</span><span class="p">)</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">TextIOWrapper</span><span class="p">)</span>
         <span class="n">root</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">root</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2"> is a directory, not a file&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2"> is a directory, not a file"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">source</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
-        <span class="n">f</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"rb"</span><span class="p">)</span>
         <span class="n">root</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">parent</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">assert_never</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
-    <span class="n">expected_sha</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sha256&quot;</span><span class="p">)</span>
+    <span class="n">expected_sha</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sha256"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">expected_sha</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">sha</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
@@ -2756,7 +2756,7 @@
         <span class="n">_</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">sha</span> <span class="o">!=</span> <span class="n">expected_sha</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;SHA256 mismatch for </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">. Expected </span><span class="si">{</span><span class="n">expected_sha</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">sha</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"SHA256 mismatch for </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">. Expected </span><span class="si">{</span><span class="n">expected_sha</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">sha</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">BytesReader</span><span class="p">(</span>
@@ -2823,12 +2823,12 @@
             <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">mv</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
-            <span class="n">read_ctxt</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+            <span class="n">read_ctxt</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"rb"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">read_ctxt</span> <span class="o">=</span> <span class="n">nullcontext</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">read_ctxt</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">read</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">),</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">read</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">),</span> <span class="sa">b</span><span class="s2">""</span><span class="p">):</span>
                 <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
 
     <span class="n">sha</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
@@ -2866,11 +2866,11 @@
 <span class="normal">58</span>
 <span class="normal">59</span>
 <span class="normal">60</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_spdx_licenses</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">SpdxLicenses</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;get details of the SPDX licenses known to bioimageio.spec&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""get details of the SPDX licenses known to bioimageio.spec"""</span>
     <span class="k">with</span> <span class="p">(</span>
-        <span class="n">files</span><span class="p">(</span><span class="s2">&quot;bioimageio.spec&quot;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;static/spdx_licenses.json&quot;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">files</span><span class="p">(</span><span class="s2">"bioimageio.spec"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"static/spdx_licenses.json"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
     <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2917,15 +2917,15 @@
     <span class="k">for</span> <span class="n">bioimageio_name</span> <span class="ow">in</span> <span class="n">ALL_BIOIMAGEIO_YAML_NAMES</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">file_name</span> <span class="o">==</span> <span class="n">bioimageio_name</span> <span class="ow">or</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
-                <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">bioimageio_name</span>
+                <span class="s2">"."</span> <span class="o">+</span> <span class="n">bioimageio_name</span>
             <span class="p">):</span>
                 <span class="k">return</span> <span class="n">file_name</span>
 
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;No </span><span class="si">{</span><span class="n">BIOIMAGEIO_YAML</span><span class="si">}</span><span class="s2"> found in </span><span class="si">{</span><span class="n">file_names</span><span class="si">}</span><span class="s2">. (Looking for &#39;</span><span class="si">{</span><span class="n">BIOIMAGEIO_YAML</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-        <span class="o">+</span> <span class="s2">&quot; or or any of the alterntive file names:&quot;</span>
-        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span><span class="si">}</span><span class="s2">, or any file with an extension of&quot;</span>
-        <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;  those, e.g. &#39;anything.</span><span class="si">{</span><span class="n">BIOIMAGEIO_YAML</span><span class="si">}</span><span class="s2">&#39;).&quot;</span>
+        <span class="sa">f</span><span class="s2">"No </span><span class="si">{</span><span class="n">BIOIMAGEIO_YAML</span><span class="si">}</span><span class="s2"> found in </span><span class="si">{</span><span class="n">file_names</span><span class="si">}</span><span class="s2">. (Looking for '</span><span class="si">{</span><span class="n">BIOIMAGEIO_YAML</span><span class="si">}</span><span class="s2">'"</span>
+        <span class="o">+</span> <span class="s2">" or or any of the alterntive file names:"</span>
+        <span class="o">+</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">ALTERNATIVE_BIOIMAGEIO_YAML_NAMES</span><span class="si">}</span><span class="s2">, or any file with an extension of"</span>
+        <span class="o">+</span> <span class="sa">f</span><span class="s2">"  those, e.g. 'anything.</span><span class="si">{</span><span class="n">BIOIMAGEIO_YAML</span><span class="si">}</span><span class="s2">')."</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2989,11 +2989,11 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_source</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">file_source</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span>
-            <span class="ow">and</span> <span class="ow">not</span> <span class="n">file_source</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.zarr&quot;</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.zarr&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">file_source</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">file_source</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".zarr"</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".zarr"</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">file_source</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_source</span><span class="si">}</span><span class="s2"> is a directory, but expected a file (or a &#39;*.zarr&#39; (sub)directory).&quot;</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">file_source</span><span class="si">}</span><span class="s2"> is a directory, but expected a file (or a '*.zarr' (sub)directory)."</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">file_source</span>
 
@@ -3007,7 +3007,7 @@
         <span class="n">strict</span> <span class="o">=</span> <span class="n">_file_source_adapter</span><span class="o">.</span><span class="n">validate_python</span><span class="p">(</span><span class="n">file_source</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">strict</span><span class="p">,</span> <span class="n">Path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">strict</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">strict</span><span class="si">}</span><span class="s2"> is a directory, but expected a file (or a &#39;*.zarr&#39; (sub)directory).&quot;</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">strict</span><span class="si">}</span><span class="s2"> is a directory, but expected a file (or a '*.zarr' (sub)directory)."</span>
             <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">strict</span>
@@ -3041,7 +3041,7 @@
 <span class="normal">382</span>
 <span class="normal">383</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_valid_bioimageio_yaml_name</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="n">FileName</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">bioimageio_name</span> <span class="ow">in</span> <span class="n">ALL_BIOIMAGEIO_YAML_NAMES</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">file_name</span> <span class="o">==</span> <span class="n">bioimageio_name</span> <span class="ow">or</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">bioimageio_name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">file_name</span> <span class="o">==</span> <span class="n">bioimageio_name</span> <span class="ow">or</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"."</span> <span class="o">+</span> <span class="n">bioimageio_name</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">return</span> <span class="kc">False</span>
@@ -3077,10 +3077,10 @@
 <span class="normal">396</span>
 <span class="normal">397</span>
 <span class="normal">398</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_array</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">PermissiveFileSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;load a numpy ndarray from a .npy file&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""load a numpy ndarray from a .npy file"""</span>
     <span class="n">reader</span> <span class="o">=</span> <span class="n">get_reader</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">allow_pickle</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Loading numpy array with `allow_pickle=True`.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Loading numpy array with `allow_pickle=True`."</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">allow_pickle</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -3159,15 +3159,15 @@
 <span class="normal">88</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_image</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">FileDescr</span> <span class="o">|</span> <span class="n">ZipPath</span> <span class="o">|</span> <span class="n">PermissiveFileSource</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;load a single image as numpy array</span>
+<span class="w">    </span><span class="sd">"""load a single image as numpy array</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        source: image source</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">source</span> <span class="o">=</span> <span class="n">_interprete_file_source</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.npy&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".npy"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">load_array</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">get_reader</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
@@ -3350,21 +3350,21 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OpenedBioimageioYaml</span><span class="p">:</span>
     <span class="k">if</span> <span class="p">(</span>
         <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-        <span class="ow">and</span> <span class="n">source</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;huggingface/&quot;</span><span class="p">)</span>
-        <span class="ow">and</span> <span class="n">source</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span>
+        <span class="ow">and</span> <span class="n">source</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"huggingface/"</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="n">source</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span>
     <span class="p">):</span>
-        <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="c1"># huggingface/{user_or_org}/{repo_name}</span>
-            <span class="n">repo_id</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;huggingface/&quot;</span><span class="p">)</span> <span class="p">:]</span>
-            <span class="n">branch</span> <span class="o">=</span> <span class="s2">&quot;main&quot;</span>
+            <span class="n">repo_id</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">"huggingface/"</span><span class="p">)</span> <span class="p">:]</span>
+            <span class="n">branch</span> <span class="o">=</span> <span class="s2">"main"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># huggingface/{user_or_org}/{repo_id}/</span>
             <span class="c1"># huggingface/{user_or_org}/{repo_id}/version</span>
-            <span class="n">repo_id</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;huggingface/&quot;</span><span class="p">)</span> <span class="p">:]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">repo_id</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">"huggingface/"</span><span class="p">)</span> <span class="p">:]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">version</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">branch</span> <span class="o">=</span> <span class="s2">&quot;main&quot;</span>
+                <span class="n">branch</span> <span class="o">=</span> <span class="s2">"main"</span>
             <span class="k">elif</span> <span class="n">version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
-                <span class="n">branch</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;v</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">branch</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"v</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">"</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">branch</span> <span class="o">=</span> <span class="n">version</span>
 
@@ -3407,16 +3407,16 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">r</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">follow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">_</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-                <span class="n">unparsed_content</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                <span class="n">unparsed_content</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
                 <span class="n">content</span> <span class="o">=</span> <span class="n">_sanitize_bioimageio_yaml</span><span class="p">(</span><span class="n">read_yaml</span><span class="p">(</span><span class="n">unparsed_content</span><span class="p">))</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e_coll_pattern</span><span class="p">:</span>
-                <span class="n">collection_pattern_error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;BIOIMAGEIO_COLLECTION_HTTP_PATTERN: Failed to get bioimageio.yaml from </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e_coll_pattern</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">collection_pattern_error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"BIOIMAGEIO_COLLECTION_HTTP_PATTERN: Failed to get bioimageio.yaml from </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e_coll_pattern</span><span class="si">}</span><span class="s2">"</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">collection_pattern_error_msg</span><span class="p">)</span>
-                <span class="n">collection_pattern_error_msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">collection_pattern_error_msg</span>
+                <span class="n">collection_pattern_error_msg</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">collection_pattern_error_msg</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;loaded </span><span class="si">{}</span><span class="s2"> from </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"loaded </span><span class="si">{}</span><span class="s2"> from </span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
                 <span class="n">original_file_name</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="s2">&quot;rdf.yaml&quot;</span> <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="s2">"rdf.yaml"</span> <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                 <span class="p">)</span>
                 <span class="k">return</span> <span class="n">OpenedBioimageioYaml</span><span class="p">(</span>
                     <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
@@ -3426,37 +3426,37 @@
                     <span class="n">unparsed_content</span><span class="o">=</span><span class="n">unparsed_content</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">collection_pattern_error_msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">collection_pattern_error_msg</span> <span class="o">=</span> <span class="s2">""</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;/&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"/"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;BIOIMAGEIO_ID_MAP: Invalid id map url </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">collection_pattern_error_msg</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"BIOIMAGEIO_ID_MAP: Invalid id map url </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">collection_pattern_error_msg</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="n">id_map</span> <span class="o">=</span> <span class="n">get_id_map</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">id_map</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;BIOIMAGEIO_ID_MAP: Empty (or unavailable) id map from </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">collection_pattern_error_msg</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"BIOIMAGEIO_ID_MAP: Empty (or unavailable) id map from </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">collection_pattern_error_msg</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="k">if</span> <span class="n">id_map</span> <span class="ow">and</span> <span class="n">source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">id_map</span><span class="p">:</span>
             <span class="n">close_matches</span> <span class="o">=</span> <span class="n">get_close_matches</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">id_map</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">close_matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;BIOIMAGEIO_ID_MAP: &#39;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&#39; not found in </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">collection_pattern_error_msg</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"BIOIMAGEIO_ID_MAP: '</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">' not found in </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">collection_pattern_error_msg</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">close_matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">did_you_mean</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; Did you mean &#39;</span><span class="si">{</span><span class="n">close_matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;?&quot;</span>
+                <span class="n">did_you_mean</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" Did you mean '</span><span class="si">{</span><span class="n">close_matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">'?"</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">did_you_mean</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; Did you mean any of </span><span class="si">{</span><span class="n">close_matches</span><span class="si">}</span><span class="s2">?&quot;</span>
+                <span class="n">did_you_mean</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" Did you mean any of </span><span class="si">{</span><span class="n">close_matches</span><span class="si">}</span><span class="s2">?"</span>
 
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;BIOIMAGEIO_ID_MAP: &#39;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&#39; not found in </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">did_you_mean</span><span class="si">}{</span><span class="n">collection_pattern_error_msg</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"BIOIMAGEIO_ID_MAP: '</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">' not found in </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">did_you_mean</span><span class="si">}{</span><span class="n">collection_pattern_error_msg</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="n">entry</span> <span class="o">=</span> <span class="n">id_map</span><span class="p">[</span><span class="n">source</span><span class="p">]</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;loading </span><span class="si">{}</span><span class="s2"> from </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">entry</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"loading </span><span class="si">{}</span><span class="s2"> from </span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">entry</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">get_reader</span><span class="p">()</span>
         <span class="k">with</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">perform_io_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="n">src</span> <span class="o">=</span> <span class="n">HttpUrl</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -3464,7 +3464,7 @@
     <span class="k">if</span> <span class="n">reader</span><span class="o">.</span><span class="n">is_zipfile</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_open_bioimageio_zip</span><span class="p">(</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">reader</span><span class="p">),</span> <span class="n">original_source_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="p">))</span>
 
-    <span class="n">unparsed_content</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="n">unparsed_content</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
     <span class="n">content</span> <span class="o">=</span> <span class="n">_sanitize_bioimageio_yaml</span><span class="p">(</span><span class="n">read_yaml</span><span class="p">(</span><span class="n">unparsed_content</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">RelativeFilePath</span><span class="p">):</span>
@@ -3531,7 +3531,7 @@
     <span class="n">file</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">|</span> <span class="n">ZipPath</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="n">BytesReader</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">YamlValue</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="n">ZipPath</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">file</span>
 
@@ -3569,8 +3569,8 @@
 <span class="normal">403</span>
 <span class="normal">404</span>
 <span class="normal">405</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_array</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;save a numpy ndarray to a .npy file&quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""save a numpy ndarray to a .npy file"""</span>
+    <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -3626,12 +3626,12 @@
     <span class="n">file</span><span class="p">:</span> <span class="n">NewPath</span> <span class="o">|</span> <span class="n">FilePath</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
-        <span class="n">cm</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="n">cm</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">cm</span> <span class="o">=</span> <span class="n">nullcontext</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-        <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"json"</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">cm</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">_yaml_dump</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>

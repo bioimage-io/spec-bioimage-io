@@ -813,15 +813,15 @@
         <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">HttpUrl</span> <span class="o">|</span> <span class="n">DirectoryPath</span><span class="p">],</span>
     <span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    a (partial) rdf may have &#39;rdf_source&#39; or &#39;source&#39; which resolve to rdf data that may be overwritten.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    a (partial) rdf may have 'rdf_source' or 'source' which resolve to rdf data that may be overwritten.</span>
+<span class="sd">    """</span>
 
     <span class="n">enriched_rdf</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="s2">&quot;rdf_source&quot;</span> <span class="ow">in</span> <span class="n">partial_rdf</span><span class="p">:</span>
-        <span class="n">given_rdf_src</span> <span class="o">=</span> <span class="n">partial_rdf</span><span class="p">[</span><span class="s2">&quot;rdf_source&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">given_rdf_src</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">given_rdf_src</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
-            <span class="s2">&quot;.imjoy.html&quot;</span>
+    <span class="k">if</span> <span class="s2">"rdf_source"</span> <span class="ow">in</span> <span class="n">partial_rdf</span><span class="p">:</span>
+        <span class="n">given_rdf_src</span> <span class="o">=</span> <span class="n">partial_rdf</span><span class="p">[</span><span class="s2">"rdf_source"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">given_rdf_src</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">given_rdf_src</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"?"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+            <span class="s2">".imjoy.html"</span>
         <span class="p">):</span>
             <span class="c1"># given_rdf_src is an imjoy plugin</span>
             <span class="n">rdf_source</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">get_plugin_as_rdf</span><span class="p">(</span><span class="n">given_rdf_src</span><span class="p">))</span>
@@ -842,24 +842,24 @@
                     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ee</span><span class="p">:</span>
                         <span class="n">rdf_source</span> <span class="o">=</span> <span class="p">{}</span>
                         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Failed to resolve `rdf_source`: 1. </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n</span><span class="s2">2. </span><span class="si">{</span><span class="n">ee</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="sa">f</span><span class="s2">"Failed to resolve `rdf_source`: 1. </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n</span><span class="s2">2. </span><span class="si">{</span><span class="n">ee</span><span class="si">}</span><span class="s2">"</span>
                         <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">rdf_source</span><span class="p">[</span><span class="s2">&quot;root_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">rdf_source</span><span class="p">[</span><span class="s2">"root_path"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                             <span class="n">rdf_source_root</span>  <span class="c1"># enables remote source content to be resolved</span>
                         <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">rdf_source</span><span class="p">[</span><span class="s2">&quot;root_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">rdf_source</span><span class="p">[</span><span class="s2">"root_path"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="n">rdf_source_root</span>  <span class="c1"># enables remote source content to be resolved</span>
                     <span class="p">)</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rdf_source</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="n">enriched_rdf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rdf_source</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="s2">&quot;source&quot;</span> <span class="ow">in</span> <span class="n">partial_rdf</span> <span class="ow">and</span> <span class="n">partial_rdf</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
-        <span class="s2">&quot;.imjoy.html&quot;</span>
+    <span class="k">if</span> <span class="s2">"source"</span> <span class="ow">in</span> <span class="n">partial_rdf</span> <span class="ow">and</span> <span class="n">partial_rdf</span><span class="p">[</span><span class="s2">"source"</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"?"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+        <span class="s2">".imjoy.html"</span>
     <span class="p">):</span>
-        <span class="n">rdf_from_source</span> <span class="o">=</span> <span class="n">get_plugin_as_rdf</span><span class="p">(</span><span class="n">partial_rdf</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">])</span>
+        <span class="n">rdf_from_source</span> <span class="o">=</span> <span class="n">get_plugin_as_rdf</span><span class="p">(</span><span class="n">partial_rdf</span><span class="p">[</span><span class="s2">"source"</span><span class="p">])</span>
         <span class="n">enriched_rdf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rdf_from_source</span><span class="p">)</span>
 
     <span class="n">enriched_rdf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -898,7 +898,7 @@
 <span class="normal">189</span>
 <span class="normal">190</span>
 <span class="normal">191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_plugin_as_rdf</span><span class="p">(</span><span class="n">source_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get imjoy plugin config in RDF format.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Get imjoy plugin config in RDF format."""</span>
     <span class="n">req</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source_url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span>
     <span class="n">plugin_config</span> <span class="o">=</span> <span class="n">parse_imjoy_plugin</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>

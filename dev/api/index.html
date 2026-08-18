@@ -2198,7 +2198,7 @@ It also provides download/upload to/from the BioImage.IO Model Zoo at <a href="h
             <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/model/#bioimageio.spec.model.ModelDescr">ModelDescr</a></span><span class="p">,</span>
             <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/notebook/#bioimageio.spec.notebook.NotebookDescr">NotebookDescr</a></span><span class="p">,</span>
         <span class="p">],</span>
-        <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Discriminator&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.Discriminator">Discriminator</a></span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
+        <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Discriminator&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.Discriminator">Discriminator</a></span><span class="p">(</span><span class="s2">"type"</span><span class="p">),</span>
     <span class="p">],</span>
     <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/generic/#bioimageio.spec.generic.GenericDescr">GenericDescr</a></span><span class="p">,</span>
 <span class="p">]</span>
@@ -2573,7 +2573,7 @@ It also provides download/upload to/from the BioImage.IO Model Zoo at <a href="h
         <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/model/#bioimageio.spec.model.AnyModelDescr">AnyModelDescr</a></span><span class="p">,</span>
         <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/notebook/#bioimageio.spec.notebook.AnyNotebookDescr">AnyNotebookDescr</a></span><span class="p">,</span>
     <span class="p">],</span>
-    <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Discriminator&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.Discriminator">Discriminator</a></span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">),</span>
+    <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Discriminator&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.Discriminator">Discriminator</a></span><span class="p">(</span><span class="s2">"type"</span><span class="p">),</span>
 <span class="p">]</span>
 </code></pre></div>
 
@@ -2768,7 +2768,7 @@ It also provides download/upload to/from the BioImage.IO Model Zoo at <a href="h
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.build_description(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.build_description(format_version)">format_version</a></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;latest&quot;</span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.build_description(format_version)">format_version</a></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"latest"</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.LatestResourceDescr">LatestResourceDescr</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.InvalidDescr">InvalidDescr</a></span>
 </code></pre></div><div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">build_description</span><span class="p">(</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.build_description(content)">content</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.io.BioimageioYamlContentView">BioimageioYamlContentView</span></span><span class="p">,</span>
@@ -2932,7 +2932,7 @@ Note:
     <span class="n">context</span><span class="p">:</span> <span class="n">ValidationContext</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">format_version</span><span class="p">:</span> <span class="n">FormatVersionPlaceholder</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DISCOVER</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResourceDescr</span> <span class="o">|</span> <span class="n">InvalidDescr</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;build a bioimage.io resource description from an RDF&#39;s content.</span>
+<span class="w">    </span><span class="sd">"""build a bioimage.io resource description from an RDF's content.</span>
 
 <span class="sd">    Use `load_description` if you want to build a resource description from an rdf.yaml</span>
 <span class="sd">    or bioimage.io zip-package.</span>
@@ -2944,15 +2944,15 @@ Note:
 <span class="sd">            (optional) use this argument to load the resource and</span>
 <span class="sd">            convert its metadata to a higher format_version.</span>
 <span class="sd">            Note:</span>
-<span class="sd">            - Use &quot;latest&quot; to convert to the latest available format version.</span>
-<span class="sd">            - Use &quot;discover&quot; to use the format version specified in the RDF.</span>
+<span class="sd">            - Use "latest" to convert to the latest available format version.</span>
+<span class="sd">            - Use "discover" to use the format version specified in the RDF.</span>
 <span class="sd">            - Only considers major.minor format version, ignores patch version.</span>
 <span class="sd">            - Conversion to lower format versions is not supported.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An object holding all metadata of the bioimage.io resource</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">return</span> <span class="n">build_description_impl</span><span class="p">(</span>
         <span class="n">content</span><span class="p">,</span>
@@ -3077,15 +3077,15 @@ Note:
     <span class="n">exclude_unset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">exclude_defaults</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BioimageioYamlContent</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML.</span>
+<span class="w">    </span><span class="sd">"""Converts a resource to a dictionary containing only simple types that can directly be serialzed to YAML.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        rd: bioimageio resource description</span>
 <span class="sd">        exclude_unset: Exclude fields that have not explicitly be set.</span>
 <span class="sd">        exclude_defaults: Exclude fields that have the default value (even if set explicitly).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">rd</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
-        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="n">exclude_unset</span><span class="p">,</span> <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">"json"</span><span class="p">,</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="n">exclude_unset</span><span class="p">,</span> <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -3104,7 +3104,7 @@ Note:
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_conda_env</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.get_conda_env(entry)">entry</span></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._get_conda_env.SupportedWeightsEntry">SupportedWeightsEntry</span></span><span class="p">,</span>
-    <span class="n"><span title="bioimageio.spec.get_conda_env(env_name)">env_name</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;DROP&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.get_conda_env(env_name)">env_name</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"DROP"</span><span class="p">]</span> <span class="o">|</span> <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/conda_env/#bioimageio.spec.conda_env.BioimageioCondaEnv">BioimageioCondaEnv</a></span>
 </code></pre></div>
 
@@ -3170,9 +3170,9 @@ Note:
 <span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_conda_env</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">entry</span><span class="p">:</span> <span class="n">SupportedWeightsEntry</span><span class="p">,</span>
-    <span class="n">env_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;DROP&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">env_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"DROP"</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BioimageioCondaEnv</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;get the recommended Conda environment for a given weights entry description&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""get the recommended Conda environment for a given weights entry description"""</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="p">(</span><span class="n">v0_4</span><span class="o">.</span><span class="n">OnnxWeightsDescr</span><span class="p">,</span> <span class="n">v0_5</span><span class="o">.</span><span class="n">OnnxWeightsDescr</span><span class="p">)):</span>
         <span class="n">conda_env</span> <span class="o">=</span> <span class="n">_get_default_onnx_env</span><span class="p">(</span><span class="n">opset_version</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">opset_version</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span>
@@ -3213,7 +3213,7 @@ Note:
     <span class="k">else</span><span class="p">:</span>
         <span class="n">assert_never</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">env_name</span> <span class="o">==</span> <span class="s2">&quot;DROP&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">env_name</span> <span class="o">==</span> <span class="s2">"DROP"</span><span class="p">:</span>
         <span class="n">conda_env</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">elif</span> <span class="n">env_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">conda_env</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">env_name</span>
@@ -3378,7 +3378,7 @@ If none of the prioritized weights formats is found a ValueError is raised.</p>
     <span class="n">weights_priority_order</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">WeightsFormat</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># model only</span>
     <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">FileName</span><span class="p">,</span> <span class="n">FileDescr</span> <span class="o">|</span> <span class="n">BioimageioYamlContent</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Args:</span>
 <span class="sd">        rd: resource description</span>
 <span class="sd">        bioimageio_yaml_file_name: RDF file name</span>
@@ -3386,7 +3386,7 @@ If none of the prioritized weights formats is found a ValueError is raised.</p>
 <span class="sd">            If given, only the first weights format present in the model is included.</span>
 <span class="sd">            If none of the prioritized weights formats is found a ValueError is raised.</span>
 <span class="sd">        local_files_only: If True, only local files are included in the package content. If False, remote files are also included.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">os_friendly_name</span> <span class="o">=</span> <span class="n">get_os_friendly_file_name</span><span class="p">(</span><span class="n">rd</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="n">bioimageio_yaml_file_name</span> <span class="o">=</span> <span class="n">bioimageio_yaml_file_name</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="n">os_friendly_name</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">rd</span><span class="o">.</span><span class="n">type</span>
@@ -3403,10 +3403,10 @@ If none of the prioritized weights formats is found a ValueError is raised.</p>
         <span class="n">local_files_only</span><span class="o">=</span><span class="n">local_files_only</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">rdf_content</span><span class="p">:</span> <span class="n">BioimageioYamlContent</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span>
-            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">"json"</span><span class="p">,</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
-    <span class="n">_</span> <span class="o">=</span> <span class="n">rdf_content</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;rdf_source&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">rdf_content</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"rdf_source"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">content</span><span class="p">,</span> <span class="n">bioimageio_yaml_file_name</span><span class="p">:</span> <span class="n">rdf_content</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
@@ -3479,7 +3479,7 @@ If none of the prioritized weights formats is found a ValueError is raised.</p>
     <span class="n">bioimageio_yaml_file_name</span><span class="p">:</span> <span class="n">FileName</span> <span class="o">=</span> <span class="n">BIOIMAGEIO_YAML</span><span class="p">,</span>
     <span class="n">weights_priority_order</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">WeightsFormat</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># model only</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">FileName</span><span class="p">,</span> <span class="n">HttpUrl</span> <span class="o">|</span> <span class="n">AbsoluteFilePath</span> <span class="o">|</span> <span class="n">BioimageioYamlContent</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;DEPRECATED in favor of get_package_content: Get the content of a bioimage.io resource package.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""DEPRECATED in favor of get_package_content: Get the content of a bioimage.io resource package."""</span>
     <span class="n">ret</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
         <span class="n">FileName</span><span class="p">,</span> <span class="n">HttpUrl</span> <span class="o">|</span> <span class="n">AbsoluteFilePath</span> <span class="o">|</span> <span class="n">BioimageioYamlContent</span> <span class="o">|</span> <span class="n">ZipPath</span>
     <span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -3517,7 +3517,7 @@ If none of the prioritized weights formats is found a ValueError is raised.</p>
     <span class="n"><span title="bioimageio.spec._io.load_dataset_description(source)">source</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.PermissiveFileSource">PermissiveFileSource</a></span> <span class="o">|</span> <span class="n"><span title="zipfile.ZipFile">ZipFile</span></span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n"><span title="bioimageio.spec._io.load_dataset_description(format_version)">format_version</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;latest&quot;</span><span class="p">],</span>
+    <span class="n"><span title="bioimageio.spec._io.load_dataset_description(format_version)">format_version</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"latest"</span><span class="p">],</span>
     <span class="n"><span title="bioimageio.spec._io.load_dataset_description(perform_io_checks)">perform_io_checks</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec._io.load_dataset_description(known_files)">known_files</span></span><span class="p">:</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.Sha256">Sha256</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec._io.load_dataset_description(sha256)">sha256</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.Sha256">Sha256</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3605,9 +3605,9 @@ description is valid and of type 'dataset'.</p>
     <span class="n">known_files</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sha256</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sha256</span><span class="p">:</span> <span class="n">Sha256</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnyDatasetDescr</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;same as `load_description`, but addtionally ensures that the loaded</span>
-<span class="sd">    description is valid and of type &#39;dataset&#39;.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""same as `load_description`, but addtionally ensures that the loaded</span>
+<span class="sd">    description is valid and of type 'dataset'.</span>
+<span class="sd">    """</span>
     <span class="n">rd</span> <span class="o">=</span> <span class="n">load_description</span><span class="p">(</span>
         <span class="n">source</span><span class="p">,</span>
         <span class="n">format_version</span><span class="o">=</span><span class="n">format_version</span><span class="p">,</span>
@@ -3635,7 +3635,7 @@ description is valid and of type 'dataset'.</p>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.load_description(source)">source</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.PermissiveFileSource">PermissiveFileSource</a></span> <span class="o">|</span> <span class="n"><span title="zipfile.ZipFile">ZipFile</span></span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.load_description(format_version)">format_version</a></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;latest&quot;</span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.load_description(format_version)">format_version</a></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"latest"</span><span class="p">],</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.load_description(perform_io_checks)">perform_io_checks</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.load_description(known_files)">known_files</a></span><span class="p">:</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.Sha256">Sha256</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.load_description(sha256)">sha256</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.Sha256">Sha256</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3907,7 +3907,7 @@ missing, 'unknown' file references are considered invalid.</p>
     <span class="n">known_files</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sha256</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sha256</span><span class="p">:</span> <span class="n">Sha256</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResourceDescr</span> <span class="o">|</span> <span class="n">InvalidDescr</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;load a bioimage.io resource description</span>
+<span class="w">    </span><span class="sd">"""load a bioimage.io resource description</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        source:</span>
@@ -3917,8 +3917,8 @@ missing, 'unknown' file references are considered invalid.</p>
 <span class="sd">            (optional) Use this argument to load the resource and</span>
 <span class="sd">            convert its metadata to a higher format_version.</span>
 <span class="sd">            Note:</span>
-<span class="sd">            - Use &quot;latest&quot; to convert to the latest available format version.</span>
-<span class="sd">            - Use &quot;discover&quot; to use the format version specified in the RDF.</span>
+<span class="sd">            - Use "latest" to convert to the latest available format version.</span>
+<span class="sd">            - Use "discover" to use the format version specified in the RDF.</span>
 <span class="sd">            - Only considers major.minor format version, ignores patch version.</span>
 <span class="sd">            - Conversion to lower format versions is not supported.</span>
 <span class="sd">        perform_io_checks:</span>
@@ -3939,17 +3939,17 @@ missing, 'unknown' file references are considered invalid.</p>
 <span class="sd">            this dictionary with their SHA-256 value.</span>
 
 <span class="sd">            If `perform_io_checks` is False and `known_files` is not empty,</span>
-<span class="sd">            missing, &#39;unknown&#39; file references are considered invalid.</span>
+<span class="sd">            missing, 'unknown' file references are considered invalid.</span>
 <span class="sd">        sha256:</span>
 <span class="sd">            Optional SHA-256 value of **source**</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An object holding all metadata of the bioimage.io resource</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">ResourceDescrBase</span><span class="p">):</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;returning already loaded description &#39;</span><span class="si">{}</span><span class="s2">&#39; as is&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">source</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"returning already loaded description '</span><span class="si">{}</span><span class="s2">' as is"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">source</span>  <span class="c1"># pyright: ignore[reportReturnType]</span>
 
     <span class="n">opened</span> <span class="o">=</span> <span class="n">open_bioimageio_yaml</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="n">sha256</span><span class="p">)</span>
@@ -4056,12 +4056,12 @@ missing, 'unknown' file references are considered invalid.</p>
     <span class="n">known_files</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sha256</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sha256</span><span class="p">:</span> <span class="n">Sha256</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationSummary</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;same as `load_description`, but only return the validation summary.</span>
+<span class="w">    </span><span class="sd">"""same as `load_description`, but only return the validation summary.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Validation summary of the bioimage.io resource found at `source`.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rd</span> <span class="o">=</span> <span class="n">load_description</span><span class="p">(</span>
         <span class="n">source</span><span class="p">,</span>
         <span class="n">format_version</span><span class="o">=</span><span class="n">format_version</span><span class="p">,</span>
@@ -4090,7 +4090,7 @@ missing, 'unknown' file references are considered invalid.</p>
     <span class="n"><span title="bioimageio.spec._io.load_model_description(source)">source</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.PermissiveFileSource">PermissiveFileSource</a></span> <span class="o">|</span> <span class="n"><span title="zipfile.ZipFile">ZipFile</span></span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n"><span title="bioimageio.spec._io.load_model_description(format_version)">format_version</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;latest&quot;</span><span class="p">],</span>
+    <span class="n"><span title="bioimageio.spec._io.load_model_description(format_version)">format_version</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"latest"</span><span class="p">],</span>
     <span class="n"><span title="bioimageio.spec._io.load_model_description(perform_io_checks)">perform_io_checks</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec._io.load_model_description(known_files)">known_files</span></span><span class="p">:</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.Sha256">Sha256</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec._io.load_model_description(sha256)">sha256</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.Sha256">Sha256</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4204,12 +4204,12 @@ description is valid and of type 'model'.</p>
     <span class="n">known_files</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sha256</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">sha256</span><span class="p">:</span> <span class="n">Sha256</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnyModelDescr</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;same as `load_description`, but addtionally ensures that the loaded</span>
-<span class="sd">    description is valid and of type &#39;model&#39;.</span>
+<span class="w">    </span><span class="sd">"""same as `load_description`, but addtionally ensures that the loaded</span>
+<span class="sd">    description is valid and of type 'model'.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: for invalid or non-model resources</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rd</span> <span class="o">=</span> <span class="n">load_description</span><span class="p">(</span>
         <span class="n">source</span><span class="p">,</span>
         <span class="n">format_version</span><span class="o">=</span><span class="n">format_version</span><span class="p">,</span>
@@ -4241,12 +4241,12 @@ description is valid and of type 'model'.</p>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package(output_path)">output_path</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.NewPath">NewPath</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.FilePath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.FilePath">FilePath</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package(weights_priority_order)">weights_priority_order</a></span><span class="p">:</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span>
         <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span>
-            <span class="s2">&quot;keras_hdf5&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;onnx&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;pytorch_state_dict&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tensorflow_js&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tensorflow_saved_model_bundle&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;torchscript&quot;</span><span class="p">,</span>
+            <span class="s2">"keras_hdf5"</span><span class="p">,</span>
+            <span class="s2">"onnx"</span><span class="p">,</span>
+            <span class="s2">"pytorch_state_dict"</span><span class="p">,</span>
+            <span class="s2">"tensorflow_js"</span><span class="p">,</span>
+            <span class="s2">"tensorflow_saved_model_bundle"</span><span class="p">,</span>
+            <span class="s2">"torchscript"</span><span class="p">,</span>
         <span class="p">]</span>
     <span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4510,19 +4510,19 @@ description is valid and of type 'model'.</p>
     <span class="n">output_path</span><span class="p">:</span> <span class="n">NewPath</span> <span class="o">|</span> <span class="n">FilePath</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">weights_priority_order</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span>
         <span class="n">Literal</span><span class="p">[</span>
-            <span class="s2">&quot;keras_hdf5&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;onnx&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;pytorch_state_dict&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tensorflow_js&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tensorflow_saved_model_bundle&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;torchscript&quot;</span><span class="p">,</span>
+            <span class="s2">"keras_hdf5"</span><span class="p">,</span>
+            <span class="s2">"onnx"</span><span class="p">,</span>
+            <span class="s2">"pytorch_state_dict"</span><span class="p">,</span>
+            <span class="s2">"tensorflow_js"</span><span class="p">,</span>
+            <span class="s2">"tensorflow_saved_model_bundle"</span><span class="p">,</span>
+            <span class="s2">"torchscript"</span><span class="p">,</span>
         <span class="p">]</span>
     <span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">allow_invalid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FilePath</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Package a bioimageio resource as a zip file.</span>
+<span class="w">    </span><span class="sd">"""Package a bioimageio resource as a zip file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        source: bioimageio resource description</span>
@@ -4537,7 +4537,7 @@ description is valid and of type 'model'.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        path to zipped bioimageio package</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">package_content</span> <span class="o">=</span> <span class="n">_prepare_resource_package</span><span class="p">(</span>
         <span class="n">source</span><span class="p">,</span>
         <span class="n">weights_priority_order</span><span class="o">=</span><span class="n">weights_priority_order</span><span class="p">,</span>
@@ -4545,7 +4545,7 @@ description is valid and of type 'model'.</p>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
-            <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.bioimageio.zip&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>  <span class="c1"># ruff: ignore[SIM115]</span>
+            <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">".bioimageio.zip"</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>  <span class="c1"># ruff: ignore[SIM115]</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
@@ -4558,7 +4558,7 @@ description is valid and of type 'model'.</p>
     <span class="p">)</span>
     <span class="k">with</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">warning_level</span><span class="o">=</span><span class="n">ERROR</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">((</span><span class="n">exported</span> <span class="o">:=</span> <span class="n">load_description</span><span class="p">(</span><span class="n">output_path</span><span class="p">)),</span> <span class="n">InvalidDescr</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Exported package at &#39;</span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&#39; is invalid:</span><span class="se">\n</span><span class="si">{</span><span class="n">exported</span><span class="o">.</span><span class="n">get_reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Exported package at '</span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">' is invalid:</span><span class="se">\n</span><span class="si">{</span><span class="n">exported</span><span class="o">.</span><span class="n">get_reason</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
             <span class="k">if</span> <span class="n">allow_invalid</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -4586,12 +4586,12 @@ description is valid and of type 'model'.</p>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package_as_folder(output_path)">output_path</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.NewPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.NewPath">NewPath</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.DirectoryPath&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.DirectoryPath">DirectoryPath</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package_as_folder(weights_priority_order)">weights_priority_order</a></span><span class="p">:</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span>
         <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span>
-            <span class="s2">&quot;keras_hdf5&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;onnx&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;pytorch_state_dict&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tensorflow_js&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tensorflow_saved_model_bundle&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;torchscript&quot;</span><span class="p">,</span>
+            <span class="s2">"keras_hdf5"</span><span class="p">,</span>
+            <span class="s2">"onnx"</span><span class="p">,</span>
+            <span class="s2">"pytorch_state_dict"</span><span class="p">,</span>
+            <span class="s2">"tensorflow_js"</span><span class="p">,</span>
+            <span class="s2">"tensorflow_saved_model_bundle"</span><span class="p">,</span>
+            <span class="s2">"torchscript"</span><span class="p">,</span>
         <span class="p">]</span>
     <span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4807,18 +4807,18 @@ description is valid and of type 'model'.</p>
     <span class="n">output_path</span><span class="p">:</span> <span class="n">NewPath</span> <span class="o">|</span> <span class="n">DirectoryPath</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">weights_priority_order</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span>
         <span class="n">Literal</span><span class="p">[</span>
-            <span class="s2">&quot;keras_hdf5&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;onnx&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;pytorch_state_dict&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tensorflow_js&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tensorflow_saved_model_bundle&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;torchscript&quot;</span><span class="p">,</span>
+            <span class="s2">"keras_hdf5"</span><span class="p">,</span>
+            <span class="s2">"onnx"</span><span class="p">,</span>
+            <span class="s2">"pytorch_state_dict"</span><span class="p">,</span>
+            <span class="s2">"tensorflow_js"</span><span class="p">,</span>
+            <span class="s2">"tensorflow_saved_model_bundle"</span><span class="p">,</span>
+            <span class="s2">"torchscript"</span><span class="p">,</span>
         <span class="p">]</span>
     <span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DirectoryPath</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write the content of a bioimage.io resource package to a folder.</span>
+<span class="w">    </span><span class="sd">"""Write the content of a bioimage.io resource package to a folder.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        source: bioimageio resource description</span>
@@ -4829,7 +4829,7 @@ description is valid and of type 'model'.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        directory path to bioimageio package folder</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">package_content</span> <span class="o">=</span> <span class="n">_prepare_resource_package</span><span class="p">(</span>
         <span class="n">source</span><span class="p">,</span>
         <span class="n">weights_priority_order</span><span class="o">=</span><span class="n">weights_priority_order</span><span class="p">,</span>
@@ -4843,7 +4843,7 @@ description is valid and of type 'model'.</p>
     <span class="n">output_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">package_content</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;got empty file name in package content&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"got empty file name in package content"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
             <span class="n">write_yaml</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">output_path</span> <span class="o">/</span> <span class="n">name</span><span class="p">)</span>
@@ -4853,18 +4853,18 @@ description is valid and of type 'model'.</p>
             <span class="o">==</span> <span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
         <span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Not copying </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">original_root</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">src</span><span class="o">.</span><span class="n">original_file_name</span><span class="si">}</span><span class="s2"> to itself.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Not copying </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">original_root</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">src</span><span class="o">.</span><span class="n">original_file_name</span><span class="si">}</span><span class="s2"> to itself."</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">original_root</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Copying from path </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">original_root</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">src</span><span class="o">.</span><span class="n">original_file_name</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">output_path</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Copying from path </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">original_root</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">src</span><span class="o">.</span><span class="n">original_file_name</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">output_path</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">name</span><span class="si">}</span><span class="s2">."</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Copying </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">original_root</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">original_file_name</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">output_path</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Copying </span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">original_root</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">src</span><span class="o">.</span><span class="n">original_file_name</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">output_path</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">name</span><span class="si">}</span><span class="s2">."</span>
                 <span class="p">)</span>
-            <span class="k">with</span> <span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dest</span><span class="p">:</span>
+            <span class="k">with</span> <span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">dest</span><span class="p">:</span>
                 <span class="n">_</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">output_path</span>
@@ -4891,12 +4891,12 @@ description is valid and of type 'model'.</p>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package_to_stream(output_stream)">output_stream</a></span><span class="p">:</span> <span class="n"><span title="typing.IO">IO</span></span><span class="p">[</span><span class="n"><span title="bytes">bytes</span></span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.save_bioimageio_package_to_stream(weights_priority_order)">weights_priority_order</a></span><span class="p">:</span> <span class="n"><span title="typing.Sequence">Sequence</span></span><span class="p">[</span>
         <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span>
-            <span class="s2">&quot;keras_hdf5&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;onnx&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;pytorch_state_dict&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tensorflow_js&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tensorflow_saved_model_bundle&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;torchscript&quot;</span><span class="p">,</span>
+            <span class="s2">"keras_hdf5"</span><span class="p">,</span>
+            <span class="s2">"onnx"</span><span class="p">,</span>
+            <span class="s2">"pytorch_state_dict"</span><span class="p">,</span>
+            <span class="s2">"tensorflow_js"</span><span class="p">,</span>
+            <span class="s2">"tensorflow_saved_model_bundle"</span><span class="p">,</span>
+            <span class="s2">"torchscript"</span><span class="p">,</span>
         <span class="p">]</span>
     <span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5134,18 +5134,18 @@ description is valid and of type 'model'.</p>
     <span class="n">output_stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">weights_priority_order</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span>
         <span class="n">Literal</span><span class="p">[</span>
-            <span class="s2">&quot;keras_hdf5&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;onnx&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;pytorch_state_dict&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tensorflow_js&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;tensorflow_saved_model_bundle&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;torchscript&quot;</span><span class="p">,</span>
+            <span class="s2">"keras_hdf5"</span><span class="p">,</span>
+            <span class="s2">"onnx"</span><span class="p">,</span>
+            <span class="s2">"pytorch_state_dict"</span><span class="p">,</span>
+            <span class="s2">"tensorflow_js"</span><span class="p">,</span>
+            <span class="s2">"tensorflow_saved_model_bundle"</span><span class="p">,</span>
+            <span class="s2">"torchscript"</span><span class="p">,</span>
         <span class="p">]</span>
     <span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Package a bioimageio resource into a stream.</span>
+<span class="w">    </span><span class="sd">"""Package a bioimageio resource into a stream.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        source: bioimageio resource description</span>
@@ -5161,7 +5161,7 @@ description is valid and of type 'model'.</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        stream of zipped bioimageio package</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">output_stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">output_stream</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
 
@@ -5353,7 +5353,7 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
     <span class="n">exclude_unset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">exclude_defaults</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;write the metadata of a resource description (`rd`) to `file`</span>
+<span class="w">    </span><span class="sd">"""write the metadata of a resource description (`rd`) to `file`</span>
 <span class="sd">    without writing any of the referenced files in it.</span>
 
 <span class="sd">    Args:</span>
@@ -5364,7 +5364,7 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
 
 <span class="sd">    Note: To save a resource description with its associated files as a package,</span>
 <span class="sd">    use `save_bioimageio_package` or `save_bioimageio_package_as_folder`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rd</span><span class="p">,</span> <span class="n">ResourceDescrBase</span><span class="p">):</span>
         <span class="n">content</span> <span class="o">=</span> <span class="n">dump_description</span><span class="p">(</span>
             <span class="n">rd</span><span class="p">,</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="n">exclude_unset</span><span class="p">,</span> <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span>
@@ -5488,12 +5488,12 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
     <span class="n">exclude_defaults</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">perform_io_checks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LatestResourceDescr</span> <span class="o">|</span> <span class="n">InvalidDescr</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update a resource description.</span>
+<span class="w">    </span><span class="sd">"""Update a resource description.</span>
 
 <span class="sd">    Notes:</span>
 <span class="sd">    - Invalid **source** descriptions may fail to update.</span>
 <span class="sd">    - The updated description might be invalid (even if the **source** was valid).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">ResourceDescrBase</span><span class="p">):</span>
         <span class="n">root</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">root</span>
@@ -5521,14 +5521,14 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
         <span class="k">pass</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;.yml&quot;</span><span class="p">}:</span>
+        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">".yaml"</span><span class="p">,</span> <span class="s2">".yml"</span><span class="p">}:</span>
             <span class="n">save_bioimageio_yaml_only</span><span class="p">(</span>
                 <span class="n">descr</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">descr</span><span class="p">,</span> <span class="n">InvalidDescr</span><span class="p">):</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">&quot;_invalid.yaml&quot;</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="s2">"_invalid.yaml"</span><span class="p">)</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;description is invalid, saving bioimageio.yaml to &#39;</span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">"description is invalid, saving bioimageio.yaml to '</span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">'"</span>
             <span class="p">)</span>
             <span class="n">save_bioimageio_yaml_only</span><span class="p">(</span>
                 <span class="n">descr</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">exclude_defaults</span><span class="o">=</span><span class="n">exclude_defaults</span>
@@ -5593,7 +5593,7 @@ use <code>save_bioimageio_package</code> or <code>save_bioimageio_package_as_fol
     <span class="n">source</span><span class="p">:</span> <span class="n">PermissiveFileSource</span> <span class="o">|</span> <span class="n">ZipFile</span> <span class="o">|</span> <span class="n">ResourceDescr</span> <span class="o">|</span> <span class="n">BioimageioYamlContent</span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ResourceDescr</span> <span class="o">|</span> <span class="n">InvalidDescr</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update hash values of the files referenced in **source**.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Update hash values of the files referenced in **source**."""</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">ResourceDescrBase</span><span class="p">):</span>
         <span class="n">root</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">root</span>
         <span class="n">source</span> <span class="o">=</span> <span class="n">dump_description</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
@@ -5868,7 +5868,7 @@ Note: It might take some time until the resource is processed and available for 
     <span class="o">/</span><span class="p">,</span>
     <span class="n">keep_remote_files_as_references</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpUrl</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a new resource description (version) to the hypha server to be shared at bioimage.io.</span>
+<span class="w">    </span><span class="sd">"""Upload a new resource description (version) to the hypha server to be shared at bioimage.io.</span>
 <span class="sd">    To edit an existing resource **version**, please login to https://bioimage.io and use the web interface.</span>
 
 <span class="sd">    WARNING: This upload function is in alpha stage and might change in the future.</span>
@@ -5880,18 +5880,18 @@ Note: It might take some time until the resource is processed and available for 
 <span class="sd">    Returns:</span>
 <span class="sd">        A URL to the uploaded resource description.</span>
 <span class="sd">        Note: It might take some time until the resource is processed and available for download from the returned URL.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">hypha_upload_token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""</span>
 <span class="sd">Upload token is not set. Please set BIOIMAGEIO_HYPHA_UPLOAD_TOKEN in your environment variables.</span>
 <span class="sd">By setting this token you agree to our terms of service at https://bioimage.io/#/toc.</span>
 
 <span class="sd">How to obtain a token:</span>
 <span class="sd">    1. Login to https://bioimage.io</span>
 <span class="sd">    2. Generate a new token at https://bioimage.io/#/api?tab=hypha-rpc</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">ResourceDescrBase</span><span class="p">):</span>
@@ -5903,16 +5903,16 @@ Note: It might take some time until the resource is processed and available for 
         <span class="n">descr</span> <span class="o">=</span> <span class="n">load_description</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">descr</span><span class="p">,</span> <span class="n">InvalidDescr</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Uploading invalid resource descriptions is not allowed.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Uploading invalid resource descriptions is not allowed."</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">descr</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;model&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">descr</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">"model"</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;For now, only model resources can be uploaded (got type=</span><span class="si">{</span><span class="n">descr</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">).&quot;</span>
+            <span class="sa">f</span><span class="s2">"For now, only model resources can be uploaded (got type=</span><span class="si">{</span><span class="n">descr</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">)."</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">descr</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;You cannot upload a resource with an id. Please remove the id from the description and make sure to upload a new non-existing resource. To edit an existing resource, please use the web interface at https://bioimage.io.&quot;</span>
+            <span class="s2">"You cannot upload a resource with an id. Please remove the id from the description and make sure to upload a new non-existing resource. To edit an existing resource, please use the web interface at https://bioimage.io."</span>
         <span class="p">)</span>
 
     <span class="n">content</span> <span class="o">=</span> <span class="n">get_package_content</span><span class="p">(</span>
@@ -5924,47 +5924,47 @@ Note: It might take some time until the resource is processed and available for 
     <span class="n">manifest</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
 
     <span class="c1"># only admins can upload a resource with a version</span>
-    <span class="n">artifact_version</span> <span class="o">=</span> <span class="s2">&quot;stage&quot;</span>  <span class="c1"># if descr.version is None else str(descr.version)</span>
+    <span class="n">artifact_version</span> <span class="o">=</span> <span class="s2">"stage"</span>  <span class="c1"># if descr.version is None else str(descr.version)</span>
 
     <span class="c1"># Create new model</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
         <span class="n">settings</span><span class="o">.</span><span class="n">hypha_upload</span><span class="p">,</span>
         <span class="n">json</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;parent_id&quot;</span><span class="p">:</span> <span class="s2">&quot;bioimage-io/bioimage.io&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;alias&quot;</span><span class="p">:</span> <span class="p">(</span>
-                <span class="n">descr</span><span class="o">.</span><span class="n">id</span> <span class="ow">or</span> <span class="s2">&quot;</span><span class="si">{animal_adjective}</span><span class="s2">-</span><span class="si">{animal}</span><span class="s2">&quot;</span>
+            <span class="s2">"parent_id"</span><span class="p">:</span> <span class="s2">"bioimage-io/bioimage.io"</span><span class="p">,</span>
+            <span class="s2">"alias"</span><span class="p">:</span> <span class="p">(</span>
+                <span class="n">descr</span><span class="o">.</span><span class="n">id</span> <span class="ow">or</span> <span class="s2">"</span><span class="si">{animal_adjective}</span><span class="s2">-</span><span class="si">{animal}</span><span class="s2">"</span>
             <span class="p">),</span>  <span class="c1"># TODO: adapt for non-model uploads,</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">descr</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
-            <span class="s2">&quot;manifest&quot;</span><span class="p">:</span> <span class="n">manifest</span><span class="p">,</span>
-            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">artifact_version</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="n">descr</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+            <span class="s2">"manifest"</span><span class="p">:</span> <span class="n">manifest</span><span class="p">,</span>
+            <span class="s2">"version"</span><span class="p">:</span> <span class="n">artifact_version</span><span class="p">,</span>
         <span class="p">},</span>
         <span class="n">headers</span><span class="o">=</span><span class="p">(</span>
             <span class="n">headers</span> <span class="o">:=</span> <span class="p">{</span>
-                <span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Bearer </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">hypha_upload_token</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+                <span class="s2">"Authorization"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"Bearer </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">hypha_upload_token</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="s2">"Content-Type"</span><span class="p">:</span> <span class="s2">"application/json"</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">),</span>
     <span class="p">)</span>
 
     <span class="n">response</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-    <span class="n">artifact_id</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+    <span class="n">artifact_id</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">artifact_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Response detail: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;detail&quot;</span><span class="p">]))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Response detail: </span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">"detail"</span><span class="p">]))</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Response: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Response: </span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
 
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Upload did not return resource id: </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Upload did not return resource id: </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Uploaded resource description </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">artifact_id</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Uploaded resource description </span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">artifact_id</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">file_source</span> <span class="ow">in</span> <span class="n">content</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="c1"># Get upload URL for a file</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-            <span class="n">settings</span><span class="o">.</span><span class="n">hypha_upload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/create&quot;</span><span class="p">,</span> <span class="s2">&quot;/put_file&quot;</span><span class="p">),</span>
+            <span class="n">settings</span><span class="o">.</span><span class="n">hypha_upload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"/create"</span><span class="p">,</span> <span class="s2">"/put_file"</span><span class="p">),</span>
             <span class="n">json</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;artifact_id&quot;</span><span class="p">:</span> <span class="n">artifact_id</span><span class="p">,</span>
-                <span class="s2">&quot;file_path&quot;</span><span class="p">:</span> <span class="n">file_name</span><span class="p">,</span>
+                <span class="s2">"artifact_id"</span><span class="p">:</span> <span class="n">artifact_id</span><span class="p">,</span>
+                <span class="s2">"file_path"</span><span class="p">:</span> <span class="n">file_name</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
             <span class="n">follow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -5984,32 +5984,32 @@ Note: It might take some time until the resource is processed and available for 
             <span class="n">upload_url</span><span class="p">,</span>
             <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
             <span class="c1"># TODO: follow up on https://github.com/encode/httpx/discussions/3611</span>
-            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>  <span class="c1"># Important for S3 uploads</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">"Content-Type"</span><span class="p">:</span> <span class="s2">""</span><span class="p">},</span>  <span class="c1"># Important for S3 uploads</span>
             <span class="n">follow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Uploaded &#39;</span><span class="si">{}</span><span class="s2">&#39; successfully&quot;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Uploaded '</span><span class="si">{}</span><span class="s2">' successfully"</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
 
     <span class="c1"># Update model status</span>
-    <span class="n">manifest</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;request-review&quot;</span>
+    <span class="n">manifest</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"request-review"</span>
     <span class="n">response</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-        <span class="n">settings</span><span class="o">.</span><span class="n">hypha_upload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/create&quot;</span><span class="p">,</span> <span class="s2">&quot;/edit&quot;</span><span class="p">),</span>
+        <span class="n">settings</span><span class="o">.</span><span class="n">hypha_upload</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"/create"</span><span class="p">,</span> <span class="s2">"/edit"</span><span class="p">),</span>
         <span class="n">json</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;artifact_id&quot;</span><span class="p">:</span> <span class="n">artifact_id</span><span class="p">,</span>
-            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">artifact_version</span><span class="p">,</span>
-            <span class="s2">&quot;manifest&quot;</span><span class="p">:</span> <span class="n">manifest</span><span class="p">,</span>
+            <span class="s2">"artifact_id"</span><span class="p">:</span> <span class="n">artifact_id</span><span class="p">,</span>
+            <span class="s2">"version"</span><span class="p">:</span> <span class="n">artifact_version</span><span class="p">,</span>
+            <span class="s2">"manifest"</span><span class="p">:</span> <span class="n">manifest</span><span class="p">,</span>
         <span class="p">},</span>
         <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
         <span class="n">follow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-        <span class="s2">&quot;Updated status of </span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2"> to &#39;request-review&#39;&quot;</span><span class="p">,</span> <span class="n">artifact_id</span><span class="p">,</span> <span class="n">artifact_version</span>
+        <span class="s2">"Updated status of </span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2"> to 'request-review'"</span><span class="p">,</span> <span class="n">artifact_id</span><span class="p">,</span> <span class="n">artifact_version</span>
     <span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-        <span class="s2">&quot;Upload successfull. Please note that the uploaded resource might not be available for download immediately.&quot;</span>
+        <span class="s2">"Upload successfull. Please note that the uploaded resource might not be available for download immediately."</span>
     <span class="p">)</span>
     <span class="k">with</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">perform_io_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">HttpUrl</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;https://hypha.aicell.io/bioimage-io/artifacts/</span><span class="si">{</span><span class="n">artifact_id</span><span class="si">}</span><span class="s2">/files/rdf.yaml?version=</span><span class="si">{</span><span class="n">artifact_version</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"https://hypha.aicell.io/bioimage-io/artifacts/</span><span class="si">{</span><span class="n">artifact_id</span><span class="si">}</span><span class="s2">/files/rdf.yaml?version=</span><span class="si">{</span><span class="n">artifact_version</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6029,7 +6029,7 @@ Note: It might take some time until the resource is processed and available for 
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.validate_format(data)">data</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/common/#bioimageio.spec.common.BioimageioYamlContent">BioimageioYamlContent</a></span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.validate_format(format_version)">format_version</a></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">&quot;discover&quot;</span><span class="p">,</span> <span class="s2">&quot;latest&quot;</span><span class="p">]</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.validate_format(format_version)">format_version</a></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"discover"</span><span class="p">,</span> <span class="s2">"latest"</span><span class="p">]</span>
     <span class="o">|</span> <span class="n"><span title="str">str</span></span> <span class="o">=</span> <span class="n"><span title="bioimageio.spec._description_impl.DISCOVER">DISCOVER</span></span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.validate_format(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" href="bioimageio/spec/summary/#bioimageio.spec.summary.ValidationSummary">ValidationSummary</a></span>
@@ -6160,10 +6160,10 @@ file source instead of loading the YAML content and creating the appropriate
     <span class="n">data</span><span class="p">:</span> <span class="n">BioimageioYamlContent</span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">format_version</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;discover&quot;</span><span class="p">,</span> <span class="s2">&quot;latest&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DISCOVER</span><span class="p">,</span>
+    <span class="n">format_version</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"discover"</span><span class="p">,</span> <span class="s2">"latest"</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DISCOVER</span><span class="p">,</span>
     <span class="n">context</span><span class="p">:</span> <span class="n">ValidationContext</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationSummary</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a dictionary holding a bioimageio description.</span>
+<span class="w">    </span><span class="sd">"""Validate a dictionary holding a bioimageio description.</span>
 <span class="sd">    See `bioimagieo.spec.load_description_and_validate_format_only`</span>
 <span class="sd">    to validate a file source.</span>
 
@@ -6172,8 +6172,8 @@ file source instead of loading the YAML content and creating the appropriate
 <span class="sd">        format_version:</span>
 <span class="sd">            Format version to (update to and) use for validation.</span>
 <span class="sd">            Note:</span>
-<span class="sd">            - Use &quot;latest&quot; to convert to the latest available format version.</span>
-<span class="sd">            - Use &quot;discover&quot; to use the format version specified in the RDF.</span>
+<span class="sd">            - Use "latest" to convert to the latest available format version.</span>
+<span class="sd">            - Use "discover" to use the format version specified in the RDF.</span>
 <span class="sd">            - Only considers major.minor format version, ignores patch version.</span>
 <span class="sd">            - Conversion to lower format versions is not supported.</span>
 <span class="sd">        context: Validation context, see `bioimagieo.spec.ValidationContext`</span>
@@ -6185,7 +6185,7 @@ file source instead of loading the YAML content and creating the appropriate
 
 <span class="sd">        Alternatively you can use `bioimagieo.spec.load_description` and access the</span>
 <span class="sd">        `validation_summary` attribute of the returned object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">with</span> <span class="n">context</span> <span class="ow">or</span> <span class="n">get_validation_context</span><span class="p">():</span>
         <span class="n">rd</span> <span class="o">=</span> <span class="n">build_description</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">format_version</span><span class="o">=</span><span class="n">format_version</span><span class="p">)</span>
 
