@@ -1,12 +1,12 @@
 # type: ignore
-from typing import List, Optional
+from __future__ import annotations
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 
 class UNetBase(nn.Module):
-    """ """
+    """Base class for U-Net architectures."""
 
     def __init__(self, encoder, base, decoder, out_conv=None, final_activation=None):
         super().__init__()
@@ -80,12 +80,12 @@ class UNetBase(nn.Module):
     def forward(
         self,
         x0: torch.Tensor,
-        x1: Optional[torch.Tensor] = None,
-        x2: Optional[torch.Tensor] = None,
-        x3: Optional[torch.Tensor] = None,
-        x4: Optional[torch.Tensor] = None,
+        x1: torch.Tensor | None = None,
+        x2: torch.Tensor | None = None,
+        x3: torch.Tensor | None = None,
+        x4: torch.Tensor | None = None,
         /,
-    ) -> List[torch.Tensor]:
+    ) -> list[torch.Tensor]:
         x = [x for x in [x0, x1, x2, x3, x4] if x is not None]
         assert len(x) == self.in_channels, f"{len(x)}, {self.in_channels}"
         x = torch.cat(x, dim=1)

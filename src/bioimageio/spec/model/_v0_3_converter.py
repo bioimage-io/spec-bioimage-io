@@ -1,8 +1,10 @@
 # type: ignore
-from typing import Any, Dict
+from __future__ import annotations
+
+from typing import Any
 
 
-def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> None:
+def convert_model_from_v0_3_to_0_4_0(data: dict[str, Any]) -> None:
     """auto converts model 'data' to newest format"""
 
     if "format_version" not in data:
@@ -59,7 +61,7 @@ def convert_model_from_v0_3_to_0_4_0(data: Dict[str, Any]) -> None:
     data["format_version"] = "0.4.0"
 
 
-def _convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
+def _convert_model_v0_3_1_to_v0_3_2(data: dict[str, Any]) -> dict[str, Any]:
     data["type"] = "model"
     data["format_version"] = "0.3.2"
     future = data.get("config", {}).get("future", {}).pop("0.3.2", {})
@@ -105,7 +107,7 @@ def _convert_model_v0_3_1_to_v0_3_2(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
-def _convert_model_v0_3_2_to_v0_3_3(data: Dict[str, Any]) -> Dict[str, Any]:
+def _convert_model_v0_3_2_to_v0_3_3(data: dict[str, Any]) -> dict[str, Any]:
     data["format_version"] = "0.3.3"
     if "outputs" in data:
         for out in data["outputs"]:

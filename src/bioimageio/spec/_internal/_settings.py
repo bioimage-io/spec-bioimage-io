@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import os
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 import platformdirs
 from genericache import DiskCache
@@ -43,7 +45,7 @@ class Settings(
     def _expand_user(cls, value: Path):
         return Path(os.path.expanduser(str(value)))
 
-    CI: Annotated[Union[bool, str], Field(alias="CI")] = False
+    CI: Annotated[bool | str, Field(alias="CI")] = False
     """Wether or not the execution happens in a continuous integration (CI) environment."""
 
     collection_http_pattern: str = (
@@ -57,10 +59,10 @@ class Settings(
     - If this endpoints fails, we fall back to `id_map`.
     """
 
-    github_username: Optional[str] = None
+    github_username: str | None = None
     """GitHub username for API requests"""
 
-    github_token: Optional[str] = None
+    github_token: str | None = None
     """GitHub token for API requests"""
 
     http_timeout: float = 10.0
@@ -84,7 +86,7 @@ class Settings(
     )
     """URL to the upload endpoint for bioimageio resources."""
 
-    hypha_upload_token: Optional[str] = None
+    hypha_upload_token: str | None = None
     """Hypha API token to use for uploads.
 
     By setting this token you agree to our terms of service at https://bioimage.io/#/toc.
@@ -122,7 +124,7 @@ class Settings(
     Set this flag to False to avoid this potential security risk
     and disallow loading draft versions."""
 
-    user_agent: Optional[str] = None
+    user_agent: str | None = None
     """user agent for http requests"""
 
     @cached_property

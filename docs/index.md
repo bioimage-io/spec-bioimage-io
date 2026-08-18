@@ -28,6 +28,8 @@ Note: [bioimageio_schema_v0-5.json](https://github.com/bioimage-io/spec-bioimage
 
 ## Flattened, interactive docs
 
+Note: The flattened, interactive docs are currently not up to date!
+
 Alternatively to the above metadata format documentation, [this flattened view of the metadata specification](https://bioimage-io.github.io/spec-bioimage-io/interactive_docs_v0-5.html) that also shows value constraints can be explored.
 
 ## API overview

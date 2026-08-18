@@ -1,4 +1,6 @@
-from typing import Any, ClassVar, Type
+from __future__ import annotations
+
+from typing import Any, ClassVar
 
 from pydantic import RootModel
 
@@ -17,8 +19,8 @@ __all__ = [
 
 
 class LicenseId(ValidatedString):
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[LicenseIdLiteral]
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[LicenseIdLiteral]
 
 
 class DeprecatedLicenseId(ValidatedString):
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[DeprecatedLicenseIdLiteral]
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[DeprecatedLicenseIdLiteral]

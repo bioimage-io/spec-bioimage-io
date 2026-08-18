@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timezone
 from types import MappingProxyType
-from typing import Any, Callable, Dict, Mapping, Union
+from typing import Any, Callable, Mapping
 
 import pytest
 from pydantic import RootModel, ValidationError
@@ -54,47 +56,49 @@ from tests.utils import check_node, check_type
 @pytest.mark.parametrize(
     "kwargs",
     [
-        dict(
-            id="t0",
-            test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
-            data={"values": ["cat", "dog", "parrot"]},
-            axes=[{"type": "channel", "channel_names": ["animal"]}],
-        ),
-        dict(
-            id="t1",
-            test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
-            data=[
+        {
+            "id": "t0",
+            "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
+            "data": {"values": ["cat", "dog", "parrot"]},
+            "axes": [{"type": "channel", "channel_names": ["animal"]}],
+        },
+        {
+            "id": "t1",
+            "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
+            "data": [
                 {"values": ["cat", "dog", "parrot"]},
                 {"values": ["mouse", "zebra", "elephant"]},
             ],
-            axes=[{"type": "channel", "channel_names": ["animal", "other_animal"]}],
-        ),
-        dict(
-            id="t2",
-            test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
-            data=[
+            "axes": [{"type": "channel", "channel_names": ["animal", "other_animal"]}],
+        },
+        {
+            "id": "t2",
+            "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
+            "data": [
                 {"values": [1, 2, 3]},
                 {"type": "uint8"},
             ],
-            axes=[
+            "axes": [
                 {"type": "channel", "channel_names": ["animal_code", "animal_count"]}
             ],
-        ),
+        },
         pytest.param(
-            dict(
-                id="t3",
-                test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
-                data=[
+            {
+                "id": "t3",
+                "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
+                "data": [
                     {"values": ["mouse", "zebra", "elephant"]},
                     {"type": "uint8"},
                 ],
-                axes=[{"type": "channel", "channel_names": ["animal_code", "count"]}],
-            ),
+                "axes": [
+                    {"type": "channel", "channel_names": ["animal_code", "count"]}
+                ],
+            },
             id="string values and uint data type",
         ),
     ],
 )
-def test_tensor_base(kwargs: Dict[str, Any]):
+def test_tensor_base(kwargs: dict[str, Any]):
     check_node(
         TensorDescrBase, kwargs, context=ValidationContext(perform_io_checks=False)
     )
@@ -104,30 +108,30 @@ def test_tensor_base(kwargs: Dict[str, Any]):
     "kwargs",
     [
         pytest.param(
-            dict(
-                id="t5",
-                test_tensor={"source": UNET2D_ROOT / "test_input.npy"},
-                data=[
+            {
+                "id": "t5",
+                "test_tensor": {"source": UNET2D_ROOT / "test_input.npy"},
+                "data": [
                     {"values": ["cat", "dog", "parrot"]},
                     {"values": [1.1, 2.2, 3.3]},
                 ],
-            ),
+            },
             id="str and float values",
         ),
         pytest.param(
-            dict(
-                id="t7",
-                test_tensor={"source": UNET2D_ROOT / "test.npy"},
-                data=[
+            {
+                "id": "t7",
+                "test_tensor": {"source": UNET2D_ROOT / "test.npy"},
+                "data": [
                     {"values": ["mouse", "zebra", "elephant"]},
                     {"type": "int8"},
                 ],
-            ),
+            },
             id="string values and int data type",
         ),
     ],
 )
-def test_tensor_base_invalid(kwargs: Dict[str, Any]):
+def test_tensor_base_invalid(kwargs: dict[str, Any]):
     check_node(
         TensorDescrBase,
         kwargs,
@@ -144,9 +148,9 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
             "description": "Input 1",
             "data": {"type": "float32", "range": ["-inf", float("inf")]},
             "axes": [
-                dict(type="space", id="x", size=10),
-                dict(type="space", id="y", size=11),
-                dict(type="channel", channel_names=tuple("abc")),
+                {"type": "space", "id": "x", "size": 10},
+                {"type": "space", "id": "y", "size": 11},
+                {"type": "channel", "channel_names": tuple("abc")},
             ],
             "preprocessing": [
                 {
@@ -162,7 +166,7 @@ def test_tensor_base_invalid(kwargs: Dict[str, Any]):
         }
     ],
 )
-def test_input_tensor(kwargs: Dict[str, Any]):
+def test_input_tensor(kwargs: dict[str, Any]):
     check_node(
         InputTensorDescr, kwargs, context=ValidationContext(perform_io_checks=False)
     )
@@ -172,20 +176,20 @@ def test_input_tensor(kwargs: Dict[str, Any]):
     "kwargs",
     [
         pytest.param(
-            dict(
-                id="input_2",
-                test_tensor={"source": UNET2D_ROOT / "test.npy"},
-                data=[
+            {
+                "id": "input_2",
+                "test_tensor": {"source": UNET2D_ROOT / "test.npy"},
+                "data": [
                     {"values": ["cat", "dog", "parrot"]},
                     {"values": ["mouse", "zebra", "elephant"]},
                 ],
-                axes=[{"type": "channel", "channel_names": ["a", "b", "c"]}],
-            ),
+                "axes": [{"type": "channel", "channel_names": ["a", "b", "c"]}],
+            },
             id="channel mismatch",
         ),
     ],
 )
-def test_input_tensor_invalid(kwargs: Dict[str, Any]):
+def test_input_tensor_invalid(kwargs: dict[str, Any]):
     check_node(
         InputTensorDescr,
         kwargs,
@@ -194,7 +198,7 @@ def test_input_tensor_invalid(kwargs: Dict[str, Any]):
     )
 
 
-def test_input_tensor_error_count(model_data: Dict[str, Any]):
+def test_input_tensor_error_count(model_data: dict[str, Any]):
     """this test checks that the discrminated union for `InputAxis` does its
     thing and we don't get errors for all options"""
     from bioimageio.spec import build_description
@@ -212,7 +216,7 @@ def test_input_tensor_error_count(model_data: Dict[str, Any]):
     "kwargs",
     [{}, {"type": "batch"}],
 )
-def test_batch_axis(kwargs: Dict[str, Any]):
+def test_batch_axis(kwargs: dict[str, Any]):
     check_node(
         BatchAxis,
         kwargs,
@@ -233,7 +237,7 @@ def test_batch_axis(kwargs: Dict[str, Any]):
         {"type": "batch"},
     ],
 )
-def test_input_axis(kwargs: Union[Dict[str, Any], SpaceInputAxis]):
+def test_input_axis(kwargs: dict[str, Any] | SpaceInputAxis):
     check_type(InputAxis, kwargs)
 
 
@@ -259,7 +263,7 @@ def model():
                 ),
                 Maintainer(github_user="githubuser2"),
             ],
-            timestamp=Datetime(datetime.now()),
+            timestamp=Datetime(datetime.now(timezone.utc)),
             cite=[CiteEntry(text="Paper title", url=HttpUrl("https://example.com/"))],
             inputs=[
                 InputTensorDescr(
@@ -324,46 +328,46 @@ def model_data(const_model_data: Mapping[str, Any]):
 @pytest.mark.parametrize(
     "update",
     [
-        dict(run_mode={"name": "special_run_mode", "kwargs": dict(marathon=True)}),
-        dict(
-            weights={
+        {"run_mode": {"name": "special_run_mode", "kwargs": {"marathon": True}}},
+        {
+            "weights": {
                 "torchscript": {
                     "source": UNET2D_ROOT / "weights.onnx",
                     "pytorch_version": 1.15,
                 }
             }
-        ),
-        dict(
-            weights={
+        },
+        {
+            "weights": {
                 "keras_hdf5": {
                     "source": UNET2D_ROOT / "weights.onnx",
                     "tensorflow_version": 1.10,
                 }
             }
-        ),
-        dict(
-            weights={
+        },
+        {
+            "weights": {
                 "tensorflow_js": {
                     "source": UNET2D_ROOT / "weights.onnx",
                     "tensorflow_version": 1.10,
                 }
             }
-        ),
-        dict(
-            weights={
+        },
+        {
+            "weights": {
                 "tensorflow_saved_model_bundle": {
                     "source": UNET2D_ROOT / "weights.onnx",
                     "tensorflow_version": 1.10,
                 }
             }
-        ),
-        dict(
-            weights={
+        },
+        {
+            "weights": {
                 "onnx": {"source": UNET2D_ROOT / "weights.onnx", "opset_version": 15}
             }
-        ),
-        dict(
-            weights={
+        },
+        {
+            "weights": {
                 "pytorch_state_dict": {
                     "source": UNET2D_ROOT / "weights.onnx",
                     "pytorch_version": "1.15",
@@ -374,10 +378,10 @@ def model_data(const_model_data: Mapping[str, Any]):
                     },
                 },
             }
-        ),
+        },
     ],
 )
-def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
+def test_model(model_data: dict[str, Any], update: dict[str, Any]):
     model_data.update(update)
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
@@ -386,7 +390,7 @@ def test_model(model_data: Dict[str, Any], update: Dict[str, Any]):
     assert summary.status == "valid-format", summary.display()
 
 
-def test_warn_long_name(model_data: Dict[str, Any]):
+def test_warn_long_name(model_data: dict[str, Any]):
     model_data["name"] = (
         "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
     )
@@ -399,7 +403,7 @@ def test_warn_long_name(model_data: Dict[str, Any]):
     assert summary.details[1].warnings[0].msg == "Name longer than 64 characters."
 
 
-def test_model_schema_raises_invalid_input_id(model_data: Dict[str, Any]):
+def test_model_schema_raises_invalid_input_id(model_data: dict[str, Any]):
     model_data["inputs"][0]["id"] = "invalid/id"
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
@@ -407,7 +411,7 @@ def test_model_schema_raises_invalid_input_id(model_data: Dict[str, Any]):
     assert summary.status == "failed", summary.display()
 
 
-def test_output_fixed_shape_too_small(model_data: Dict[str, Any]):
+def test_output_fixed_shape_too_small(model_data: dict[str, Any]):
     model_data["outputs"][0]["halo"] = 999
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
@@ -428,7 +432,7 @@ def test_get_axis_sizes_with_partial_max_size(model: ModelDescr):
     assert wo_max_shape.inputs[key] > with_max_shape.inputs[key]
 
 
-def test_get_axis_sizes_raises_with_missing_n(model_data: Dict[str, Any]):
+def test_get_axis_sizes_raises_with_missing_n(model_data: dict[str, Any]):
     model_data["inputs"][0]["axes"][2] = {
         "type": "space",
         "id": "x",
@@ -442,7 +446,7 @@ def test_get_axis_sizes_raises_with_missing_n(model_data: Dict[str, Any]):
         _ = model.get_axis_sizes(ns={}, batch_size=1)
 
 
-def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
+def test_output_ref_shape_mismatch(model_data: dict[str, Any]):
     model_data["outputs"][0]["axes"][2] = {
         "type": "space",
         "id": "x",
@@ -466,7 +470,7 @@ def test_output_ref_shape_mismatch(model_data: Dict[str, Any]):
     assert summary.status == "failed", summary.display()
 
 
-def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
+def test_output_ref_shape_too_small(model_data: dict[str, Any]):
     model_data["outputs"][0]["axes"][2] = {
         "type": "space",
         "id": "x",
@@ -485,15 +489,15 @@ def test_output_ref_shape_too_small(model_data: Dict[str, Any]):
     assert summary.status == "failed", summary.display()
 
 
-def test_model_has_parent_with_id(model_data: Dict[str, Any]):
-    model_data["parent"] = dict(id="10.5281/zenodo.5764892/6647674")
+def test_model_has_parent_with_id(model_data: dict[str, Any]):
+    model_data["parent"] = {"id": "10.5281/zenodo.5764892/6647674"}
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
     )
     assert summary.status == "valid-format", summary.display()
 
 
-def test_model_with_expanded_output(model_data: Dict[str, Any]):
+def test_model_with_expanded_output(model_data: dict[str, Any]):
     model_data["outputs"][0]["axes"] = [
         {
             "type": "space",
@@ -536,7 +540,7 @@ def test_model_with_expanded_output(model_data: Dict[str, Any]):
     assert actual_outputs == expected_outputs
 
 
-def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
+def test_model_rdf_is_valid_general_rdf(model_data: dict[str, Any]):
     model_data["type"] = "model_as_generic"
     model_data["format_version"] = "0.3.0"
     summary = validate_format(
@@ -545,7 +549,7 @@ def test_model_rdf_is_valid_general_rdf(model_data: Dict[str, Any]):
     assert summary.status == "valid-format", summary.display()
 
 
-def test_model_does_not_accept_unknown_fields(model_data: Dict[str, Any]):
+def test_model_does_not_accept_unknown_fields(model_data: dict[str, Any]):
     model_data["unknown_additional_field"] = "shouldn't be here"
     summary = validate_format(
         model_data, context=ValidationContext(perform_io_checks=False)
@@ -581,7 +585,7 @@ def test_validate_parameterized_size(model: ModelDescr):
     assert (actual := param_size.validate_size(512)) == 512, actual
 
 
-def test_absolute_tolerance(model_data: Dict[str, Any]):
+def test_absolute_tolerance(model_data: dict[str, Any]):
     model_data["config"]["bioimageio"]["reproducibility_tolerance"] = [
         {"absolute_tolerance": 100000}
     ]
@@ -699,7 +703,7 @@ def test_custom_op_class_style():
             super().__init__()
             self.threshold = threshold
 
-        def __call__(self, *arrays: "NDArray[np.generic]") -> "NDArray[np.generic]":
+        def __call__(self, *arrays: NDArray[np.generic]) -> NDArray[np.generic]:
             return (arrays[0] > self.threshold).astype(np.uint8)  # type: ignore[return-value]
 
     op = MyClassOp(threshold=0.3)
@@ -710,8 +714,8 @@ def test_custom_op_class_style():
     # -- factory function style --
     def my_factory_op(
         threshold: float = 0.5,
-    ) -> "Callable[..., NDArray[np.generic]]":
-        def run(*arrays: "NDArray[np.generic]") -> "NDArray[np.generic]":
+    ) -> Callable[..., NDArray[np.generic]]:
+        def run(*arrays: NDArray[np.generic]) -> NDArray[np.generic]:
             return (arrays[0] > threshold).astype(np.uint8)  # type: ignore[return-value]
 
         return run
@@ -733,3 +737,29 @@ def test_input_is_output_of(model: ModelDescr):
 
     model.inputs[0].id = affable_shark.outputs[0].id
     model.inputs[0].output_of = ModelId("affable-shark")
+
+
+@pytest.mark.parametrize(
+    "raw,norm",
+    [
+        ("b", "batch"),
+        ("B", "batch"),
+        ("c", "channel"),
+        ("C", "channel"),
+        ("x", "x"),
+        ("X", "x"),
+        ("y", "y"),
+        ("Y", "y"),
+        ("z", "z"),
+        ("Z", "z"),
+        ("I", "index"),
+        ("t", "time"),
+        ("Quannel", "quannel"),
+        ("Ind", "ind"),
+    ],
+)
+def test_normalize_axis_id(raw: str, norm: str):
+    from bioimageio.spec.model.v0_5 import AxisId
+
+    processed = str(AxisId(raw))
+    assert processed == norm, f"raw: {raw}, processed: {processed}, expected: {norm}"

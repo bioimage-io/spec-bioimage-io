@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from __future__ import annotations
 
 import pytest
 from deepdiff.diff import DeepDiff
@@ -18,7 +18,7 @@ def test_json_schema_is_up_to_date() -> None:
 
 
 @pytest.mark.parametrize("type_format", [None, ("model", "0.5")])
-def test_generate_json_schema(type_format: Optional[Tuple[str, str]]) -> None:
+def test_generate_json_schema(type_format: tuple[str, str] | None) -> None:
     from bioimageio.spec._internal.json_schema import generate_json_schema
 
     _ = generate_json_schema(type_format=type_format)

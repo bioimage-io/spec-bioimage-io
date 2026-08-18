@@ -1,18 +1,16 @@
+from __future__ import annotations
+
 import string
 from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
     ClassVar,
-    Dict,
     List,
     Literal,
     Mapping,
-    Optional,
     Sequence,
-    Type,
     TypeVar,
-    Union,
     cast,
 )
 
@@ -58,7 +56,7 @@ from ._v0_2_converter import convert_from_older_format as _convert_from_older_fo
 
 
 class ResourceId(ValidatedString):
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[
         Annotated[
             NotEmpty[str],
             AfterValidator(str.lower),  # convert upper case on the fly
@@ -95,11 +93,8 @@ _FileSource_cover = Annotated[
 ]
 
 
-class AttachmentsDescr(Node):
-    model_config = {**Node.model_config, "extra": "allow"}
-    """update pydantic model config to allow additional unknown keys"""
-
-    files: List[FileSource_package] = Field(
+class AttachmentsDescr(Node, extra="allow"):
+    files: list[FileSource_package] = Field(
         default_factory=cast(Callable[[], List[FileSource]], list)
     )
     """File attachments"""
@@ -112,18 +107,18 @@ def _remove_slashes(s: str):
 class Uploader(Node):
     email: EmailStr
     """Email"""
-    name: Optional[Annotated[str, AfterValidator(_remove_slashes)]] = None
+    name: Annotated[str, AfterValidator(_remove_slashes)] | None = None
     """name"""
 
 
 class _Person(Node):
-    affiliation: Optional[str] = None
+    affiliation: str | None = None
     """Affiliation"""
 
-    email: Optional[EmailStr] = None
+    email: EmailStr | None = None
     """Email"""
 
-    orcid: Annotated[Optional[OrcidId], Field(examples=["0000-0001-2345-6789"])] = None
+    orcid: Annotated[OrcidId | None, Field(examples=["0000-0001-2345-6789"])] = None
     """An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
     ) in hyphenated groups of 4 digits, (and [valid](
     https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
@@ -133,11 +128,11 @@ class _Person(Node):
 
 class Author(_Person):
     name: Annotated[str, AfterValidator(_remove_slashes)]
-    github_user: Optional[str] = None  # TODO: validate github_user
+    github_user: str | None = None  # TODO: validate github_user
 
 
 class Maintainer(_Person):
-    name: Optional[Annotated[str, AfterValidator(_remove_slashes)]] = None
+    name: Annotated[str, AfterValidator(_remove_slashes)] | None = None
     github_user: str
 
 
@@ -148,16 +143,14 @@ class BadgeDescr(Node):
     """badge label to display on hover"""
 
     icon: Annotated[
-        Optional[
-            Union[
-                Annotated[
-                    Union[FilePath, RelativeFilePath],
-                    AfterValidator(wo_special_file_name),
-                    include_in_package,
-                ],
-                Union[HttpUrl, pydantic.HttpUrl],
-            ]
-        ],
+        Annotated[
+            FilePath | RelativeFilePath,
+            AfterValidator(wo_special_file_name),
+            include_in_package,
+        ]
+        | HttpUrl
+        | pydantic.HttpUrl
+        | None,
         Field(examples=["https://colab.research.google.com/assets/colab-badge.svg"]),
     ] = None
     """badge icon (included in bioimage.io package if not a URL)"""
@@ -177,7 +170,7 @@ class CiteEntry(Node):
     text: str
     """free text description"""
 
-    doi: Optional[Doi] = None
+    doi: Doi | None = None
     """A digital object identifier (DOI) is the prefered citation reference.
     See https://www.doi.org/ for details. (alternatively specify `url`)"""
 
@@ -192,7 +185,7 @@ class CiteEntry(Node):
 
         return doi
 
-    url: Optional[str] = None
+    url: str | None = None
     """URL to cite (preferably specify a `doi` instead)"""
 
     @model_validator(mode="after")
@@ -209,7 +202,7 @@ class LinkedResource(Node):
     id: ResourceId
     """A valid resource `id` from the bioimage.io collection."""
 
-    version_number: Optional[int] = None
+    version_number: int | None = None
     """version number (n-th published version, not the semantic version) of linked resource"""
 
 
@@ -221,7 +214,7 @@ class GenericModelDescrBase(ResourceDescrBase):
 
     description: str
 
-    covers: List[_FileSource_cover] = Field(
+    covers: list[_FileSource_cover] = Field(
         default_factory=cast(Callable[[], List[_FileSource_cover]], list),
         examples=[["cover.png"]],
         description=(
@@ -232,19 +225,20 @@ class GenericModelDescrBase(ResourceDescrBase):
     )
     """Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1."""
 
-    id_emoji: Optional[
+    id_emoji: (
         Annotated[str, Len(min_length=1, max_length=1), Field(examples=["🦈", "🦥"])]
-    ] = None
+        | None
+    ) = None
     """UTF-8 emoji for display alongside the `id`."""
 
-    authors: List[Author] = Field(  # pyright: ignore[reportUnknownVariableType]
+    authors: list[Author] = Field(  # pyright: ignore[reportUnknownVariableType]
         default_factory=list
     )
     """The authors are the creators of the RDF and the primary points of contact."""
 
     @field_validator("authors", mode="before")
     @classmethod
-    def accept_author_strings(cls, authors: Union[Any, Sequence[Any]]) -> Any:
+    def accept_author_strings(cls, authors: Any | Sequence[Any]) -> Any:
         """we unofficially accept strings as author entries"""
         if is_sequence(authors):
             authors = [{"name": a} if isinstance(a, str) else a for a in authors]
@@ -254,10 +248,10 @@ class GenericModelDescrBase(ResourceDescrBase):
 
         return authors
 
-    attachments: Optional[AttachmentsDescr] = None
+    attachments: AttachmentsDescr | None = None
     """file and other attachments"""
 
-    cite: List[CiteEntry] = Field(  # pyright: ignore[reportUnknownVariableType]
+    cite: list[CiteEntry] = Field(  # pyright: ignore[reportUnknownVariableType]
         default_factory=list
     )
     """citations"""
@@ -271,16 +265,16 @@ class GenericModelDescrBase(ResourceDescrBase):
         return value
 
     config: Annotated[
-        Dict[str, YamlValue],
+        dict[str, YamlValue],
         Field(
             examples=[
-                dict(
-                    bioimageio={
+                {
+                    "bioimageio": {
                         "my_custom_key": 3837283,
                         "another_key": {"nested": "value"},
                     },
-                    imagej={"macro_dir": "path/to/macro/file"},
-                )
+                    "imagej": {"macro_dir": "path/to/macro/file"},
+                }
             ],
         ),
     ] = Field(default_factory=dict)
@@ -304,11 +298,11 @@ class GenericModelDescrBase(ResourceDescrBase):
     (packaging a resource means downloading/copying important linked files and creating a ZIP archive that contains
     an altered rdf.yaml file with local references to the downloaded files)"""
 
-    download_url: Optional[HttpUrl] = None
+    download_url: HttpUrl | None = None
     """URL to download the resource from (deprecated)"""
 
     git_repo: Annotated[
-        Optional[str],
+        str | None,
         Field(
             examples=[
                 "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
@@ -317,13 +311,11 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[Annotated[str, Len(min_length=1, max_length=2)], FileSource, None] = (
-        None
-    )
+    icon: Annotated[str, Len(min_length=1, max_length=2)] | FileSource | None = None
     """An icon for illustration"""
 
     links: Annotated[
-        List[str],
+        list[str],
         Field(
             examples=[
                 (
@@ -336,22 +328,22 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = Field(default_factory=list)
     """IDs of other bioimage.io resources"""
 
-    uploader: Optional[Uploader] = None
+    uploader: Uploader | None = None
     """The person who uploaded the model (e.g. to bioimage.io)"""
 
     # TODO: (py>3.8) remove pyright ignore
-    maintainers: List[Maintainer] = Field(  # pyright: ignore[reportUnknownVariableType]
+    maintainers: list[Maintainer] = Field(  # pyright: ignore[reportUnknownVariableType]
         default_factory=list
     )
     """Maintainers of this resource.
     If not specified `authors` are maintainers and at least some of them should specify their `github_user` name"""
 
-    rdf_source: Optional[FileSource] = None
+    rdf_source: FileSource | None = None
     """Resource description file (RDF) source; used to keep track of where an rdf.yaml was loaded from.
     Do not set this field in a YAML file."""
 
     tags: Annotated[
-        List[str],
+        list[str],
         Field(examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")]),
     ] = Field(default_factory=list)
     """Associated tags"""
@@ -360,10 +352,10 @@ class GenericModelDescrBase(ResourceDescrBase):
     @field_validator("tags")
     @classmethod
     def warn_about_tag_categories(
-        cls, value: List[str], info: ValidationInfo
-    ) -> List[str]:
+        cls, value: list[str], info: ValidationInfo
+    ) -> list[str]:
         categories = TAG_CATEGORIES.get(info.data["type"], {})
-        missing_categories: List[Mapping[str, Sequence[str]]] = []
+        missing_categories: list[Mapping[str, Sequence[str]]] = []
         for cat, entries in categories.items():
             if not any(e in value for e in entries):
                 missing_categories.append({cat: entries})
@@ -375,10 +367,10 @@ class GenericModelDescrBase(ResourceDescrBase):
 
         return value
 
-    version: Optional[Version] = None
+    version: Version | None = None
     """The version of the resource following SemVer 2.0."""
 
-    version_number: Optional[int] = None
+    version_number: int | None = None
     """version number (n-th published version, not the semantic version)"""
 
 
@@ -404,13 +396,13 @@ class GenericDescrBase(GenericModelDescrBase):
         _convert_from_older_format(data)
         return data
 
-    badges: List[BadgeDescr] = Field(  # pyright: ignore[reportUnknownVariableType]
+    badges: list[BadgeDescr] = Field(  # pyright: ignore[reportUnknownVariableType]
         default_factory=list
     )
     """badges associated with this resource"""
 
     documentation: Annotated[
-        Optional[FileSource],
+        FileSource | None,
         Field(
             examples=[
                 "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
@@ -422,7 +414,7 @@ class GenericDescrBase(GenericModelDescrBase):
     The recommended documentation file name is `README.md`. An `.md` suffix is mandatory."""
 
     license: Annotated[
-        Union[LicenseId, DeprecatedLicenseId, str, None],
+        LicenseId | DeprecatedLicenseId | str | None,
         Field(union_mode="left_to_right", examples=["CC0-1.0", "MIT", "BSD-2-Clause"]),
     ] = None
     """A [SPDX license identifier](https://spdx.org/licenses/).
@@ -433,7 +425,7 @@ class GenericDescrBase(GenericModelDescrBase):
     @field_validator("license", mode="after")
     @classmethod
     def deprecated_spdx_license(
-        cls, value: Optional[Union[LicenseId, DeprecatedLicenseId, str]]
+        cls, value: LicenseId | DeprecatedLicenseId | str | None
     ):
         if isinstance(value, LicenseId):
             pass
@@ -471,13 +463,14 @@ class GenericDescr(GenericDescrBase, extra="ignore"):
     type: Annotated[str, LowerCase, Field(frozen=True)] = "generic"
     """The resource type assigns a broad category to the resource."""
 
-    id: Optional[
+    id: (
         Annotated[ResourceId, Field(examples=["affable-shark", "ambitious-sloth"])]
-    ] = None
+        | None
+    ) = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 
-    source: Optional[HttpUrl] = None
+    source: HttpUrl | None = None
     """The primary source of the resource"""
 
     @field_validator("type", mode="after")

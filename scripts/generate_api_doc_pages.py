@@ -2,8 +2,9 @@
 (adapted from https://mkdocstrings.github.io/recipes/#bind-pages-to-sections-themselves)
 """
 
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Set
 
 import mkdocs_gen_files
 
@@ -13,7 +14,7 @@ root = Path(__file__).parent.parent
 src = root / "src"
 
 # Track flat nav entries we have added
-added_nav_labels: Set[str] = set()
+added_nav_labels: set[str] = set()
 
 for path in sorted(src.rglob("*.py")):
     module_path = path.relative_to(src).with_suffix("")
@@ -70,8 +71,7 @@ for path in sorted(src.rglob("*.py")):
     with mkdocs_gen_files.open(full_doc_path, "w") as fd:
         # Reconstruct the full identifier from the original module_path
         ident = ".".join(module_path.parts)
-        if ident.endswith(".__init__"):
-            ident = ident[:-9]  # Remove .__init__
+        ident = ident.removesuffix(".__init__")  # Remove .__init__
         fd.write(f"::: {ident}")
         print(f"Written {full_doc_path}")
 

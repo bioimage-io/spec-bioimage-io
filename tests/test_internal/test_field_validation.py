@@ -1,5 +1,7 @@
-from datetime import datetime
-from typing import ClassVar, Literal, Optional
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from typing import ClassVar, Literal
 
 import pytest
 from pydantic import Field
@@ -18,7 +20,7 @@ def test_is_valid_yaml_value():
 
     assert not is_valid_yaml_value(invalid)
 
-    valid = {"a": 1, "b": ["1", 2], ("c", 1): ("a", "b", datetime.now())}
+    valid = {"a": 1, "b": ["1", 2], ("c", 1): ("a", "b", datetime.now(timezone.utc))}
     assert is_valid_yaml_value(valid)
 
 
@@ -59,7 +61,7 @@ def test_FAIR():
         format_version: Literal["1.0.0"]
 
         a_opt1: FAIR[int] = 0  # actual int value is considered FAIR
-        a_opt2: FAIR[Optional[str]] = None  # None is not FAIR (warning 1)
+        a_opt2: FAIR[str | None] = None  # None is not FAIR (warning 1)
         a_opt3: FAIR[str] = ""  # empty string is not FAIR (warning 2)
         nested: Nested = Field(default_factory=Nested.model_construct)
 

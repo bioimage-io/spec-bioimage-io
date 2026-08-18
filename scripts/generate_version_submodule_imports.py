@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import re
 import subprocess
 import sys
@@ -6,7 +8,7 @@ from dataclasses import dataclass, field
 from difflib import ndiff
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import List, Literal
+from typing import Literal
 
 SRC_PATH = Path(__file__).parent.parent / "src"
 
@@ -73,7 +75,7 @@ def parse_args():
 @dataclass
 class Info:
     target: str
-    all_version_modules: List[str]
+    all_version_modules: list[str]
     target_node: str = field(init=False)
     all_target_nodes_plain: str = field(init=False)
     all_target_nodes_plain_aliases: str = field(init=False)

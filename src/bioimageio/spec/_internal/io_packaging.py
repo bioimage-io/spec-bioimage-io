@@ -2,10 +2,6 @@ from __future__ import annotations
 
 import warnings
 from pathlib import Path
-from typing import (
-    Optional,
-    Union,
-)
 
 from pydantic import (
     AnyUrl,
@@ -38,7 +34,7 @@ from .validator_annotations import AfterValidator
 
 def _package_serializer(
     source: FileSource, info: SerializationInfo
-) -> Union[str, Path, FileName]:
+) -> str | Path | FileName:
     return _package(source, info, None)
 
 
@@ -54,8 +50,8 @@ def package_file_descr_serializer(
 
 
 def _package(
-    source: FileSource, info: SerializationInfo, sha256: Optional[Sha256]
-) -> Union[str, Path, FileName]:
+    source: FileSource, info: SerializationInfo, sha256: Sha256 | None
+) -> str | Path | FileName:
     if (packaging_context := packaging_context_var.get()) is None:
         # convert to standard python obj
         # note: pydantic keeps returning Rootmodels (here `HttpUrl`) as-is, but if
@@ -63,9 +59,7 @@ def _package(
         #   returning the 'root' attribute, which is incorrect.
         #   see https://github.com/pydantic/pydantic/issues/8963
         #   TODO: follow up on https://github.com/pydantic/pydantic/issues/8963
-        if isinstance(source, Path):
-            unpackaged = source
-        elif isinstance(source, HttpUrl):
+        if isinstance(source, (Path, HttpUrl)):
             unpackaged = source
         elif isinstance(source, RelativeFilePath):
             unpackaged = Path(source.path)

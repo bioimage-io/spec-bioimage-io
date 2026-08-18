@@ -10,7 +10,7 @@ Note:
     For additional tools to work with BioImage.IO resources in Python, consider using the [bioimageio.core](https://bioimage-io.github.io/core-bioimage-io-python) package.
 """
 
-# ruff: noqa: E402
+# ruff: disable[E402]
 from loguru import logger
 from typing_extensions import TypeAlias
 

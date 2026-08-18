@@ -1,19 +1,34 @@
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.8
-    hooks:
-      - id: ruff-check
-        args: [--fix, --show-fixes]
-      - id: ruff-format
   - repo: local
     hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: ruff check --fix --show-fixes
+        language: system
+        pass_filenames: true
+        files: ^.*\.py$
+        always_run: false
+      - id: ruff-format
+        name: ruff format
+        entry: ruff format
+        language: system
+        pass_filenames: true
+        files: ^.*\.py$
+        always_run: false
       - id: pyright
         name: pyright
         entry: pyright
         language: system
         always_run: false
         pass_filenames: true
-        files: ^.*\.py$
+        files: ^(?!scripts/).*\.py$
+      - id: pyright_scripts
+        name: pyright scripts
+        entry: pyright --pythonversion 3.10
+        language: system
+        always_run: false
+        pass_filenames: true
+        files: ^scripts/.*\.py$
       - id: generate passthrough modules
         name: generate passthrough modules
         entry: python scripts/generate_version_submodule_imports.py generate

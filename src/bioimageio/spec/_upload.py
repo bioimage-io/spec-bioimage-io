@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import collections.abc
 import io
-from typing import Union
 from zipfile import ZipFile
 
 import httpx
@@ -20,7 +21,7 @@ from .common import HttpUrl, PermissiveFileSource
 
 # TODO: remove alpha stage warning
 def upload(
-    source: Union[PermissiveFileSource, ZipFile, ResourceDescr, BioimageioYamlContent],
+    source: PermissiveFileSource | ZipFile | ResourceDescr | BioimageioYamlContent,
     /,
     keep_remote_files_as_references: bool = False,
 ) -> HttpUrl:

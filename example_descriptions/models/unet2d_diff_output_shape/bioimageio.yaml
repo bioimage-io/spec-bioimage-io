@@ -69,7 +69,7 @@ weights:
       callable: ResizeUNet
       kwargs:
         { depth: 3, in_channels: 1, initial_features: 16, out_channels: 1 }
-      sha256: 1d260e6a124f2c344ead9915b71f01af074ec45178847307e10471ebe0512842
+      sha256: 6657275fec7ad5ec27934ac8a0afae90f9c603f6a4b8dd47890f157e573bb9df
       source: resize_unet.py
     pytorch_version: 1.6
     sha256: 2c475874f358eb75dc5f3b6af8d186e4fbf8da3acf43fb6662f0d5de21b0a838

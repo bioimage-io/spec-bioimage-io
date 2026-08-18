@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, ClassVar, Iterable, Optional, Type
+from pathlib import PurePosixPath
+from typing import Any, ClassVar, Iterable
 from urllib.parse import urlsplit, urlunsplit
 
 import pydantic
@@ -12,7 +13,7 @@ from .validated_string import ValidatedString
 class RootHttpUrl(ValidatedString):
     """An untested HTTP URL, possibly a 'URL folder' or an invalid HTTP URL"""
 
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
     _validated: pydantic.HttpUrl
 
     def absolute(self):
@@ -24,11 +25,11 @@ class RootHttpUrl(ValidatedString):
         return self._validated.scheme
 
     @property
-    def host(self) -> Optional[str]:
+    def host(self) -> str | None:
         return self._validated.host
 
     @property
-    def path(self) -> Optional[str]:
+    def path(self) -> str | None:
         return self._validated.path
 
     @property
@@ -63,6 +64,13 @@ class RootHttpUrl(ValidatedString):
         for _ in range(100):
             current = current.parent
             yield current
+
+    @property
+    def suffix(self) -> str:
+        if self.path is None:
+            return ""
+        else:
+            return PurePosixPath(self.path).suffix
 
     def __truediv__(self, other: str) -> RootHttpUrl:
         parsed = urlsplit(str(self))

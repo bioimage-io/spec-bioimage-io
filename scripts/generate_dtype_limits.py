@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 from pprint import pprint
-from typing import Dict, Tuple, Union
 
 import numpy as np
 
-dtype_limits: Dict[str, Tuple[Union[float, int], Union[float, int]]] = {}
+dtype_limits: dict[str, tuple[float | int, float | int]] = {}
 
 for dtype in ["float32", "float64"]:
     info = np.finfo(dtype)

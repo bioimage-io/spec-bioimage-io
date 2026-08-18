@@ -13,7 +13,7 @@ UTC = timezone.utc
 
 TYPE_ARGS = {
     types.Datetime: (2024, 2, 14),
-    types.Datetime: datetime.now().astimezone(UTC).isoformat(timespec="seconds"),
+    types.Datetime: datetime.now(timezone.utc).isoformat(timespec="seconds"),
     types.DeprecatedLicenseId: "AGPL-1.0",
     types.Doi: "10.5281/zenodo.5764892",
     types.Identifier: "id",
@@ -38,27 +38,20 @@ TYPE_ARGS = {
 
 IGNORE_TYPES_MEMBERS = {
     "A",
+    "ALERT",
     "AfterValidator",
     "AfterWarner",
-    "ALERT",
-    "annotated_types",
     "Annotated",
-    "annotations",
     "Any",
     "BeforeValidator",
     "ClassVar",
-    "datetime",
     "FAIR",
-    "field_validation",
     "FileDescr_",  # an annoated union
     "FilePath",
     "FileSource",
     "FileSource_cover",  # an annotated union
     "FileSource_package",  # an annoated union
     "FormatVersionPlaceholder",  # a literal
-    "is_sequence",
-    "iskeyword",
-    "isoparse",
     "Literal",
     "NotEmpty",
     "PermissiveFileSource",
@@ -68,14 +61,23 @@ IGNORE_TYPES_MEMBERS = {
     "S",
     "Sequence",
     "StringConstraints",
-    "timezone",
     "Type",
     "TypeVar",
-    "typing",
-    "Union",
     "UTC",
+    "Union",
     "ValidatedString",
     "YamlValue",
+    "annotated_types",
+    "annotations",
+    "datetime",
+    "field_validation",
+    "is_sequence",
+    "iskeyword",
+    "isoparse",
+    "timezone",
+    "typing",
+    "validate_identifier",
+    "validate_is_not_keyword",
 }
 
 

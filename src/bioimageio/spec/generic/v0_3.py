@@ -6,14 +6,10 @@ from typing import (
     Any,
     Callable,
     ClassVar,
-    Dict,
     List,
     Literal,
-    Optional,
     Sequence,
-    Type,
     TypeVar,
-    Union,
     cast,
 )
 
@@ -52,6 +48,8 @@ from .v0_2 import BadgeDescr, Doi, OrcidId, Uploader
 from .v0_2 import Maintainer as _Maintainer_v0_2
 
 __all__ = [
+    "KNOWN_SPECIFIC_RESOURCE_TYPES",
+    "VALID_COVER_IMAGE_EXTENSIONS",
     "Author",
     "BadgeDescr",
     "CiteEntry",
@@ -60,7 +58,6 @@ __all__ = [
     "FileDescr",
     "GenericDescr",
     "HttpUrl",
-    "KNOWN_SPECIFIC_RESOURCE_TYPES",
     "LicenseId",
     "LinkedResource",
     "Maintainer",
@@ -69,7 +66,6 @@ __all__ = [
     "ResourceId",
     "Sha256",
     "Uploader",
-    "VALID_COVER_IMAGE_EXTENSIONS",
     "Version",
 ]
 
@@ -101,7 +97,7 @@ FileDescr_documentation = Annotated[
 
 
 class ResourceId(ValidatedString):
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[
         Annotated[
             NotEmpty[str],
             RestrictCharacters(string.ascii_lowercase + string.digits + "_-/."),
@@ -118,10 +114,10 @@ def _has_no_slash(s: str) -> bool:
 
 class Author(_Author_v0_2):
     name: Annotated[str, Predicate(_has_no_slash)]
-    github_user: Optional[str] = None
+    github_user: str | None = None
 
     @field_validator("github_user", mode="after")
-    def _validate_github_user(cls, value: Optional[str]):
+    def _validate_github_user(cls, value: str | None):
         if value is None:
             return None
         else:
@@ -130,8 +126,8 @@ class Author(_Author_v0_2):
 
 class _AuthorConv(Converter[_Author_v0_2, Author]):
     def _convert(
-        self, src: _Author_v0_2, tgt: "type[Author] | type[dict[str, Any]]"
-    ) -> "Author | dict[str, Any]":
+        self, src: _Author_v0_2, tgt: type[Author | dict[str, Any]]
+    ) -> Author | dict[str, Any]:
         return tgt(
             name=src.name,
             github_user=src.github_user,
@@ -145,7 +141,7 @@ _author_conv = _AuthorConv(_Author_v0_2, Author)
 
 
 class Maintainer(_Maintainer_v0_2):
-    name: Optional[Annotated[str, Predicate(_has_no_slash)]] = None
+    name: Annotated[str, Predicate(_has_no_slash)] | None = None
     github_user: str
 
     @field_validator("github_user", mode="after")
@@ -155,8 +151,8 @@ class Maintainer(_Maintainer_v0_2):
 
 class _MaintainerConv(Converter[_Maintainer_v0_2, Maintainer]):
     def _convert(
-        self, src: _Maintainer_v0_2, tgt: "type[Maintainer | dict[str, Any]]"
-    ) -> "Maintainer | dict[str, Any]":
+        self, src: _Maintainer_v0_2, tgt: type[Maintainer | dict[str, Any]]
+    ) -> Maintainer | dict[str, Any]:
         return tgt(
             name=src.name,
             github_user=src.github_user,
@@ -175,14 +171,14 @@ class CiteEntry(Node):
     text: str
     """free text description"""
 
-    doi: Optional[Doi] = None
+    doi: Doi | None = None
     """A digital object identifier (DOI) is the prefered citation reference.
     See https://www.doi.org/ for details.
     Note:
         Either **doi** or **url** have to be specified.
     """
 
-    url: Optional[HttpUrl] = None
+    url: HttpUrl | None = None
     """URL to cite (preferably specify a **doi** instead/also).
     Note:
         Either **doi** or **url** have to be specified.
@@ -206,7 +202,7 @@ class LinkedResourceBase(Node):
 
         return value
 
-    version: Optional[Version] = None
+    version: Version | None = None
     """The version of the linked resource following SemVer 2.0."""
 
 
@@ -287,7 +283,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = ""
     """A string containing a brief description."""
 
-    covers: List[_FileDescr_cover] = Field(
+    covers: list[_FileDescr_cover] = Field(
         default_factory=cast(Callable[[], List[_FileDescr_cover]], list),
         description=(
             "Cover images. Please use an image smaller than 500KB and an aspect"
@@ -298,7 +294,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     )
     """Cover images."""
 
-    documentation: FAIR[Optional[FileDescr_documentation]] = None
+    documentation: FAIR[FileDescr_documentation | None] = None
     """Additional model documentation.
     The recommended documentation source file name is `README.md`. An `.md` suffix is mandatory."""
 
@@ -309,29 +305,30 @@ class GenericModelDescrBase(ResourceDescrBase):
         """
         convert_from_older_format(data)
 
-    id_emoji: Optional[
+    id_emoji: (
         Annotated[str, Len(min_length=1, max_length=2), Field(examples=["🦈", "🦥"])]
-    ] = None
+        | None
+    ) = None
     """UTF-8 emoji for display alongside the `id`."""
 
-    authors: FAIR[List[Author]] = Field(
+    authors: FAIR[list[Author]] = Field(
         default_factory=cast(Callable[[], List[Author]], list)
     )
     """The authors are the creators of this resource description and the primary points of contact."""
 
-    attachments: List[FileDescr_package] = Field(
+    attachments: list[FileDescr_package] = Field(
         default_factory=cast(Callable[[], List[FileDescr]], list)
     )
     """file attachments"""
 
-    cite: FAIR[List[CiteEntry]] = Field(
+    cite: FAIR[list[CiteEntry]] = Field(
         default_factory=cast(Callable[[], List[CiteEntry]], list)
     )
     """citations"""
 
     license: FAIR[
         Annotated[
-            Union[LicenseId, DeprecatedLicenseId, None, FileDescr_package],
+            LicenseId | DeprecatedLicenseId | None | FileDescr_package,
             Field(
                 union_mode="left_to_right", examples=["CC0-1.0", "MIT", "BSD-2-Clause"]
             ),
@@ -358,7 +355,7 @@ class GenericModelDescrBase(ResourceDescrBase):
         return value
 
     git_repo: Annotated[
-        Optional[HttpUrl],
+        HttpUrl | None,
         Field(
             examples=[
                 "https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"
@@ -367,13 +364,13 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = None
     """A URL to the Git repository where the resource is being developed."""
 
-    icon: Union[
-        Annotated[str, Len(min_length=1, max_length=2)], FileDescr_package, None
-    ] = None
+    icon: Annotated[str, Len(min_length=1, max_length=2)] | FileDescr_package | None = (
+        None
+    )
     """An icon for illustration, e.g. on bioimage.io"""
 
     links: Annotated[
-        List[str],
+        list[str],
         Field(
             examples=[
                 (
@@ -386,10 +383,10 @@ class GenericModelDescrBase(ResourceDescrBase):
     ] = Field(default_factory=list)
     """IDs of other bioimage.io resources"""
 
-    uploader: Optional[Uploader] = None
+    uploader: Uploader | None = None
     """The person who uploaded the model (e.g. to bioimage.io)"""
 
-    maintainers: List[Maintainer] = Field(
+    maintainers: list[Maintainer] = Field(
         default_factory=cast(Callable[[], List[Maintainer]], list)
     )
     """Maintainers of this resource.
@@ -397,21 +394,24 @@ class GenericModelDescrBase(ResourceDescrBase):
 
     @model_validator(mode="after")
     def _check_maintainers_exist(self):
-        if not self.maintainers and self.authors:
-            if all(a.github_user is None for a in self.authors):
-                issue_warning(
-                    "Missing `maintainers` or any author in `authors` with a specified"
-                    + " `github_user` name.",
-                    value=self.authors,
-                    field="authors",
-                    severity=ALERT,
-                )
+        if (
+            not self.maintainers
+            and self.authors
+            and all(a.github_user is None for a in self.authors)
+        ):
+            issue_warning(
+                "Missing `maintainers` or any author in `authors` with a specified"
+                + " `github_user` name.",
+                value=self.authors,
+                field="authors",
+                severity=ALERT,
+            )
 
         return self
 
     tags: FAIR[
         Annotated[
-            List[str],
+            list[str],
             Field(
                 examples=[("unet2d", "pytorch", "nucleus", "segmentation", "dsb2018")]
             ),
@@ -423,10 +423,10 @@ class GenericModelDescrBase(ResourceDescrBase):
     @field_validator("tags")
     @classmethod
     def warn_about_tag_categories(
-        cls, value: List[str], info: ValidationInfo
-    ) -> List[str]:
+        cls, value: list[str], info: ValidationInfo
+    ) -> list[str]:
         categories = TAG_CATEGORIES.get(info.data["type"], {})
-        missing_categories: List[Dict[str, Sequence[str]]] = []
+        missing_categories: list[dict[str, Sequence[str]]] = []
         for cat, entries in categories.items():
             if not any(e in value for e in entries):
                 missing_categories.append({cat: entries})
@@ -438,7 +438,7 @@ class GenericModelDescrBase(ResourceDescrBase):
 
         return value
 
-    version: Optional[Version] = None
+    version: Version | None = None
     """The version of the resource following SemVer 2.0."""
 
     @model_validator(mode="before")
@@ -450,7 +450,7 @@ class GenericModelDescrBase(ResourceDescrBase):
 
         return value
 
-    version_comment: Optional[Annotated[str, MaxLen(512)]] = None
+    version_comment: Annotated[str, MaxLen(512)] | None = None
     """A comment on the version of the resource."""
 
 
@@ -472,7 +472,7 @@ class GenericDescrBase(GenericModelDescrBase):
         cls.convert_from_old_format_wo_validation(data)
         return data
 
-    badges: List[BadgeDescr] = Field(  # pyright: ignore[reportUnknownVariableType]
+    badges: list[BadgeDescr] = Field(  # pyright: ignore[reportUnknownVariableType]
         default_factory=list
     )
     """badges associated with this resource"""
@@ -517,16 +517,17 @@ class GenericDescr(GenericDescrBase, extra="ignore"):
         type: Annotated[str, LowerCase]
         """The resource type assigns a broad category to the resource."""
 
-    id: Optional[
+    id: (
         Annotated[ResourceId, Field(examples=["affable-shark", "ambitious-sloth"])]
-    ] = None
+        | None
+    ) = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 
-    parent: Optional[ResourceId] = None
+    parent: ResourceId | None = None
     """The description from which this one is derived"""
 
-    source: Optional[HttpUrl] = None
+    source: HttpUrl | None = None
     """The primary source of the resource"""
 
     @field_validator("type", mode="after")
