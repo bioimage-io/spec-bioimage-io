@@ -43,90 +43,88 @@ Union of
 
 </details>
 
-## `attachments`<sub> Sequence</sub> ≝ `[]`
+## `attachments`<sub> list</sub> ≝ `[]`
 file attachments
 
-<details><summary>Sequence[_internal.io.FileDescr*]
+<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))
+list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 **_internal.io.FileDescr:**
-### `attachments.i.source`<sub> Union</sub>
+### `attachments.source`<sub> Union</sub>
 File source
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-### `attachments.i.sha256`<sub> Optional</sub> ≝ `None`
+### `attachments.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
-## `authors`<sub> Sequence[generic.v0_3.Author]</sub> ≝ `[]`
+## `authors`<sub> list</sub> ≝ `[]`
 The authors are the creators of this resource description and the primary points of contact.
 
-<details><summary>Sequence[generic.v0_3.Author]
+<details><summary>list[bioimageio.spec.generic.v0_3.Author]
 
 </summary>
 
 
 **generic.v0_3.Author:**
-### `authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+### `authors.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-### `authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
+### `authors.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-### `authors.i.orcid`<sub> Optional</sub> ≝ `None`
+### `authors.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#authorsiorcid) '0000-0001-2345-6789'
-
-
-Optional[_internal.types.OrcidId]
-
-### `authors.i.name`<sub> str</sub>
+[*Example:*](#authorsorcid) '0000-0001-2345-6789'
 
 
 
+### `authors.name`<sub> str</sub>
 
-### `authors.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+### `authors.github_user`<sub> str | None</sub> ≝ `None`
 
 
 
 
 </details>
 
-## `badges`<sub> Sequence</sub> ≝ `[]`
+## `badges`<sub> list</sub> ≝ `[]`
 badges associated with this resource
 
-<details><summary>Sequence[generic.v0_2.BadgeDescr]
+<details><summary>list[bioimageio.spec.generic.v0_2.BadgeDescr]
 
 </summary>
 
 
 **generic.v0_2.BadgeDescr:**
-### `badges.i.label`<sub> str</sub>
+### `badges.label`<sub> str</sub>
 badge label to display on hover
-[*Example:*](#badgesilabel) 'Open in Colab'
+[*Example:*](#badgeslabel) 'Open in Colab'
 
 
 
-### `badges.i.icon`<sub> Union</sub> ≝ `None`
+### `badges.icon`<sub> Union</sub> ≝ `None`
 badge icon (included in bioimage.io package if not a URL)
-[*Example:*](#badgesiicon) 'https://colab.research.google.com/assets/colab-badge.svg'
+[*Example:*](#badgesicon) 'https://colab.research.google.com/assets/colab-badge.svg'
 
 <details><summary>Union[Union[Path*, _internal.io.RelativeFilePath]*, _internal.url.HttpUrl, pydantic.networks.HttpUrl, None]
 
@@ -134,7 +132,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f8ee2fffe20>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fd6ac433d80>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -142,29 +140,29 @@ Union of
 
 </details>
 
-### `badges.i.url`<sub> _internal.url.HttpUrl</sub>
+### `badges.url`<sub> _internal.url.HttpUrl</sub>
 target URL
-[*Example:*](#badgesiurl) 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
+[*Example:*](#badgesurl) 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
 
 
 
 </details>
 
-## `cite`<sub> Sequence[generic.v0_3.CiteEntry]</sub> ≝ `[]`
+## `cite`<sub> list</sub> ≝ `[]`
 citations
 
-<details><summary>Sequence[generic.v0_3.CiteEntry]
+<details><summary>list[bioimageio.spec.generic.v0_3.CiteEntry]
 
 </summary>
 
 
 **generic.v0_3.CiteEntry:**
-### `cite.i.text`<sub> str</sub>
+### `cite.text`<sub> str</sub>
 free text description
 
 
 
-### `cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
+### `cite.doi`<sub> _internal.types.Doi | None</sub> ≝ `None`
 A digital object identifier (DOI) is the prefered citation reference.
 See https://www.doi.org/ for details.
 Note:
@@ -172,7 +170,7 @@ Note:
 
 
 
-### `cite.i.url`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+### `cite.url`<sub> _internal.url.HttpUrl | None</sub> ≝ `None`
 URL to cite (preferably specify a **doi** instead/also).
 Note:
     Either **doi** or **url** have to be specified.
@@ -214,30 +212,29 @@ bioimage.io internal metadata.
 
 </details>
 
-## `covers`<sub> Sequence</sub> ≝ `[]`
+## `covers`<sub> list</sub> ≝ `[]`
 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 [*Example:*](#covers) ['cover.png']
 
-<details><summary>Sequence[_internal.io.FileDescr*]
+<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False)]]
 
 </summary>
 
-Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False))
+list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False)]]
 
 **_internal.io.FileDescr:**
-### `covers.i.source`<sub> Union</sub>
+### `covers.source`<sub> Union</sub>
 File source
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-### `covers.i.sha256`<sub> Optional</sub> ≝ `None`
+### `covers.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
@@ -255,7 +252,7 @@ The recommended documentation source file name is `README.md`. An `.md` suffix i
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ### `documentation.source`<sub> Union</sub>
@@ -264,15 +261,15 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-### `documentation.sha256`<sub> Optional</sub> ≝ `None`
+### `documentation.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
-## `git_repo`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+## `git_repo`<sub> _internal.url.HttpUrl | None</sub> ≝ `None`
 A URL to the Git repository where the resource is being developed.
 [*Example:*](#git_repo) 'https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad'
 
@@ -288,7 +285,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -299,15 +296,15 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-### `icon.sha256`<sub> Optional</sub> ≝ `None`
+### `icon.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
-## `id`<sub> Optional[NotebookId]</sub> ≝ `None`
+## `id`<sub> NotebookId | None</sub> ≝ `None`
 bioimage.io-wide unique resource identifier
 assigned by bioimage.io; version **un**specific.
 
@@ -332,7 +329,7 @@ Union of
 - _internal.license_id.DeprecatedLicenseId
 - None
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'))
 
 
 **_internal.io.FileDescr:**
@@ -342,78 +339,77 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-### `license.sha256`<sub> Optional</sub> ≝ `None`
+### `license.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
-## `links`<sub> Sequence[str]</sub> ≝ `[]`
+## `links`<sub> list[str]</sub> ≝ `[]`
 IDs of other bioimage.io resources
 [*Example:*](#links) ('ilastik/ilastik', 'deepimagej/deepimagej', 'zero/notebook_u-net_3d_zerocostdl4mic')
 
 
 
-## `maintainers`<sub> Sequence</sub> ≝ `[]`
+## `maintainers`<sub> list</sub> ≝ `[]`
 Maintainers of this resource.
 If not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name
 
-<details><summary>Sequence[generic.v0_3.Maintainer]
+<details><summary>list[bioimageio.spec.generic.v0_3.Maintainer]
 
 </summary>
 
 
 **generic.v0_3.Maintainer:**
-### `maintainers.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+### `maintainers.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-### `maintainers.i.email`<sub> Optional[Email]</sub> ≝ `None`
+### `maintainers.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-### `maintainers.i.orcid`<sub> Optional</sub> ≝ `None`
+### `maintainers.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#maintainersiorcid) '0000-0001-2345-6789'
+[*Example:*](#maintainersorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.types.OrcidId]
 
-### `maintainers.i.name`<sub> Optional</sub> ≝ `None`
+### `maintainers.name`<sub> Optional</sub> ≝ `None`
 
 
 
 Optional[str (Predicate(_has_no_slash))]
 
-### `maintainers.i.github_user`<sub> str</sub>
+### `maintainers.github_user`<sub> str</sub>
 
 
 
 
 </details>
 
-## `parent`<sub> Optional[NotebookId]</sub> ≝ `None`
+## `parent`<sub> NotebookId | None</sub> ≝ `None`
 The description from which this one is derived
 
 
 
-## `tags`<sub> Sequence[str]</sub> ≝ `[]`
+## `tags`<sub> list[str]</sub> ≝ `[]`
 Associated tags
 [*Example:*](#tags) ('unet2d', 'pytorch', 'nucleus', 'segmentation', 'dsb2018')
 
 
 
-## `uploader`<sub> Optional[generic.v0_2.Uploader]</sub> ≝ `None`
+## `uploader`<sub> generic.v0_2.Uploader | None</sub> ≝ `None`
 The person who uploaded the model (e.g. to bioimage.io)
 
-<details><summary>Optional[generic.v0_2.Uploader]
+<details><summary>generic.v0_2.Uploader | None
 
 </summary>
 
@@ -432,11 +428,11 @@ Optional[str (AfterValidator(_remove_slashes))]
 
 </details>
 
-## `version`<sub> Optional</sub> ≝ `None`
+## `version`<sub> _internal.version_type.Version |</sub> ≝ `None`
 The version of the resource following SemVer 2.0.
 
 
-Optional[_internal.version_type.Version]
+_internal.version_type.Version | None
 
 ## `version_comment`<sub> Optional</sub> ≝ `None`
 A comment on the version of the resource.
@@ -445,13 +441,13 @@ A comment on the version of the resource.
 Optional[str (MaxLen(max_length=512))]
 
 # Example values
-### `authors.i.orcid`
+### `authors.orcid`
 0000-0001-2345-6789
-### `badges.i.label`
+### `badges.label`
 Open in Colab
-### `badges.i.icon`
+### `badges.icon`
 https://colab.research.google.com/assets/colab-badge.svg
-### `badges.i.url`
+### `badges.url`
 https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb
 ### `covers`
 ['cover.png']
@@ -464,7 +460,7 @@ https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/m
 
 ### `links`
 ('ilastik/ilastik', 'deepimagej/deepimagej', 'zero/notebook_u-net_3d_zerocostdl4mic')
-### `maintainers.i.orcid`
+### `maintainers.orcid`
 0000-0001-2345-6789
 ### `tags`
 ('unet2d', 'pytorch', 'nucleus', 'segmentation', 'dsb2018')

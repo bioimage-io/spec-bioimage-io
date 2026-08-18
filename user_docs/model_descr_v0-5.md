@@ -19,7 +19,7 @@ Specialized resource type 'model'
 
 
 
-## `format_version`<sub> Literal[0.5.12]</sub>
+## `format_version`<sub> Literal[0.5.13]</sub>
 Version of the bioimage.io model description specification used.
 When creating a new model always use the latest micro/patch version described here.
 The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -93,10 +93,21 @@ A short description of this axis beyond its type and id.
 
 
 
-#### `inputs.axes.channel_names`<sub> Sequence[str]</sub>
+#### `inputs.axes.channel_names`<sub> list[str]</sub>
+Name/label for each channel. The number of channels is given by `len(channel_names)`.
 
 
 
+#### `inputs.axes.channel_colors`<sub> list</sub> ≝ `[]`
+Colors for each channel for visualization purposes.
+If not given, a default color palette is used:
+
+- For < 8 channels: colorblind-friendly palette from https://www.nature.com/articles/nmeth.1618 (without black)
+- For < 21 channels: discrete matplotlib colormap 'tab20b' (redistributed for more even color distribution < 20 channels)
+- For >= 21 channels: sample colors from continuous matplotlib colormap 'cividis'
+
+
+list[pydantic_extra_types.color.Color]
 
 **IndexInputAxis:**
 #### `inputs.axes.size`<sub> Union</sub>
@@ -391,7 +402,7 @@ The file extension must be '.npy'.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `inputs.test_tensor.source`<sub> Union</sub>
@@ -400,11 +411,11 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `inputs.test_tensor.sha256`<sub> Optional</sub> ≝ `None`
+#### `inputs.test_tensor.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
@@ -421,7 +432,7 @@ The image dimensionality has to match the number of axes specified in this tenso
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `inputs.sample_tensor.source`<sub> Union</sub>
@@ -430,11 +441,11 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `inputs.sample_tensor.sha256`<sub> Optional</sub> ≝ `None`
+#### `inputs.sample_tensor.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
@@ -495,12 +506,12 @@ Union[Literal[arbitrary unit], _internal.types.SiUnit, None]
 
 Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int64]
 
-#### `inputs.data.range`<sub> Sequence</sub> ≝ `(None, None)`
+#### `inputs.data.range`<sub> tuple</sub> ≝ `(None, None)`
 Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
 `None` corresponds to min/max of what can be expressed by **type**.
 
 
-Sequence[Optional[float], Optional[float]]
+tuple[float | None, float | None]
 
 #### `inputs.data.unit`<sub> Union</sub> ≝ `arbitrary unit`
 
@@ -513,7 +524,7 @@ Scale for data on an interval (or ratio) scale.
 
 
 
-#### `inputs.data.offset`<sub> Optional[float]</sub> ≝ `None`
+#### `inputs.data.offset`<sub> float | None</sub> ≝ `None`
 Offset for data on a ratio scale.
 
 
@@ -560,12 +571,12 @@ Union[Literal[arbitrary unit], _internal.types.SiUnit, None]
 
 Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int64]
 
-#### `inputs.data.range`<sub> Sequence</sub> ≝ `(None, None)`
+#### `inputs.data.range`<sub> tuple</sub> ≝ `(None, None)`
 Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
 `None` corresponds to min/max of what can be expressed by **type**.
 
 
-Sequence[Optional[float], Optional[float]]
+tuple[float | None, float | None]
 
 #### `inputs.data.unit`<sub> Union</sub> ≝ `arbitrary unit`
 
@@ -578,14 +589,14 @@ Scale for data on an interval (or ratio) scale.
 
 
 
-#### `inputs.data.offset`<sub> Optional[float]</sub> ≝ `None`
+#### `inputs.data.offset`<sub> float | None</sub> ≝ `None`
 Offset for data on a ratio scale.
 
 
 
 </details>
 
-### `inputs.output_of`<sub> Optional[ModelId]</sub> ≝ `None`
+### `inputs.output_of`<sub> ModelId | None</sub> ≝ `None`
 If this input tensor is the output of another model, specify the model id here.
 This model's input id must match the output id of the referenced model.
 
@@ -615,7 +626,7 @@ Note:
 
 
 
-#### `inputs.pad.value`<sub> Union[int, float]</sub> ≝ `0`
+#### `inputs.pad.value`<sub> int | float</sub> ≝ `0`
 
 
 
@@ -640,7 +651,7 @@ Note:
 
 </details>
 
-### `inputs.preprocessing`<sub> Sequence</sub> ≝ `[]`
+### `inputs.preprocessing`<sub> list</sub> ≝ `[]`
 Description of how this input should be preprocessed.
 
 notes:
@@ -650,64 +661,53 @@ notes:
   'ensure_dtype' step is added to ensure preprocessing steps are not unintentionally
   changing the data type.
 
-<details><summary>Sequence[Union[BinarizeDescr, ..., ZeroMeanUnitVarianceDescr]*]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BinarizeDescr, bioimageio.spec.model.v0_5.ClipDescr, bioimageio.spec.model.v0_5.EnsureDtypeDescr, bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceDescr, bioimageio.spec.model.v0_5.ScaleLinearDescr, bioimageio.spec.model.v0_5.ScaleRangeDescr, bioimageio.spec.model.v0_5.SigmoidDescr, bioimageio.spec.model.v0_5.SoftmaxDescr, bioimageio.spec.model.v0_5.ZeroMeanUnitVarianceDescr], Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-Sequence of Union of
-- BinarizeDescr
-- ClipDescr
-- EnsureDtypeDescr
-- FixedZeroMeanUnitVarianceDescr
-- ScaleLinearDescr
-- ScaleRangeDescr
-- SigmoidDescr
-- SoftmaxDescr
-- ZeroMeanUnitVarianceDescr
-
-(Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None))
+list[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BinarizeDescr, bioimageio.spec.model.v0_5.ClipDescr, bioimageio.spec.model.v0_5.EnsureDtypeDescr, bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceDescr, bioimageio.spec.model.v0_5.ScaleLinearDescr, bioimageio.spec.model.v0_5.ScaleRangeDescr, bioimageio.spec.model.v0_5.SigmoidDescr, bioimageio.spec.model.v0_5.SoftmaxDescr, bioimageio.spec.model.v0_5.ZeroMeanUnitVarianceDescr], Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BinarizeDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[binarize]</sub>
+#### `inputs.preprocessing.id`<sub> Literal[binarize]</sub>
 
 
 
 
-#### `inputs.preprocessing.i.kwargs`<sub> Union</sub>
+#### `inputs.preprocessing.kwargs`<sub> BinarizeKwargs | bioimageio.spec</sub>
 
 
-<details><summary>Union[BinarizeKwargs, BinarizeAlongAxisKwargs]
+<details><summary>BinarizeKwargs | bioimageio.spec.model.v0_5.BinarizeAlongAxisKwargs
 
 </summary>
 
 
 **BinarizeKwargs:**
-##### `inputs.preprocessing.i.kwargs.threshold`<sub> float</sub>
+##### `inputs.preprocessing.kwargs.threshold`<sub> float</sub>
 The fixed threshold
 
 
 
 **BinarizeAlongAxisKwargs:**
-##### `inputs.preprocessing.i.kwargs.threshold`<sub> Sequence[float]</sub>
+##### `inputs.preprocessing.kwargs.threshold`<sub> list[float]</sub>
 The fixed threshold values along `axis`
 
 
 
-##### `inputs.preprocessing.i.kwargs.axis`<sub> AxisId</sub>
+##### `inputs.preprocessing.kwargs.axis`<sub> AxisId</sub>
 The `threshold` axis
-[*Example:*](#inputspreprocessingikwargsaxis) 'channel'
+[*Example:*](#inputspreprocessingkwargsaxis) 'channel'
 
 
 
 </details>
 
 **ClipDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[clip]</sub>
+#### `inputs.preprocessing.id`<sub> Literal[clip]</sub>
 
 
 
 
-#### `inputs.preprocessing.i.kwargs`<sub> ClipKwargs</sub>
+#### `inputs.preprocessing.kwargs`<sub> ClipKwargs</sub>
 
 
 <details><summary>ClipKwargs
@@ -716,14 +716,14 @@ The `threshold` axis
 
 
 **ClipKwargs:**
-##### `inputs.preprocessing.i.kwargs.min`<sub> Optional[float]</sub> ≝ `None`
+##### `inputs.preprocessing.kwargs.min`<sub> float | None</sub> ≝ `None`
 Minimum value for clipping.
 
 Exclusive with [min_percentile][]
 
 
 
-##### `inputs.preprocessing.i.kwargs.min_percentile`<sub> Optional</sub> ≝ `None`
+##### `inputs.preprocessing.kwargs.min_percentile`<sub> Optional</sub> ≝ `None`
 Minimum percentile for clipping.
 
 Exclusive with [min][].
@@ -733,14 +733,14 @@ In range [0, 100).
 
 Optional[float (Interval(gt=None, ge=0, lt=100, le=None))]
 
-##### `inputs.preprocessing.i.kwargs.max`<sub> Optional[float]</sub> ≝ `None`
+##### `inputs.preprocessing.kwargs.max`<sub> float | None</sub> ≝ `None`
 Maximum value for clipping.
 
 Exclusive with `max_percentile`.
 
 
 
-##### `inputs.preprocessing.i.kwargs.max_percentile`<sub> Optional</sub> ≝ `None`
+##### `inputs.preprocessing.kwargs.max_percentile`<sub> Optional</sub> ≝ `None`
 Maximum percentile for clipping.
 
 Exclusive with `max`.
@@ -750,7 +750,7 @@ In range (1, 100].
 
 Optional[float (Interval(gt=1, ge=None, lt=None, le=100))]
 
-##### `inputs.preprocessing.i.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `inputs.preprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
 The subset of axes to determine percentiles jointly,
 
 i.e. axes to reduce to compute min/max from `min_percentile`/`max_percentile`.
@@ -761,7 +761,7 @@ To clip samples independently, leave out the 'batch' axis.
 Only valid if `min_percentile` and/or `max_percentile` are set.
 
 Default: Compute percentiles over all axes jointly.
-[*Example:*](#inputspreprocessingikwargsaxes) ('batch', 'x', 'y')
+[*Example:*](#inputspreprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
 Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
@@ -769,12 +769,12 @@ Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 </details>
 
 **EnsureDtypeDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[ensure_dtype]</sub>
+#### `inputs.preprocessing.id`<sub> Literal[ensure_dtype]</sub>
 
 
 
 
-#### `inputs.preprocessing.i.kwargs`<sub> EnsureDtypeKwargs</sub>
+#### `inputs.preprocessing.kwargs`<sub> EnsureDtypeKwargs</sub>
 
 
 <details><summary>EnsureDtypeKwargs
@@ -783,7 +783,7 @@ Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
 
 **EnsureDtypeKwargs:**
-##### `inputs.preprocessing.i.kwargs.dtype`<sub> Literal</sub>
+##### `inputs.preprocessing.kwargs.dtype`<sub> Literal</sub>
 
 
 
@@ -792,105 +792,106 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 </details>
 
 **FixedZeroMeanUnitVarianceDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal</sub>
+#### `inputs.preprocessing.id`<sub> Literal</sub>
 
 
 
 Literal[fixed_zero_mean_unit_variance]
 
-#### `inputs.preprocessing.i.kwargs`<sub> Union</sub>
+#### `inputs.preprocessing.kwargs`<sub> FixedZeroMeanUnitVarianceKwargs </sub>
 
 
-<details><summary>Union[FixedZeroMeanUnitVarianceKwargs, FixedZeroMeanUnitVarianceAlongAxisKwargs]
+<details><summary>FixedZeroMeanUnitVarianceKwargs | bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceAlongAxisKwargs
 
 </summary>
 
 
 **FixedZeroMeanUnitVarianceKwargs:**
-##### `inputs.preprocessing.i.kwargs.mean`<sub> float</sub>
+##### `inputs.preprocessing.kwargs.mean`<sub> float</sub>
 The mean value to normalize with.
 
 
 
-##### `inputs.preprocessing.i.kwargs.std`<sub> float</sub>
+##### `inputs.preprocessing.kwargs.std`<sub> float</sub>
 The standard deviation value to normalize with.
 
 
 
 **FixedZeroMeanUnitVarianceAlongAxisKwargs:**
-##### `inputs.preprocessing.i.kwargs.mean`<sub> Sequence[float]</sub>
+##### `inputs.preprocessing.kwargs.mean`<sub> list[float]</sub>
 The mean value(s) to normalize with.
 
 
 
-##### `inputs.preprocessing.i.kwargs.std`<sub> Sequence[float (Ge(ge=1e-06))]</sub>
+##### `inputs.preprocessing.kwargs.std`<sub> list</sub>
 The standard deviation value(s) to normalize with.
 Size must match `mean` values.
 
 
+list[typing.Annotated[float, Ge(ge=1e-06)]]
 
-##### `inputs.preprocessing.i.kwargs.axis`<sub> AxisId</sub>
+##### `inputs.preprocessing.kwargs.axis`<sub> AxisId</sub>
 The axis of the mean/std values to normalize each entry along that dimension
 separately.
-[*Examples:*](#inputspreprocessingikwargsaxis) ['channel', 'index']
+[*Examples:*](#inputspreprocessingkwargsaxis) ['channel', 'index']
 
 
 
 </details>
 
 **ScaleLinearDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[scale_linear]</sub>
+#### `inputs.preprocessing.id`<sub> Literal[scale_linear]</sub>
 
 
 
 
-#### `inputs.preprocessing.i.kwargs`<sub> Union</sub>
+#### `inputs.preprocessing.kwargs`<sub> ScaleLinearKwargs | bioimageio.s</sub>
 
 
-<details><summary>Union[ScaleLinearKwargs, ScaleLinearAlongAxisKwargs]
+<details><summary>ScaleLinearKwargs | bioimageio.spec.model.v0_5.ScaleLinearAlongAxisKwargs
 
 </summary>
 
 
 **ScaleLinearKwargs:**
-##### `inputs.preprocessing.i.kwargs.gain`<sub> float</sub> ≝ `1.0`
+##### `inputs.preprocessing.kwargs.gain`<sub> float</sub> ≝ `1.0`
 multiplicative factor
 
 
 
-##### `inputs.preprocessing.i.kwargs.offset`<sub> float</sub> ≝ `0.0`
+##### `inputs.preprocessing.kwargs.offset`<sub> float</sub> ≝ `0.0`
 additive term
 
 
 
 **ScaleLinearAlongAxisKwargs:**
-##### `inputs.preprocessing.i.kwargs.axis`<sub> AxisId</sub>
+##### `inputs.preprocessing.kwargs.axis`<sub> AxisId</sub>
 The axis of gain and offset values.
-[*Example:*](#inputspreprocessingikwargsaxis) 'channel'
+[*Example:*](#inputspreprocessingkwargsaxis) 'channel'
 
 
 
-##### `inputs.preprocessing.i.kwargs.gain`<sub> Union</sub> ≝ `1.0`
+##### `inputs.preprocessing.kwargs.gain`<sub> Union</sub> ≝ `1.0`
 multiplicative factor
 
 
-Union[float, Sequence[float] (MinLen(min_length=1))]
+Union[float, list[float] (MinLen(min_length=1))]
 
-##### `inputs.preprocessing.i.kwargs.offset`<sub> Union</sub> ≝ `0.0`
+##### `inputs.preprocessing.kwargs.offset`<sub> Union</sub> ≝ `0.0`
 additive term
 
 
-Union[float, Sequence[float] (MinLen(min_length=1))]
+Union[float, list[float] (MinLen(min_length=1))]
 
 </details>
 
 **ScaleRangeDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[scale_range]</sub>
+#### `inputs.preprocessing.id`<sub> Literal[scale_range]</sub>
 
 
 
 
-#### `inputs.preprocessing.i.kwargs`<sub> ScaleRangeKwargs</sub> ≝ `axes=None min_percentile=0.0 max_percentile=100.0 eps=1e-06 reference_tensor=None`
+#### `inputs.preprocessing.kwargs`<sub> ScaleRangeKwargs</sub> ≝ `axes=None min_percentile=0.0 max_percentile=100.0 eps=1e-06 reference_tensor=None`
 
 
 <details><summary>ScaleRangeKwargs
@@ -899,23 +900,23 @@ Union[float, Sequence[float] (MinLen(min_length=1))]
 
 
 **ScaleRangeKwargs:**
-##### `inputs.preprocessing.i.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `inputs.preprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
 The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
 For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
 resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
 To normalize samples independently, leave out the "batch" axis.
 Default: Scale all axes jointly.
-[*Example:*](#inputspreprocessingikwargsaxes) ('batch', 'x', 'y')
+[*Example:*](#inputspreprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
 Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
-##### `inputs.preprocessing.i.kwargs.min_percentile`<sub> float</sub> ≝ `0.0`
+##### `inputs.preprocessing.kwargs.min_percentile`<sub> float</sub> ≝ `0.0`
 The lower percentile used to determine the value to align with zero.
 
 
 
-##### `inputs.preprocessing.i.kwargs.max_percentile`<sub> float</sub> ≝ `100.0`
+##### `inputs.preprocessing.kwargs.max_percentile`<sub> float</sub> ≝ `100.0`
 The upper percentile used to determine the value to align with one.
 Has to be bigger than `min_percentile`.
 The range is 1 to 100 instead of 0 to 100 to avoid mistakenly
@@ -923,14 +924,14 @@ accepting percentiles specified in the range 0.0 to 1.0.
 
 
 
-##### `inputs.preprocessing.i.kwargs.eps`<sub> float</sub> ≝ `1e-06`
+##### `inputs.preprocessing.kwargs.eps`<sub> float</sub> ≝ `1e-06`
 Epsilon for numeric stability.
 `out = (tensor - v_lower) / (v_upper - v_lower + eps)`;
 with `v_lower,v_upper` values at the respective percentiles.
 
 
 
-##### `inputs.preprocessing.i.kwargs.reference_tensor`<sub> Optional[TensorId]</sub> ≝ `None`
+##### `inputs.preprocessing.kwargs.reference_tensor`<sub> TensorId | None</sub> ≝ `None`
 ID of the unprocessed input tensor to compute the percentiles from.
 Default: The tensor itself.
 
@@ -939,18 +940,18 @@ Default: The tensor itself.
 </details>
 
 **SigmoidDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[sigmoid]</sub>
+#### `inputs.preprocessing.id`<sub> Literal[sigmoid]</sub>
 
 
 
 
 **SoftmaxDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[softmax]</sub>
+#### `inputs.preprocessing.id`<sub> Literal[softmax]</sub>
 
 
 
 
-#### `inputs.preprocessing.i.kwargs`<sub> SoftmaxKwargs</sub> ≝ `axis='channel'`
+#### `inputs.preprocessing.kwargs`<sub> SoftmaxKwargs</sub> ≝ `axis='channel'`
 
 
 <details><summary>SoftmaxKwargs
@@ -959,25 +960,25 @@ Default: The tensor itself.
 
 
 **SoftmaxKwargs:**
-##### `inputs.preprocessing.i.kwargs.axis`<sub> AxisId</sub> ≝ `channel`
+##### `inputs.preprocessing.kwargs.axis`<sub> AxisId</sub> ≝ `channel`
 The axis to apply the softmax function along.
 Note:
     Defaults to 'channel' axis
     (which may not exist, in which case
     a different axis id has to be specified).
-[*Example:*](#inputspreprocessingikwargsaxis) 'channel'
+[*Example:*](#inputspreprocessingkwargsaxis) 'channel'
 
 
 
 </details>
 
 **ZeroMeanUnitVarianceDescr:**
-#### `inputs.preprocessing.i.id`<sub> Literal[zero_mean_unit_variance]</sub>
+#### `inputs.preprocessing.id`<sub> Literal[zero_mean_unit_variance]</sub>
 
 
 
 
-#### `inputs.preprocessing.i.kwargs`<sub> ZeroMeanUnitVarianceKwargs</sub> ≝ `axes=None eps=1e-06`
+#### `inputs.preprocessing.kwargs`<sub> ZeroMeanUnitVarianceKwargs</sub> ≝ `axes=None eps=1e-06`
 
 
 <details><summary>ZeroMeanUnitVarianceKwargs
@@ -986,18 +987,18 @@ Note:
 
 
 **ZeroMeanUnitVarianceKwargs:**
-##### `inputs.preprocessing.i.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `inputs.preprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
 The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
 For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
 resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
 To normalize each sample independently leave out the 'batch' axis.
 Default: Scale all axes jointly.
-[*Example:*](#inputspreprocessingikwargsaxes) ('batch', 'x', 'y')
+[*Example:*](#inputspreprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
 Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
-##### `inputs.preprocessing.i.kwargs.eps`<sub> float</sub> ≝ `1e-06`
+##### `inputs.preprocessing.kwargs.eps`<sub> float</sub> ≝ `1e-06`
 epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.
 
 
@@ -1039,11 +1040,11 @@ free text description
 ### `outputs.axes`<sub> Sequence</sub>
 tensor axes
 
-<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f8ed408a520>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f8ed408a520>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fd6ac0660c0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fd6ac0660c0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f8ed408a520>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f8ed408a520>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fd6ac0660c0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7fd6ac0660c0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BatchAxis:**
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `batch`
@@ -1083,10 +1084,21 @@ A short description of this axis beyond its type and id.
 
 
 
-#### `outputs.axes.channel_names`<sub> Sequence[str]</sub>
+#### `outputs.axes.channel_names`<sub> list[str]</sub>
+Name/label for each channel. The number of channels is given by `len(channel_names)`.
 
 
 
+#### `outputs.axes.channel_colors`<sub> list</sub> ≝ `[]`
+Colors for each channel for visualization purposes.
+If not given, a default color palette is used:
+
+- For < 8 channels: colorblind-friendly palette from https://www.nature.com/articles/nmeth.1618 (without black)
+- For < 21 channels: discrete matplotlib colormap 'tab20b' (redistributed for more even color distribution < 20 channels)
+- For >= 21 channels: sample colors from continuous matplotlib colormap 'cividis'
+
+
+list[pydantic_extra_types.color.Color]
 
 **IndexOutputAxis:**
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `index`
@@ -1138,7 +1150,7 @@ axis id of the reference axis
 
 
 
-##### `outputs.axes.size.max`<sub> Optional[int]</sub> ≝ `None`
+##### `outputs.axes.size.max`<sub> int | None</sub> ≝ `None`
 
 
 
@@ -1240,7 +1252,7 @@ To document a halo that is already cropped by the model use `size.offset` instea
 
 #### `outputs.axes.size`<sub> SizeReference</sub>
 reference to another axis with an optional offset (see [SizeReference][])
-[*Examples:*](#outputsaxessize) [10, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
+[*Example:*](#outputsaxessize) {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
 
 <details><summary>SizeReference
 
@@ -1419,7 +1431,7 @@ To document a halo that is already cropped by the model use `size.offset` instea
 
 #### `outputs.axes.size`<sub> SizeReference</sub>
 reference to another axis with an optional offset (see [SizeReference][])
-[*Examples:*](#outputsaxessize) [10, {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}]
+[*Example:*](#outputsaxessize) {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
 
 <details><summary>SizeReference
 
@@ -1517,7 +1529,7 @@ The file extension must be '.npy'.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `outputs.test_tensor.source`<sub> Union</sub>
@@ -1526,11 +1538,11 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `outputs.test_tensor.sha256`<sub> Optional</sub> ≝ `None`
+#### `outputs.test_tensor.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
@@ -1547,7 +1559,7 @@ The image dimensionality has to match the number of axes specified in this tenso
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `outputs.sample_tensor.source`<sub> Union</sub>
@@ -1556,11 +1568,11 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `outputs.sample_tensor.sha256`<sub> Optional</sub> ≝ `None`
+#### `outputs.sample_tensor.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
@@ -1621,12 +1633,12 @@ Union[Literal[arbitrary unit], _internal.types.SiUnit, None]
 
 Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int64]
 
-#### `outputs.data.range`<sub> Sequence</sub> ≝ `(None, None)`
+#### `outputs.data.range`<sub> tuple</sub> ≝ `(None, None)`
 Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
 `None` corresponds to min/max of what can be expressed by **type**.
 
 
-Sequence[Optional[float], Optional[float]]
+tuple[float | None, float | None]
 
 #### `outputs.data.unit`<sub> Union</sub> ≝ `arbitrary unit`
 
@@ -1639,7 +1651,7 @@ Scale for data on an interval (or ratio) scale.
 
 
 
-#### `outputs.data.offset`<sub> Optional[float]</sub> ≝ `None`
+#### `outputs.data.offset`<sub> float | None</sub> ≝ `None`
 Offset for data on a ratio scale.
 
 
@@ -1686,12 +1698,12 @@ Union[Literal[arbitrary unit], _internal.types.SiUnit, None]
 
 Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int64]
 
-#### `outputs.data.range`<sub> Sequence</sub> ≝ `(None, None)`
+#### `outputs.data.range`<sub> tuple</sub> ≝ `(None, None)`
 Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
 `None` corresponds to min/max of what can be expressed by **type**.
 
 
-Sequence[Optional[float], Optional[float]]
+tuple[float | None, float | None]
 
 #### `outputs.data.unit`<sub> Union</sub> ≝ `arbitrary unit`
 
@@ -1704,81 +1716,66 @@ Scale for data on an interval (or ratio) scale.
 
 
 
-#### `outputs.data.offset`<sub> Optional[float]</sub> ≝ `None`
+#### `outputs.data.offset`<sub> float | None</sub> ≝ `None`
 Offset for data on a ratio scale.
 
 
 
 </details>
 
-### `outputs.postprocessing`<sub> Sequence</sub> ≝ `[]`
+### `outputs.postprocessing`<sub> list</sub> ≝ `[]`
 Description of how this output should be postprocessed.
 
 note: `postprocessing` always ends with an 'ensure_dtype' operation.
       If not given this is added to cast to this tensor's `data.type`.
 
-<details><summary>Sequence[Union[BinarizeDescr, ..., ZeroMeanUnitVarianceDescr]*]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BinarizeDescr, bioimageio.spec.model.v0_5.CellposeFlowDynamicsDescr, bioimageio.spec.model.v0_5.ClipDescr, bioimageio.spec.model.v0_5.CustomProcessingDescr, bioimageio.spec.model.v0_5.EnsureDtypeDescr, bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceDescr, bioimageio.spec.model.v0_5.ScaleLinearDescr, bioimageio.spec.model.v0_5.ScaleMeanVarianceDescr, bioimageio.spec.model.v0_5.ScaleRangeDescr, bioimageio.spec.model.v0_5.SigmoidDescr, bioimageio.spec.model.v0_5.SoftmaxDescr, bioimageio.spec.model.v0_5.StardistPostprocessingDescr, bioimageio.spec.model.v0_5.ZeroMeanUnitVarianceDescr], Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-Sequence of Union of
-- BinarizeDescr
-- CellposeFlowDynamicsDescr
-- ClipDescr
-- CustomProcessingDescr
-- EnsureDtypeDescr
-- FixedZeroMeanUnitVarianceDescr
-- ScaleLinearDescr
-- ScaleMeanVarianceDescr
-- ScaleRangeDescr
-- SigmoidDescr
-- SoftmaxDescr
-- StardistPostprocessingDescr
-- ZeroMeanUnitVarianceDescr
-
-(Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None))
+list[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BinarizeDescr, bioimageio.spec.model.v0_5.CellposeFlowDynamicsDescr, bioimageio.spec.model.v0_5.ClipDescr, bioimageio.spec.model.v0_5.CustomProcessingDescr, bioimageio.spec.model.v0_5.EnsureDtypeDescr, bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceDescr, bioimageio.spec.model.v0_5.ScaleLinearDescr, bioimageio.spec.model.v0_5.ScaleMeanVarianceDescr, bioimageio.spec.model.v0_5.ScaleRangeDescr, bioimageio.spec.model.v0_5.SigmoidDescr, bioimageio.spec.model.v0_5.SoftmaxDescr, bioimageio.spec.model.v0_5.StardistPostprocessingDescr, bioimageio.spec.model.v0_5.ZeroMeanUnitVarianceDescr], Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BinarizeDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[binarize]</sub>
+#### `outputs.postprocessing.id`<sub> Literal[binarize]</sub>
 
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> Union</sub>
+#### `outputs.postprocessing.kwargs`<sub> BinarizeKwargs | bioimageio.spec</sub>
 
 
-<details><summary>Union[BinarizeKwargs, BinarizeAlongAxisKwargs]
+<details><summary>BinarizeKwargs | bioimageio.spec.model.v0_5.BinarizeAlongAxisKwargs
 
 </summary>
 
 
 **BinarizeKwargs:**
-##### `outputs.postprocessing.i.kwargs.threshold`<sub> float</sub>
+##### `outputs.postprocessing.kwargs.threshold`<sub> float</sub>
 The fixed threshold
 
 
 
 **BinarizeAlongAxisKwargs:**
-##### `outputs.postprocessing.i.kwargs.threshold`<sub> Sequence[float]</sub>
+##### `outputs.postprocessing.kwargs.threshold`<sub> list[float]</sub>
 The fixed threshold values along `axis`
 
 
 
-##### `outputs.postprocessing.i.kwargs.axis`<sub> AxisId</sub>
+##### `outputs.postprocessing.kwargs.axis`<sub> AxisId</sub>
 The `threshold` axis
-[*Example:*](#outputspostprocessingikwargsaxis) 'channel'
+[*Example:*](#outputspostprocessingkwargsaxis) 'channel'
 
 
 
 </details>
 
 **CellposeFlowDynamicsDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[cellpose_flow_dynamics]</sub>
+#### `outputs.postprocessing.id`<sub> Literal[cellpose_flow_dynamics]</sub>
 
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> CellposeFlowDynamicsKwargs</sub>
+#### `outputs.postprocessing.kwargs`<sub> CellposeFlowDynamicsKwargs</sub>
 
 
 <details><summary>CellposeFlowDynamicsKwargs
@@ -1787,27 +1784,27 @@ The `threshold` axis
 
 
 **CellposeFlowDynamicsKwargs:**
-##### `outputs.postprocessing.i.kwargs.cellprob_threshold`<sub> float</sub>
+##### `outputs.postprocessing.kwargs.cellprob_threshold`<sub> float</sub>
 
 
 
 
-##### `outputs.postprocessing.i.kwargs.flow_threshold`<sub> float</sub>
+##### `outputs.postprocessing.kwargs.flow_threshold`<sub> float</sub>
 
 
 
 
-##### `outputs.postprocessing.i.kwargs.do_3D`<sub> bool</sub>
+##### `outputs.postprocessing.kwargs.do_3D`<sub> bool</sub>
 
 
 
 
-##### `outputs.postprocessing.i.kwargs.min_size`<sub> int</sub> ≝ `15`
+##### `outputs.postprocessing.kwargs.min_size`<sub> int</sub> ≝ `15`
 Minimum size of objects to keep, in pixels. Default is 15, which is the default in Cellpose. Set to 0 to disable filtering by size.
 
 
 
-##### `outputs.postprocessing.i.kwargs.output_dtype`<sub> Literal[uint16, uint32]</sub> ≝ `uint16`
+##### `outputs.postprocessing.kwargs.output_dtype`<sub> Literal[uint16, uint32]</sub> ≝ `uint16`
 
 
 
@@ -1815,12 +1812,12 @@ Minimum size of objects to keep, in pixels. Default is 15, which is the default 
 </details>
 
 **ClipDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[clip]</sub>
+#### `outputs.postprocessing.id`<sub> Literal[clip]</sub>
 
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> ClipKwargs</sub>
+#### `outputs.postprocessing.kwargs`<sub> ClipKwargs</sub>
 
 
 <details><summary>ClipKwargs
@@ -1829,14 +1826,14 @@ Minimum size of objects to keep, in pixels. Default is 15, which is the default 
 
 
 **ClipKwargs:**
-##### `outputs.postprocessing.i.kwargs.min`<sub> Optional[float]</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.min`<sub> float | None</sub> ≝ `None`
 Minimum value for clipping.
 
 Exclusive with [min_percentile][]
 
 
 
-##### `outputs.postprocessing.i.kwargs.min_percentile`<sub> Optional</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.min_percentile`<sub> Optional</sub> ≝ `None`
 Minimum percentile for clipping.
 
 Exclusive with [min][].
@@ -1846,14 +1843,14 @@ In range [0, 100).
 
 Optional[float (Interval(gt=None, ge=0, lt=100, le=None))]
 
-##### `outputs.postprocessing.i.kwargs.max`<sub> Optional[float]</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.max`<sub> float | None</sub> ≝ `None`
 Maximum value for clipping.
 
 Exclusive with `max_percentile`.
 
 
 
-##### `outputs.postprocessing.i.kwargs.max_percentile`<sub> Optional</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.max_percentile`<sub> Optional</sub> ≝ `None`
 Maximum percentile for clipping.
 
 Exclusive with `max`.
@@ -1863,7 +1860,7 @@ In range (1, 100].
 
 Optional[float (Interval(gt=1, ge=None, lt=None, le=100))]
 
-##### `outputs.postprocessing.i.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
 The subset of axes to determine percentiles jointly,
 
 i.e. axes to reduce to compute min/max from `min_percentile`/`max_percentile`.
@@ -1874,7 +1871,7 @@ To clip samples independently, leave out the 'batch' axis.
 Only valid if `min_percentile` and/or `max_percentile` are set.
 
 Default: Compute percentiles over all axes jointly.
-[*Example:*](#outputspostprocessingikwargsaxes) ('batch', 'x', 'y')
+[*Example:*](#outputspostprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
 Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
@@ -1882,45 +1879,45 @@ Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 </details>
 
 **CustomProcessingDescr:**
-#### `outputs.postprocessing.i.source`<sub> Union</sub>
+#### `outputs.postprocessing.source`<sub> Union</sub>
 Python source file (included when packaging the model).
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `outputs.postprocessing.i.sha256`<sub> Optional</sub> ≝ `None`
+#### `outputs.postprocessing.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
-#### `outputs.postprocessing.i.id`<sub> Literal[custom]</sub>
-
-
+#### `outputs.postprocessing.id`<sub> Literal[custom]</sub>
 
 
-#### `outputs.postprocessing.i.callable`<sub> str</sub>
+
+
+#### `outputs.postprocessing.callable`<sub> str</sub>
 Name of the callable class or factory function defined in ``source``.
 
 At runtime: ``op = callable(**kwargs)``, then ``result = op(*output_tensors)``
 per image.  Both a class with ``__call__`` and a factory function returning
 a callable satisfy this protocol.
-[*Examples:*](#outputspostprocessingicallable) ['my_postprocess_factory', 'MyPostprocessClass']
+[*Examples:*](#outputspostprocessingcallable) ['my_postprocess_factory', 'MyPostprocessClass']
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
+#### `outputs.postprocessing.kwargs`<sub> dict[str, YamlValue]</sub> ≝ `{}`
 Keyword arguments forwarded to the callable (``__init__`` or factory).
 
 
 
 **EnsureDtypeDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[ensure_dtype]</sub>
+#### `outputs.postprocessing.id`<sub> Literal[ensure_dtype]</sub>
 
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> EnsureDtypeKwargs</sub>
+#### `outputs.postprocessing.kwargs`<sub> EnsureDtypeKwargs</sub>
 
 
 <details><summary>EnsureDtypeKwargs
@@ -1929,7 +1926,7 @@ Keyword arguments forwarded to the callable (``__init__`` or factory).
 
 
 **EnsureDtypeKwargs:**
-##### `outputs.postprocessing.i.kwargs.dtype`<sub> Literal</sub>
+##### `outputs.postprocessing.kwargs.dtype`<sub> Literal</sub>
 
 
 
@@ -1938,105 +1935,106 @@ Literal[float32, float64, uint8, int8, uint16, int16, uint32, int32, uint64, int
 </details>
 
 **FixedZeroMeanUnitVarianceDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal</sub>
+#### `outputs.postprocessing.id`<sub> Literal</sub>
 
 
 
 Literal[fixed_zero_mean_unit_variance]
 
-#### `outputs.postprocessing.i.kwargs`<sub> Union</sub>
+#### `outputs.postprocessing.kwargs`<sub> FixedZeroMeanUnitVarianceKwargs </sub>
 
 
-<details><summary>Union[FixedZeroMeanUnitVarianceKwargs, FixedZeroMeanUnitVarianceAlongAxisKwargs]
+<details><summary>FixedZeroMeanUnitVarianceKwargs | bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceAlongAxisKwargs
 
 </summary>
 
 
 **FixedZeroMeanUnitVarianceKwargs:**
-##### `outputs.postprocessing.i.kwargs.mean`<sub> float</sub>
+##### `outputs.postprocessing.kwargs.mean`<sub> float</sub>
 The mean value to normalize with.
 
 
 
-##### `outputs.postprocessing.i.kwargs.std`<sub> float</sub>
+##### `outputs.postprocessing.kwargs.std`<sub> float</sub>
 The standard deviation value to normalize with.
 
 
 
 **FixedZeroMeanUnitVarianceAlongAxisKwargs:**
-##### `outputs.postprocessing.i.kwargs.mean`<sub> Sequence[float]</sub>
+##### `outputs.postprocessing.kwargs.mean`<sub> list[float]</sub>
 The mean value(s) to normalize with.
 
 
 
-##### `outputs.postprocessing.i.kwargs.std`<sub> Sequence[float (Ge(ge=1e-06))]</sub>
+##### `outputs.postprocessing.kwargs.std`<sub> list</sub>
 The standard deviation value(s) to normalize with.
 Size must match `mean` values.
 
 
+list[typing.Annotated[float, Ge(ge=1e-06)]]
 
-##### `outputs.postprocessing.i.kwargs.axis`<sub> AxisId</sub>
+##### `outputs.postprocessing.kwargs.axis`<sub> AxisId</sub>
 The axis of the mean/std values to normalize each entry along that dimension
 separately.
-[*Examples:*](#outputspostprocessingikwargsaxis) ['channel', 'index']
+[*Examples:*](#outputspostprocessingkwargsaxis) ['channel', 'index']
 
 
 
 </details>
 
 **ScaleLinearDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[scale_linear]</sub>
+#### `outputs.postprocessing.id`<sub> Literal[scale_linear]</sub>
 
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> Union</sub>
+#### `outputs.postprocessing.kwargs`<sub> ScaleLinearKwargs | bioimageio.s</sub>
 
 
-<details><summary>Union[ScaleLinearKwargs, ScaleLinearAlongAxisKwargs]
+<details><summary>ScaleLinearKwargs | bioimageio.spec.model.v0_5.ScaleLinearAlongAxisKwargs
 
 </summary>
 
 
 **ScaleLinearKwargs:**
-##### `outputs.postprocessing.i.kwargs.gain`<sub> float</sub> ≝ `1.0`
+##### `outputs.postprocessing.kwargs.gain`<sub> float</sub> ≝ `1.0`
 multiplicative factor
 
 
 
-##### `outputs.postprocessing.i.kwargs.offset`<sub> float</sub> ≝ `0.0`
+##### `outputs.postprocessing.kwargs.offset`<sub> float</sub> ≝ `0.0`
 additive term
 
 
 
 **ScaleLinearAlongAxisKwargs:**
-##### `outputs.postprocessing.i.kwargs.axis`<sub> AxisId</sub>
+##### `outputs.postprocessing.kwargs.axis`<sub> AxisId</sub>
 The axis of gain and offset values.
-[*Example:*](#outputspostprocessingikwargsaxis) 'channel'
+[*Example:*](#outputspostprocessingkwargsaxis) 'channel'
 
 
 
-##### `outputs.postprocessing.i.kwargs.gain`<sub> Union</sub> ≝ `1.0`
+##### `outputs.postprocessing.kwargs.gain`<sub> Union</sub> ≝ `1.0`
 multiplicative factor
 
 
-Union[float, Sequence[float] (MinLen(min_length=1))]
+Union[float, list[float] (MinLen(min_length=1))]
 
-##### `outputs.postprocessing.i.kwargs.offset`<sub> Union</sub> ≝ `0.0`
+##### `outputs.postprocessing.kwargs.offset`<sub> Union</sub> ≝ `0.0`
 additive term
 
 
-Union[float, Sequence[float] (MinLen(min_length=1))]
+Union[float, list[float] (MinLen(min_length=1))]
 
 </details>
 
 **ScaleMeanVarianceDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[scale_mean_variance]</sub>
+#### `outputs.postprocessing.id`<sub> Literal[scale_mean_variance]</sub>
 
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> ScaleMeanVarianceKwargs</sub>
+#### `outputs.postprocessing.kwargs`<sub> ScaleMeanVarianceKwargs</sub>
 
 
 <details><summary>ScaleMeanVarianceKwargs
@@ -2045,23 +2043,23 @@ Union[float, Sequence[float] (MinLen(min_length=1))]
 
 
 **ScaleMeanVarianceKwargs:**
-##### `outputs.postprocessing.i.kwargs.reference_tensor`<sub> TensorId</sub>
+##### `outputs.postprocessing.kwargs.reference_tensor`<sub> TensorId</sub>
 ID of unprocessed input tensor to match.
 
 
 
-##### `outputs.postprocessing.i.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
 The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
 For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
 resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
 To normalize samples independently, leave out the 'batch' axis.
 Default: Scale all axes jointly.
-[*Example:*](#outputspostprocessingikwargsaxes) ('batch', 'x', 'y')
+[*Example:*](#outputspostprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
 Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
-##### `outputs.postprocessing.i.kwargs.eps`<sub> float</sub> ≝ `1e-06`
+##### `outputs.postprocessing.kwargs.eps`<sub> float</sub> ≝ `1e-06`
 Epsilon for numeric stability:
 `out  = (tensor - mean) / (std + eps) * (ref_std + eps) + ref_mean.`
 
@@ -2070,12 +2068,12 @@ Epsilon for numeric stability:
 </details>
 
 **ScaleRangeDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[scale_range]</sub>
+#### `outputs.postprocessing.id`<sub> Literal[scale_range]</sub>
 
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> ScaleRangeKwargs</sub> ≝ `axes=None min_percentile=0.0 max_percentile=100.0 eps=1e-06 reference_tensor=None`
+#### `outputs.postprocessing.kwargs`<sub> ScaleRangeKwargs</sub> ≝ `axes=None min_percentile=0.0 max_percentile=100.0 eps=1e-06 reference_tensor=None`
 
 
 <details><summary>ScaleRangeKwargs
@@ -2084,23 +2082,23 @@ Epsilon for numeric stability:
 
 
 **ScaleRangeKwargs:**
-##### `outputs.postprocessing.i.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
 The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
 For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
 resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
 To normalize samples independently, leave out the "batch" axis.
 Default: Scale all axes jointly.
-[*Example:*](#outputspostprocessingikwargsaxes) ('batch', 'x', 'y')
+[*Example:*](#outputspostprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
 Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
-##### `outputs.postprocessing.i.kwargs.min_percentile`<sub> float</sub> ≝ `0.0`
+##### `outputs.postprocessing.kwargs.min_percentile`<sub> float</sub> ≝ `0.0`
 The lower percentile used to determine the value to align with zero.
 
 
 
-##### `outputs.postprocessing.i.kwargs.max_percentile`<sub> float</sub> ≝ `100.0`
+##### `outputs.postprocessing.kwargs.max_percentile`<sub> float</sub> ≝ `100.0`
 The upper percentile used to determine the value to align with one.
 Has to be bigger than `min_percentile`.
 The range is 1 to 100 instead of 0 to 100 to avoid mistakenly
@@ -2108,14 +2106,14 @@ accepting percentiles specified in the range 0.0 to 1.0.
 
 
 
-##### `outputs.postprocessing.i.kwargs.eps`<sub> float</sub> ≝ `1e-06`
+##### `outputs.postprocessing.kwargs.eps`<sub> float</sub> ≝ `1e-06`
 Epsilon for numeric stability.
 `out = (tensor - v_lower) / (v_upper - v_lower + eps)`;
 with `v_lower,v_upper` values at the respective percentiles.
 
 
 
-##### `outputs.postprocessing.i.kwargs.reference_tensor`<sub> Optional[TensorId]</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.reference_tensor`<sub> TensorId | None</sub> ≝ `None`
 ID of the unprocessed input tensor to compute the percentiles from.
 Default: The tensor itself.
 
@@ -2124,18 +2122,18 @@ Default: The tensor itself.
 </details>
 
 **SigmoidDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[sigmoid]</sub>
+#### `outputs.postprocessing.id`<sub> Literal[sigmoid]</sub>
 
 
 
 
 **SoftmaxDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[softmax]</sub>
+#### `outputs.postprocessing.id`<sub> Literal[softmax]</sub>
 
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> SoftmaxKwargs</sub> ≝ `axis='channel'`
+#### `outputs.postprocessing.kwargs`<sub> SoftmaxKwargs</sub> ≝ `axis='channel'`
 
 
 <details><summary>SoftmaxKwargs
@@ -2144,92 +2142,92 @@ Default: The tensor itself.
 
 
 **SoftmaxKwargs:**
-##### `outputs.postprocessing.i.kwargs.axis`<sub> AxisId</sub> ≝ `channel`
+##### `outputs.postprocessing.kwargs.axis`<sub> AxisId</sub> ≝ `channel`
 The axis to apply the softmax function along.
 Note:
     Defaults to 'channel' axis
     (which may not exist, in which case
     a different axis id has to be specified).
-[*Example:*](#outputspostprocessingikwargsaxis) 'channel'
+[*Example:*](#outputspostprocessingkwargsaxis) 'channel'
 
 
 
 </details>
 
 **StardistPostprocessingDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[stardist_postprocessing]</sub>
+#### `outputs.postprocessing.id`<sub> Literal[stardist_postprocessing]</sub>
 
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> Union</sub>
+#### `outputs.postprocessing.kwargs`<sub> StardistPostprocessingKwargs2D |</sub>
 
 
-<details><summary>Union[StardistPostprocessingKwargs2D, StardistPostprocessingKwargs3D]
+<details><summary>StardistPostprocessingKwargs2D | bioimageio.spec.model.v0_5.StardistPostprocessingKwargs3D
 
 </summary>
 
 
 **StardistPostprocessingKwargs2D:**
-##### `outputs.postprocessing.i.kwargs.prob_threshold`<sub> float</sub>
+##### `outputs.postprocessing.kwargs.prob_threshold`<sub> float</sub>
 The probability threshold for object candidate selection.
 
 
 
-##### `outputs.postprocessing.i.kwargs.nms_threshold`<sub> float</sub>
+##### `outputs.postprocessing.kwargs.nms_threshold`<sub> float</sub>
 The IoU threshold for non-maximum suppression.
 
 
 
-##### `outputs.postprocessing.i.kwargs.n_rays`<sub> int</sub>
+##### `outputs.postprocessing.kwargs.n_rays`<sub> int</sub>
 Number of radial lines (rays) cast from the center of an object to its boundary.
 
 
 
-##### `outputs.postprocessing.i.kwargs.grid`<sub> Sequence[int, int]</sub>
+##### `outputs.postprocessing.kwargs.grid`<sub> tuple[int, int]</sub>
 Grid size of network predictions.
 
 
 
-##### `outputs.postprocessing.i.kwargs.b`<sub> Union</sub>
+##### `outputs.postprocessing.kwargs.b`<sub> int | tuple</sub>
 Border region in which object probability is set to zero.
 
 
-Union[int, Sequence[Sequence[int, int], Sequence[int, int]]]
+int | tuple[tuple[int, int], tuple[int, int]]
 
 **StardistPostprocessingKwargs3D:**
-##### `outputs.postprocessing.i.kwargs.prob_threshold`<sub> float</sub>
+##### `outputs.postprocessing.kwargs.prob_threshold`<sub> float</sub>
 The probability threshold for object candidate selection.
 
 
 
-##### `outputs.postprocessing.i.kwargs.nms_threshold`<sub> float</sub>
+##### `outputs.postprocessing.kwargs.nms_threshold`<sub> float</sub>
 The IoU threshold for non-maximum suppression.
 
 
 
-##### `outputs.postprocessing.i.kwargs.n_rays`<sub> int</sub>
+##### `outputs.postprocessing.kwargs.n_rays`<sub> int</sub>
 Number of radial lines (rays) cast from the center of an object to its boundary.
 
 
 
-##### `outputs.postprocessing.i.kwargs.grid`<sub> Sequence[int, int, int]</sub>
+##### `outputs.postprocessing.kwargs.grid`<sub> tuple[int, int, int]</sub>
 Grid size of network predictions.
 
 
 
-##### `outputs.postprocessing.i.kwargs.b`<sub> Union</sub>
+##### `outputs.postprocessing.kwargs.b`<sub> int | tuple</sub>
 Border region in which object probability is set to zero.
 
 
-Union[int, Sequence[Sequence[int, int], Sequence[int, int], Sequence[int, int]]]
+int | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]
 
-##### `outputs.postprocessing.i.kwargs.anisotropy`<sub> Sequence[float, float, float]</sub>
+##### `outputs.postprocessing.kwargs.anisotropy`<sub> tuple[float, float, float]</sub>
 Anisotropy factors for 3D star-convex polyhedra, i.e. the physical pixel size along each spatial axis.
 
 
 
-##### `outputs.postprocessing.i.kwargs.overlap_label`<sub> Optional[int]</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.overlap_label`<sub> int | None</sub> ≝ `None`
 Optional label to apply to any area of overlapping predicted objects.
 
 
@@ -2237,12 +2235,12 @@ Optional label to apply to any area of overlapping predicted objects.
 </details>
 
 **ZeroMeanUnitVarianceDescr:**
-#### `outputs.postprocessing.i.id`<sub> Literal[zero_mean_unit_variance]</sub>
+#### `outputs.postprocessing.id`<sub> Literal[zero_mean_unit_variance]</sub>
 
 
 
 
-#### `outputs.postprocessing.i.kwargs`<sub> ZeroMeanUnitVarianceKwargs</sub> ≝ `axes=None eps=1e-06`
+#### `outputs.postprocessing.kwargs`<sub> ZeroMeanUnitVarianceKwargs</sub> ≝ `axes=None eps=1e-06`
 
 
 <details><summary>ZeroMeanUnitVarianceKwargs
@@ -2251,18 +2249,18 @@ Optional label to apply to any area of overlapping predicted objects.
 
 
 **ZeroMeanUnitVarianceKwargs:**
-##### `outputs.postprocessing.i.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
 The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
 For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
 resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
 To normalize each sample independently leave out the 'batch' axis.
 Default: Scale all axes jointly.
-[*Example:*](#outputspostprocessingikwargsaxes) ('batch', 'x', 'y')
+[*Example:*](#outputspostprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
 Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
 
-##### `outputs.postprocessing.i.kwargs.eps`<sub> float</sub> ≝ `1e-06`
+##### `outputs.postprocessing.kwargs.eps`<sub> float</sub> ≝ `1e-06`
 epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.
 
 
@@ -2284,10 +2282,10 @@ The available weight formats determine which consumers can use this model.
 
 
 **WeightsDescr:**
-### `weights.keras_hdf5`<sub> Optional[KerasHdf5WeightsDescr]</sub> ≝ `None`
+### `weights.keras_hdf5`<sub> KerasHdf5WeightsDescr | None</sub> ≝ `None`
 
 
-<details><summary>Optional[KerasHdf5WeightsDescr]
+<details><summary>KerasHdf5WeightsDescr | None
 
 </summary>
 
@@ -2299,51 +2297,50 @@ Source of the weights file.
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `weights.keras_hdf5.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.keras_hdf5.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
-#### `weights.keras_hdf5.authors`<sub> Optional</sub> ≝ `None`
+#### `weights.keras_hdf5.authors`<sub> list</sub> ≝ `None`
 Authors
 Either the person(s) that have trained this model resulting in the original weights file.
     (If this is the initial weights entry, i.e. it does not have a `parent`)
 Or the person(s) who have converted the weights to this weights format.
     (If this is a child weight, i.e. it has a `parent` field)
 
-<details><summary>Optional[Sequence[generic.v0_3.Author]]
+<details><summary>list[bioimageio.spec.generic.v0_3.Author] | None
 
 </summary>
 
 
 **generic.v0_3.Author:**
-##### `weights.keras_hdf5.authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+##### `weights.keras_hdf5.authors.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-##### `weights.keras_hdf5.authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
+##### `weights.keras_hdf5.authors.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-##### `weights.keras_hdf5.authors.i.orcid`<sub> Optional</sub> ≝ `None`
+##### `weights.keras_hdf5.authors.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#weightskeras_hdf5authorsiorcid) '0000-0001-2345-6789'
-
-
-Optional[_internal.types.OrcidId]
-
-##### `weights.keras_hdf5.authors.i.name`<sub> str</sub>
+[*Example:*](#weightskeras_hdf5authorsorcid) '0000-0001-2345-6789'
 
 
 
+##### `weights.keras_hdf5.authors.name`<sub> str</sub>
 
-##### `weights.keras_hdf5.authors.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+##### `weights.keras_hdf5.authors.github_user`<sub> str | None</sub> ≝ `None`
 
 
 
@@ -2378,10 +2375,10 @@ TensorFlow version used to create these weights.
 
 </details>
 
-### `weights.keras_v3`<sub> Optional[KerasV3WeightsDescr]</sub> ≝ `None`
+### `weights.keras_v3`<sub> KerasV3WeightsDescr | None</sub> ≝ `None`
 
 
-<details><summary>Optional[KerasV3WeightsDescr]
+<details><summary>KerasV3WeightsDescr | None
 
 </summary>
 
@@ -2393,51 +2390,50 @@ Source of the .keras weights file.
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `weights.keras_v3.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.keras_v3.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
-#### `weights.keras_v3.authors`<sub> Optional</sub> ≝ `None`
+#### `weights.keras_v3.authors`<sub> list</sub> ≝ `None`
 Authors
 Either the person(s) that have trained this model resulting in the original weights file.
     (If this is the initial weights entry, i.e. it does not have a `parent`)
 Or the person(s) who have converted the weights to this weights format.
     (If this is a child weight, i.e. it has a `parent` field)
 
-<details><summary>Optional[Sequence[generic.v0_3.Author]]
+<details><summary>list[bioimageio.spec.generic.v0_3.Author] | None
 
 </summary>
 
 
 **generic.v0_3.Author:**
-##### `weights.keras_v3.authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+##### `weights.keras_v3.authors.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-##### `weights.keras_v3.authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
+##### `weights.keras_v3.authors.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-##### `weights.keras_v3.authors.i.orcid`<sub> Optional</sub> ≝ `None`
+##### `weights.keras_v3.authors.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#weightskeras_v3authorsiorcid) '0000-0001-2345-6789'
-
-
-Optional[_internal.types.OrcidId]
-
-##### `weights.keras_v3.authors.i.name`<sub> str</sub>
+[*Example:*](#weightskeras_v3authorsorcid) '0000-0001-2345-6789'
 
 
 
+##### `weights.keras_v3.authors.name`<sub> str</sub>
 
-##### `weights.keras_v3.authors.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+##### `weights.keras_v3.authors.github_user`<sub> str | None</sub> ≝ `None`
 
 
 
@@ -2470,18 +2466,18 @@ Keras version used to create these weights.
 
 
 
-#### `weights.keras_v3.backend`<sub> Sequence</sub>
+#### `weights.keras_v3.backend`<sub> tuple</sub>
 Keras backend used to create these weights.
 
 
-Sequence[Literal[tensorflow, jax, torch], _internal.version_type.Version]
+tuple[typing.Literal['tensorflow', 'jax', 'torch'], bioimageio.spec._internal.version_type.Version]
 
 </details>
 
-### `weights.onnx`<sub> Optional[OnnxWeightsDescr]</sub> ≝ `None`
+### `weights.onnx`<sub> OnnxWeightsDescr | None</sub> ≝ `None`
 
 
-<details><summary>Optional[OnnxWeightsDescr]
+<details><summary>OnnxWeightsDescr | None
 
 </summary>
 
@@ -2493,51 +2489,50 @@ Source of the weights file.
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `weights.onnx.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.onnx.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
-#### `weights.onnx.authors`<sub> Optional</sub> ≝ `None`
+#### `weights.onnx.authors`<sub> list</sub> ≝ `None`
 Authors
 Either the person(s) that have trained this model resulting in the original weights file.
     (If this is the initial weights entry, i.e. it does not have a `parent`)
 Or the person(s) who have converted the weights to this weights format.
     (If this is a child weight, i.e. it has a `parent` field)
 
-<details><summary>Optional[Sequence[generic.v0_3.Author]]
+<details><summary>list[bioimageio.spec.generic.v0_3.Author] | None
 
 </summary>
 
 
 **generic.v0_3.Author:**
-##### `weights.onnx.authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+##### `weights.onnx.authors.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-##### `weights.onnx.authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
+##### `weights.onnx.authors.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-##### `weights.onnx.authors.i.orcid`<sub> Optional</sub> ≝ `None`
+##### `weights.onnx.authors.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#weightsonnxauthorsiorcid) '0000-0001-2345-6789'
-
-
-Optional[_internal.types.OrcidId]
-
-##### `weights.onnx.authors.i.name`<sub> str</sub>
+[*Example:*](#weightsonnxauthorsorcid) '0000-0001-2345-6789'
 
 
 
+##### `weights.onnx.authors.name`<sub> str</sub>
 
-##### `weights.onnx.authors.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+##### `weights.onnx.authors.github_user`<sub> str | None</sub> ≝ `None`
 
 
 
@@ -2579,7 +2574,7 @@ Source of the external ONNX data file holding the weights.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.data', case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.data', case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.onnx.external_data.source`<sub> Union</sub>
@@ -2588,20 +2583,20 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-##### `weights.onnx.external_data.sha256`<sub> Optional</sub> ≝ `None`
+##### `weights.onnx.external_data.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
 </details>
 
-### `weights.pytorch_state_dict`<sub> Optional</sub> ≝ `None`
+### `weights.pytorch_state_dict`<sub> PytorchStateDictWeightsDescr | N</sub> ≝ `None`
 
 
-<details><summary>Optional[PytorchStateDictWeightsDescr]
+<details><summary>PytorchStateDictWeightsDescr | None
 
 </summary>
 
@@ -2613,51 +2608,50 @@ Source of the weights file.
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `weights.pytorch_state_dict.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.pytorch_state_dict.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
-#### `weights.pytorch_state_dict.authors`<sub> Optional</sub> ≝ `None`
+#### `weights.pytorch_state_dict.authors`<sub> list</sub> ≝ `None`
 Authors
 Either the person(s) that have trained this model resulting in the original weights file.
     (If this is the initial weights entry, i.e. it does not have a `parent`)
 Or the person(s) who have converted the weights to this weights format.
     (If this is a child weight, i.e. it has a `parent` field)
 
-<details><summary>Optional[Sequence[generic.v0_3.Author]]
+<details><summary>list[bioimageio.spec.generic.v0_3.Author] | None
 
 </summary>
 
 
 **generic.v0_3.Author:**
-##### `weights.pytorch_state_dict.authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+##### `weights.pytorch_state_dict.authors.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-##### `weights.pytorch_state_dict.authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
+##### `weights.pytorch_state_dict.authors.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-##### `weights.pytorch_state_dict.authors.i.orcid`<sub> Optional</sub> ≝ `None`
+##### `weights.pytorch_state_dict.authors.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#weightspytorch_state_dictauthorsiorcid) '0000-0001-2345-6789'
-
-
-Optional[_internal.types.OrcidId]
-
-##### `weights.pytorch_state_dict.authors.i.name`<sub> str</sub>
+[*Example:*](#weightspytorch_state_dictauthorsorcid) '0000-0001-2345-6789'
 
 
 
+##### `weights.pytorch_state_dict.authors.name`<sub> str</sub>
 
-##### `weights.pytorch_state_dict.authors.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+##### `weights.pytorch_state_dict.authors.github_user`<sub> str | None</sub> ≝ `None`
 
 
 
@@ -2685,10 +2679,10 @@ A comment about this weights entry, for example how these weights were created.
 
 
 
-#### `weights.pytorch_state_dict.architecture`<sub> Union</sub>
+#### `weights.pytorch_state_dict.architecture`<sub> ArchitectureFromFileDescr | bioi</sub>
 
 
-<details><summary>Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr]
+<details><summary>ArchitectureFromFileDescr | bioimageio.spec.model.v0_5.ArchitectureFromLibraryDescr
 
 </summary>
 
@@ -2700,11 +2694,11 @@ Architecture source file
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-##### `weights.pytorch_state_dict.architecture.sha256`<sub> Optional</sub> ≝ `None`
+##### `weights.pytorch_state_dict.architecture.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 ##### `weights.pytorch_state_dict.architecture.callable`<sub> _internal.types.Identifier</sub>
 Identifier of the callable that returns a torch.nn.Module instance.
@@ -2712,7 +2706,7 @@ Identifier of the callable that returns a torch.nn.Module instance.
 
 
 
-##### `weights.pytorch_state_dict.architecture.kwargs`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
+##### `weights.pytorch_state_dict.architecture.kwargs`<sub> dict[str, YamlValue]</sub> ≝ `{}`
 key word arguments for the `callable`
 
 
@@ -2724,7 +2718,7 @@ Identifier of the callable that returns a torch.nn.Module instance.
 
 
 
-##### `weights.pytorch_state_dict.architecture.kwargs`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
+##### `weights.pytorch_state_dict.architecture.kwargs`<sub> dict[str, YamlValue]</sub> ≝ `{}`
 key word arguments for the `callable`
 
 
@@ -2756,7 +2750,7 @@ The conda environment file should include pytorch and any version pinning has to
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.pytorch_state_dict.dependencies.source`<sub> Union</sub>
@@ -2765,11 +2759,11 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-##### `weights.pytorch_state_dict.dependencies.sha256`<sub> Optional</sub> ≝ `None`
+##### `weights.pytorch_state_dict.dependencies.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
@@ -2780,10 +2774,10 @@ Whether to allow missing or unexpected keys or to be strict about the architectu
 
 </details>
 
-### `weights.tensorflow_js`<sub> Optional</sub> ≝ `None`
+### `weights.tensorflow_js`<sub> TensorflowJsWeightsDescr | None</sub> ≝ `None`
 
 
-<details><summary>Optional[TensorflowJsWeightsDescr]
+<details><summary>TensorflowJsWeightsDescr | None
 
 </summary>
 
@@ -2796,51 +2790,50 @@ All required files/folders should be a zip archive.
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `weights.tensorflow_js.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.tensorflow_js.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
-#### `weights.tensorflow_js.authors`<sub> Optional</sub> ≝ `None`
+#### `weights.tensorflow_js.authors`<sub> list</sub> ≝ `None`
 Authors
 Either the person(s) that have trained this model resulting in the original weights file.
     (If this is the initial weights entry, i.e. it does not have a `parent`)
 Or the person(s) who have converted the weights to this weights format.
     (If this is a child weight, i.e. it has a `parent` field)
 
-<details><summary>Optional[Sequence[generic.v0_3.Author]]
+<details><summary>list[bioimageio.spec.generic.v0_3.Author] | None
 
 </summary>
 
 
 **generic.v0_3.Author:**
-##### `weights.tensorflow_js.authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+##### `weights.tensorflow_js.authors.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-##### `weights.tensorflow_js.authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
+##### `weights.tensorflow_js.authors.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-##### `weights.tensorflow_js.authors.i.orcid`<sub> Optional</sub> ≝ `None`
+##### `weights.tensorflow_js.authors.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#weightstensorflow_jsauthorsiorcid) '0000-0001-2345-6789'
-
-
-Optional[_internal.types.OrcidId]
-
-##### `weights.tensorflow_js.authors.i.name`<sub> str</sub>
+[*Example:*](#weightstensorflow_jsauthorsorcid) '0000-0001-2345-6789'
 
 
 
+##### `weights.tensorflow_js.authors.name`<sub> str</sub>
 
-##### `weights.tensorflow_js.authors.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+##### `weights.tensorflow_js.authors.github_user`<sub> str | None</sub> ≝ `None`
 
 
 
@@ -2875,10 +2868,10 @@ Version of the TensorFlow library used.
 
 </details>
 
-### `weights.tensorflow_saved_model_bundle`<sub> Optional</sub> ≝ `None`
+### `weights.tensorflow_saved_model_bundle`<sub> TensorflowSavedModelBundleWeight</sub> ≝ `None`
 
 
-<details><summary>Optional[TensorflowSavedModelBundleWeightsDescr]
+<details><summary>TensorflowSavedModelBundleWeightsDescr | None
 
 </summary>
 
@@ -2891,51 +2884,50 @@ All required files/folders should be a zip archive.
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `weights.tensorflow_saved_model_bundle.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.tensorflow_saved_model_bundle.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
-#### `weights.tensorflow_saved_model_bundle.authors`<sub> Optional</sub> ≝ `None`
+#### `weights.tensorflow_saved_model_bundle.authors`<sub> list</sub> ≝ `None`
 Authors
 Either the person(s) that have trained this model resulting in the original weights file.
     (If this is the initial weights entry, i.e. it does not have a `parent`)
 Or the person(s) who have converted the weights to this weights format.
     (If this is a child weight, i.e. it has a `parent` field)
 
-<details><summary>Optional[Sequence[generic.v0_3.Author]]
+<details><summary>list[bioimageio.spec.generic.v0_3.Author] | None
 
 </summary>
 
 
 **generic.v0_3.Author:**
-##### `weights.tensorflow_saved_model_bundle.authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+##### `weights.tensorflow_saved_model_bundle.authors.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-##### `weights.tensorflow_saved_model_bundle.authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
+##### `weights.tensorflow_saved_model_bundle.authors.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-##### `weights.tensorflow_saved_model_bundle.authors.i.orcid`<sub> Optional</sub> ≝ `None`
+##### `weights.tensorflow_saved_model_bundle.authors.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#weightstensorflow_saved_model_bundleauthorsiorcid) '0000-0001-2345-6789'
-
-
-Optional[_internal.types.OrcidId]
-
-##### `weights.tensorflow_saved_model_bundle.authors.i.name`<sub> str</sub>
+[*Example:*](#weightstensorflow_saved_model_bundleauthorsorcid) '0000-0001-2345-6789'
 
 
 
+##### `weights.tensorflow_saved_model_bundle.authors.name`<sub> str</sub>
 
-##### `weights.tensorflow_saved_model_bundle.authors.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+##### `weights.tensorflow_saved_model_bundle.authors.github_user`<sub> str | None</sub> ≝ `None`
 
 
 
@@ -2977,7 +2969,7 @@ Should include tensorflow and any version pinning has to be compatible with **te
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.tensorflow_saved_model_bundle.dependencies.source`<sub> Union</sub>
@@ -2986,20 +2978,20 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-##### `weights.tensorflow_saved_model_bundle.dependencies.sha256`<sub> Optional</sub> ≝ `None`
+##### `weights.tensorflow_saved_model_bundle.dependencies.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
 </details>
 
-### `weights.torchscript`<sub> Optional</sub> ≝ `None`
+### `weights.torchscript`<sub> TorchscriptWeightsDescr | None</sub> ≝ `None`
 
 
-<details><summary>Optional[TorchscriptWeightsDescr]
+<details><summary>TorchscriptWeightsDescr | None
 
 </summary>
 
@@ -3011,51 +3003,50 @@ Source of the weights file.
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `weights.torchscript.sha256`<sub> Optional</sub> ≝ `None`
+#### `weights.torchscript.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
-#### `weights.torchscript.authors`<sub> Optional</sub> ≝ `None`
+#### `weights.torchscript.authors`<sub> list</sub> ≝ `None`
 Authors
 Either the person(s) that have trained this model resulting in the original weights file.
     (If this is the initial weights entry, i.e. it does not have a `parent`)
 Or the person(s) who have converted the weights to this weights format.
     (If this is a child weight, i.e. it has a `parent` field)
 
-<details><summary>Optional[Sequence[generic.v0_3.Author]]
+<details><summary>list[bioimageio.spec.generic.v0_3.Author] | None
 
 </summary>
 
 
 **generic.v0_3.Author:**
-##### `weights.torchscript.authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+##### `weights.torchscript.authors.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-##### `weights.torchscript.authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
+##### `weights.torchscript.authors.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-##### `weights.torchscript.authors.i.orcid`<sub> Optional</sub> ≝ `None`
+##### `weights.torchscript.authors.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#weightstorchscriptauthorsiorcid) '0000-0001-2345-6789'
-
-
-Optional[_internal.types.OrcidId]
-
-##### `weights.torchscript.authors.i.name`<sub> str</sub>
+[*Example:*](#weightstorchscriptauthorsorcid) '0000-0001-2345-6789'
 
 
 
+##### `weights.torchscript.authors.name`<sub> str</sub>
 
-##### `weights.torchscript.authors.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+##### `weights.torchscript.authors.github_user`<sub> str | None</sub> ≝ `None`
 
 
 
@@ -3092,87 +3083,85 @@ Version of the PyTorch library used.
 
 </details>
 
-## `attachments`<sub> Sequence</sub> ≝ `[]`
+## `attachments`<sub> list</sub> ≝ `[]`
 file attachments
 
-<details><summary>Sequence[_internal.io.FileDescr*]
+<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))
+list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 **_internal.io.FileDescr:**
-### `attachments.i.source`<sub> Union</sub>
+### `attachments.source`<sub> Union</sub>
 File source
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-### `attachments.i.sha256`<sub> Optional</sub> ≝ `None`
+### `attachments.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
-## `authors`<sub> Sequence[generic.v0_3.Author]</sub> ≝ `[]`
+## `authors`<sub> list</sub> ≝ `[]`
 The authors are the creators of the model RDF and the primary points of contact.
 
-<details><summary>Sequence[generic.v0_3.Author]
+<details><summary>list[bioimageio.spec.generic.v0_3.Author]
 
 </summary>
 
 
 **generic.v0_3.Author:**
-### `authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+### `authors.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-### `authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
+### `authors.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-### `authors.i.orcid`<sub> Optional</sub> ≝ `None`
+### `authors.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#authorsiorcid) '0000-0001-2345-6789'
-
-
-Optional[_internal.types.OrcidId]
-
-### `authors.i.name`<sub> str</sub>
+[*Example:*](#authorsorcid) '0000-0001-2345-6789'
 
 
 
+### `authors.name`<sub> str</sub>
 
-### `authors.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+### `authors.github_user`<sub> str | None</sub> ≝ `None`
 
 
 
 
 </details>
 
-## `cite`<sub> Sequence[generic.v0_3.CiteEntry]</sub> ≝ `[]`
+## `cite`<sub> list</sub> ≝ `[]`
 citations
 
-<details><summary>Sequence[generic.v0_3.CiteEntry]
+<details><summary>list[bioimageio.spec.generic.v0_3.CiteEntry]
 
 </summary>
 
 
 **generic.v0_3.CiteEntry:**
-### `cite.i.text`<sub> str</sub>
+### `cite.text`<sub> str</sub>
 free text description
 
 
 
-### `cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
+### `cite.doi`<sub> _internal.types.Doi | None</sub> ≝ `None`
 A digital object identifier (DOI) is the prefered citation reference.
 See https://www.doi.org/ for details.
 Note:
@@ -3180,7 +3169,7 @@ Note:
 
 
 
-### `cite.i.url`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+### `cite.url`<sub> _internal.url.HttpUrl | None</sub> ≝ `None`
 URL to cite (preferably specify a **doi** instead/also).
 Note:
     Either **doi** or **url** have to be specified.
@@ -3260,7 +3249,7 @@ Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 
 
 </details>
 
-#### `config.bioimageio.funded_by`<sub> Optional[str]</sub> ≝ `None`
+#### `config.bioimageio.funded_by`<sub> str | None</sub> ≝ `None`
 Funding agency, grant number if applicable
 
 
@@ -3271,32 +3260,32 @@ Model architecture type, e.g., 3D U-Net, ResNet, transformer
 
 Optional[str (MaxLen(max_length=32))]
 
-#### `config.bioimageio.architecture_description`<sub> Optional[str]</sub> ≝ `None`
+#### `config.bioimageio.architecture_description`<sub> str | None</sub> ≝ `None`
 Text description of model architecture.
 
 
 
-#### `config.bioimageio.modality`<sub> Optional[str]</sub> ≝ `None`
+#### `config.bioimageio.modality`<sub> str | None</sub> ≝ `None`
 Input modality, e.g., fluorescence microscopy, electron microscopy
 
 
 
-#### `config.bioimageio.target_structure`<sub> Sequence[str]</sub> ≝ `[]`
+#### `config.bioimageio.target_structure`<sub> list[str]</sub> ≝ `[]`
 Biological structure(s) the model is designed to analyze, e.g., nuclei, mitochondria, cells
 
 
 
-#### `config.bioimageio.task`<sub> Optional[str]</sub> ≝ `None`
+#### `config.bioimageio.task`<sub> str | None</sub> ≝ `None`
 Bioimage-specific task type, e.g., segmentation, classification, detection, denoising
 
 
 
-#### `config.bioimageio.new_version`<sub> Optional[ModelId]</sub> ≝ `None`
+#### `config.bioimageio.new_version`<sub> ModelId | None</sub> ≝ `None`
 A new version of this model exists with a different model id.
 
 
 
-#### `config.bioimageio.out_of_scope_use`<sub> Optional[str]</sub> ≝ `None`
+#### `config.bioimageio.out_of_scope_use`<sub> str | None</sub> ≝ `None`
 Describe how the model may be misused in bioimage analysis contexts and what users should **not** do with the model.
 
 
@@ -3342,7 +3331,7 @@ Potential risks in the context of bioimage analysis.
 
 
 
-##### `config.bioimageio.bias_risks_limitations.limitations`<sub> Optional[str]</sub> ≝ `None`
+##### `config.bioimageio.bias_risks_limitations.limitations`<sub> str | None</sub> ≝ `None`
 Technical limitations and failure modes.
 
 
@@ -3363,7 +3352,7 @@ Consider:
 
 </details>
 
-#### `config.bioimageio.model_parameter_count`<sub> Optional[int]</sub> ≝ `None`
+#### `config.bioimageio.model_parameter_count`<sub> int | None</sub> ≝ `None`
 Total number of model parameters.
 
 
@@ -3381,7 +3370,7 @@ Details on how the model was trained.
 
 
 **TrainingDetails:**
-##### `config.bioimageio.training.training_preprocessing`<sub> Optional[str]</sub> ≝ `None`
+##### `config.bioimageio.training.training_preprocessing`<sub> str | None</sub> ≝ `None`
 Detailed image preprocessing steps during model training:
 
 Mention:
@@ -3392,74 +3381,74 @@ Mention:
 
 
 
-##### `config.bioimageio.training.training_epochs`<sub> Optional[float]</sub> ≝ `None`
+##### `config.bioimageio.training.training_epochs`<sub> float | None</sub> ≝ `None`
 Number of training epochs.
 
 
 
-##### `config.bioimageio.training.training_batch_size`<sub> Optional[float]</sub> ≝ `None`
+##### `config.bioimageio.training.training_batch_size`<sub> float | None</sub> ≝ `None`
 Batch size used in training.
 
 
 
-##### `config.bioimageio.training.initial_learning_rate`<sub> Optional[float]</sub> ≝ `None`
+##### `config.bioimageio.training.initial_learning_rate`<sub> float | None</sub> ≝ `None`
 Initial learning rate used in training.
 
 
 
-##### `config.bioimageio.training.learning_rate_schedule`<sub> Optional[str]</sub> ≝ `None`
+##### `config.bioimageio.training.learning_rate_schedule`<sub> str | None</sub> ≝ `None`
 Learning rate schedule used in training.
 
 
 
-##### `config.bioimageio.training.loss_function`<sub> Optional[str]</sub> ≝ `None`
+##### `config.bioimageio.training.loss_function`<sub> str | None</sub> ≝ `None`
 Loss function used in training, e.g. nn.MSELoss.
 
 
 
-##### `config.bioimageio.training.loss_function_kwargs`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
+##### `config.bioimageio.training.loss_function_kwargs`<sub> dict[str, YamlValue]</sub> ≝ `{}`
 key word arguments for the `loss_function`
 
 
 
-##### `config.bioimageio.training.optimizer`<sub> Optional[str]</sub> ≝ `None`
+##### `config.bioimageio.training.optimizer`<sub> str | None</sub> ≝ `None`
 optimizer, e.g. torch.optim.Adam
 
 
 
-##### `config.bioimageio.training.optimizer_kwargs`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
+##### `config.bioimageio.training.optimizer_kwargs`<sub> dict[str, YamlValue]</sub> ≝ `{}`
 key word arguments for the `optimizer`
 
 
 
-##### `config.bioimageio.training.regularization`<sub> Optional[str]</sub> ≝ `None`
+##### `config.bioimageio.training.regularization`<sub> str | None</sub> ≝ `None`
 Regularization techniques used during training, e.g. drop-out or weight decay.
 
 
 
-##### `config.bioimageio.training.training_duration`<sub> Optional[float]</sub> ≝ `None`
+##### `config.bioimageio.training.training_duration`<sub> float | None</sub> ≝ `None`
 Total training duration in hours.
 
 
 
 </details>
 
-#### `config.bioimageio.inference_time`<sub> Optional[str]</sub> ≝ `None`
+#### `config.bioimageio.inference_time`<sub> str | None</sub> ≝ `None`
 Average inference time per image/tile. Specify hardware and image size. Multiple examples can be given.
 
 
 
-#### `config.bioimageio.memory_requirements_inference`<sub> Optional[str]</sub> ≝ `None`
+#### `config.bioimageio.memory_requirements_inference`<sub> str | None</sub> ≝ `None`
 GPU memory needed for inference. Multiple examples with different image size can be given.
 
 
 
-#### `config.bioimageio.memory_requirements_training`<sub> Optional[str]</sub> ≝ `None`
+#### `config.bioimageio.memory_requirements_training`<sub> str | None</sub> ≝ `None`
 GPU memory needed for training. Multiple examples with different image/batch sizes can be given.
 
 
 
-#### `config.bioimageio.evaluations`<sub> Sequence[Evaluation]</sub> ≝ `[]`
+#### `config.bioimageio.evaluations`<sub> list</sub> ≝ `[]`
 Quantitative model evaluations.
 
 Note:
@@ -3467,28 +3456,28 @@ Note:
     (with evaluation factors that may mark subsets of the dataset)
     to avoid confusion and make the presentation of results cleaner.
 
-<details><summary>Sequence[Evaluation]
+<details><summary>list[bioimageio.spec.model.v0_5.Evaluation]
 
 </summary>
 
 
 **Evaluation:**
-##### `config.bioimageio.evaluations.i.model_id`<sub> Optional[ModelId]</sub> ≝ `None`
+##### `config.bioimageio.evaluations.model_id`<sub> ModelId | None</sub> ≝ `None`
 Model being evaluated.
 
 
 
-##### `config.bioimageio.evaluations.i.dataset_id`<sub> dataset.v0_3.DatasetId</sub>
+##### `config.bioimageio.evaluations.dataset_id`<sub> dataset.v0_3.DatasetId</sub>
 Dataset used for evaluation.
 
 
 
-##### `config.bioimageio.evaluations.i.dataset_source`<sub> _internal.url.HttpUrl</sub>
+##### `config.bioimageio.evaluations.dataset_source`<sub> _internal.url.HttpUrl</sub>
 Source of the dataset.
 
 
 
-##### `config.bioimageio.evaluations.i.dataset_role`<sub> Literal</sub>
+##### `config.bioimageio.evaluations.dataset_role`<sub> Literal</sub>
 Role of the dataset used for evaluation.
 
 - `train`: dataset was (part of) the training data
@@ -3500,12 +3489,12 @@ Role of the dataset used for evaluation.
 
 Literal[train, validation, test, independent, unknown]
 
-##### `config.bioimageio.evaluations.i.sample_count`<sub> int</sub>
+##### `config.bioimageio.evaluations.sample_count`<sub> int</sub>
 Number of evaluated samples.
 
 
 
-##### `config.bioimageio.evaluations.i.evaluation_factors`<sub> Sequence</sub>
+##### `config.bioimageio.evaluations.evaluation_factors`<sub> list</sub>
 (Abbreviations of) each evaluation factor.
 
 Evaluation factors are criteria along which model performance is evaluated, e.g. different image conditions
@@ -3513,31 +3502,30 @@ like 'low SNR', 'high cell density', or different biological conditions like 'ce
 An 'overall' factor may be included to summarize performance across all conditions.
 
 
-Sequence[str (MaxLen(max_length=16))]
+list[typing.Annotated[str, MaxLen(max_length=16)]]
 
-##### `config.bioimageio.evaluations.i.evaluation_factors_long`<sub> Sequence[str]</sub>
+##### `config.bioimageio.evaluations.evaluation_factors_long`<sub> list[str]</sub>
 Descriptions (long form) of each evaluation factor.
 
 
 
-##### `config.bioimageio.evaluations.i.metrics`<sub> Sequence</sub>
+##### `config.bioimageio.evaluations.metrics`<sub> list</sub>
 (Abbreviations of) metrics used for evaluation.
 
 
-Sequence[str (MaxLen(max_length=16))]
+list[typing.Annotated[str, MaxLen(max_length=16)]]
 
-##### `config.bioimageio.evaluations.i.metrics_long`<sub> Sequence[str]</sub>
+##### `config.bioimageio.evaluations.metrics_long`<sub> list[str]</sub>
 Description of each metric used.
 
 
 
-##### `config.bioimageio.evaluations.i.results`<sub> Sequence</sub>
+##### `config.bioimageio.evaluations.results`<sub> list[list[str | float | int]]</sub>
 Results for each metric (rows; outer list) and each evaluation factor (columns; inner list).
 
 
-Sequence[Sequence[Union[str, float, int]]]
 
-##### `config.bioimageio.evaluations.i.results_summary`<sub> Optional[str]</sub> ≝ `None`
+##### `config.bioimageio.evaluations.results_summary`<sub> str | None</sub> ≝ `None`
 Interpretation of results for general audience.
 
 Consider:
@@ -3562,27 +3550,27 @@ Environmental considerations for model training and deployment
 
 
 **EnvironmentalImpact:**
-##### `config.bioimageio.environmental_impact.hardware_type`<sub> Optional[str]</sub> ≝ `None`
+##### `config.bioimageio.environmental_impact.hardware_type`<sub> str | None</sub> ≝ `None`
 GPU/CPU specifications
 
 
 
-##### `config.bioimageio.environmental_impact.hours_used`<sub> Optional[float]</sub> ≝ `None`
+##### `config.bioimageio.environmental_impact.hours_used`<sub> float | None</sub> ≝ `None`
 Total compute hours
 
 
 
-##### `config.bioimageio.environmental_impact.cloud_provider`<sub> Optional[str]</sub> ≝ `None`
+##### `config.bioimageio.environmental_impact.cloud_provider`<sub> str | None</sub> ≝ `None`
 If applicable
 
 
 
-##### `config.bioimageio.environmental_impact.compute_region`<sub> Optional[str]</sub> ≝ `None`
+##### `config.bioimageio.environmental_impact.compute_region`<sub> str | None</sub> ≝ `None`
 Geographic location
 
 
 
-##### `config.bioimageio.environmental_impact.co2_emitted`<sub> Optional[float]</sub> ≝ `None`
+##### `config.bioimageio.environmental_impact.co2_emitted`<sub> float | None</sub> ≝ `None`
 kg CO2 equivalent
 
 Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
@@ -3600,30 +3588,29 @@ Carbon emissions can be estimated using the [Machine Learning Impact calculator]
 
 </details>
 
-## `covers`<sub> Sequence</sub> ≝ `[]`
+## `covers`<sub> list</sub> ≝ `[]`
 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 [*Example:*](#covers) ['cover.png']
 
-<details><summary>Sequence[_internal.io.FileDescr*]
+<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False)]]
 
 </summary>
 
-Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False))
+list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False)]]
 
 **_internal.io.FileDescr:**
-### `covers.i.source`<sub> Union</sub>
+### `covers.source`<sub> Union</sub>
 File source
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-### `covers.i.sha256`<sub> Optional</sub> ≝ `None`
+### `covers.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
@@ -3643,7 +3630,7 @@ with details on how to quantitatively validate the model on unseen data.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 ### `documentation.source`<sub> Union</sub>
@@ -3652,15 +3639,15 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-### `documentation.sha256`<sub> Optional</sub> ≝ `None`
+### `documentation.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
-## `git_repo`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+## `git_repo`<sub> _internal.url.HttpUrl | None</sub> ≝ `None`
 A URL to the Git repository where the resource is being developed.
 [*Example:*](#git_repo) 'https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad'
 
@@ -3676,7 +3663,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -3687,15 +3674,15 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-### `icon.sha256`<sub> Optional</sub> ≝ `None`
+### `icon.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
-## `id`<sub> Optional[ModelId]</sub> ≝ `None`
+## `id`<sub> ModelId | None</sub> ≝ `None`
 bioimage.io-wide unique resource identifier
 assigned by bioimage.io; version **un**specific.
 
@@ -3720,7 +3707,7 @@ Union of
 - _internal.license_id.DeprecatedLicenseId
 - None
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'))
 
 
 **_internal.io.FileDescr:**
@@ -3730,119 +3717,117 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-### `license.sha256`<sub> Optional</sub> ≝ `None`
+### `license.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
-## `links`<sub> Sequence[str]</sub> ≝ `[]`
+## `links`<sub> list[str]</sub> ≝ `[]`
 IDs of other bioimage.io resources
 [*Example:*](#links) ('ilastik/ilastik', 'deepimagej/deepimagej', 'zero/notebook_u-net_3d_zerocostdl4mic')
 
 
 
-## `maintainers`<sub> Sequence</sub> ≝ `[]`
+## `maintainers`<sub> list</sub> ≝ `[]`
 Maintainers of this resource.
 If not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name
 
-<details><summary>Sequence[generic.v0_3.Maintainer]
+<details><summary>list[bioimageio.spec.generic.v0_3.Maintainer]
 
 </summary>
 
 
 **generic.v0_3.Maintainer:**
-### `maintainers.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+### `maintainers.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-### `maintainers.i.email`<sub> Optional[Email]</sub> ≝ `None`
+### `maintainers.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-### `maintainers.i.orcid`<sub> Optional</sub> ≝ `None`
+### `maintainers.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#maintainersiorcid) '0000-0001-2345-6789'
+[*Example:*](#maintainersorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.types.OrcidId]
 
-### `maintainers.i.name`<sub> Optional</sub> ≝ `None`
+### `maintainers.name`<sub> Optional</sub> ≝ `None`
 
 
 
 Optional[str (Predicate(_has_no_slash))]
 
-### `maintainers.i.github_user`<sub> str</sub>
+### `maintainers.github_user`<sub> str</sub>
 
 
 
 
 </details>
 
-## `packaged_by`<sub> Sequence[generic.v0_3.Author]</sub> ≝ `[]`
+## `packaged_by`<sub> list</sub> ≝ `[]`
 The persons that have packaged and uploaded this model.
 Only required if those persons differ from the `authors`.
 
-<details><summary>Sequence[generic.v0_3.Author]
+<details><summary>list[bioimageio.spec.generic.v0_3.Author]
 
 </summary>
 
 
 **generic.v0_3.Author:**
-### `packaged_by.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+### `packaged_by.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-### `packaged_by.i.email`<sub> Optional[Email]</sub> ≝ `None`
+### `packaged_by.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-### `packaged_by.i.orcid`<sub> Optional</sub> ≝ `None`
+### `packaged_by.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#packaged_byiorcid) '0000-0001-2345-6789'
-
-
-Optional[_internal.types.OrcidId]
-
-### `packaged_by.i.name`<sub> str</sub>
+[*Example:*](#packaged_byorcid) '0000-0001-2345-6789'
 
 
 
+### `packaged_by.name`<sub> str</sub>
 
-### `packaged_by.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+### `packaged_by.github_user`<sub> str | None</sub> ≝ `None`
 
 
 
 
 </details>
 
-## `parent`<sub> Optional[LinkedModel]</sub> ≝ `None`
+## `parent`<sub> LinkedModel | None</sub> ≝ `None`
 The model from which this model is derived, e.g. by fine-tuning the weights.
 
-<details><summary>Optional[LinkedModel]
+<details><summary>LinkedModel | None
 
 </summary>
 
 
 **LinkedModel:**
-### `parent.version`<sub> Optional</sub> ≝ `None`
+### `parent.version`<sub> _internal.version_type.Version |</sub> ≝ `None`
 The version of the linked resource following SemVer 2.0.
 
 
-Optional[_internal.version_type.Version]
+_internal.version_type.Version | None
 
 ### `parent.id`<sub> ModelId</sub>
 A valid model `id` from the bioimage.io collection.
@@ -3851,12 +3836,12 @@ A valid model `id` from the bioimage.io collection.
 
 </details>
 
-## `run_mode`<sub> Optional[model.v0_4.RunMode]</sub> ≝ `None`
+## `run_mode`<sub> model.v0_4.RunMode | None</sub> ≝ `None`
 Custom run mode for this model: for more complex prediction procedures like test time
 data augmentation that currently cannot be expressed in the specification.
 No standard run modes are defined yet.
 
-<details><summary>Optional[model.v0_4.RunMode]
+<details><summary>model.v0_4.RunMode | None
 
 </summary>
 
@@ -3867,40 +3852,41 @@ Run mode name
 
 
 
-### `run_mode.kwargs`<sub> Dict[str, Any]</sub> ≝ `{}`
+### `run_mode.kwargs`<sub> dict[str, typing.Any]</sub> ≝ `{}`
 Run mode specific key word arguments
 
 
 
 </details>
 
-## `tags`<sub> Sequence[str]</sub> ≝ `[]`
+## `tags`<sub> list[str]</sub> ≝ `[]`
 Associated tags
 [*Example:*](#tags) ('unet2d', 'pytorch', 'nucleus', 'segmentation', 'dsb2018')
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2026, 7, 8, 12, 43, 57, 671519, tzinfo=datetime.timezone.utc)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2026, 8, 18, 9, 20, 14, 148543, tzinfo=datetime.timezone.utc)`
 Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
 with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
 (In Python a datetime object is valid, too).
 
 
 
-## `training_data`<sub> Union</sub> ≝ `None`
+## `training_data`<sub> None | bioimageio.spec.dataset.v</sub> ≝ `None`
 The dataset used to train this model
 
-<details><summary>Union[None, dataset.v0_3.LinkedDataset, dataset.v0_3.DatasetDescr, dataset.v0_2.DatasetDescr]
+<details><summary>None | bioimageio.spec.dataset.v0_3.LinkedDataset | bioimageio.spec.dataset.v0_3.DatasetDescr | bioimageio.spec.dataset.v0_2.DatasetDescr
 
 </summary>
 
+None | bioimageio.spec.dataset.v0_3.LinkedDataset | bioimageio.spec.dataset.v0_3.DatasetDescr | bioimageio.spec.dataset.v0_2.DatasetDescr
 
 **dataset.v0_3.LinkedDataset:**
-### `training_data.version`<sub> Optional</sub> ≝ `None`
+### `training_data.version`<sub> _internal.version_type.Version |</sub> ≝ `None`
 The version of the linked resource following SemVer 2.0.
 
 
-Optional[_internal.version_type.Version]
+_internal.version_type.Version | None
 
 ### `training_data.id`<sub> dataset.v0_3.DatasetId</sub>
 A valid dataset `id` from the bioimage.io collection.
@@ -3919,30 +3905,29 @@ A string containing a brief description.
 
 
 
-### `training_data.covers`<sub> Sequence</sub> ≝ `[]`
+### `training_data.covers`<sub> list</sub> ≝ `[]`
 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 [*Example:*](#training_datacovers) ['cover.png']
 
-<details><summary>Sequence[_internal.io.FileDescr*]
+<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False)]]
 
 </summary>
 
-Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False))
+list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False)]]
 
 **_internal.io.FileDescr:**
-#### `training_data.covers.i.source`<sub> Union</sub>
+#### `training_data.covers.source`<sub> Union</sub>
 File source
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `training_data.covers.i.sha256`<sub> Optional</sub> ≝ `None`
+#### `training_data.covers.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
@@ -3955,7 +3940,7 @@ The recommended documentation source file name is `README.md`. An `.md` suffix i
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True); )]
 
 **_internal.io.FileDescr:**
 #### `training_data.documentation.source`<sub> Union</sub>
@@ -3964,11 +3949,11 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `training_data.documentation.sha256`<sub> Optional</sub> ≝ `None`
+#### `training_data.documentation.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
@@ -3978,87 +3963,85 @@ UTF-8 emoji for display alongside the `id`.
 
 Optional[str (Len(min_length=1, max_length=2); )]
 
-### `training_data.authors`<sub> Sequence[generic.v0_3.Author]</sub> ≝ `[]`
+### `training_data.authors`<sub> list</sub> ≝ `[]`
 The authors are the creators of this resource description and the primary points of contact.
 
-<details><summary>Sequence[generic.v0_3.Author]
+<details><summary>list[bioimageio.spec.generic.v0_3.Author]
 
 </summary>
 
 
 **generic.v0_3.Author:**
-#### `training_data.authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+#### `training_data.authors.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-#### `training_data.authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
+#### `training_data.authors.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-#### `training_data.authors.i.orcid`<sub> Optional</sub> ≝ `None`
+#### `training_data.authors.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#training_dataauthorsiorcid) '0000-0001-2345-6789'
-
-
-Optional[_internal.types.OrcidId]
-
-#### `training_data.authors.i.name`<sub> str</sub>
+[*Example:*](#training_dataauthorsorcid) '0000-0001-2345-6789'
 
 
 
+#### `training_data.authors.name`<sub> str</sub>
 
-#### `training_data.authors.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+#### `training_data.authors.github_user`<sub> str | None</sub> ≝ `None`
 
 
 
 
 </details>
 
-### `training_data.attachments`<sub> Sequence</sub> ≝ `[]`
+### `training_data.attachments`<sub> list</sub> ≝ `[]`
 file attachments
 
-<details><summary>Sequence[_internal.io.FileDescr*]
+<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-Sequence of _internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))
+list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 **_internal.io.FileDescr:**
-#### `training_data.attachments.i.source`<sub> Union</sub>
+#### `training_data.attachments.source`<sub> Union</sub>
 File source
 
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `training_data.attachments.i.sha256`<sub> Optional</sub> ≝ `None`
+#### `training_data.attachments.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
-### `training_data.cite`<sub> Sequence[generic.v0_3.CiteEntry]</sub> ≝ `[]`
+### `training_data.cite`<sub> list</sub> ≝ `[]`
 citations
 
-<details><summary>Sequence[generic.v0_3.CiteEntry]
+<details><summary>list[bioimageio.spec.generic.v0_3.CiteEntry]
 
 </summary>
 
 
 **generic.v0_3.CiteEntry:**
-#### `training_data.cite.i.text`<sub> str</sub>
+#### `training_data.cite.text`<sub> str</sub>
 free text description
 
 
 
-#### `training_data.cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
+#### `training_data.cite.doi`<sub> _internal.types.Doi | None</sub> ≝ `None`
 A digital object identifier (DOI) is the prefered citation reference.
 See https://www.doi.org/ for details.
 Note:
@@ -4066,7 +4049,7 @@ Note:
 
 
 
-#### `training_data.cite.i.url`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+#### `training_data.cite.url`<sub> _internal.url.HttpUrl | None</sub> ≝ `None`
 URL to cite (preferably specify a **doi** instead/also).
 Note:
     Either **doi** or **url** have to be specified.
@@ -4088,7 +4071,7 @@ Union of
 - _internal.license_id.DeprecatedLicenseId
 - None
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'))
 
 
 **_internal.io.FileDescr:**
@@ -4098,15 +4081,15 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `training_data.license.sha256`<sub> Optional</sub> ≝ `None`
+#### `training_data.license.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
-### `training_data.git_repo`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+### `training_data.git_repo`<sub> _internal.url.HttpUrl | None</sub> ≝ `None`
 A URL to the Git repository where the resource is being developed.
 [*Example:*](#training_datagit_repo) 'https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad'
 
@@ -4122,7 +4105,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f8ed4380360>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7fd6ac4f4f40>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -4133,24 +4116,24 @@ File source
 
 Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
 
-#### `training_data.icon.sha256`<sub> Optional</sub> ≝ `None`
+#### `training_data.icon.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
 
 
-Optional[_internal.io_basics.Sha256]
+_internal.io_basics.Sha256 | None
 
 </details>
 
-### `training_data.links`<sub> Sequence[str]</sub> ≝ `[]`
+### `training_data.links`<sub> list[str]</sub> ≝ `[]`
 IDs of other bioimage.io resources
 [*Example:*](#training_datalinks) ('ilastik/ilastik', 'deepimagej/deepimagej', 'zero/notebook_u-net_3d_zerocostdl4mic')
 
 
 
-### `training_data.uploader`<sub> Optional[generic.v0_2.Uploader]</sub> ≝ `None`
+### `training_data.uploader`<sub> generic.v0_2.Uploader | None</sub> ≝ `None`
 The person who uploaded the model (e.g. to bioimage.io)
 
-<details><summary>Optional[generic.v0_2.Uploader]
+<details><summary>generic.v0_2.Uploader | None
 
 </summary>
 
@@ -4169,60 +4152,59 @@ Optional[str (AfterValidator(_remove_slashes))]
 
 </details>
 
-### `training_data.maintainers`<sub> Sequence</sub> ≝ `[]`
+### `training_data.maintainers`<sub> list</sub> ≝ `[]`
 Maintainers of this resource.
 If not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name
 
-<details><summary>Sequence[generic.v0_3.Maintainer]
+<details><summary>list[bioimageio.spec.generic.v0_3.Maintainer]
 
 </summary>
 
 
 **generic.v0_3.Maintainer:**
-#### `training_data.maintainers.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+#### `training_data.maintainers.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-#### `training_data.maintainers.i.email`<sub> Optional[Email]</sub> ≝ `None`
+#### `training_data.maintainers.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-#### `training_data.maintainers.i.orcid`<sub> Optional</sub> ≝ `None`
+#### `training_data.maintainers.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#training_datamaintainersiorcid) '0000-0001-2345-6789'
+[*Example:*](#training_datamaintainersorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.types.OrcidId]
 
-#### `training_data.maintainers.i.name`<sub> Optional</sub> ≝ `None`
+#### `training_data.maintainers.name`<sub> Optional</sub> ≝ `None`
 
 
 
 Optional[str (Predicate(_has_no_slash))]
 
-#### `training_data.maintainers.i.github_user`<sub> str</sub>
+#### `training_data.maintainers.github_user`<sub> str</sub>
 
 
 
 
 </details>
 
-### `training_data.tags`<sub> Sequence[str]</sub> ≝ `[]`
+### `training_data.tags`<sub> list[str]</sub> ≝ `[]`
 Associated tags
 [*Example:*](#training_datatags) ('unet2d', 'pytorch', 'nucleus', 'segmentation', 'dsb2018')
 
 
 
-### `training_data.version`<sub> Optional</sub> ≝ `None`
+### `training_data.version`<sub> _internal.version_type.Version |</sub> ≝ `None`
 The version of the resource following SemVer 2.0.
 
 
-Optional[_internal.version_type.Version]
+_internal.version_type.Version | None
 
 ### `training_data.version_comment`<sub> Optional</sub> ≝ `None`
 A comment on the version of the resource.
@@ -4235,24 +4217,24 @@ The **format** version of this resource specification
 
 
 
-### `training_data.badges`<sub> Sequence</sub> ≝ `[]`
+### `training_data.badges`<sub> list</sub> ≝ `[]`
 badges associated with this resource
 
-<details><summary>Sequence[generic.v0_2.BadgeDescr]
+<details><summary>list[bioimageio.spec.generic.v0_2.BadgeDescr]
 
 </summary>
 
 
 **generic.v0_2.BadgeDescr:**
-#### `training_data.badges.i.label`<sub> str</sub>
+#### `training_data.badges.label`<sub> str</sub>
 badge label to display on hover
-[*Example:*](#training_databadgesilabel) 'Open in Colab'
+[*Example:*](#training_databadgeslabel) 'Open in Colab'
 
 
 
-#### `training_data.badges.i.icon`<sub> Union</sub> ≝ `None`
+#### `training_data.badges.icon`<sub> Union</sub> ≝ `None`
 badge icon (included in bioimage.io package if not a URL)
-[*Example:*](#training_databadgesiicon) 'https://colab.research.google.com/assets/colab-badge.svg'
+[*Example:*](#training_databadgesicon) 'https://colab.research.google.com/assets/colab-badge.svg'
 
 <details><summary>Union[Union[Path*, _internal.io.RelativeFilePath]*, _internal.url.HttpUrl, pydantic.networks.HttpUrl, None]
 
@@ -4260,7 +4242,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f8ee2fffe20>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fd6ac433d80>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -4268,9 +4250,9 @@ Union of
 
 </details>
 
-#### `training_data.badges.i.url`<sub> _internal.url.HttpUrl</sub>
+#### `training_data.badges.url`<sub> _internal.url.HttpUrl</sub>
 target URL
-[*Example:*](#training_databadgesiurl) 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
+[*Example:*](#training_databadgesurl) 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
 
 
 
@@ -4314,18 +4296,18 @@ bioimage.io internal metadata.
 
 
 
-### `training_data.id`<sub> Optional[dataset.v0_3.DatasetId]</sub> ≝ `None`
+### `training_data.id`<sub> dataset.v0_3.DatasetId | None</sub> ≝ `None`
 bioimage.io-wide unique resource identifier
 assigned by bioimage.io; version **un**specific.
 
 
 
-### `training_data.parent`<sub> Optional[dataset.v0_3.DatasetId]</sub> ≝ `None`
+### `training_data.parent`<sub> dataset.v0_3.DatasetId | None</sub> ≝ `None`
 The description from which this one is derived
 
 
 
-### `training_data.source`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+### `training_data.source`<sub> _internal.url.HttpUrl | None</sub> ≝ `None`
 "URL to the source of the dataset.
 
 
@@ -4341,17 +4323,16 @@ A human-friendly name of the resource description
 
 
 
-### `training_data.covers`<sub> Sequence</sub> ≝ `[]`
+### `training_data.covers`<sub> list</sub> ≝ `[]`
 Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1.
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')
 [*Example:*](#training_datacovers) ['cover.png']
 
-<details><summary>Sequence[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7fd6ac433d80>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False)]]
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f8ee2fffe20>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False))
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7fd6ac433d80>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False)]]
 
 </details>
 
@@ -4361,98 +4342,96 @@ UTF-8 emoji for display alongside the `id`.
 
 Optional[str (Len(min_length=1, max_length=1); )]
 
-### `training_data.authors`<sub> Sequence[generic.v0_2.Author]</sub> ≝ `[]`
+### `training_data.authors`<sub> list</sub> ≝ `[]`
 The authors are the creators of the RDF and the primary points of contact.
 
-<details><summary>Sequence[generic.v0_2.Author]
+<details><summary>list[bioimageio.spec.generic.v0_2.Author]
 
 </summary>
 
 
 **generic.v0_2.Author:**
-#### `training_data.authors.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+#### `training_data.authors.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-#### `training_data.authors.i.email`<sub> Optional[Email]</sub> ≝ `None`
+#### `training_data.authors.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-#### `training_data.authors.i.orcid`<sub> Optional</sub> ≝ `None`
+#### `training_data.authors.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#training_dataauthorsiorcid) '0000-0001-2345-6789'
-
-
-Optional[_internal.types.OrcidId]
-
-#### `training_data.authors.i.name`<sub> str</sub>
+[*Example:*](#training_dataauthorsorcid) '0000-0001-2345-6789'
 
 
 
+#### `training_data.authors.name`<sub> str</sub>
 
-#### `training_data.authors.i.github_user`<sub> Optional[str]</sub> ≝ `None`
+
+
+
+#### `training_data.authors.github_user`<sub> str | None</sub> ≝ `None`
 
 
 
 
 </details>
 
-### `training_data.attachments`<sub> Optional</sub> ≝ `None`
+### `training_data.attachments`<sub> generic.v0_2.AttachmentsDescr | </sub> ≝ `None`
 file and other attachments
 
-<details><summary>Optional[generic.v0_2.AttachmentsDescr]
+<details><summary>generic.v0_2.AttachmentsDescr | None
 
 </summary>
 
 
 **generic.v0_2.AttachmentsDescr:**
-#### `training_data.attachments.files`<sub> Sequence</sub> ≝ `[]`
+#### `training_data.attachments.files`<sub> list</sub> ≝ `[]`
 File attachments
 
-<details><summary>Sequence[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7fd6ac433d80>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-Sequence of Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f8ee2fffe20>, return_type=PydanticUndefined, when_used='unless-none'))
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7fd6ba952de0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7fd6ac433d80>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </details>
 
 </details>
 
-### `training_data.cite`<sub> Sequence[generic.v0_2.CiteEntry]</sub> ≝ `[]`
+### `training_data.cite`<sub> list</sub> ≝ `[]`
 citations
 
-<details><summary>Sequence[generic.v0_2.CiteEntry]
+<details><summary>list[bioimageio.spec.generic.v0_2.CiteEntry]
 
 </summary>
 
 
 **generic.v0_2.CiteEntry:**
-#### `training_data.cite.i.text`<sub> str</sub>
+#### `training_data.cite.text`<sub> str</sub>
 free text description
 
 
 
-#### `training_data.cite.i.doi`<sub> Optional[_internal.types.Doi]</sub> ≝ `None`
+#### `training_data.cite.doi`<sub> _internal.types.Doi | None</sub> ≝ `None`
 A digital object identifier (DOI) is the prefered citation reference.
 See https://www.doi.org/ for details. (alternatively specify `url`)
 
 
 
-#### `training_data.cite.i.url`<sub> Optional[str]</sub> ≝ `None`
+#### `training_data.cite.url`<sub> str | None</sub> ≝ `None`
 URL to cite (preferably specify a `doi` instead)
 
 
 
 </details>
 
-### `training_data.config`<sub> Dict[str, YamlValue]</sub> ≝ `{}`
+### `training_data.config`<sub> dict[str, YamlValue]</sub> ≝ `{}`
 A field for custom configuration that can contain any keys not present in the RDF spec.
 This means you should not store, for example, a github repo URL in `config` since we already have the
 `git_repo` field defined in the spec.
@@ -4476,12 +4455,12 @@ an altered rdf.yaml file with local references to the downloaded files)
 
 
 
-### `training_data.download_url`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+### `training_data.download_url`<sub> _internal.url.HttpUrl | None</sub> ≝ `None`
 URL to download the resource from (deprecated)
 
 
 
-### `training_data.git_repo`<sub> Optional[str]</sub> ≝ `None`
+### `training_data.git_repo`<sub> str | None</sub> ≝ `None`
 A URL to the Git repository where the resource is being developed.
 [*Example:*](#training_datagit_repo) 'https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad'
 
@@ -4503,16 +4482,16 @@ Union of
 
 </details>
 
-### `training_data.links`<sub> Sequence[str]</sub> ≝ `[]`
+### `training_data.links`<sub> list[str]</sub> ≝ `[]`
 IDs of other bioimage.io resources
 [*Example:*](#training_datalinks) ('ilastik/ilastik', 'deepimagej/deepimagej', 'zero/notebook_u-net_3d_zerocostdl4mic')
 
 
 
-### `training_data.uploader`<sub> Optional[generic.v0_2.Uploader]</sub> ≝ `None`
+### `training_data.uploader`<sub> generic.v0_2.Uploader | None</sub> ≝ `None`
 The person who uploaded the model (e.g. to bioimage.io)
 
-<details><summary>Optional[generic.v0_2.Uploader]
+<details><summary>generic.v0_2.Uploader | None
 
 </summary>
 
@@ -4531,43 +4510,42 @@ Optional[str (AfterValidator(_remove_slashes))]
 
 </details>
 
-### `training_data.maintainers`<sub> Sequence</sub> ≝ `[]`
+### `training_data.maintainers`<sub> list</sub> ≝ `[]`
 Maintainers of this resource.
 If not specified `authors` are maintainers and at least some of them should specify their `github_user` name
 
-<details><summary>Sequence[generic.v0_2.Maintainer]
+<details><summary>list[bioimageio.spec.generic.v0_2.Maintainer]
 
 </summary>
 
 
 **generic.v0_2.Maintainer:**
-#### `training_data.maintainers.i.affiliation`<sub> Optional[str]</sub> ≝ `None`
+#### `training_data.maintainers.affiliation`<sub> str | None</sub> ≝ `None`
 Affiliation
 
 
 
-#### `training_data.maintainers.i.email`<sub> Optional[Email]</sub> ≝ `None`
+#### `training_data.maintainers.email`<sub> Email | None</sub> ≝ `None`
 Email
 
 
 
-#### `training_data.maintainers.i.orcid`<sub> Optional</sub> ≝ `None`
+#### `training_data.maintainers.orcid`<sub> _internal.types.OrcidId | None</sub> ≝ `None`
 An [ORCID iD](https://support.orcid.org/hc/en-us/sections/360001495313-What-is-ORCID
 ) in hyphenated groups of 4 digits, (and [valid](
 https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-Identifier
 ) as per ISO 7064 11,2.)
-[*Example:*](#training_datamaintainersiorcid) '0000-0001-2345-6789'
+[*Example:*](#training_datamaintainersorcid) '0000-0001-2345-6789'
 
 
-Optional[_internal.types.OrcidId]
 
-#### `training_data.maintainers.i.name`<sub> Optional</sub> ≝ `None`
+#### `training_data.maintainers.name`<sub> Optional</sub> ≝ `None`
 
 
 
 Optional[str (AfterValidator(_remove_slashes))]
 
-#### `training_data.maintainers.i.github_user`<sub> str</sub>
+#### `training_data.maintainers.github_user`<sub> str</sub>
 
 
 
@@ -4587,19 +4565,19 @@ Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathT
 
 </details>
 
-### `training_data.tags`<sub> Sequence[str]</sub> ≝ `[]`
+### `training_data.tags`<sub> list[str]</sub> ≝ `[]`
 Associated tags
 [*Example:*](#training_datatags) ('unet2d', 'pytorch', 'nucleus', 'segmentation', 'dsb2018')
 
 
 
-### `training_data.version`<sub> Optional</sub> ≝ `None`
+### `training_data.version`<sub> _internal.version_type.Version |</sub> ≝ `None`
 The version of the resource following SemVer 2.0.
 
 
-Optional[_internal.version_type.Version]
+_internal.version_type.Version | None
 
-### `training_data.version_number`<sub> Optional[int]</sub> ≝ `None`
+### `training_data.version_number`<sub> int | None</sub> ≝ `None`
 version number (n-th published version, not the semantic version)
 
 
@@ -4612,24 +4590,24 @@ The `format_version` is important for any consumer software to understand how to
 
 
 
-### `training_data.badges`<sub> Sequence</sub> ≝ `[]`
+### `training_data.badges`<sub> list</sub> ≝ `[]`
 badges associated with this resource
 
-<details><summary>Sequence[generic.v0_2.BadgeDescr]
+<details><summary>list[bioimageio.spec.generic.v0_2.BadgeDescr]
 
 </summary>
 
 
 **generic.v0_2.BadgeDescr:**
-#### `training_data.badges.i.label`<sub> str</sub>
+#### `training_data.badges.label`<sub> str</sub>
 badge label to display on hover
-[*Example:*](#training_databadgesilabel) 'Open in Colab'
+[*Example:*](#training_databadgeslabel) 'Open in Colab'
 
 
 
-#### `training_data.badges.i.icon`<sub> Union</sub> ≝ `None`
+#### `training_data.badges.icon`<sub> Union</sub> ≝ `None`
 badge icon (included in bioimage.io package if not a URL)
-[*Example:*](#training_databadgesiicon) 'https://colab.research.google.com/assets/colab-badge.svg'
+[*Example:*](#training_databadgesicon) 'https://colab.research.google.com/assets/colab-badge.svg'
 
 <details><summary>Union[Union[Path*, _internal.io.RelativeFilePath]*, _internal.url.HttpUrl, pydantic.networks.HttpUrl, None]
 
@@ -4637,7 +4615,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f8ee2fffe20>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7fd6ac433d80>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -4645,9 +4623,9 @@ Union of
 
 </details>
 
-#### `training_data.badges.i.url`<sub> _internal.url.HttpUrl</sub>
+#### `training_data.badges.url`<sub> _internal.url.HttpUrl</sub>
 target URL
-[*Example:*](#training_databadgesiurl) 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
+[*Example:*](#training_databadgesurl) 'https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb'
 
 
 
@@ -4667,7 +4645,7 @@ Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathT
 
 </details>
 
-### `training_data.license`<sub> Union</sub> ≝ `None`
+### `training_data.license`<sub> _internal.license_id.LicenseId |</sub> ≝ `None`
 A [SPDX license identifier](https://spdx.org/licenses/).
 We do not support custom license beyond the SPDX license list, if you need that please
 [open a GitHub issue](https://github.com/bioimage-io/spec-bioimage-io/issues/new/choose
@@ -4675,30 +4653,30 @@ We do not support custom license beyond the SPDX license list, if you need that 
 [*Examples:*](#training_datalicense) ['CC0-1.0', 'MIT', 'BSD-2-Clause']
 
 
-Union[_internal.license_id.LicenseId, _internal.license_id.DeprecatedLicenseId, str, None]
+_internal.license_id.LicenseId | bioimageio.spec._internal.license_id.DeprecatedLicenseId | str | None
 
 ### `training_data.type`<sub> Literal[dataset]</sub>
 
 
 
 
-### `training_data.id`<sub> Optional[dataset.v0_2.DatasetId]</sub> ≝ `None`
+### `training_data.id`<sub> dataset.v0_2.DatasetId | None</sub> ≝ `None`
 bioimage.io-wide unique resource identifier
 assigned by bioimage.io; version **un**specific.
 
 
 
-### `training_data.source`<sub> Optional[_internal.url.HttpUrl]</sub> ≝ `None`
+### `training_data.source`<sub> _internal.url.HttpUrl | None</sub> ≝ `None`
 "URL to the source of the dataset.
 
 
 
 </details>
 
-## `uploader`<sub> Optional[generic.v0_2.Uploader]</sub> ≝ `None`
+## `uploader`<sub> generic.v0_2.Uploader | None</sub> ≝ `None`
 The person who uploaded the model (e.g. to bioimage.io)
 
-<details><summary>Optional[generic.v0_2.Uploader]
+<details><summary>generic.v0_2.Uploader | None
 
 </summary>
 
@@ -4717,11 +4695,11 @@ Optional[str (AfterValidator(_remove_slashes))]
 
 </details>
 
-## `version`<sub> Optional</sub> ≝ `None`
+## `version`<sub> _internal.version_type.Version |</sub> ≝ `None`
 The version of the resource following SemVer 2.0.
 
 
-Optional[_internal.version_type.Version]
+_internal.version_type.Version | None
 
 ## `version_comment`<sub> Optional</sub> ≝ `None`
 A comment on the version of the resource.
@@ -4776,21 +4754,21 @@ Optional[str (MaxLen(max_length=512))]
 - uint8
 - uint16
 
-### `inputs.preprocessing.i.kwargs.axis`
+### `inputs.preprocessing.kwargs.axis`
 channel
-### `inputs.preprocessing.i.kwargs.axes`
+### `inputs.preprocessing.kwargs.axes`
 ('batch', 'x', 'y')
-### `inputs.preprocessing.i.kwargs.axis`
+### `inputs.preprocessing.kwargs.axis`
 - channel
 - index
 
-### `inputs.preprocessing.i.kwargs.axis`
+### `inputs.preprocessing.kwargs.axis`
 channel
-### `inputs.preprocessing.i.kwargs.axes`
+### `inputs.preprocessing.kwargs.axes`
 ('batch', 'x', 'y')
-### `inputs.preprocessing.i.kwargs.axis`
+### `inputs.preprocessing.kwargs.axis`
 channel
-### `inputs.preprocessing.i.kwargs.axes`
+### `inputs.preprocessing.kwargs.axes`
 ('batch', 'x', 'y')
 ### `outputs.axes.size`
 - 10
@@ -4801,9 +4779,7 @@ channel
 - {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
 
 ### `outputs.axes.size`
-- 10
-- {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
-
+{'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
 ### `outputs.axes.size`
 - 10
 - {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
@@ -4814,9 +4790,7 @@ channel
 - z
 
 ### `outputs.axes.size`
-- 10
-- {'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
-
+{'tensor_id': 't', 'axis_id': 'a', 'offset': 5}
 ### `outputs.axes.id`
 - x
 - y
@@ -4848,41 +4822,41 @@ channel
 - uint8
 - uint16
 
-### `outputs.postprocessing.i.kwargs.axis`
+### `outputs.postprocessing.kwargs.axis`
 channel
-### `outputs.postprocessing.i.kwargs.axes`
+### `outputs.postprocessing.kwargs.axes`
 ('batch', 'x', 'y')
-### `outputs.postprocessing.i.callable`
+### `outputs.postprocessing.callable`
 - my_postprocess_factory
 - MyPostprocessClass
 
-### `outputs.postprocessing.i.kwargs.axis`
+### `outputs.postprocessing.kwargs.axis`
 - channel
 - index
 
-### `outputs.postprocessing.i.kwargs.axis`
+### `outputs.postprocessing.kwargs.axis`
 channel
-### `outputs.postprocessing.i.kwargs.axes`
+### `outputs.postprocessing.kwargs.axes`
 ('batch', 'x', 'y')
-### `outputs.postprocessing.i.kwargs.axes`
+### `outputs.postprocessing.kwargs.axes`
 ('batch', 'x', 'y')
-### `outputs.postprocessing.i.kwargs.axis`
+### `outputs.postprocessing.kwargs.axis`
 channel
-### `outputs.postprocessing.i.kwargs.axes`
+### `outputs.postprocessing.kwargs.axes`
 ('batch', 'x', 'y')
-### `weights.keras_hdf5.authors.i.orcid`
+### `weights.keras_hdf5.authors.orcid`
 0000-0001-2345-6789
 ### `weights.keras_hdf5.parent`
 pytorch_state_dict
-### `weights.keras_v3.authors.i.orcid`
+### `weights.keras_v3.authors.orcid`
 0000-0001-2345-6789
 ### `weights.keras_v3.parent`
 pytorch_state_dict
-### `weights.onnx.authors.i.orcid`
+### `weights.onnx.authors.orcid`
 0000-0001-2345-6789
 ### `weights.onnx.parent`
 pytorch_state_dict
-### `weights.pytorch_state_dict.authors.i.orcid`
+### `weights.pytorch_state_dict.authors.orcid`
 0000-0001-2345-6789
 ### `weights.pytorch_state_dict.parent`
 pytorch_state_dict
@@ -4894,19 +4868,19 @@ pytorch_state_dict
 - MyNetworkClass
 - get_my_model
 
-### `weights.tensorflow_js.authors.i.orcid`
+### `weights.tensorflow_js.authors.orcid`
 0000-0001-2345-6789
 ### `weights.tensorflow_js.parent`
 pytorch_state_dict
-### `weights.tensorflow_saved_model_bundle.authors.i.orcid`
+### `weights.tensorflow_saved_model_bundle.authors.orcid`
 0000-0001-2345-6789
 ### `weights.tensorflow_saved_model_bundle.parent`
 pytorch_state_dict
-### `weights.torchscript.authors.i.orcid`
+### `weights.torchscript.authors.orcid`
 0000-0001-2345-6789
 ### `weights.torchscript.parent`
 pytorch_state_dict
-### `authors.i.orcid`
+### `authors.orcid`
 0000-0001-2345-6789
 ### `covers`
 ['cover.png']
@@ -4919,15 +4893,15 @@ https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/m
 
 ### `links`
 ('ilastik/ilastik', 'deepimagej/deepimagej', 'zero/notebook_u-net_3d_zerocostdl4mic')
-### `maintainers.i.orcid`
+### `maintainers.orcid`
 0000-0001-2345-6789
-### `packaged_by.i.orcid`
+### `packaged_by.orcid`
 0000-0001-2345-6789
 ### `tags`
 ('unet2d', 'pytorch', 'nucleus', 'segmentation', 'dsb2018')
 ### `training_data.covers`
 ['cover.png']
-### `training_data.authors.i.orcid`
+### `training_data.authors.orcid`
 0000-0001-2345-6789
 ### `training_data.license`
 - CC0-1.0
@@ -4938,19 +4912,19 @@ https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/m
 https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 ### `training_data.links`
 ('ilastik/ilastik', 'deepimagej/deepimagej', 'zero/notebook_u-net_3d_zerocostdl4mic')
-### `training_data.maintainers.i.orcid`
+### `training_data.maintainers.orcid`
 0000-0001-2345-6789
 ### `training_data.tags`
 ('unet2d', 'pytorch', 'nucleus', 'segmentation', 'dsb2018')
-### `training_data.badges.i.label`
+### `training_data.badges.label`
 Open in Colab
-### `training_data.badges.i.icon`
+### `training_data.badges.icon`
 https://colab.research.google.com/assets/colab-badge.svg
-### `training_data.badges.i.url`
+### `training_data.badges.url`
 https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb
 ### `training_data.covers`
 ['cover.png']
-### `training_data.authors.i.orcid`
+### `training_data.authors.orcid`
 0000-0001-2345-6789
 ### `training_data.config`
 {'bioimageio': {'my_custom_key': 3837283, 'another_key': {'nested': 'value'}}, 'imagej': {'macro_dir': 'path/to/macro/file'}}
@@ -4958,15 +4932,15 @@ https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master
 https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 ### `training_data.links`
 ('ilastik/ilastik', 'deepimagej/deepimagej', 'zero/notebook_u-net_3d_zerocostdl4mic')
-### `training_data.maintainers.i.orcid`
+### `training_data.maintainers.orcid`
 0000-0001-2345-6789
 ### `training_data.tags`
 ('unet2d', 'pytorch', 'nucleus', 'segmentation', 'dsb2018')
-### `training_data.badges.i.label`
+### `training_data.badges.label`
 Open in Colab
-### `training_data.badges.i.icon`
+### `training_data.badges.icon`
 https://colab.research.google.com/assets/colab-badge.svg
-### `training_data.badges.i.url`
+### `training_data.badges.url`
 https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb
 ### `training_data.documentation`
 - https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md
