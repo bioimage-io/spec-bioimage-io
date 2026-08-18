@@ -8089,7 +8089,7 @@
       "title": "Version Comment"
     },
     "format_version": {
-      "const": "0.5.12",
+      "const": "0.5.13",
       "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
       "title": "Format Version",
       "type": "string"
@@ -8204,6 +8204,6 @@
     "outputs",
     "weights"
   ],
-  "title": "model 0.5.12",
+  "title": "model 0.5.13",
   "type": "object"
 }
