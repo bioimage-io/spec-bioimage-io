@@ -2488,29 +2488,29 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">927</span>
-<span class="normal">928</span>
-<span class="normal">929</span>
-<span class="normal">930</span>
-<span class="normal">931</span>
-<span class="normal">932</span>
-<span class="normal">933</span>
-<span class="normal">934</span>
-<span class="normal">935</span>
-<span class="normal">936</span>
-<span class="normal">937</span>
-<span class="normal">938</span>
-<span class="normal">939</span>
-<span class="normal">940</span>
-<span class="normal">941</span>
-<span class="normal">942</span>
-<span class="normal">943</span>
-<span class="normal">944</span>
-<span class="normal">945</span>
-<span class="normal">946</span>
-<span class="normal">947</span>
-<span class="normal">948</span>
-<span class="normal">949</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">extract_file_name</span><span class="p">(</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">964</span>
+<span class="normal">965</span>
+<span class="normal">966</span>
+<span class="normal">967</span>
+<span class="normal">968</span>
+<span class="normal">969</span>
+<span class="normal">970</span>
+<span class="normal">971</span>
+<span class="normal">972</span>
+<span class="normal">973</span>
+<span class="normal">974</span>
+<span class="normal">975</span>
+<span class="normal">976</span>
+<span class="normal">977</span>
+<span class="normal">978</span>
+<span class="normal">979</span>
+<span class="normal">980</span>
+<span class="normal">981</span>
+<span class="normal">982</span>
+<span class="normal">983</span>
+<span class="normal">984</span>
+<span class="normal">985</span>
+<span class="normal">986</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">extract_file_name</span><span class="p">(</span>
     <span class="n">src</span><span class="p">:</span> <span class="n">ZarrSource</span> <span class="o">|</span> <span class="n">FileSource</span> <span class="o">|</span> <span class="n">FileDescr</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileName</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">FileDescr</span><span class="p">):</span>
@@ -2629,44 +2629,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">739</span>
-<span class="normal">740</span>
-<span class="normal">741</span>
-<span class="normal">742</span>
-<span class="normal">743</span>
-<span class="normal">744</span>
-<span class="normal">745</span>
-<span class="normal">746</span>
-<span class="normal">747</span>
-<span class="normal">748</span>
-<span class="normal">749</span>
-<span class="normal">750</span>
-<span class="normal">751</span>
-<span class="normal">752</span>
-<span class="normal">753</span>
-<span class="normal">754</span>
-<span class="normal">755</span>
-<span class="normal">756</span>
-<span class="normal">757</span>
-<span class="normal">758</span>
-<span class="normal">759</span>
-<span class="normal">760</span>
-<span class="normal">761</span>
-<span class="normal">762</span>
-<span class="normal">763</span>
-<span class="normal">764</span>
-<span class="normal">765</span>
-<span class="normal">766</span>
-<span class="normal">767</span>
-<span class="normal">768</span>
-<span class="normal">769</span>
-<span class="normal">770</span>
-<span class="normal">771</span>
-<span class="normal">772</span>
-<span class="normal">773</span>
-<span class="normal">774</span>
-<span class="normal">775</span>
-<span class="normal">776</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">776</span>
 <span class="normal">777</span>
 <span class="normal">778</span>
 <span class="normal">779</span>
@@ -2697,7 +2660,44 @@
 <span class="normal">804</span>
 <span class="normal">805</span>
 <span class="normal">806</span>
-<span class="normal">807</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+<span class="normal">807</span>
+<span class="normal">808</span>
+<span class="normal">809</span>
+<span class="normal">810</span>
+<span class="normal">811</span>
+<span class="normal">812</span>
+<span class="normal">813</span>
+<span class="normal">814</span>
+<span class="normal">815</span>
+<span class="normal">816</span>
+<span class="normal">817</span>
+<span class="normal">818</span>
+<span class="normal">819</span>
+<span class="normal">820</span>
+<span class="normal">821</span>
+<span class="normal">822</span>
+<span class="normal">823</span>
+<span class="normal">824</span>
+<span class="normal">825</span>
+<span class="normal">826</span>
+<span class="normal">827</span>
+<span class="normal">828</span>
+<span class="normal">829</span>
+<span class="normal">830</span>
+<span class="normal">831</span>
+<span class="normal">832</span>
+<span class="normal">833</span>
+<span class="normal">834</span>
+<span class="normal">835</span>
+<span class="normal">836</span>
+<span class="normal">837</span>
+<span class="normal">838</span>
+<span class="normal">839</span>
+<span class="normal">840</span>
+<span class="normal">841</span>
+<span class="normal">842</span>
+<span class="normal">843</span>
+<span class="normal">844</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">PermissiveFileSource</span> <span class="o">|</span> <span class="n">FileDescr</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">ProgressbarLike</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">ProgressbarLike</span><span class="p">]</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2897,9 +2897,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">420</span>
-<span class="normal">421</span>
-<span class="normal">422</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">422</span>
 <span class="normal">423</span>
 <span class="normal">424</span>
 <span class="normal">425</span>
@@ -2911,7 +2909,9 @@
 <span class="normal">431</span>
 <span class="normal">432</span>
 <span class="normal">433</span>
-<span class="normal">434</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">identify_bioimageio_yaml_file_name</span><span class="p">(</span><span class="n">file_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FileName</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">FileName</span><span class="p">:</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">identify_bioimageio_yaml_file_name</span><span class="p">(</span><span class="n">file_names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">FileName</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">FileName</span><span class="p">:</span>
     <span class="n">file_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">file_names</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">bioimageio_name</span> <span class="ow">in</span> <span class="n">ALL_BIOIMAGEIO_YAML_NAMES</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">file_names</span><span class="p">:</span>
@@ -2940,9 +2940,20 @@
 
 
 <a href="#bioimageio.spec.utils.interprete_file_source" class="headerlink" title="Anchor link to this section for reference">¤</a></h2>
+          <div class="doc-overloads">
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">interprete_file_source</span><span class="p">(</span>
+    <span class="n"><span title="bioimageio.spec._internal.io.interprete_file_source(file_source)">file_source</span></span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="n"><span title="pydantic">pydantic</span></span><span class="o">.</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AnyUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.AnyUrl">AnyUrl</a></span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec._internal.io.interprete_file_source(allow_zarr)">allow_zarr</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" href="../common/#bioimageio.spec.common.FileSource">FileSource</a></span>
+</code></pre></div><div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">interprete_file_source</span><span class="p">(</span>
+    <span class="n"><span title="bioimageio.spec._internal.io.interprete_file_source(file_source)">file_source</span></span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="n"><span title="pydantic">pydantic</span></span><span class="o">.</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AnyUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.AnyUrl">AnyUrl</a></span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec._internal.io.interprete_file_source(allow_zarr)">allow_zarr</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" href="../common/#bioimageio.spec.common.FileSource">FileSource</a></span> <span class="o">|</span> <span class="n"><span title="bioimageio.spec._internal.io.ZarrSource">ZarrSource</span></span>
+</code></pre></div>          </div>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">interprete_file_source</span><span class="p">(</span>
     <span class="n"><span title="bioimageio.spec.utils.interprete_file_source(file_source)">file_source</span></span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="n"><span title="pydantic">pydantic</span></span><span class="o">.</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AnyUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.AnyUrl">AnyUrl</a></span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" href="../common/#bioimageio.spec.common.FileSource">FileSource</a></span>
+    <span class="n"><span title="bioimageio.spec.utils.interprete_file_source(allow_zarr)">allow_zarr</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" href="../common/#bioimageio.spec.common.FileSource">FileSource</a></span> <span class="o">|</span> <span class="n"><span title="bioimageio.spec._internal.io.ZarrSource">ZarrSource</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2951,19 +2962,43 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">664</span>
-<span class="normal">665</span>
-<span class="normal">666</span>
-<span class="normal">667</span>
-<span class="normal">668</span>
-<span class="normal">669</span>
-<span class="normal">670</span>
-<span class="normal">671</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">interprete_file_source</span><span class="p">(</span>
-    <span class="n">file_source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">AnyUrl</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileSource</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">679</span>
+<span class="normal">680</span>
+<span class="normal">681</span>
+<span class="normal">682</span>
+<span class="normal">683</span>
+<span class="normal">684</span>
+<span class="normal">685</span>
+<span class="normal">686</span>
+<span class="normal">687</span>
+<span class="normal">688</span>
+<span class="normal">689</span>
+<span class="normal">690</span>
+<span class="normal">691</span>
+<span class="normal">692</span>
+<span class="normal">693</span>
+<span class="normal">694</span>
+<span class="normal">695</span>
+<span class="normal">696</span>
+<span class="normal">697</span>
+<span class="normal">698</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">interprete_file_source</span><span class="p">(</span>
+    <span class="n">file_source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">AnyUrl</span><span class="p">,</span> <span class="n">allow_zarr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileSource</span> <span class="o">|</span> <span class="n">ZarrSource</span><span class="p">:</span>
     <span class="n">file_source</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">file_source</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">perform_io_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="n">strict</span> <span class="o">=</span> <span class="n">_file_source_adapter</span><span class="o">.</span><span class="n">validate_python</span><span class="p">(</span><span class="n">file_source</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">strict</span> <span class="o">=</span> <span class="n">_file_source_adapter</span><span class="o">.</span><span class="n">validate_python</span><span class="p">(</span><span class="n">file_source</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">allow_zarr</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">strict</span> <span class="o">=</span> <span class="n">_zarr_source_adapter</span><span class="o">.</span><span class="n">validate_python</span><span class="p">(</span><span class="n">file_source</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e2</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">ExceptionGroup</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Could not interpret </span><span class="si">{</span><span class="n">file_source</span><span class="si">}</span><span class="s2"> as a file source or zarr source."</span><span class="p">,</span>
+                        <span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">),</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span>
 
     <span class="k">return</span> <span class="n">strict</span>
 </code></pre></div></td></tr></table></div>
@@ -2989,12 +3024,12 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">412</span>
-<span class="normal">413</span>
-<span class="normal">414</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">414</span>
 <span class="normal">415</span>
 <span class="normal">416</span>
-<span class="normal">417</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_valid_bioimageio_yaml_name</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="n">FileName</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">is_valid_bioimageio_yaml_name</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="n">FileName</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">bioimageio_name</span> <span class="ow">in</span> <span class="n">ALL_BIOIMAGEIO_YAML_NAMES</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">file_name</span> <span class="o">==</span> <span class="n">bioimageio_name</span> <span class="ow">or</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"."</span> <span class="o">+</span> <span class="n">bioimageio_name</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
