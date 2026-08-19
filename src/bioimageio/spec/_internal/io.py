@@ -23,6 +23,7 @@ from typing import (
     Generic,
     Iterable,
     List,
+    Literal,
     Mapping,
     Sequence,
     Tuple,
@@ -36,6 +37,7 @@ from zipfile import ZipFile
 
 import httpx
 import pydantic
+from exceptiongroup import ExceptionGroup
 from genericache import NoopCache
 from genericache.digest import ContentDigest, UrlDigest
 from pydantic import (
@@ -659,14 +661,49 @@ class HashKwargs(TypedDict):
 
 
 _file_source_adapter: TypeAdapter[FileSource] = TypeAdapter(FileSource)
+_zarr_source_adapter: TypeAdapter[ZarrSource] = TypeAdapter(ZarrSource)
+
+
+@overload
+def interprete_file_source(
+    file_source: str | pydantic.AnyUrl, allow_zarr: Literal[False] = False
+) -> FileSource: ...
+
+
+@overload
+def interprete_file_source(
+    file_source: str | pydantic.AnyUrl, allow_zarr: Literal[True] = True
+) -> FileSource | ZarrSource: ...
 
 
 def interprete_file_source(
-    file_source: str | pydantic.AnyUrl,
-) -> FileSource:
+    file_source: str | pydantic.AnyUrl, allow_zarr: bool = False
+) -> FileSource | ZarrSource:
     file_source = str(file_source)
     with get_validation_context().replace(perform_io_checks=False):
-        strict = _file_source_adapter.validate_python(file_source)
+        try:
+            strict = _file_source_adapter.validate_python(file_source)
+        except Exception as e1:
+            if allow_zarr:
+                try:
+                    strict = _zarr_source_adapter.validate_python(file_source)
+                except Exception as e2:
+                    raise ExceptionGroup(
+                        f"Could not interpret {file_source} as a file source or zarr source.",
+                        (e1, e2),
+                    )
+            else:
+                raise
+
+    return strict
+
+
+def interprete_zarr_source(
+    zarr_source: str | pydantic.AnyUrl,
+) -> ZarrSource:
+    zarr_source = str(zarr_source)
+    with get_validation_context().replace(perform_io_checks=False):
+        strict = _zarr_source_adapter.validate_python(zarr_source)
 
     return strict
 
