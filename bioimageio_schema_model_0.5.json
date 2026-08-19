@@ -5573,7 +5573,9 @@
           "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
           "examples": [
             [
-              "cover.png"
+              {
+                "source": "cover.png"
+              }
             ]
           ],
           "items": {
@@ -7190,7 +7192,9 @@
       "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
       "examples": [
         [
-          "cover.png"
+          {
+            "source": "cover.png"
+          }
         ]
       ],
       "items": {
