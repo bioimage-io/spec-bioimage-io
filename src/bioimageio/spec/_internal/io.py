@@ -292,7 +292,7 @@ RelativeZarrPath = Annotated[
     WithSuffix(".zarr", case_sensitive=True),
 ]
 
-ZarrUrl = Annotated[
+ZarrUrl: TypeAlias = Annotated[
     Union[RootHttpUrl, FtpUrl],
     pydantic.Field(title="ZarrUrl"),
     WithSuffix(".zarr", case_sensitive=True, allow_any_parent_suffix=True),
@@ -535,7 +535,7 @@ IncompleteDescrView = Mapping[str, IncompleteDescrInnerView]
 """A non-editable incomplete resource description --- YAML mappings and Node instances mixed."""
 
 
-BioimageioYamlSource = Union[
+BioimageioYamlSource: TypeAlias = Union[
     PermissiveFileSource, ZipFile, BioimageioYamlContent, BioimageioYamlContentView
 ]
 
