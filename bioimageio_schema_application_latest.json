@@ -229,7 +229,7 @@
             }
           ],
           "description": "File source",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -1369,20 +1369,25 @@
     "source": {
       "anyOf": [
         {
-          "description": "A URL with the HTTP or HTTPS scheme.",
-          "format": "uri",
-          "maxLength": 2083,
-          "minLength": 1,
-          "title": "HttpUrl",
-          "type": "string"
-        },
-        {
-          "$ref": "#/$defs/RelativeFilePath"
-        },
-        {
-          "format": "file-path",
-          "title": "FilePath",
-          "type": "string"
+          "anyOf": [
+            {
+              "description": "A URL with the HTTP or HTTPS scheme.",
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "title": "HttpUrl",
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/RelativeFilePath"
+            },
+            {
+              "format": "file-path",
+              "title": "FilePath",
+              "type": "string"
+            }
+          ],
+          "title": "FileSource"
         },
         {
           "type": "null"

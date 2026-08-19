@@ -23,7 +23,7 @@
             }
           ],
           "description": "Architecture source file",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -125,7 +125,8 @@
                 "title": "FilePath",
                 "type": "string"
               }
-            ]
+            ],
+            "title": "FileSource"
           },
           "title": "Files",
           "type": "array"
@@ -625,7 +626,7 @@
             }
           ],
           "description": "Python source file (included when packaging the model).",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -997,7 +998,7 @@
             }
           ],
           "description": "File source",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -1570,7 +1571,7 @@
             }
           ],
           "description": "Source of the weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -1671,7 +1672,7 @@
             }
           ],
           "description": "Source of the .keras weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -1941,7 +1942,7 @@
             }
           ],
           "description": "Source of the weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -2301,7 +2302,7 @@
             }
           ],
           "description": "Source of the weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -3476,7 +3477,7 @@
             }
           ],
           "description": "The multi-file weights.\nAll required files/folders should be a zip archive.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -3577,7 +3578,7 @@
             }
           ],
           "description": "The multi-file weights.\nAll required files/folders should be a zip archive.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -3987,7 +3988,7 @@
             }
           ],
           "description": "Source of the weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -4472,7 +4473,8 @@
                 "title": "FilePath",
                 "type": "string"
               }
-            ]
+            ],
+            "title": "FileSource"
           },
           "title": "Covers",
           "type": "array"
@@ -4587,20 +4589,25 @@
               "type": "string"
             },
             {
-              "description": "A URL with the HTTP or HTTPS scheme.",
-              "format": "uri",
-              "maxLength": 2083,
-              "minLength": 1,
-              "title": "HttpUrl",
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/RelativeFilePath"
-            },
-            {
-              "format": "file-path",
-              "title": "FilePath",
-              "type": "string"
+              "anyOf": [
+                {
+                  "description": "A URL with the HTTP or HTTPS scheme.",
+                  "format": "uri",
+                  "maxLength": 2083,
+                  "minLength": 1,
+                  "title": "HttpUrl",
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/$defs/RelativeFilePath"
+                },
+                {
+                  "format": "file-path",
+                  "title": "FilePath",
+                  "type": "string"
+                }
+              ],
+              "title": "FileSource"
             },
             {
               "type": "null"
@@ -4648,20 +4655,25 @@
         "rdf_source": {
           "anyOf": [
             {
-              "description": "A URL with the HTTP or HTTPS scheme.",
-              "format": "uri",
-              "maxLength": 2083,
-              "minLength": 1,
-              "title": "HttpUrl",
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/RelativeFilePath"
-            },
-            {
-              "format": "file-path",
-              "title": "FilePath",
-              "type": "string"
+              "anyOf": [
+                {
+                  "description": "A URL with the HTTP or HTTPS scheme.",
+                  "format": "uri",
+                  "maxLength": 2083,
+                  "minLength": 1,
+                  "title": "HttpUrl",
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/$defs/RelativeFilePath"
+                },
+                {
+                  "format": "file-path",
+                  "title": "FilePath",
+                  "type": "string"
+                }
+              ],
+              "title": "FileSource"
             },
             {
               "type": "null"
@@ -4730,20 +4742,25 @@
         "documentation": {
           "anyOf": [
             {
-              "description": "A URL with the HTTP or HTTPS scheme.",
-              "format": "uri",
-              "maxLength": 2083,
-              "minLength": 1,
-              "title": "HttpUrl",
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/RelativeFilePath"
-            },
-            {
-              "format": "file-path",
-              "title": "FilePath",
-              "type": "string"
+              "anyOf": [
+                {
+                  "description": "A URL with the HTTP or HTTPS scheme.",
+                  "format": "uri",
+                  "maxLength": 2083,
+                  "minLength": 1,
+                  "title": "HttpUrl",
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/$defs/RelativeFilePath"
+                },
+                {
+                  "format": "file-path",
+                  "title": "FilePath",
+                  "type": "string"
+                }
+              ],
+              "title": "FileSource"
             },
             {
               "type": "null"

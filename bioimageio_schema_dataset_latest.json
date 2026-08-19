@@ -229,7 +229,7 @@
             }
           ],
           "description": "File source",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
