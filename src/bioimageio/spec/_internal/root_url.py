@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from abc import ABC
 from pathlib import PurePosixPath
-from typing import Any, ClassVar, Iterable
+from typing import Any, ClassVar, Generic, Iterable, TypeVar
 from urllib.parse import urlsplit, urlunsplit
 
 import pydantic
@@ -9,12 +10,14 @@ from pydantic import RootModel
 
 from .validated_string import ValidatedString
 
+ValidatedType = TypeVar("ValidatedType", pydantic.HttpUrl, pydantic.FtpUrl)
 
-class RootHttpUrl(ValidatedString):
+
+class _RootUrl(ValidatedString, ABC, Generic[ValidatedType]):
     """An untested HTTP URL, possibly a 'URL folder' or an invalid HTTP URL"""
 
-    root_model: ClassVar[type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
-    _validated: pydantic.HttpUrl
+    root_model: ClassVar[type[RootModel[Any]]]
+    _validated: ValidatedType
 
     def absolute(self):
         """analog to `absolute` method of pathlib."""
@@ -85,3 +88,17 @@ class RootHttpUrl(ValidatedString):
                 )
             )
         )
+
+
+class RootHttpUrl(_RootUrl[pydantic.HttpUrl]):
+    """An untested HTTP URL, possibly a 'URL folder'"""
+
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
+    _validated: pydantic.HttpUrl
+
+
+class FtpUrl(_RootUrl[pydantic.FtpUrl]):
+    """An untested FTP URL"""
+
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[pydantic.FtpUrl]
+    _validated: pydantic.FtpUrl

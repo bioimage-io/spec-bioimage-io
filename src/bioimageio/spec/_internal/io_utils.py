@@ -13,6 +13,7 @@ from zipfile import ZipFile
 
 import httpx
 import numpy
+import pydantic
 from loguru import logger
 from numpy.typing import NDArray
 from pydantic import BaseModel, FilePath, NewPath, RootModel
@@ -178,8 +179,10 @@ def open_bioimageio_yaml(
         elif isinstance(source, (Path, str)) and (source_dir := Path(source)).is_dir():
             # open bioimageio yaml from a folder
             src = source_dir / find_bioimageio_yaml_file_name(source_dir)
-        else:
+        elif isinstance(source, (str, pydantic.AnyUrl)):
             src = interprete_file_source(source)
+        else:
+            src = source
 
         reader = get_reader(src, **kwargs)
 

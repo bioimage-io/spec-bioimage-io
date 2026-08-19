@@ -39,7 +39,6 @@ import pydantic
 from genericache import NoopCache
 from genericache.digest import ContentDigest, UrlDigest
 from pydantic import (
-    AnyUrl,
     DirectoryPath,
     Field,
     GetCoreSchemaHandler,
@@ -79,7 +78,7 @@ from .io_basics import (
 )
 from .node import Node
 from .progress import ProgressbarLike
-from .root_url import RootHttpUrl
+from .root_url import FtpUrl, RootHttpUrl
 from .type_guards import is_dict, is_list, is_mapping, is_sequence
 from .url import HttpUrl
 from .utils import SLOTS
@@ -122,6 +121,10 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
     @property
     def path(self) -> PurePath:
         return self.root
+
+    @property
+    def suffix(self):
+        return self.root.suffix
 
     def absolute(  # method not property analog to `pathlib.Path.absolute()`
         self,
@@ -214,7 +217,7 @@ class RelativeFilePath(
         super().model_post_init(__context)
 
     def get_absolute(
-        self, root: RootHttpUrl | Path | AnyUrl | ZipFile
+        self, root: RootHttpUrl | Path | pydantic.AnyUrl | ZipFile
     ) -> AbsoluteFilePath | HttpUrl | ZipPath:
         absolute = self._get_absolute_impl(root)
         if (
@@ -228,15 +231,15 @@ class RelativeFilePath(
         return absolute
 
     @property
-    def suffix(self):
-        return self.root.suffix
+    def parent(self) -> RelativeDirectory:
+        return RelativeDirectory(self.root.parent)
 
 
 class RelativeDirectory(
     RelativePathBase[Union[AbsoluteDirectory, HttpUrl, ZipPath]], frozen=True
 ):
     def get_absolute(
-        self, root: RootHttpUrl | Path | AnyUrl | ZipFile
+        self, root: RootHttpUrl | Path | pydantic.AnyUrl | ZipFile
     ) -> AbsoluteDirectory | HttpUrl | ZipPath:
         absolute = self._get_absolute_impl(root)
         if (
@@ -248,10 +251,60 @@ class RelativeDirectory(
 
         return absolute
 
+    @property
+    def parent(self) -> RelativeDirectory:
+        return RelativeDirectory(self.root.parent)
 
-FileSource = Annotated[
+
+@dataclass(frozen=True, **SLOTS)
+class WithSuffix:
+    suffix: LiteralString | tuple[LiteralString, ...]
+    case_sensitive: bool
+    allow_any_parent_suffix: bool = False
+    """Considers the suffix of any parent directory as well, e.g. for `foo.zarr/bar` or `foo.zarr/bar/buz`"""
+
+    def __get_pydantic_core_schema__(
+        self, source: type[Any], handler: GetCoreSchemaHandler
+    ):
+        if not self.suffix:
+            raise ValueError("suffix may not be empty")
+
+        schema = handler(source)
+        return core_schema.no_info_after_validator_function(
+            self.validate,
+            schema,
+        )
+
+    def validate(self, value: FileSource | FileDescr) -> FileSource | FileDescr:
+        return validate_suffix(value, self.suffix, case_sensitive=self.case_sensitive)
+
+
+ZarrPath = Annotated[
+    pydantic.DirectoryPath,
+    pydantic.Field(title="ZarrPath"),
+    WithSuffix(".zarr", case_sensitive=True),
+]
+RelativeZarrPath = Annotated[
+    RelativeDirectory,
+    pydantic.Field(title="RelativeZarrPath"),
+    WithSuffix(".zarr", case_sensitive=True),
+]
+
+ZarrUrl = Annotated[
+    Union[RootHttpUrl, FtpUrl],
+    pydantic.Field(title="ZarrUrl"),
+    WithSuffix(".zarr", case_sensitive=True, allow_any_parent_suffix=True),
+]
+"""An untested HTTP/FTP URL to a zarr (sub) directory"""
+
+
+FileSource: TypeAlias = Annotated[
     Union[HttpUrl, RelativeFilePath, FilePath],
-    Field(union_mode="left_to_right"),
+    Field(title="FileSource", union_mode="left_to_right"),
+]
+ZarrSource: TypeAlias = Annotated[
+    Union[ZarrUrl, RelativeZarrPath, ZarrPath],
+    Field(title="ZarrSource", union_mode="left_to_right"),
 ]
 
 
@@ -340,27 +393,6 @@ path_or_url_adapter: TypeAdapter[FilePath | DirectoryPath | HttpUrl] = TypeAdapt
 )
 
 
-@dataclass(frozen=True, **SLOTS)
-class WithSuffix:
-    suffix: LiteralString | tuple[LiteralString, ...]
-    case_sensitive: bool
-
-    def __get_pydantic_core_schema__(
-        self, source: type[Any], handler: GetCoreSchemaHandler
-    ):
-        if not self.suffix:
-            raise ValueError("suffix may not be empty")
-
-        schema = handler(source)
-        return core_schema.no_info_after_validator_function(
-            self.validate,
-            schema,
-        )
-
-    def validate(self, value: FileSource | FileDescr) -> FileSource | FileDescr:
-        return validate_suffix(value, self.suffix, case_sensitive=self.case_sensitive)
-
-
 def wo_special_file_name(src: F) -> F:
     if has_valid_bioimageio_yaml_name(src):
         raise ValueError(
@@ -371,7 +403,9 @@ def wo_special_file_name(src: F) -> F:
     return src
 
 
-def has_valid_bioimageio_yaml_name(src: FileSource | FileDescr) -> bool:
+def has_valid_bioimageio_yaml_name(
+    src: ZarrSource | FileSource | FileDescr,
+) -> bool:
     return is_valid_bioimageio_yaml_name(extract_file_name(src))
 
 
@@ -545,6 +579,7 @@ def _deepcopy_incomplete_descr_impl(
             Path,
             PurePath,
             RelativeFilePath,
+            RelativeDirectory,
             Version,
             _date,
             _datetime,
@@ -623,37 +658,15 @@ class HashKwargs(TypedDict):
     sha256: NotRequired[Sha256 | None]
 
 
-_file_source_adapter: TypeAdapter[HttpUrl | RelativeFilePath | FilePath] = TypeAdapter(
-    FileSource
-)
+_file_source_adapter: TypeAdapter[FileSource] = TypeAdapter(FileSource)
 
 
 def interprete_file_source(
-    file_source: HttpUrl | RelativeFilePath | Path | str | pydantic.HttpUrl,
-) -> HttpUrl | RelativeFilePath | Path:
-    if isinstance(file_source, Path):
-        if (
-            file_source.is_dir()
-            and not file_source.name.endswith(".zarr")
-            and not any(p.name.endswith(".zarr") for p in file_source.parents)
-        ):
-            raise FileNotFoundError(
-                f"{file_source} is a directory, but expected a file (or a '*.zarr' (sub)directory)."
-            )
-        return file_source
-
-    if isinstance(file_source, HttpUrl):
-        return file_source
-
-    if isinstance(file_source, pydantic.AnyUrl):
-        file_source = str(file_source)
-
+    file_source: str | pydantic.AnyUrl,
+) -> FileSource:
+    file_source = str(file_source)
     with get_validation_context().replace(perform_io_checks=False):
         strict = _file_source_adapter.validate_python(file_source)
-        if isinstance(strict, Path) and strict.is_dir():
-            raise FileNotFoundError(
-                f"{strict} is a directory, but expected a file (or a '*.zarr' (sub)directory)."
-            )
 
     return strict
 
@@ -738,11 +751,18 @@ def get_reader(
     elif isinstance(source, str):
         source = interprete_file_source(source)
 
-    if isinstance(source, RelativeFilePath):
+    if isinstance(source, RelativeDirectory):
+        raise ValueError(f"{source} is not a file source, but a directory")
+    elif isinstance(source, RelativeFilePath):
         source = source.absolute()
-    elif isinstance(source, pydantic.AnyUrl):
+    elif isinstance(source, (pydantic.AnyUrl, RootHttpUrl)):
         with get_validation_context().replace(perform_io_checks=False):
             source = HttpUrl(source)
+
+    if isinstance(source, FtpUrl):
+        raise NotImplementedError(
+            "FTP URLs are not supported yet. Please use HTTP(S) URLs instead."
+        )
 
     if isinstance(source, HttpUrl):
         return _open_url(source, progressbar=progressbar, **kwargs)
@@ -905,19 +925,14 @@ def _fetch_url(
 
 
 def extract_file_name(
-    src: pydantic.HttpUrl
-    | RootHttpUrl
-    | PurePath
-    | RelativeFilePath
-    | ZipPath
-    | FileDescr,
+    src: ZarrSource | FileSource | FileDescr | ZipPath,
 ) -> FileName:
     if isinstance(src, FileDescr):
         src = src.source
 
     if isinstance(src, ZipPath):
         return src.name or src.root.filename or "bioimageio.zip"
-    elif isinstance(src, RelativeFilePath):
+    elif isinstance(src, (RelativeFilePath, RelativeDirectory)):
         return src.path.name
     elif isinstance(src, PurePath):
         return src.name
@@ -983,10 +998,16 @@ def _extract_file_descrs_impl(
             _extract_file_descrs_impl(v, collected)
 
 
-F = TypeVar("F", bound=Union[FileSource, FileDescr])
+F = TypeVar("F", bound=Union[ZarrSource, FileSource, FileDescr])
 
 
-def validate_suffix(value: F, suffix: str | Sequence[str], case_sensitive: bool) -> F:
+def validate_suffix(
+    value: F,
+    suffix: str | Sequence[str],
+    *,
+    case_sensitive: bool,
+    allow_any_parent_suffix: bool = False,
+) -> F:
     """check final suffix"""
     if isinstance(suffix, str):
         suffixes = [suffix]
@@ -1000,10 +1021,12 @@ def validate_suffix(value: F, suffix: str | Sequence[str], case_sensitive: bool)
     o_value = value
     if isinstance(value, FileDescr):
         strict = value.source
-    else:
+    elif isinstance(value, (str, pydantic.AnyUrl)):
         strict = interprete_file_source(value)
+    else:
+        strict = value
 
-    if isinstance(strict, (HttpUrl, AnyUrl)):
+    if isinstance(strict, (HttpUrl, pydantic.AnyUrl, RootHttpUrl, FtpUrl)):
         if strict.path is None or "." not in (path := strict.path):
             actual_suffixes = []
         else:
@@ -1019,7 +1042,7 @@ def validate_suffix(value: F, suffix: str | Sequence[str], case_sensitive: bool)
 
     elif isinstance(strict, PurePath):
         actual_suffixes = strict.suffixes
-    elif isinstance(strict, RelativeFilePath):
+    elif isinstance(strict, (RelativeFilePath, RelativeDirectory)):
         actual_suffixes = strict.path.suffixes
     else:
         assert_never(strict)
@@ -1035,6 +1058,19 @@ def validate_suffix(value: F, suffix: str | Sequence[str], case_sensitive: bool)
         or not case_sensitive
         and actual_suffix.lower() not in [s.lower() for s in suffixes]
     ):
+        if allow_any_parent_suffix and strict != strict.parent:
+            try:
+                _ = validate_suffix(
+                    strict.parent,
+                    suffix,
+                    case_sensitive=case_sensitive,
+                    allow_any_parent_suffix=allow_any_parent_suffix,
+                )
+            except ValueError:
+                pass
+            else:
+                return o_value
+
         if len(suffixes) == 1:
             raise ValueError(f"Expected suffix {suffixes[0]}, but got {actual_suffix}")
         else:
@@ -1060,6 +1096,10 @@ def populate_cache(sources: Sequence[FileDescr | LightHttpFileDescr]):
                 continue  # not caching local paths
         elif isinstance(src.source, Path):
             continue  # not caching local paths
+        elif isinstance(src.source, (RootHttpUrl, RelativeDirectory)):
+            continue  # not caching directories
+        elif isinstance(src.source, FtpUrl):
+            continue  # not caching FTP URLs
         else:
             assert_never(src.source)
 
