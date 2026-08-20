@@ -41,11 +41,6 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
         "channel_colors",
         "dependencies",
     },
-    # "models/unet2d_diff_output_shape/bioimageio.yaml": {
-    #     "channel_colors",
-    #     "dependencies",
-    #     "weights",
-    # },
     "models/unet2d_multi_tensor/bioimageio.yaml": {
         "channel_colors",
         "dependencies",
