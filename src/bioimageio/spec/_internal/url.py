@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 from contextlib import nullcontext
-from pathlib import PurePosixPath
-from typing import Any, ClassVar, Optional, Type, Union
+from typing import Any, ClassVar
 
 import httpx
 import pydantic
@@ -15,12 +16,12 @@ from .root_url import RootHttpUrl
 from .validation_context import get_validation_context
 
 
-def _validate_url(url: Union[str, pydantic.HttpUrl]) -> pydantic.HttpUrl:
+def _validate_url(url: str | pydantic.HttpUrl) -> pydantic.HttpUrl:
     return _validate_url_impl(url, request_mode="head", timeout=settings.http_timeout)
 
 
 def _validate_url_impl(
-    url: Union[str, pydantic.HttpUrl],
+    url: str | pydantic.HttpUrl,
     request_mode: Literal["head", "get_stream", "get"],
     timeout: float,
 ) -> pydantic.HttpUrl:
@@ -31,7 +32,7 @@ def _validate_url_impl(
 
     val_url = url
 
-    if url.startswith("http://example.com") or url.startswith("https://example.com"):
+    if url.startswith(("http://example.com", "https://example.com")):
         return pydantic.HttpUrl(url)
 
     if url.startswith("https://colab.research.google.com/github/"):
@@ -88,9 +89,7 @@ def _validate_url_impl(
             msg_context={"error": str(e)},
         )
     else:
-        if status_code == 200:  # ok
-            pass
-        elif status_code in (302, 303):  # found
+        if status_code == 200 or status_code in (302, 303):  # ok
             pass
         elif status_code in (301, 308):
             issue_warning(
@@ -131,16 +130,15 @@ def _validate_url_impl(
 class HttpUrl(RootHttpUrl):
     """A URL with the HTTP or HTTPS scheme."""
 
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
-    _exists: Optional[bool] = None
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
+    _exists: bool | None = None
 
     def _after_validator(self):
-        self = super()._after_validator()
-        context = get_validation_context()
-        if context.perform_io_checks:
-            _ = self.exists()
+        value = super()._after_validator()
+        if get_validation_context().perform_io_checks:
+            _ = value.exists()
 
-        return self
+        return value
 
     def exists(self):
         """True if URL is available"""
@@ -158,10 +156,3 @@ class HttpUrl(RootHttpUrl):
                 self._exists = True
 
         return self._exists
-
-    @property
-    def suffix(self) -> str:
-        if self.path is None:
-            return ""
-        else:
-            return PurePosixPath(self.path).suffix

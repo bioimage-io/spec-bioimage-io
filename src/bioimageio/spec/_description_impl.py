@@ -1,7 +1,9 @@
 """implementation details for building a bioimage.io resource description"""
 
+from __future__ import annotations
+
 import collections.abc
-from typing import Any, Callable, List, Literal, Mapping, Optional, Type, TypeVar, Union
+from typing import Any, Callable, Literal, Mapping, TypeVar
 
 from ._internal.common_nodes import InvalidDescr, ResourceDescrBase
 from ._internal.field_validation import issue_warning
@@ -23,9 +25,9 @@ DISCOVER: Literal["discover"] = "discover"
 def get_rd_class_impl(
     typ: Any,
     format_version: Any,
-    descriptions_map: Mapping[Optional[str], Mapping[str, Type[ResourceDescrT]]],
+    descriptions_map: Mapping[str | None, Mapping[str, type[ResourceDescrT]]],
     fallback_to_latest: bool,
-) -> Type[ResourceDescrT]:
+) -> type[ResourceDescrT]:
     """get the resource description class for the given type and format version"""
     assert None in descriptions_map
     assert all("latest" in version_map for version_map in descriptions_map.values())
@@ -70,12 +72,12 @@ def build_description_impl(
     content: BioimageioYamlContentView,
     /,
     *,
-    context: Optional[ValidationContext] = None,
-    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    get_rd_class: Callable[[Any, Any, bool], Type[ResourceDescrT]],
-) -> Union[ResourceDescrT, InvalidDescr]:
+    context: ValidationContext | None = None,
+    format_version: FormatVersionPlaceholder | str = DISCOVER,
+    get_rd_class: Callable[[Any, Any, bool], type[ResourceDescrT]],
+) -> ResourceDescrT | InvalidDescr:
     context = context or get_validation_context()
-    errors: List[ErrorEntry] = []
+    errors: list[ErrorEntry] = []
     if isinstance(content, collections.abc.Mapping):
         for minimum in ("type", "format_version"):
             if minimum not in content:

@@ -114,7 +114,7 @@ weights:
       kwargs:
         input_channels: 1
         output_channels: 1
-      sha256: 62b976622d0f1ff898fb28577688a14a52f8389fb08943f8e003cfa4fabb56ff
+      sha256: 5eb82517389b4cc63298edaf77b52178898c87f8a3f1398bd0e2f98a2d245089
       source: unet2d_expand_output_shape.py
     authors:
       - affiliation: EMBL Heidelberg

@@ -1,5 +1,7 @@
 """utils to test bioimageio.spec"""
 
+from __future__ import annotations
+
 import os
 from contextlib import nullcontext
 from copy import deepcopy
@@ -9,13 +11,9 @@ from typing import (
     Any,
     Collection,
     ContextManager,
-    Dict,
     Mapping,
-    Optional,
     Protocol,
     Sequence,
-    Type,
-    Union,
 )
 from zipfile import ZipFile
 
@@ -34,7 +32,7 @@ from bioimageio.spec import InvalidDescr, ValidationContext, build_description
 from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.io_utils import open_bioimageio_yaml, read_yaml
 from bioimageio.spec._internal.root_url import RootHttpUrl
-from bioimageio.spec._internal.type_guards import is_kwargs
+from bioimageio.spec._internal.type_guards import is_kwargs, is_mapping, is_sequence
 from bioimageio.spec.application.v0_2 import ApplicationDescr as ApplicationDescr02
 from bioimageio.spec.common import HttpUrl, Sha256
 from bioimageio.spec.dataset.v0_2 import DatasetDescr as DatasetDescr02
@@ -52,10 +50,10 @@ expensive_test = pytest.mark.skipif(
 
 
 def check_node(
-    node_class: Type[Node],
-    kwargs: Union[Dict[str, Any], Node],
+    node_class: type[Node],
+    kwargs: dict[str, Any] | Node,
     *,
-    context: Optional[ValidationContext] = None,
+    context: ValidationContext | None = None,
     expected_dump_json: Any = unset,
     expected_dump_python: Any = unset,
     is_invalid: bool = False,
@@ -64,7 +62,7 @@ def check_node(
         assert expected_dump_json is unset
         assert expected_dump_python is unset
 
-    error_context: "ContextManager[Any]" = (
+    error_context: ContextManager[Any] = (
         pytest.raises(ValidationError) if is_invalid else nullcontext()
     )
     with error_context:
@@ -87,7 +85,7 @@ class DummyNodeBase(Node):
 
 
 def check_type(
-    type_: Union[Any, Type[Any]],
+    type_: Any | type[Any],
     value: Any,
     expected: Any = unset,
     expected_root: Any = unset,
@@ -96,7 +94,7 @@ def check_type(
     is_invalid: bool = False,
 ):
     type_adapter = TypeAdapter(type_)
-    error_context: "ContextManager[Any]" = (
+    error_context: ContextManager[Any] = (
         pytest.raises(ValidationError) if is_invalid else nullcontext()
     )
 
@@ -121,7 +119,7 @@ def check_type(
 
     node = create_model("DummyNode", value=(type_, ...), __base__=DummyNodeBase)
     with error_context:
-        actual_node = node.model_validate(dict(value=value))
+        actual_node = node.model_validate({"value": value})
 
     if expected is not unset:
         assert actual_node.value == expected, (actual_node.value, expected)
@@ -142,15 +140,15 @@ def check_type(
 
 
 def check_bioimageio_yaml(
-    source: Union[Path, HttpUrl],
+    source: Path | HttpUrl,
     /,
     *,
-    sha: Optional[Sha256] = None,
-    root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path(),
+    sha: Sha256 | None = None,
+    root: RootHttpUrl | DirectoryPath | ZipFile = Path(),
     as_latest: bool,
     exclude_fields_from_roundtrip: Collection[str] = set(),
     is_invalid: bool = False,
-    bioimageio_json_schema: Optional[Mapping[Any, Any]],
+    bioimageio_json_schema: Mapping[Any, Any] | None,
     perform_io_checks: bool = True,
 ) -> None:
     opened_yaml = open_bioimageio_yaml(source, sha256=sha)
@@ -191,7 +189,7 @@ def check_bioimageio_yaml(
     if as_latest:
         return
 
-    # check rountrip
+    # check roundtrip
     exclude_from_comp = {
         "format_version",
         "timestamp",
@@ -210,18 +208,30 @@ def check_bioimageio_yaml(
         # these fields may intentionally be manipulated
         exclude_from_comp |= {"version_number", "id_emoji", "id"}
 
-    deserialized = rd.model_dump(
-        mode="json", exclude=exclude_from_comp, exclude_unset=True
-    )
-    expect_back = {k: v for k, v in data.items() if k not in exclude_from_comp}
+    deserialized = rd.model_dump(mode="json", exclude_unset=True)
+    deserialized = _remove_field(deserialized, exclude_from_comp)
+    expect_back = _remove_field(data, exclude_from_comp)
     assert_rdf_dict_equal(
         deserialized, expect_back, f"roundtrip {source}\n", ignore_known_rdf_diffs=True
     )
 
 
+def _remove_field(data: Any, fields: Collection[str], root: str = "") -> Any:
+    if is_mapping(data):
+        return {
+            k: _remove_field(v, fields, root=current_field)
+            for k, v in data.items()
+            if (current_field := f"{root}.{k}" if root else k) not in fields
+        }
+    elif not isinstance(data, str) and is_sequence(data):
+        return [_remove_field(v, fields, root=root) for v in data]
+    else:
+        return data
+
+
 def assert_rdf_dict_equal(
-    actual: Dict[Any, Any],
-    expected: Dict[Any, Any],
+    actual: dict[Any, Any],
+    expected: dict[Any, Any],
     msg: str = "",
     *,
     ignore_known_rdf_diffs: bool = False,

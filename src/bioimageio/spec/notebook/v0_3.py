@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, ClassVar, Literal, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, ClassVar, Literal
 
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io_basics import Sha256 as Sha256
@@ -36,11 +38,11 @@ class NotebookDescr(GenericDescrBase):
     else:
         type: Literal["notebook"]
 
-    id: Optional[NotebookId] = None
+    id: NotebookId | None = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 
-    parent: Optional[NotebookId] = None
+    parent: NotebookId | None = None
     """The description from which this one is derived"""
 
     source: NotebookSource

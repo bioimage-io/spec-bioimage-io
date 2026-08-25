@@ -1,4 +1,4 @@
-from typing import Type
+from __future__ import annotations
 
 import httpx
 import pytest
@@ -63,7 +63,7 @@ def test_httpurl_mock_invalid(text: str, status_code: int, respx_mock: MockRoute
         httpx.InvalidURL,
     ],
 )
-def test_httpurl_mock_exc(exc: Type[Exception], respx_mock: MockRouter):
+def test_httpurl_mock_exc(exc: type[Exception], respx_mock: MockRouter):
     from bioimageio.spec._internal.url import HttpUrl
 
     url = "https://mock_example.com"

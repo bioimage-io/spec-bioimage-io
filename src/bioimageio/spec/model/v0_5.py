@@ -24,9 +24,6 @@ from typing import (
     NamedTuple,
     Optional,
     Sequence,
-    Set,
-    Tuple,
-    Type,
     TypeVar,
     Union,
     cast,
@@ -78,7 +75,7 @@ from .._internal.io_packaging import (
     FileDescr_package,
     package_file_descr_serializer,
 )
-from .._internal.io_utils import load_array
+from .._internal.io_utils import load_array, open_bioimageio_yaml
 from .._internal.node_converter import Converter
 from .._internal.type_guards import is_dict, is_sequence
 from .._internal.types import (
@@ -88,6 +85,8 @@ from .._internal.types import (
     LowerCaseIdentifierAnno,
     MismatchedElementsPerMillion,
     RelativeTolerance,
+    validate_identifier,
+    validate_is_not_keyword,
 )
 from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
@@ -136,6 +135,7 @@ from .v0_4 import ClipDescr as _ClipDescr_v0_4
 from .v0_4 import ImplicitOutputShape as _ImplicitOutputShape_v0_4
 from .v0_4 import InputTensorDescr as _InputTensorDescr_v0_4
 from .v0_4 import KnownRunMode as KnownRunMode
+from .v0_4 import ModelDescr as _ModelDescr04
 from .v0_4 import ModelDescr as _ModelDescr_v0_4
 from .v0_4 import OutputTensorDescr as _OutputTensorDescr_v0_4
 from .v0_4 import ParameterizedInputShape as _ParameterizedInputShape_v0_4
@@ -224,6 +224,7 @@ _AXIS_ID_MAP = {
     "t": "time",
     "i": "index",
     "c": "channel",
+    "s": "channel",
 }
 
 WeightsFormat = Literal[
@@ -238,14 +239,14 @@ WeightsFormat = Literal[
 
 
 class TensorId(LowerCaseIdentifier):
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[
         Annotated[LowerCaseIdentifierAnno, MaxLen(32)]
     ]
 
 
 def _normalize_axis_id(a: str):
-    a = str(a)
-    normalized = _AXIS_ID_MAP.get(a, a)
+    b = str(a).lower()
+    normalized = _AXIS_ID_MAP.get(b, b)
     if a != normalized:
         logger.opt(depth=3).warning(
             "Normalized axis id from '{}' to '{}'.", a, normalized
@@ -254,11 +255,13 @@ def _normalize_axis_id(a: str):
 
 
 class AxisId(LowerCaseIdentifier):
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[
         Annotated[
-            LowerCaseIdentifierAnno,
-            MaxLen(16),
+            NotEmpty[str],
             AfterValidator(_normalize_axis_id),
+            MaxLen(16),
+            AfterValidator(validate_identifier),
+            AfterValidator(validate_is_not_keyword),
         ]
     ]
 
@@ -316,7 +319,7 @@ class ParameterizedSize(Node):
       This allows to adjust the axis size more generically.
     """
 
-    N: ClassVar[Type[int]] = ParameterizedSize_N
+    N: ClassVar[type[int]] = ParameterizedSize_N
     """Positive integer to parameterize this axis"""
 
     min: Annotated[int, Gt(0)]
@@ -345,7 +348,7 @@ class ParameterizedSize(Node):
 
 class DataDependentSize(Node):
     min: Annotated[int, Gt(0)] = 1
-    max: Annotated[Optional[int], Gt(1)] = None
+    max: Annotated[int | None, Gt(1)] = None
 
     @model_validator(mode="after")
     def _validate_max_gt_min(self):
@@ -405,30 +408,26 @@ class SizeReference(Node):
 
     def get_size(
         self,
-        axis: Union[
-            ChannelAxis,
-            IndexInputAxis,
-            IndexOutputAxis,
-            TimeInputAxis,
-            SpaceInputAxis,
-            TimeOutputAxis,
-            TimeOutputAxisWithHalo,
-            SpaceOutputAxis,
-            SpaceOutputAxisWithHalo,
-        ],
-        ref_axis: Union[
-            ChannelAxis,
-            IndexInputAxis,
-            IndexOutputAxis,
-            TimeInputAxis,
-            SpaceInputAxis,
-            TimeOutputAxis,
-            TimeOutputAxisWithHalo,
-            SpaceOutputAxis,
-            SpaceOutputAxisWithHalo,
-        ],
+        axis: ChannelAxis
+        | IndexInputAxis
+        | IndexOutputAxis
+        | TimeInputAxis
+        | SpaceInputAxis
+        | TimeOutputAxis
+        | TimeOutputAxisWithHalo
+        | SpaceOutputAxis
+        | SpaceOutputAxisWithHalo,
+        ref_axis: ChannelAxis
+        | IndexInputAxis
+        | IndexOutputAxis
+        | TimeInputAxis
+        | SpaceInputAxis
+        | TimeOutputAxis
+        | TimeOutputAxisWithHalo
+        | SpaceOutputAxis
+        | SpaceOutputAxisWithHalo,
         n: ParameterizedSize_N = 0,
-        ref_size: Optional[int] = None,
+        ref_size: int | None = None,
     ):
         """Compute the concrete size for a given axis and its reference axis.
 
@@ -475,17 +474,15 @@ class SizeReference(Node):
 
     @staticmethod
     def _get_unit(
-        axis: Union[
-            ChannelAxis,
-            IndexInputAxis,
-            IndexOutputAxis,
-            TimeInputAxis,
-            SpaceInputAxis,
-            TimeOutputAxis,
-            TimeOutputAxisWithHalo,
-            SpaceOutputAxis,
-            SpaceOutputAxisWithHalo,
-        ],
+        axis: ChannelAxis
+        | IndexInputAxis
+        | IndexOutputAxis
+        | TimeInputAxis
+        | SpaceInputAxis
+        | TimeOutputAxis
+        | TimeOutputAxisWithHalo
+        | SpaceOutputAxis
+        | SpaceOutputAxisWithHalo,
     ):
         return axis.unit
 
@@ -506,19 +503,16 @@ class WithHalo(Node):
 
     size: Annotated[
         SizeReference,
-        Field(
-            examples=[
-                10,
-                SizeReference(
-                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
-                ).model_dump(mode="json"),
-            ]
-        ),
+        Field(examples=[{"tensor_id": "t", "axis_id": "a", "offset": 5}]),
     ]
     """reference to another axis with an optional offset (see [SizeReference][])"""
 
 
 BATCH_AXIS_ID = AxisId("batch")
+CHANNEL_AXIS_ID = AxisId("channel")
+DEFAULT_SPACE_AXIS_ID = AxisId("x")
+DEFAULT_INDEX_AXIS_ID = AxisId("index")
+DEFAULT_TIME_AXIS_ID = AxisId("time")
 
 
 class BatchAxis(AxisBase):
@@ -529,7 +523,7 @@ class BatchAxis(AxisBase):
         type: Literal["batch"]
 
     id: Annotated[AxisId, Predicate(_is_batch)] = BATCH_AXIS_ID
-    size: Optional[Literal[1]] = None
+    size: Literal[1] | None = None
     """The batch size may be fixed to 1,
     otherwise (the default) it may be chosen arbitrarily depending on available memory"""
 
@@ -553,9 +547,10 @@ class ChannelAxis(AxisBase):
     else:
         type: Literal["channel"]
 
-    id: NonBatchAxisId = AxisId("channel")
+    id: NonBatchAxisId = CHANNEL_AXIS_ID
 
-    channel_names: NotEmpty[List[str]]
+    channel_names: NotEmpty[list[str]]
+    """Name/label for each channel. The number of channels is given by `len(channel_names)`."""
 
     @property
     def size(self) -> int:
@@ -576,14 +571,12 @@ class ChannelAxis(AxisBase):
 
 class _WithInputAxisSize(Node):
     size: Annotated[
-        Union[Annotated[int, Gt(0)], ParameterizedSize, SizeReference],
+        Annotated[int, Gt(0)] | ParameterizedSize | SizeReference,
         Field(
             examples=[
                 10,
                 ParameterizedSize(min=32, step=16).model_dump(mode="json"),
-                SizeReference(
-                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
-                ).model_dump(mode="json"),
+                {"tensor_id": "t", "axis_id": "a", "offset": 5},
             ]
         ),
     ]
@@ -601,7 +594,7 @@ class IndexAxisBase(AxisBase):
     else:
         type: Literal["index"]
 
-    id: NonBatchAxisId = AxisId("index")
+    id: NonBatchAxisId = DEFAULT_INDEX_AXIS_ID
 
     @property
     def scale(self) -> float:
@@ -623,15 +616,8 @@ class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
 
 class IndexOutputAxis(IndexAxisBase):
     size: Annotated[
-        Union[Annotated[int, Gt(0)], SizeReference, DataDependentSize],
-        Field(
-            examples=[
-                10,
-                SizeReference(
-                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
-                ).model_dump(mode="json"),
-            ]
-        ),
+        Annotated[int, Gt(0)] | SizeReference | DataDependentSize,
+        Field(examples=[10, {"tensor_id": "t", "axis_id": "a", "offset": 5}]),
     ]
     """The size/length of this axis can be specified as
     - fixed integer
@@ -647,8 +633,8 @@ class TimeAxisBase(AxisBase):
     else:
         type: Literal["time"]
 
-    id: NonBatchAxisId = AxisId("time")
-    unit: Optional[TimeUnit] = None
+    id: NonBatchAxisId = DEFAULT_TIME_AXIS_ID
+    unit: TimeUnit | None = None
     scale: Annotated[float, Gt(0)] = 1.0
 
 
@@ -668,8 +654,10 @@ class SpaceAxisBase(AxisBase):
     else:
         type: Literal["space"]
 
-    id: Annotated[NonBatchAxisId, Field(examples=["x", "y", "z"])] = AxisId("x")
-    unit: Optional[SpaceUnit] = None
+    id: Annotated[NonBatchAxisId, Field(examples=["x", "y", "z"])] = (
+        DEFAULT_SPACE_AXIS_ID
+    )
+    unit: SpaceUnit | None = None
     scale: Annotated[float, Gt(0)] = 1.0
 
 
@@ -699,15 +687,8 @@ InputAxis = Annotated[_InputAxisUnion, Discriminator("type")]
 
 class _WithOutputAxisSize(Node):
     size: Annotated[
-        Union[Annotated[int, Gt(0)], SizeReference],
-        Field(
-            examples=[
-                10,
-                SizeReference(
-                    tensor_id=TensorId("t"), axis_id=AxisId("a"), offset=5
-                ).model_dump(mode="json"),
-            ]
-        ),
+        Annotated[int, Gt(0)] | SizeReference,
+        Field(examples=[10, {"tensor_id": "t", "axis_id": "a", "offset": 5}]),
     ]
     """The size/length of this axis can be specified as
     - fixed integer
@@ -827,7 +808,7 @@ class NominalOrOrdinalDataDescr(Node):
     def _validate_values_match_type(
         self,
     ) -> Self:
-        incompatible: List[Any] = []
+        incompatible: list[Any] = []
         for v in self.values:
             if self.type == "bool":
                 if not isinstance(v, bool):
@@ -857,7 +838,7 @@ class NominalOrOrdinalDataDescr(Node):
 
         return self
 
-    unit: Optional[Union[Literal["arbitrary unit"], SiUnit]] = None
+    unit: Literal["arbitrary unit"] | SiUnit | None = None
 
     @property
     def range(self):
@@ -888,36 +869,35 @@ class IntervalOrRatioDataDescr(Node):
             examples=["float32", "float64", "uint8", "uint16"],
         ),
     ] = "float32"
-    range: Tuple[Optional[float], Optional[float]] = (
+    range: tuple[float | None, float | None] = (
         None,
         None,
     )
     """Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
     `None` corresponds to min/max of what can be expressed by **type**."""
-    unit: Union[Literal["arbitrary unit"], SiUnit] = "arbitrary unit"
+    unit: Literal["arbitrary unit"] | SiUnit = "arbitrary unit"
     scale: float = 1.0
     """Scale for data on an interval (or ratio) scale."""
-    offset: Optional[float] = None
+    offset: float | None = None
     """Offset for data on a ratio scale."""
 
     @model_validator(mode="before")
     def _replace_inf(cls, data: Any):
-        if is_dict(data):
-            if "range" in data and is_sequence(data["range"]):
-                forbidden = (
-                    "inf",
-                    "-inf",
-                    ".inf",
-                    "-.inf",
-                    float("inf"),
-                    float("-inf"),
-                )
-                if any(v in forbidden for v in data["range"]):
-                    issue_warning("replaced 'inf' value", value=data["range"])
+        if is_dict(data) and "range" in data and is_sequence(data["range"]):
+            forbidden = (
+                "inf",
+                "-inf",
+                ".inf",
+                "-.inf",
+                float("inf"),
+                float("-inf"),
+            )
+            if any(v in forbidden for v in data["range"]):
+                issue_warning("replaced 'inf' value", value=data["range"])
 
-                data["range"] = tuple(
-                    (None if v in forbidden else v) for v in data["range"]
-                )
+            data["range"] = tuple(
+                (None if v in forbidden else v) for v in data["range"]
+            )
 
         return data
 
@@ -935,7 +915,7 @@ class BinarizeKwargs(KwargsNode):
 class BinarizeAlongAxisKwargs(KwargsNode):
     """key word arguments for [BinarizeDescr][]"""
 
-    threshold: NotEmpty[List[float]]
+    threshold: NotEmpty[list[float]]
     """The fixed threshold values along `axis`"""
 
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
@@ -972,18 +952,18 @@ class BinarizeDescr(NodeWithExplicitlySetFields):
         id: Literal["binarize"] = "binarize"
     else:
         id: Literal["binarize"]
-    kwargs: Union[BinarizeKwargs, BinarizeAlongAxisKwargs]
+    kwargs: BinarizeKwargs | BinarizeAlongAxisKwargs
 
 
 class ClipKwargs(KwargsNode):
     """key word arguments for [ClipDescr][]"""
 
-    min: Optional[float] = None
+    min: float | None = None
     """Minimum value for clipping.
 
     Exclusive with [min_percentile][]
     """
-    min_percentile: Optional[Annotated[float, Interval(ge=0, lt=100)]] = None
+    min_percentile: Annotated[float, Interval(ge=0, lt=100)] | None = None
     """Minimum percentile for clipping.
 
     Exclusive with [min][].
@@ -991,12 +971,12 @@ class ClipKwargs(KwargsNode):
     In range [0, 100).
     """
 
-    max: Optional[float] = None
+    max: float | None = None
     """Maximum value for clipping.
 
     Exclusive with `max_percentile`.
     """
-    max_percentile: Optional[Annotated[float, Interval(gt=1, le=100)]] = None
+    max_percentile: Annotated[float, Interval(gt=1, le=100)] | None = None
     """Maximum percentile for clipping.
 
     Exclusive with `max`.
@@ -1004,9 +984,9 @@ class ClipKwargs(KwargsNode):
     In range (1, 100].
     """
 
-    axes: Annotated[
-        Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
-    ] = None
+    axes: Annotated[Sequence[AxisId] | None, Field(examples=[("batch", "x", "y")])] = (
+        None
+    )
     """The subset of axes to determine percentiles jointly,
 
     i.e. axes to reduce to compute min/max from `min_percentile`/`max_percentile`.
@@ -1161,10 +1141,10 @@ class ScaleLinearAlongAxisKwargs(KwargsNode):
     axis: Annotated[NonBatchAxisId, Field(examples=["channel"])]
     """The axis of gain and offset values."""
 
-    gain: Union[float, NotEmpty[List[float]]] = 1.0
+    gain: float | NotEmpty[list[float]] = 1.0
     """multiplicative factor"""
 
-    offset: Union[float, NotEmpty[List[float]]] = 0.0
+    offset: float | NotEmpty[list[float]] = 0.0
     """additive term"""
 
     @model_validator(mode="after")
@@ -1239,7 +1219,7 @@ class ScaleLinearDescr(NodeWithExplicitlySetFields):
         id: Literal["scale_linear"] = "scale_linear"
     else:
         id: Literal["scale_linear"]
-    kwargs: Union[ScaleLinearKwargs, ScaleLinearAlongAxisKwargs]
+    kwargs: ScaleLinearKwargs | ScaleLinearAlongAxisKwargs
 
 
 class SigmoidDescr(NodeWithExplicitlySetFields):
@@ -1271,7 +1251,7 @@ class SigmoidDescr(NodeWithExplicitlySetFields):
 class SoftmaxKwargs(KwargsNode):
     """key word arguments for [SoftmaxDescr][]"""
 
-    axis: Annotated[NonBatchAxisId, Field(examples=["channel"])] = AxisId("channel")
+    axis: Annotated[NonBatchAxisId, Field(examples=["channel"])] = CHANNEL_AXIS_ID
     """The axis to apply the softmax function along.
     Note:
         Defaults to 'channel' axis
@@ -1319,24 +1299,24 @@ class _StardistPostprocessingKwargsBase(KwargsNode):
 
 
 class StardistPostprocessingKwargs2D(_StardistPostprocessingKwargsBase):
-    grid: Tuple[int, int]
+    grid: tuple[int, int]
     """Grid size of network predictions."""
 
-    b: Union[int, Tuple[Tuple[int, int], Tuple[int, int]]]
+    b: int | tuple[tuple[int, int], tuple[int, int]]
     """Border region in which object probability is set to zero."""
 
 
 class StardistPostprocessingKwargs3D(_StardistPostprocessingKwargsBase):
-    grid: Tuple[int, int, int]
+    grid: tuple[int, int, int]
     """Grid size of network predictions."""
 
-    b: Union[int, Tuple[Tuple[int, int], Tuple[int, int], Tuple[int, int]]]
+    b: int | tuple[tuple[int, int], tuple[int, int], tuple[int, int]]
     """Border region in which object probability is set to zero."""
 
-    anisotropy: Tuple[float, float, float]
+    anisotropy: tuple[float, float, float]
     """Anisotropy factors for 3D star-convex polyhedra, i.e. the physical pixel size along each spatial axis."""
 
-    overlap_label: Optional[int] = None
+    overlap_label: int | None = None
     """Optional label to apply to any area of overlapping predicted objects."""
 
 
@@ -1362,7 +1342,7 @@ class StardistPostprocessingDescr(NodeWithExplicitlySetFields):
     else:
         id: Literal["stardist_postprocessing"]
 
-    kwargs: Union[StardistPostprocessingKwargs2D, StardistPostprocessingKwargs3D]
+    kwargs: StardistPostprocessingKwargs2D | StardistPostprocessingKwargs3D
 
 
 class CellposeFlowDynamicsKwargs(KwargsNode):
@@ -1466,7 +1446,7 @@ class CustomProcessingDescr(NodeWithExplicitlySetFields, FileDescr):
     source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
     """Python source file (included when packaging the model)."""
 
-    kwargs: Dict[str, YamlValue] = Field(
+    kwargs: dict[str, YamlValue] = Field(
         default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
     )
     """Keyword arguments forwarded to the callable (``__init__`` or factory)."""
@@ -1474,7 +1454,7 @@ class CustomProcessingDescr(NodeWithExplicitlySetFields, FileDescr):
     @model_serializer(mode="wrap", when_used="unless-none")
     def _serialize(
         self, nxt: SerializerFunctionWrapHandler, info: SerializationInfo
-    ) -> Dict[str, YamlValue]:
+    ) -> dict[str, YamlValue]:
         return package_file_descr_serializer(self, nxt, info)
 
 
@@ -1491,10 +1471,10 @@ class FixedZeroMeanUnitVarianceKwargs(KwargsNode):
 class FixedZeroMeanUnitVarianceAlongAxisKwargs(KwargsNode):
     """key word arguments for [FixedZeroMeanUnitVarianceDescr][]"""
 
-    mean: NotEmpty[List[float]]
+    mean: NotEmpty[list[float]]
     """The mean value(s) to normalize with."""
 
-    std: NotEmpty[List[Annotated[float, Ge(1e-6)]]]
+    std: NotEmpty[list[Annotated[float, Ge(1e-6)]]]
     """The standard deviation value(s) to normalize with.
     Size must match `mean` values."""
 
@@ -1564,17 +1544,15 @@ class FixedZeroMeanUnitVarianceDescr(NodeWithExplicitlySetFields):
     else:
         id: Literal["fixed_zero_mean_unit_variance"]
 
-    kwargs: Union[
-        FixedZeroMeanUnitVarianceKwargs, FixedZeroMeanUnitVarianceAlongAxisKwargs
-    ]
+    kwargs: FixedZeroMeanUnitVarianceKwargs | FixedZeroMeanUnitVarianceAlongAxisKwargs
 
 
 class ZeroMeanUnitVarianceKwargs(KwargsNode):
     """key word arguments for [ZeroMeanUnitVarianceDescr][]"""
 
-    axes: Annotated[
-        Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
-    ] = None
+    axes: Annotated[Sequence[AxisId] | None, Field(examples=[("batch", "x", "y")])] = (
+        None
+    )
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -1622,9 +1600,9 @@ class ScaleRangeKwargs(KwargsNode):
     normalized values to a range.
     """
 
-    axes: Annotated[
-        Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
-    ] = None
+    axes: Annotated[Sequence[AxisId] | None, Field(examples=[("batch", "x", "y")])] = (
+        None
+    )
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -1645,7 +1623,7 @@ class ScaleRangeKwargs(KwargsNode):
     `out = (tensor - v_lower) / (v_upper - v_lower + eps)`;
     with `v_lower,v_upper` values at the respective percentiles."""
 
-    reference_tensor: Optional[TensorId] = None
+    reference_tensor: TensorId | None = None
     """ID of the unprocessed input tensor to compute the percentiles from.
     Default: The tensor itself.
     """
@@ -1733,9 +1711,9 @@ class ScaleMeanVarianceKwargs(KwargsNode):
     reference_tensor: TensorId
     """ID of unprocessed input tensor to match."""
 
-    axes: Annotated[
-        Optional[Sequence[AxisId]], Field(examples=[("batch", "x", "y")])
-    ] = None
+    axes: Annotated[Sequence[AxisId] | None, Field(examples=[("batch", "x", "y")])] = (
+        None
+    )
     """The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
     For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
     resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -1819,8 +1797,8 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
                 f"Only one batch axis (per tensor) allowed, but got {batch_axes}"
             )
 
-        seen_ids: Set[AxisId] = set()
-        duplicate_axes_ids: Set[AxisId] = set()
+        seen_ids: set[AxisId] = set()
+        duplicate_axes_ids: set[AxisId] = set()
         for a in axes:
             (duplicate_axes_ids if a.id in seen_ids else seen_ids).add(a.id)
 
@@ -1829,14 +1807,14 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
 
         return axes
 
-    test_tensor: FAIR[Optional[FileDescr_package]] = None
+    test_tensor: FAIR[FileDescr_package | None] = None
     """An example tensor to use for testing.
     Using the model with the test input tensors is expected to yield the test output tensors.
     Each test tensor has be a an ndarray in the
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
     The file extension must be '.npy'."""
 
-    sample_tensor: FAIR[Optional[FileDescr_package]] = None
+    sample_tensor: FAIR[FileDescr_package | None] = None
     """A sample tensor to illustrate a possible input/output for the model,
     The sample image primarily serves to inform a human user about an example use case
     and is typically stored as .hdf5, .png or .tiff.
@@ -1883,7 +1861,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
 
         return self
 
-    data: Union[TensorDataDescr, NotEmpty[Sequence[TensorDataDescr]]] = (
+    data: TensorDataDescr | NotEmpty[Sequence[TensorDataDescr]] = (
         IntervalOrRatioDataDescr()
     )
     """Description of the tensor's data values, optionally per channel.
@@ -1914,8 +1892,8 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
     @field_validator("data", mode="after")
     @classmethod
     def _check_data_type_across_channels(
-        cls, value: Union[TensorDataDescr, NotEmpty[Sequence[TensorDataDescr]]]
-    ) -> Union[TensorDataDescr, NotEmpty[Sequence[TensorDataDescr]]]:
+        cls, value: TensorDataDescr | NotEmpty[Sequence[TensorDataDescr]]
+    ) -> TensorDataDescr | NotEmpty[Sequence[TensorDataDescr]]:
         if not isinstance(value, list):
             return value
 
@@ -1949,7 +1927,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
 
         return self
 
-    def get_axis_sizes_for_array(self, array: NDArray[Any]) -> Dict[AxisId, int]:
+    def get_axis_sizes_for_array(self, array: NDArray[Any]) -> dict[AxisId, int]:
         if len(array.shape) != len(self.axes):
             raise ValueError(
                 f"Dimension mismatch: array shape {array.shape} (#{len(array.shape)})"
@@ -1960,7 +1938,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
 
 class ConstantPadding(Node):
     mode: Literal["constant"] = "constant"
-    value: Union[int, float] = 0
+    value: int | float = 0
 
 
 class EdgePadding(Node):
@@ -1978,15 +1956,60 @@ class SymmetricPadding(Node):
 Padding = Union[ConstantPadding, EdgePadding, ReflectPadding, SymmetricPadding]
 
 
+class ModelId(ResourceId):
+    pass
+
+
 class InputTensorDescr(TensorDescrBase[InputAxis]):
     id: TensorId = TensorId("input")
     """Input tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
+    output_of: ModelId | None = None
+    """If this input tensor is the output of another model, specify the model id here.
+    This model's input id must match the output id of the referenced model.
+    """
+
+    @model_validator(mode="after")
+    def _validate_output_of(self) -> Self:
+        if self.output_of is None:
+            return self
+
+        try:
+            with get_validation_context().replace(perform_io_checks=False):
+                opened_ref_model = open_bioimageio_yaml(self.output_of)
+                format_version = opened_ref_model.content["format_version"]
+                assert isinstance(format_version, str)
+                if format_version.startswith("0.4"):
+                    ref_model = _ModelDescr04.model_validate(opened_ref_model.content)
+                else:
+                    ref_model = ModelDescr.model_validate(opened_ref_model.content)
+        except Exception as e:
+            raise ValueError(
+                f"Failed to load model '{self.output_of}' referenced under output_of: {e}"
+            )
+
+        try:
+            ref_model_outputs = {
+                t.id if isinstance(t, OutputTensorDescr) else TensorId(t.name)
+                for t in ref_model.outputs
+            }
+        except Exception as e:
+            raise ValueError(
+                f"Failed to read output IDs of model '{self.output_of}' referenced under output_of: {e}"
+            )
+
+        if self.id not in ref_model_outputs:
+            raise ValueError(
+                f"Input tensor '{self.id}' is specified as output of model '{self.output_of}', "
+                + f"but that model's outputs are {ref_model_outputs}."
+            )
+        return self
+
     optional: bool = False
     """indicates that this tensor may be `None`"""
 
-    pad: Optional[Padding] = None
+    pad: Padding | None = None
     """Explicitly specify how to pad this input tensor.
 
     Use `axes[i].pad` to specify padding width.
@@ -1995,7 +2018,7 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
       Non-blockwise sample prediction only applies padding for axes with a `pad` specification.
     """
 
-    preprocessing: List[PreprocessingDescr] = Field(
+    preprocessing: list[PreprocessingDescr] = Field(
         default_factory=cast(Callable[[], List[PreprocessingDescr]], list)
     )
     """Description of how this input should be preprocessed.
@@ -2012,7 +2035,7 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     def _validate_preprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
         for p in self.preprocessing:
-            kwargs_axes: Optional[Sequence[Any]] = p.kwargs.get("axes")
+            kwargs_axes: Sequence[Any] | None = p.kwargs.get("axes")
             if kwargs_axes is None:
                 continue
 
@@ -2051,14 +2074,12 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
 def convert_axes(
     axes: str,
     *,
-    shape: Union[
-        Sequence[int], _ParameterizedInputShape_v0_4, _ImplicitOutputShape_v0_4
-    ],
+    shape: Sequence[int] | _ParameterizedInputShape_v0_4 | _ImplicitOutputShape_v0_4,
     tensor_type: Literal["input", "output"],
-    halo: Optional[Sequence[int]],
+    halo: Sequence[int] | None,
     size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
 ):
-    ret: List[AnyAxis] = []
+    ret: list[AnyAxis] = []
     for i, a in enumerate(axes):
         axis_type = _AXIS_TYPE_MAP.get(a, a)
         if axis_type == "batch":
@@ -2159,8 +2180,8 @@ def convert_axes(
 
 
 def _axes_letters_to_ids(
-    axes: Optional[str],
-) -> Optional[List[AxisId]]:
+    axes: str | None,
+) -> list[AxisId] | None:
     if axes is None:
         return None
 
@@ -2168,8 +2189,8 @@ def _axes_letters_to_ids(
 
 
 def _get_complement_v04_axis(
-    tensor_axes: Sequence[str], axes: Optional[Sequence[str]]
-) -> Optional[AxisId]:
+    tensor_axes: Sequence[str], axes: Sequence[str] | None
+) -> AxisId | None:
     if axes is None:
         return None
 
@@ -2185,9 +2206,9 @@ def _get_complement_v04_axis(
 
 
 def _convert_proc(
-    p: Union[_PreprocessingDescr_v0_4, _PostprocessingDescr_v0_4],
+    p: _PreprocessingDescr_v0_4 | _PostprocessingDescr_v0_4,
     tensor_axes: Sequence[str],
-) -> Union[PreprocessingDescr, PostprocessingDescr]:
+) -> PreprocessingDescr | PostprocessingDescr:
     if isinstance(p, _BinarizeDescr_v0_4):
         return BinarizeDescr(kwargs=BinarizeKwargs(threshold=p.kwargs.threshold))
     elif isinstance(p, _ClipDescr_v0_4):
@@ -2285,19 +2306,19 @@ class _InputTensorConv(
     def _convert(
         self,
         src: _InputTensorDescr_v0_4,
-        tgt: "type[InputTensorDescr] | type[dict[str, Any]]",
+        tgt: type[InputTensorDescr | dict[str, Any]],
         test_tensor: FileSource,
-        sample_tensor: Optional[FileSource],
+        sample_tensor: FileSource | None,
         size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
-    ) -> "InputTensorDescr | dict[str, Any]":
-        axes: List[InputAxis] = convert_axes(  # pyright: ignore[reportAssignmentType]
+    ) -> InputTensorDescr | dict[str, Any]:
+        axes: list[InputAxis] = convert_axes(  # pyright: ignore[reportAssignmentType]
             src.axes,
             shape=src.shape,
             tensor_type="input",
             halo=None,
             size_refs=size_refs,
         )
-        prep: List[PreprocessingDescr] = []
+        prep: list[PreprocessingDescr] = []
         for p in src.preprocessing:
             cp = _convert_proc(p, src.axes)
             assert not isinstance(
@@ -2320,7 +2341,7 @@ class _InputTensorConv(
             sample_tensor=(
                 None if sample_tensor is None else FileDescr(source=sample_tensor)
             ),
-            data=dict(type=src.data_type),  # pyright: ignore[reportArgumentType]
+            data={"type": src.data_type},  # pyright: ignore[reportArgumentType]
             preprocessing=prep,
         )
 
@@ -2333,7 +2354,7 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     """Output tensor id.
     No duplicates are allowed across all inputs and outputs."""
 
-    postprocessing: List[PostprocessingDescr] = Field(
+    postprocessing: list[PostprocessingDescr] = Field(
         default_factory=cast(Callable[[], List[PostprocessingDescr]], list)
     )
     """Description of how this output should be postprocessed.
@@ -2386,20 +2407,20 @@ class _OutputTensorConv(
     def _convert(
         self,
         src: _OutputTensorDescr_v0_4,
-        tgt: "type[OutputTensorDescr] | type[dict[str, Any]]",
+        tgt: type[OutputTensorDescr | dict[str, Any]],
         test_tensor: FileSource,
-        sample_tensor: Optional[FileSource],
+        sample_tensor: FileSource | None,
         size_refs: Mapping[_TensorName_v0_4, Mapping[str, int]],
-    ) -> "OutputTensorDescr | dict[str, Any]":
+    ) -> OutputTensorDescr | dict[str, Any]:
         # TODO: split convert_axes into convert_output_axes and convert_input_axes
-        axes: List[OutputAxis] = convert_axes(  # pyright: ignore[reportAssignmentType]
+        axes: list[OutputAxis] = convert_axes(  # pyright: ignore[reportAssignmentType]
             src.axes,
             shape=src.shape,
             tensor_type="output",
             halo=src.halo,
             size_refs=size_refs,
         )
-        data_descr: Dict[str, Any] = dict(type=src.data_type)
+        data_descr: dict[str, Any] = {"type": src.data_type}
         if data_descr["type"] == "bool":
             data_descr["values"] = [False, True]
 
@@ -2424,14 +2445,14 @@ TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
 def get_halos(
     tensors: Mapping[TensorId, TensorDescr],
     /,
-) -> Dict[TensorId, Dict[AxisId, Tuple[int, int]]]:
+) -> dict[TensorId, dict[AxisId, tuple[int, int]]]:
     """Get all input and output halos from tensor descriptions.
 
     Note:
         - Input halos are to be padded
         - Output halos are to be cropped
     """
-    halos: Dict[TensorId, Dict[AxisId, Tuple[int, int]]] = {}
+    halos: dict[TensorId, dict[AxisId, tuple[int, int]]] = {}
     for descr in tensors.values():
         if isinstance(descr, InputTensorDescr):
             continue
@@ -2458,13 +2479,13 @@ def get_halos(
 
 
 def validate_tensors(
-    tensors: Mapping[TensorId, Tuple[TensorDescr, Optional[NDArray[Any]]]],
+    tensors: Mapping[TensorId, tuple[TensorDescr, NDArray[Any] | None]],
     tensor_origin: Literal[
         "source", "test_tensor"
     ] = "source",  # for more precise error messages
     *,
-    pad_inputs: Union[bool, Literal["allow"]] = True,
-    crop_outputs: Union[bool, Literal["allow"]] = True,
+    pad_inputs: bool | Literal["allow"] = True,
+    crop_outputs: bool | Literal["allow"] = True,
 ):
     """Validate all inputs (and optionally output tensors) against their tensor descriptions.
 
@@ -2474,7 +2495,7 @@ def validate_tensors(
         pad_inputs: Wether to apply/allow padding of inputs before shape comparison
         crop_outputs: Wether to apply/allow cropping of outputs before shape comparison.
     """
-    all_tensor_axes: Dict[TensorId, Dict[AxisId, Tuple[AnyAxis, Optional[int]]]] = {}
+    all_tensor_axes: dict[TensorId, dict[AxisId, tuple[AnyAxis, int | None]]] = {}
 
     def e_msg_location(d: TensorDescr):
         return f"{'inputs' if isinstance(d, InputTensorDescr) else 'outputs'}[{d.id}]"
@@ -2620,7 +2641,7 @@ def validate_tensors(
 FileDescr_dependencies = Annotated[
     FileDescr_package,
     WithSuffix((".yaml", ".yml"), case_sensitive=True),
-    Field(examples=[dict(source="environment.yaml")]),
+    Field(examples=[{"source": "environment.yaml"}]),
 ]
 
 
@@ -2628,7 +2649,7 @@ class _ArchitectureCallableDescr(Node):
     callable: Annotated[Identifier, Field(examples=["MyNetworkClass", "get_my_model"])]
     """Identifier of the callable that returns a torch.nn.Module instance."""
 
-    kwargs: Dict[str, YamlValue] = Field(
+    kwargs: dict[str, YamlValue] = Field(
         default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
     )
     """key word arguments for the `callable`"""
@@ -2659,13 +2680,13 @@ class _ArchFileConv(
     def _convert(
         self,
         src: _CallableFromFile_v0_4,
-        tgt: "type[ArchitectureFromFileDescr | dict[str, Any]]",
-        sha256: Optional[Sha256],
-        kwargs: Dict[str, Any],
-    ) -> "ArchitectureFromFileDescr | dict[str, Any]":
+        tgt: type[ArchitectureFromFileDescr | dict[str, Any]],
+        sha256: Sha256 | None,
+        kwargs: dict[str, Any],
+    ) -> ArchitectureFromFileDescr | dict[str, Any]:
         if src.startswith("http") and src.count(":") == 2:
             http, source, callable_ = src.split(":")
-            source = ":".join((http, source))
+            source = f"{http}:{source}"
         elif not src.startswith("http") and src.count(":") == 1:
             source, callable_ = src.split(":")
         else:
@@ -2690,9 +2711,9 @@ class _ArchLibConv(
     def _convert(
         self,
         src: _CallableFromDepencency_v0_4,
-        tgt: "type[ArchitectureFromLibraryDescr | dict[str, Any]]",
-        kwargs: Dict[str, Any],
-    ) -> "ArchitectureFromLibraryDescr | dict[str, Any]":
+        tgt: type[ArchitectureFromLibraryDescr | dict[str, Any]],
+        kwargs: dict[str, Any],
+    ) -> ArchitectureFromLibraryDescr | dict[str, Any]:
         *mods, callable_ = src.split(".")
         import_from = ".".join(mods)
         return tgt(
@@ -2712,7 +2733,7 @@ class WeightsEntryDescrBase(FileDescr):
     source: Annotated[FileSource, AfterValidator(wo_special_file_name)]
     """Source of the weights file."""
 
-    authors: Optional[List[Author]] = None
+    authors: list[Author] | None = None
     """Authors
     Either the person(s) that have trained this model resulting in the original weights file.
         (If this is the initial weights entry, i.e. it does not have a `parent`)
@@ -2720,9 +2741,9 @@ class WeightsEntryDescrBase(FileDescr):
         (If this is a child weight, i.e. it has a `parent` field)
     """
 
-    parent: Annotated[
-        Optional[WeightsFormat], Field(examples=["pytorch_state_dict"])
-    ] = None
+    parent: Annotated[WeightsFormat | None, Field(examples=["pytorch_state_dict"])] = (
+        None
+    )
     """The source weights these weights were converted from.
     For example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,
     The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
@@ -2756,7 +2777,7 @@ class KerasV3WeightsDescr(WeightsEntryDescrBase):
     weights_format_name: ClassVar[str] = "Keras v3"
     keras_version: Annotated[Version, Ge(Version(3))]
     """Keras version used to create these weights."""
-    backend: Tuple[Literal["tensorflow", "jax", "torch"], Version]
+    backend: tuple[Literal["tensorflow", "jax", "torch"], Version]
     """Keras backend used to create these weights."""
     source: Annotated[
         FileSource,
@@ -2769,7 +2790,7 @@ class KerasV3WeightsDescr(WeightsEntryDescrBase):
 FileDescr_external_data = Annotated[
     FileDescr_package,
     WithSuffix(".data", case_sensitive=True),
-    Field(examples=[dict(source="weights.onnx.data")]),
+    Field(examples=[{"source": "weights.onnx.data"}]),
 ]
 
 
@@ -2779,7 +2800,7 @@ class OnnxWeightsDescr(WeightsEntryDescrBase):
     opset_version: Annotated[int, Ge(7)]
     """ONNX opset version"""
 
-    external_data: Optional[FileDescr_external_data] = None
+    external_data: FileDescr_external_data | None = None
     """Source of the external ONNX data file holding the weights.
     (If present **source** holds the ONNX architecture without weights)."""
 
@@ -2800,12 +2821,12 @@ class OnnxWeightsDescr(WeightsEntryDescrBase):
 class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     type: ClassVar[WeightsFormat] = "pytorch_state_dict"
     weights_format_name: ClassVar[str] = "Pytorch State Dict"
-    architecture: Union[ArchitectureFromFileDescr, ArchitectureFromLibraryDescr]
+    architecture: ArchitectureFromFileDescr | ArchitectureFromLibraryDescr
     pytorch_version: Version
     """Version of the PyTorch library used.
     If `architecture.depencencies` is specified it has to include pytorch and any version pinning has to be compatible.
     """
-    dependencies: Optional[FileDescr_dependencies] = None
+    dependencies: FileDescr_dependencies | None = None
     """Custom depencies beyond pytorch described in a Conda environment file.
     Allows to specify custom dependencies, see conda docs:
     - [Exporting an environment file across platforms](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#exporting-an-environment-file-across-platforms)
@@ -2835,7 +2856,7 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     tensorflow_version: Version
     """Version of the TensorFlow library used."""
 
-    dependencies: Optional[FileDescr_dependencies] = None
+    dependencies: FileDescr_dependencies | None = None
     """Custom dependencies beyond tensorflow.
     Should include tensorflow and any version pinning has to be compatible with **tensorflow_version**."""
 
@@ -2863,15 +2884,13 @@ SpecificWeightsDescr = Union[
 
 
 class WeightsDescr(Node):
-    keras_hdf5: Optional[KerasHdf5WeightsDescr] = None
-    keras_v3: Optional[KerasV3WeightsDescr] = None
-    onnx: Optional[OnnxWeightsDescr] = None
-    pytorch_state_dict: Optional[PytorchStateDictWeightsDescr] = None
-    tensorflow_js: Optional[TensorflowJsWeightsDescr] = None
-    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeightsDescr] = (
-        None
-    )
-    torchscript: Optional[TorchscriptWeightsDescr] = None
+    keras_hdf5: KerasHdf5WeightsDescr | None = None
+    keras_v3: KerasV3WeightsDescr | None = None
+    onnx: OnnxWeightsDescr | None = None
+    pytorch_state_dict: PytorchStateDictWeightsDescr | None = None
+    tensorflow_js: TensorflowJsWeightsDescr | None = None
+    tensorflow_saved_model_bundle: TensorflowSavedModelBundleWeightsDescr | None = None
+    torchscript: TorchscriptWeightsDescr | None = None
 
     @model_validator(mode="after")
     def check_entries(self) -> Self:
@@ -2941,41 +2960,41 @@ class WeightsDescr(Node):
 
     @overload
     def __setitem__(
-        self, key: Literal["keras_hdf5"], value: Optional[KerasHdf5WeightsDescr]
+        self, key: Literal["keras_hdf5"], value: KerasHdf5WeightsDescr | None
     ) -> None: ...
     @overload
     def __setitem__(
-        self, key: Literal["keras_v3"], value: Optional[KerasV3WeightsDescr]
+        self, key: Literal["keras_v3"], value: KerasV3WeightsDescr | None
     ) -> None: ...
     @overload
     def __setitem__(
-        self, key: Literal["onnx"], value: Optional[OnnxWeightsDescr]
+        self, key: Literal["onnx"], value: OnnxWeightsDescr | None
     ) -> None: ...
     @overload
     def __setitem__(
         self,
         key: Literal["pytorch_state_dict"],
-        value: Optional[PytorchStateDictWeightsDescr],
+        value: PytorchStateDictWeightsDescr | None,
     ) -> None: ...
     @overload
     def __setitem__(
-        self, key: Literal["tensorflow_js"], value: Optional[TensorflowJsWeightsDescr]
+        self, key: Literal["tensorflow_js"], value: TensorflowJsWeightsDescr | None
     ) -> None: ...
     @overload
     def __setitem__(
         self,
         key: Literal["tensorflow_saved_model_bundle"],
-        value: Optional[TensorflowSavedModelBundleWeightsDescr],
+        value: TensorflowSavedModelBundleWeightsDescr | None,
     ) -> None: ...
     @overload
     def __setitem__(
-        self, key: Literal["torchscript"], value: Optional[TorchscriptWeightsDescr]
+        self, key: Literal["torchscript"], value: TorchscriptWeightsDescr | None
     ) -> None: ...
 
     def __setitem__(
         self,
         key: WeightsFormat,
-        value: Optional[SpecificWeightsDescr],
+        value: SpecificWeightsDescr | None,
     ):
         if key == "keras_hdf5":
             if value is not None and not isinstance(value, KerasHdf5WeightsDescr):
@@ -3027,7 +3046,7 @@ class WeightsDescr(Node):
             raise KeyError(key)
 
     @property
-    def available_formats(self) -> Dict[WeightsFormat, SpecificWeightsDescr]:
+    def available_formats(self) -> dict[WeightsFormat, SpecificWeightsDescr]:
         return {
             **({} if self.keras_hdf5 is None else {"keras_hdf5": self.keras_hdf5}),
             **({} if self.keras_v3 is None else {"keras_v3": self.keras_v3}),
@@ -3053,14 +3072,10 @@ class WeightsDescr(Node):
         }
 
     @property
-    def missing_formats(self) -> Set[WeightsFormat]:
+    def missing_formats(self) -> set[WeightsFormat]:
         return {
             wf for wf in get_args(WeightsFormat) if wf not in self.available_formats
         }
-
-
-class ModelId(ResourceId):
-    pass
 
 
 class LinkedModel(LinkedResourceBase):
@@ -3072,21 +3087,21 @@ class LinkedModel(LinkedResourceBase):
 
 class _DataDepSize(NamedTuple):
     min: StrictInt
-    max: Optional[StrictInt]
+    max: StrictInt | None
 
 
 class _AxisSizes(NamedTuple):
     """the lenghts of all axes of model inputs and outputs"""
 
-    inputs: Dict[Tuple[TensorId, AxisId], int]
-    outputs: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]]
+    inputs: dict[tuple[TensorId, AxisId], int]
+    outputs: dict[tuple[TensorId, AxisId], int | _DataDepSize]
 
 
 class _TensorSizes(NamedTuple):
     """_AxisSizes as nested dicts"""
 
-    inputs: Dict[TensorId, Dict[AxisId, int]]
-    outputs: Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]
+    inputs: dict[TensorId, dict[AxisId, int]]
+    outputs: dict[TensorId, dict[AxisId, int | _DataDepSize]]
 
 
 class ReproducibilityTolerance(Node, extra="allow"):
@@ -3143,7 +3158,7 @@ class BiasRisksLimitations(Node, extra="allow"):
     """)
     """Potential risks in the context of bioimage analysis."""
 
-    limitations: Optional[str] = None
+    limitations: str | None = None
     """Technical limitations and failure modes."""
 
     recommendations: str = "Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model."
@@ -3178,7 +3193,7 @@ class BiasRisksLimitations(Node, extra="allow"):
 
 
 class TrainingDetails(Node, extra="allow"):
-    training_preprocessing: Optional[str] = None
+    training_preprocessing: str | None = None
     """Detailed image preprocessing steps during model training:
 
     Mention:
@@ -3189,43 +3204,43 @@ class TrainingDetails(Node, extra="allow"):
 
     """
 
-    training_epochs: Optional[float] = None
+    training_epochs: float | None = None
     """Number of training epochs."""
 
-    training_batch_size: Optional[float] = None
+    training_batch_size: float | None = None
     """Batch size used in training."""
 
-    initial_learning_rate: Optional[float] = None
+    initial_learning_rate: float | None = None
     """Initial learning rate used in training."""
 
-    learning_rate_schedule: Optional[str] = None
+    learning_rate_schedule: str | None = None
     """Learning rate schedule used in training."""
 
-    loss_function: Optional[str] = None
+    loss_function: str | None = None
     """Loss function used in training, e.g. nn.MSELoss."""
 
-    loss_function_kwargs: Dict[str, YamlValue] = Field(
+    loss_function_kwargs: dict[str, YamlValue] = Field(
         default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
     )
     """key word arguments for the `loss_function`"""
 
-    optimizer: Optional[str] = None
+    optimizer: str | None = None
     """optimizer, e.g. torch.optim.Adam"""
 
-    optimizer_kwargs: Dict[str, YamlValue] = Field(
+    optimizer_kwargs: dict[str, YamlValue] = Field(
         default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
     )
     """key word arguments for the `optimizer`"""
 
-    regularization: Optional[str] = None
+    regularization: str | None = None
     """Regularization techniques used during training, e.g. drop-out or weight decay."""
 
-    training_duration: Optional[float] = None
+    training_duration: float | None = None
     """Total training duration in hours."""
 
 
 class Evaluation(Node, extra="allow"):
-    model_id: Optional[ModelId] = None
+    model_id: ModelId | None = None
     """Model being evaluated."""
 
     dataset_id: DatasetId
@@ -3247,7 +3262,7 @@ class Evaluation(Node, extra="allow"):
     sample_count: int
     """Number of evaluated samples."""
 
-    evaluation_factors: List[Annotated[str, MaxLen(16)]]
+    evaluation_factors: list[Annotated[str, MaxLen(16)]]
     """(Abbreviations of) each evaluation factor.
 
     Evaluation factors are criteria along which model performance is evaluated, e.g. different image conditions
@@ -3255,13 +3270,13 @@ class Evaluation(Node, extra="allow"):
     An 'overall' factor may be included to summarize performance across all conditions.
     """
 
-    evaluation_factors_long: List[str]
+    evaluation_factors_long: list[str]
     """Descriptions (long form) of each evaluation factor."""
 
-    metrics: List[Annotated[str, MaxLen(16)]]
+    metrics: list[Annotated[str, MaxLen(16)]]
     """(Abbreviations of) metrics used for evaluation."""
 
-    metrics_long: List[str]
+    metrics_long: list[str]
     """Description of each metric used."""
 
     @model_validator(mode="after")
@@ -3285,10 +3300,10 @@ class Evaluation(Node, extra="allow"):
 
         return self
 
-    results: List[List[Union[str, float, int]]]
+    results: list[list[str | float | int]]
     """Results for each metric (rows; outer list) and each evaluation factor (columns; inner list)."""
 
-    results_summary: Optional[str] = None
+    results_summary: str | None = None
     """Interpretation of results for general audience.
 
     Consider:
@@ -3350,19 +3365,19 @@ class EnvironmentalImpact(Node, extra="allow"):
     Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
     """
 
-    hardware_type: Optional[str] = None
+    hardware_type: str | None = None
     """GPU/CPU specifications"""
 
-    hours_used: Optional[float] = None
+    hours_used: float | None = None
     """Total compute hours"""
 
-    cloud_provider: Optional[str] = None
+    cloud_provider: str | None = None
     """If applicable"""
 
-    compute_region: Optional[str] = None
+    compute_region: str | None = None
     """Geographic location"""
 
-    co2_emitted: Optional[float] = None
+    co2_emitted: float | None = None
     """kg CO2 equivalent
 
     Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
@@ -3395,32 +3410,32 @@ class BioimageioConfig(Node, extra="allow"):
     Only the first entry matching tensor id and weights format is considered.
     """
 
-    funded_by: Optional[str] = None
+    funded_by: str | None = None
     """Funding agency, grant number if applicable"""
 
-    architecture_type: Optional[Annotated[str, MaxLen(32)]] = (
+    architecture_type: Annotated[str, MaxLen(32)] | None = (
         None  # TODO: add to differentiated tags
     )
     """Model architecture type, e.g., 3D U-Net, ResNet, transformer"""
 
-    architecture_description: Optional[str] = None
+    architecture_description: str | None = None
     """Text description of model architecture."""
 
-    modality: Optional[str] = None  # TODO: add to differentiated tags
+    modality: str | None = None  # TODO: add to differentiated tags
     """Input modality, e.g., fluorescence microscopy, electron microscopy"""
 
-    target_structure: List[str] = Field(  # TODO: add to differentiated tags
+    target_structure: list[str] = Field(  # TODO: add to differentiated tags
         default_factory=cast(Callable[[], List[str]], list)
     )
     """Biological structure(s) the model is designed to analyze, e.g., nuclei, mitochondria, cells"""
 
-    task: Optional[str] = None  # TODO: add to differentiated tags
+    task: str | None = None  # TODO: add to differentiated tags
     """Bioimage-specific task type, e.g., segmentation, classification, detection, denoising"""
 
-    new_version: Optional[ModelId] = None
+    new_version: ModelId | None = None
     """A new version of this model exists with a different model id."""
 
-    out_of_scope_use: Optional[str] = None
+    out_of_scope_use: str | None = None
     """Describe how the model may be misused in bioimage analysis contexts and what users should **not** do with the model."""
 
     bias_risks_limitations: BiasRisksLimitations = Field(
@@ -3428,22 +3443,22 @@ class BioimageioConfig(Node, extra="allow"):
     )
     """Description of known bias, risks, and technical limitations for in-scope model use."""
 
-    model_parameter_count: Optional[int] = None
+    model_parameter_count: int | None = None
     """Total number of model parameters."""
 
     training: TrainingDetails = Field(default_factory=TrainingDetails.model_construct)
     """Details on how the model was trained."""
 
-    inference_time: Optional[str] = None
+    inference_time: str | None = None
     """Average inference time per image/tile. Specify hardware and image size. Multiple examples can be given."""
 
-    memory_requirements_inference: Optional[str] = None
+    memory_requirements_inference: str | None = None
     """GPU memory needed for inference. Multiple examples with different image size can be given."""
 
-    memory_requirements_training: Optional[str] = None
+    memory_requirements_training: str | None = None
     """GPU memory needed for training. Multiple examples with different image/batch sizes can be given."""
 
-    evaluations: List[Evaluation] = Field(
+    evaluations: list[Evaluation] = Field(
         default_factory=cast(Callable[[], List[Evaluation]], list)
     )
     """Quantitative model evaluations.
@@ -3472,11 +3487,11 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    implemented_format_version: ClassVar[Literal["0.5.11"]] = "0.5.11"
+    implemented_format_version: ClassVar[Literal["0.5.14"]] = "0.5.14"
     if TYPE_CHECKING:
-        format_version: Literal["0.5.11"] = "0.5.11"
+        format_version: Literal["0.5.14"] = "0.5.14"
     else:
-        format_version: Literal["0.5.11"]
+        format_version: Literal["0.5.14"]
         """Version of the bioimage.io model description specification used.
         When creating a new model always use the latest micro/patch version described here.
         The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -3489,16 +3504,16 @@ class ModelDescr(GenericModelDescrBase):
         type: Literal["model"]
         """Specialized resource type 'model'"""
 
-    id: Optional[ModelId] = None
+    id: ModelId | None = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 
-    authors: FAIR[List[Author]] = Field(
+    authors: FAIR[list[Author]] = Field(
         default_factory=cast(Callable[[], List[Author]], list)
     )
     """The authors are the creators of the model RDF and the primary points of contact."""
 
-    documentation: FAIR[Optional[FileDescr_documentation]] = None
+    documentation: FAIR[FileDescr_documentation | None] = None
     """Additional model documentation.
     The recommended documentation source file name is `README.md`. An `.md` suffix is mandatory.
     The documentation should include a '#[#] Validation' (sub)section
@@ -3506,7 +3521,7 @@ class ModelDescr(GenericModelDescrBase):
 
     @field_validator("documentation", mode="after")
     @classmethod
-    def _validate_documentation(cls, value: Optional[FileDescr]) -> Optional[FileDescr]:
+    def _validate_documentation(cls, value: FileDescr | None) -> FileDescr | None:
         if not get_validation_context().perform_io_checks or value is None:
             return value
 
@@ -3532,9 +3547,9 @@ class ModelDescr(GenericModelDescrBase):
         input_size_refs = cls._get_axes_with_independent_size(inputs)
 
         for i, ipt in enumerate(inputs):
-            valid_independent_refs: Dict[
-                Tuple[TensorId, AxisId],
-                Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]],
+            valid_independent_refs: dict[
+                tuple[TensorId, AxisId],
+                tuple[TensorDescr, AnyAxis, int | ParameterizedSize],
             ] = {
                 **{
                     (ipt.id, a.id): (ipt, a, a.size)
@@ -3562,9 +3577,9 @@ class ModelDescr(GenericModelDescrBase):
         tensor_id: TensorId,
         a: int,
         axis: AnyAxis,
-        valid_independent_refs: Dict[
-            Tuple[TensorId, AxisId],
-            Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]],
+        valid_independent_refs: dict[
+            tuple[TensorId, AxisId],
+            tuple[TensorDescr, AnyAxis, int | ParameterizedSize],
         ],
     ):
         if isinstance(axis, BatchAxis) or isinstance(
@@ -3636,13 +3651,11 @@ class ModelDescr(GenericModelDescrBase):
 
     def validate_input_tensors(
         self,
-        sources: Union[
-            Sequence[NDArray[Any]], Mapping[TensorId, Optional[NDArray[Any]]]
-        ],
+        sources: Sequence[NDArray[Any]] | Mapping[TensorId, NDArray[Any] | None],
         *,
-        pad_inputs: Union[bool, Literal["allow"]] = True,
-        crop_outputs: Union[bool, Literal["allow"]] = True,
-    ) -> Mapping[TensorId, Optional[NDArray[Any]]]:
+        pad_inputs: bool | Literal["allow"] = True,
+        crop_outputs: bool | Literal["allow"] = True,
+    ) -> Mapping[TensorId, NDArray[Any] | None]:
         """Check if the given input tensors match the model's input tensor descriptions.
         This includes checks of tensor shapes and dtypes, but not of the actual values.
         """
@@ -3754,8 +3767,8 @@ class ModelDescr(GenericModelDescrBase):
         tensor_ids = [
             t.id for t in info.data.get("inputs", []) + info.data.get("outputs", [])
         ]
-        duplicate_tensor_ids: List[str] = []
-        seen: Set[str] = set()
+        duplicate_tensor_ids: list[str] = []
+        seen: set[str] = set()
         for t in tensor_ids:
             if t in seen:
                 duplicate_tensor_ids.append(t)
@@ -3769,7 +3782,7 @@ class ModelDescr(GenericModelDescrBase):
 
     @staticmethod
     def _get_axes_with_parameterized_size(
-        io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]],
+        io: Sequence[InputTensorDescr] | Sequence[OutputTensorDescr],
     ):
         return {
             f"{t.id}.{a.id}": (t, a, a.size)
@@ -3780,7 +3793,7 @@ class ModelDescr(GenericModelDescrBase):
 
     @staticmethod
     def _get_axes_with_independent_size(
-        io: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]],
+        io: Sequence[InputTensorDescr] | Sequence[OutputTensorDescr],
     ):
         return {
             (t.id, a.id): (t, a, a.size)
@@ -3793,17 +3806,17 @@ class ModelDescr(GenericModelDescrBase):
     @field_validator("outputs", mode="after")
     @classmethod
     def _validate_output_axes(
-        cls, outputs: List[OutputTensorDescr], info: ValidationInfo
-    ) -> List[OutputTensorDescr]:
+        cls, outputs: list[OutputTensorDescr], info: ValidationInfo
+    ) -> list[OutputTensorDescr]:
         input_size_refs = cls._get_axes_with_independent_size(
             info.data.get("inputs", [])
         )
         output_size_refs = cls._get_axes_with_independent_size(outputs)
 
         for i, out in enumerate(outputs):
-            valid_independent_refs: Dict[
-                Tuple[TensorId, AxisId],
-                Tuple[TensorDescr, AnyAxis, Union[int, ParameterizedSize]],
+            valid_independent_refs: dict[
+                tuple[TensorId, AxisId],
+                tuple[TensorDescr, AnyAxis, int | ParameterizedSize],
             ] = {
                 **{
                     (out.id, a.id): (out, a, a.size)
@@ -3826,13 +3839,13 @@ class ModelDescr(GenericModelDescrBase):
 
         return outputs
 
-    packaged_by: List[Author] = Field(
+    packaged_by: list[Author] = Field(
         default_factory=cast(Callable[[], List[Author]], list)
     )
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
 
-    parent: Optional[LinkedModel] = None
+    parent: LinkedModel | None = None
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
 
     @model_validator(mode="after")
@@ -3843,7 +3856,7 @@ class ModelDescr(GenericModelDescrBase):
         return self
 
     run_mode: Annotated[
-        Optional[RunMode],
+        RunMode | None,
         warn(None, "Run mode '{value}' has limited support across consumer softwares."),
     ] = None
     """Custom run mode for this model: for more complex prediction procedures like test time
@@ -3856,7 +3869,7 @@ class ModelDescr(GenericModelDescrBase):
     (In Python a datetime object is valid, too)."""
 
     training_data: Annotated[
-        Union[None, LinkedDataset, DatasetDescr, DatasetDescr02],
+        None | LinkedDataset | DatasetDescr | DatasetDescr02,
         Field(union_mode="left_to_right"),
     ] = None
     """The dataset used to train this model"""
@@ -3890,7 +3903,7 @@ class ModelDescr(GenericModelDescrBase):
             issue_warning(
                 "Failed to generate cover image(s): {e}",
                 value=self.covers,
-                msg_context=dict(e=e),
+                msg_context={"e": e},
                 field="covers",
             )
         else:
@@ -3898,17 +3911,17 @@ class ModelDescr(GenericModelDescrBase):
 
         return self
 
-    def get_input_test_arrays(self) -> List[NDArray[Any]]:
+    def get_input_test_arrays(self) -> list[NDArray[Any]]:
         return self._get_test_arrays(self.inputs)
 
-    def get_output_test_arrays(self) -> List[NDArray[Any]]:
+    def get_output_test_arrays(self) -> list[NDArray[Any]]:
         return self._get_test_arrays(self.outputs)
 
     @staticmethod
     def _get_test_arrays(
-        io_descr: Union[Sequence[InputTensorDescr], Sequence[OutputTensorDescr]],
+        io_descr: Sequence[InputTensorDescr] | Sequence[OutputTensorDescr],
     ):
-        ts: List[FileDescr] = []
+        ts: list[FileDescr] = []
         for d in io_descr:
             if d.test_tensor is None:
                 raise ValueError(
@@ -3923,7 +3936,7 @@ class ModelDescr(GenericModelDescrBase):
     @staticmethod
     def get_batch_size(tensor_sizes: Mapping[TensorId, Mapping[AxisId, int]]) -> int:
         batch_size = 1
-        tensor_with_batchsize: Optional[TensorId] = None
+        tensor_with_batchsize: TensorId | None = None
         for tid in tensor_sizes:
             for aid, s in tensor_sizes[tid].items():
                 if aid != BATCH_AXIS_ID or s == 1 or s == batch_size:
@@ -3942,7 +3955,7 @@ class ModelDescr(GenericModelDescrBase):
 
     def get_output_tensor_sizes(
         self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]
-    ) -> Dict[TensorId, Dict[AxisId, Union[int, _DataDepSize]]]:
+    ) -> dict[TensorId, dict[AxisId, int | _DataDepSize]]:
         """Returns the tensor output sizes for given **input_sizes**.
         Only if **input_sizes** has a valid input shape, the tensor output size is exact.
         Otherwise it might be larger than the actual (valid) output"""
@@ -3955,7 +3968,7 @@ class ModelDescr(GenericModelDescrBase):
     def get_ns(self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]):
         """get parameter `n` for each parameterized axis
         such that the valid input size is >= the given input size"""
-        ret: Dict[Tuple[TensorId, AxisId], ParameterizedSize_N] = {}
+        ret: dict[tuple[TensorId, AxisId], ParameterizedSize_N] = {}
         axes = {t.id: {a.id: a for a in t.axes} for t in self.inputs}
         for tid in input_sizes:
             for aid, s in input_sizes[tid].items():
@@ -3970,9 +3983,19 @@ class ModelDescr(GenericModelDescrBase):
         return ret
 
     def get_tensor_sizes(
-        self, ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize_N], batch_size: int
+        self,
+        ns: Mapping[tuple[TensorId, AxisId], ParameterizedSize_N],
+        batch_size: int,
+        max_input_shape: Mapping[TensorId, Mapping[AxisId, int]] | None = None,
     ) -> _TensorSizes:
-        axis_sizes = self.get_axis_sizes(ns, batch_size=batch_size)
+        max_axis_sizes: dict[tuple[TensorId, AxisId], int] = {}
+        for m, this_max_axis_sizes in (max_input_shape or {}).items():
+            for a, s in this_max_axis_sizes.items():
+                max_axis_sizes[(m, a)] = s
+
+        axis_sizes = self.get_axis_sizes(
+            ns, batch_size=batch_size, max_input_shape=max_axis_sizes
+        )
         return _TensorSizes(
             {
                 t: {
@@ -3994,10 +4017,10 @@ class ModelDescr(GenericModelDescrBase):
 
     def get_axis_sizes(
         self,
-        ns: Mapping[Tuple[TensorId, AxisId], ParameterizedSize_N],
-        batch_size: Optional[int] = None,
+        ns: Mapping[tuple[TensorId, AxisId], ParameterizedSize_N],
+        batch_size: int | None = None,
         *,
-        max_input_shape: Optional[Mapping[Tuple[TensorId, AxisId], int]] = None,
+        max_input_shape: Mapping[tuple[TensorId, AxisId], int] | None = None,
     ) -> _AxisSizes:
         """Determine input and output block shape for scale factors **ns**
         of parameterized input sizes.
@@ -4031,10 +4054,10 @@ class ModelDescr(GenericModelDescrBase):
             t.id: {a.id: a for a in t.axes} for t in chain(self.inputs, self.outputs)
         }
 
-        inputs: Dict[Tuple[TensorId, AxisId], int] = {}
-        outputs: Dict[Tuple[TensorId, AxisId], Union[int, _DataDepSize]] = {}
+        inputs: dict[tuple[TensorId, AxisId], int] = {}
+        outputs: dict[tuple[TensorId, AxisId], int | _DataDepSize] = {}
 
-        def get_axis_size(a: Union[InputAxis, OutputAxis]):
+        def get_axis_size(a: InputAxis | OutputAxis):
             if isinstance(a, BatchAxis):
                 if (t_descr.id, a.id) in ns:
                     logger.warning(
@@ -4124,12 +4147,12 @@ class ModelDescr(GenericModelDescrBase):
 
     @model_validator(mode="before")
     @classmethod
-    def _convert(cls, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _convert(cls, data: dict[str, Any]) -> dict[str, Any]:
         cls.convert_from_old_format_wo_validation(data)
         return data
 
     @classmethod
-    def convert_from_old_format_wo_validation(cls, data: Dict[str, Any]) -> None:
+    def convert_from_old_format_wo_validation(cls, data: dict[str, Any]) -> None:
         """Convert metadata following an older format version to this classes' format
         without validating the result.
         """
@@ -4178,14 +4201,14 @@ class ModelDescr(GenericModelDescrBase):
 
 class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
     def _convert(
-        self, src: _ModelDescr_v0_4, tgt: "type[ModelDescr] | type[dict[str, Any]]"
-    ) -> "ModelDescr | dict[str, Any]":
+        self, src: _ModelDescr_v0_4, tgt: type[ModelDescr | dict[str, Any]]
+    ) -> ModelDescr | dict[str, Any]:
         name = "".join(
             c if c in string.ascii_letters + string.digits + "_+- ()" else " "
             for c in src.name
         )
 
-        def conv_authors(auths: Optional[Sequence[_Author_v0_4]]):
+        def conv_authors(auths: Sequence[_Author_v0_4] | None):
             conv = (
                 _author_conv.convert if TYPE_CHECKING else _author_conv.convert_as_dict
             )
@@ -4234,7 +4257,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             covers=[{"source": c} for c in src.covers],  # pyright: ignore[reportArgumentType]
             description=src.description,
             documentation={"source": src.documentation} if src.documentation else None,  # pyright: ignore[reportArgumentType]
-            format_version="0.5.11",
+            format_version="0.5.14",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon={"source": src.icon} if src.icon else None,  # pyright: ignore[reportArgumentType]
             id=None if src.id is None else ModelId(src.id),
@@ -4391,12 +4414,12 @@ _model_conv = _ModelConv(_ModelDescr_v0_4, ModelDescr)
 
 # create better cover images for 3d data and non-image outputs
 def generate_covers(
-    inputs: Sequence[Tuple[InputTensorDescr, NDArray[Any]]],
-    outputs: Sequence[Tuple[OutputTensorDescr, NDArray[Any]]],
-) -> List[FileDescr]:
+    inputs: Sequence[tuple[InputTensorDescr, NDArray[Any]]],
+    outputs: Sequence[tuple[OutputTensorDescr, NDArray[Any]]],
+) -> list[FileDescr]:
     def squeeze(
         data: NDArray[Any], axes: Sequence[AnyAxis]
-    ) -> Tuple[NDArray[Any], List[AnyAxis]]:
+    ) -> tuple[NDArray[Any], list[AnyAxis]]:
         """apply numpy.ndarray.squeeze while keeping track of the axis descriptions remaining"""
         if data.ndim != len(axes):
             raise ValueError(
@@ -4408,7 +4431,7 @@ def generate_covers(
         return data.squeeze(), axes
 
     def normalize(
-        data: NDArray[Any], axis: Optional[Tuple[int, ...]], eps: float = 1e-7
+        data: NDArray[Any], axis: tuple[int, ...] | None, eps: float = 1e-7
     ) -> NDArray[np.float32]:
         data = data.astype("float32")
         data -= data.min(axis=axis, keepdims=True)
@@ -4422,7 +4445,7 @@ def generate_covers(
 
         # take slice fom any batch or index axis if needed
         # and convert the first channel axis and take a slice from any additional channel axes
-        slices: Tuple[slice, ...] = ()
+        slices: tuple[slice, ...] = ()
         ndim = data.ndim
         ndim_need = 3 if any(isinstance(a, ChannelAxis) for a in axes) else 2
         has_c_axis = False
@@ -4516,10 +4539,10 @@ def generate_covers(
         assert ndim == 3
 
         # transpose axis order such that longest axis comes first...
-        axis_order: List[int] = list(np.argsort(list(data.shape)))
+        axis_order: list[int] = [int(i) for i in np.argsort(list(data.shape))]
         axis_order.reverse()
         # ... and channel axis is last
-        c = [i for i in range(3) if isinstance(axes[i], ChannelAxis)][0]
+        c = next(i for i in range(3) if isinstance(axes[i], ChannelAxis))
         axis_order.append(axis_order.pop(c))
         axes = [axes[ao] for ao in axis_order]
         data = data.transpose(axis_order)

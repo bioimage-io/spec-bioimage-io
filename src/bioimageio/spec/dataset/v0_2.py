@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, ClassVar, Literal, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, ClassVar, Literal
 
 from .._internal.common_nodes import Node
 from .._internal.url import HttpUrl as HttpUrl
@@ -32,11 +34,11 @@ class DatasetDescr(GenericDescrBase):
     else:
         type: Literal["dataset"]
 
-    id: Optional[DatasetId] = None
+    id: DatasetId | None = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 
-    source: Optional[HttpUrl] = None
+    source: HttpUrl | None = None
     """"URL to the source of the dataset."""
 
 
@@ -46,5 +48,5 @@ class LinkedDataset(Node):
     id: DatasetId
     """A valid dataset `id` from the bioimage.io collection."""
 
-    version_number: Optional[int] = None
+    version_number: int | None = None
     """version number (n-th published version, not the semantic version) of linked dataset"""

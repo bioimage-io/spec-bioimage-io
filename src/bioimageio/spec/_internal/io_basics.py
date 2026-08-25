@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import hashlib
 import os
 import zipfile
 from contextlib import nullcontext
 from functools import partial
 from pathlib import Path
-from typing import Any, ClassVar, Optional, Protocol, Type, Union, runtime_checkable
+from typing import Any, ClassVar, Protocol, runtime_checkable
 from zipfile import ZipFile
 
 import pydantic
@@ -39,7 +41,7 @@ ZipPath = zipp.Path  # not zipfile.Path due to https://bugs.python.org/issue4056
 class Sha256(ValidatedString):
     """A SHA-256 hash value"""
 
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[
         Annotated[
             str,
             StringConstraints(
@@ -66,7 +68,7 @@ class BytesReaderP(Protocol):
 
 @runtime_checkable
 class BytesReaderIntoP(BytesReaderP, Protocol):
-    def readinto(self, b: Union[bytearray, memoryview]) -> int: ...
+    def readinto(self, b: bytearray | memoryview) -> int: ...
 
 
 Suffix = str
@@ -76,13 +78,13 @@ class BytesReader(BytesReaderP):
     def __init__(
         self,
         /,
-        reader: Union[BytesReaderP, BytesReaderIntoP],
+        reader: BytesReaderP | BytesReaderIntoP,
         *,
-        sha256: Optional[Sha256],
+        sha256: Sha256 | None,
         suffix: Suffix,
         original_file_name: FileName,
-        original_root: Union[RootHttpUrl, AbsoluteDirectory, ZipFile],
-        is_zipfile: Optional[bool],
+        original_root: RootHttpUrl | AbsoluteDirectory | ZipFile,
+        is_zipfile: bool | None,
     ) -> None:
         self._reader = reader
         self._sha256 = sha256
@@ -120,7 +122,7 @@ class BytesReader(BytesReaderP):
         return self._original_file_name
 
     @property
-    def original_root(self) -> Union[RootHttpUrl, AbsoluteDirectory, ZipFile]:
+    def original_root(self) -> RootHttpUrl | AbsoluteDirectory | ZipFile:
         return self._original_root
 
     def read(self, size: int = -1, /) -> bytes:
@@ -146,7 +148,7 @@ class BytesReader(BytesReaderP):
         return self._reader.closed
 
 
-def get_sha256(source: Union[BytesReaderP, BytesReaderIntoP, Path]) -> Sha256:
+def get_sha256(source: BytesReaderP | BytesReaderIntoP | Path) -> Sha256:
     chunksize = 128 * 1024
     h = hashlib.sha256()
 

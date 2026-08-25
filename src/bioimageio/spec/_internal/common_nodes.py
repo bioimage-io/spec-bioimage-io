@@ -9,24 +9,20 @@ from typing import (
     IO,
     TYPE_CHECKING,
     Any,
+    Callable,
     ClassVar,
-    Dict,
     Iterable,
-    List,
     Literal,
     Mapping,
-    Optional,
     Protocol,
-    Tuple,
     TypeVar,
-    Union,
 )
 from zipfile import ZipFile
 
 import pydantic
 from pydantic import DirectoryPath, PrivateAttr, model_validator
 from pydantic_core import PydanticUndefined
-from typing_extensions import Callable, ParamSpec, Self
+from typing_extensions import ParamSpec, Self
 
 from ..summary import (
     WARNING_LEVEL_TO_NAME,
@@ -61,7 +57,7 @@ class NodeWithExplicitlySetFields(Node):
 
     @classmethod
     def __pydantic_init_subclass__(cls, **kwargs: Any) -> None:
-        explict_fields: Dict[str, Any] = {}
+        explict_fields: dict[str, Any] = {}
         for attr in dir(cls):
             if attr.startswith("implemented_"):
                 field_name = attr.replace("implemented_", "")
@@ -79,9 +75,7 @@ class NodeWithExplicitlySetFields(Node):
 
     @model_validator(mode="before")
     @classmethod
-    def _set_fields_explicitly(
-        cls, data: Union[Any, Dict[str, Any]]
-    ) -> Union[Any, Dict[str, Any]]:
+    def _set_fields_explicitly(cls, data: Any | dict[str, Any]) -> Any | dict[str, Any]:
         if isinstance(data, dict):
             for name, default in cls._fields_to_set_explicitly.items():
                 if name not in data:
@@ -117,9 +111,9 @@ class ResourceDescrBase(
 ):
     """base class for all resource descriptions"""
 
-    _validation_summary: Optional[ValidationSummary] = None
+    _validation_summary: ValidationSummary | None = None
 
-    implemented_format_version_tuple: ClassVar[Tuple[int, int, int]]
+    implemented_format_version_tuple: ClassVar[tuple[int, int, int]]
 
     # @field_validator("format_version", mode="before", check_fields=False)
     # field_validator on "format_version" is not possible, because we want to use
@@ -147,7 +141,7 @@ class ResourceDescrBase(
             issue_warning(
                 "future format_version '{value}' treated as '{implemented}'",
                 value=value,
-                msg_context=dict(implemented=cls.implemented_format_version),
+                msg_context={"implemented": cls.implemented_format_version},
                 severity=ALERT,
             )
             data["format_version"] = cls.implemented_format_version
@@ -186,21 +180,21 @@ class ResourceDescrBase(
         assert self._validation_summary is not None, "access only after initialization"
         return self._validation_summary
 
-    _root: Union[RootHttpUrl, DirectoryPath, ZipFile] = PrivateAttr(
+    _root: RootHttpUrl | DirectoryPath | ZipFile = PrivateAttr(
         default_factory=lambda: get_validation_context().root
     )
 
-    _file_name: Optional[FileName] = PrivateAttr(
+    _file_name: FileName | None = PrivateAttr(
         default_factory=lambda: get_validation_context().file_name
     )
 
     @property
-    def root(self) -> Union[RootHttpUrl, DirectoryPath, ZipFile]:
+    def root(self) -> RootHttpUrl | DirectoryPath | ZipFile:
         """The URL/Path prefix to resolve any relative paths with."""
         return self._root
 
     @property
-    def file_name(self) -> Optional[FileName]:
+    def file_name(self) -> FileName | None:
         """File name of the bioimageio.yaml file the description was loaded from."""
         return self._file_name
 
@@ -221,10 +215,10 @@ class ResourceDescrBase(
     @classmethod
     def load_from_kwargs(
         cls: Callable[P, T],
-        context: Optional[ValidationContext] = None,
+        context: ValidationContext | None = None,
         *args: P.args,
         **kwargs: P.kwargs,
-    ) -> Union[T, InvalidDescr]:
+    ) -> T | InvalidDescr:
         sig = signature(cls)
         bound = sig.bind_partial(*args, **kwargs)
         return cls.load(dict(bound.arguments), context=context)  # pyright: ignore[reportFunctionMemberAccess]
@@ -233,8 +227,8 @@ class ResourceDescrBase(
     def load(
         cls,
         data: IncompleteDescrView,
-        context: Optional[ValidationContext] = None,
-    ) -> Union[Self, InvalidDescr]:
+        context: ValidationContext | None = None,
+    ) -> Self | InvalidDescr:
         """factory method to create a resource description object"""
 
         context = context or get_validation_context()
@@ -277,7 +271,7 @@ class ResourceDescrBase(
         given = self.model_dump(mode="json", exclude_unset=True, exclude_defaults=False)
         full = self.model_dump(mode="json", exclude_unset=False, exclude_defaults=False)
 
-        def extract_flat_keys(d: Dict[Any, Any], key: str = "") -> Iterable[str]:
+        def extract_flat_keys(d: dict[Any, Any], key: str = "") -> Iterable[str]:
             for k, v in d.items():
                 if is_dict(v):
                     yield from extract_flat_keys(v, key=f"{key}.{k}" if key else k)
@@ -292,10 +286,10 @@ class ResourceDescrBase(
     @classmethod
     def _load_impl(
         cls, data: IncompleteDescr
-    ) -> Tuple[Union[Self, InvalidDescr], List[ErrorEntry], List[WarningEntry]]:
-        rd: Union[Self, InvalidDescr, None] = None
-        val_errors: List[ErrorEntry] = []
-        val_warnings: List[WarningEntry] = []
+    ) -> tuple[Self | InvalidDescr, list[ErrorEntry], list[WarningEntry]]:
+        rd: Self | InvalidDescr | None = None
+        val_errors: list[ErrorEntry] = []
+        val_warnings: list[WarningEntry] = []
 
         context = get_validation_context()
         try:
@@ -312,7 +306,7 @@ class ResourceDescrBase(
                         )
                     )
                 elif context.raise_errors:
-                    raise e
+                    raise
                 else:
                     val_errors.append(
                         ErrorEntry(loc=ee["loc"], msg=ee["msg"], type=ee["type"])
@@ -332,7 +326,7 @@ class ResourceDescrBase(
                 )
         except Exception as e:
             if context.raise_errors:
-                raise e
+                raise
 
             try:
                 msg = str(e)
@@ -351,9 +345,9 @@ class ResourceDescrBase(
         if rd is None:
             try:
                 rd = InvalidDescr.model_validate(data)
-            except Exception as e:
+            except Exception:
                 if context.raise_errors:
-                    raise e
+                    raise
                 resource_type = cls.model_fields["type"].default
                 format_version = cls.implemented_format_version
                 rd = InvalidDescr(type=resource_type, format_version=format_version)
@@ -364,7 +358,7 @@ class ResourceDescrBase(
 
     def package(
         self,
-        dest: Optional[Union[ZipFile, IO[bytes], Path, str]] = None,
+        dest: ZipFile | IO[bytes] | Path | str | None = None,
         /,
         local_files_only: bool = False,
     ) -> ZipFile:
@@ -397,9 +391,9 @@ class ResourceDescrBase(
 
     def get_package_content(
         self, local_files_only: bool = False
-    ) -> Dict[FileName, Union[FileDescr, BioimageioYamlContent]]:
+    ) -> dict[FileName, FileDescr | BioimageioYamlContent]:
         """Returns package content without creating the package."""
-        content: Dict[FileName, FileDescr] = {}
+        content: dict[FileName, FileDescr] = {}
         with PackagingContext(
             bioimageio_yaml_file_name=BIOIMAGEIO_YAML,
             file_sources=content,
@@ -433,9 +427,9 @@ class InvalidDescr(
     else:
         format_version: Any
 
-    def get_reason(self) -> Optional[str]:
+    def get_reason(self) -> str | None:
         """Get the reason why the description is invalid, if available."""
-        reasons: List[str] = []
+        reasons: list[str] = []
         if self.validation_summary and self.validation_summary.details:
             for detail in self.validation_summary.details:
                 if detail.status == "failed" and detail.errors:
@@ -455,7 +449,7 @@ class InvalidDescr(
 
 class KwargsNode(Node):
     def get(self, item: str, default: Any = None) -> Any:
-        return self[item] if item in self else default
+        return self[item] if item in self else default  # ruff: ignore[SIM401]
 
     def __getitem__(self, item: str) -> Any:
         if item in self.__class__.model_fields:

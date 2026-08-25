@@ -144,7 +144,7 @@ weights:
         in_channels: 2
         initial_features: 16
         out_channels: 2
-      sha256: 74b6d27cd17b40560e70fde4d57b5675614979ffab4f1e0328a6c3a3f64a1ff2
+      sha256: 3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2
       source: multi_tensor_unet.py
     pytorch_version: 1.6
     sha256: c498522b3f2b02429b41fe9dbcb722ce0d7ad4cae7fcf8059cee27857ae49b00

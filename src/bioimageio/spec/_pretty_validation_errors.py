@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import warnings
 from pprint import pformat
 from types import TracebackType
-from typing import Any, List, Type
+from typing import Any
 
 from pydantic import ValidationError
 
@@ -19,7 +21,7 @@ try:
             self.error = validation_error
 
         def __str__(self):
-            errors: List[str] = []
+            errors: list[str] = []
             for e in self.error.errors(include_url=False):
                 ipt_lines = pformat(
                     e["input"], sort_dicts=False, depth=1, compact=True, width=30
@@ -40,7 +42,7 @@ try:
 
     def _custom_exception_handler(
         self: InteractiveShell,
-        etype: Type[ValidationError],
+        etype: type[ValidationError],
         evalue: ValidationError,
         tb: TracebackType,
         tb_offset: Any = None,

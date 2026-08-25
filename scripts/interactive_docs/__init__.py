@@ -1,8 +1,11 @@
-from typing import Any, List
+from __future__ import annotations
+
+from typing import Any
+
 from .hint import Hint, Unrecognized, Widget
 
 
-def generate_docs(*, raw_type: Any, root_path: List[str]) -> "str | Exception":
+def generate_docs(*, raw_type: Any, root_path: list[str]) -> str | Exception:
     hint = Hint.parse(raw_hint=raw_type, parent_raw_hints=[])
     if isinstance(hint, (Exception, Unrecognized)):
         return Exception(f"Could not process {raw_type}: {hint}")

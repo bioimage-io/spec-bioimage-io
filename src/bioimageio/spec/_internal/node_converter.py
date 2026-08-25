@@ -6,7 +6,6 @@ from typing import (
     Dict,
     Final,
     Generic,
-    Type,
     Union,
     cast,
 )
@@ -71,20 +70,20 @@ TGT = TypeVar("TGT", bound=Node)
 CArgs = TypeVarTuple("CArgs")
 
 
-class Converter(Generic[SRC, TGT, Unpack[CArgs]], ABC):
+class Converter(ABC, Generic[SRC, TGT, Unpack[CArgs]]):
     # src: ClassVar[Type[SRC]]
     # tgt: ClassVar[Type[TGT]]
     # note: the above is not yet possible, see https://github.com/python/typing/discussions/1424
     # we therefore use an instance
-    def __init__(self, src: Type[SRC], tgt: Type[TGT], /):
+    def __init__(self, src: type[SRC], tgt: type[TGT], /):
         super().__init__()
-        self.src: Final[Type[SRC]] = src
-        self.tgt: Final[Type[TGT]] = tgt
+        self.src: Final[type[SRC]] = src
+        self.tgt: Final[type[TGT]] = tgt
 
     @abstractmethod
     def _convert(
-        self, src: SRC, tgt: "type[TGT | dict[str, Any]]", /, *args: Unpack[CArgs]
-    ) -> "TGT | dict[str, Any]": ...
+        self, src: SRC, tgt: type[TGT | dict[str, Any]], /, *args: Unpack[CArgs]
+    ) -> TGT | dict[str, Any]: ...
 
     # note: the following is not (yet) allowed, see https://github.com/python/typing/issues/1399
     #       we therefore use `kwargs` (and not `**kwargs`)
@@ -101,5 +100,5 @@ class Converter(Generic[SRC, TGT, Unpack[CArgs]], ABC):
         data = self.convert_as_dict(source, *args)
         return assert_all_params_set_explicitly(self.tgt)(**data)
 
-    def convert_as_dict(self, source: SRC, /, *args: Unpack[CArgs]) -> Dict[str, Any]:
+    def convert_as_dict(self, source: SRC, /, *args: Unpack[CArgs]) -> dict[str, Any]:
         return cast(Dict[str, Any], self._convert(source, dict, *args))

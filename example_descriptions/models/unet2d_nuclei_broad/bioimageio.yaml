@@ -119,7 +119,7 @@ weights:
         name: Constantin Pape;@bioimage-io
     architecture:
       source: unet2d.py
-      sha256: d00721e7d00f55222e8cbf90019dd85ce9df0ae42fd46a07f0e6ea45729b310d
+      sha256: 68e34520084afde3b160b8774a863ccf2934169838217ace376d6a244c53422b
       callable: UNet2d
       kwargs:
         input_channels: 1

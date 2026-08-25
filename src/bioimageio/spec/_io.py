@@ -1,4 +1,6 @@
-from typing import Callable, Dict, Literal, Optional, TextIO, Union, cast, overload
+from __future__ import annotations
+
+from typing import Callable, Literal, TextIO, cast, overload
 from zipfile import ZipFile
 
 from loguru import logger
@@ -25,45 +27,43 @@ from .dataset import AnyDatasetDescr, DatasetDescr
 from .model import AnyModelDescr, ModelDescr
 from .summary import ValidationSummary
 
-PbarArg = Union[ProgressbarLike, Callable[[], ProgressbarLike], bool, None]
-
 
 @overload
 def load_description(
-    source: Union[PermissiveFileSource, ZipFile],
+    source: PermissiveFileSource | ZipFile,
     /,
     *,
     format_version: Literal["latest"],
-    perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
-    sha256: Optional[Sha256] = None,
-    pbar: PbarArg = None,
-) -> Union[LatestResourceDescr, InvalidDescr]: ...
+    perform_io_checks: bool | None = None,
+    known_files: dict[str, Sha256 | None] | None = None,
+    sha256: Sha256 | None = None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+) -> LatestResourceDescr | InvalidDescr: ...
 
 
 @overload
 def load_description(
-    source: Union[PermissiveFileSource, ZipFile],
+    source: PermissiveFileSource | ZipFile,
     /,
     *,
-    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
-    sha256: Optional[Sha256] = None,
-    pbar: PbarArg = None,
-) -> Union[ResourceDescr, InvalidDescr]: ...
+    format_version: FormatVersionPlaceholder | str = DISCOVER,
+    perform_io_checks: bool | None = None,
+    known_files: dict[str, Sha256 | None] | None = None,
+    sha256: Sha256 | None = None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+) -> ResourceDescr | InvalidDescr: ...
 
 
 def load_description(
-    source: Union[PermissiveFileSource, ZipFile],
+    source: PermissiveFileSource | ZipFile,
     /,
     *,
-    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
-    sha256: Optional[Sha256] = None,
-    pbar: PbarArg = None,
-) -> Union[ResourceDescr, InvalidDescr]:
+    format_version: FormatVersionPlaceholder | str = DISCOVER,
+    perform_io_checks: bool | None = None,
+    known_files: dict[str, Sha256 | None] | None = None,
+    sha256: Sha256 | None = None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+) -> ResourceDescr | InvalidDescr:
     """load a bioimage.io resource description
 
     Args:
@@ -99,10 +99,10 @@ def load_description(
             missing, 'unknown' file references are considered invalid.
         sha256:
             Optional SHA-256 value of **source**
-        pbar:
+        progressbar:
             Optional progress bar control forwarded to download/open helpers.
             Use `False` to disable download progress bars, `True` for the default
-            tqdm bar, or pass a callable / tqdm-like instance to customize it.
+            tqdm bar, or pass a (factory of a) tqdm-like progressbar to customize it.
 
     Returns:
         An object holding all metadata of the bioimage.io resource
@@ -133,39 +133,39 @@ def load_description(
 
 @overload
 def load_model_description(
-    source: Union[PermissiveFileSource, ZipFile],
+    source: PermissiveFileSource | ZipFile,
     /,
     *,
     format_version: Literal["latest"],
-    perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
-    sha256: Optional[Sha256] = None,
-    pbar: PbarArg = None,
+    perform_io_checks: bool | None = None,
+    known_files: dict[str, Sha256 | None] | None = None,
+    sha256: Sha256 | None = None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
 ) -> ModelDescr: ...
 
 
 @overload
 def load_model_description(
-    source: Union[PermissiveFileSource, ZipFile],
+    source: PermissiveFileSource | ZipFile,
     /,
     *,
-    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
-    sha256: Optional[Sha256] = None,
-    pbar: PbarArg = None,
+    format_version: FormatVersionPlaceholder | str = DISCOVER,
+    perform_io_checks: bool | None = None,
+    known_files: dict[str, Sha256 | None] | None = None,
+    sha256: Sha256 | None = None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
 ) -> AnyModelDescr: ...
 
 
 def load_model_description(
-    source: Union[PermissiveFileSource, ZipFile],
+    source: PermissiveFileSource | ZipFile,
     /,
     *,
-    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
-    sha256: Optional[Sha256] = None,
-    pbar: PbarArg = None,
+    format_version: FormatVersionPlaceholder | str = DISCOVER,
+    perform_io_checks: bool | None = None,
+    known_files: dict[str, Sha256 | None] | None = None,
+    sha256: Sha256 | None = None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
 ) -> AnyModelDescr:
     """same as `load_description`, but addtionally ensures that the loaded
     description is valid and of type 'model'.
@@ -186,39 +186,39 @@ def load_model_description(
 
 @overload
 def load_dataset_description(
-    source: Union[PermissiveFileSource, ZipFile],
+    source: PermissiveFileSource | ZipFile,
     /,
     *,
     format_version: Literal["latest"],
-    perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
-    sha256: Optional[Sha256] = None,
-    pbar: PbarArg = None,
+    perform_io_checks: bool | None = None,
+    known_files: dict[str, Sha256 | None] | None = None,
+    sha256: Sha256 | None = None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
 ) -> DatasetDescr: ...
 
 
 @overload
 def load_dataset_description(
-    source: Union[PermissiveFileSource, ZipFile],
+    source: PermissiveFileSource | ZipFile,
     /,
     *,
-    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
-    sha256: Optional[Sha256] = None,
-    pbar: PbarArg = None,
+    format_version: FormatVersionPlaceholder | str = DISCOVER,
+    perform_io_checks: bool | None = None,
+    known_files: dict[str, Sha256 | None] | None = None,
+    sha256: Sha256 | None = None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
 ) -> AnyDatasetDescr: ...
 
 
 def load_dataset_description(
-    source: Union[PermissiveFileSource, ZipFile],
+    source: PermissiveFileSource | ZipFile,
     /,
     *,
-    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
-    sha256: Optional[Sha256] = None,
-    pbar: PbarArg = None,
+    format_version: FormatVersionPlaceholder | str = DISCOVER,
+    perform_io_checks: bool | None = None,
+    known_files: dict[str, Sha256 | None] | None = None,
+    sha256: Sha256 | None = None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
 ) -> AnyDatasetDescr:
     """same as `load_description`, but addtionally ensures that the loaded
     description is valid and of type 'dataset'.
@@ -235,9 +235,9 @@ def load_dataset_description(
 
 
 def save_bioimageio_yaml_only(
-    rd: Union[ResourceDescr, BioimageioYamlContent, InvalidDescr],
+    rd: ResourceDescr | BioimageioYamlContent | InvalidDescr,
     /,
-    file: Union[NewPath, FilePath, TextIO],
+    file: NewPath | FilePath | TextIO,
     *,
     exclude_unset: bool = True,
     exclude_defaults: bool = False,
@@ -265,14 +265,14 @@ def save_bioimageio_yaml_only(
 
 
 def load_description_and_validate_format_only(
-    source: Union[PermissiveFileSource, ZipFile],
+    source: PermissiveFileSource | ZipFile,
     /,
     *,
-    format_version: Union[FormatVersionPlaceholder, str] = DISCOVER,
-    perform_io_checks: Optional[bool] = None,
-    known_files: Optional[Dict[str, Optional[Sha256]]] = None,
-    sha256: Optional[Sha256] = None,
-    pbar: PbarArg = None,
+    format_version: FormatVersionPlaceholder | str = DISCOVER,
+    perform_io_checks: bool | None = None,
+    known_files: dict[str, Sha256 | None] | None = None,
+    sha256: Sha256 | None = None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
 ) -> ValidationSummary:
     """same as `load_description`, but only return the validation summary.
 

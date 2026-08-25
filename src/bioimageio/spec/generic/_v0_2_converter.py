@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import collections.abc
-from typing import Any, Dict, Mapping, Union
+from typing import Any, Mapping
 
 from .._internal.io import BioimageioYamlContent
 from .._internal.type_guards import is_mapping
@@ -43,14 +45,14 @@ def convert_from_older_format(data: BioimageioYamlContent) -> None:
     remove_gh_prefix(data)
 
 
-def remove_slashes_from_names(data: Dict[Any, Any]) -> None:
+def remove_slashes_from_names(data: dict[Any, Any]) -> None:
     NAME = "name"
     if NAME in data and isinstance(data[NAME], str):
         data[NAME] = data[NAME].replace("/", "").replace("\\", "")
 
     # update authors and maintainers
     def rm_slashes_in_person_name(
-        person: Union[Any, Mapping[Union[Any, str], Any]],
+        person: Any | Mapping[Any | str, Any],
     ) -> Any:
         if not is_mapping(person):
             return person

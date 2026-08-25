@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, ClassVar, Literal, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, ClassVar, Literal
 
 from pydantic import Field
 from typing_extensions import Annotated
@@ -39,15 +41,15 @@ class ApplicationDescr(GenericDescrBase):
     else:
         type: Literal["application"]
 
-    id: Optional[ApplicationId] = None
+    id: ApplicationId | None = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 
-    parent: Optional[ApplicationId] = None
+    parent: ApplicationId | None = None
     """The description from which this one is derived"""
 
     source: Annotated[
-        FAIR[Optional[FileSource_package]],
+        FAIR[FileSource_package | None],
         Field(description="URL or path to the source of the application"),
     ] = None
     """The primary source of the application"""

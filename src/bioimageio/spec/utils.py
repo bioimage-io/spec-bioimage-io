@@ -1,9 +1,12 @@
 """Utility functions for bioimage.io specifications (mostly IO)."""
 
+from __future__ import annotations
+
 import json
 import shutil
-from typing import Any, Dict, List, TypedDict, Union
+from typing import Any, TypedDict
 
+import pydantic
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from loguru import logger
 from numpy.typing import NDArray
@@ -27,7 +30,6 @@ from ._internal.io_utils import open_bioimageio_yaml as open_bioimageio_yaml
 from ._internal.io_utils import read_yaml as read_yaml
 from ._internal.io_utils import save_array as save_array
 from ._internal.io_utils import write_yaml as write_yaml
-from ._internal.type_guards import is_ndarray
 from ._internal.types import PermissiveFileSource, RelativeFilePath
 from ._internal.utils import files
 
@@ -45,7 +47,7 @@ class SpdxLicenseEntry(TypedDict):
 
 class SpdxLicenses(TypedDict):
     licenseListVersion: str
-    licenses: List[SpdxLicenseEntry]
+    licenses: list[SpdxLicenseEntry]
     releaseDate: str
 
 
@@ -59,7 +61,7 @@ def get_spdx_licenses() -> SpdxLicenses:
         return json.load(f)
 
 
-def get_bioimageio_json_schema() -> Dict[str, Any]:
+def get_bioimageio_json_schema() -> dict[str, Any]:
     """get the bioimageio specification as a JSON schema"""
     with (
         files("bioimageio.spec")
@@ -69,31 +71,36 @@ def get_bioimageio_json_schema() -> Dict[str, Any]:
         return json.load(f)
 
 
-def load_image(source: Union[FileDescr, ZipPath, PermissiveFileSource]) -> NDArray[Any]:
+def load_image(
+    source: FileDescr | ZipPath | PermissiveFileSource,
+) -> NDArray[Any]:
     """load a single image as numpy array
 
     Args:
         source: image source
     """
 
+    source = _interprete_file_source(source)
+
+    if source.suffix == ".npy":
+        return load_array(source)
+    else:
+        reader = get_reader(source)
+        return imread(reader.read(), extension=source.suffix)  # pyright: ignore[reportUnknownVariableType]
+
+
+def _interprete_file_source(source: FileDescr | ZipPath | PermissiveFileSource):
     if isinstance(source, (FileDescr, ZipPath)):
         parsed_source = source
-    else:
+    elif isinstance(source, (str, pydantic.AnyUrl)):
         parsed_source = interprete_file_source(source)
+    else:
+        parsed_source = source
 
     if isinstance(parsed_source, RelativeFilePath):
         parsed_source = parsed_source.absolute()
 
-    if parsed_source.suffix == ".npy":
-        image = load_array(parsed_source)
-    else:
-        reader = get_reader(parsed_source)
-        image = imread(  # pyright: ignore[reportUnknownVariableType]
-            reader.read(), extension=parsed_source.suffix
-        )
-
-    assert is_ndarray(image)
-    return image
+    return parsed_source
 
 
 def empty_cache():

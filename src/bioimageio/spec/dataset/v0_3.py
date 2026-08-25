@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, Any, ClassVar, Dict, Literal, Optional, cast
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Literal, cast
 
 from pydantic import model_validator
 
@@ -47,19 +49,19 @@ class DatasetDescr(GenericDescrBase):
     else:
         type: Literal["dataset"]
 
-    id: Optional[DatasetId] = None
+    id: DatasetId | None = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 
-    parent: Optional[DatasetId] = None
+    parent: DatasetId | None = None
     """The description from which this one is derived"""
 
-    source: FAIR[Optional[HttpUrl]] = None
+    source: FAIR[HttpUrl | None] = None
     """"URL to the source of the dataset."""
 
     @model_validator(mode="before")
     @classmethod
-    def _convert(cls, data: Dict[str, Any], /) -> Dict[str, Any]:
+    def _convert(cls, data: dict[str, Any], /) -> dict[str, Any]:
         if (
             data.get("type") == "dataset"
             and isinstance(fv := data.get("format_version"), str)
