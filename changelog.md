@@ -10,6 +10,11 @@ In this file we log both:
 
 This changelog includes implementation details and might reference [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+### bioimageio.spec 0.5.14.1
+
+- add suffixes property to URLs
+- add progressbar argument to open_bioimageio_yaml, load_description, etc.
+
 ### bioimageio.spec 0.5.14.0
 
 - add `ZarrSource` for zarr 'file' handling
