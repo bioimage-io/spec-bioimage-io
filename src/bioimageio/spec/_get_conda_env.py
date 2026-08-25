@@ -1,4 +1,6 @@
-from typing import List, Literal, Optional, Tuple, Union
+from __future__ import annotations
+
+from typing import Literal, Union
 
 from typing_extensions import assert_never
 
@@ -27,7 +29,7 @@ SupportedWeightsEntry = Union[
 def get_conda_env(
     *,
     entry: SupportedWeightsEntry,
-    env_name: Optional[Union[Literal["DROP"], str]] = None,
+    env_name: Literal["DROP"] | str | None = None,
 ) -> BioimageioCondaEnv:
     """get the recommended Conda environment for a given weights entry description"""
     if isinstance(entry, (v0_4.OnnxWeightsDescr, v0_5.OnnxWeightsDescr)):
@@ -79,7 +81,7 @@ def get_conda_env(
 
 
 def _get_default_keras3_env(
-    backend: Tuple[Literal["tensorflow", "jax", "torch"], Version],
+    backend: tuple[Literal["tensorflow", "jax", "torch"], Version],
 ) -> BioimageioCondaEnv:
     if backend[0] == "tensorflow":
         env = _get_default_tf_env(tensorflow_version=backend[1])
@@ -100,7 +102,7 @@ def _get_default_keras3_env(
 
 def _get_default_pytorch_env(
     *,
-    pytorch_version: Optional[Version] = None,
+    pytorch_version: Version | None = None,
 ) -> BioimageioCondaEnv:
     if pytorch_version is None:
         pytorch_version = Version("1.10.1")
@@ -115,7 +117,7 @@ def _get_default_pytorch_env(
     elif v.count(".") == 1:
         v += ".0"
 
-    deps: List[Union[str, PipDeps]] = [f"pytorch=={v}"]
+    deps: list[str | PipDeps] = [f"pytorch=={v}"]
     additional_deps = {
         "1.5.1": "torchvision==0.6.1",
         "1.6.0": "torchvision==0.7.0",
@@ -184,7 +186,7 @@ def _get_default_pytorch_env(
     return BioimageioCondaEnv(channels=channels, dependencies=deps)
 
 
-def _get_default_onnx_env(*, opset_version: Optional[int]) -> BioimageioCondaEnv:
+def _get_default_onnx_env(*, opset_version: int | None) -> BioimageioCondaEnv:
     if opset_version is None:
         opset_version = 15
 
@@ -193,7 +195,7 @@ def _get_default_onnx_env(*, opset_version: Optional[int]) -> BioimageioCondaEnv
     return BioimageioCondaEnv(dependencies=["onnxruntime"])
 
 
-def _get_default_tf_env(tensorflow_version: Optional[Version]) -> BioimageioCondaEnv:
+def _get_default_tf_env(tensorflow_version: Version | None) -> BioimageioCondaEnv:
     if tensorflow_version is None or tensorflow_version.major < 2:
         tensorflow_version = Version("2.17")
 
@@ -203,7 +205,7 @@ def _get_default_tf_env(tensorflow_version: Optional[Version]) -> BioimageioCond
 
 
 def _get_env_from_deps(
-    deps: Union[v0_4.Dependencies, FileDescr],
+    deps: v0_4.Dependencies | FileDescr,
 ) -> BioimageioCondaEnv:
     if isinstance(deps, v0_4.Dependencies):
         deps_reader = get_reader(deps.file)

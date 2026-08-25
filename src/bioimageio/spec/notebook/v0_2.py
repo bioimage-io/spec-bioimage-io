@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, ClassVar, Literal, Optional, Union
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, ClassVar, Literal, Union
 
 from typing_extensions import Annotated
 
@@ -43,7 +45,7 @@ class NotebookDescr(GenericDescrBase):
     else:
         type: Literal["notebook"]
 
-    id: Optional[NotebookId] = None
+    id: NotebookId | None = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 
@@ -57,5 +59,5 @@ class LinkedNotebook(Node):
     id: NotebookId
     """A valid notebook `id` from the bioimage.io collection."""
 
-    version_number: Optional[int] = None
+    version_number: int | None = None
     """version number (n-th published version, not the semantic version) of linked notebook"""

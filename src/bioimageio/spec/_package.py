@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import collections.abc
 import shutil
 from io import BytesIO
 from pathlib import Path
 from tempfile import NamedTemporaryFile, mkdtemp
-from typing import IO, Dict, Literal, Optional, Sequence, Union
+from typing import IO, Literal, Sequence
 from zipfile import ZIP_DEFLATED
 
 from loguru import logger
@@ -40,11 +42,11 @@ def get_resource_package_content(
     /,
     *,
     bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
-    weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
-) -> Dict[FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]]:
+    weights_priority_order: Sequence[WeightsFormat] | None = None,  # model only
+) -> dict[FileName, HttpUrl | AbsoluteFilePath | BioimageioYamlContent | ZipPath]:
     """DEPRECATED in favor of get_package_content: Get the content of a bioimage.io resource package."""
-    ret: Dict[
-        FileName, Union[HttpUrl, AbsoluteFilePath, BioimageioYamlContent, ZipPath]
+    ret: dict[
+        FileName, HttpUrl | AbsoluteFilePath | BioimageioYamlContent | ZipPath
     ] = {}
     for k, v in get_package_content(
         rd,
@@ -68,9 +70,9 @@ def get_package_content(
     /,
     *,
     bioimageio_yaml_file_name: FileName = BIOIMAGEIO_YAML,
-    weights_priority_order: Optional[Sequence[WeightsFormat]] = None,  # model only
+    weights_priority_order: Sequence[WeightsFormat] | None = None,  # model only
     local_files_only: bool = False,
-) -> Dict[FileName, Union[FileDescr, BioimageioYamlContent]]:
+) -> dict[FileName, FileDescr | BioimageioYamlContent]:
     """
     Args:
         rd: resource description
@@ -88,7 +90,7 @@ def get_package_content(
     bioimageio_yaml_file_name = ensure_is_valid_bioimageio_yaml_name(
         bioimageio_yaml_file_name
     )
-    content: Dict[FileName, FileDescr] = {}
+    content: dict[FileName, FileDescr] = {}
     with PackagingContext(
         bioimageio_yaml_file_name=bioimageio_yaml_file_name,
         file_sources=content,
@@ -105,12 +107,12 @@ def get_package_content(
 
 
 def _prepare_resource_package(
-    source: Union[BioimageioYamlSource, ResourceDescr],
+    source: BioimageioYamlSource | ResourceDescr,
     /,
     *,
-    weights_priority_order: Optional[Sequence[WeightsFormat]] = None,
+    weights_priority_order: Sequence[WeightsFormat] | None = None,
     local_files_only: bool = False,
-) -> Dict[FileName, Union[BioimageioYamlContent, BytesReader]]:
+) -> dict[FileName, BioimageioYamlContent | BytesReader]:
     """Prepare to package a resource description; downloads all required files.
 
     Args:
@@ -153,22 +155,21 @@ def _prepare_resource_package(
 
 
 def save_bioimageio_package_as_folder(
-    source: Union[BioimageioYamlSource, ResourceDescr],
+    source: BioimageioYamlSource | ResourceDescr,
     /,
     *,
-    output_path: Union[NewPath, DirectoryPath, None] = None,
-    weights_priority_order: Optional[  # model only
-        Sequence[
-            Literal[
-                "keras_hdf5",
-                "onnx",
-                "pytorch_state_dict",
-                "tensorflow_js",
-                "tensorflow_saved_model_bundle",
-                "torchscript",
-            ]
+    output_path: NewPath | DirectoryPath | None = None,
+    weights_priority_order: Sequence[
+        Literal[
+            "keras_hdf5",
+            "onnx",
+            "pytorch_state_dict",
+            "tensorflow_js",
+            "tensorflow_saved_model_bundle",
+            "torchscript",
         ]
-    ] = None,
+    ]
+    | None = None,
     local_files_only: bool = False,
 ) -> DirectoryPath:
     """Write the content of a bioimage.io resource package to a folder.
@@ -224,24 +225,23 @@ def save_bioimageio_package_as_folder(
 
 
 def save_bioimageio_package(
-    source: Union[BioimageioYamlSource, ResourceDescr],
+    source: BioimageioYamlSource | ResourceDescr,
     /,
     *,
     compression: int = ZIP_DEFLATED,
     compression_level: int = 1,
-    output_path: Union[NewPath, FilePath, None] = None,
-    weights_priority_order: Optional[  # model only
-        Sequence[
-            Literal[
-                "keras_hdf5",
-                "onnx",
-                "pytorch_state_dict",
-                "tensorflow_js",
-                "tensorflow_saved_model_bundle",
-                "torchscript",
-            ]
+    output_path: NewPath | FilePath | None = None,
+    weights_priority_order: Sequence[
+        Literal[
+            "keras_hdf5",
+            "onnx",
+            "pytorch_state_dict",
+            "tensorflow_js",
+            "tensorflow_saved_model_bundle",
+            "torchscript",
         ]
-    ] = None,
+    ]
+    | None = None,
     allow_invalid: bool = False,
     local_files_only: bool = False,
 ) -> FilePath:
@@ -268,7 +268,7 @@ def save_bioimageio_package(
     )
     if output_path is None:
         output_path = Path(
-            NamedTemporaryFile(suffix=".bioimageio.zip", delete=False).name
+            NamedTemporaryFile(suffix=".bioimageio.zip", delete=False).name  # ruff: ignore[SIM115]
         )
     else:
         output_path = Path(output_path)
@@ -291,24 +291,23 @@ def save_bioimageio_package(
 
 
 def save_bioimageio_package_to_stream(
-    source: Union[BioimageioYamlSource, ResourceDescr],
+    source: BioimageioYamlSource | ResourceDescr,
     /,
     *,
     compression: int = ZIP_DEFLATED,
     compression_level: int = 1,
-    output_stream: Union[IO[bytes], None] = None,
-    weights_priority_order: Optional[  # model only
-        Sequence[
-            Literal[
-                "keras_hdf5",
-                "onnx",
-                "pytorch_state_dict",
-                "tensorflow_js",
-                "tensorflow_saved_model_bundle",
-                "torchscript",
-            ]
+    output_stream: IO[bytes] | None = None,
+    weights_priority_order: Sequence[
+        Literal[
+            "keras_hdf5",
+            "onnx",
+            "pytorch_state_dict",
+            "tensorflow_js",
+            "tensorflow_saved_model_bundle",
+            "torchscript",
         ]
-    ] = None,
+    ]
+    | None = None,
     local_files_only: bool = False,
 ) -> IO[bytes]:
     """Package a bioimageio resource into a stream.

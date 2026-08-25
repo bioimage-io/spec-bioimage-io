@@ -1,4 +1,4 @@
-from typing import Union
+from __future__ import annotations
 
 import pytest
 from pydantic import BaseModel, Field, ValidationError
@@ -20,7 +20,7 @@ def test_license_id_in_model():
     from bioimageio.spec._internal.license_id import LicenseId
 
     class Model(BaseModel):
-        lid: Union[LicenseId, str] = Field(union_mode="left_to_right")
+        lid: LicenseId | str = Field(union_mode="left_to_right")
 
     out = Model.model_validate({"lid": "CC-BY-4.0"}).lid
     assert isinstance(out, LicenseId)

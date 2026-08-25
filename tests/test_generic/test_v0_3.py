@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path, PurePath
-from typing import Any, Dict, Sequence, Union
+from typing import Any, Sequence, Union
 
 import pytest
 from pydantic import (
@@ -31,31 +31,31 @@ EXAMPLE_COM_FILE = "https://example.com/file"
 @pytest.mark.parametrize(
     "kwargs",
     [
-        dict(
-            authors=[{"name": "Me"}],
-            cite=[dict(text="lala", url=EXAMPLE_COM)],
-            description="the description",
-            format_version=GenericDescr.implemented_format_version,
-            license="BSD-2-Clause-FreeBSD",
-            name="my name",
-            type="my_type",
-            unknown_extra_field="present",
-            version="1",
-        ),
-        dict(
-            attachments=[{"source": EXAMPLE_COM_FILE}],
-            authors=[{"name": "Me"}],
-            cite=[dict(text="lala", url=EXAMPLE_COM)],
-            description="my description",
-            format_version=GenericDescr.implemented_format_version,
-            license="BSD-2-Clause-FreeBSD",
-            name="your name",
-            type="my_type",
-            version="2",
-        ),
+        {
+            "authors": [{"name": "Me"}],
+            "cite": [{"text": "lala", "url": EXAMPLE_COM}],
+            "description": "the description",
+            "format_version": GenericDescr.implemented_format_version,
+            "license": "BSD-2-Clause-FreeBSD",
+            "name": "my name",
+            "type": "my_type",
+            "unknown_extra_field": "present",
+            "version": "1",
+        },
+        {
+            "attachments": [{"source": EXAMPLE_COM_FILE}],
+            "authors": [{"name": "Me"}],
+            "cite": [{"text": "lala", "url": EXAMPLE_COM}],
+            "description": "my description",
+            "format_version": GenericDescr.implemented_format_version,
+            "license": "BSD-2-Clause-FreeBSD",
+            "name": "your name",
+            "type": "my_type",
+            "version": "2",
+        },
     ],
 )
-def test_generic_valid(kwargs: Dict[str, Any]):
+def test_generic_valid(kwargs: dict[str, Any]):
     check_node(GenericDescr, kwargs, context=ValidationContext(perform_io_checks=False))
 
 
@@ -63,41 +63,41 @@ def test_generic_valid(kwargs: Dict[str, Any]):
     "kwargs,context",
     [
         pytest.param(
-            dict(
-                format_version=GenericDescr.implemented_format_version,
-                name="my name",
-                description="my description",
-                authors=[{"name": "Me"}],
-                type="my_type",
-                version="0.1.0",
-                license="BSD-2-Clause-FreeBSD",
-                cite=[dict(text="lala", url=EXAMPLE_COM)],
-            ),
+            {
+                "format_version": GenericDescr.implemented_format_version,
+                "name": "my name",
+                "description": "my description",
+                "authors": [{"name": "Me"}],
+                "type": "my_type",
+                "version": "0.1.0",
+                "license": "BSD-2-Clause-FreeBSD",
+                "cite": [{"text": "lala", "url": EXAMPLE_COM}],
+            },
             ValidationContext(warning_level=WARNING, perform_io_checks=False),
             id="deprecated license",
         ),
         (
-            dict(
-                format_version=GenericDescr.implemented_format_version,
-                version="0.1.0",
-                type="my_type",
+            {
+                "format_version": GenericDescr.implemented_format_version,
+                "version": "0.1.0",
+                "type": "my_type",
                 # name="their name",  # missing name
-            ),
+            },
             ValidationContext(perform_io_checks=False),
         ),
         (
-            dict(
-                format_version="9.9.9",  # unknown format version
-                version="0.1.0",
-                type="my_type",
-                name="its name",
-                attachments={"files": [Path(__file__), "missing"], "something": 42},
-            ),
+            {
+                "format_version": "9.9.9",  # unknown format version
+                "version": "0.1.0",
+                "type": "my_type",
+                "name": "its name",
+                "attachments": {"files": [Path(__file__), "missing"], "something": 42},
+            },
             ValidationContext(perform_io_checks=False),
         ),
     ],
 )
-def test_generic_invalid(kwargs: Dict[str, Any], context: ValidationContext):
+def test_generic_invalid(kwargs: dict[str, Any], context: ValidationContext):
     check_node(GenericDescr, kwargs, context=context, is_invalid=True)
 
 
@@ -141,7 +141,7 @@ with ValidationContext(perform_io_checks=False):
     text_md_url = HttpUrl("https://example.com/text.md")
 
 
-def validate_md_suffix(value: Union[AbsoluteFilePath, RelativeFilePath, HttpUrl]):
+def validate_md_suffix(value: AbsoluteFilePath | RelativeFilePath | HttpUrl):
     return validate_suffix(value, ".md", case_sensitive=True)
 
 
@@ -179,7 +179,7 @@ _type_adapters_for_url: Sequence[TypeAdapter[Any]] = (
     [(UNET2D_ROOT / "README.md", a) for a in _type_adapters_for_path]
     + [(text_md_url, a) for a in _type_adapters_for_url],
 )
-def test_with_suffix(src: Union[Path, HttpUrl], adapter: TypeAdapter[Any]):
+def test_with_suffix(src: Path | HttpUrl, adapter: TypeAdapter[Any]):
     with ValidationContext(perform_io_checks=False):
         valid = adapter.validate_python(src)
 
@@ -196,9 +196,7 @@ def test_with_suffix(src: Union[Path, HttpUrl], adapter: TypeAdapter[Any]):
     #     assert_never(src)
 
     json_obj = adapter.dump_python(valid, mode="json")
-    if isinstance(src, Path):
-        assert json_obj == str(src)
-    elif isinstance(src, HttpUrl):
+    if isinstance(src, (Path, HttpUrl)):
         assert json_obj == str(src)
     else:
         assert_never(src)

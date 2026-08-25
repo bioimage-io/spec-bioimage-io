@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from abc import abstractmethod
-from typing import Any, Optional, Protocol
+from typing import Any, Protocol
 
 from rich.progress import Progress
 
@@ -7,7 +9,7 @@ from rich.progress import Progress
 class ProgressbarLike(Protocol):
     """Progressbar protocol modeled after tqdm"""
 
-    total: Optional[int]
+    total: int | None
 
     @abstractmethod
     def update(self, increment: int, /) -> Any: ...
@@ -23,7 +25,7 @@ class ProgressbarLike(Protocol):
 
 
 class RichTaskBar(ProgressbarLike):
-    def __init__(self, description: str, *, parent: Progress, total: Optional[int]):
+    def __init__(self, description: str, *, parent: Progress, total: int | None):
         super().__init__()
         self.task_id = parent.add_task(description, total=total)
         self.parent = parent
@@ -47,5 +49,5 @@ class RichOverallProgress:
         super().__init__()
         self.progress = Progress()
 
-    def __call__(self, description: str = "", *, total: Optional[int] = None):
+    def __call__(self, description: str = "", *, total: int | None = None):
         return RichTaskBar(description, parent=self.progress, total=total)

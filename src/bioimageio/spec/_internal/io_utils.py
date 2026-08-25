@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import collections.abc
 import io
 import shutil
@@ -6,11 +8,12 @@ from contextlib import nullcontext
 from difflib import get_close_matches
 from pathlib import Path
 from types import MappingProxyType
-from typing import IO, Any, Dict, Mapping, Union, cast
+from typing import IO, Any, Dict, Mapping, cast
 from zipfile import ZipFile
 
 import httpx
 import numpy
+import pydantic
 from loguru import logger
 from numpy.typing import NDArray
 from pydantic import BaseModel, FilePath, NewPath, RootModel
@@ -36,7 +39,7 @@ from .io import (
     interprete_file_source,
 )
 from .io_basics import AbsoluteDirectory, FileName, ZipPath
-from .types import FileSource, PermissiveFileSource
+from .types import PermissiveFileSource
 from .url import HttpUrl, RootHttpUrl
 from .utils import cache
 from .validation_context import ValidationContext, get_validation_context
@@ -51,7 +54,7 @@ _yaml_dump.width = 88  # pyright: ignore[reportAttributeAccessIssue]
 
 
 def read_yaml(
-    file: Union[FilePath, ZipPath, IO[str], IO[bytes], BytesReader, str],
+    file: FilePath | ZipPath | IO[str] | IO[bytes] | BytesReader | str,
 ) -> YamlValue:
     if isinstance(file, (ZipPath, Path)):
         data = file.read_text(encoding="utf-8")
@@ -63,9 +66,9 @@ def read_yaml(
 
 
 def write_yaml(
-    content: Union[YamlValue, BioimageioYamlContentView, BaseModel],
+    content: YamlValue | BioimageioYamlContentView | BaseModel,
     /,
-    file: Union[NewPath, FilePath, IO[str], IO[bytes], ZipPath],
+    file: NewPath | FilePath | IO[str] | IO[bytes] | ZipPath,
 ):
     if isinstance(file, Path):
         cm = file.open("w", encoding="utf-8")
@@ -98,7 +101,7 @@ def _sanitize_bioimageio_yaml(content: YamlValue) -> BioimageioYamlContent:
 def _open_bioimageio_rdf_in_zip(
     path: ZipPath,
     *,
-    original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile],
+    original_root: AbsoluteDirectory | RootHttpUrl | ZipFile,
     original_source_name: str,
 ) -> OpenedBioimageioYaml:
     with path.open("rb") as f:
@@ -132,7 +135,7 @@ def _open_bioimageio_zip(
 
 
 def open_bioimageio_yaml(
-    source: Union[PermissiveFileSource, ZipFile, ZipPath],
+    source: PermissiveFileSource | ZipFile | ZipPath,
     /,
     **kwargs: Unpack[HashKwargs],
 ) -> OpenedBioimageioYaml:
@@ -176,15 +179,17 @@ def open_bioimageio_yaml(
         elif isinstance(source, (Path, str)) and (source_dir := Path(source)).is_dir():
             # open bioimageio yaml from a folder
             src = source_dir / find_bioimageio_yaml_file_name(source_dir)
-        else:
+        elif isinstance(source, (str, pydantic.AnyUrl)):
             src = interprete_file_source(source)
+        else:
+            src = source
 
         reader = get_reader(src, **kwargs)
 
     except Exception as e:
         # check if `source` is a collection id
         if not isinstance(source, str):
-            raise e
+            raise
 
         if settings.collection_http_pattern:
             with ValidationContext(perform_io_checks=False):
@@ -281,7 +286,7 @@ def open_bioimageio_yaml(
 _IdMap = RootModel[Dict[str, LightHttpFileDescr]]
 
 
-def _get_id_map_impl(url: str) -> Dict[str, LightHttpFileDescr]:
+def _get_id_map_impl(url: str) -> dict[str, LightHttpFileDescr]:
     if not isinstance(url, str) or "/" not in url:
         logger.opt(depth=1).error("invalid id map url: {}", url)
     try:
@@ -316,9 +321,7 @@ def get_id_map() -> Mapping[str, LightHttpFileDescr]:
 def write_content_to_zip(
     content: Mapping[
         FileName,
-        Union[
-            str, FilePath, ZipPath, BioimageioYamlContentView, FileDescr, BytesReader
-        ],
+        str | FilePath | ZipPath | BioimageioYamlContentView | FileDescr | BytesReader,
     ],
     zip: zipfile.ZipFile,
 ):
@@ -362,9 +365,9 @@ def write_content_to_zip(
 
 
 def write_zip(
-    path: Union[FilePath, IO[bytes]],
+    path: FilePath | IO[bytes],
     content: Mapping[
-        FileName, Union[str, FilePath, ZipPath, BioimageioYamlContentView, BytesReader]
+        FileName, str | FilePath | ZipPath | BioimageioYamlContentView | BytesReader
     ],
     *,
     compression: int,
@@ -389,7 +392,7 @@ def write_zip(
         write_content_to_zip(content, zip)
 
 
-def load_array(source: Union[FileSource, FileDescr, ZipPath]) -> NDArray[Any]:
+def load_array(source: PermissiveFileSource) -> NDArray[Any]:
     """load a numpy ndarray from a .npy file"""
     reader = get_reader(source)
     if settings.allow_pickle:
@@ -398,7 +401,7 @@ def load_array(source: Union[FileSource, FileDescr, ZipPath]) -> NDArray[Any]:
     return numpy.load(reader, allow_pickle=settings.allow_pickle)
 
 
-def save_array(path: Union[Path, ZipPath], array: NDArray[Any]) -> None:
+def save_array(path: Path | ZipPath, array: NDArray[Any]) -> None:
     """save a numpy ndarray to a .npy file"""
     with path.open(mode="wb") as f:
         assert not isinstance(f, io.TextIOWrapper)

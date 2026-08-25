@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import dataclasses
 import inspect
-from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Union, get_args
+from typing import TYPE_CHECKING, Any, Literal, Union, get_args
 
 import pydantic.functional_validators
 from annotated_types import BaseMetadata, GroupedMetadata
@@ -28,7 +30,7 @@ AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
 
 
 def warn(
-    typ: Union[AnnotationMetaData, Any],
+    typ: AnnotationMetaData | Any,
     msg: LiteralString,  # warning message, e.g. "'{value}' incompatible with {typ}
     severity: WarningSeverity = WARNING,
 ):
@@ -44,7 +46,7 @@ def warn(
 
 
 def _call_validator_func(
-    func: "_V2Validator",
+    func: _V2Validator,
     mode: Literal["after", "before", "plain", "wrap"],
     value: Any,
     info: ValidationInfo,
@@ -86,12 +88,12 @@ def _call_validator_func(
 
 
 def as_warning(
-    func: "_V2Validator",
+    func: _V2Validator,
     *,
     mode: Literal["after", "before", "plain", "wrap"] = "after",
     severity: WarningSeverity = WARNING,
-    msg: Optional[LiteralString] = None,
-    msg_context: Optional[Dict[str, Any]] = None,
+    msg: LiteralString | None = None,
+    msg_context: dict[str, Any] | None = None,
 ) -> ValidatorFunction:
     """turn validation function into a no-op, based on warning level"""
 
@@ -118,8 +120,8 @@ class AfterWarner(pydantic.functional_validators.AfterValidator):
     """Like AfterValidator, but wraps validation `func` `as_warning`"""
 
     severity: WarningSeverity = WARNING
-    msg: Optional[LiteralString] = None
-    context: Optional[Dict[str, Any]] = None
+    msg: LiteralString | None = None
+    context: dict[str, Any] | None = None
 
     def __post_init__(self):
         object.__setattr__(
@@ -140,8 +142,8 @@ class BeforeWarner(pydantic.functional_validators.BeforeValidator):
     """Like BeforeValidator, but wraps validation `func` `as_warning`"""
 
     severity: WarningSeverity = WARNING
-    msg: Optional[LiteralString] = None
-    context: Optional[Dict[str, Any]] = None
+    msg: LiteralString | None = None
+    context: dict[str, Any] | None = None
 
     def __post_init__(self):
         object.__setattr__(
@@ -164,8 +166,8 @@ def issue_warning(
     *,
     value: Any,
     severity: WarningSeverity = WARNING,
-    msg_context: Optional[Dict[str, Any]] = None,
-    field: Optional[str] = None,
+    msg_context: dict[str, Any] | None = None,
+    field: str | None = None,
     log_depth: int = 1,
 ):
     msg_context = {"value": value, "severity": severity, **(msg_context or {})}

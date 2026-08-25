@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from contextlib import nullcontext
-from typing import Any, Dict, Tuple
+from typing import Any
 
 import pytest
 
@@ -7,21 +9,21 @@ import pytest
 @pytest.mark.parametrize(
     "args,kwargs,valid",
     [
-        ((1, 1, 1, 1, 1), dict(c1=1, c2=1, d=1), True),
-        ((1, 1, 1, 1, 1), dict(c1=1, c2=1), True),
-        ((1, 1, 1, 1), dict(c1=1, c2=1, d=1), True),
-        ((1, 1, 1, 1), dict(c1=1, c2=1), True),
-        ((1, 1, 1, 1), dict(c1=1), False),
-        ((1, 1, 1), dict(c1=1, c2=1), False),
-        ((1, 1, 1, 1, 1), dict(c2=1), False),
-        ((1, 1, 1), dict(b2=1, c1=1, c2=1), True),
-        ((1, 1), dict(b1=1, b2=1, c1=1, c2=1), True),
-        ((1,), dict(a2=1, b1=1, b2=1, c1=1, c2=1), False),
-        ((), dict(a1=1, a2=1, b1=1, b2=1, c1=1, c2=1), False),
+        ((1, 1, 1, 1, 1), {"c1": 1, "c2": 1, "d": 1}, True),
+        ((1, 1, 1, 1, 1), {"c1": 1, "c2": 1}, True),
+        ((1, 1, 1, 1), {"c1": 1, "c2": 1, "d": 1}, True),
+        ((1, 1, 1, 1), {"c1": 1, "c2": 1}, True),
+        ((1, 1, 1, 1), {"c1": 1}, False),
+        ((1, 1, 1), {"c1": 1, "c2": 1}, False),
+        ((1, 1, 1, 1, 1), {"c2": 1}, False),
+        ((1, 1, 1), {"b2": 1, "c1": 1, "c2": 1}, True),
+        ((1, 1), {"b1": 1, "b2": 1, "c1": 1, "c2": 1}, True),
+        ((1,), {"a2": 1, "b1": 1, "b2": 1, "c1": 1, "c2": 1}, False),
+        ((), {"a1": 1, "a2": 1, "b1": 1, "b2": 1, "c1": 1, "c2": 1}, False),
     ],
 )
 def test_assert_all_params_set_explicitly(
-    args: Tuple[int, ...], kwargs: Dict[str, int], valid: bool
+    args: tuple[int, ...], kwargs: dict[str, int], valid: bool
 ):
     from bioimageio.spec._internal.utils import assert_all_params_set_explicitly
 

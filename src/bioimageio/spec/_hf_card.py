@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import collections.abc
 import warnings
 from functools import partial
 from pathlib import PurePosixPath
-from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, Sequence
 
 import numpy as np
 from imageio.v3 import imwrite  # pyright: ignore[reportUnknownVariableType]
@@ -115,7 +117,7 @@ HF_KNOWN_LICENSES = (
 )
 
 
-def _generate_png_from_tensor(tensor: NDArray[np.generic]) -> Optional[bytes]:
+def _generate_png_from_tensor(tensor: NDArray[np.generic]) -> bytes | None:
     """Generate PNG bytes from a sample tensor.
 
     Prefers 2D slices from multi-dimensional arrays.
@@ -164,7 +166,7 @@ def _generate_png_from_tensor(tensor: NDArray[np.generic]) -> Optional[bytes]:
 
 def _get_io_description(
     model: ModelDescr,
-) -> Tuple[str, Dict[str, bytes], List[TensorId], List[TensorId]]:
+) -> tuple[str, dict[str, bytes], list[TensorId], list[TensorId]]:
     """Generate a description of model inputs and outputs with sample images.
 
     Returns:
@@ -173,15 +175,13 @@ def _get_io_description(
     """
     markdown_string = ""
     referenced_files: dict[str, bytes] = {}
-    input_ids: List[TensorId] = []
-    output_ids: List[TensorId] = []
+    input_ids: list[TensorId] = []
+    output_ids: list[TensorId] = []
 
     def format_data_descr(
-        d: Union[
-            NominalOrOrdinalDataDescr,
-            IntervalOrRatioDataDescr,
-            Sequence[Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr]],
-        ],
+        d: NominalOrOrdinalDataDescr
+        | IntervalOrRatioDataDescr
+        | Sequence[NominalOrOrdinalDataDescr | IntervalOrRatioDataDescr],
     ) -> str:
         ret = ""
         if isinstance(d, NominalOrOrdinalDataDescr):
@@ -210,10 +210,7 @@ def _get_io_description(
         for inp in model.inputs:
             input_ids.append(inp.id)
             axes_str = ", ".join(str(a.id) for a in inp.axes)
-            shape_str = " × ".join(
-                str(a.size) if isinstance(a.size, int) else str(a.size)
-                for a in inp.axes
-            )
+            shape_str = " × ".join(str(a.size) for a in inp.axes)
 
             markdown_string += f"  `{inp.id}`: {inp.description or ''}\n\n"
             markdown_string += f"  - Axes: `{axes_str}`\n"
@@ -225,7 +222,7 @@ def _get_io_description(
             img_bytes = None
             if inp.sample_tensor is not None:
                 try:
-                    arr = load_image(inp.sample_tensor)
+                    arr = np.asarray(load_image(inp.sample_tensor))
                     img_bytes = _generate_png_from_tensor(arr)
                 except Exception as e:
                     logger.error("failed to generate input sample image: {}", e)
@@ -250,10 +247,7 @@ def _get_io_description(
         for out in model.outputs:
             output_ids.append(out.id)
             axes_str = ", ".join(str(a.id) for a in out.axes)
-            shape_str = " × ".join(
-                str(a.size) if isinstance(a.size, int) else str(a.size)
-                for a in out.axes
-            )
+            shape_str = " × ".join(str(a.size) for a in out.axes)
 
             markdown_string += f"  `{out.id}`: {out.description or ''}\n"
             markdown_string += f"  - Axes: `{axes_str}`\n"
@@ -265,7 +259,7 @@ def _get_io_description(
             img_bytes = None
             if out.sample_tensor is not None:
                 try:
-                    arr = load_image(out.sample_tensor)
+                    arr = np.asarray(load_image(out.sample_tensor))
                     img_bytes = _generate_png_from_tensor(arr)
                 except Exception as e:
                     logger.error("failed to generate output sample image: {}", e)
@@ -289,7 +283,7 @@ def _get_io_description(
 
 def create_huggingface_model_card(
     model: ModelDescr, *, repo_id: str
-) -> Tuple[str, Dict[str, bytes]]:
+) -> tuple[str, dict[str, bytes]]:
     """Create a Hugging Face model card for a BioImage.IO model.
 
     Returns:
@@ -336,21 +330,19 @@ def create_huggingface_model_card(
     if model.authors:
         shared_by = "\n- **Shared by:** " + (
             "".join(
-                (
-                    f"\n    - {a.name}"
-                    + (f", {a.affiliation}" if a.affiliation else "")
-                    + (
-                        f", [https://orcid.org/{a.orcid}](https://orcid.org/{a.orcid})"
-                        if a.orcid
-                        else ""
-                    )
-                    + (
-                        f", [https://github.com/{a.github_user}](https://github.com/{a.github_user})"
-                        if a.github_user
-                        else ""
-                    )
-                    for a in model.authors
+                f"\n    - {a.name}"
+                + (f", {a.affiliation}" if a.affiliation else "")
+                + (
+                    f", [https://orcid.org/{a.orcid}](https://orcid.org/{a.orcid})"
+                    if a.orcid
+                    else ""
                 )
+                + (
+                    f", [https://github.com/{a.github_user}](https://github.com/{a.github_user})"
+                    if a.github_user
+                    else ""
+                )
+                for a in model.authors
             )
         )
     else:
@@ -387,9 +379,9 @@ def create_huggingface_model_card(
         f"[{model.git_repo}]({model.git_repo})" if model.git_repo else "missing"
     )
 
-    dl_framework_parts: List[str] = []
-    training_frameworks: List[str] = []
-    model_size: Optional[str] = None
+    dl_framework_parts: list[str] = []
+    training_frameworks: list[str] = []
+    model_size: str | None = None
     for weights in model.weights.available_formats.values():
         if isinstance(weights, (PytorchStateDictWeightsDescr, TorchscriptWeightsDescr)):
             dl_framework_version = weights.pytorch_version
@@ -470,7 +462,7 @@ def create_huggingface_model_card(
     else:
         environmental_impact_toc_entry = ""
 
-    evaluation_parts: List[str] = []
+    evaluation_parts: list[str] = []
     n_evals = 0
     for e in model.config.bioimageio.evaluations:
         if e.dataset_role == "independent":
@@ -546,7 +538,7 @@ def create_huggingface_model_card(
 
     speeds_sizes_times = "### Speeds, Sizes, Times\n\n"
     if model.config.bioimageio.training.training_duration is not None:
-        speeds_sizes_times += f"- **Training time:** {'{:.2f}'.format(model.config.bioimageio.training.training_duration)}\n"
+        speeds_sizes_times += f"- **Training time:** {f'{model.config.bioimageio.training.training_duration:.2f}'}\n"
 
     speeds_sizes_times += f"- **Model size:** {model_size}\n"
     if model.config.bioimageio.inference_time:

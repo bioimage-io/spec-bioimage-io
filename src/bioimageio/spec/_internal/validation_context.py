@@ -4,7 +4,7 @@ from contextvars import ContextVar, Token
 from copy import copy
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Dict, List, Literal, Optional, Union, cast
+from typing import Callable, Dict, List, Literal, Optional, cast
 from urllib.parse import urlsplit, urlunsplit
 from zipfile import ZipFile
 
@@ -22,10 +22,10 @@ from .warning_levels import WarningLevel
 
 @dataclass(frozen=True, **SLOTS)
 class ValidationContextBase:
-    file_name: Optional[FileName] = None
+    file_name: FileName | None = None
     """File name of the bioimageio YAML file."""
 
-    original_source_name: Optional[str] = None
+    original_source_name: str | None = None
     """Original source of the bioimageio resource description, e.g. a URL or file path."""
 
     perform_io_checks: bool = settings.perform_io_checks
@@ -34,7 +34,7 @@ class ValidationContextBase:
 
     Existence of local absolute file paths is still being checked."""
 
-    known_files: Dict[str, Optional[Sha256]] = field(
+    known_files: dict[str, Sha256 | None] = field(
         default_factory=cast(  # TODO: (py>3.8) use dict[str, Optional[Sha256]]
             Callable[[], Dict[str, Optional[Sha256]]], dict
         )
@@ -67,7 +67,7 @@ class ValidationContextSummary(ValidationContextBase):
     __pydantic_config__ = ConfigDict(extra="forbid")
     """Pydantic config to include **ValdationContextSummary** in **ValidationDetail**."""
 
-    root: Union[RootHttpUrl, Path, Literal["in-memory"]] = Path()
+    root: RootHttpUrl | Path | Literal["in-memory"] = Path()
 
 
 @dataclass(frozen=True)
@@ -79,21 +79,21 @@ class ValidationContext(ValidationContextBase):
     if it matches its expected SHA256 hash value.
     """
 
-    _context_tokens: "List[Token[Optional[ValidationContext]]]" = field(
+    _context_tokens: list[Token[ValidationContext | None]] = field(
         init=False,
         default_factory=cast(
-            "Callable[[], List[Token[Optional[ValidationContext]]]]", list
+            "Callable[[], List[Token[ValidationContext | None]]]", list
         ),
     )
 
-    cache: Union[
-        DiskCache[RootHttpUrl], MemoryCache[RootHttpUrl], NoopCache[RootHttpUrl]
-    ] = field(default=settings.disk_cache)
+    cache: (
+        DiskCache[RootHttpUrl] | MemoryCache[RootHttpUrl] | NoopCache[RootHttpUrl]
+    ) = field(default=settings.disk_cache)
     disable_cache: bool = False
     """Disable caching downloads to `settings.cache_path`
     and (re)download them to memory instead."""
 
-    root: Union[RootHttpUrl, DirectoryPath, ZipFile] = Path()
+    root: RootHttpUrl | DirectoryPath | ZipFile = Path()
     """Url/directory/archive serving as base to resolve any relative file paths."""
 
     warning_level: WarningLevel = 50
@@ -107,7 +107,7 @@ class ValidationContext(ValidationContextBase):
         of a generated `bioimageio.spec.ValidationSummary`.
     """
 
-    progressbar: Union[None, bool, Callable[[], ProgressbarLike]] = None
+    progressbar: None | bool | Callable[[], ProgressbarLike] = None
     """Control any progressbar.
     (Currently this is only used for file downloads.)
 
@@ -149,15 +149,15 @@ class ValidationContext(ValidationContextBase):
 
     def replace(  # TODO: probably use __replace__ when py>=3.13
         self,
-        root: Optional[Union[RootHttpUrl, DirectoryPath, ZipFile]] = None,
-        warning_level: Optional[WarningLevel] = None,
-        log_warnings: Optional[bool] = None,
-        file_name: Optional[str] = None,
-        perform_io_checks: Optional[bool] = None,
-        known_files: Optional[Dict[str, Optional[Sha256]]] = None,
-        raise_errors: Optional[bool] = None,
-        update_hashes: Optional[bool] = None,
-        original_source_name: Optional[str] = None,
+        root: RootHttpUrl | DirectoryPath | ZipFile | None = None,
+        warning_level: WarningLevel | None = None,
+        log_warnings: bool | None = None,
+        file_name: str | None = None,
+        perform_io_checks: bool | None = None,
+        known_files: dict[str, Sha256 | None] | None = None,
+        raise_errors: bool | None = None,
+        update_hashes: bool | None = None,
+        original_source_name: str | None = None,
     ) -> Self:
         if known_files is None and root is not None and self.root != root:
             # reset known files if root changes, but no new known_files are given
@@ -215,13 +215,13 @@ class ValidationContext(ValidationContextBase):
                 return str(source)
 
 
-_validation_context_var: ContextVar[Optional[ValidationContext]] = ContextVar(
+_validation_context_var: ContextVar[ValidationContext | None] = ContextVar(
     "validation_context_var", default=None
 )
 
 
 def get_validation_context(
-    default: Optional[ValidationContext] = None,
+    default: ValidationContext | None = None,
 ) -> ValidationContext:
     """Get the currently active validation context (or a default)"""
     return _validation_context_var.get() or default or ValidationContext()

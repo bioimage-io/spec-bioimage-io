@@ -26,6 +26,7 @@ dependencies = [
     "tqdm",
     "typing-extensions",
     "zipp",
+    'eval-type-backport;python_version<"3.10"', # TODO: remove when py3.10 is lowest supported version
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -56,7 +57,7 @@ dev = [
     "nbval",
     "pdoc",
     "pre-commit",
-    "pyright==1.1.409",
+    "pyright==1.1.411",
     "pytest-cov",
     "pytest",
     "python-dotenv",
@@ -100,7 +101,7 @@ exclude = [
     "bioimageio_cache",
     "tests/old_*",
 ]
-include = ["src", "scripts", "tests"]
+include = ["src", "tests"]
 pythonPlatform = "All"
 pythonVersion = "3.8"
 reportDuplicateImport = "error"
@@ -143,8 +144,13 @@ exclude = [
     "scripts/pdoc/patched.py",
 ]
 
+[tool.ruff.per-file-target-version]
+"scripts/*.py" = "py310"
+
 [tool.ruff.lint]
-extend-select = ["NPY201"]
+extend-select = ["NPY201", "E402"]
+ignore = ["PLC0414", "TRY004", "BLE001"]
+
 
 [tool.coverage.report]
 omit = ["src/bioimageio/spec/partner_utils/imjoy/*.py"]

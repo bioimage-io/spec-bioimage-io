@@ -70,7 +70,7 @@ def convert_cover_images(data: BioimageioYamlContent) -> None:
         src = interprete_file_source(c)
         fname = extract_file_name(src)
 
-        if not (fname.endswith(".tif") or fname.endswith(".tiff")):
+        if not fname.endswith((".tif", ".tiff")):
             continue
 
         try:

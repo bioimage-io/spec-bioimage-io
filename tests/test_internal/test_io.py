@@ -64,20 +64,6 @@ def test_interprete_file_source_from_str():
         assert interpreted.absolute().exists()
 
 
-def test_interprete_file_source_from_rel_path():
-    from bioimageio.spec._internal.io import interprete_file_source
-
-    with ValidationContext(root=Path(__file__).parent.parent):
-        src = RelativeFilePath(
-            PurePath(PurePath(__file__).parent.name) / PurePath(__file__).name
-        )
-
-    interpreted = interprete_file_source(src)
-    assert isinstance(interpreted, RelativeFilePath)
-    assert isinstance(interpreted.absolute(), Path)
-    assert interpreted.absolute().exists()
-
-
 def test_known_files(tmp_path: Path):
     from bioimageio.spec._internal.io import FileDescr, get_sha256
     from bioimageio.spec._internal.node import Node

@@ -10,7 +10,7 @@
     "python.testing.pytestEnabled": true,
     "python.testing.unittestEnabled": false,
     "yaml.schemas": {
-        "dist/bioimageio_schema_latest.json": [
+        "src/bioimageio/spec/static/bioimageio_schema.json": [
             "rdf.yaml",
             "bioimageio.yaml",
             "*.bioimageio.yaml"

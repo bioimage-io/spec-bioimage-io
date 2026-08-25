@@ -1,7 +1,9 @@
 """Representation of conda environment.yaml files for bioimageio specifications."""
 
+from __future__ import annotations
+
 import warnings
-from typing import Any, Callable, List, Optional, Union, cast
+from typing import Any, Callable, List, Union, cast
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -9,12 +11,12 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 class PipDeps(BaseModel):
     """Pip dependencies to include in conda dependecies"""
 
-    pip: List[str] = Field(default_factory=list)
+    pip: list[str] = Field(default_factory=list)
 
     @field_validator("pip", mode="after")
     @classmethod
-    def _remove_empty_and_sort(cls, value: List[str]) -> List[str]:
-        return sorted((vs for v in value if (vs := v.strip())))
+    def _remove_empty_and_sort(cls, value: list[str]) -> list[str]:
+        return sorted(vs for v in value if (vs := v.strip()))
 
     def __lt__(self, other: Any):
         if isinstance(other, PipDeps):
@@ -32,14 +34,14 @@ class PipDeps(BaseModel):
 class CondaEnv(BaseModel):
     """Represenation of the content of a conda environment.yaml file"""
 
-    name: Optional[str] = None
-    channels: List[str] = Field(default_factory=list)
-    dependencies: List[Union[str, PipDeps]] = Field(
+    name: str | None = None
+    channels: list[str] = Field(default_factory=list)
+    dependencies: list[str | PipDeps] = Field(
         default_factory=cast(Callable[[], List[Union[str, PipDeps]]], list)
     )
 
     @field_validator("name", mode="after")
-    def _ensure_valid_conda_env_name(cls, value: Optional[str]) -> Optional[str]:
+    def _ensure_valid_conda_env_name(cls, value: str | None) -> str | None:
         if value is None:
             return None
 
@@ -69,7 +71,7 @@ class CondaEnv(BaseModel):
             ):
                 return d_wo_channel[len(package) :]
 
-    def get_pip_deps(self) -> List[str]:
+    def get_pip_deps(self) -> list[str]:
         """Get the pip dependencies of this conda env."""
         for dep in self.dependencies:
             if isinstance(dep, PipDeps):
@@ -110,8 +112,7 @@ class BioimageioCondaEnv(CondaEnv):
             pip_section is None
             or not any(pd.startswith("bioimageio.core") for pd in pip_section.pip)
         ) and not any(
-            d.startswith("bioimageio.core")
-            or d.startswith("conda-forge::bioimageio.core")
+            d.startswith(("bioimageio.core", "conda-forge::bioimageio.core"))
             for d in self.dependencies
             if not isinstance(d, PipDeps)
         ):

@@ -9,10 +9,7 @@ from typing import (
     Dict,
     List,
     Literal,
-    Optional,
     Sequence,
-    Tuple,
-    Type,
     Union,
     cast,
 )
@@ -131,7 +128,7 @@ class CallableFromDepencencyNode(Node):
 
 class CallableFromDepencency(ValidatedStringWithInnerNode[CallableFromDepencencyNode]):
     _inner_node_class = CallableFromDepencencyNode
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[
         Annotated[
             str,
             StringConstraints(strip_whitespace=True, pattern=r"^.+\..+$"),
@@ -141,7 +138,7 @@ class CallableFromDepencency(ValidatedStringWithInnerNode[CallableFromDepencency
     @classmethod
     def _get_data(cls, valid_string_data: str):
         *mods, callname = valid_string_data.split(".")
-        return dict(module_name=".".join(mods), callable_name=callname)
+        return {"module_name": ".".join(mods), "callable_name": callname}
 
     @property
     def module_name(self):
@@ -156,7 +153,7 @@ class CallableFromDepencency(ValidatedStringWithInnerNode[CallableFromDepencency
 
 class CallableFromFileNode(Node):
     source_file: Annotated[
-        Union[RelativeFilePath, HttpUrl],
+        RelativeFilePath | HttpUrl,
         Field(union_mode="left_to_right"),
         include_in_package,
     ]
@@ -167,7 +164,7 @@ class CallableFromFileNode(Node):
 
 class CallableFromFile(ValidatedStringWithInnerNode[CallableFromFileNode]):
     _inner_node_class = CallableFromFileNode
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[
         Annotated[
             str,
             StringConstraints(strip_whitespace=True, pattern=r"^.+:.+$"),
@@ -177,7 +174,7 @@ class CallableFromFile(ValidatedStringWithInnerNode[CallableFromFileNode]):
     @classmethod
     def _get_data(cls, valid_string_data: str):
         *file_parts, callname = valid_string_data.split(":")
-        return dict(source_file=":".join(file_parts), callable_name=callname)
+        return {"source_file": ":".join(file_parts), "callable_name": callname}
 
     @property
     def source_file(self):
@@ -205,7 +202,7 @@ class DependenciesNode(Node):
 
 class Dependencies(ValidatedStringWithInnerNode[DependenciesNode]):
     _inner_node_class = DependenciesNode
-    root_model: ClassVar[Type[RootModel[Any]]] = RootModel[
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[
         Annotated[
             str,
             StringConstraints(strip_whitespace=True, pattern=r"^.+:.+$"),
@@ -215,7 +212,7 @@ class Dependencies(ValidatedStringWithInnerNode[DependenciesNode]):
     @classmethod
     def _get_data(cls, valid_string_data: str):
         manager, *file_parts = valid_string_data.split(":")
-        return dict(manager=manager, file=":".join(file_parts))
+        return {"manager": manager, "file": ":".join(file_parts)}
 
     @property
     def manager(self):
@@ -246,12 +243,12 @@ class WeightsEntryDescrBase(FileDescr):
     """The weights file."""
 
     attachments: Annotated[
-        Union[AttachmentsDescr, None],
+        AttachmentsDescr | None,
         warn(None, "Weights entry depends on additional attachments.", ALERT),
     ] = None
     """Attachments that are specific to this weights entry."""
 
-    authors: Union[List[Author], None] = None
+    authors: list[Author] | None = None
     """Authors
     Either the person(s) that have trained this model resulting in the original weights file.
         (If this is the initial weights entry, i.e. it does not have a `parent`)
@@ -260,7 +257,7 @@ class WeightsEntryDescrBase(FileDescr):
     """
 
     dependencies: Annotated[
-        Optional[Dependencies],
+        Dependencies | None,
         warn(
             None,
             "Custom dependencies ({value}) specified. Avoid this whenever possible "
@@ -276,9 +273,9 @@ class WeightsEntryDescrBase(FileDescr):
     ] = None
     """Dependency manager and dependency file, specified as `<dependency manager>:<relative file path>`."""
 
-    parent: Annotated[
-        Optional[WeightsFormat], Field(examples=["pytorch_state_dict"])
-    ] = None
+    parent: Annotated[WeightsFormat | None, Field(examples=["pytorch_state_dict"])] = (
+        None
+    )
     """The source weights these weights were converted from.
     For example, if a model's weights were converted from the `pytorch_state_dict` format to `torchscript`,
     The `pytorch_state_dict` weights entry has no `parent` and is the parent of the `torchscript` weights.
@@ -296,7 +293,7 @@ class WeightsEntryDescrBase(FileDescr):
 class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
     type: ClassVar[WeightsFormat] = "keras_hdf5"
     weights_format_name: ClassVar[str] = "Keras HDF5"
-    tensorflow_version: Optional[Version] = None
+    tensorflow_version: Version | None = None
     """TensorFlow version used to create these weights"""
 
     @field_validator("tensorflow_version", mode="after")
@@ -316,7 +313,7 @@ class KerasHdf5WeightsDescr(WeightsEntryDescrBase):
 class OnnxWeightsDescr(WeightsEntryDescrBase):
     type: ClassVar[WeightsFormat] = "onnx"
     weights_format_name: ClassVar[str] = "ONNX"
-    opset_version: Optional[Annotated[int, Ge(7)]] = None
+    opset_version: Annotated[int, Ge(7)] | None = None
     """ONNX opset version"""
 
     @field_validator("opset_version", mode="after")
@@ -345,7 +342,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
     Implementation in a dependency: `<dependency-package>.<[dependency-module]>.<identifier>`."""
 
     architecture_sha256: Annotated[
-        Optional[Sha256],
+        Sha256 | None,
         Field(
             description=(
                 "The SHA256 of the architecture source file, if the architecture is not"
@@ -373,12 +370,12 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
 
         return self
 
-    kwargs: Dict[str, Any] = Field(
+    kwargs: dict[str, Any] = Field(
         default_factory=cast(Callable[[], Dict[str, Any]], dict)
     )
     """key word arguments for the `architecture` callable"""
 
-    pytorch_version: Optional[Version] = None
+    pytorch_version: Version | None = None
     """Version of the PyTorch library used.
     If `depencencies` is specified it should include pytorch and the verison has to match.
     (`dependencies` overrules `pytorch_version`)"""
@@ -400,7 +397,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
 class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     type: ClassVar[WeightsFormat] = "torchscript"
     weights_format_name: ClassVar[str] = "TorchScript"
-    pytorch_version: Optional[Version] = None
+    pytorch_version: Version | None = None
     """Version of the PyTorch library used."""
 
     @field_validator("pytorch_version", mode="after")
@@ -420,7 +417,7 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
 class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
     type: ClassVar[WeightsFormat] = "tensorflow_js"
     weights_format_name: ClassVar[str] = "Tensorflow.js"
-    tensorflow_version: Optional[Version] = None
+    tensorflow_version: Version | None = None
     """Version of the TensorFlow library used."""
 
     @field_validator("tensorflow_version", mode="after")
@@ -444,7 +441,7 @@ class TensorflowJsWeightsDescr(WeightsEntryDescrBase):
 class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
     type: ClassVar[WeightsFormat] = "tensorflow_saved_model_bundle"
     weights_format_name: ClassVar[str] = "Tensorflow Saved Model"
-    tensorflow_version: Optional[Version] = None
+    tensorflow_version: Version | None = None
     """Version of the TensorFlow library used."""
 
     @field_validator("tensorflow_version", mode="after")
@@ -462,14 +459,12 @@ class TensorflowSavedModelBundleWeightsDescr(WeightsEntryDescrBase):
 
 
 class WeightsDescr(Node):
-    keras_hdf5: Optional[KerasHdf5WeightsDescr] = None
-    onnx: Optional[OnnxWeightsDescr] = None
-    pytorch_state_dict: Optional[PytorchStateDictWeightsDescr] = None
-    tensorflow_js: Optional[TensorflowJsWeightsDescr] = None
-    tensorflow_saved_model_bundle: Optional[TensorflowSavedModelBundleWeightsDescr] = (
-        None
-    )
-    torchscript: Optional[TorchscriptWeightsDescr] = None
+    keras_hdf5: KerasHdf5WeightsDescr | None = None
+    onnx: OnnxWeightsDescr | None = None
+    pytorch_state_dict: PytorchStateDictWeightsDescr | None = None
+    tensorflow_js: TensorflowJsWeightsDescr | None = None
+    tensorflow_saved_model_bundle: TensorflowSavedModelBundleWeightsDescr | None = None
+    torchscript: TorchscriptWeightsDescr | None = None
 
     @model_validator(mode="after")
     def check_one_entry(self) -> Self:
@@ -547,10 +542,10 @@ class WeightsDescr(Node):
 class ParameterizedInputShape(Node):
     """A sequence of valid shapes given by `shape_k = min + k * step for k in {0, 1, ...}`."""
 
-    min: NotEmpty[List[int]]
+    min: NotEmpty[list[int]]
     """The minimum input shape"""
 
-    step: NotEmpty[List[int]]
+    step: NotEmpty[list[int]]
     """The minimum shape change"""
 
     def __len__(self) -> int:
@@ -571,11 +566,11 @@ class ImplicitOutputShape(Node):
     reference_tensor: TensorName
     """Name of the reference tensor."""
 
-    scale: NotEmpty[List[Optional[float]]]
+    scale: NotEmpty[list[float | None]]
     """output_pix/input_pix for each dimension.
     'null' values indicate new dimensions, whose length is defined by 2*`offset`"""
 
-    offset: NotEmpty[List[Union[int, Annotated[float, MultipleOf(0.5)]]]]
+    offset: NotEmpty[list[int | Annotated[float, MultipleOf(0.5)]]]
     """Position of origin wrt to input."""
 
     def __len__(self) -> int:
@@ -614,9 +609,10 @@ class TensorDescrBase(Node):
     |  x  |  spatial dimension x |
     """
 
-    data_range: Optional[
-        Tuple[Annotated[float, AllowInfNan(True)], Annotated[float, AllowInfNan(True)]]
-    ] = None
+    data_range: (
+        tuple[Annotated[float, AllowInfNan(True)], Annotated[float, AllowInfNan(True)]]
+        | None
+    ) = None
     """Tuple `(minimum, maximum)` specifying the allowed range of the data in this tensor.
     If not specified, the full data range that can be expressed in `data_type` is allowed."""
 
@@ -670,14 +666,14 @@ class ClipDescr(NodeWithExplicitlySetFields):
 class ScaleLinearKwargs(KwargsNode):
     """key word arguments for `ScaleLinearDescr`"""
 
-    axes: Annotated[Optional[AxesInCZYX], Field(examples=["xy"])] = None
+    axes: Annotated[AxesInCZYX | None, Field(examples=["xy"])] = None
     """The subset of axes to scale jointly.
     For example xy to scale the two image axes for 2d data jointly."""
 
-    gain: Union[float, List[float]] = 1.0
+    gain: float | list[float] = 1.0
     """multiplicative factor"""
 
-    offset: Union[float, List[float]] = 0.0
+    offset: float | list[float] = 0.0
     """additive term"""
 
     @model_validator(mode="after")
@@ -742,14 +738,14 @@ class ZeroMeanUnitVarianceKwargs(KwargsNode):
     For example `xy` to normalize the two image axes for 2d data jointly."""
 
     mean: Annotated[
-        Union[float, NotEmpty[List[float]], None], Field(examples=[(1.1, 2.2, 3.3)])
+        float | NotEmpty[list[float]] | None, Field(examples=[(1.1, 2.2, 3.3)])
     ] = None
     """The mean value(s) to use for `mode: fixed`.
     For example `[1.1, 2.2, 3.3]` in the case of a 3 channel image with `axes: xy`."""
     # todo: check if means match input axes (for mode 'fixed')
 
     std: Annotated[
-        Union[float, NotEmpty[List[float]], None], Field(examples=[(0.1, 0.2, 0.3)])
+        float | NotEmpty[list[float]] | None, Field(examples=[(0.1, 0.2, 0.3)])
     ] = None
     """The standard deviation values to use for `mode: fixed`. Analogous to mean."""
 
@@ -801,10 +797,10 @@ class ScaleRangeKwargs(KwargsNode):
     """The subset of axes to normalize jointly.
     For example xy to normalize the two image axes for 2d data jointly."""
 
-    min_percentile: Annotated[Union[int, float], Interval(ge=0, lt=100)] = 0.0
+    min_percentile: Annotated[int | float, Interval(ge=0, lt=100)] = 0.0
     """The lower percentile used to determine the value to align with zero."""
 
-    max_percentile: Annotated[Union[int, float], Interval(gt=1, le=100)] = 100.0
+    max_percentile: Annotated[int | float, Interval(gt=1, le=100)] = 100.0
     """The upper percentile used to determine the value to align with one.
     Has to be bigger than `min_percentile`.
     The range is 1 to 100 instead of 0 to 100 to avoid mistakenly
@@ -825,7 +821,7 @@ class ScaleRangeKwargs(KwargsNode):
     `out = (tensor - v_lower) / (v_upper - v_lower + eps)`;
     with `v_lower,v_upper` values at the respective percentiles."""
 
-    reference_tensor: Optional[TensorName] = None
+    reference_tensor: TensorName | None = None
     """Tensor name to compute the percentiles from. Default: The tensor itself.
     For any tensor in `inputs` only input tensor references are allowed.
     For a tensor in `outputs` only input tensor refereences are allowed if `mode: per_dataset`"""
@@ -857,7 +853,7 @@ class ScaleMeanVarianceKwargs(KwargsNode):
     reference_tensor: TensorName
     """Name of tensor to match."""
 
-    axes: Annotated[Optional[AxesInCZYX], Field(examples=["xy"])] = None
+    axes: Annotated[AxesInCZYX | None, Field(examples=["xy"])] = None
     """The subset of axes to scale jointly.
     For example xy to normalize the two image axes for 2d data jointly.
     Default: scale all non-batch axes jointly."""
@@ -911,14 +907,14 @@ class InputTensorDescr(TensorDescrBase):
     [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit)."""
 
     shape: Annotated[
-        Union[Sequence[int], ParameterizedInputShape],
+        Sequence[int] | ParameterizedInputShape,
         Field(
-            examples=[(1, 512, 512, 1), dict(min=(1, 64, 64, 1), step=(0, 32, 32, 0))]
+            examples=[(1, 512, 512, 1), {"min": (1, 64, 64, 1), "step": (0, 32, 32, 0)}]
         ),
     ]
     """Specification of input tensor shape."""
 
-    preprocessing: List[PreprocessingDescr] = Field(
+    preprocessing: list[PreprocessingDescr] = Field(
         default_factory=cast(  # TODO: (py>3.8) use list[PreprocessingDesr]
             Callable[[], List[PreprocessingDescr]], list
         )
@@ -979,15 +975,15 @@ class OutputTensorDescr(TensorDescrBase):
     The data flow in bioimage.io models is explained
     [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit)."""
 
-    shape: Union[Sequence[int], ImplicitOutputShape]
+    shape: Sequence[int] | ImplicitOutputShape
     """Output tensor shape."""
 
-    halo: Optional[Sequence[int]] = None
+    halo: Sequence[int] | None = None
     """The `halo` that should be cropped from the output tensor to avoid boundary effects.
     The `halo` is to be cropped from both sides, i.e. `shape_after_crop = shape - 2 * halo`.
     To document a `halo` that is already cropped by the model `shape.offset` has to be used instead."""
 
-    postprocessing: List[PostprocessingDescr] = Field(
+    postprocessing: list[PostprocessingDescr] = Field(
         default_factory=cast(Callable[[], List[PostprocessingDescr]], list)
     )
     """Description of how this output should be postprocessed."""
@@ -1019,11 +1015,11 @@ KnownRunMode = Literal["deepimagej"]
 
 class RunMode(Node):
     name: Annotated[
-        Union[KnownRunMode, str], warn(KnownRunMode, "Unknown run mode '{value}'.")
+        KnownRunMode | str, warn(KnownRunMode, "Unknown run mode '{value}'.")
     ]
     """Run mode name"""
 
-    kwargs: Dict[str, Any] = Field(
+    kwargs: dict[str, Any] = Field(
         default_factory=cast(Callable[[], Dict[str, Any]], dict)
     )
     """Run mode specific key word arguments"""
@@ -1035,7 +1031,7 @@ class LinkedModel(Node):
     id: Annotated[ModelId, Field(examples=["affable-shark", "ambitious-sloth"])]
     """A valid model `id` from the bioimage.io collection."""
 
-    version_number: Optional[int] = None
+    version_number: int | None = None
     """version number (n-th published version, not the semantic version) of linked model"""
 
 
@@ -1090,12 +1086,12 @@ class ModelDescr(GenericModelDescrBase):
         type: Literal["model"]
         """Specialized resource type 'model'"""
 
-    id: Optional[ModelId] = None
+    id: ModelId | None = None
     """bioimage.io-wide unique resource identifier
     assigned by bioimage.io; version **un**specific."""
 
     authors: NotEmpty[  # pyright: ignore[reportGeneralTypeIssues]  # make mandatory
-        List[Author]
+        list[Author]
     ]
     """The authors are the creators of the model RDF and the primary points of contact."""
 
@@ -1113,11 +1109,11 @@ class ModelDescr(GenericModelDescrBase):
     The documentation should include a '[#[#]]# Validation' (sub)section
     with details on how to quantitatively validate the model on unseen data."""
 
-    inputs: NotEmpty[List[InputTensorDescr]]
+    inputs: NotEmpty[list[InputTensorDescr]]
     """Describes the input tensors expected by this model."""
 
     license: Annotated[
-        Union[LicenseId, str],
+        LicenseId | str,
         warn(LicenseId, "Unknown license id '{value}'."),
         Field(examples=["CC0-1.0", "MIT", "BSD-2-Clause"]),
     ]
@@ -1135,14 +1131,14 @@ class ModelDescr(GenericModelDescrBase):
     """A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""
 
-    outputs: NotEmpty[List[OutputTensorDescr]]
+    outputs: NotEmpty[list[OutputTensorDescr]]
     """Describes the output tensors."""
 
     @field_validator("inputs", "outputs")
     @classmethod
     def unique_tensor_descr_names(
-        cls, value: Sequence[Union[InputTensorDescr, OutputTensorDescr]]
-    ) -> Sequence[Union[InputTensorDescr, OutputTensorDescr]]:
+        cls, value: Sequence[InputTensorDescr | OutputTensorDescr]
+    ) -> Sequence[InputTensorDescr | OutputTensorDescr]:
         unique_names = {str(v.name) for v in value}
         if len(unique_names) != len(value):
             raise ValueError("Duplicate tensor descriptor names")
@@ -1159,9 +1155,9 @@ class ModelDescr(GenericModelDescrBase):
 
     @model_validator(mode="after")
     def minimum_shape2valid_output(self) -> Self:
-        tensors_by_name: Dict[
-            TensorName, Union[InputTensorDescr, OutputTensorDescr]
-        ] = {t.name: t for t in self.inputs + self.outputs}
+        tensors_by_name: dict[TensorName, InputTensorDescr | OutputTensorDescr] = {
+            t.name: t for t in self.inputs + self.outputs
+        }
 
         for out in self.outputs:
             if isinstance(out.shape, ImplicitOutputShape):
@@ -1191,7 +1187,7 @@ class ModelDescr(GenericModelDescrBase):
                 halo = [0] * len(min_out_shape)
                 halo_msg = ""
 
-            if any([s - 2 * h < 1 for s, h in zip(min_out_shape, halo)]):
+            if any(s - 2 * h < 1 for s, h in zip(min_out_shape, halo)):
                 raise ValueError(
                     f"Minimal shape {min_out_shape} of output {out.name} is too"
                     + f" small{halo_msg}."
@@ -1202,8 +1198,8 @@ class ModelDescr(GenericModelDescrBase):
     @classmethod
     def _get_min_shape(
         cls,
-        t: Union[InputTensorDescr, OutputTensorDescr],
-        tensors_by_name: Dict[TensorName, Union[InputTensorDescr, OutputTensorDescr]],
+        t: InputTensorDescr | OutputTensorDescr,
+        tensors_by_name: dict[TensorName, InputTensorDescr | OutputTensorDescr],
     ) -> Sequence[int]:
         """output with subtracted halo has to result in meaningful output even for the minimal input
         see https://github.com/bioimage-io/spec-bioimage-io/issues/392
@@ -1225,7 +1221,7 @@ class ModelDescr(GenericModelDescrBase):
             scale: Sequence[float, ...] = t.shape.scale  # type: ignore
         else:
             expanded_dims = [idx for idx, sc in enumerate(t.shape.scale) if sc is None]
-            new_ref_shape: List[int] = []
+            new_ref_shape: list[int] = []
             for idx in range(len(t.shape.scale)):
                 ref_idx = idx - sum(int(exp < idx) for exp in expanded_dims)
                 new_ref_shape.append(1 if idx in expanded_dims else ref_shape[ref_idx])
@@ -1272,13 +1268,13 @@ class ModelDescr(GenericModelDescrBase):
 
         return self
 
-    packaged_by: List[Author] = Field(
+    packaged_by: list[Author] = Field(
         default_factory=cast(Callable[[], List[Author]], list)
     )
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
 
-    parent: Optional[LinkedModel] = None
+    parent: LinkedModel | None = None
     """The model from which this model is derived, e.g. by fine-tuning the weights."""
 
     @field_validator("parent", mode="before")
@@ -1290,25 +1286,25 @@ class ModelDescr(GenericModelDescrBase):
         else:
             return parent
 
-    run_mode: Optional[RunMode] = None
+    run_mode: RunMode | None = None
     """Custom run mode for this model: for more complex prediction procedures like test time
     data augmentation that currently cannot be expressed in the specification.
     No standard run modes are defined yet."""
 
-    sample_inputs: List[FileSource_package] = Field(
+    sample_inputs: list[FileSource_package] = Field(
         default_factory=cast(Callable[[], List[FileSource]], list)
     )
     """URLs/relative paths to sample inputs to illustrate possible inputs for the model,
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
-    sample_outputs: List[FileSource_package] = Field(
+    sample_outputs: list[FileSource_package] = Field(
         default_factory=cast(Callable[[], List[FileSource]], list)
     )
     """URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
     test_inputs: NotEmpty[
-        List[Annotated[FileSource_package, WithSuffix(".npy", case_sensitive=True)]]
+        list[Annotated[FileSource_package, WithSuffix(".npy", case_sensitive=True)]]
     ]
     """Test input tensors compatible with the `inputs` description for a **single test case**.
     This means if your model has more than one input, you should provide one URL/relative path for each input.
@@ -1317,7 +1313,7 @@ class ModelDescr(GenericModelDescrBase):
     The extension must be '.npy'."""
 
     test_outputs: NotEmpty[
-        List[Annotated[FileSource_package, WithSuffix(".npy", case_sensitive=True)]]
+        list[Annotated[FileSource_package, WithSuffix(".npy", case_sensitive=True)]]
     ]
     """Analog to `test_inputs`."""
 
@@ -1325,7 +1321,7 @@ class ModelDescr(GenericModelDescrBase):
     """Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
     with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat)."""
 
-    training_data: Union[LinkedDataset, DatasetDescr, None] = None
+    training_data: LinkedDataset | DatasetDescr | None = None
     """The dataset used to train this model"""
 
     weights: Annotated[WeightsDescr, WrapSerializer(package_weights)]
@@ -1341,12 +1337,12 @@ class ModelDescr(GenericModelDescrBase):
         convert_from_older_format(data)
         return data
 
-    def get_input_test_arrays(self) -> List[NDArray[Any]]:
+    def get_input_test_arrays(self) -> list[NDArray[Any]]:
         data = [load_array(ipt) for ipt in self.test_inputs]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data
 
-    def get_output_test_arrays(self) -> List[NDArray[Any]]:
+    def get_output_test_arrays(self) -> list[NDArray[Any]]:
         data = [load_array(out) for out in self.test_outputs]
         assert all(isinstance(d, np.ndarray) for d in data)
         return data

@@ -18,7 +18,7 @@ from ._internal.io_basics import (
     ZipPath,
 )
 from ._internal.progress import ProgressbarLike
-from ._internal.root_url import RootHttpUrl
+from ._internal.root_url import FtpUrl, RootHttpUrl
 from ._internal.types import (
     FilePath,
     FileSource,
@@ -37,6 +37,7 @@ __all__ = [
     "FileName",
     "FilePath",
     "FileSource",
+    "FtpUrl",
     "HttpUrl",
     "InvalidDescr",
     "PermissiveFileSource",

@@ -23,12 +23,10 @@ from typing import (
     Generic,
     Iterable,
     List,
+    Literal,
     Mapping,
-    Optional,
     Sequence,
-    Set,
     Tuple,
-    Type,
     TypedDict,
     TypeVar,
     Union,
@@ -39,10 +37,10 @@ from zipfile import ZipFile
 
 import httpx
 import pydantic
+from exceptiongroup import ExceptionGroup
 from genericache import NoopCache
 from genericache.digest import ContentDigest, UrlDigest
 from pydantic import (
-    AnyUrl,
     DirectoryPath,
     Field,
     GetCoreSchemaHandler,
@@ -82,7 +80,7 @@ from .io_basics import (
 )
 from .node import Node
 from .progress import ProgressbarLike
-from .root_url import RootHttpUrl
+from .root_url import FtpUrl, RootHttpUrl
 from .type_guards import is_dict, is_list, is_mapping, is_sequence
 from .url import HttpUrl
 from .utils import SLOTS
@@ -107,9 +105,10 @@ class LightHttpFileDescr(Node):
     def get_reader(
         self,
         *,
-        progressbar: Union[
-            ProgressbarLike, Callable[[], ProgressbarLike], bool, None
-        ] = None,
+        progressbar: ProgressbarLike
+        | Callable[[], ProgressbarLike]
+        | bool
+        | None = None,
     ) -> BytesReader:
         """open the file source (download if needed)"""
         return get_reader(self.source, sha256=self.sha256, progressbar=progressbar)
@@ -125,6 +124,10 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
     def path(self) -> PurePath:
         return self.root
 
+    @property
+    def suffix(self):
+        return self.root.suffix
+
     def absolute(  # method not property analog to `pathlib.Path.absolute()`
         self,
     ) -> AbsolutePathT:
@@ -134,7 +137,7 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
         """
         return self._absolute
 
-    def model_post_init(self, __context: Any) -> None:
+    def model_post_init(self, __context: Any, /) -> None:
         """set `_absolute` property with validation context at creation time. @private"""
         if self.root.is_absolute():
             raise ValueError(f"{self.root} is an absolute path.")
@@ -159,12 +162,12 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
 
     @abstractmethod
     def get_absolute(
-        self, root: Union[RootHttpUrl, AbsoluteDirectory, pydantic.AnyUrl, ZipFile]
+        self, root: RootHttpUrl | AbsoluteDirectory | pydantic.AnyUrl | ZipFile
     ) -> AbsolutePathT: ...
 
     def _get_absolute_impl(
-        self, root: Union[RootHttpUrl, AbsoluteDirectory, pydantic.AnyUrl, ZipFile]
-    ) -> Union[Path, HttpUrl, ZipPath]:
+        self, root: RootHttpUrl | AbsoluteDirectory | pydantic.AnyUrl | ZipFile
+    ) -> Path | HttpUrl | ZipPath:
         if isinstance(root, Path):
             return (root / self.root).absolute()
 
@@ -196,10 +199,8 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
         )
 
     @classmethod
-    def _validate(cls, value: Union[PurePath, str]):
-        if isinstance(value, str) and (
-            value.startswith("https://") or value.startswith("http://")
-        ):
+    def _validate(cls, value: PurePath | str):
+        if isinstance(value, str) and value.startswith(("https://", "http://")):
             raise ValueError(f"{value} looks like a URL, not a relative path")
 
         return cls(PurePath(value))
@@ -210,7 +211,7 @@ class RelativeFilePath(
 ):
     """A path relative to the `rdf.yaml` file (also if the RDF source is a URL)."""
 
-    def model_post_init(self, __context: Any) -> None:
+    def model_post_init(self, __context: Any, /) -> None:
         """add validation @private"""
         if not self.root.parts:  # an empty path can only be a directory
             raise ValueError(f"{self.root} is not a valid file path.")
@@ -218,8 +219,8 @@ class RelativeFilePath(
         super().model_post_init(__context)
 
     def get_absolute(
-        self, root: "RootHttpUrl | Path | AnyUrl | ZipFile"
-    ) -> "AbsoluteFilePath | HttpUrl | ZipPath":
+        self, root: RootHttpUrl | Path | pydantic.AnyUrl | ZipFile
+    ) -> AbsoluteFilePath | HttpUrl | ZipPath:
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
@@ -232,16 +233,16 @@ class RelativeFilePath(
         return absolute
 
     @property
-    def suffix(self):
-        return self.root.suffix
+    def parent(self) -> RelativeDirectory:
+        return RelativeDirectory(self.root.parent)
 
 
 class RelativeDirectory(
     RelativePathBase[Union[AbsoluteDirectory, HttpUrl, ZipPath]], frozen=True
 ):
     def get_absolute(
-        self, root: "RootHttpUrl | Path | AnyUrl | ZipFile"
-    ) -> "AbsoluteDirectory | HttpUrl | ZipPath":
+        self, root: RootHttpUrl | Path | pydantic.AnyUrl | ZipFile
+    ) -> AbsoluteDirectory | HttpUrl | ZipPath:
         absolute = self._get_absolute_impl(root)
         if (
             isinstance(absolute, Path)
@@ -252,10 +253,60 @@ class RelativeDirectory(
 
         return absolute
 
+    @property
+    def parent(self) -> RelativeDirectory:
+        return RelativeDirectory(self.root.parent)
 
-FileSource = Annotated[
+
+@dataclass(frozen=True, **SLOTS)
+class WithSuffix:
+    suffix: LiteralString | tuple[LiteralString, ...]
+    case_sensitive: bool
+    allow_any_parent_suffix: bool = False
+    """Considers the suffix of any parent directory as well, e.g. for `foo.zarr/bar` or `foo.zarr/bar/buz`"""
+
+    def __get_pydantic_core_schema__(
+        self, source: type[Any], handler: GetCoreSchemaHandler
+    ):
+        if not self.suffix:
+            raise ValueError("suffix may not be empty")
+
+        schema = handler(source)
+        return core_schema.no_info_after_validator_function(
+            self.validate,
+            schema,
+        )
+
+    def validate(self, value: FileSource | FileDescr) -> FileSource | FileDescr:
+        return validate_suffix(value, self.suffix, case_sensitive=self.case_sensitive)
+
+
+ZarrPath = Annotated[
+    pydantic.DirectoryPath,
+    pydantic.Field(title="ZarrPath"),
+    WithSuffix(".zarr", case_sensitive=True),
+]
+RelativeZarrPath = Annotated[
+    RelativeDirectory,
+    pydantic.Field(title="RelativeZarrPath"),
+    WithSuffix(".zarr", case_sensitive=True),
+]
+
+ZarrUrl: TypeAlias = Annotated[
+    Union[RootHttpUrl, FtpUrl],
+    pydantic.Field(title="ZarrUrl"),
+    WithSuffix(".zarr", case_sensitive=True, allow_any_parent_suffix=True),
+]
+"""An untested HTTP/FTP URL to a zarr (sub) directory"""
+
+
+FileSource: TypeAlias = Annotated[
     Union[HttpUrl, RelativeFilePath, FilePath],
-    Field(union_mode="left_to_right"),
+    Field(title="FileSource", union_mode="left_to_right"),
+]
+ZarrSource: TypeAlias = Annotated[
+    Union[ZarrUrl, RelativeZarrPath, ZarrPath],
+    Field(title="ZarrSource", union_mode="left_to_right"),
 ]
 
 
@@ -265,7 +316,7 @@ class FileDescr(Node):
     source: FileSource
     """File source"""
 
-    sha256: Optional[Sha256] = None
+    sha256: Sha256 | None = None
     """SHA256 hash value of the **source** file."""
 
     @model_validator(mode="after")
@@ -310,9 +361,10 @@ class FileDescr(Node):
     def get_reader(
         self,
         *,
-        progressbar: Union[
-            ProgressbarLike, Callable[[], ProgressbarLike], bool, None
-        ] = None,
+        progressbar: ProgressbarLike
+        | Callable[[], ProgressbarLike]
+        | bool
+        | None = None,
     ):
         """open the file source (download if needed)"""
         return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
@@ -320,9 +372,10 @@ class FileDescr(Node):
     def download(
         self,
         *,
-        progressbar: Union[
-            ProgressbarLike, Callable[[], ProgressbarLike], bool, None
-        ] = None,
+        progressbar: ProgressbarLike
+        | Callable[[], ProgressbarLike]
+        | bool
+        | None = None,
     ):
         """alias for `.get_reader`"""
         return get_reader(self.source, progressbar=progressbar, sha256=self.sha256)
@@ -337,32 +390,9 @@ PermissiveFileSource: TypeAlias = Union[
 ]
 
 
-path_or_url_adapter: "TypeAdapter[Union[FilePath, DirectoryPath, HttpUrl]]" = (
-    TypeAdapter(Union[FilePath, DirectoryPath, HttpUrl])
+path_or_url_adapter: TypeAdapter[FilePath | DirectoryPath | HttpUrl] = TypeAdapter(
+    Union[FilePath, DirectoryPath, HttpUrl]
 )
-
-
-@dataclass(frozen=True, **SLOTS)
-class WithSuffix:
-    suffix: Union[LiteralString, Tuple[LiteralString, ...]]
-    case_sensitive: bool
-
-    def __get_pydantic_core_schema__(
-        self, source: Type[Any], handler: GetCoreSchemaHandler
-    ):
-        if not self.suffix:
-            raise ValueError("suffix may not be empty")
-
-        schema = handler(source)
-        return core_schema.no_info_after_validator_function(
-            self.validate,
-            schema,
-        )
-
-    def validate(
-        self, value: Union[FileSource, FileDescr]
-    ) -> Union[FileSource, FileDescr]:
-        return validate_suffix(value, self.suffix, case_sensitive=self.case_sensitive)
 
 
 def wo_special_file_name(src: F) -> F:
@@ -375,7 +405,9 @@ def wo_special_file_name(src: F) -> F:
     return src
 
 
-def has_valid_bioimageio_yaml_name(src: Union[FileSource, FileDescr]) -> bool:
+def has_valid_bioimageio_yaml_name(
+    src: ZarrSource | FileSource | FileDescr,
+) -> bool:
     return is_valid_bioimageio_yaml_name(extract_file_name(src))
 
 
@@ -404,7 +436,7 @@ def identify_bioimageio_yaml_file_name(file_names: Iterable[FileName]) -> FileNa
     )
 
 
-def find_bioimageio_yaml_file_name(path: Union[Path, ZipFile]) -> FileName:
+def find_bioimageio_yaml_file_name(path: Path | ZipFile) -> FileName:
     if isinstance(path, ZipFile):
         file_names = path.namelist()
     elif path.is_file():
@@ -503,7 +535,7 @@ IncompleteDescrView = Mapping[str, IncompleteDescrInnerView]
 """A non-editable incomplete resource description --- YAML mappings and Node instances mixed."""
 
 
-BioimageioYamlSource = Union[
+BioimageioYamlSource: TypeAlias = Union[
     PermissiveFileSource, ZipFile, BioimageioYamlContent, BioimageioYamlContentView
 ]
 
@@ -517,8 +549,8 @@ def deepcopy_yaml_value(value: YamlValueView) -> YamlValue: ...
 
 
 def deepcopy_yaml_value(
-    value: Union[BioimageioYamlContentView, YamlValueView],
-) -> Union[BioimageioYamlContent, YamlValue]:
+    value: BioimageioYamlContentView | YamlValueView,
+) -> BioimageioYamlContent | YamlValue:
     if isinstance(value, collections.abc.Mapping):
         return {key: deepcopy_yaml_value(val) for key, val in value.items()}
     elif isinstance(value, collections.abc.Sequence):
@@ -549,6 +581,7 @@ def _deepcopy_incomplete_descr_impl(
             Path,
             PurePath,
             RelativeFilePath,
+            RelativeDirectory,
             Version,
             _date,
             _datetime,
@@ -569,11 +602,11 @@ def is_yaml_leaf_value(value: Any) -> TypeGuard[YamlLeafValue]:
     return isinstance(value, (bool, _date, _datetime, int, float, str, type(None)))
 
 
-def is_yaml_list(value: Any) -> TypeGuard[List[YamlValue]]:
+def is_yaml_list(value: Any) -> TypeGuard[list[YamlValue]]:
     return is_list(value) and all(is_yaml_value(item) for item in value)
 
 
-def is_yaml_sequence(value: Any) -> TypeGuard[List[YamlValueView]]:
+def is_yaml_sequence(value: Any) -> TypeGuard[list[YamlValueView]]:
     return is_sequence(value) and all(is_yaml_value(item) for item in value)
 
 
@@ -603,8 +636,8 @@ def is_yaml_value_read_only(value: Any) -> TypeGuard[YamlValueView]:
 @dataclass(frozen=True, **SLOTS)
 class OpenedBioimageioYaml:
     content: BioimageioYamlContent = field(repr=False)
-    original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
-    original_source_name: Optional[str]
+    original_root: AbsoluteDirectory | RootHttpUrl | ZipFile
+    original_source_name: str | None
     original_file_name: FileName
     unparsed_content: str = field(repr=False)
 
@@ -612,53 +645,72 @@ class OpenedBioimageioYaml:
 @dataclass(frozen=True, **SLOTS)
 class LocalFile:
     path: FilePath
-    original_root: Union[AbsoluteDirectory, RootHttpUrl, ZipFile]
+    original_root: AbsoluteDirectory | RootHttpUrl | ZipFile
     original_file_name: FileName
 
 
 @dataclass(frozen=True, **SLOTS)
 class FileInZip:
     path: ZipPath
-    original_root: Union[RootHttpUrl, ZipFile]
+    original_root: RootHttpUrl | ZipFile
     original_file_name: FileName
 
 
 class HashKwargs(TypedDict):
-    sha256: NotRequired[Optional[Sha256]]
+    sha256: NotRequired[Sha256 | None]
 
 
-_file_source_adapter: TypeAdapter[Union[HttpUrl, RelativeFilePath, FilePath]] = (
-    TypeAdapter(FileSource)
-)
+_file_source_adapter: TypeAdapter[FileSource] = TypeAdapter(FileSource)
+_zarr_source_adapter: TypeAdapter[ZarrSource] = TypeAdapter(ZarrSource)
+
+
+@overload
+def interprete_file_source(
+    file_source: str | pydantic.AnyUrl, allow_zarr: Literal[False] = False
+) -> FileSource: ...
+
+
+@overload
+def interprete_file_source(
+    file_source: str | pydantic.AnyUrl, allow_zarr: Literal[True] = True
+) -> FileSource | ZarrSource: ...
 
 
 def interprete_file_source(
-    file_source: Union[FileSource, str, pydantic.HttpUrl],
-) -> FileSource:
-    if isinstance(file_source, Path):
-        if file_source.is_dir():
-            raise FileNotFoundError(
-                f"{file_source} is a directory, but expected a file."
-            )
-        return file_source
-
-    if isinstance(file_source, HttpUrl):
-        return file_source
-
-    if isinstance(file_source, pydantic.AnyUrl):
-        file_source = str(file_source)
-
+    file_source: str | pydantic.AnyUrl, allow_zarr: bool = False
+) -> FileSource | ZarrSource:
+    file_source = str(file_source)
     with get_validation_context().replace(perform_io_checks=False):
-        strict = _file_source_adapter.validate_python(file_source)
-        if isinstance(strict, Path) and strict.is_dir():
-            raise FileNotFoundError(f"{strict} is a directory, but expected a file.")
+        try:
+            strict = _file_source_adapter.validate_python(file_source)
+        except Exception as e1:
+            if allow_zarr:
+                try:
+                    strict = _zarr_source_adapter.validate_python(file_source)
+                except Exception as e2:
+                    raise ExceptionGroup(
+                        f"Could not interpret {file_source} as a file source or zarr source.",
+                        (e1, e2),
+                    )
+            else:
+                raise
+
+    return strict
+
+
+def interprete_zarr_source(
+    zarr_source: str | pydantic.AnyUrl,
+) -> ZarrSource:
+    zarr_source = str(zarr_source)
+    with get_validation_context().replace(perform_io_checks=False):
+        strict = _zarr_source_adapter.validate_python(zarr_source)
 
     return strict
 
 
 def extract(
-    source: Union[FilePath, ZipFile, ZipPath],
-    folder: Optional[DirectoryPath] = None,
+    source: FilePath | ZipFile | ZipPath,
+    folder: DirectoryPath | None = None,
     overwrite: bool = False,
 ) -> DirectoryPath:
     extract_member = None
@@ -722,11 +774,9 @@ def extract(
 
 
 def get_reader(
-    source: Union[PermissiveFileSource, FileDescr, ZipPath],
+    source: PermissiveFileSource | FileDescr | ZipPath,
     /,
-    progressbar: Union[
-        ProgressbarLike, Callable[[], ProgressbarLike], bool, None
-    ] = None,
+    progressbar: ProgressbarLike | Callable[[], ProgressbarLike] | bool | None = None,
     **kwargs: Unpack[HashKwargs],
 ) -> BytesReader:
     """Open a file `source` (download if needed)"""
@@ -738,11 +788,18 @@ def get_reader(
     elif isinstance(source, str):
         source = interprete_file_source(source)
 
-    if isinstance(source, RelativeFilePath):
+    if isinstance(source, RelativeDirectory):
+        raise ValueError(f"{source} is not a file source, but a directory")
+    elif isinstance(source, RelativeFilePath):
         source = source.absolute()
-    elif isinstance(source, pydantic.AnyUrl):
+    elif isinstance(source, (pydantic.AnyUrl, RootHttpUrl)):
         with get_validation_context().replace(perform_io_checks=False):
             source = HttpUrl(source)
+
+    if isinstance(source, FtpUrl):
+        raise NotImplementedError(
+            "FTP URLs are not supported yet. Please use HTTP(S) URLs instead."
+        )
 
     if isinstance(source, HttpUrl):
         return _open_url(source, progressbar=progressbar, **kwargs)
@@ -793,7 +850,7 @@ download = get_reader
 def _open_url(
     source: HttpUrl,
     /,
-    progressbar: Union[ProgressbarLike, Callable[[], ProgressbarLike], bool, None],
+    progressbar: ProgressbarLike | Callable[[], ProgressbarLike] | bool | None,
     **kwargs: Unpack[HashKwargs],
 ) -> BytesReader:
     cache = (
@@ -827,7 +884,7 @@ def _open_url(
 def _fetch_url(
     source: RootHttpUrl,
     *,
-    progressbar: Union[ProgressbarLike, Callable[[], ProgressbarLike], bool, None],
+    progressbar: ProgressbarLike | Callable[[], ProgressbarLike] | bool | None,
 ):
     if source.scheme not in ("http", "https"):
         raise NotImplementedError(source.scheme)
@@ -855,7 +912,7 @@ def _fetch_url(
     if progressbar is not False:
         progressbar.set_description(f"Downloading {extract_file_name(source)}")
 
-    headers: Dict[str, str] = {}
+    headers: dict[str, str] = {}
     if settings.user_agent is not None:
         headers["User-Agent"] = settings.user_agent
     elif settings.CI:
@@ -905,16 +962,14 @@ def _fetch_url(
 
 
 def extract_file_name(
-    src: Union[
-        pydantic.HttpUrl, RootHttpUrl, PurePath, RelativeFilePath, ZipPath, FileDescr
-    ],
+    src: ZarrSource | FileSource | FileDescr | ZipPath,
 ) -> FileName:
     if isinstance(src, FileDescr):
         src = src.source
 
     if isinstance(src, ZipPath):
         return src.name or src.root.filename or "bioimageio.zip"
-    elif isinstance(src, RelativeFilePath):
+    elif isinstance(src, (RelativeFilePath, RelativeDirectory)):
         return src.path.name
     elif isinstance(src, PurePath):
         return src.name
@@ -933,8 +988,8 @@ def extract_file_name(
 
 def extract_file_descrs(
     data: IncompleteDescrView,
-) -> List[FileDescr]:
-    collected: List[FileDescr] = []
+) -> list[FileDescr]:
+    collected: list[FileDescr] = []
     with get_validation_context().replace(perform_io_checks=False, log_warnings=False):
         _extract_file_descrs_impl(data, collected)
 
@@ -942,8 +997,8 @@ def extract_file_descrs(
 
 
 def _extract_file_descrs_impl(
-    data: Union[IncompleteDescrView, IncompleteDescrInnerView],
-    collected: List[FileDescr],
+    data: IncompleteDescrView | IncompleteDescrInnerView,
+    collected: list[FileDescr],
 ) -> None:
     if isinstance(data, FileDescr):
         collected.append(data)
@@ -954,14 +1009,14 @@ def _extract_file_descrs_impl(
         if "source" in data and "sha256" in data:
             try:
                 fd = FileDescr.model_validate(
-                    dict(source=data["source"], sha256=data["sha256"])
+                    {"source": data["source"], "sha256": data["sha256"]}
                 )
             except Exception:
                 warnings.warn(
                     "Found mapping with 'source' and 'sha256' keys, but could not parse it as a FileDescr. Ignoring `sha256`."
                 )
                 try:
-                    fd = FileDescr.model_validate(dict(source=data["source"]))
+                    fd = FileDescr.model_validate({"source": data["source"]})
                 except Exception:
                     warnings.warn(
                         f"Found mapping with 'source' and `sha256' keys , but could not parse it as a FileDescr, evning when ignoring 'sha256'. Ignoring `source`: {data['source']}."
@@ -980,11 +1035,15 @@ def _extract_file_descrs_impl(
             _extract_file_descrs_impl(v, collected)
 
 
-F = TypeVar("F", bound=Union[FileSource, FileDescr])
+F = TypeVar("F", bound=Union[ZarrSource, FileSource, FileDescr])
 
 
 def validate_suffix(
-    value: F, suffix: Union[str, Sequence[str]], case_sensitive: bool
+    value: F,
+    suffix: str | Sequence[str],
+    *,
+    case_sensitive: bool,
+    allow_any_parent_suffix: bool = False,
 ) -> F:
     """check final suffix"""
     if isinstance(suffix, str):
@@ -999,10 +1058,12 @@ def validate_suffix(
     o_value = value
     if isinstance(value, FileDescr):
         strict = value.source
-    else:
+    elif isinstance(value, (str, pydantic.AnyUrl)):
         strict = interprete_file_source(value)
+    else:
+        strict = value
 
-    if isinstance(strict, (HttpUrl, AnyUrl)):
+    if isinstance(strict, (HttpUrl, pydantic.AnyUrl, RootHttpUrl, FtpUrl)):
         if strict.path is None or "." not in (path := strict.path):
             actual_suffixes = []
         else:
@@ -1018,7 +1079,7 @@ def validate_suffix(
 
     elif isinstance(strict, PurePath):
         actual_suffixes = strict.suffixes
-    elif isinstance(strict, RelativeFilePath):
+    elif isinstance(strict, (RelativeFilePath, RelativeDirectory)):
         actual_suffixes = strict.path.suffixes
     else:
         assert_never(strict)
@@ -1034,6 +1095,19 @@ def validate_suffix(
         or not case_sensitive
         and actual_suffix.lower() not in [s.lower() for s in suffixes]
     ):
+        if allow_any_parent_suffix and strict != strict.parent:
+            try:
+                _ = validate_suffix(
+                    strict.parent,
+                    suffix,
+                    case_sensitive=case_sensitive,
+                    allow_any_parent_suffix=allow_any_parent_suffix,
+                )
+            except ValueError:
+                pass
+            else:
+                return o_value
+
         if len(suffixes) == 1:
             raise ValueError(f"Expected suffix {suffixes[0]}, but got {actual_suffix}")
         else:
@@ -1044,8 +1118,8 @@ def validate_suffix(
     return o_value
 
 
-def populate_cache(sources: Sequence[Union[FileDescr, LightHttpFileDescr]]):
-    unique: Set[str] = set()
+def populate_cache(sources: Sequence[FileDescr | LightHttpFileDescr]):
+    unique: set[str] = set()
     for src in sources:
         if src.sha256 is None:
             continue  # not caching without known SHA
@@ -1059,6 +1133,10 @@ def populate_cache(sources: Sequence[Union[FileDescr, LightHttpFileDescr]]):
                 continue  # not caching local paths
         elif isinstance(src.source, Path):
             continue  # not caching local paths
+        elif isinstance(src.source, (RootHttpUrl, RelativeDirectory)):
+            continue  # not caching directories
+        elif isinstance(src.source, FtpUrl):
+            continue  # not caching FTP URLs
         else:
             assert_never(src.source)
 
