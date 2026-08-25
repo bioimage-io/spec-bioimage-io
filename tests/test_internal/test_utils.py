@@ -153,8 +153,9 @@ def test_try_all_first_fails_second_succeeds():
 
 
 def test_try_all_all_fail():
-    from bioimageio.spec._internal.utils import try_all
     from exceptiongroup import ExceptionGroup
+
+    from bioimageio.spec._internal.utils import try_all
 
     def fail():
         raise ValueError("fail")
