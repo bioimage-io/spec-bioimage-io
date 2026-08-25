@@ -8,7 +8,7 @@ from contextlib import nullcontext
 from difflib import get_close_matches
 from pathlib import Path
 from types import MappingProxyType
-from typing import IO, Any, Dict, Mapping, cast
+from typing import IO, Any, Callable, Dict, Mapping, cast
 from zipfile import ZipFile
 
 import httpx
@@ -39,6 +39,7 @@ from .io import (
     interprete_file_source,
 )
 from .io_basics import AbsoluteDirectory, FileName, ZipPath
+from .progress import ProgressbarLike
 from .types import PermissiveFileSource
 from .url import HttpUrl, RootHttpUrl
 from .utils import cache
@@ -137,6 +138,7 @@ def _open_bioimageio_zip(
 def open_bioimageio_yaml(
     source: PermissiveFileSource | ZipFile | ZipPath,
     /,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
     **kwargs: Unpack[HashKwargs],
 ) -> OpenedBioimageioYaml:
     if (
@@ -184,7 +186,7 @@ def open_bioimageio_yaml(
         else:
             src = source
 
-        reader = get_reader(src, **kwargs)
+        reader = get_reader(src, progressbar=progressbar, **kwargs)
 
     except Exception as e:
         # check if `source` is a collection id
@@ -250,7 +252,7 @@ def open_bioimageio_yaml(
 
         entry = id_map[source]
         logger.info("loading {} from {}", source, entry.source)
-        reader = entry.get_reader()
+        reader = entry.get_reader(progressbar=progressbar)
         with get_validation_context().replace(perform_io_checks=False):
             src = HttpUrl(entry.source)
 

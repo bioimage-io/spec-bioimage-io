@@ -107,7 +107,7 @@ class ValidationContext(ValidationContextBase):
         of a generated `bioimageio.spec.ValidationSummary`.
     """
 
-    progressbar: None | bool | Callable[[], ProgressbarLike] = None
+    progressbar: None | bool | ProgressbarLike | Callable[[], ProgressbarLike] = None
     """Control any progressbar.
     (Currently this is only used for file downloads.)
 
@@ -158,6 +158,7 @@ class ValidationContext(ValidationContextBase):
         raise_errors: bool | None = None,
         update_hashes: bool | None = None,
         original_source_name: str | None = None,
+        progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
     ) -> Self:
         if known_files is None and root is not None and self.root != root:
             # reset known files if root changes, but no new known_files are given
@@ -184,6 +185,9 @@ class ValidationContext(ValidationContextBase):
                 self.original_source_name
                 if original_source_name is None
                 else original_source_name
+            ),
+            progressbar=(
+                self.progressbar if progressbar is None else progressbar
             ),
         )
 

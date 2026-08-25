@@ -1,4 +1,6 @@
 from pathlib import Path
+from types import SimpleNamespace
+from typing import Any
 
 import pytest
 
@@ -42,6 +44,107 @@ def test_load_description_again(unet2d_data: BioimageioYamlContent):
         perform_io_checks=False,
     )
     assert descr is descr2
+
+
+def test_load_description_forwards_pbar(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+):
+    import bioimageio.spec._io as io_module
+    from bioimageio.spec import load_description
+
+    seen_source: list[object] = []
+    seen_kwargs: dict[str, object] = {}
+    expected = object()
+
+    def fake_open_bioimageio_yaml(source: object, /, **kwargs: object):
+        seen_source.append(source)
+        seen_kwargs.update(kwargs)
+        return SimpleNamespace(
+            content={"type": "dataset", "format_version": "0.3.0"},
+            original_root=tmp_path,
+            original_file_name="bioimageio.yaml",
+            original_source_name="mock-source",
+        )
+
+    seen_context: list[object] = []
+
+    def fake_build_description(
+        content: object, /, *, context: object, format_version: object
+    ):
+        seen_context.append(context)
+        return expected
+
+    monkeypatch.setattr(io_module, "open_bioimageio_yaml", fake_open_bioimageio_yaml)
+    monkeypatch.setattr(io_module, "build_description", fake_build_description)
+
+    result = load_description(tmp_path / "bioimageio.yaml", progressbar=False)
+
+    assert result is expected
+    assert seen_source == [tmp_path / "bioimageio.yaml"]
+    assert seen_kwargs["progressbar"] is False
+    assert seen_kwargs["sha256"] is None
+    assert getattr(seen_context[0], "progressbar", "missing") is False
+
+
+def test_open_bioimageio_yaml_forwards_progressbar_to_reader(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+):
+    from bioimageio.spec._internal import io_utils
+
+    seen_source: list[object] = []
+    seen_kwargs: dict[str, object] = {}
+
+    class Reader:
+        is_zipfile = False
+
+        def read(self) -> bytes:
+            return b"type: dataset\nformat_version: 0.3.0\n"
+
+    def fake_get_reader(source: object, /, **kwargs: object) -> Reader:
+        seen_source.append(source)
+        seen_kwargs.update(kwargs)
+        return Reader()
+
+    monkeypatch.setattr(io_utils, "get_reader", fake_get_reader)
+
+    source = tmp_path / "bioimageio.yaml"
+    opened = io_utils.open_bioimageio_yaml(source, progressbar=False)
+
+    assert opened.content == {"type": "dataset", "format_version": "0.3.0"}
+    assert seen_source == [source]
+    assert seen_kwargs["progressbar"] is False
+
+
+def test_open_bioimageio_yaml_forwards_progressbar_to_id_map_entry(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    from bioimageio.spec._internal import io_utils
+
+    seen_progressbar: list[Any] = []
+
+    class Reader:
+        is_zipfile = False
+
+        def read(self) -> bytes:
+            return b"type: dataset\nformat_version: 0.3.0\n"
+
+    class Entry:
+        source = "https://example.com/bioimageio.yaml"
+
+        def get_reader(self, *, progressbar: Any = None) -> Reader:
+            seen_progressbar.append(progressbar)
+            return Reader()
+
+    def fake_interprete_file_source(source: Any) -> Any:
+        raise FileNotFoundError(source)
+
+    monkeypatch.setattr(io_utils, "interprete_file_source", fake_interprete_file_source)
+    monkeypatch.setattr(io_utils, "get_id_map", lambda: {"collection-id": Entry()})
+
+    opened = io_utils.open_bioimageio_yaml("collection-id", progressbar=False)
+
+    assert opened.content == {"type": "dataset", "format_version": "0.3.0"}
+    assert seen_progressbar == [False]
 
 
 def test_load_dataset_description(covid_if_dataset_path: Path, tmp_path: Path):
