@@ -23,7 +23,8 @@
                 "title": "FilePath",
                 "type": "string"
               }
-            ]
+            ],
+            "title": "FileSource"
           },
           "title": "Files",
           "type": "array"
@@ -330,7 +331,8 @@
                 "title": "FilePath",
                 "type": "string"
               }
-            ]
+            ],
+            "title": "FileSource"
           },
           "title": "Covers",
           "type": "array"
@@ -445,20 +447,25 @@
               "type": "string"
             },
             {
-              "description": "A URL with the HTTP or HTTPS scheme.",
-              "format": "uri",
-              "maxLength": 2083,
-              "minLength": 1,
-              "title": "HttpUrl",
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/RelativeFilePath"
-            },
-            {
-              "format": "file-path",
-              "title": "FilePath",
-              "type": "string"
+              "anyOf": [
+                {
+                  "description": "A URL with the HTTP or HTTPS scheme.",
+                  "format": "uri",
+                  "maxLength": 2083,
+                  "minLength": 1,
+                  "title": "HttpUrl",
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/$defs/RelativeFilePath"
+                },
+                {
+                  "format": "file-path",
+                  "title": "FilePath",
+                  "type": "string"
+                }
+              ],
+              "title": "FileSource"
             },
             {
               "type": "null"
@@ -506,20 +513,25 @@
         "rdf_source": {
           "anyOf": [
             {
-              "description": "A URL with the HTTP or HTTPS scheme.",
-              "format": "uri",
-              "maxLength": 2083,
-              "minLength": 1,
-              "title": "HttpUrl",
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/RelativeFilePath"
-            },
-            {
-              "format": "file-path",
-              "title": "FilePath",
-              "type": "string"
+              "anyOf": [
+                {
+                  "description": "A URL with the HTTP or HTTPS scheme.",
+                  "format": "uri",
+                  "maxLength": 2083,
+                  "minLength": 1,
+                  "title": "HttpUrl",
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/$defs/RelativeFilePath"
+                },
+                {
+                  "format": "file-path",
+                  "title": "FilePath",
+                  "type": "string"
+                }
+              ],
+              "title": "FileSource"
             },
             {
               "type": "null"
@@ -588,20 +600,25 @@
         "documentation": {
           "anyOf": [
             {
-              "description": "A URL with the HTTP or HTTPS scheme.",
-              "format": "uri",
-              "maxLength": 2083,
-              "minLength": 1,
-              "title": "HttpUrl",
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/RelativeFilePath"
-            },
-            {
-              "format": "file-path",
-              "title": "FilePath",
-              "type": "string"
+              "anyOf": [
+                {
+                  "description": "A URL with the HTTP or HTTPS scheme.",
+                  "format": "uri",
+                  "maxLength": 2083,
+                  "minLength": 1,
+                  "title": "HttpUrl",
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/$defs/RelativeFilePath"
+                },
+                {
+                  "format": "file-path",
+                  "title": "FilePath",
+                  "type": "string"
+                }
+              ],
+              "title": "FileSource"
             },
             {
               "type": "null"
@@ -1610,7 +1627,7 @@
             }
           ],
           "description": "The weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -1878,7 +1895,7 @@
             }
           ],
           "description": "The weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -2186,7 +2203,7 @@
             }
           ],
           "description": "The weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -2663,7 +2680,7 @@
             }
           ],
           "description": "The multi-file weights.\nAll required files/folders should be a zip archive.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -2796,7 +2813,7 @@
             }
           ],
           "description": "The weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -2929,7 +2946,7 @@
             }
           ],
           "description": "The weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -3346,7 +3363,8 @@
             "title": "FilePath",
             "type": "string"
           }
-        ]
+        ],
+        "title": "FileSource"
       },
       "title": "Covers",
       "type": "array"
@@ -3462,20 +3480,25 @@
           "type": "string"
         },
         {
-          "description": "A URL with the HTTP or HTTPS scheme.",
-          "format": "uri",
-          "maxLength": 2083,
-          "minLength": 1,
-          "title": "HttpUrl",
-          "type": "string"
-        },
-        {
-          "$ref": "#/$defs/RelativeFilePath"
-        },
-        {
-          "format": "file-path",
-          "title": "FilePath",
-          "type": "string"
+          "anyOf": [
+            {
+              "description": "A URL with the HTTP or HTTPS scheme.",
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "title": "HttpUrl",
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/RelativeFilePath"
+            },
+            {
+              "format": "file-path",
+              "title": "FilePath",
+              "type": "string"
+            }
+          ],
+          "title": "FileSource"
         },
         {
           "type": "null"
@@ -3523,20 +3546,25 @@
     "rdf_source": {
       "anyOf": [
         {
-          "description": "A URL with the HTTP or HTTPS scheme.",
-          "format": "uri",
-          "maxLength": 2083,
-          "minLength": 1,
-          "title": "HttpUrl",
-          "type": "string"
-        },
-        {
-          "$ref": "#/$defs/RelativeFilePath"
-        },
-        {
-          "format": "file-path",
-          "title": "FilePath",
-          "type": "string"
+          "anyOf": [
+            {
+              "description": "A URL with the HTTP or HTTPS scheme.",
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "title": "HttpUrl",
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/RelativeFilePath"
+            },
+            {
+              "format": "file-path",
+              "title": "FilePath",
+              "type": "string"
+            }
+          ],
+          "title": "FileSource"
         },
         {
           "type": "null"
@@ -3639,7 +3667,7 @@
         "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md",
         "README.md"
       ],
-      "title": "Documentation"
+      "title": "FileSource"
     },
     "inputs": {
       "description": "Describes the input tensors expected by this model.",
@@ -4398,7 +4426,8 @@
             "title": "FilePath",
             "type": "string"
           }
-        ]
+        ],
+        "title": "FileSource"
       },
       "title": "Sample Inputs",
       "type": "array"
@@ -4423,7 +4452,8 @@
             "title": "FilePath",
             "type": "string"
           }
-        ]
+        ],
+        "title": "FileSource"
       },
       "title": "Sample Outputs",
       "type": "array"
@@ -4448,7 +4478,8 @@
             "title": "FilePath",
             "type": "string"
           }
-        ]
+        ],
+        "title": "FileSource"
       },
       "minItems": 1,
       "title": "Test Inputs",
@@ -4474,7 +4505,8 @@
             "title": "FilePath",
             "type": "string"
           }
-        ]
+        ],
+        "title": "FileSource"
       },
       "minItems": 1,
       "title": "Test Outputs",

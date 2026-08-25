@@ -23,7 +23,7 @@
             }
           ],
           "description": "Architecture source file",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -125,7 +125,8 @@
                 "title": "FilePath",
                 "type": "string"
               }
-            ]
+            ],
+            "title": "FileSource"
           },
           "title": "Files",
           "type": "array"
@@ -447,16 +448,6 @@
           "minItems": 1,
           "title": "Channel Names",
           "type": "array"
-        },
-        "channel_colors": {
-          "description": "Colors for each channel for visualization purposes.\nIf not given, a default color palette is used:\n\n- For < 8 channels: colorblind-friendly palette from https://www.nature.com/articles/nmeth.1618 (without black)\n- For < 21 channels: discrete matplotlib colormap 'tab20b' (redistributed for more even color distribution < 20 channels)\n- For >= 21 channels: sample colors from continuous matplotlib colormap 'cividis'",
-          "items": {
-            "format": "color",
-            "type": "string"
-          },
-          "minItems": 1,
-          "title": "Channel Colors",
-          "type": "array"
         }
       },
       "required": [
@@ -625,7 +616,7 @@
             }
           ],
           "description": "Python source file (included when packaging the model).",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -997,7 +988,7 @@
             }
           ],
           "description": "File source",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -1570,7 +1561,7 @@
             }
           ],
           "description": "Source of the weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -1671,7 +1662,7 @@
             }
           ],
           "description": "Source of the .keras weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -1941,7 +1932,7 @@
             }
           ],
           "description": "Source of the weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -2301,7 +2292,7 @@
             }
           ],
           "description": "Source of the weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -3476,7 +3467,7 @@
             }
           ],
           "description": "The multi-file weights.\nAll required files/folders should be a zip archive.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -3577,7 +3568,7 @@
             }
           ],
           "description": "The multi-file weights.\nAll required files/folders should be a zip archive.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -3987,7 +3978,7 @@
             }
           ],
           "description": "Source of the weights file.",
-          "title": "Source"
+          "title": "FileSource"
         },
         "sha256": {
           "anyOf": [
@@ -4472,7 +4463,8 @@
                 "title": "FilePath",
                 "type": "string"
               }
-            ]
+            ],
+            "title": "FileSource"
           },
           "title": "Covers",
           "type": "array"
@@ -4587,20 +4579,25 @@
               "type": "string"
             },
             {
-              "description": "A URL with the HTTP or HTTPS scheme.",
-              "format": "uri",
-              "maxLength": 2083,
-              "minLength": 1,
-              "title": "HttpUrl",
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/RelativeFilePath"
-            },
-            {
-              "format": "file-path",
-              "title": "FilePath",
-              "type": "string"
+              "anyOf": [
+                {
+                  "description": "A URL with the HTTP or HTTPS scheme.",
+                  "format": "uri",
+                  "maxLength": 2083,
+                  "minLength": 1,
+                  "title": "HttpUrl",
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/$defs/RelativeFilePath"
+                },
+                {
+                  "format": "file-path",
+                  "title": "FilePath",
+                  "type": "string"
+                }
+              ],
+              "title": "FileSource"
             },
             {
               "type": "null"
@@ -4648,20 +4645,25 @@
         "rdf_source": {
           "anyOf": [
             {
-              "description": "A URL with the HTTP or HTTPS scheme.",
-              "format": "uri",
-              "maxLength": 2083,
-              "minLength": 1,
-              "title": "HttpUrl",
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/RelativeFilePath"
-            },
-            {
-              "format": "file-path",
-              "title": "FilePath",
-              "type": "string"
+              "anyOf": [
+                {
+                  "description": "A URL with the HTTP or HTTPS scheme.",
+                  "format": "uri",
+                  "maxLength": 2083,
+                  "minLength": 1,
+                  "title": "HttpUrl",
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/$defs/RelativeFilePath"
+                },
+                {
+                  "format": "file-path",
+                  "title": "FilePath",
+                  "type": "string"
+                }
+              ],
+              "title": "FileSource"
             },
             {
               "type": "null"
@@ -4730,20 +4732,25 @@
         "documentation": {
           "anyOf": [
             {
-              "description": "A URL with the HTTP or HTTPS scheme.",
-              "format": "uri",
-              "maxLength": 2083,
-              "minLength": 1,
-              "title": "HttpUrl",
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/RelativeFilePath"
-            },
-            {
-              "format": "file-path",
-              "title": "FilePath",
-              "type": "string"
+              "anyOf": [
+                {
+                  "description": "A URL with the HTTP or HTTPS scheme.",
+                  "format": "uri",
+                  "maxLength": 2083,
+                  "minLength": 1,
+                  "title": "HttpUrl",
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/$defs/RelativeFilePath"
+                },
+                {
+                  "format": "file-path",
+                  "title": "FilePath",
+                  "type": "string"
+                }
+              ],
+              "title": "FileSource"
             },
             {
               "type": "null"
@@ -5556,7 +5563,9 @@
           "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
           "examples": [
             [
-              "cover.png"
+              {
+                "source": "cover.png"
+              }
             ]
           ],
           "items": {
@@ -7173,7 +7182,9 @@
       "description": "Cover images. Please use an image smaller than 500KB and an aspect ratio width to height of 2:1 or 1:1.\nThe supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')",
       "examples": [
         [
-          "cover.png"
+          {
+            "source": "cover.png"
+          }
         ]
       ],
       "items": {
@@ -8089,7 +8100,7 @@
       "title": "Version Comment"
     },
     "format_version": {
-      "const": "0.5.13",
+      "const": "0.5.14",
       "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
       "title": "Format Version",
       "type": "string"
@@ -8204,6 +8215,6 @@
     "outputs",
     "weights"
   ],
-  "title": "model 0.5.13",
+  "title": "model 0.5.14",
   "type": "object"
 }
