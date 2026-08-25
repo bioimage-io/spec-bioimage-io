@@ -39,8 +39,8 @@ def test_load_description_again(unet2d_data: BioimageioYamlContent):
     descr = build_description(
         unet2d_data, context=ValidationContext(perform_io_checks=False)
     )
-    descr2 = load_description(  # pyright: ignore[reportUnknownVariableType,reportCallIssue]
-        descr,
+    descr2 = load_description(
+        descr,  # pyright: ignore[reportArgumentType]
         perform_io_checks=False,
     )
     assert descr is descr2
