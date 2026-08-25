@@ -1,5 +1,6 @@
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Any
 
 import pytest
 
@@ -38,8 +39,8 @@ def test_load_description_again(unet2d_data: BioimageioYamlContent):
     descr = build_description(
         unet2d_data, context=ValidationContext(perform_io_checks=False)
     )
-    descr2 = load_description(
-        descr,  # pyright: ignore[reportArgumentType]
+    descr2 = load_description(  # pyright: ignore[reportUnknownVariableType,reportCallIssue]
+        descr,
         perform_io_checks=False,
     )
     assert descr is descr2
@@ -76,19 +77,19 @@ def test_load_description_forwards_pbar(
     monkeypatch.setattr(io_module, "open_bioimageio_yaml", fake_open_bioimageio_yaml)
     monkeypatch.setattr(io_module, "build_description", fake_build_description)
 
-    result = load_description(tmp_path / "bioimageio.yaml", pbar=False)
+    result = load_description(tmp_path / "bioimageio.yaml", progressbar=False)
 
     assert result is expected
     assert seen_source == [tmp_path / "bioimageio.yaml"]
     assert seen_kwargs["progressbar"] is False
     assert seen_kwargs["sha256"] is None
-    assert getattr(seen_context[0], "progressbar") is False
+    assert getattr(seen_context[0], "progressbar", "missing") is False
 
 
 def test_open_bioimageio_yaml_forwards_progressbar_to_reader(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ):
-    import bioimageio.spec._internal.io_utils as io_utils
+    from bioimageio.spec._internal import io_utils
 
     seen_source: list[object] = []
     seen_kwargs: dict[str, object] = {}
@@ -117,9 +118,9 @@ def test_open_bioimageio_yaml_forwards_progressbar_to_reader(
 def test_open_bioimageio_yaml_forwards_progressbar_to_id_map_entry(
     monkeypatch: pytest.MonkeyPatch,
 ):
-    import bioimageio.spec._internal.io_utils as io_utils
+    from bioimageio.spec._internal import io_utils
 
-    seen_progressbar: list[object] = []
+    seen_progressbar: list[Any] = []
 
     class Reader:
         is_zipfile = False
@@ -130,11 +131,11 @@ def test_open_bioimageio_yaml_forwards_progressbar_to_id_map_entry(
     class Entry:
         source = "https://example.com/bioimageio.yaml"
 
-        def get_reader(self, *, progressbar: object = None) -> Reader:
+        def get_reader(self, *, progressbar: Any = None) -> Reader:
             seen_progressbar.append(progressbar)
             return Reader()
 
-    def fake_interprete_file_source(source: object) -> object:
+    def fake_interprete_file_source(source: Any) -> Any:
         raise FileNotFoundError(source)
 
     monkeypatch.setattr(io_utils, "interprete_file_source", fake_interprete_file_source)

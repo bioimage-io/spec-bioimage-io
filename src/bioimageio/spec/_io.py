@@ -17,12 +17,12 @@ from ._description import (
     ensure_description_is_model,
 )
 from ._internal.common_nodes import ResourceDescrBase
-from .common import ProgressbarLike
 from ._internal.io import BioimageioYamlContent, YamlValue
 from ._internal.io_basics import Sha256
 from ._internal.io_utils import open_bioimageio_yaml, write_yaml
 from ._internal.types import FormatVersionPlaceholder, PermissiveFileSource
 from ._internal.validation_context import get_validation_context
+from .common import ProgressbarLike
 from .dataset import AnyDatasetDescr, DatasetDescr
 from .model import AnyModelDescr, ModelDescr
 from .summary import ValidationSummary
@@ -37,7 +37,7 @@ def load_description(
     perform_io_checks: bool | None = None,
     known_files: dict[str, Sha256 | None] | None = None,
     sha256: Sha256 | None = None,
-    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
 ) -> LatestResourceDescr | InvalidDescr: ...
 
 
@@ -50,7 +50,7 @@ def load_description(
     perform_io_checks: bool | None = None,
     known_files: dict[str, Sha256 | None] | None = None,
     sha256: Sha256 | None = None,
-    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
 ) -> ResourceDescr | InvalidDescr: ...
 
 
@@ -62,7 +62,7 @@ def load_description(
     perform_io_checks: bool | None = None,
     known_files: dict[str, Sha256 | None] | None = None,
     sha256: Sha256 | None = None,
-    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
 ) -> ResourceDescr | InvalidDescr:
     """load a bioimage.io resource description
 
@@ -113,7 +113,7 @@ def load_description(
         logger.warning("returning already loaded description '{}' as is", name)
         return source  # pyright: ignore[reportReturnType]
 
-    opened = open_bioimageio_yaml(source, sha256=sha256, progressbar=pbar)
+    opened = open_bioimageio_yaml(source, sha256=sha256, progressbar=progressbar)
 
     context = get_validation_context().replace(
         root=opened.original_root,
@@ -121,7 +121,7 @@ def load_description(
         original_source_name=opened.original_source_name,
         perform_io_checks=perform_io_checks,
         known_files=known_files,
-        progressbar=pbar,
+        progressbar=progressbar,
     )
 
     return build_description(
@@ -140,7 +140,7 @@ def load_model_description(
     perform_io_checks: bool | None = None,
     known_files: dict[str, Sha256 | None] | None = None,
     sha256: Sha256 | None = None,
-    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
 ) -> ModelDescr: ...
 
 
@@ -153,7 +153,7 @@ def load_model_description(
     perform_io_checks: bool | None = None,
     known_files: dict[str, Sha256 | None] | None = None,
     sha256: Sha256 | None = None,
-    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
 ) -> AnyModelDescr: ...
 
 
@@ -165,7 +165,7 @@ def load_model_description(
     perform_io_checks: bool | None = None,
     known_files: dict[str, Sha256 | None] | None = None,
     sha256: Sha256 | None = None,
-    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
 ) -> AnyModelDescr:
     """same as `load_description`, but addtionally ensures that the loaded
     description is valid and of type 'model'.
@@ -179,7 +179,7 @@ def load_model_description(
         perform_io_checks=perform_io_checks,
         known_files=known_files,
         sha256=sha256,
-        pbar=pbar,
+        progressbar=progressbar,
     )
     return ensure_description_is_model(rd)
 
@@ -193,7 +193,7 @@ def load_dataset_description(
     perform_io_checks: bool | None = None,
     known_files: dict[str, Sha256 | None] | None = None,
     sha256: Sha256 | None = None,
-    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
 ) -> DatasetDescr: ...
 
 
@@ -206,7 +206,7 @@ def load_dataset_description(
     perform_io_checks: bool | None = None,
     known_files: dict[str, Sha256 | None] | None = None,
     sha256: Sha256 | None = None,
-    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
 ) -> AnyDatasetDescr: ...
 
 
@@ -218,7 +218,7 @@ def load_dataset_description(
     perform_io_checks: bool | None = None,
     known_files: dict[str, Sha256 | None] | None = None,
     sha256: Sha256 | None = None,
-    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
 ) -> AnyDatasetDescr:
     """same as `load_description`, but addtionally ensures that the loaded
     description is valid and of type 'dataset'.
@@ -229,7 +229,7 @@ def load_dataset_description(
         perform_io_checks=perform_io_checks,
         known_files=known_files,
         sha256=sha256,
-        pbar=pbar,
+        progressbar=progressbar,
     )
     return ensure_description_is_dataset(rd)
 
@@ -272,7 +272,7 @@ def load_description_and_validate_format_only(
     perform_io_checks: bool | None = None,
     known_files: dict[str, Sha256 | None] | None = None,
     sha256: Sha256 | None = None,
-    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
 ) -> ValidationSummary:
     """same as `load_description`, but only return the validation summary.
 
@@ -286,7 +286,7 @@ def load_description_and_validate_format_only(
         perform_io_checks=perform_io_checks,
         known_files=known_files,
         sha256=sha256,
-        pbar=pbar,
+        progressbar=progressbar,
     )
     assert rd.validation_summary is not None
     return rd.validation_summary

@@ -138,9 +138,7 @@ def _open_bioimageio_zip(
 def open_bioimageio_yaml(
     source: PermissiveFileSource | ZipFile | ZipPath,
     /,
-    progressbar: Union[
-        ProgressbarLike, Callable[[], ProgressbarLike], bool, None
-    ] = None,
+    progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
     **kwargs: Unpack[HashKwargs],
 ) -> OpenedBioimageioYaml:
     if (
