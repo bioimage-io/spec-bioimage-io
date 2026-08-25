@@ -290,7 +290,7 @@ class GenericModelDescrBase(ResourceDescrBase):
             " ratio width to height of 2:1 or 1:1.\nThe supported image formats"
             f" are: {VALID_COVER_IMAGE_EXTENSIONS}"
         ),
-        examples=[["cover.png"]],
+        examples=[[{"source": "cover.png"}]],
     )
     """Cover images."""
 

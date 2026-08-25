@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from abc import ABC
 from pathlib import PurePosixPath
-from typing import Any, ClassVar, Iterable
+from typing import Any, ClassVar, Generic, Iterable, TypeVar
 from urllib.parse import urlsplit, urlunsplit
 
 import pydantic
@@ -9,12 +10,14 @@ from pydantic import RootModel
 
 from .validated_string import ValidatedString
 
+ValidatedType = TypeVar("ValidatedType", pydantic.HttpUrl, pydantic.FtpUrl)
 
-class RootHttpUrl(ValidatedString):
+
+class _RootUrl(ValidatedString, ABC, Generic[ValidatedType]):
     """An untested HTTP URL, possibly a 'URL folder' or an invalid HTTP URL"""
 
-    root_model: ClassVar[type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
-    _validated: pydantic.HttpUrl
+    root_model: ClassVar[type[RootModel[Any]]]
+    _validated: ValidatedType
 
     def absolute(self):
         """analog to `absolute` method of pathlib."""
@@ -31,6 +34,34 @@ class RootHttpUrl(ValidatedString):
     @property
     def path(self) -> str | None:
         return self._validated.path
+
+    @property
+    def suffix(self) -> str:
+        if self.path is None:
+            return ""
+        else:
+            return PurePosixPath(self.path).suffix
+
+    def __truediv__(self, other: str) -> RootHttpUrl:
+        parsed = urlsplit(str(self))
+        return RootHttpUrl(
+            urlunsplit(
+                (
+                    parsed.scheme,
+                    parsed.netloc,
+                    f"{parsed.path.strip('/')}/{other.strip('/')}",
+                    parsed.query,
+                    parsed.fragment,
+                )
+            )
+        )
+
+
+class RootHttpUrl(_RootUrl[pydantic.HttpUrl]):
+    """An untested HTTP URL, possibly a 'URL folder'"""
+
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[pydantic.HttpUrl]
+    _validated: pydantic.HttpUrl
 
     @property
     def parent(self) -> RootHttpUrl:
@@ -62,26 +93,44 @@ class RootHttpUrl(ValidatedString):
         """iterate over all URL parents (max 100)"""
         current = self
         for _ in range(100):
-            current = current.parent
-            yield current
+            parent = current.parent
+            if current == parent:
+                break
+
+            current = parent
+            yield parent
+
+
+class FtpUrl(_RootUrl[pydantic.FtpUrl]):
+    """An untested FTP URL"""
+
+    root_model: ClassVar[type[RootModel[Any]]] = RootModel[pydantic.FtpUrl]
+    _validated: pydantic.FtpUrl
 
     @property
-    def suffix(self) -> str:
-        if self.path is None:
-            return ""
-        else:
-            return PurePosixPath(self.path).suffix
-
-    def __truediv__(self, other: str) -> RootHttpUrl:
+    def parent(self) -> FtpUrl:
         parsed = urlsplit(str(self))
-        return RootHttpUrl(
+        path = list(parsed.path.split("/"))[:-1]
+        return FtpUrl(
             urlunsplit(
                 (
                     parsed.scheme,
                     parsed.netloc,
-                    f"{parsed.path.strip('/')}/{other.strip('/')}",
+                    "/".join(path),
                     parsed.query,
                     parsed.fragment,
                 )
             )
         )
+
+    @property
+    def parents(self) -> Iterable[FtpUrl]:
+        """iterate over all URL parents (max 100)"""
+        current = self
+        for _ in range(100):
+            parent = current.parent
+            if current == parent:
+                break
+
+            current = parent
+            yield parent

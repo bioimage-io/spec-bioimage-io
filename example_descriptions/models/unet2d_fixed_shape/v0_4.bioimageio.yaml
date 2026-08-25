@@ -40,7 +40,7 @@ type: model
 weights:
   pytorch_state_dict:
     architecture: unet.py:UNet2d
-    architecture_sha256: 68e34520084afde3b160b8774a863ccf2934169838217ace376d6a244c53422b
+    architecture_sha256: 92abd72662389848236269313e10bc2b68f34b87c944921227b9e2401225c637
     kwargs:
       {
         depth: 3,

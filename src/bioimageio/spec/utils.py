@@ -6,6 +6,7 @@ import json
 import shutil
 from typing import Any, TypedDict
 
+import pydantic
 from imageio.v3 import imread  # pyright: ignore[reportUnknownVariableType]
 from loguru import logger
 from numpy.typing import NDArray
@@ -91,10 +92,13 @@ def load_image(
 def _interprete_file_source(source: FileDescr | ZipPath | PermissiveFileSource):
     if isinstance(source, (FileDescr, ZipPath)):
         parsed_source = source
-    else:
+    elif isinstance(source, (str, pydantic.AnyUrl)):
         parsed_source = interprete_file_source(source)
-        if isinstance(parsed_source, RelativeFilePath):
-            parsed_source = parsed_source.absolute()
+    else:
+        parsed_source = source
+
+    if isinstance(parsed_source, RelativeFilePath):
+        parsed_source = parsed_source.absolute()
 
     return parsed_source
 

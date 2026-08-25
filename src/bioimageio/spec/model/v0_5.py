@@ -50,7 +50,6 @@ from pydantic import (
     model_serializer,
     model_validator,
 )
-from pydantic_extra_types.color import Color
 from typing_extensions import Annotated, Self, TypeAlias, assert_never, get_args
 
 from .._internal.common_nodes import (
@@ -78,7 +77,7 @@ from .._internal.io_packaging import (
 )
 from .._internal.io_utils import load_array, open_bioimageio_yaml
 from .._internal.node_converter import Converter
-from .._internal.type_guards import is_dict, is_mapping, is_sequence
+from .._internal.type_guards import is_dict, is_sequence
 from .._internal.types import (
     FAIR,
     AbsoluteTolerance,
@@ -552,77 +551,6 @@ class ChannelAxis(AxisBase):
 
     channel_names: NotEmpty[list[str]]
     """Name/label for each channel. The number of channels is given by `len(channel_names)`."""
-
-    channel_colors: NotEmpty[list[Color]] = Field(
-        default_factory=cast(Callable[[], list[Color]], list)
-    )  # real default is set by _set_default_channel_colors()
-    """Colors for each channel for visualization purposes.
-    If not given, a default color palette is used:
-
-    - For < 8 channels: colorblind-friendly palette from https://www.nature.com/articles/nmeth.1618 (without black)
-    - For < 21 channels: discrete matplotlib colormap 'tab20b' (redistributed for more even color distribution < 20 channels)
-    - For >= 21 channels: sample colors from continuous matplotlib colormap 'cividis'
-
-    """
-
-    @model_validator(mode="before")
-    @classmethod
-    def _set_default_channel_colors(cls, data: Any):
-        if (
-            is_mapping(data)
-            and not data.get("channel_colors")
-            and is_sequence(channel_names := data.get("channel_names"))
-        ):
-            n_channels = len(channel_names)
-            data = dict(data)
-            if n_channels < 8:
-                # use colorblind-friendly palette from https://www.nature.com/articles/nmeth.1618
-                # (without black)
-                data["channel_colors"] = [
-                    "#E69F00",
-                    "#56B4E9",
-                    "#009E73",
-                    "#F0E442",
-                    "#0072B2",
-                    "#D55E00",
-                    "#CC79A7",
-                ][:n_channels]
-            elif n_channels < 21:
-                # use discrete matplotlib colormap 'tab20b'
-                # (redistributed for more even color distribution < 20 channels)
-                data["channel_colors"] = [
-                    "#393b79",
-                    "#8ca252",
-                    "#e7ba52",
-                    "#e7969c",
-                    "#7b4173",
-                    "#5254a3",
-                    "#b5cf6b",
-                    "#e7cb94",
-                    "#843c39",
-                    "#a55194",
-                    "#6b6ecf",
-                    "#cedb9c",
-                    "#8c6d31",
-                    "#d6616b",
-                    "#ce6dbd",
-                    "#9c9ede",
-                    "#637939",
-                    "#bd9e39",
-                    "#ad494a",
-                    "#de9ed6",
-                ][:n_channels]
-            else:
-                # sample colors from continuous matplotlib colormap 'cividis'
-                import matplotlib.colors
-                import matplotlib.pyplot as plt
-
-                cmap = plt.colormaps["cividis"].resampled(n_channels)
-                data["channel_colors"] = [
-                    matplotlib.colors.to_hex(cmap(i)) for i in range(n_channels)
-                ]
-
-        return data
 
     @property
     def size(self) -> int:
@@ -3559,11 +3487,11 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    implemented_format_version: ClassVar[Literal["0.5.13"]] = "0.5.13"
+    implemented_format_version: ClassVar[Literal["0.5.14"]] = "0.5.14"
     if TYPE_CHECKING:
-        format_version: Literal["0.5.13"] = "0.5.13"
+        format_version: Literal["0.5.14"] = "0.5.14"
     else:
-        format_version: Literal["0.5.13"]
+        format_version: Literal["0.5.14"]
         """Version of the bioimage.io model description specification used.
         When creating a new model always use the latest micro/patch version described here.
         The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -4329,7 +4257,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             covers=[{"source": c} for c in src.covers],  # pyright: ignore[reportArgumentType]
             description=src.description,
             documentation={"source": src.documentation} if src.documentation else None,  # pyright: ignore[reportArgumentType]
-            format_version="0.5.13",
+            format_version="0.5.14",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon={"source": src.icon} if src.icon else None,  # pyright: ignore[reportArgumentType]
             id=None if src.id is None else ModelId(src.id),
