@@ -19,6 +19,28 @@ def test_httpurl_valid(url: str):
 
 
 @pytest.mark.parametrize(
+    "url_base",
+    [
+        "https://example.com",
+        "https://example.com/",
+        "https://example.com/file",
+        "https://example.com/file/",
+    ],
+)
+def test_httpurl_suffix(url_base: str):
+    from bioimageio.spec._internal.root_url import RootHttpUrl
+
+    url = RootHttpUrl(url_base)
+    assert url.suffix == ""
+    assert url.suffixes == []
+
+    if url_base != "https://example.com" and not url_base.endswith("/"):
+        url = RootHttpUrl(f"{url_base}.txt.zip")
+        assert url.suffix == ".zip"
+        assert url.suffixes == [".txt", ".zip"]
+
+
+@pytest.mark.parametrize(
     "text,status_code",
     [
         ("OK", 200),
