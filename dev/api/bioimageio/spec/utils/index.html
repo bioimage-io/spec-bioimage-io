@@ -3060,13 +3060,13 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io_utils.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">395</span>
-<span class="normal">396</span>
-<span class="normal">397</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">397</span>
 <span class="normal">398</span>
 <span class="normal">399</span>
 <span class="normal">400</span>
-<span class="normal">401</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_array</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">PermissiveFileSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_array</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">PermissiveFileSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""load a numpy ndarray from a .npy file"""</span>
     <span class="n">reader</span> <span class="o">=</span> <span class="n">get_reader</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">allow_pickle</span><span class="p">:</span>
@@ -3179,6 +3179,10 @@
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">open_bioimageio_yaml</span><span class="p">(</span>
     <span class="n"><span title="bioimageio.spec.utils.open_bioimageio_yaml(source)">source</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../common/#bioimageio.spec.common.PermissiveFileSource">PermissiveFileSource</a></span> <span class="o">|</span> <span class="n"><span title="zipfile.ZipFile">ZipFile</span></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" href="../common/#bioimageio.spec.common.ZipPath">ZipPath</a></span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
+    <span class="n"><span title="bioimageio.spec.utils.open_bioimageio_yaml(progressbar)">progressbar</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span>
+    <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" href="../common/#bioimageio.spec.common.ProgressbarLike">ProgressbarLike</a></span>
+    <span class="o">|</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[],</span> <span class="n"><a class="autorefs autorefs-internal" href="../common/#bioimageio.spec.common.ProgressbarLike">ProgressbarLike</a></span><span class="p">]</span>
+    <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n"><span title="bioimageio.spec.utils.open_bioimageio_yaml(**kwargs)">kwargs</span></span><span class="p">:</span> <span class="n"><span title="typing_extensions.Unpack">Unpack</span></span><span class="p">[</span><span class="n"><span title="bioimageio.spec._internal.io.HashKwargs">HashKwargs</span></span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="bioimageio.spec._internal.io.OpenedBioimageioYaml">OpenedBioimageioYaml</span></span>
 </code></pre></div>
@@ -3189,8 +3193,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io_utils.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">137</span>
-<span class="normal">138</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">138</span>
 <span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
@@ -3335,9 +3338,12 @@
 <span class="normal">280</span>
 <span class="normal">281</span>
 <span class="normal">282</span>
-<span class="normal">283</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">open_bioimageio_yaml</span><span class="p">(</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">open_bioimageio_yaml</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">PermissiveFileSource</span> <span class="o">|</span> <span class="n">ZipFile</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
+    <span class="n">progressbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">ProgressbarLike</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">ProgressbarLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Unpack</span><span class="p">[</span><span class="n">HashKwargs</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OpenedBioimageioYaml</span><span class="p">:</span>
     <span class="k">if</span> <span class="p">(</span>
@@ -3385,7 +3391,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">src</span> <span class="o">=</span> <span class="n">source</span>
 
-        <span class="n">reader</span> <span class="o">=</span> <span class="n">get_reader</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">get_reader</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">progressbar</span><span class="o">=</span><span class="n">progressbar</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="c1"># check if `source` is a collection id</span>
@@ -3451,7 +3457,7 @@
 
         <span class="n">entry</span> <span class="o">=</span> <span class="n">id_map</span><span class="p">[</span><span class="n">source</span><span class="p">]</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"loading </span><span class="si">{}</span><span class="s2"> from </span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">entry</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
-        <span class="n">reader</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">get_reader</span><span class="p">()</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">get_reader</span><span class="p">(</span><span class="n">progressbar</span><span class="o">=</span><span class="n">progressbar</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">get_validation_context</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">perform_io_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="n">src</span> <span class="o">=</span> <span class="n">HttpUrl</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
 
@@ -3512,8 +3518,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io_utils.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">56</span>
-<span class="normal">57</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">57</span>
 <span class="normal">58</span>
 <span class="normal">59</span>
 <span class="normal">60</span>
@@ -3521,7 +3526,8 @@
 <span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span>
-<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_yaml</span><span class="p">(</span>
+<span class="normal">65</span>
+<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_yaml</span><span class="p">(</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">FilePath</span> <span class="o">|</span> <span class="n">ZipPath</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="n">BytesReader</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">YamlValue</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="p">(</span><span class="n">ZipPath</span><span class="p">,</span> <span class="n">Path</span><span class="p">)):</span>
@@ -3558,11 +3564,11 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io_utils.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">404</span>
-<span class="normal">405</span>
-<span class="normal">406</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">406</span>
 <span class="normal">407</span>
-<span class="normal">408</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_array</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_array</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""save a numpy ndarray to a .npy file"""</span>
     <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">)</span>
@@ -3600,8 +3606,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io_utils.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
-<span class="normal">69</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
 <span class="normal">70</span>
 <span class="normal">71</span>
 <span class="normal">72</span>
@@ -3614,7 +3619,8 @@
 <span class="normal">79</span>
 <span class="normal">80</span>
 <span class="normal">81</span>
-<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write_yaml</span><span class="p">(</span>
+<span class="normal">82</span>
+<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">write_yaml</span><span class="p">(</span>
     <span class="n">content</span><span class="p">:</span> <span class="n">YamlValue</span> <span class="o">|</span> <span class="n">BioimageioYamlContentView</span> <span class="o">|</span> <span class="n">BaseModel</span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="n">file</span><span class="p">:</span> <span class="n">NewPath</span> <span class="o">|</span> <span class="n">FilePath</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">,</span>
