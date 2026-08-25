@@ -1346,6 +1346,78 @@
       "title": "model.v0_5.KerasV3WeightsDescr",
       "type": "object"
     },
+    "MicroSamWatershedDescr": {
+      "additionalProperties": false,
+      "description": "micro-sam instance segmentation postprocessing as described in:\n- Anna Archit, Luca Freckmann, Sushmita Nair, et al. [*Segment Anything for Microscopy*](https://www.nature.com/articles/s41592-024-02580-4). Nature Methods, 2025.\n\nTurns the three dense maps predicted by a micro-sam instance segmentation\ndecoder (foreground probability, center distance, inverted boundary\ndistance) into instance labels with a seeded watershed.\n\nNote: Only available if the `scikit-image` package is installed.",
+      "properties": {
+        "id": {
+          "const": "microsam_watershed",
+          "title": "Id",
+          "type": "string"
+        },
+        "kwargs": {
+          "$ref": "#/$defs/MicroSamWatershedKwargs"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "model.v0_5.MicroSamWatershedDescr",
+      "type": "object"
+    },
+    "MicroSamWatershedKwargs": {
+      "additionalProperties": false,
+      "description": "key word arguments for `MicroSamWatershedDescr`",
+      "properties": {
+        "center_distance_threshold": {
+          "default": 0.5,
+          "description": "Center distance predictions below this value are used to find seeds.",
+          "title": "Center Distance Threshold",
+          "type": "number"
+        },
+        "boundary_distance_threshold": {
+          "default": 0.5,
+          "description": "Boundary distance predictions below this value are used to find seeds.",
+          "title": "Boundary Distance Threshold",
+          "type": "number"
+        },
+        "foreground_threshold": {
+          "default": 0.5,
+          "description": "Foreground predictions above this value make up the foreground mask.",
+          "title": "Foreground Threshold",
+          "type": "number"
+        },
+        "foreground_smoothing": {
+          "default": 1.0,
+          "description": "Sigma of the gaussian smoothing applied to the foreground prediction to\navoid checkerboard artifacts. Set to 0 to disable smoothing.",
+          "title": "Foreground Smoothing",
+          "type": "number"
+        },
+        "distance_smoothing": {
+          "default": 1.6,
+          "description": "Sigma of the gaussian smoothing applied to both distance predictions.\nSet to 0 to disable smoothing.",
+          "title": "Distance Smoothing",
+          "type": "number"
+        },
+        "min_size": {
+          "default": 0,
+          "description": "Minimum size of objects to keep, in pixels. Set to 0 to disable filtering by size.",
+          "title": "Min Size",
+          "type": "integer"
+        },
+        "output_dtype": {
+          "default": "uint16",
+          "enum": [
+            "uint16",
+            "uint32"
+          ],
+          "title": "Output Dtype",
+          "type": "string"
+        }
+      },
+      "title": "model.v0_5.MicroSamWatershedKwargs",
+      "type": "object"
+    },
     "NominalOrOrdinalDataDescr": {
       "additionalProperties": false,
       "properties": {
@@ -12516,6 +12588,7 @@
                 "custom": "#/$defs/CustomProcessingDescr",
                 "ensure_dtype": "#/$defs/EnsureDtypeDescr",
                 "fixed_zero_mean_unit_variance": "#/$defs/FixedZeroMeanUnitVarianceDescr",
+                "microsam_watershed": "#/$defs/MicroSamWatershedDescr",
                 "scale_linear": "#/$defs/bioimageio__spec__model__v0_5__ScaleLinearDescr",
                 "scale_mean_variance": "#/$defs/bioimageio__spec__model__v0_5__ScaleMeanVarianceDescr",
                 "scale_range": "#/$defs/bioimageio__spec__model__v0_5__ScaleRangeDescr",
@@ -12544,6 +12617,9 @@
               },
               {
                 "$ref": "#/$defs/FixedZeroMeanUnitVarianceDescr"
+              },
+              {
+                "$ref": "#/$defs/MicroSamWatershedDescr"
               },
               {
                 "$ref": "#/$defs/bioimageio__spec__model__v0_5__ScaleLinearDescr"

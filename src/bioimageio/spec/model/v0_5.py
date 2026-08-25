@@ -1374,6 +1374,54 @@ class CellposeFlowDynamicsDescr(NodeWithExplicitlySetFields):
     kwargs: CellposeFlowDynamicsKwargs
 
 
+class MicroSamWatershedKwargs(KwargsNode):
+    """key word arguments for [MicroSamWatershedDescr][]"""
+
+    center_distance_threshold: float = 0.5
+    """Center distance predictions below this value are used to find seeds."""
+
+    boundary_distance_threshold: float = 0.5
+    """Boundary distance predictions below this value are used to find seeds."""
+
+    foreground_threshold: float = 0.5
+    """Foreground predictions above this value make up the foreground mask."""
+
+    foreground_smoothing: float = 1.0
+    """Sigma of the gaussian smoothing applied to the foreground prediction to
+    avoid checkerboard artifacts. Set to 0 to disable smoothing."""
+
+    distance_smoothing: float = 1.6
+    """Sigma of the gaussian smoothing applied to both distance predictions.
+    Set to 0 to disable smoothing."""
+
+    min_size: int = 0
+    """Minimum size of objects to keep, in pixels. Set to 0 to disable filtering by size."""
+
+    output_dtype: Literal["uint16", "uint32"] = "uint16"
+
+
+class MicroSamWatershedDescr(NodeWithExplicitlySetFields):
+    """micro-sam instance segmentation postprocessing as described in:
+    - Anna Archit, Luca Freckmann, Sushmita Nair, et al. [*Segment Anything for Microscopy*](https://www.nature.com/articles/s41592-024-02580-4). Nature Methods, 2025.
+
+    Turns the three dense maps predicted by a micro-sam instance segmentation
+    decoder (foreground probability, center distance, inverted boundary
+    distance) into instance labels with a seeded watershed.
+
+    Note: Only available if the `scikit-image` package is installed.
+    """
+
+    implemented_id: ClassVar[Literal["microsam_watershed"]] = "microsam_watershed"
+    if TYPE_CHECKING:
+        id: Literal["microsam_watershed"] = "microsam_watershed"
+    else:
+        id: Literal["microsam_watershed"]
+
+    kwargs: MicroSamWatershedKwargs = Field(
+        default_factory=MicroSamWatershedKwargs.model_construct
+    )
+
+
 class CustomProcessingDescr(NodeWithExplicitlySetFields, FileDescr):
     """Custom (post)processing op — source file shipped inline with the model.
 
@@ -1760,6 +1808,7 @@ PostprocessingDescr = Annotated[
         CustomProcessingDescr,
         EnsureDtypeDescr,
         FixedZeroMeanUnitVarianceDescr,
+        MicroSamWatershedDescr,
         ScaleLinearDescr,
         ScaleMeanVarianceDescr,
         ScaleRangeDescr,
@@ -2326,6 +2375,7 @@ class _InputTensorConv(
                 (
                     CellposeFlowDynamicsDescr,
                     CustomProcessingDescr,
+                    MicroSamWatershedDescr,
                     ScaleMeanVarianceDescr,
                     StardistPostprocessingDescr,
                 ),
