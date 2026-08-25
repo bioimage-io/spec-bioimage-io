@@ -42,6 +42,13 @@ class _RootUrl(ValidatedString, ABC, Generic[ValidatedType]):
         else:
             return PurePosixPath(self.path).suffix
 
+    @property
+    def suffixes(self) -> list[str]:
+        if self.path is None:
+            return []
+        else:
+            return PurePosixPath(self.path).suffixes
+
     def __truediv__(self, other: str) -> RootHttpUrl:
         parsed = urlsplit(str(self))
         return RootHttpUrl(

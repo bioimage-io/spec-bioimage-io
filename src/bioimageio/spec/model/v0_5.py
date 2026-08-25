@@ -248,7 +248,7 @@ def _normalize_axis_id(a: str):
     b = str(a).lower()
     normalized = _AXIS_ID_MAP.get(b, b)
     if a != normalized:
-        logger.opt(depth=3).warning(
+        logger.opt(depth=3).debug(
             "Normalized axis id from '{}' to '{}'.", a, normalized
         )
     return normalized
