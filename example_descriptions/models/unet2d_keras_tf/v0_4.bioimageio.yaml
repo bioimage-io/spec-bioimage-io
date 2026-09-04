@@ -6,12 +6,17 @@ authors:
     github_user: HenriquesLab
 cite:
   - text: Falk et al. Nature Methods 2019
-    doi: "10.1038/s41592-018-0261-2"
+    doi: '10.1038/s41592-018-0261-2'
   - text: Ronneberger et al. arXiv in 2015
-    doi: "10.1007/978-3-319-24574-4_28"
+    doi: '10.1007/978-3-319-24574-4_28'
   - text: Lucas von Chamier et al. biorXiv 2020
-    doi: "10.1101/2020.03.20.000133"
+    doi: '10.1101/2020.03.20.000133'
 config:
+  bioimageio:
+    reproducibility_tolerance:
+      - absolute_tolerance: 1e-3
+        relative_tolerance: 1e-3
+        mismatched_elements_per_million: 100
   deepimagej:
     allow_tiling: true
     model_keys: null
@@ -19,7 +24,7 @@ config:
       postprocess:
         - { spec: null }
       preprocess:
-        - { kwargs: per_sample_scale_range.ijm, spec: "ij.IJ::runMacroFile" }
+        - { kwargs: per_sample_scale_range.ijm, spec: 'ij.IJ::runMacroFile' }
     pyramidal_model: false
     test_information:
       inputs:
@@ -63,10 +68,10 @@ sample_outputs: [sample_output_0.tif]
 tags: [zerocostdl4mic, deepimagej, segmentation, tem, unet]
 test_inputs: [test_input.npy]
 test_outputs: [test_output.npy]
-timestamp: "2021-11-30T11:37:51.374314Z"
+timestamp: '2021-11-30T11:37:51.374314Z'
 type: model
 weights:
   keras_hdf5:
     sha256: 2c0d85bbb37f424d4927bd6ccd6537bac815b1c0ed5f0b4bfa313be3efba96af
     source: keras_weights.hdf5
-    tensorflow_version: "1.15"
+    tensorflow_version: '1.15'
