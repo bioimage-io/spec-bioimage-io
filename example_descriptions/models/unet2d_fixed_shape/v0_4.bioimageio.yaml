@@ -55,3 +55,9 @@ weights:
     sha256: bcf26f08c26f5ef8f891c08dba2c8812bec7991643fb7c0f7b5d3e7dc321092f
     source: weights.pt
     pytorch_version: 1.6
+config:
+  bioimageio:
+    reproducibility_tolerance:
+      - absolute_tolerance: 1e-3
+        relative_tolerance: 1e-3
+        mismatched_elements_per_million: 100

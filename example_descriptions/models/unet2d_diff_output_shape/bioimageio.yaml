@@ -6,13 +6,16 @@ cite:
 config:
   bioimageio:
     reproducibility_tolerance:
-      - { absolute_tolerance: 0.0001 }
+      - absolute_tolerance: 0.0001
+        relative_tolerance: 0.001
+        mismatched_elements_per_million: 100
+
 covers:
   - source: cover.jpg
 description: Different output shape
 documentation:
   source: documentation.md
-format_version: 0.5.11
+format_version: 0.5.13
 git_repo: https://github.com/constantinpape/torch-em.git
 inputs:
   - axes:

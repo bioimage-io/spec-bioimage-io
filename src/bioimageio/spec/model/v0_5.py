@@ -4,6 +4,7 @@ import collections.abc
 import re
 import string
 import warnings
+from abc import ABC
 from copy import deepcopy
 from functools import partial
 from itertools import chain
@@ -80,17 +81,23 @@ from .._internal.node_converter import Converter
 from .._internal.type_guards import is_dict, is_sequence
 from .._internal.types import (
     FAIR,
-    AbsoluteTolerance,
     LowerCaseIdentifier,
     LowerCaseIdentifierAnno,
-    MismatchedElementsPerMillion,
-    RelativeTolerance,
     validate_identifier,
     validate_is_not_keyword,
 )
+from .._internal.types import (
+    AbsoluteTolerance as AbsoluteTolerance,
+)
 from .._internal.types import Datetime as Datetime
 from .._internal.types import Identifier as Identifier
+from .._internal.types import (
+    MismatchedElementsPerMillion as MismatchedElementsPerMillion,
+)
 from .._internal.types import NotEmpty as NotEmpty
+from .._internal.types import (
+    RelativeTolerance as RelativeTolerance,
+)
 from .._internal.types import SiUnit as SiUnit
 from .._internal.url import HttpUrl as HttpUrl
 from .._internal.utils import try_all_raise_last
@@ -3104,7 +3111,11 @@ class _TensorSizes(NamedTuple):
     outputs: dict[TensorId, dict[AxisId, int | _DataDepSize]]
 
 
-class ReproducibilityTolerance(Node, extra="allow"):
+_RT = TypeVar("_RT", RelativeTolerance, Literal[0])
+_AT = TypeVar("_AT", AbsoluteTolerance, Literal[0])
+
+
+class _ReproducibilityToleranceBase(Node, ABC, Generic[_RT, _AT], extra="allow"):
     """Describes what small numerical differences -- if any -- may be tolerated
     in the generated output when executing in different environments.
 
@@ -3119,20 +3130,91 @@ class ReproducibilityTolerance(Node, extra="allow"):
         may still lead to numerical differences.
     """
 
-    relative_tolerance: RelativeTolerance = 1e-3
-    """Maximum relative tolerance of reproduced test tensor."""
-
-    absolute_tolerance: AbsoluteTolerance = 1e-3
-    """Maximum absolute tolerance of reproduced test tensor."""
-
     mismatched_elements_per_million: MismatchedElementsPerMillion = 100
     """Maximum number of mismatched elements/pixels per million to tolerate."""
 
-    output_ids: Sequence[TensorId] = ()
-    """Limits the output tensor IDs these reproducibility details apply to."""
-
     weights_formats: Sequence[WeightsFormat] = ()
     """Limits the weights formats these details apply to."""
+
+    relative_tolerance: _RT
+    absolute_tolerance: _AT
+
+    @model_serializer(mode="wrap")
+    def serialize(
+        self,
+        handler: SerializerFunctionWrapHandler,
+    ) -> dict[str, Any]:
+        """explicitly serialize tolerance values
+
+        (even if they are default values and `exclude_defaults=True`).
+        """
+        data = handler(self)
+        data["relative_tolerance"] = self.relative_tolerance
+        data["absolute_tolerance"] = self.absolute_tolerance
+        data["mismatched_elements_per_million"] = self.mismatched_elements_per_million
+        return data
+
+
+class ReproducibilityTolerance(
+    _ReproducibilityToleranceBase[RelativeTolerance, AbsoluteTolerance]
+):
+    output_ids: Sequence[TensorId] = ()
+    """Limits the output tensor IDs these reproducibility details apply to.
+
+    If empty, the reproducibility details apply to all outputs."""
+
+    relative_tolerance: RelativeTolerance = 1e-3
+    """Maximum relative tolerance of reproduced test tensor.
+    Needs to be 0 for discrete (integer and boolean) outputs.
+    """
+
+    absolute_tolerance: AbsoluteTolerance = 1e-3
+    """Maximum absolute tolerance of reproduced test tensor.
+
+    The `absolute_tolerance` may not be greater than 1% of the maximum absolute value of the test tensor
+    (this serves to prevent false positives in the presence of very small numbers).
+    Needs to be 0 for discrete (integer and boolean) outputs.
+    """
+
+
+class DiscreteReproducibilityTolerance(
+    _ReproducibilityToleranceBase[Literal[0], Literal[0]]
+):
+    output_ids: Literal["any_discrete_output"] = "any_discrete_output"
+    """Limits the output tensor IDs to all outputs of integer or boolean data type."""
+
+    relative_tolerance: Literal[0] = 0
+    """Relative tolerance does not apply to discrete outputs"""
+
+    absolute_tolerance: Literal[0] = 0
+    """Absolute tolerance does not apply to discrete outputs"""
+
+    mismatched_elements_per_million: MismatchedElementsPerMillion = 1000
+    """Maximum number of mismatched elements/pixels per million to tolerate.
+
+    Note: Increased default mismatched elements per million compared to
+    [`ReproducibilityTolerance`][ReproducibilityTolerance]/[`ContinuousReproducibilityTolerance`][ContinuousReproducibilityTolerance],
+    since a single pixel mismatch can be more significant than for continuous outputs with numeric tolerance."""
+
+
+class ContinuousReproducibilityTolerance(
+    _ReproducibilityToleranceBase[RelativeTolerance, AbsoluteTolerance]
+):
+    output_ids: Literal["any_continuous_output"] = "any_continuous_output"
+    """Limits the output tensor IDs to all outputs of float data type."""
+
+    relative_tolerance: RelativeTolerance = 1e-3
+    """Maximum relative tolerance of reproduced test tensor.
+    Needs to be 0 for discrete (integer and boolean) outputs.
+    """
+
+    absolute_tolerance: AbsoluteTolerance = 1e-3
+    """Maximum absolute tolerance of reproduced test tensor.
+
+    The `absolute_tolerance` may not be greater than 1% of the maximum absolute value of the test tensor
+    (this serves to prevent false positives in the presence of very small numbers).
+    Needs to be 0 for discrete (integer and boolean) outputs.
+    """
 
 
 class BiasRisksLimitations(Node, extra="allow"):
@@ -3404,11 +3486,34 @@ class EnvironmentalImpact(Node, extra="allow"):
 
 
 class BioimageioConfig(Node, extra="allow"):
-    reproducibility_tolerance: Sequence[ReproducibilityTolerance] = ()
+    reproducibility_tolerance: Sequence[
+        ReproducibilityTolerance
+        | ContinuousReproducibilityTolerance
+        | DiscreteReproducibilityTolerance
+    ] = Field(
+        default_factory=lambda: (
+            ContinuousReproducibilityTolerance.model_construct(),
+            DiscreteReproducibilityTolerance.model_construct(),
+        )
+    )
     """Tolerances to allow when reproducing the model's test outputs
     from the model's test inputs.
     Only the first entry matching tensor id and weights format is considered.
+    For defaults see [`ContinuousReproducibilityTolerance`][ContinuousReproducibilityTolerance]/[`DiscreteReproducibilityTolerance`][DiscreteReproducibilityTolerance]
     """
+
+    @model_serializer(mode="wrap")
+    def _serialize(
+        self,
+        handler: SerializerFunctionWrapHandler,
+    ) -> dict[str, Any]:
+        """explicitly serialize reproducibility_tolerance
+
+        (even if they are default values and `exclude_defaults=True`).
+        """
+        data = handler(self)
+        data["reproducibility_tolerance"] = self.reproducibility_tolerance
+        return data
 
     funded_by: str | None = None
     """Funding agency, grant number if applicable"""
@@ -3699,18 +3804,37 @@ class ModelDescr(GenericModelDescrBase):
             crop_outputs="allow",
         )
 
+        seen_output_ids: set[TensorId] = (
+            set()
+        )  # reproducibility tolerance is only applicable to the first matching output tensor id
         for rep_tol in self.config.bioimageio.reproducibility_tolerance:
-            if not rep_tol.absolute_tolerance:
-                continue
-
-            if rep_tol.output_ids:
-                out_arrays = {
-                    k: v[1] for k, v in test_outputs.items() if k in rep_tol.output_ids
+            if not rep_tol.output_ids:
+                out_arrays: dict[TensorId, NDArray[Any] | None] = {
+                    k: v[1] for k, v in test_outputs.items() if k not in seen_output_ids
                 }
             else:
-                out_arrays = {k: v[1] for k, v in test_outputs.items()}
+                out_arrays = {}
+                for k, v in test_outputs.items():
+                    if k in seen_output_ids:
+                        continue
+
+                    if rep_tol.output_ids == "any_discrete_output":
+                        if not (
+                            v[0].dtype.startswith("int")
+                            or v[0].dtype.startswith("uint")
+                            or v[0].dtype.startswith("bool")
+                        ):
+                            continue
+                    elif rep_tol.output_ids == "any_continuous_output":
+                        if not v[0].dtype.startswith("float"):
+                            continue
+                    elif k not in rep_tol.output_ids:
+                        continue
+
+                    out_arrays[k] = v[1]
 
             for out_id, array in out_arrays.items():
+                seen_output_ids.add(out_id)
                 if array is None:
                     continue
 
@@ -3880,6 +4004,59 @@ class ModelDescr(GenericModelDescrBase):
     The available weight formats determine which consumers can use this model."""
 
     config: Config = Field(default_factory=Config.model_construct)
+
+    @model_validator(mode="after")
+    def _validate_reproducibility_tolerance_output_ids(self) -> Self:
+        seen_output_ids: set[TensorId] = set()
+        for rep_tol in self.config.bioimageio.reproducibility_tolerance:
+            if not rep_tol.output_ids:
+                continue
+
+            if rep_tol.output_ids == "any_discrete_output":
+                applicable_output_ids = [
+                    t.id
+                    for t in self.outputs
+                    if t.dtype.startswith("int")
+                    or t.dtype.startswith("uint")
+                    or t.dtype.startswith("bool")
+                ]
+            elif rep_tol.output_ids == "any_continuous_output":
+                applicable_output_ids = [
+                    t.id for t in self.outputs if t.dtype.startswith("float")
+                ]
+            else:
+                applicable_output_ids = rep_tol.output_ids
+
+            for out_id in applicable_output_ids:
+                if out_id in seen_output_ids:
+                    continue
+                else:
+                    seen_output_ids.add(out_id)
+
+                discrete_values = next(
+                    (
+                        t.dtype.startswith("int")
+                        or t.dtype.startswith("uint")
+                        or t.dtype.startswith("bool")
+                        for t in self.outputs
+                        if t.id == out_id
+                    ),
+                    None,
+                )
+                if discrete_values is None:
+                    raise ValueError(
+                        f"config.bioimageio.reproducibility_tolerance.output_ids contains '{out_id}', which is not a valid output tensor id."
+                    )
+                if discrete_values and rep_tol.relative_tolerance != 0:
+                    raise ValueError(
+                        f"config.bioimageio.reproducibility_tolerance.output_ids contains '{out_id}', which is a discrete output tensor, but config.bioimageio.reproducibility_tolerance.relative_tolerance={rep_tol.relative_tolerance} is not 0."
+                    )
+                if discrete_values and rep_tol.absolute_tolerance != 0:
+                    raise ValueError(
+                        f"config.bioimageio.reproducibility_tolerance.output_ids contains '{out_id}', which is a discrete output tensor, but config.bioimageio.reproducibility_tolerance.absolute_tolerance={rep_tol.absolute_tolerance} is not 0."
+                    )
+
+        return self
 
     @model_validator(mode="after")
     def _add_default_cover(self) -> Self:
