@@ -1690,7 +1690,7 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
         <span class="n">context</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_mapping</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
 
     <span class="c1"># TODO: pass on extra with pydantic &gt;=2.12</span>
     <span class="k">if</span> <span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -2217,7 +2217,7 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
         <span class="n">context</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_mapping</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
 
     <span class="c1"># TODO: pass on extra with pydantic &gt;=2.12</span>
     <span class="k">if</span> <span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -2710,7 +2710,7 @@ Note:
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
         <span class="n">context</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_mapping</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
 
     <span class="c1"># TODO: pass on extra with pydantic &gt;=2.12</span>
     <span class="k">if</span> <span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -3405,12 +3405,6 @@ Note:
             </li>
         </ul>
 
-        <p>Validators:</p>
-        <ul>
-            <li>
-              <code><span title="bioimageio.spec._internal.io.FileDescr._validate_sha256">_validate_sha256</span></code>
-            </li>
-        </ul>
 
 
 
@@ -3874,7 +3868,7 @@ Note:
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
         <span class="n">context</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_mapping</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
 
     <span class="c1"># TODO: pass on extra with pydantic &gt;=2.12</span>
     <span class="k">if</span> <span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -5521,20 +5515,6 @@ Use this generic resource description, if none of the known specific types match
         <p>Validators:</p>
         <ul>
             <li>
-              <code><span title="bioimageio.spec.generic.v0_3.GenericDescr._check_license">_check_license</span></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.generic.v0_3.GenericDescr.license">license</a></code>            </li>
-            <li>
-              <code><span title="bioimageio.spec.generic.v0_3.GenericDescr._check_maintainers_exist">_check_maintainers_exist</span></code>
-            </li>
-            <li>
-              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.generic.v0_3.GenericDescr.warn_about_tag_categories">warn_about_tag_categories</a></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.generic.v0_3.GenericDescr.tags">tags</a></code>            </li>
-            <li>
-              <code><span title="bioimageio.spec.generic.v0_3.GenericDescr._remove_version_number">_remove_version_number</span></code>
-            </li>
-            <li>
               <code><span title="bioimageio.spec.generic.v0_3.GenericDescr._convert_from_older_format">_convert_from_older_format</span></code>
             </li>
             <li>
@@ -7038,7 +7018,7 @@ without validating the result.</p>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
         <span class="n">context</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_mapping</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
 
     <span class="c1"># TODO: pass on extra with pydantic &gt;=2.12</span>
     <span class="k">if</span> <span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -7186,7 +7166,7 @@ without validating the result.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#bioimageio.spec.generic.v0_3.GenericDescr.warn_about_tag_categories" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -8506,12 +8486,6 @@ without validating the result.</p>
             </li>
         </ul>
 
-        <p>Validators:</p>
-        <ul>
-            <li>
-              <code><span title="bioimageio.spec.generic.v0_3.LinkedResource._remove_version_number">_remove_version_number</span></code>
-            </li>
-        </ul>
 
 
 
@@ -8852,7 +8826,7 @@ without validating the result.</p>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
         <span class="n">context</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_mapping</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
 
     <span class="c1"># TODO: pass on extra with pydantic &gt;=2.12</span>
     <span class="k">if</span> <span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -9416,7 +9390,7 @@ without validating the result.</p>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
         <span class="n">context</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_mapping</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
 
     <span class="c1"># TODO: pass on extra with pydantic &gt;=2.12</span>
     <span class="k">if</span> <span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -11408,7 +11382,7 @@ without validating the result.</p>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
         <span class="n">context</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_mapping</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_kwargs</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">obj</span>
 
     <span class="c1"># TODO: pass on extra with pydantic &gt;=2.12</span>
     <span class="k">if</span> <span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
