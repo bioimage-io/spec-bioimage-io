@@ -467,13 +467,6 @@
           "title": "Weights Formats",
           "type": "array"
         },
-        "output_ids": {
-          "const": "any_continuous_output",
-          "default": "any_continuous_output",
-          "description": "Limits the output tensor IDs to all outputs of float data type.",
-          "title": "Output Ids",
-          "type": "string"
-        },
         "relative_tolerance": {
           "default": 0.001,
           "description": "Maximum relative tolerance of reproduced test tensor.\nNeeds to be 0 for discrete (integer and boolean) outputs.",
@@ -488,6 +481,13 @@
           "minimum": 0,
           "title": "Absolute Tolerance",
           "type": "number"
+        },
+        "output_ids": {
+          "const": "any_continuous_output",
+          "default": "any_continuous_output",
+          "description": "Limits the output tensor IDs to all outputs of float data type.",
+          "title": "Output Ids",
+          "type": "string"
         }
       },
       "title": "model.v0_5.ContinuousReproducibilityTolerance",
@@ -628,13 +628,6 @@
           "title": "Weights Formats",
           "type": "array"
         },
-        "output_ids": {
-          "const": "any_discrete_output",
-          "default": "any_discrete_output",
-          "description": "Limits the output tensor IDs to all outputs of integer or boolean data type.",
-          "title": "Output Ids",
-          "type": "string"
-        },
         "relative_tolerance": {
           "const": 0,
           "default": 0,
@@ -648,6 +641,13 @@
           "description": "Absolute tolerance does not apply to discrete outputs",
           "title": "Absolute Tolerance",
           "type": "integer"
+        },
+        "output_ids": {
+          "const": "any_discrete_output",
+          "default": "any_discrete_output",
+          "description": "Limits the output tensor IDs to all outputs of integer or boolean data type.",
+          "title": "Output Ids",
+          "type": "string"
         }
       },
       "title": "model.v0_5.DiscreteReproducibilityTolerance",
@@ -1644,18 +1644,6 @@
           "title": "Weights Formats",
           "type": "array"
         },
-        "output_ids": {
-          "default": [],
-          "description": "Limits the output tensor IDs these reproducibility details apply to.\n\nIf empty, the reproducibility details apply to all outputs.",
-          "items": {
-            "maxLength": 32,
-            "minLength": 1,
-            "title": "TensorId",
-            "type": "string"
-          },
-          "title": "Output Ids",
-          "type": "array"
-        },
         "relative_tolerance": {
           "default": 0.001,
           "description": "Maximum relative tolerance of reproduced test tensor.\nNeeds to be 0 for discrete (integer and boolean) outputs.",
@@ -1670,6 +1658,18 @@
           "minimum": 0,
           "title": "Absolute Tolerance",
           "type": "number"
+        },
+        "output_ids": {
+          "default": [],
+          "description": "Limits the output tensor IDs these reproducibility details apply to.\n\nIf empty, the reproducibility details apply to all outputs.",
+          "items": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "TensorId",
+            "type": "string"
+          },
+          "title": "Output Ids",
+          "type": "array"
         }
       },
       "title": "model.v0_5.ReproducibilityTolerance",

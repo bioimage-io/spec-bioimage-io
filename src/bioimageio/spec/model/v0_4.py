@@ -975,6 +975,11 @@ class OutputTensorDescr(TensorDescrBase):
     The data flow in bioimage.io models is explained
     [in this diagram.](https://docs.google.com/drawings/d/1FTw8-Rn6a6nXdkZ_SkMumtcjvur9mtIhRqLwnKqZNHM/edit)."""
 
+    @property
+    def dtype(self):
+        """alias for `data_type`"""
+        return self.data_type
+
     shape: Sequence[int] | ImplicitOutputShape
     """Output tensor shape."""
 
