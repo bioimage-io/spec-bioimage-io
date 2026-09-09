@@ -137,6 +137,10 @@ weights:
 config:
   bioimageio:
     reproducibility_tolerance:
+      - absolute_tolerance: 5e-3
+        relative_tolerance: 5e-3
+        mismatched_elements_per_million: 100
+        weights_formats: [onnx]
       - absolute_tolerance: 1e-3
         relative_tolerance: 1e-3
         mismatched_elements_per_million: 100
