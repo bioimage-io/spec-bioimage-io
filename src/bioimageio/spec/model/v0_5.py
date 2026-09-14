@@ -2031,6 +2031,13 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
       changing the data type.
     """
 
+    parameters: list[ParameterDescr] = Field(
+        default_factory=list
+    )
+    """Additional non-tensor parameters accepted by the model's forward method.
+    These parameters have default values and are optional for the model consumer.
+    They are distinct from initialization parameters (which are in the model section)."""
+
     @model_validator(mode="after")
     def _validate_preprocessing_kwargs(self) -> Self:
         axes_ids = [a.id for a in self.axes]
@@ -2069,6 +2076,36 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
             )
 
         return self
+
+
+class ParameterDescr(Node):
+    name: Annotated[str, MinLen(1)]
+    """Name of the parameter that is passed to the model's forward method."""
+
+    description: Annotated[str, MaxLen(128)] = ""
+    """A short description of this parameter."""
+
+    default: YamlValue
+    """The default value of this parameter. All parameters must have a default
+    value so that they are optional for the model consumer."""
+
+    dtype: Literal[
+        "float32",
+        "float64",
+        "uint8",
+        "int8",
+        "uint16",
+        "int16",
+        "uint32",
+        "int32",
+        "uint64",
+        "int64",
+        "bool",
+        "int",
+        "float",
+    ] | None = None
+    """Data type of the parameter value.
+    If not specified, the type is inferred from the default value."""
 
 
 def convert_axes(
