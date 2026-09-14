@@ -10,6 +10,11 @@ In this file we log both:
 
 This changelog includes implementation details and might reference [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+### bioimageio.spec 0.5.14.2
+
+- added `parameters` field to `InputTensorDescr` for specifying non-tensor model parameters accepted by the forward method
+- added `ParameterDescr` type with `name`, `description`, `default`, and optional `dtype` fields
+
 ### bioimageio.spec 0.5.14.1
 
 - add suffixes property to URLs
@@ -422,6 +427,8 @@ If the changes also apply to `type` model, the coresponding model format version
 
 - Breaking changes:
   - removed field `ChannelAxis.channel_colors`
+- Non-breaking changes:
+  - added optional `parameters` field to `InputTensorDescr` for specifying non-tensor model parameters accepted by the forward method
 
 ### model 0.5.13
 

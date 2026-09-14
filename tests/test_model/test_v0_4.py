@@ -19,6 +19,7 @@ from bioimageio.spec.model.v0_4 import (
     ModelDescr,
     OnnxWeightsDescr,
     OutputTensorDescr,
+    ParameterDescr,
     PostprocessingDescr,
     PreprocessingDescr,
     ScaleLinearKwargs,
@@ -269,6 +270,56 @@ def test_scale_linear_kwargs(kwargs: dict[str, Any], valid: bool):
     ],
 )
 def test_input_tensor(kwargs: dict[str, Any]):
+    check_node(InputTensorDescr, kwargs)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {
+            "name": "diameter",
+            "description": "expected diameter in pixels of objects to segment",
+            "default": 30,
+        },
+        {
+            "name": "threshold",
+            "default": 0.5,
+            "dtype": "float32",
+        },
+        {
+            "name": "num_iterations",
+            "default": 100,
+            "dtype": "int",
+        },
+    ],
+)
+def test_parameter_descr(kwargs: dict[str, Any]):
+    check_node(ParameterDescr, kwargs)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {
+            "name": "output_1",
+            "description": "Output 1",
+            "data_type": "float32",
+            "axes": "xyc",
+            "shape": [128, 128, 3],
+            "parameters": [
+                {"name": "diameter", "default": 30, "description": "expected diameter"},
+            ],
+        },
+        {
+            "name": "tensor_1",
+            "data_type": "float32",
+            "axes": "xyc",
+            "shape": [128, 128, 3],
+            "parameters": [],
+        },
+    ],
+)
+def test_input_tensor_with_parameters(kwargs: dict[str, Any]):
     check_node(InputTensorDescr, kwargs)
 
 

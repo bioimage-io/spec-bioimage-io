@@ -35,6 +35,7 @@ from bioimageio.spec.model.v0_5 import (
     ModelId,
     OnnxWeightsDescr,
     OutputTensorDescr,
+    ParameterDescr,
     ParameterizedSize,
     PytorchStateDictWeightsDescr,
     Sha256,
@@ -195,6 +196,56 @@ def test_input_tensor_invalid(kwargs: dict[str, Any]):
         kwargs,
         is_invalid=True,
         context=ValidationContext(perform_io_checks=False),
+    )
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {
+            "name": "diameter",
+            "description": "expected diameter in pixels of objects to segment",
+            "default": 30,
+        },
+        {
+            "name": "threshold",
+            "default": 0.5,
+            "dtype": "float32",
+        },
+        {
+            "name": "num_iterations",
+            "default": 100,
+            "dtype": "int",
+        },
+    ],
+)
+def test_parameter_descr(kwargs: dict[str, Any]):
+    check_node(ParameterDescr, kwargs, context=ValidationContext(perform_io_checks=False))
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {
+            "id": "input_with_params",
+            "data": {"type": "float32"},
+            "axes": [{"type": "space", "size": 10}],
+            "parameters": [
+                {"name": "diameter", "default": 30, "description": "expected diameter in pixels"},
+                {"name": "threshold", "default": 0.5, "dtype": "float32"},
+            ],
+        },
+        {
+            "id": "input_no_params",
+            "data": {"type": "float32"},
+            "axes": [{"type": "space", "size": 10}],
+            "parameters": [],
+        },
+    ],
+)
+def test_input_tensor_with_parameters(kwargs: dict[str, Any]):
+    check_node(
+        InputTensorDescr, kwargs, context=ValidationContext(perform_io_checks=False)
     )
 
 

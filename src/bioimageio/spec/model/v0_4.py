@@ -43,6 +43,7 @@ from .._internal.field_validation import validate_unique_entries
 from .._internal.field_warning import issue_warning, warn
 from .._internal.io import BioimageioYamlContent, WithSuffix
 from .._internal.io import FileDescr as FileDescr
+from .._internal.io import YamlValue
 from .._internal.io_basics import Sha256 as Sha256
 from .._internal.io_packaging import FileSource_package, include_in_package
 from .._internal.io_utils import load_array
@@ -921,6 +922,13 @@ class InputTensorDescr(TensorDescrBase):
     )
     """Description of how this input should be preprocessed."""
 
+    parameters: list[ParameterDescr] = Field(
+        default_factory=list
+    )
+    """Additional non-tensor parameters accepted by the model's forward method.
+    These parameters have default values and are optional for the model consumer.
+    They are distinct from initialization parameters (which are in the model section)."""
+
     @model_validator(mode="after")
     def zero_batch_step_and_one_batch_size(self) -> Self:
         bidx = self.axes.find("b")
@@ -955,6 +963,36 @@ class InputTensorDescr(TensorDescrBase):
                 raise ValueError("`kwargs.axes` needs to be subset of `axes`")
 
         return self
+
+
+class ParameterDescr(Node):
+    name: Annotated[str, MinLen(1)]
+    """Name of the parameter that is passed to the model's forward method."""
+
+    description: Annotated[str, MaxLen(128)] = ""
+    """A short description of this parameter."""
+
+    default: YamlValue
+    """The default value of this parameter. All parameters must have a default
+    value so that they are optional for the model consumer."""
+
+    dtype: Literal[
+        "float32",
+        "float64",
+        "uint8",
+        "int8",
+        "uint16",
+        "int16",
+        "uint32",
+        "int32",
+        "uint64",
+        "int64",
+        "bool",
+        "int",
+        "float",
+    ] | None = None
+    """Data type of the parameter value.
+    If not specified, the type is inferred from the default value."""
 
 
 class OutputTensorDescr(TensorDescrBase):
