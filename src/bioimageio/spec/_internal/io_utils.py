@@ -362,7 +362,7 @@ def write_content_to_zip(
                 )
                 continue
 
-            with zip.open(arc_name, "w") as dest:
+            with zip.open(arc_name, "w", force_zip64=True) as dest:
                 shutil.copyfileobj(reader, dest, 1024 * 8)
 
 

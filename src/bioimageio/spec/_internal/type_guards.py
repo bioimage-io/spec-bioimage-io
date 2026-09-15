@@ -3,15 +3,19 @@ They widen the type to T[Any], which is not always correct."""
 
 from __future__ import annotations
 
-import collections.abc
-from typing import Any, Mapping, Sequence
+from collections.abc import Mapping, Sequence
+from typing import Any, Hashable, TypeVar
 
 import numpy as np
 from numpy.typing import NDArray
 from typing_extensions import TypeGuard
 
+T = TypeVar("T")
+K = TypeVar("K", bound=Hashable)
+V = TypeVar("V")
 
-def is_dict(v: Any) -> TypeGuard[dict[Any, Any]]:
+
+def is_dict(v: Any | Mapping[K, V]) -> TypeGuard[dict[K, V]]:
     """to avoid Dict[Unknown, Unknown]"""
     return isinstance(v, dict)
 
@@ -21,24 +25,24 @@ def is_set(v: Any) -> TypeGuard[set[Any]]:
     return isinstance(v, set)
 
 
-def is_kwargs(v: Any) -> TypeGuard[dict[str, Any]]:
-    return isinstance(v, dict) and all(
+def is_kwargs(v: Any | Mapping[Any, T]) -> TypeGuard[Mapping[str, T]]:
+    return isinstance(v, Mapping) and all(
         isinstance(k, str)
         for k in v  # pyright: ignore[reportUnknownVariableType]
     )
 
 
-def is_mapping(v: Any) -> TypeGuard[Mapping[Any, Any]]:
+def is_mapping(v: Any | Mapping[K, V]) -> TypeGuard[Mapping[K, V]]:
     """to avoid Mapping[Unknown, Unknown]"""
-    return isinstance(v, collections.abc.Mapping)
+    return isinstance(v, Mapping)
 
 
-def is_sequence(v: Any) -> TypeGuard[Sequence[Any]]:
+def is_sequence(v: Any | Sequence[T]) -> TypeGuard[Sequence[T]]:
     """to avoid Sequence[Unknown]"""
-    return isinstance(v, collections.abc.Sequence)
+    return isinstance(v, Sequence)
 
 
-def is_tuple(v: Any) -> TypeGuard[tuple[Any, ...]]:
+def is_tuple(v: Any | Sequence[T]) -> TypeGuard[tuple[T, ...]]:
     """to avoid Tuple[Unknown, ...]"""
     return isinstance(v, tuple)
 

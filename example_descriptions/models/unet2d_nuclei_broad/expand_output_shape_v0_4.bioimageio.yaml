@@ -79,3 +79,10 @@ download_url: https://example.com/ # note: not recommended for model RDFs
 
 training_data:
   id: ilastik/covid_if_training_data # note: not the real training data
+
+config:
+  bioimageio:
+    reproducibility_tolerance:
+      - absolute_tolerance: 1e-3
+        relative_tolerance: 1e-3
+        mismatched_elements_per_million: 100

@@ -126,3 +126,9 @@ weights:
     pytorch_version: '1.10'
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2
     source: http://files.ilastik.org/bioimageio_test/unet2d_nuclei_broad_weights.torch
+config:
+  bioimageio:
+    reproducibility_tolerance:
+      - absolute_tolerance: 1e-3
+        relative_tolerance: 1e-3
+        mismatched_elements_per_million: 100

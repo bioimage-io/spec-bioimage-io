@@ -20,6 +20,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT: Collection[str] = {
     "version",  # may be set from deprecated `version_number`
     "documentation",  # plain source to FileDescr(source=...)
     "covers",  # plain source to FileDescr(source=...)
+    "config.bioimageio.reproducibility_tolerance",  # added by serializing defaults
 }
 EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
     "affable-shark/1.1": {
@@ -31,6 +32,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
         "inputs",  # preprocessing ensure_dtype added
         "documentation",  # plain source to FileDescr(source=...)
         "covers",  # plain source to FileDescr(source=...)
+        "config.bioimageio.reproducibility_tolerance",  # added by serializing defaults
     },
     "charismatic-whale/1.0.1": {
         "inputs",  # int -> float
@@ -48,11 +50,13 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
         "cite",
         "documentation",  # plain source to FileDescr(source=...)
         "covers",  # plain source to FileDescr(source=...)
+        "config.bioimageio.reproducibility_tolerance",  # added by serializing defaults
     },
     "philosophical-panda/0.0.11": {
         "outputs",  # int -> float
         "documentation",  # plain source to FileDescr(source=...)
         "covers",  # plain source to FileDescr(source=...)
+        "config.bioimageio.reproducibility_tolerance",  # added by serializing defaults
     },
     "philosophical-panda/0.1.0": {
         "outputs",
@@ -70,6 +74,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
         "outputs",
         "documentation",  # plain source to FileDescr(source=...)
         "covers",  # plain source to FileDescr(source=...)
+        "config.bioimageio.reproducibility_tolerance",  # added by serializing defaults
     },  # int -> float
     "dynamic-t-rex/1.1": {"inputs"},  # int -> float
 }

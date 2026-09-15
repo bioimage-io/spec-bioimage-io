@@ -12,7 +12,7 @@ from typing import (
 import pydantic
 from typing_extensions import ParamSpec, Self, TypeVar
 
-from .type_guards import is_kwargs
+from .type_guards import is_kwargs, is_mapping
 from .validation_context import ValidationContext, get_validation_context
 
 
@@ -78,7 +78,7 @@ class Node(
         elif isinstance(context, collections.abc.Mapping):
             context = ValidationContext(**context)
 
-        assert not isinstance(obj, collections.abc.Mapping) or is_kwargs(obj), obj
+        assert not is_mapping(obj) or is_kwargs(obj), obj
 
         # TODO: pass on extra with pydantic >=2.12
         if extra is not None:
