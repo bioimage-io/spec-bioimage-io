@@ -592,6 +592,61 @@
       "title": "model.v0_5.ConstantPadding",
       "type": "object"
     },
+    "ContinuousReproducibilityTolerance": {
+      "additionalProperties": true,
+      "properties": {
+        "mismatched_elements_per_million": {
+          "default": 100,
+          "description": "Maximum number of mismatched elements/pixels per million to tolerate.",
+          "maximum": 30000,
+          "minimum": 0,
+          "title": "Mismatched Elements Per Million",
+          "type": "integer"
+        },
+        "weights_formats": {
+          "default": [],
+          "description": "Limits the weights formats these details apply to.",
+          "items": {
+            "enum": [
+              "keras_hdf5",
+              "keras_v3",
+              "onnx",
+              "pytorch_state_dict",
+              "tensorflow_js",
+              "tensorflow_saved_model_bundle",
+              "torchscript"
+            ],
+            "type": "string"
+          },
+          "title": "Weights Formats",
+          "type": "array"
+        },
+        "relative_tolerance": {
+          "default": 0.001,
+          "description": "Maximum relative tolerance of reproduced test tensor.\nNeeds to be 0 for discrete (integer and boolean) outputs.",
+          "maximum": 0.01,
+          "minimum": 0,
+          "title": "Relative Tolerance",
+          "type": "number"
+        },
+        "absolute_tolerance": {
+          "default": 0.001,
+          "description": "Maximum absolute tolerance of reproduced test tensor.\n\nThe `absolute_tolerance` may not be greater than 1% of the maximum absolute value of the test tensor\n(this serves to prevent false positives in the presence of very small numbers).\nNeeds to be 0 for discrete (integer and boolean) outputs.",
+          "minimum": 0,
+          "title": "Absolute Tolerance",
+          "type": "number"
+        },
+        "output_ids": {
+          "const": "any_continuous_output",
+          "default": "any_continuous_output",
+          "description": "Limits the output tensor IDs to all outputs of float data type.",
+          "title": "Output Ids",
+          "type": "string"
+        }
+      },
+      "title": "model.v0_5.ContinuousReproducibilityTolerance",
+      "type": "object"
+    },
     "CustomProcessingDescr": {
       "additionalProperties": false,
       "description": "Custom (post)processing op \u2014 source file shipped inline with the model.\n\nSupports (post)processing that cannot be expressed by the built-in named\noperations (watershed, connected components, etc.)\nusing a simple Python callable interface.\n\nThe op is implemented in a ``.py`` file packaged alongside the model weights.\nTwo styles are supported:\n\n*Callable class* \u2014 kwargs go to ``__init__``, tensors arrive in ``__call__``:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    class my_postprocess:\n        def __init__(self, threshold: float = 0.5) -> None:\n            self.threshold = threshold\n        def __call__(self, *arrays: np.ndarray) -> np.ndarray:\n            # arrays = model output tensors in rdf.yaml declaration order\n            return (arrays[0] > self.threshold).astype(np.uint8)\n\n*Factory function* \u2014 alternative closure style, identical runtime behaviour:\n\n.. code-block:: python\n\n    # my_postprocess.py\n    import numpy as np\n\n    def my_postprocess(threshold: float = 0.5):\n        def run(*arrays: np.ndarray) -> np.ndarray:\n            return (arrays[0] > threshold).astype(np.uint8)\n        return run\n\nReference it in ``rdf.yaml`` with the source file included in the package:\n\n.. code-block:: yaml\n\n    postprocessing:\n      - id: custom\n        callable: my_postprocess   # class or function name in source\n        source: my_postprocess.py  # packaged alongside weights\n        sha256: <hash>             # sha256 of the source file\n        kwargs:                    # forwarded to __init__ / factory\n          threshold: 0.5\n\n**Security:** source files are SHA-256 verified before execution.\nExecution requires explicit opt-in in bioimageio.core and curator\nreview before Zoo publication.",
@@ -697,6 +752,60 @@
       "format": "date-time",
       "title": "Datetime",
       "type": "string"
+    },
+    "DiscreteReproducibilityTolerance": {
+      "additionalProperties": true,
+      "properties": {
+        "mismatched_elements_per_million": {
+          "default": 1000,
+          "description": "Maximum number of mismatched elements/pixels per million to tolerate.\n\nNote: Increased default mismatched elements per million compared to\n[`ReproducibilityTolerance`][ReproducibilityTolerance]/[`ContinuousReproducibilityTolerance`][ContinuousReproducibilityTolerance],\nsince a single pixel mismatch can be more significant than for continuous outputs with numeric tolerance.",
+          "maximum": 30000,
+          "minimum": 0,
+          "title": "Mismatched Elements Per Million",
+          "type": "integer"
+        },
+        "weights_formats": {
+          "default": [],
+          "description": "Limits the weights formats these details apply to.",
+          "items": {
+            "enum": [
+              "keras_hdf5",
+              "keras_v3",
+              "onnx",
+              "pytorch_state_dict",
+              "tensorflow_js",
+              "tensorflow_saved_model_bundle",
+              "torchscript"
+            ],
+            "type": "string"
+          },
+          "title": "Weights Formats",
+          "type": "array"
+        },
+        "relative_tolerance": {
+          "const": 0,
+          "default": 0,
+          "description": "Relative tolerance does not apply to discrete outputs",
+          "title": "Relative Tolerance",
+          "type": "integer"
+        },
+        "absolute_tolerance": {
+          "const": 0,
+          "default": 0,
+          "description": "Absolute tolerance does not apply to discrete outputs",
+          "title": "Absolute Tolerance",
+          "type": "integer"
+        },
+        "output_ids": {
+          "const": "any_discrete_output",
+          "default": "any_discrete_output",
+          "description": "Limits the output tensor IDs to all outputs of integer or boolean data type.",
+          "title": "Output Ids",
+          "type": "string"
+        }
+      },
+      "title": "model.v0_5.DiscreteReproducibilityTolerance",
+      "type": "object"
     },
     "EdgePadding": {
       "additionalProperties": false,
@@ -2426,23 +2535,7 @@
     },
     "ReproducibilityTolerance": {
       "additionalProperties": true,
-      "description": "Describes what small numerical differences -- if any -- may be tolerated\nin the generated output when executing in different environments.\n\nA tensor element *output* is considered mismatched to the **test_tensor** if\nabs(*output* - **test_tensor**) > **absolute_tolerance** + **relative_tolerance** * abs(**test_tensor**).\n(Internally we call [numpy.testing.assert_allclose](https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_allclose.html).)\n\nMotivation:\n    For testing we can request the respective deep learning frameworks to be as\n    reproducible as possible by setting seeds and chosing deterministic algorithms,\n    but differences in operating systems, available hardware and installed drivers\n    may still lead to numerical differences.",
       "properties": {
-        "relative_tolerance": {
-          "default": 0.001,
-          "description": "Maximum relative tolerance of reproduced test tensor.",
-          "maximum": 0.01,
-          "minimum": 0,
-          "title": "Relative Tolerance",
-          "type": "number"
-        },
-        "absolute_tolerance": {
-          "default": 0.001,
-          "description": "Maximum absolute tolerance of reproduced test tensor.",
-          "minimum": 0,
-          "title": "Absolute Tolerance",
-          "type": "number"
-        },
         "mismatched_elements_per_million": {
           "default": 100,
           "description": "Maximum number of mismatched elements/pixels per million to tolerate.",
@@ -2450,18 +2543,6 @@
           "minimum": 0,
           "title": "Mismatched Elements Per Million",
           "type": "integer"
-        },
-        "output_ids": {
-          "default": [],
-          "description": "Limits the output tensor IDs these reproducibility details apply to.",
-          "items": {
-            "maxLength": 32,
-            "minLength": 1,
-            "title": "TensorId",
-            "type": "string"
-          },
-          "title": "Output Ids",
-          "type": "array"
         },
         "weights_formats": {
           "default": [],
@@ -2479,6 +2560,33 @@
             "type": "string"
           },
           "title": "Weights Formats",
+          "type": "array"
+        },
+        "relative_tolerance": {
+          "default": 0.001,
+          "description": "Maximum relative tolerance of reproduced test tensor.\nNeeds to be 0 for discrete (integer and boolean) outputs.",
+          "maximum": 0.01,
+          "minimum": 0,
+          "title": "Relative Tolerance",
+          "type": "number"
+        },
+        "absolute_tolerance": {
+          "default": 0.001,
+          "description": "Maximum absolute tolerance of reproduced test tensor.\n\nThe `absolute_tolerance` may not be greater than 1% of the maximum absolute value of the test tensor\n(this serves to prevent false positives in the presence of very small numbers).\nNeeds to be 0 for discrete (integer and boolean) outputs.",
+          "minimum": 0,
+          "title": "Absolute Tolerance",
+          "type": "number"
+        },
+        "output_ids": {
+          "default": [],
+          "description": "Limits the output tensor IDs these reproducibility details apply to.\n\nIf empty, the reproducibility details apply to all outputs.",
+          "items": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "TensorId",
+            "type": "string"
+          },
+          "title": "Output Ids",
           "type": "array"
         }
       },
@@ -6960,10 +7068,19 @@
       "additionalProperties": true,
       "properties": {
         "reproducibility_tolerance": {
-          "default": [],
-          "description": "Tolerances to allow when reproducing the model's test outputs\nfrom the model's test inputs.\nOnly the first entry matching tensor id and weights format is considered.",
+          "description": "Tolerances to allow when reproducing the model's test outputs\nfrom the model's test inputs.\nOnly the first entry matching tensor id and weights format is considered.\nFor defaults see [`ContinuousReproducibilityTolerance`][ContinuousReproducibilityTolerance]/[`DiscreteReproducibilityTolerance`][DiscreteReproducibilityTolerance]",
           "items": {
-            "$ref": "#/$defs/ReproducibilityTolerance"
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ReproducibilityTolerance"
+              },
+              {
+                "$ref": "#/$defs/ContinuousReproducibilityTolerance"
+              },
+              {
+                "$ref": "#/$defs/DiscreteReproducibilityTolerance"
+              }
+            ]
           },
           "title": "Reproducibility Tolerance",
           "type": "array"
