@@ -1853,6 +1853,10 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
                 if a.size.min == 1:
                     n_dims_min -= 1
             elif isinstance(a.size, SizeReference):
+                if a.id != a.size.axis_id:
+                    raise ValueError(
+                        f"Axis {a.id} has a size reference to a different axis {a.size.axis_id}."
+                    )
                 if a.size.offset < 2:
                     # size reference may result in singleton axis
                     n_dims_min -= 1
@@ -4163,7 +4167,7 @@ class ModelDescr(GenericModelDescrBase):
 
     def get_tensor_sizes(
         self,
-        ns: Mapping[tuple[TensorId, AxisId], ParameterizedSize_N],
+        ns: Mapping[tuple[TensorId, AxisId], ParameterizedSize_N] | ParameterizedSize_N,
         batch_size: int,
         max_input_shape: Mapping[TensorId, Mapping[AxisId, int]] | None = None,
     ) -> _TensorSizes:
@@ -4196,7 +4200,7 @@ class ModelDescr(GenericModelDescrBase):
 
     def get_axis_sizes(
         self,
-        ns: Mapping[tuple[TensorId, AxisId], ParameterizedSize_N],
+        ns: Mapping[tuple[TensorId, AxisId], ParameterizedSize_N] | ParameterizedSize_N,
         batch_size: int | None = None,
         *,
         max_input_shape: Mapping[tuple[TensorId, AxisId], int] | None = None,
@@ -4238,7 +4242,7 @@ class ModelDescr(GenericModelDescrBase):
 
         def get_axis_size(a: InputAxis | OutputAxis):
             if isinstance(a, BatchAxis):
-                if (t_descr.id, a.id) in ns:
+                if not isinstance(ns, int) and (t_descr.id, a.id) in ns:
                     logger.warning(
                         "Ignoring unexpected size increment factor (n) for batch axis"
                         + " of tensor '{}'.",
@@ -4246,7 +4250,7 @@ class ModelDescr(GenericModelDescrBase):
                     )
                 return batch_size
             elif isinstance(a.size, int):
-                if (t_descr.id, a.id) in ns:
+                if not isinstance(ns, int) and (t_descr.id, a.id) in ns:
                     logger.warning(
                         "Ignoring unexpected size increment factor (n) for fixed size"
                         + " axis '{}' of tensor '{}'.",
@@ -4255,12 +4259,12 @@ class ModelDescr(GenericModelDescrBase):
                     )
                 return a.size
             elif isinstance(a.size, ParameterizedSize):
-                if (t_descr.id, a.id) not in ns:
+                n = ns if isinstance(ns, int) else ns.get((t_descr.id, a.id))
+                if n is None:
                     raise ValueError(
                         "Size increment factor (n) missing for parametrized axis"
                         + f" '{a.id}' of tensor '{t_descr.id}'."
                     )
-                n = ns[(t_descr.id, a.id)]
                 s_max = max_input_shape.get((t_descr.id, a.id))
                 if s_max is not None:
                     n = min(n, a.size.get_n(s_max))
@@ -4268,7 +4272,7 @@ class ModelDescr(GenericModelDescrBase):
                 return a.size.get_size(n)
 
             elif isinstance(a.size, SizeReference):
-                if (t_descr.id, a.id) in ns:
+                if not isinstance(ns, int) and (t_descr.id, a.id) in ns:
                     logger.warning(
                         "Ignoring unexpected size increment factor (n) for axis '{}'"
                         + " of tensor '{}' with size reference.",
@@ -4288,7 +4292,7 @@ class ModelDescr(GenericModelDescrBase):
                     ref_size=ref_size,
                 )
             elif isinstance(a.size, DataDependentSize):
-                if (t_descr.id, a.id) in ns:
+                if not isinstance(ns, int) and (t_descr.id, a.id) in ns:
                     logger.warning(
                         "Ignoring unexpected increment factor (n) for data dependent"
                         + " size axis '{}' of tensor '{}'.",
