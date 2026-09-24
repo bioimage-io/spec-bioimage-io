@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import Path
 from pprint import pprint
 from types import MappingProxyType
@@ -16,7 +17,6 @@ from bioimageio.spec._internal.constants import (
     N_KNOWN_INVALID_GITHUB_USERS,
 )
 from bioimageio.spec._internal.io_utils import read_yaml
-from bioimageio.spec._internal.type_guards import is_kwargs
 from bioimageio.spec.utils import get_bioimageio_json_schema
 
 _ = load_dotenv()
@@ -37,7 +37,7 @@ def stardist04_data():
     data = read_yaml(
         EXAMPLE_DESCRIPTIONS / "models/stardist_example_model/v0_4.bioimageio.yaml"
     )
-    assert isinstance(data, dict)
+    assert isinstance(data, Mapping)
     return MappingProxyType(data)
 
 
@@ -59,7 +59,7 @@ def unet2d_path_old() -> Path:
 @pytest.fixture(scope="session")
 def unet2d_data(unet2d_path: Path):
     data = read_yaml(unet2d_path)
-    assert is_kwargs(data)
+    assert isinstance(data, Mapping)
     return MappingProxyType(data)
 
 

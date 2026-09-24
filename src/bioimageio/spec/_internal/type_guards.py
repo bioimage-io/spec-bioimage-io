@@ -25,16 +25,12 @@ def is_set(v: Any) -> TypeGuard[set[Any]]:
     return isinstance(v, set)
 
 
-def is_kwargs(v: Any | Mapping[Any, T]) -> TypeGuard[Mapping[str, T]]:
-    return isinstance(v, Mapping) and all(
-        isinstance(k, str)
-        for k in v  # pyright: ignore[reportUnknownVariableType]
-    )
+def is_kwargs(v: Any | Mapping[str, T]) -> TypeGuard[Mapping[str, T]]:
+    return is_mapping(v) and all(isinstance(k, str) for k in v)
 
 
-def is_mapping(v: Any | Mapping[K, V]) -> TypeGuard[Mapping[K, V]]:
-    """to avoid Mapping[Unknown, Unknown]"""
-    return isinstance(v, Mapping)
+def is_mapping(value: Any | Mapping[K, V]) -> TypeGuard[Mapping[K, V]]:
+    return isinstance(value, Mapping)
 
 
 def is_sequence(v: Any | Sequence[T]) -> TypeGuard[Sequence[T]]:

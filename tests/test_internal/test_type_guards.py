@@ -50,7 +50,7 @@ def test_is_kwargs(value: Mapping[Any, str], expected: bool):
 
 
 def test_narrowed_types() -> None:
-    mapping: Mapping[str, int] = {"value": 1}
+    mapping: int | Mapping[str, int] = {"value": 1}
     sequence: Sequence[int] = [1]
 
     if is_mapping(mapping):

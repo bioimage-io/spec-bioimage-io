@@ -1960,7 +1960,9 @@ class SymmetricPadding(Node):
     mode: Literal["symmetric"] = "symmetric"
 
 
-Padding = Union[ConstantPadding, EdgePadding, ReflectPadding, SymmetricPadding]
+Padding: TypeAlias = Union[
+    ConstantPadding, EdgePadding, ReflectPadding, SymmetricPadding
+]
 
 
 class ModelId(ResourceId):
@@ -2446,7 +2448,7 @@ class _OutputTensorConv(
 _output_tensor_conv = _OutputTensorConv(_OutputTensorDescr_v0_4, OutputTensorDescr)
 
 
-TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
+TensorDescr: TypeAlias = Union[InputTensorDescr, OutputTensorDescr]
 
 
 def get_halos(
