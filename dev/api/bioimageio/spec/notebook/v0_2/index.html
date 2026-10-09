@@ -1622,11 +1622,11 @@
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.Author.orcid">orcid</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.OrcidId">OrcidId</a> | None, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;0000-0001-2345-6789&#39;])]</code>)
+                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.OrcidId">OrcidId</a> | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.Author.name">name</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span>, <span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span>(<span title="bioimageio.spec.generic.v0_2._remove_slashes">_remove_slashes</span>)]</code>)
+                (<code><span title="str">str</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.Author.github_user">github_user</a></code>
@@ -1731,7 +1731,7 @@
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.Author.name" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">name</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span></span><span class="p">(</span><span class="n"><span title="bioimageio.spec.generic.v0_2._remove_slashes">_remove_slashes</span></span><span class="p">)]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">name</span><span class="p">:</span> <span class="n"><span title="str">str</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1754,9 +1754,7 @@
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.Author.orcid" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">orcid</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.OrcidId">OrcidId</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span><span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span><span class="s2">"0000-0001-2345-6789"</span><span class="p">])</span>
-<span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">orcid</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.OrcidId">OrcidId</a></span> <span class="o">|</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2176,15 +2174,15 @@
         <ul>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.BadgeDescr.label">label</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;Open in Colab&#39;])]</code>)
+                (<code><span title="str">str</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.BadgeDescr.icon">icon</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FilePath">FilePath</a> | <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.RelativeFilePath">RelativeFilePath</a>, <span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span>(<span title="bioimageio.spec._internal.io.wo_special_file_name">wo_special_file_name</span>), <span title="bioimageio.spec._internal.io_packaging.include_in_package">include_in_package</span>] | <a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a> | <span title="pydantic">pydantic</span>.<a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.HttpUrl">HttpUrl</a> | None, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;https://colab.research.google.com/assets/colab-badge.svg&#39;])]</code>)
+                (<code><span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FilePath">FilePath</a> | <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.RelativeFilePath">RelativeFilePath</a>, <span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span>(<span title="bioimageio.spec._internal.io.wo_special_file_name">wo_special_file_name</span>), <span title="bioimageio.spec._internal.io_packaging.include_in_package">include_in_package</span>] | <a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a> | <span title="pydantic">pydantic</span>.<a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.HttpUrl">HttpUrl</a> | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.BadgeDescr.url">url</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb&#39;])]</code>)
+                (<code><a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a></code>)
             </li>
         </ul>
 
@@ -2212,7 +2210,7 @@
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.BadgeDescr.icon" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">icon</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">icon</span><span class="p">:</span> <span class="p">(</span>
     <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FilePath">FilePath</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.RelativeFilePath">RelativeFilePath</a></span><span class="p">,</span>
         <span class="n"><span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span></span><span class="p">(</span><span class="n"><span title="bioimageio.spec._internal.io.wo_special_file_name">wo_special_file_name</span></span><span class="p">),</span>
@@ -2220,13 +2218,8 @@
     <span class="p">]</span>
     <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a></span>
     <span class="o">|</span> <span class="n"><span title="pydantic">pydantic</span></span><span class="o">.</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.HttpUrl">HttpUrl</a></span>
-    <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span>
-        <span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span>
-            <span class="s2">"https://colab.research.google.com/assets/colab-badge.svg"</span>
-        <span class="p">]</span>
-    <span class="p">),</span>
-<span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="o">|</span> <span class="kc">None</span>
+<span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2251,7 +2244,7 @@
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.BadgeDescr.label" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">label</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span><span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span><span class="s1">'Open in Colab'</span><span class="p">])]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">label</span><span class="p">:</span> <span class="n"><span title="str">str</span></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -2276,14 +2269,7 @@
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.BadgeDescr.url" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">url</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a></span><span class="p">,</span>
-    <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span>
-        <span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span>
-            <span class="s2">"https://colab.research.google.com/github/HenriquesLab/ZeroCostDL4Mic/blob/master/Colab_notebooks/U-net_2D_ZeroCostDL4Mic.ipynb"</span>
-        <span class="p">]</span>
-    <span class="p">),</span>
-<span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">url</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a></span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -4391,7 +4377,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.Maintainer.orcid">orcid</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.OrcidId">OrcidId</a> | None, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;0000-0001-2345-6789&#39;])]</code>)
+                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.OrcidId">OrcidId</a> | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.Maintainer.name">name</a></code>
@@ -4525,9 +4511,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.Maintainer.orcid" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">orcid</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.OrcidId">OrcidId</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span><span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span><span class="s2">"0000-0001-2345-6789"</span><span class="p">])</span>
-<span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">orcid</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.OrcidId">OrcidId</a></span> <span class="o">|</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6375,7 +6359,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.name">name</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../../model/v0_4/#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="str">str</span>], <span title="bioimageio.spec._internal.field_warning.warn">warn</span>(<span title="annotated_types.MaxLen">MaxLen</span>(128), &#39;Longer than 128 characters.&#39;)]</code>)
+                (<code><a class="autorefs autorefs-internal" href="../../model/v0_4/#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="str">str</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.description">description</a></code>
@@ -6403,7 +6387,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.config">config</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="dict">dict</span>[<span title="str">str</span>, <a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.YamlValue">YamlValue</a>], <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[{&#39;bioimageio&#39;: {&#39;my_custom_key&#39;: 3837283, &#39;another_key&#39;: {&#39;nested&#39;: &#39;value&#39;}}, &#39;imagej&#39;: {&#39;macro_dir&#39;: &#39;path/to/macro/file&#39;}}])]</code>)
+                (<code><span title="dict">dict</span>[<span title="str">str</span>, <a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.YamlValue">YamlValue</a>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.download_url">download_url</a></code>
@@ -6411,7 +6395,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.git_repo">git_repo</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span> | None, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad&#39;])]</code>)
+                (<code><span title="str">str</span> | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.icon">icon</a></code>
@@ -6419,7 +6403,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.links">links</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="list">list</span>[<span title="str">str</span>], <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[(&#39;ilastik/ilastik&#39;, &#39;deepimagej/deepimagej&#39;, &#39;zero/notebook_u-net_3d_zerocostdl4mic&#39;)])]</code>)
+                (<code><span title="list">list</span>[<span title="str">str</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.uploader">uploader</a></code>
@@ -6435,7 +6419,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.tags">tags</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="list">list</span>[<span title="str">str</span>], <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[(&#39;unet2d&#39;, &#39;pytorch&#39;, &#39;nucleus&#39;, &#39;segmentation&#39;, &#39;dsb2018&#39;)])]</code>)
+                (<code><span title="list">list</span>[<span title="str">str</span>]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.version">version</a></code>
@@ -6455,11 +6439,11 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.documentation">documentation</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FileSource">FileSource</a> | None, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md&#39;, &#39;README.md&#39;])]</code>)
+                (<code><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FileSource">FileSource</a> | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.license">license</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.LicenseId">LicenseId</a> | <a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.DeprecatedLicenseId">DeprecatedLicenseId</a> | <span title="str">str</span> | None, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(union_mode)">union_mode</span>=&#39;left_to_right&#39;, <span title="pydantic.Field(examples)">examples</span>=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]</code>)
+                (<code><a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.LicenseId">LicenseId</a> | <a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.DeprecatedLicenseId">DeprecatedLicenseId</a> | <span title="str">str</span> | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.type">type</a></code>
@@ -6475,16 +6459,6 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
             </li>
         </ul>
 
-        <p>Validators:</p>
-        <ul>
-            <li>
-              <code><span title="bioimageio.spec.notebook.v0_2.NotebookDescr._convert_from_older_format">_convert_from_older_format</span></code>
-            </li>
-            <li>
-              <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_2.NotebookDescr.deprecated_spdx_license">deprecated_spdx_license</a></code>
-                &rarr;
-                  <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.GenericDescrBase.license">license</a></code>            </li>
-        </ul>
 
 
 
@@ -6609,22 +6583,7 @@ See <a href="https://www.doi.org/">https://www.doi.org/</a> for details. (altern
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.NotebookDescr.config" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">config</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.YamlValue">YamlValue</a></span><span class="p">],</span>
-    <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span>
-        <span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span>
-            <span class="p">{</span>
-                <span class="s2">"bioimageio"</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">"my_custom_key"</span><span class="p">:</span> <span class="mi">3837283</span><span class="p">,</span>
-                    <span class="s2">"another_key"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"nested"</span><span class="p">:</span> <span class="s2">"value"</span><span class="p">},</span>
-                <span class="p">},</span>
-                <span class="s2">"imagej"</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">"macro_dir"</span><span class="p">:</span> <span class="s2">"path/to/macro/file"</span>
-                <span class="p">},</span>
-            <span class="p">}</span>
-        <span class="p">]</span>
-    <span class="p">),</span>
-<span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">config</span><span class="p">:</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.YamlValue">YamlValue</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6714,15 +6673,7 @@ an altered rdf.yaml file with local references to the downloaded files)</p>
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.NotebookDescr.documentation" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">documentation</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FileSource">FileSource</a></span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span>
-        <span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span>
-            <span class="s2">"https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_descriptions/models/unet2d_nuclei_broad/README.md"</span><span class="p">,</span>
-            <span class="s2">"README.md"</span><span class="p">,</span>
-        <span class="p">]</span>
-    <span class="p">),</span>
-<span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">documentation</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FileSource">FileSource</a></span> <span class="o">|</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -6821,14 +6772,7 @@ The recommended documentation file name is <code>README.md</code>. An <code>.md<
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.NotebookDescr.git_repo" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">git_repo</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span>
-        <span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span>
-            <span class="s2">"https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad"</span>
-        <span class="p">]</span>
-    <span class="p">),</span>
-<span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">git_repo</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7009,13 +6953,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.NotebookDescr.license" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">license</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.LicenseId">LicenseId</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.DeprecatedLicenseId">DeprecatedLicenseId</a></span> <span class="o">|</span> <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span>
-        <span class="n"><span title="pydantic.Field(union_mode)">union_mode</span></span><span class="o">=</span><span class="s2">"left_to_right"</span><span class="p">,</span>
-        <span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span><span class="s2">"CC0-1.0"</span><span class="p">,</span> <span class="s2">"MIT"</span><span class="p">,</span> <span class="s2">"BSD-2-Clause"</span><span class="p">],</span>
-    <span class="p">),</span>
-<span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">license</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.LicenseId">LicenseId</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" href="../v0_3/#bioimageio.spec.notebook.v0_3.DeprecatedLicenseId">DeprecatedLicenseId</a></span> <span class="o">|</span> <span class="n"><span title="str">str</span></span> <span class="o">|</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7042,18 +6980,7 @@ We do not support custom license beyond the SPDX license list, if you need that 
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.NotebookDescr.links" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">links</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span>
-    <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span>
-        <span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span>
-            <span class="p">(</span>
-                <span class="s2">"ilastik/ilastik"</span><span class="p">,</span>
-                <span class="s2">"deepimagej/deepimagej"</span><span class="p">,</span>
-                <span class="s2">"zero/notebook_u-net_3d_zerocostdl4mic"</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="p">]</span>
-    <span class="p">),</span>
-<span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">links</span><span class="p">:</span> <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7104,10 +7031,7 @@ If not specified <code>authors</code> are maintainers and at least some of them 
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.NotebookDescr.name" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">name</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="../../model/v0_4/#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span>
-    <span class="n"><span title="bioimageio.spec._internal.field_warning.warn">warn</span></span><span class="p">(</span><span class="n"><span title="annotated_types.MaxLen">MaxLen</span></span><span class="p">(</span><span class="mi">128</span><span class="p">),</span> <span class="s2">"Longer than 128 characters."</span><span class="p">),</span>
-<span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">name</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../model/v0_4/#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7208,20 +7132,7 @@ Do not set this field in a YAML file.</p>
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.NotebookDescr.tags" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">tags</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span>
-    <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span>
-        <span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span>
-            <span class="p">(</span>
-                <span class="s2">"unet2d"</span><span class="p">,</span>
-                <span class="s2">"pytorch"</span><span class="p">,</span>
-                <span class="s2">"nucleus"</span><span class="p">,</span>
-                <span class="s2">"segmentation"</span><span class="p">,</span>
-                <span class="s2">"dsb2018"</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="p">]</span>
-    <span class="p">),</span>
-<span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">tags</span><span class="p">:</span> <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7432,9 +7343,7 @@ Do not set this field in a YAML file.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/generic/v0_2.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">239</span>
-<span class="normal">240</span>
-<span class="normal">241</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">241</span>
 <span class="normal">242</span>
 <span class="normal">243</span>
 <span class="normal">244</span>
@@ -7442,7 +7351,9 @@ Do not set this field in a YAML file.</p>
 <span class="normal">246</span>
 <span class="normal">247</span>
 <span class="normal">248</span>
-<span class="normal">249</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"authors"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"before"</span><span class="p">)</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"authors"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"before"</span><span class="p">)</span>
 <span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">accept_author_strings</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">authors</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""we unofficially accept strings as author entries"""</span>
@@ -7467,7 +7378,7 @@ Do not set this field in a YAML file.</p>
 
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-pydantic-validator"><code>pydantic-validator</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_2.NotebookDescr.deprecated_spdx_license" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
@@ -7482,9 +7393,7 @@ Do not set this field in a YAML file.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/generic/v0_2.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">425</span>
-<span class="normal">426</span>
-<span class="normal">427</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">427</span>
 <span class="normal">428</span>
 <span class="normal">429</span>
 <span class="normal">430</span>
@@ -7506,7 +7415,9 @@ Do not set this field in a YAML file.</p>
 <span class="normal">446</span>
 <span class="normal">447</span>
 <span class="normal">448</span>
-<span class="normal">449</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"license"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"license"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
 <span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">deprecated_spdx_license</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">LicenseId</span> <span class="o">|</span> <span class="n">DeprecatedLicenseId</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
@@ -8197,9 +8108,7 @@ Do not set this field in a YAML file.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/generic/v0_2.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">351</span>
-<span class="normal">352</span>
-<span class="normal">353</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">353</span>
 <span class="normal">354</span>
 <span class="normal">355</span>
 <span class="normal">356</span>
@@ -8214,7 +8123,9 @@ Do not set this field in a YAML file.</p>
 <span class="normal">365</span>
 <span class="normal">366</span>
 <span class="normal">367</span>
-<span class="normal">368</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@as_warning</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@as_warning</span>
 <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"tags"</span><span class="p">)</span>
 <span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">warn_about_tag_categories</span><span class="p">(</span>

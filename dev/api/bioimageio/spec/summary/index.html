@@ -1899,6 +1899,7 @@ diagnostics.</p>
 <span class="w">            </span><span class="s2">"model_attributes_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"dataclass_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"dataclass_exact_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"named_tuple_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"default_factory_not_called"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"none_required"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"greater_than"</span><span class="p">,</span>
@@ -1912,7 +1913,6 @@ diagnostics.</p>
 <span class="w">            </span><span class="s2">"iterable_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"iteration_error"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"string_type"</span><span class="p">,</span>
-<span class="w">            </span><span class="s2">"string_sub_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"string_unicode"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"string_too_short"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"string_too_long"</span><span class="p">,</span>
@@ -1920,8 +1920,12 @@ diagnostics.</p>
 <span class="w">            </span><span class="s2">"string_not_ascii"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"enum"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"dict_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"frozen_dict_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"ordered_dict_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"counter_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"mapping_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"list_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"deque_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"tuple_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"set_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"set_item_not_hashable"</span><span class="p">,</span>
@@ -1941,6 +1945,7 @@ diagnostics.</p>
 <span class="w">            </span><span class="s2">"assertion_error"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"literal_error"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"missing_sentinel_error"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"ellipsis_error"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"date_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"date_parsing"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"date_from_datetime_parsing"</span><span class="p">,</span>
@@ -1986,6 +1991,8 @@ diagnostics.</p>
 <span class="w">            </span><span class="s2">"decimal_max_digits"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"decimal_max_places"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"decimal_whole_digits"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"fraction_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"fraction_parsing"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"complex_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"complex_str_parsing"</span>
 <span class="w">          </span><span class="p">],</span>
@@ -2626,6 +2633,7 @@ diagnostics.</p>
 <span class="w">                </span><span class="s2">"model_attributes_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"dataclass_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"dataclass_exact_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"named_tuple_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"default_factory_not_called"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"none_required"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"greater_than"</span><span class="p">,</span>
@@ -2639,7 +2647,6 @@ diagnostics.</p>
 <span class="w">                </span><span class="s2">"iterable_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"iteration_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_type"</span><span class="p">,</span>
-<span class="w">                </span><span class="s2">"string_sub_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_unicode"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_too_short"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_too_long"</span><span class="p">,</span>
@@ -2647,8 +2654,12 @@ diagnostics.</p>
 <span class="w">                </span><span class="s2">"string_not_ascii"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"enum"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"dict_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"frozen_dict_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"ordered_dict_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"counter_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"mapping_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"list_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"deque_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"tuple_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"set_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"set_item_not_hashable"</span><span class="p">,</span>
@@ -2668,6 +2679,7 @@ diagnostics.</p>
 <span class="w">                </span><span class="s2">"assertion_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"literal_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"missing_sentinel_error"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"ellipsis_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"date_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"date_parsing"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"date_from_datetime_parsing"</span><span class="p">,</span>
@@ -2713,6 +2725,8 @@ diagnostics.</p>
 <span class="w">                </span><span class="s2">"decimal_max_digits"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"decimal_max_places"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"decimal_whole_digits"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"fraction_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"fraction_parsing"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"complex_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"complex_str_parsing"</span>
 <span class="w">              </span><span class="p">],</span>
@@ -2884,6 +2898,7 @@ diagnostics.</p>
 <span class="w">                </span><span class="s2">"model_attributes_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"dataclass_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"dataclass_exact_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"named_tuple_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"default_factory_not_called"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"none_required"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"greater_than"</span><span class="p">,</span>
@@ -2897,7 +2912,6 @@ diagnostics.</p>
 <span class="w">                </span><span class="s2">"iterable_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"iteration_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_type"</span><span class="p">,</span>
-<span class="w">                </span><span class="s2">"string_sub_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_unicode"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_too_short"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_too_long"</span><span class="p">,</span>
@@ -2905,8 +2919,12 @@ diagnostics.</p>
 <span class="w">                </span><span class="s2">"string_not_ascii"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"enum"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"dict_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"frozen_dict_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"ordered_dict_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"counter_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"mapping_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"list_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"deque_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"tuple_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"set_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"set_item_not_hashable"</span><span class="p">,</span>
@@ -2926,6 +2944,7 @@ diagnostics.</p>
 <span class="w">                </span><span class="s2">"assertion_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"literal_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"missing_sentinel_error"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"ellipsis_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"date_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"date_parsing"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"date_from_datetime_parsing"</span><span class="p">,</span>
@@ -2971,6 +2990,8 @@ diagnostics.</p>
 <span class="w">                </span><span class="s2">"decimal_max_digits"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"decimal_max_places"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"decimal_whole_digits"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"fraction_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"fraction_parsing"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"complex_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"complex_str_parsing"</span>
 <span class="w">              </span><span class="p">],</span>
@@ -3454,6 +3475,7 @@ diagnostics.</p>
 <span class="w">            </span><span class="s2">"model_attributes_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"dataclass_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"dataclass_exact_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"named_tuple_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"default_factory_not_called"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"none_required"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"greater_than"</span><span class="p">,</span>
@@ -3467,7 +3489,6 @@ diagnostics.</p>
 <span class="w">            </span><span class="s2">"iterable_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"iteration_error"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"string_type"</span><span class="p">,</span>
-<span class="w">            </span><span class="s2">"string_sub_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"string_unicode"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"string_too_short"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"string_too_long"</span><span class="p">,</span>
@@ -3475,8 +3496,12 @@ diagnostics.</p>
 <span class="w">            </span><span class="s2">"string_not_ascii"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"enum"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"dict_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"frozen_dict_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"ordered_dict_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"counter_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"mapping_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"list_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"deque_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"tuple_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"set_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"set_item_not_hashable"</span><span class="p">,</span>
@@ -3496,6 +3521,7 @@ diagnostics.</p>
 <span class="w">            </span><span class="s2">"assertion_error"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"literal_error"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"missing_sentinel_error"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"ellipsis_error"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"date_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"date_parsing"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"date_from_datetime_parsing"</span><span class="p">,</span>
@@ -3541,6 +3567,8 @@ diagnostics.</p>
 <span class="w">            </span><span class="s2">"decimal_max_digits"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"decimal_max_places"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"decimal_whole_digits"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"fraction_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"fraction_parsing"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"complex_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"complex_str_parsing"</span>
 <span class="w">          </span><span class="p">],</span>
@@ -3777,6 +3805,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">                </span><span class="s2">"model_attributes_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"dataclass_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"dataclass_exact_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"named_tuple_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"default_factory_not_called"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"none_required"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"greater_than"</span><span class="p">,</span>
@@ -3790,7 +3819,6 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">                </span><span class="s2">"iterable_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"iteration_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_type"</span><span class="p">,</span>
-<span class="w">                </span><span class="s2">"string_sub_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_unicode"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_too_short"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_too_long"</span><span class="p">,</span>
@@ -3798,8 +3826,12 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">                </span><span class="s2">"string_not_ascii"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"enum"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"dict_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"frozen_dict_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"ordered_dict_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"counter_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"mapping_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"list_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"deque_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"tuple_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"set_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"set_item_not_hashable"</span><span class="p">,</span>
@@ -3819,6 +3851,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">                </span><span class="s2">"assertion_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"literal_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"missing_sentinel_error"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"ellipsis_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"date_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"date_parsing"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"date_from_datetime_parsing"</span><span class="p">,</span>
@@ -3864,6 +3897,8 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">                </span><span class="s2">"decimal_max_digits"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"decimal_max_places"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"decimal_whole_digits"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"fraction_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"fraction_parsing"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"complex_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"complex_str_parsing"</span>
 <span class="w">              </span><span class="p">],</span>
@@ -4162,6 +4197,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">                </span><span class="s2">"model_attributes_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"dataclass_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"dataclass_exact_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"named_tuple_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"default_factory_not_called"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"none_required"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"greater_than"</span><span class="p">,</span>
@@ -4175,7 +4211,6 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">                </span><span class="s2">"iterable_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"iteration_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_type"</span><span class="p">,</span>
-<span class="w">                </span><span class="s2">"string_sub_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_unicode"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_too_short"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"string_too_long"</span><span class="p">,</span>
@@ -4183,8 +4218,12 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">                </span><span class="s2">"string_not_ascii"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"enum"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"dict_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"frozen_dict_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"ordered_dict_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"counter_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"mapping_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"list_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"deque_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"tuple_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"set_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"set_item_not_hashable"</span><span class="p">,</span>
@@ -4204,6 +4243,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">                </span><span class="s2">"assertion_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"literal_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"missing_sentinel_error"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"ellipsis_error"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"date_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"date_parsing"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"date_from_datetime_parsing"</span><span class="p">,</span>
@@ -4249,6 +4289,8 @@ for one specific <code>ResourceDescr</code> instance.</p>
 <span class="w">                </span><span class="s2">"decimal_max_digits"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"decimal_max_places"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"decimal_whole_digits"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"fraction_type"</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">"fraction_parsing"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"complex_type"</span><span class="p">,</span>
 <span class="w">                </span><span class="s2">"complex_str_parsing"</span>
 <span class="w">              </span><span class="p">],</span>
@@ -4413,7 +4455,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationSummary.metadata_completeness">metadata_completeness</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="float">float</span>, <span title="annotated_types">annotated_types</span>.<span title="annotated_types.Interval">Interval</span>(<span title="annotated_types.Interval(ge)">ge</span>=0, <span title="annotated_types.Interval(le)">le</span>=1)]</code>)
+                (<code><span title="float">float</span></code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.summary.ValidationSummary.details">details</a></code>
@@ -4606,9 +4648,7 @@ for one specific <code>ResourceDescr</code> instance.</p>
   </span>
 
 <a href="#bioimageio.spec.summary.ValidationSummary.metadata_completeness" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">metadata_completeness</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
-    <span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><span title="annotated_types">annotated_types</span></span><span class="o">.</span><span class="n"><span title="annotated_types.Interval">Interval</span></span><span class="p">(</span><span class="n"><span title="annotated_types.Interval(ge)">ge</span></span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n"><span title="annotated_types.Interval(le)">le</span></span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">metadata_completeness</span><span class="p">:</span> <span class="n"><span title="float">float</span></span> <span class="o">=</span> <span class="mf">0.0</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5563,6 +5603,7 @@ save it to disk. See <code>save</code> for details.</p>
 <span class="w">            </span><span class="s2">"model_attributes_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"dataclass_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"dataclass_exact_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"named_tuple_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"default_factory_not_called"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"none_required"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"greater_than"</span><span class="p">,</span>
@@ -5576,7 +5617,6 @@ save it to disk. See <code>save</code> for details.</p>
 <span class="w">            </span><span class="s2">"iterable_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"iteration_error"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"string_type"</span><span class="p">,</span>
-<span class="w">            </span><span class="s2">"string_sub_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"string_unicode"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"string_too_short"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"string_too_long"</span><span class="p">,</span>
@@ -5584,8 +5624,12 @@ save it to disk. See <code>save</code> for details.</p>
 <span class="w">            </span><span class="s2">"string_not_ascii"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"enum"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"dict_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"frozen_dict_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"ordered_dict_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"counter_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"mapping_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"list_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"deque_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"tuple_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"set_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"set_item_not_hashable"</span><span class="p">,</span>
@@ -5605,6 +5649,7 @@ save it to disk. See <code>save</code> for details.</p>
 <span class="w">            </span><span class="s2">"assertion_error"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"literal_error"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"missing_sentinel_error"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"ellipsis_error"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"date_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"date_parsing"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"date_from_datetime_parsing"</span><span class="p">,</span>
@@ -5650,6 +5695,8 @@ save it to disk. See <code>save</code> for details.</p>
 <span class="w">            </span><span class="s2">"decimal_max_digits"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"decimal_max_places"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"decimal_whole_digits"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"fraction_type"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"fraction_parsing"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"complex_type"</span><span class="p">,</span>
 <span class="w">            </span><span class="s2">"complex_str_parsing"</span>
 <span class="w">          </span><span class="p">],</span>
