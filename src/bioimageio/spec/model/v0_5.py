@@ -4138,30 +4138,103 @@ class ModelDescr(GenericModelDescrBase):
 
     def get_output_tensor_sizes(
         self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]
-    ) -> dict[TensorId, dict[AxisId, int | _DataDepSize]]:
+    ) -> dict[TensorId, dict[AxisId, int]]:
         """Returns the tensor output sizes for given **input_sizes**.
-        Only if **input_sizes** has a valid input shape, the tensor output size is exact.
-        Otherwise it might be larger than the actual (valid) output"""
+        Data-dependent output sizes are set to -1.
+
+        Note:
+            A warning is logged if the calculated output sizes do not match the output tensor sizes
+            inferred from the model descriptions with parameters inferred fromthe given input sizes.
+            This is likely the case if the input sizes are not valid according to the model description.
+        """
+        # get tensor sizes for valid inputs that can be parameterized by batch size and axis size parameters `n` (for each parameterized axis)
         batch_size = self.get_batch_size(input_sizes)
         ns = self.get_ns(input_sizes)
+        valid_tensor_sizes = self.get_tensor_sizes(ns, batch_size=batch_size)
 
-        tensor_sizes = self.get_tensor_sizes(ns, batch_size=batch_size)
-        return tensor_sizes.outputs
+        input_sizes_refs = {
+            ipt.id: {
+                ax.id: (ax, input_sizes[ipt.id][ax.id])
+                for ax in ipt.axes
+                if not isinstance(ax, BatchAxis) and ax.id in input_sizes[ipt.id]
+            }
+            for ipt in self.inputs
+            if ipt.id in input_sizes
+        }
+        output_sizes: dict[TensorId, dict[AxisId, int]] = {
+            out.id: {} for out in self.outputs
+        }
+        for out in self.outputs:
+            for ax in out.axes:
+                if isinstance(ax, BatchAxis):
+                    s = batch_size
+                elif isinstance(ax.size, int):
+                    s = ax.size
+                elif isinstance(ax.size, SizeReference):
+                    if (
+                        ax.size.tensor_id not in input_sizes_refs
+                        or ax.size.axis_id not in input_sizes_refs[ax.size.tensor_id]
+                    ):
+                        logger.warning(
+                            "Output axis {}.{} references input axis {}.{}, which is not present in the provided input sizes."
+                            + " Assuming the output is optional and not produced for this input.",
+                            out.id,
+                            ax.id,
+                            ax.size.tensor_id,
+                            ax.size.axis_id,
+                        )
+                        continue
+
+                    ref_ax, ref_size = input_sizes_refs[ax.size.tensor_id][
+                        ax.size.axis_id
+                    ]
+                    s = ax.size.get_size(ax, ref_ax, ref_size=ref_size)
+                elif isinstance(ax.size, DataDependentSize):
+                    s = -1
+                else:
+                    assert_never(ax.size)
+
+                output_sizes[out.id][ax.id] = s
+
+        if valid_tensor_sizes.outputs != output_sizes:
+            if valid_tensor_sizes.inputs != input_sizes:
+                logger.warning(
+                    "Input sizes do not match the model's input tensor descriptions leading to inconsistent output sizes."
+                    + " Expected: {}, got: {}.",
+                    valid_tensor_sizes.inputs,
+                    input_sizes,
+                )
+            else:
+                logger.error(
+                    "Directly calculated output sizes do not match the output tensor sizes inferred from the model descriptions with the given input size parameters."
+                    + " Expected: {}, got: {}.",
+                    valid_tensor_sizes.outputs,
+                    output_sizes,
+                )
+
+        return output_sizes
 
     def get_ns(self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]):
         """get parameter `n` for each parameterized axis
         such that the valid input size is >= the given input size"""
         ret: dict[tuple[TensorId, AxisId], ParameterizedSize_N] = {}
-        axes = {t.id: {a.id: a for a in t.axes} for t in self.inputs}
+        axes_per_member = {t.id: {a.id: a for a in t.axes} for t in self.inputs}
         for tid in input_sizes:
+            axes = axes_per_member.get(tid)
+            if axes is None:
+                continue
             for aid, s in input_sizes[tid].items():
-                size_descr = axes[tid][aid].size
-                if isinstance(size_descr, ParameterizedSize):
-                    ret[(tid, aid)] = size_descr.get_n(s)
-                elif size_descr is None or isinstance(size_descr, (int, SizeReference)):
+                axis_descr = axes.get(aid)
+                if axis_descr is None:
+                    continue
+                if isinstance(axis_descr.size, ParameterizedSize):
+                    ret[(tid, aid)] = axis_descr.size.get_n(s)
+                elif axis_descr.size is None or isinstance(
+                    axis_descr.size, (int, SizeReference)
+                ):
                     pass
                 else:
-                    assert_never(size_descr)
+                    assert_never(axis_descr.size)
 
         return ret
 

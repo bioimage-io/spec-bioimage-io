@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import collections.abc
+from collections.abc import Sequence
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -9,7 +9,6 @@ from typing import (
     Dict,
     List,
     Literal,
-    Sequence,
     Union,
     cast,
 )
@@ -1209,7 +1208,7 @@ class ModelDescr(GenericModelDescrBase):
         """output with subtracted halo has to result in meaningful output even for the minimal input
         see https://github.com/bioimage-io/spec-bioimage-io/issues/392
         """
-        if isinstance(t.shape, collections.abc.Sequence):
+        if isinstance(t.shape, Sequence):
             return t.shape
         elif isinstance(t.shape, ParameterizedInputShape):
             return t.shape.min
