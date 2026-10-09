@@ -57,7 +57,7 @@ dev = [
     "nbval",
     "pdoc",
     "pre-commit",
-    "pyright==1.1.411",
+    "pyright==1.1.414",
     "pytest-cov",
     "pytest",
     "python-dotenv",

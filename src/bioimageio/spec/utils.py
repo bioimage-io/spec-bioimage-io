@@ -86,7 +86,7 @@ def load_image(
         return load_array(source)
     else:
         reader = get_reader(source)
-        return imread(reader.read(), extension=source.suffix)  # pyright: ignore[reportUnknownVariableType]
+        return imread(reader.read(), extension=source.suffix)
 
 
 def _interprete_file_source(source: FileDescr | ZipPath | PermissiveFileSource):

@@ -1836,7 +1836,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
             return self
 
         reader = get_reader(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
-        tensor: NDArray[Any] = imread(  # pyright: ignore[reportUnknownVariableType]
+        tensor: NDArray[Any] = imread(
             reader.read(),
             extension=PurePosixPath(reader.original_file_name).suffix,
         )
@@ -2545,7 +2545,7 @@ def validate_tensors(
                 "int64",
             )
         else:
-            invalid_test_tensor_dtype = array.dtype.name != descr.dtype
+            invalid_test_tensor_dtype = cast(bool, array.dtype.name != descr.dtype)
 
         if invalid_test_tensor_dtype:
             raise ValueError(
@@ -3878,7 +3878,7 @@ class ModelDescr(GenericModelDescrBase):
         RestrictCharacters(string.ascii_letters + string.digits + "_+- ()"),
         MinLen(5),
         MaxLen(128),
-        warn(MaxLen(64), "Name longer than 64 characters.", INFO),
+        warn(Annotated[str, MaxLen(64)], "Name longer than 64 characters.", INFO),
     ]
     """A human-readable name of this model.
     It should be no longer than 64 characters
@@ -4801,7 +4801,7 @@ def generate_covers(
         c = next(i for i in range(3) if isinstance(axes[i], ChannelAxis))
         axis_order.append(axis_order.pop(c))
         axes = [axes[ao] for ao in axis_order]
-        data = data.transpose(axis_order)
+        data = cast(NDArray[Any], data.transpose(axis_order))
 
         # h, w = data.shape[:2]
         # if h / w  in (1.0 or 2.0):

@@ -269,7 +269,7 @@ class GenericModelDescrBase(ResourceDescrBase):
         ],
         MinLen(5),
         MaxLen(128),
-        warn(MaxLen(64), "Name longer than 64 characters.", INFO),
+        warn(Annotated[str, MaxLen(64)], "Name longer than 64 characters.", INFO),
     ]
     """A human-friendly name of the resource description.
     May only contains letters, digits, underscore, minus, parentheses and spaces."""
@@ -278,7 +278,9 @@ class GenericModelDescrBase(ResourceDescrBase):
         Annotated[
             str,
             MaxLen(1024),
-            warn(MaxLen(512), "Description longer than 512 characters."),
+            warn(
+                Annotated[str, MaxLen(512)], "Description longer than 512 characters."
+            ),
         ]
     ] = ""
     """A string containing a brief description."""

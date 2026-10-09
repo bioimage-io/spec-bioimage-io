@@ -1126,8 +1126,8 @@ class ModelDescr(GenericModelDescrBase):
     name: Annotated[
         str,
         MinLen(1),
-        warn(MinLen(5), "Name shorter than 5 characters.", INFO),
-        warn(MaxLen(64), "Name longer than 64 characters.", INFO),
+        warn(Annotated[str, MinLen(5)], "Name shorter than 5 characters.", INFO),
+        warn(Annotated[str, MaxLen(64)], "Name longer than 64 characters.", INFO),
     ]
     """A human-readable name of this model.
     It should be no longer than 64 characters and only contain letter, number, underscore, minus or space characters."""

@@ -25,7 +25,7 @@ def is_set(v: Any) -> TypeGuard[set[Any]]:
     return isinstance(v, set)
 
 
-def is_kwargs(v: Any | Mapping[str, T]) -> TypeGuard[Mapping[str, T]]:
+def is_kwargs(v: Any | Mapping[Any, T]) -> TypeGuard[Mapping[str, T]]:
     return is_mapping(v) and all(isinstance(k, str) for k in v)
 
 
