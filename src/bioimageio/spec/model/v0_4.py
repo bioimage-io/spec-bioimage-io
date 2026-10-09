@@ -1061,10 +1061,7 @@ def package_weights(
         new_w = w.model_construct(**{k: v for k, v in w if k != "parent"})
         value = value.model_construct(None, **{wf: new_w})
 
-    return handler(
-        value,
-        info,  # pyright: ignore[reportArgumentType]  # taken from pydantic docs
-    )
+    return handler(value)
 
 
 class ModelDescr(GenericModelDescrBase):

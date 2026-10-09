@@ -41,10 +41,7 @@ def _package_serializer(
 def package_file_descr_serializer(
     value: FileDescr, handler: SerializerFunctionWrapHandler, info: SerializationInfo
 ):
-    ret = handler(
-        value,
-        info,  # pyright: ignore[reportArgumentType]  # taken from pydantic docs
-    )
+    ret = handler(value)
     ret["source"] = _package(value.source, info, sha256=value.sha256)
     return ret
 

@@ -22,11 +22,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
-        pydantic-version: ['2.11.10', '2.12.5']
+        python-version: ['3.9', '3.11', '3.13', '3.14']
+        pydantic-version: ['2.13.*', '2.*']
         include:
-          - python-version: '3.10'
-            pydantic-version: '2.12.5'
+          - python-version: '3.13'
+            pydantic-version: '2.*'
             is-dev-version: true
             run-expensive-tests: true
     steps:
@@ -38,7 +38,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install pydantic~=${{matrix.pydantic-version }} -e .[dev,docs]
+          pip install pydantic==${{matrix.pydantic-version }} -e .[dev,docs]
       - name: Get Date
         id: get-date
         run: |
@@ -81,12 +81,14 @@ jobs:
           key: 'py${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}'
 
       - run: coverage report -m
-      - run: cp .coverage .coverage.${{ matrix.python-version }}-${{ matrix.pydantic-version }}
+      - id: pydantic-version-label
+        run: printf 'value=%s\n' '${{ matrix.pydantic-version }}' | sed 's/\*/x/g' >> "$GITHUB_OUTPUT"
+      - run: cp .coverage .coverage.${{ matrix.python-version }}-${{ steps.pydantic-version-label.outputs.value }}
       - uses: actions/upload-artifact@v4
         with:
-          name: .coverage.${{ matrix.python-version }}-${{ matrix.pydantic-version }}
+          name: .coverage.${{ matrix.python-version }}-${{ steps.pydantic-version-label.outputs.value }}
           retention-days: 1
-          path: .coverage.${{ matrix.python-version }}-${{ matrix.pydantic-version }}
+          path: .coverage.${{ matrix.python-version }}-${{ steps.pydantic-version-label.outputs.value }}
           include-hidden-files: true
   coverage:
     needs: test

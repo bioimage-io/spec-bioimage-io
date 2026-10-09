@@ -22,10 +22,7 @@ class ValidatedStringWithInnerNode(ABC, ValidatedString, Generic[InnerNodeT]):
         self, handler: SerializerFunctionWrapHandler, info: SerializationInfo
     ):
         _ = self._inner_node.model_dump(mode=info.mode)
-        return handler(
-            self,
-            info,  # pyright: ignore[reportArgumentType]  # taken from pydantic docs
-        )
+        return handler(self)
 
     @classmethod
     @abstractmethod
