@@ -6,10 +6,10 @@ from typing import (
     Hashable,
     Mapping,
     Sequence,
-    TypeGuard,
 )
 
 import httpx
+from typing_extensions import TypeGuard
 
 from ._settings import settings
 from .constants import KNOWN_GITHUB_USERS, KNOWN_INVALID_GITHUB_USERS
