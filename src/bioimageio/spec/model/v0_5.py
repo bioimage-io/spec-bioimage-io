@@ -4198,8 +4198,8 @@ class ModelDescr(GenericModelDescrBase):
 
         if valid_tensor_sizes.outputs != output_sizes:
             if valid_tensor_sizes.inputs != input_sizes:
-                logger.warning(
-                    "Input sizes do not match the model's input tensor descriptions leading to inconsistent output sizes."
+                logger.trace(
+                    "Input sizes do not match the model's input tensor descriptions which may lead to inconsistent output sizes."
                     + " Expected: {}, got: {}.",
                     valid_tensor_sizes.inputs,
                     input_sizes,
