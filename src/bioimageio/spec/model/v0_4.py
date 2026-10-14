@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import (
     TYPE_CHECKING,
+    Annotated,
     Any,
     Callable,
     ClassVar,
-    Dict,
-    List,
     Literal,
     Union,
     cast,
@@ -15,6 +14,7 @@ from typing import (
 
 import numpy as np
 from annotated_types import Ge, Interval, MaxLen, MinLen, MultipleOf
+from loguru import logger
 from numpy.typing import NDArray
 from pydantic import (
     AllowInfNan,
@@ -30,7 +30,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated, Self, assert_never, get_args
+from typing_extensions import Self, assert_never, get_args
 
 from .._internal.common_nodes import (
     KwargsNode,
@@ -370,7 +370,7 @@ class PytorchStateDictWeightsDescr(WeightsEntryDescrBase):
         return self
 
     kwargs: dict[str, Any] = Field(
-        default_factory=cast(Callable[[], Dict[str, Any]], dict)
+        default_factory=cast(Callable[[], dict[str, Any]], dict)
     )
     """key word arguments for the `architecture` callable"""
 
@@ -915,7 +915,7 @@ class InputTensorDescr(TensorDescrBase):
 
     preprocessing: list[PreprocessingDescr] = Field(
         default_factory=cast(  # TODO: (py>3.8) use list[PreprocessingDesr]
-            Callable[[], List[PreprocessingDescr]], list
+            Callable[[], list[PreprocessingDescr]], list
         )
     )
     """Description of how this input should be preprocessed."""
@@ -988,7 +988,7 @@ class OutputTensorDescr(TensorDescrBase):
     To document a `halo` that is already cropped by the model `shape.offset` has to be used instead."""
 
     postprocessing: list[PostprocessingDescr] = Field(
-        default_factory=cast(Callable[[], List[PostprocessingDescr]], list)
+        default_factory=cast(Callable[[], list[PostprocessingDescr]], list)
     )
     """Description of how this output should be postprocessed."""
 
@@ -1024,7 +1024,7 @@ class RunMode(Node):
     """Run mode name"""
 
     kwargs: dict[str, Any] = Field(
-        default_factory=cast(Callable[[], Dict[str, Any]], dict)
+        default_factory=cast(Callable[[], dict[str, Any]], dict)
     )
     """Run mode specific key word arguments"""
 
@@ -1270,7 +1270,7 @@ class ModelDescr(GenericModelDescrBase):
         return self
 
     packaged_by: list[Author] = Field(
-        default_factory=cast(Callable[[], List[Author]], list)
+        default_factory=cast(Callable[[], list[Author]], list)
     )
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
@@ -1293,14 +1293,14 @@ class ModelDescr(GenericModelDescrBase):
     No standard run modes are defined yet."""
 
     sample_inputs: list[FileSource_package] = Field(
-        default_factory=cast(Callable[[], List[FileSource]], list)
+        default_factory=cast(Callable[[], list[FileSource]], list)
     )
     """URLs/relative paths to sample inputs to illustrate possible inputs for the model,
     for example stored as PNG or TIFF images.
     The sample files primarily serve to inform a human user about an example use case"""
 
     sample_outputs: list[FileSource_package] = Field(
-        default_factory=cast(Callable[[], List[FileSource]], list)
+        default_factory=cast(Callable[[], list[FileSource]], list)
     )
     """URLs/relative paths to sample outputs corresponding to the `sample_inputs`."""
 
@@ -1337,6 +1337,79 @@ class ModelDescr(GenericModelDescrBase):
     ) -> BioimageioYamlContent:
         convert_from_older_format(data)
         return data
+
+    @staticmethod
+    def get_batch_size(tensor_sizes: Mapping[TensorName, Mapping[AxesStr, int]]) -> int:
+        batch_size = 1
+        tensor_with_batchsize: TensorName | None = None
+        for tid in tensor_sizes:
+            for aid, s in tensor_sizes[tid].items():
+                if aid != "b" or s == 1 or s == batch_size:
+                    continue
+
+                if batch_size != 1:
+                    assert tensor_with_batchsize is not None
+                    raise ValueError(
+                        f"batch size mismatch for tensors '{tensor_with_batchsize}' ({batch_size}) and '{tid}' ({s})"
+                    )
+
+                batch_size = s
+                tensor_with_batchsize = tid
+
+        return batch_size
+
+    def get_output_tensor_sizes(
+        self, input_sizes: Mapping[TensorName, Mapping[AxesStr, int]]
+    ) -> dict[TensorName, dict[AxesStr, int]]:
+        """backport of model.v0_5.ModelDescr.get_output_tensor_sizes()"""
+        batch_size = self.get_batch_size(input_sizes)
+        input_sizes_refs = {
+            ipt.name: {
+                ax: (ax, input_sizes[ipt.name][ax])
+                for ax in ipt.axes
+                if ax != "b" and "b" in input_sizes[ipt.name]
+            }
+            for ipt in self.inputs
+            if ipt.name in input_sizes
+        }
+        output_sizes: dict[TensorName, dict[AxesStr, int]] = {
+            out.name: {} for out in self.outputs
+        }
+        for out in self.outputs:
+            for i, ax in enumerate(out.axes):
+                if ax == "b":
+                    s = batch_size
+                elif isinstance(out.shape, Sequence):
+                    s = out.shape[i]
+                elif isinstance(out.shape, ImplicitOutputShape):
+                    if (
+                        out.shape.reference_tensor not in input_sizes_refs
+                        or ax not in input_sizes_refs[out.shape.reference_tensor]
+                    ):
+                        logger.warning(
+                            "Output axis {}.{} references input axis {}.{}, which is not present in the provided input sizes."
+                            + " Assuming the output is optional and not produced for this input.",
+                            out.name,
+                            ax,
+                            out.shape.reference_tensor,
+                            ax,
+                        )
+                        continue
+
+                    _ref_ax, ref_size = input_sizes_refs[out.shape.reference_tensor][ax]
+                    s = (
+                        ref_size * scale
+                        if (scale := out.shape.scale[i] is not None)
+                        else 0
+                    ) + 2 * out.shape.offset[i]
+                    assert s == int(s)
+                    s = int(s)
+                else:
+                    assert_never(out.shape)
+
+                output_sizes[out.name][ax] = s
+
+        return output_sizes
 
     def get_input_test_arrays(self) -> list[NDArray[Any]]:
         data = [load_array(ipt) for ipt in self.test_inputs]
