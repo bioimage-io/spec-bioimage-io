@@ -446,7 +446,7 @@ def find_bioimageio_yaml_file_name(path: Path | ZipFile) -> FileName:
         with ZipFile(path, "r") as f:
             file_names = f.namelist()
     else:
-        file_names = [p.name for p in path.glob("*")]
+        file_names = [p.name for p in path.iterdir() if p.is_file()]
 
     return identify_bioimageio_yaml_file_name(file_names)
 
