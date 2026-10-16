@@ -31,18 +31,18 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.
 ## `attachments`<sub> list</sub> ≝ `[]`
 file attachments
 
-<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f414ed142c0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4140760400>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f414ed142c0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4140760400>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 **_internal.io.FileDescr:**
 ### `attachments.source`<sub> Union</sub>
 FileSource: File source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, _local.Path (PathType(path_type='file'); )]
 
 ### `attachments.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
@@ -111,13 +111,13 @@ badge label to display on hover
 badge icon (included in bioimage.io package if not a URL)
 [*Example:*](#badgesicon) 'https://colab.research.google.com/assets/colab-badge.svg'
 
-<details><summary>Union[Union[Path*, _internal.io.RelativeFilePath]*, _internal.url.HttpUrl, pydantic.networks.HttpUrl, None]
+<details><summary>Union[Union[_local.Path*, _internal.io.RelativeFilePath]*, _internal.url.HttpUrl, pydantic.networks.HttpUrl, None]
 
 </summary>
 
 Union of
-- Union[Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f414f8b0b80>, return_type=PydanticUndefined, when_used='unless-none'))
+- Union[_local.Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -202,18 +202,18 @@ Cover images. Please use an image smaller than 500KB and an aspect ratio width t
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 [*Example:*](#covers) [{'source': 'cover.png'}]
 
-<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f414ed142c0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4140760400>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False, allow_any_parent_suffix=False)]]
+<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False, allow_any_parent_suffix=False)]]
 
 </summary>
 
-list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f414ed142c0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4140760400>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False, allow_any_parent_suffix=False)]]
+list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False, allow_any_parent_suffix=False)]]
 
 **_internal.io.FileDescr:**
 ### `covers.source`<sub> Union</sub>
 FileSource: File source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, _local.Path (PathType(path_type='file'); )]
 
 ### `covers.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
@@ -237,14 +237,14 @@ The recommended documentation source file name is `README.md`. An `.md` suffix i
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4140760400>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True, allow_any_parent_suffix=False); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True, allow_any_parent_suffix=False); )]
 
 **_internal.io.FileDescr:**
 ### `documentation.source`<sub> Union</sub>
 FileSource: File source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, _local.Path (PathType(path_type='file'); )]
 
 ### `documentation.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
@@ -270,7 +270,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4140760400>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -279,7 +279,7 @@ Union of
 FileSource: File source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, _local.Path (PathType(path_type='file'); )]
 
 ### `icon.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
@@ -314,7 +314,7 @@ Union of
 - _internal.license_id.DeprecatedLicenseId
 - None
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4140760400>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'))
 
 
 **_internal.io.FileDescr:**
@@ -322,7 +322,7 @@ Union of
 FileSource: File source
 
 
-Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
+Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, _local.Path (PathType(path_type='file'); )]
 
 ### `license.sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 SHA256 hash value of the **source** file.
@@ -388,12 +388,12 @@ The description from which this one is derived
 ## `source`<sub> Optional</sub> ≝ `None`
 URL or path to the source of the application
 
-<details><summary>Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path*]*]
+<details><summary>Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, _local.Path*]*]
 
 </summary>
 
-Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, Path (PathType(path_type='file'); )]
-(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f414f8b0b80>, return_type=PydanticUndefined, when_used='unless-none'))]
+Optional[Union[_internal.url.HttpUrl, _internal.io.RelativeFilePath, _local.Path (PathType(path_type='file'); )]
+(union_mode='left_to_right'; AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 </details>
 
