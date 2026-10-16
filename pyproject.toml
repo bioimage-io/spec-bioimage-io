@@ -75,6 +75,7 @@ docs = [
     "mkdocs-gen-files",
     "mkdocs-literate-nav",
     "mkdocs-material",
+    "pymdown-extensions<12.2",
     "mkdocs-section-index",
 ]
 
