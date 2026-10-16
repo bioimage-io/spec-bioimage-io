@@ -19,8 +19,8 @@ from tests.utils import WARNING_LEVEL_CONTEXT_KEY, check_node
 
 
 class DummyNode(Node):
-    a: Annotated[int, warn(Ge(0), "smaller than zero")] = 0
-    b: Annotated[int, warn(Ge(0), "smaller than zero", WARNING)] = 0
+    a: Annotated[int, warn(Annotated[int, Ge(0)], "smaller than zero")] = 0
+    b: Annotated[int, warn(Annotated[int, Ge(0)], "smaller than zero", WARNING)] = 0
 
 
 class NestedDummyNode(Node):

@@ -540,3 +540,16 @@ def test_model_does_not_accept_unknown_fields(model_data: dict[str, Any]):
         ),
     )
     assert summary.status == "failed", summary.display()
+
+
+def test_get_output_tensor_sizes_with_scaling():
+    from bioimageio.spec import load_model_description
+
+    model = load_model_description(
+        UNET2D_ROOT.parent / "upsample_test_model" / "v0_4.bioimageio.yaml",
+        perform_io_checks=False,
+    )
+    assert isinstance(model, ModelDescr)
+    assert model.get_output_tensor_sizes(
+        {TensorName("input"): {"b": 2, "c": 1, "y": 10, "x": 10}}
+    ) == {TensorName("output"): {"b": 2, "c": 1, "y": 40, "x": 40}}

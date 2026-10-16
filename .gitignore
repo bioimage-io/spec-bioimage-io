@@ -3,7 +3,6 @@
 .coverage
 .env
 .ipynb_checkpoints
-.vscode/launch.json
 __pycache__/
 bioimageio_cache/
 build/

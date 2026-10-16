@@ -50,13 +50,13 @@ try:
         assert issubclass(etype, ValidationError), type(etype)
         assert isinstance(evalue, ValidationError), type(etype)
 
-        stb = self.InteractiveTB.structured_traceback(  # pyright: ignore
+        stb = self.InteractiveTB.structured_traceback(
             etype, PrettyValidationError(evalue), tb, tb_offset=tb_offset
         )
 
         if isinstance(stb, list):
             stb_clean = []
-            for line in stb:  # pyright: ignore[reportUnknownVariableType]
+            for line in stb:
                 if (
                     isinstance(line, str)
                     and "pydantic" in line

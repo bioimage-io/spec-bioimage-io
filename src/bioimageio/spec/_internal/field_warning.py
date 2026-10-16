@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import inspect
-from typing import TYPE_CHECKING, Any, Literal, Union, get_args
+from typing import TYPE_CHECKING, Any, Literal, Union
 
 import pydantic.functional_validators
 from annotated_types import BaseMetadata, GroupedMetadata
@@ -14,7 +14,7 @@ from pydantic_core.core_schema import (
     ValidationInfo,
     WithInfoValidatorFunction,
 )
-from typing_extensions import Annotated, LiteralString
+from typing_extensions import LiteralString, TypeForm
 
 from .utils import SLOTS
 from .validation_context import get_validation_context
@@ -30,15 +30,12 @@ AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
 
 
 def warn(
-    typ: AnnotationMetaData | Any,
+    typ: TypeForm[Any],
     msg: LiteralString,  # warning message, e.g. "'{value}' incompatible with {typ}
     severity: WarningSeverity = WARNING,
 ):
-    """treat a type or its annotation metadata as a warning condition"""
-    if isinstance(typ, get_args(AnnotationMetaData)):
-        typ = Annotated[Any, typ]
-
-    validator: TypeAdapter[Any] = TypeAdapter(typ)
+    """treat a type validation as a warning"""
+    validator = TypeAdapter(typ)
 
     return AfterWarner(
         validator.validate_python, severity=severity, msg=msg, context={"typ": typ}

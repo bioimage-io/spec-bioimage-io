@@ -86,7 +86,7 @@ IGNORE_TYPES_MEMBERS = {
     [
         name
         for name in dir(types)
-        if not name.startswith("_") and name not in IGNORE_TYPES_MEMBERS
+        if not name.startswith("_") and name.split("[")[0] not in IGNORE_TYPES_MEMBERS
     ],
 )
 def test_type_is_usable(name: str):

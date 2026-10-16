@@ -209,7 +209,9 @@ class LinkedResource(Node):
 class GenericModelDescrBase(ResourceDescrBase):
     """Base for all resource descriptions including of model descriptions"""
 
-    name: Annotated[NotEmpty[str], warn(MaxLen(128), "Longer than 128 characters.")]
+    name: Annotated[
+        NotEmpty[str], warn(Annotated[str, MaxLen(128)], "Longer than 128 characters.")
+    ]
     """A human-friendly name of the resource description"""
 
     description: str

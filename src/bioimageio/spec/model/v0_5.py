@@ -1836,7 +1836,7 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
             return self
 
         reader = get_reader(self.sample_tensor.source, sha256=self.sample_tensor.sha256)
-        tensor: NDArray[Any] = imread(  # pyright: ignore[reportUnknownVariableType]
+        tensor: NDArray[Any] = imread(
             reader.read(),
             extension=PurePosixPath(reader.original_file_name).suffix,
         )
@@ -1853,6 +1853,10 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
                 if a.size.min == 1:
                     n_dims_min -= 1
             elif isinstance(a.size, SizeReference):
+                if a.id != a.size.axis_id:
+                    raise ValueError(
+                        f"Axis {a.id} has a size reference to a different axis {a.size.axis_id}."
+                    )
                 if a.size.offset < 2:
                     # size reference may result in singleton axis
                     n_dims_min -= 1
@@ -1960,7 +1964,9 @@ class SymmetricPadding(Node):
     mode: Literal["symmetric"] = "symmetric"
 
 
-Padding = Union[ConstantPadding, EdgePadding, ReflectPadding, SymmetricPadding]
+Padding: TypeAlias = Union[
+    ConstantPadding, EdgePadding, ReflectPadding, SymmetricPadding
+]
 
 
 class ModelId(ResourceId):
@@ -2446,7 +2452,7 @@ class _OutputTensorConv(
 _output_tensor_conv = _OutputTensorConv(_OutputTensorDescr_v0_4, OutputTensorDescr)
 
 
-TensorDescr = Union[InputTensorDescr, OutputTensorDescr]
+TensorDescr: TypeAlias = Union[InputTensorDescr, OutputTensorDescr]
 
 
 def get_halos(
@@ -2539,7 +2545,7 @@ def validate_tensors(
                 "int64",
             )
         else:
-            invalid_test_tensor_dtype = array.dtype.name != descr.dtype
+            invalid_test_tensor_dtype = cast(bool, array.dtype.name != descr.dtype)
 
         if invalid_test_tensor_dtype:
             raise ValueError(
@@ -3872,7 +3878,7 @@ class ModelDescr(GenericModelDescrBase):
         RestrictCharacters(string.ascii_letters + string.digits + "_+- ()"),
         MinLen(5),
         MaxLen(128),
-        warn(MaxLen(64), "Name longer than 64 characters.", INFO),
+        warn(Annotated[str, MaxLen(64)], "Name longer than 64 characters.", INFO),
     ]
     """A human-readable name of this model.
     It should be no longer than 64 characters
@@ -4132,36 +4138,109 @@ class ModelDescr(GenericModelDescrBase):
 
     def get_output_tensor_sizes(
         self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]
-    ) -> dict[TensorId, dict[AxisId, int | _DataDepSize]]:
+    ) -> dict[TensorId, dict[AxisId, int]]:
         """Returns the tensor output sizes for given **input_sizes**.
-        Only if **input_sizes** has a valid input shape, the tensor output size is exact.
-        Otherwise it might be larger than the actual (valid) output"""
+        Data-dependent output sizes are set to -1.
+
+        Note:
+            A warning is logged if the calculated output sizes do not match the output tensor sizes
+            inferred from the model descriptions with parameters inferred fromthe given input sizes.
+            This is likely the case if the input sizes are not valid according to the model description.
+        """
+        # get tensor sizes for valid inputs that can be parameterized by batch size and axis size parameters `n` (for each parameterized axis)
         batch_size = self.get_batch_size(input_sizes)
         ns = self.get_ns(input_sizes)
+        valid_tensor_sizes = self.get_tensor_sizes(ns, batch_size=batch_size)
 
-        tensor_sizes = self.get_tensor_sizes(ns, batch_size=batch_size)
-        return tensor_sizes.outputs
+        input_sizes_refs = {
+            ipt.id: {
+                ax.id: (ax, input_sizes[ipt.id][ax.id])
+                for ax in ipt.axes
+                if not isinstance(ax, BatchAxis) and ax.id in input_sizes[ipt.id]
+            }
+            for ipt in self.inputs
+            if ipt.id in input_sizes
+        }
+        output_sizes: dict[TensorId, dict[AxisId, int]] = {
+            out.id: {} for out in self.outputs
+        }
+        for out in self.outputs:
+            for ax in out.axes:
+                if isinstance(ax, BatchAxis):
+                    s = batch_size
+                elif isinstance(ax.size, int):
+                    s = ax.size
+                elif isinstance(ax.size, SizeReference):
+                    if (
+                        ax.size.tensor_id not in input_sizes_refs
+                        or ax.size.axis_id not in input_sizes_refs[ax.size.tensor_id]
+                    ):
+                        logger.warning(
+                            "Output axis {}.{} references input axis {}.{}, which is not present in the provided input sizes."
+                            + " Assuming the output is optional and not produced for this input.",
+                            out.id,
+                            ax.id,
+                            ax.size.tensor_id,
+                            ax.size.axis_id,
+                        )
+                        continue
+
+                    ref_ax, ref_size = input_sizes_refs[ax.size.tensor_id][
+                        ax.size.axis_id
+                    ]
+                    s = ax.size.get_size(ax, ref_ax, ref_size=ref_size)
+                elif isinstance(ax.size, DataDependentSize):
+                    s = -1
+                else:
+                    assert_never(ax.size)
+
+                output_sizes[out.id][ax.id] = s
+
+        if valid_tensor_sizes.outputs != output_sizes:
+            if valid_tensor_sizes.inputs != input_sizes:
+                logger.trace(
+                    "Input sizes do not match the model's input tensor descriptions which may lead to inconsistent output sizes."
+                    + " Expected: {}, got: {}.",
+                    valid_tensor_sizes.inputs,
+                    input_sizes,
+                )
+            else:
+                logger.error(
+                    "Directly calculated output sizes do not match the output tensor sizes inferred from the model descriptions with the given input size parameters."
+                    + " Expected: {}, got: {}.",
+                    valid_tensor_sizes.outputs,
+                    output_sizes,
+                )
+
+        return output_sizes
 
     def get_ns(self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]):
         """get parameter `n` for each parameterized axis
         such that the valid input size is >= the given input size"""
         ret: dict[tuple[TensorId, AxisId], ParameterizedSize_N] = {}
-        axes = {t.id: {a.id: a for a in t.axes} for t in self.inputs}
+        axes_per_member = {t.id: {a.id: a for a in t.axes} for t in self.inputs}
         for tid in input_sizes:
+            axes = axes_per_member.get(tid)
+            if axes is None:
+                continue
             for aid, s in input_sizes[tid].items():
-                size_descr = axes[tid][aid].size
-                if isinstance(size_descr, ParameterizedSize):
-                    ret[(tid, aid)] = size_descr.get_n(s)
-                elif size_descr is None or isinstance(size_descr, (int, SizeReference)):
+                axis_descr = axes.get(aid)
+                if axis_descr is None:
+                    continue
+                if isinstance(axis_descr.size, ParameterizedSize):
+                    ret[(tid, aid)] = axis_descr.size.get_n(s)
+                elif axis_descr.size is None or isinstance(
+                    axis_descr.size, (int, SizeReference)
+                ):
                     pass
                 else:
-                    assert_never(size_descr)
+                    assert_never(axis_descr.size)
 
         return ret
 
     def get_tensor_sizes(
         self,
-        ns: Mapping[tuple[TensorId, AxisId], ParameterizedSize_N],
+        ns: Mapping[tuple[TensorId, AxisId], ParameterizedSize_N] | ParameterizedSize_N,
         batch_size: int,
         max_input_shape: Mapping[TensorId, Mapping[AxisId, int]] | None = None,
     ) -> _TensorSizes:
@@ -4194,7 +4273,7 @@ class ModelDescr(GenericModelDescrBase):
 
     def get_axis_sizes(
         self,
-        ns: Mapping[tuple[TensorId, AxisId], ParameterizedSize_N],
+        ns: Mapping[tuple[TensorId, AxisId], ParameterizedSize_N] | ParameterizedSize_N,
         batch_size: int | None = None,
         *,
         max_input_shape: Mapping[tuple[TensorId, AxisId], int] | None = None,
@@ -4236,7 +4315,7 @@ class ModelDescr(GenericModelDescrBase):
 
         def get_axis_size(a: InputAxis | OutputAxis):
             if isinstance(a, BatchAxis):
-                if (t_descr.id, a.id) in ns:
+                if not isinstance(ns, int) and (t_descr.id, a.id) in ns:
                     logger.warning(
                         "Ignoring unexpected size increment factor (n) for batch axis"
                         + " of tensor '{}'.",
@@ -4244,7 +4323,7 @@ class ModelDescr(GenericModelDescrBase):
                     )
                 return batch_size
             elif isinstance(a.size, int):
-                if (t_descr.id, a.id) in ns:
+                if not isinstance(ns, int) and (t_descr.id, a.id) in ns:
                     logger.warning(
                         "Ignoring unexpected size increment factor (n) for fixed size"
                         + " axis '{}' of tensor '{}'.",
@@ -4253,12 +4332,12 @@ class ModelDescr(GenericModelDescrBase):
                     )
                 return a.size
             elif isinstance(a.size, ParameterizedSize):
-                if (t_descr.id, a.id) not in ns:
+                n = ns if isinstance(ns, int) else ns.get((t_descr.id, a.id))
+                if n is None:
                     raise ValueError(
                         "Size increment factor (n) missing for parametrized axis"
                         + f" '{a.id}' of tensor '{t_descr.id}'."
                     )
-                n = ns[(t_descr.id, a.id)]
                 s_max = max_input_shape.get((t_descr.id, a.id))
                 if s_max is not None:
                     n = min(n, a.size.get_n(s_max))
@@ -4266,7 +4345,7 @@ class ModelDescr(GenericModelDescrBase):
                 return a.size.get_size(n)
 
             elif isinstance(a.size, SizeReference):
-                if (t_descr.id, a.id) in ns:
+                if not isinstance(ns, int) and (t_descr.id, a.id) in ns:
                     logger.warning(
                         "Ignoring unexpected size increment factor (n) for axis '{}'"
                         + " of tensor '{}' with size reference.",
@@ -4286,7 +4365,7 @@ class ModelDescr(GenericModelDescrBase):
                     ref_size=ref_size,
                 )
             elif isinstance(a.size, DataDependentSize):
-                if (t_descr.id, a.id) in ns:
+                if not isinstance(ns, int) and (t_descr.id, a.id) in ns:
                     logger.warning(
                         "Ignoring unexpected increment factor (n) for data dependent"
                         + " size axis '{}' of tensor '{}'.",
@@ -4722,7 +4801,7 @@ def generate_covers(
         c = next(i for i in range(3) if isinstance(axes[i], ChannelAxis))
         axis_order.append(axis_order.pop(c))
         axes = [axes[ao] for ao in axis_order]
-        data = data.transpose(axis_order)
+        data = cast(NDArray[Any], data.transpose(axis_order))
 
         # h, w = data.shape[:2]
         # if h / w  in (1.0 or 2.0):

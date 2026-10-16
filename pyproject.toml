@@ -2,7 +2,7 @@
 name = "bioimageio.spec"
 description = "Parser and validator library for bioimage.io specifications"
 authors = [{ name = "Fynn Beuttenmüller", email = "thefynnbe@gmail.com" }]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 readme = "README.md"
 dependencies = [
     "annotated-types>=0.5.0,<1",
@@ -32,12 +32,12 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 dynamic = ["version"]
 
@@ -57,7 +57,7 @@ dev = [
     "nbval",
     "pdoc",
     "pre-commit",
-    "pyright==1.1.411",
+    "pyright==1.1.414",
     "pytest-cov",
     "pytest",
     "python-dotenv",
@@ -75,6 +75,7 @@ docs = [
     "mkdocs-gen-files",
     "mkdocs-literate-nav",
     "mkdocs-material",
+    "pymdown-extensions<12.2",
     "mkdocs-section-index",
 ]
 
