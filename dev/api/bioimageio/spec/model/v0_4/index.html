@@ -2074,7 +2074,7 @@
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.AxesInCZYX" class="headerlink" title="Anchor link to this section for reference">¤</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">AxesInCZYX</span> <span class="o">=</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">AxesInCZYX</span> <span class="o">=</span> <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
     <span class="n"><span title="str">str</span></span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec._internal.validator_annotations.RestrictCharacters">RestrictCharacters</span></span><span class="p">(</span><span class="s2">"czyx"</span><span class="p">),</span>
     <span class="n"><span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span></span><span class="p">(</span><span class="n"><span title="bioimageio.spec._internal.field_validation.validate_unique_entries">validate_unique_entries</span></span><span class="p">),</span>
@@ -2101,7 +2101,7 @@
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.AxesStr" class="headerlink" title="Anchor link to this section for reference">¤</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">AxesStr</span> <span class="o">=</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">AxesStr</span> <span class="o">=</span> <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
     <span class="n"><span title="str">str</span></span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec._internal.validator_annotations.RestrictCharacters">RestrictCharacters</span></span><span class="p">(</span><span class="s2">"bitczyx"</span><span class="p">),</span>
     <span class="n"><span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span></span><span class="p">(</span><span class="n"><span title="bioimageio.spec._internal.field_validation.validate_unique_entries">validate_unique_entries</span></span><span class="p">),</span>
@@ -2128,7 +2128,7 @@
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.CustomCallable" class="headerlink" title="Anchor link to this section for reference">¤</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">CustomCallable</span> <span class="o">=</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">CustomCallable</span> <span class="o">=</span> <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
     <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.CallableFromFile">CallableFromFile</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.CallableFromDepencency">CallableFromDepencency</a></span><span class="p">],</span>
     <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span><span class="n"><span title="pydantic.Field(union_mode)">union_mode</span></span><span class="o">=</span><span class="s2">"left_to_right"</span><span class="p">),</span>
 <span class="p">]</span>
@@ -2219,7 +2219,7 @@
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.PostprocessingDescr" class="headerlink" title="Anchor link to this section for reference">¤</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">PostprocessingDescr</span> <span class="o">=</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">PostprocessingDescr</span> <span class="o">=</span> <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
     <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span>
         <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.BinarizeDescr">BinarizeDescr</a></span><span class="p">,</span>
         <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ClipDescr">ClipDescr</a></span><span class="p">,</span>
@@ -2284,7 +2284,7 @@
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.PreprocessingDescr" class="headerlink" title="Anchor link to this section for reference">¤</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">PreprocessingDescr</span> <span class="o">=</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">PreprocessingDescr</span> <span class="o">=</span> <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
     <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span>
         <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.BinarizeDescr">BinarizeDescr</a></span><span class="p">,</span>
         <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ClipDescr">ClipDescr</a></span><span class="p">,</span>
@@ -5147,7 +5147,7 @@ Values above the threshold will be set to one, values below the threshold to zer
 
 <a href="#bioimageio.spec.model.v0_4.CallableFromDepencency.root_model" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root_model</span><span class="p">:</span> <span class="n"><span title="type">type</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><span title="str">str</span></span><span class="p">,</span>
         <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.StringConstraints&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.StringConstraints">StringConstraints</a></span><span class="p">(</span>
             <span class="n"><span title="pydantic.StringConstraints(strip_whitespace)">strip_whitespace</span></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n"><span title="pydantic.StringConstraints(pattern)">pattern</span></span><span class="o">=</span><span class="s2">"^.+</span><span class="se">\\</span><span class="s2">..+$"</span>
@@ -5937,7 +5937,7 @@ Values above the threshold will be set to one, values below the threshold to zer
 
 <a href="#bioimageio.spec.model.v0_4.CallableFromFile.root_model" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root_model</span><span class="p">:</span> <span class="n"><span title="type">type</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><span title="str">str</span></span><span class="p">,</span>
         <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.StringConstraints&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.StringConstraints">StringConstraints</a></span><span class="p">(</span>
             <span class="n"><span title="pydantic.StringConstraints(strip_whitespace)">strip_whitespace</span></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n"><span title="pydantic.StringConstraints(pattern)">pattern</span></span><span class="o">=</span><span class="s2">"^.+:.+$"</span>
@@ -11795,7 +11795,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 
 <a href="#bioimageio.spec.model.v0_4.Dependencies.root_model" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root_model</span><span class="p">:</span> <span class="n"><span title="type">type</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><span title="str">str</span></span><span class="p">,</span>
         <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.StringConstraints&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.StringConstraints">StringConstraints</a></span><span class="p">(</span>
             <span class="n"><span title="pydantic.StringConstraints(strip_whitespace)">strip_whitespace</span></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n"><span title="pydantic.StringConstraints(pattern)">pattern</span></span><span class="o">=</span><span class="s2">"^.+:.+$"</span>
@@ -14618,7 +14618,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ImplicitOutputShape.offset">offset</a></code>
-                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="list">list</span>[<span title="int">int</span> | <span title="typing_extensions.Annotated">Annotated</span>[<span title="float">float</span>, <span title="annotated_types.MultipleOf">MultipleOf</span>(0.5)]]]</code>)
+                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="list">list</span>[<span title="int">int</span> | <span title="typing.Annotated">Annotated</span>[<span title="float">float</span>, <span title="annotated_types.MultipleOf">MultipleOf</span>(0.5)]]]</code>)
             </li>
         </ul>
 
@@ -14653,7 +14653,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 
 <a href="#bioimageio.spec.model.v0_4.ImplicitOutputShape.offset" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">offset</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a></span><span class="p">[</span>
-    <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span> <span class="o">|</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><span title="annotated_types.MultipleOf">MultipleOf</span></span><span class="p">(</span><span class="mf">0.5</span><span class="p">)]]</span>
+    <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span> <span class="o">|</span> <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><span title="annotated_types.MultipleOf">MultipleOf</span></span><span class="p">(</span><span class="mf">0.5</span><span class="p">)]]</span>
 <span class="p">]</span>
 </code></pre></div>
 
@@ -15690,7 +15690,7 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.InputTensorDescr.data_range">data_range</a></code>
-                (<code><span title="tuple">tuple</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="float">float</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a>(True)], <span title="typing_extensions.Annotated">Annotated</span>[<span title="float">float</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a>(True)]] | None</code>)
+                (<code><span title="tuple">tuple</span>[<span title="typing.Annotated">Annotated</span>[<span title="float">float</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a>(True)], <span title="typing.Annotated">Annotated</span>[<span title="float">float</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a>(True)]] | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.InputTensorDescr.data_type">data_type</a></code>
@@ -15775,8 +15775,8 @@ with a few restrictions listed <a href="https://docs.python.org/3/library/dateti
 <a href="#bioimageio.spec.model.v0_4.InputTensorDescr.data_range" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">data_range</span><span class="p">:</span> <span class="p">(</span>
     <span class="n"><span title="tuple">tuple</span></span><span class="p">[</span>
-        <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a></span><span class="p">(</span><span class="kc">True</span><span class="p">)],</span>
-        <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a></span><span class="p">(</span><span class="kc">True</span><span class="p">)],</span>
+        <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a></span><span class="p">(</span><span class="kc">True</span><span class="p">)],</span>
+        <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a></span><span class="p">(</span><span class="kc">True</span><span class="p">)],</span>
     <span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span>
@@ -24317,11 +24317,11 @@ need to have this field.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.test_inputs">test_inputs</a></code>
-                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="list">list</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>, <span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span>(&#39;.npy&#39;, <span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span>=True)]]]</code>)
+                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="list">list</span>[<span title="typing.Annotated">Annotated</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>, <span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span>(&#39;.npy&#39;, <span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span>=True)]]]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.test_outputs">test_outputs</a></code>
-                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="list">list</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>, <span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span>(&#39;.npy&#39;, <span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span>=True)]]]</code>)
+                (<code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a>[<span title="list">list</span>[<span title="typing.Annotated">Annotated</span>[<span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span>, <span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span>(&#39;.npy&#39;, <span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span>=True)]]]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.ModelDescr.timestamp">timestamp</a></code>
@@ -25196,7 +25196,7 @@ The sample files primarily serve to inform a human user about an example use cas
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.test_inputs" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">test_inputs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a></span><span class="p">[</span>
     <span class="n"><span title="list">list</span></span><span class="p">[</span>
-        <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+        <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
             <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">,</span>
             <span class="n"><span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span></span><span class="p">(</span><span class="s2">".npy"</span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span></span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="p">]</span>
@@ -25232,7 +25232,7 @@ The extension must be '.npy'.</p>
 <a href="#bioimageio.spec.model.v0_4.ModelDescr.test_outputs" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">test_outputs</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a></span><span class="p">[</span>
     <span class="n"><span title="list">list</span></span><span class="p">[</span>
-        <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+        <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
             <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileSource_package">FileSource_package</span></span><span class="p">,</span>
             <span class="n"><span title="bioimageio.spec._internal.io.WithSuffix">WithSuffix</span></span><span class="p">(</span><span class="s2">".npy"</span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.io.WithSuffix(case_sensitive)">case_sensitive</span></span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="p">]</span>
@@ -25596,6 +25596,74 @@ The available weight formats determine which consumers can use this model.</p>
 <div class="doc doc-object doc-function">
 
 
+<h3 id="bioimageio.spec.model.v0_4.ModelDescr.get_batch_size" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">get_batch_size</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+<a href="#bioimageio.spec.model.v0_4.ModelDescr.get_batch_size" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_batch_size</span><span class="p">(</span>
+    <span class="n"><span title="bioimageio.spec.model.v0_4.ModelDescr.get_batch_size(tensor_sizes)">tensor_sizes</span></span><span class="p">:</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span>
+        <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorName">TensorName</a></span><span class="p">,</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.AxesStr">AxesStr</a></span><span class="p">,</span> <span class="n"><span title="int">int</span></span><span class="p">]</span>
+    <span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="int">int</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+          
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/bioimageio/spec/model/v0_4.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1341</span>
+<span class="normal">1342</span>
+<span class="normal">1343</span>
+<span class="normal">1344</span>
+<span class="normal">1345</span>
+<span class="normal">1346</span>
+<span class="normal">1347</span>
+<span class="normal">1348</span>
+<span class="normal">1349</span>
+<span class="normal">1350</span>
+<span class="normal">1351</span>
+<span class="normal">1352</span>
+<span class="normal">1353</span>
+<span class="normal">1354</span>
+<span class="normal">1355</span>
+<span class="normal">1356</span>
+<span class="normal">1357</span>
+<span class="normal">1358</span>
+<span class="normal">1359</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_batch_size</span><span class="p">(</span><span class="n">tensor_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorName</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxesStr</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">tensor_with_batchsize</span><span class="p">:</span> <span class="n">TensorName</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">tid</span> <span class="ow">in</span> <span class="n">tensor_sizes</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">aid</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">tensor_sizes</span><span class="p">[</span><span class="n">tid</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">aid</span> <span class="o">!=</span> <span class="s2">"b"</span> <span class="ow">or</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">s</span> <span class="o">==</span> <span class="n">batch_size</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">batch_size</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">tensor_with_batchsize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"batch size mismatch for tensors '</span><span class="si">{</span><span class="n">tensor_with_batchsize</span><span class="si">}</span><span class="s2">' (</span><span class="si">{</span><span class="n">batch_size</span><span class="si">}</span><span class="s2">) and '</span><span class="si">{</span><span class="n">tid</span><span class="si">}</span><span class="s2">' (</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">)"</span>
+                <span class="p">)</span>
+
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">s</span>
+            <span class="n">tensor_with_batchsize</span> <span class="o">=</span> <span class="n">tid</span>
+
+    <span class="k">return</span> <span class="n">batch_size</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="bioimageio.spec.model.v0_4.ModelDescr.get_input_test_arrays" class="doc doc-heading">
 <code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">get_input_test_arrays</span>
 
@@ -25610,13 +25678,143 @@ The available weight formats determine which consumers can use this model.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_4.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1341</span>
-<span class="normal">1342</span>
-<span class="normal">1343</span>
-<span class="normal">1344</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1414</span>
+<span class="normal">1415</span>
+<span class="normal">1416</span>
+<span class="normal">1417</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">load_array</span><span class="p">(</span><span class="n">ipt</span><span class="p">)</span> <span class="k">for</span> <span class="n">ipt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_inputs</span><span class="p">]</span>
     <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bioimageio.spec.model.v0_4.ModelDescr.get_output_tensor_sizes" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-method"></code>            <span class="doc doc-object-name doc-function-name">get_output_tensor_sizes</span>
+
+
+<a href="#bioimageio.spec.model.v0_4.ModelDescr.get_output_tensor_sizes" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_output_tensor_sizes</span><span class="p">(</span>
+    <span class="n"><span title="bioimageio.spec.model.v0_4.ModelDescr.get_output_tensor_sizes(input_sizes)">input_sizes</span></span><span class="p">:</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorName">TensorName</a></span><span class="p">,</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.AxesStr">AxesStr</a></span><span class="p">,</span> <span class="n"><span title="int">int</span></span><span class="p">]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorName">TensorName</a></span><span class="p">,</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.AxesStr">AxesStr</a></span><span class="p">,</span> <span class="n"><span title="int">int</span></span><span class="p">]]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>backport of model.v0_5.ModelDescr.get_output_tensor_sizes()</p>
+
+          
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/bioimageio/spec/model/v0_4.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1361</span>
+<span class="normal">1362</span>
+<span class="normal">1363</span>
+<span class="normal">1364</span>
+<span class="normal">1365</span>
+<span class="normal">1366</span>
+<span class="normal">1367</span>
+<span class="normal">1368</span>
+<span class="normal">1369</span>
+<span class="normal">1370</span>
+<span class="normal">1371</span>
+<span class="normal">1372</span>
+<span class="normal">1373</span>
+<span class="normal">1374</span>
+<span class="normal">1375</span>
+<span class="normal">1376</span>
+<span class="normal">1377</span>
+<span class="normal">1378</span>
+<span class="normal">1379</span>
+<span class="normal">1380</span>
+<span class="normal">1381</span>
+<span class="normal">1382</span>
+<span class="normal">1383</span>
+<span class="normal">1384</span>
+<span class="normal">1385</span>
+<span class="normal">1386</span>
+<span class="normal">1387</span>
+<span class="normal">1388</span>
+<span class="normal">1389</span>
+<span class="normal">1390</span>
+<span class="normal">1391</span>
+<span class="normal">1392</span>
+<span class="normal">1393</span>
+<span class="normal">1394</span>
+<span class="normal">1395</span>
+<span class="normal">1396</span>
+<span class="normal">1397</span>
+<span class="normal">1398</span>
+<span class="normal">1399</span>
+<span class="normal">1400</span>
+<span class="normal">1401</span>
+<span class="normal">1402</span>
+<span class="normal">1403</span>
+<span class="normal">1404</span>
+<span class="normal">1405</span>
+<span class="normal">1406</span>
+<span class="normal">1407</span>
+<span class="normal">1408</span>
+<span class="normal">1409</span>
+<span class="normal">1410</span>
+<span class="normal">1411</span>
+<span class="normal">1412</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_tensor_sizes</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorName</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxesStr</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TensorName</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">AxesStr</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""backport of model.v0_5.ModelDescr.get_output_tensor_sizes()"""</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_batch_size</span><span class="p">(</span><span class="n">input_sizes</span><span class="p">)</span>
+    <span class="n">input_sizes_refs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">ipt</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span>
+            <span class="n">ax</span><span class="p">:</span> <span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">[</span><span class="n">ipt</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="n">ax</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">ipt</span><span class="o">.</span><span class="n">axes</span>
+            <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="s2">"b"</span> <span class="ow">and</span> <span class="s2">"b"</span> <span class="ow">in</span> <span class="n">input_sizes</span><span class="p">[</span><span class="n">ipt</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">ipt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span>
+        <span class="k">if</span> <span class="n">ipt</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">input_sizes</span>
+    <span class="p">}</span>
+    <span class="n">output_sizes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TensorName</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">AxesStr</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">axes</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ax</span> <span class="o">==</span> <span class="s2">"b"</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">batch_size</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ImplicitOutputShape</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">reference_tensor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_sizes_refs</span>
+                    <span class="ow">or</span> <span class="n">ax</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_sizes_refs</span><span class="p">[</span><span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">reference_tensor</span><span class="p">]</span>
+                <span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="s2">"Output axis </span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2"> references input axis </span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">, which is not present in the provided input sizes."</span>
+                        <span class="o">+</span> <span class="s2">" Assuming the output is optional and not produced for this input."</span><span class="p">,</span>
+                        <span class="n">out</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="n">ax</span><span class="p">,</span>
+                        <span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">reference_tensor</span><span class="p">,</span>
+                        <span class="n">ax</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="n">_ref_ax</span><span class="p">,</span> <span class="n">ref_size</span> <span class="o">=</span> <span class="n">input_sizes_refs</span><span class="p">[</span><span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">reference_tensor</span><span class="p">][</span><span class="n">ax</span><span class="p">]</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">ref_size</span> <span class="o">*</span> <span class="n">scale</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">scale</span> <span class="o">:=</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">scale</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="k">else</span> <span class="mi">0</span>
+                <span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">offset</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="n">s</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">assert_never</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+            <span class="n">output_sizes</span><span class="p">[</span><span class="n">out</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="n">ax</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
+
+    <span class="k">return</span> <span class="n">output_sizes</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -25640,10 +25838,10 @@ The available weight formats determine which consumers can use this model.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_4.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1346</span>
-<span class="normal">1347</span>
-<span class="normal">1348</span>
-<span class="normal">1349</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1419</span>
+<span class="normal">1420</span>
+<span class="normal">1421</span>
+<span class="normal">1422</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">load_array</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_outputs</span><span class="p">]</span>
     <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span>
@@ -27279,7 +27477,7 @@ The available weight formats determine which consumers can use this model.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.OnnxWeightsDescr.opset_version">opset_version</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="int">int</span>, <span title="annotated_types.Ge">Ge</span>(7)] | None</code>)
+                (<code><span title="typing.Annotated">Annotated</span>[<span title="int">int</span>, <span title="annotated_types.Ge">Ge</span>(7)] | None</code>)
             </li>
         </ul>
 
@@ -27396,7 +27594,7 @@ Or the person(s) who have converted the weights to this weights format.
   </span>
 
 <a href="#bioimageio.spec.model.v0_4.OnnxWeightsDescr.opset_version" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">opset_version</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="annotated_types.Ge">Ge</span></span><span class="p">(</span><span class="mi">7</span><span class="p">)]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">opset_version</span><span class="p">:</span> <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n"><span title="annotated_types.Ge">Ge</span></span><span class="p">(</span><span class="mi">7</span><span class="p">)]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -29068,7 +29266,7 @@ need to have this field.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.OutputTensorDescr.data_range">data_range</a></code>
-                (<code><span title="tuple">tuple</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="float">float</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a>(True)], <span title="typing_extensions.Annotated">Annotated</span>[<span title="float">float</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a>(True)]] | None</code>)
+                (<code><span title="tuple">tuple</span>[<span title="typing.Annotated">Annotated</span>[<span title="float">float</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a>(True)], <span title="typing.Annotated">Annotated</span>[<span title="float">float</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a>(True)]] | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.OutputTensorDescr.data_type">data_type</a></code>
@@ -29157,8 +29355,8 @@ need to have this field.</p>
 <a href="#bioimageio.spec.model.v0_4.OutputTensorDescr.data_range" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">data_range</span><span class="p">:</span> <span class="p">(</span>
     <span class="n"><span title="tuple">tuple</span></span><span class="p">[</span>
-        <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a></span><span class="p">(</span><span class="kc">True</span><span class="p">)],</span>
-        <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a></span><span class="p">(</span><span class="kc">True</span><span class="p">)],</span>
+        <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a></span><span class="p">(</span><span class="kc">True</span><span class="p">)],</span>
+        <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a></span><span class="p">(</span><span class="kc">True</span><span class="p">)],</span>
     <span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span>
@@ -37519,7 +37717,7 @@ For a tensor in <code>outputs</code> only input tensor refereences are allowed i
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.model.v0_4.TensorDescrBase.data_range">data_range</a></code>
-                (<code><span title="tuple">tuple</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="float">float</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a>(True)], <span title="typing_extensions.Annotated">Annotated</span>[<span title="float">float</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a>(True)]] | None</code>)
+                (<code><span title="tuple">tuple</span>[<span title="typing.Annotated">Annotated</span>[<span title="float">float</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a>(True)], <span title="typing.Annotated">Annotated</span>[<span title="float">float</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a>(True)]] | None</code>)
             </li>
         </ul>
 
@@ -37583,8 +37781,8 @@ For a tensor in <code>outputs</code> only input tensor refereences are allowed i
 <a href="#bioimageio.spec.model.v0_4.TensorDescrBase.data_range" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">data_range</span><span class="p">:</span> <span class="p">(</span>
     <span class="n"><span title="tuple">tuple</span></span><span class="p">[</span>
-        <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a></span><span class="p">(</span><span class="kc">True</span><span class="p">)],</span>
-        <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a></span><span class="p">(</span><span class="kc">True</span><span class="p">)],</span>
+        <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a></span><span class="p">(</span><span class="kc">True</span><span class="p">)],</span>
+        <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.AllowInfNan&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.AllowInfNan">AllowInfNan</a></span><span class="p">(</span><span class="kc">True</span><span class="p">)],</span>
     <span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span>
