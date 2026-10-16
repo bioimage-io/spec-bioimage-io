@@ -1399,7 +1399,7 @@ class ModelDescr(GenericModelDescrBase):
                     _ref_ax, ref_size = input_sizes_refs[out.shape.reference_tensor][ax]
                     s = (
                         ref_size * scale
-                        if (scale := out.shape.scale[i] is not None)
+                        if (scale := out.shape.scale[i]) is not None
                         else 0
                     ) + 2 * out.shape.offset[i]
                     assert s == int(s)
