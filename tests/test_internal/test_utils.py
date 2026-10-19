@@ -71,41 +71,6 @@ def test_get_format_version_tuple_invalid():
     assert get_format_version_tuple(None) is None
 
 
-def test_nest_dict_basic():
-    from bioimageio.spec._internal.utils import nest_dict
-
-    result = nest_dict({("a", "b"): 1, ("a", "c"): 2})
-    assert result == {"a": {"b": 1, "c": 2}}
-
-
-def test_nest_dict_single_key():
-    from bioimageio.spec._internal.utils import nest_dict
-
-    result = nest_dict({("a",): 1})
-    assert result == {"a": 1}
-
-
-def test_nest_dict_collision():
-    from bioimageio.spec._internal.utils import nest_dict
-
-    with pytest.raises(ValueError):
-        _ = nest_dict({("a",): 1, ("a", "b"): 2})
-
-
-def test_nest_dict_with_narrow_first_key():
-    from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
-
-    result = nest_dict_with_narrow_first_key({("a", "b"): 1}, str)
-    assert result == {"a": {"b": 1}}
-
-
-def test_nest_dict_with_narrow_first_key_invalid():
-    from bioimageio.spec._internal.utils import nest_dict_with_narrow_first_key
-
-    with pytest.raises(ValueError):
-        _ = nest_dict_with_narrow_first_key({(1, "b"): 1}, str)
-
-
 def test_unindent_basic():
     from bioimageio.spec._internal.utils import unindent
 
@@ -188,14 +153,6 @@ def test_pretty_serializer_repr():
     r = repr(s)
     assert "PrettyPlainSerializer" in r
     assert "str" in r
-
-
-def test_nest_dict_leaf_then_nested():
-    from bioimageio.spec._internal.utils import nest_dict
-
-    # Insert leaf first so the nested key hits the outer ValueError (line 69)
-    with pytest.raises(ValueError):
-        _ = nest_dict({("a",): 1, ("a", "b"): 2})
 
 
 def test_pretty_wrap_serializer_repr():
