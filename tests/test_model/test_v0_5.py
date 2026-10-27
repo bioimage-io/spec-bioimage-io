@@ -48,6 +48,7 @@ from bioimageio.spec.model.v0_5 import (
     TorchscriptWeightsDescr,
     Version,
     WeightsDescr,
+    validate_tensors,
 )
 from tests.conftest import UNET2D_ROOT
 from tests.utils import check_node, check_type
@@ -763,3 +764,57 @@ def test_normalize_axis_id(raw: str, norm: str):
 
     processed = str(AxisId(raw))
     assert processed == norm, f"raw: {raw}, processed: {processed}, expected: {norm}"
+
+
+def test_SizeReference_get_size_floatingpoint():
+    sr = SizeReference(tensor_id=TensorId("input"), axis_id=AxisId("y"))
+    x = SpaceInputAxis(
+        id=AxisId("y"),
+        size=ParameterizedSize(min=44, step=1),
+        scale=0.24,
+        unit="micrometer",
+    )
+    y = SpaceOutputAxis(id=AxisId("y"), size=sr, scale=0.24, unit="micrometer")
+
+    assert y.size.get_size(y, x, n=0) == 44
+
+
+def test_validate_tensors_size_reference_float():
+    """Test the scale validation"""
+    import numpy as np
+
+    scale = 0.24
+    ipt = InputTensorDescr(
+        id=TensorId("input"),
+        data=IntervalOrRatioDataDescr(type="float32"),
+        axes=[
+            BatchAxis(),
+            ChannelAxis(channel_names=[Identifier("intensity")]),
+            SpaceInputAxis(
+                id=AxisId("y"),
+                size=ParameterizedSize(min=44, step=1),
+                scale=scale,
+                unit="micrometer",
+            ),
+        ],
+    )
+    out = OutputTensorDescr(
+        id=TensorId("output"),
+        data=IntervalOrRatioDataDescr(type="float32"),
+        axes=[
+            BatchAxis(),
+            ChannelAxis(channel_names=[Identifier("intensity")]),
+            SpaceOutputAxis(
+                id=AxisId("y"),
+                size=SizeReference(tensor_id=TensorId("input"), axis_id=AxisId("y")),
+                scale=scale,
+                unit="micrometer",
+            ),
+        ],
+    )
+    array = np.ones((1, 1, 44), dtype="float32")
+
+    validate_tensors({ipt.id: (ipt, array), out.id: (out, array)})
+
+    with pytest.raises(ValueError, match="invalid for referenced size"):
+        validate_tensors({ipt.id: (ipt, array), out.id: (out, array[:, :, :43])})
