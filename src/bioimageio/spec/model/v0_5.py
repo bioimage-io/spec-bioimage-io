@@ -6,6 +6,7 @@ import string
 import warnings
 from abc import ABC
 from copy import deepcopy
+from fractions import Fraction
 from functools import partial
 from itertools import chain
 from math import ceil
@@ -477,7 +478,8 @@ class SizeReference(Node):
             else:
                 assert_never(ref_axis.size)
 
-        return int(ref_size * ref_axis.scale / axis.scale + self.offset)
+        ratio = Fraction(ref_axis.scale) / Fraction(axis.scale)
+        return int(Fraction(ref_size) * ratio + self.offset)
 
     @staticmethod
     def _get_unit(
@@ -2638,8 +2640,11 @@ def validate_tensors(
                     )
 
                 if (
-                    expected_size := (
-                        ref_size * ref_axis.scale / a.scale + a.size.offset
+                    expected_size := int(
+                        Fraction(ref_size)
+                        * Fraction(ref_axis.scale)
+                        / Fraction(a.scale)
+                        + a.size.offset
                     )
                 ) not in check_sizes:
                     raise ValueError(
