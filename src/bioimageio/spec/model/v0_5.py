@@ -4,9 +4,9 @@ import collections.abc
 import re
 import string
 import warnings
-from fractions import Fraction
 from abc import ABC
 from copy import deepcopy
+from fractions import Fraction
 from functools import partial
 from itertools import chain
 from math import ceil
