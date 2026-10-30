@@ -240,7 +240,7 @@ def test_serialize_relative_file_path_from_left_to_right_union():
     path = Path(__file__).absolute()
     path_str = str(path)
     file_path = RootModel[
-        Annotated[Union[RelativeFilePath, FilePath], Field(union_mode="left_to_right")]
+        Annotated[RelativeFilePath | FilePath, Field(union_mode="left_to_right")]
     ](path)
     assert isinstance(file_path, RootModel)
     assert not isinstance(file_path.root, RelativeFilePath)

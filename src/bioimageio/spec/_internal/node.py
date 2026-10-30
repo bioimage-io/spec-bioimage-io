@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import collections.abc
 import warnings
+from collections.abc import Callable, Mapping
 from typing import (
     Any,
-    Callable,
     Literal,
-    Mapping,
 )
 
 import pydantic

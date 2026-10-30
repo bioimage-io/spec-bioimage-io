@@ -1,15 +1,13 @@
 from __future__ import annotations
 
+from collections.abc import Hashable, Mapping, Sequence
 from datetime import date, datetime
 from typing import (
     Any,
-    Hashable,
-    Mapping,
-    Sequence,
+    TypeGuard,
 )
 
 import httpx
-from typing_extensions import TypeGuard
 
 from ._settings import settings
 from .constants import KNOWN_GITHUB_USERS, KNOWN_INVALID_GITHUB_USERS

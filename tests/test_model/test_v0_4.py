@@ -564,7 +564,11 @@ def two_input_model() -> ModelDescr:
     ipt0 = data["inputs"][0]
     out0 = data["outputs"][0]
     ipt1 = {**ipt0, "name": "input1"}
-    out1 = {**out0, "name": "output1", "shape": {**out0["shape"], "reference_tensor": "input1"}}
+    out1 = {
+        **out0,
+        "name": "output1",
+        "shape": {**out0["shape"], "reference_tensor": "input1"},
+    }
     data["inputs"] = [ipt0, ipt1]
     data["outputs"] = [out0, out1]
     data["test_inputs"] = ["test_input.npy"] * 2

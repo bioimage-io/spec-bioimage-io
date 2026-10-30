@@ -5,6 +5,7 @@ import re
 import string
 import warnings
 from abc import ABC
+from collections.abc import Callable, Mapping, Sequence
 from copy import deepcopy
 from fractions import Fraction
 from functools import partial
@@ -15,20 +16,18 @@ from tempfile import mkdtemp
 from textwrap import dedent
 from typing import (
     TYPE_CHECKING,
+    Annotated,
     Any,
-    Callable,
     ClassVar,
-    Dict,
     Generic,
-    List,
     Literal,
-    Mapping,
     NamedTuple,
     Optional,
-    Sequence,
+    TypeAlias,
     TypeVar,
     Union,
     cast,
+    get_args,
     overload,
 )
 
@@ -52,7 +51,7 @@ from pydantic import (
     model_serializer,
     model_validator,
 )
-from typing_extensions import Annotated, Self, TypeAlias, assert_never, get_args
+from typing_extensions import Self, assert_never
 
 from .._internal.common_nodes import (
     InvalidDescr,
@@ -721,10 +720,8 @@ def _get_halo_axis_discriminator_value(v: Any) -> Literal["with_halo", "wo_halo"
 
 
 _TimeOutputAxisUnion = Annotated[
-    Union[
-        Annotated[TimeOutputAxis, Tag("wo_halo")],
-        Annotated[TimeOutputAxisWithHalo, Tag("with_halo")],
-    ],
+    Annotated[TimeOutputAxis, Tag("wo_halo")]
+    | Annotated[TimeOutputAxisWithHalo, Tag("with_halo")],
     Discriminator(_get_halo_axis_discriminator_value),
 ]
 
@@ -738,10 +735,8 @@ class SpaceOutputAxisWithHalo(SpaceAxisBase, WithHalo):
 
 
 _SpaceOutputAxisUnion = Annotated[
-    Union[
-        Annotated[SpaceOutputAxis, Tag("wo_halo")],
-        Annotated[SpaceOutputAxisWithHalo, Tag("with_halo")],
-    ],
+    Annotated[SpaceOutputAxis, Tag("wo_halo")]
+    | Annotated[SpaceOutputAxisWithHalo, Tag("with_halo")],
     Discriminator(_get_halo_axis_discriminator_value),
 ]
 
@@ -769,10 +764,10 @@ ANY_AXIS_TYPES = INPUT_AXIS_TYPES + OUTPUT_AXIS_TYPES
 """intended for isinstance comparisons in py<3.10"""
 
 TVs = Union[
-    NotEmpty[List[int]],
-    NotEmpty[List[float]],
-    NotEmpty[List[bool]],
-    NotEmpty[List[str]],
+    NotEmpty[list[int]],
+    NotEmpty[list[float]],
+    NotEmpty[list[bool]],
+    NotEmpty[list[str]],
 ]
 
 
@@ -1456,7 +1451,7 @@ class CustomProcessingDescr(NodeWithExplicitlySetFields, FileDescr):
     """Python source file (included when packaging the model)."""
 
     kwargs: dict[str, YamlValue] = Field(
-        default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
+        default_factory=cast(Callable[[], dict[str, YamlValue]], dict)
     )
     """Keyword arguments forwarded to the callable (``__init__`` or factory)."""
 
@@ -1748,35 +1743,31 @@ class ScaleMeanVarianceDescr(NodeWithExplicitlySetFields):
 
 
 PreprocessingDescr = Annotated[
-    Union[
-        BinarizeDescr,
-        ClipDescr,
-        EnsureDtypeDescr,
-        FixedZeroMeanUnitVarianceDescr,
-        ScaleLinearDescr,
-        ScaleRangeDescr,
-        SigmoidDescr,
-        SoftmaxDescr,
-        ZeroMeanUnitVarianceDescr,
-    ],
+    BinarizeDescr
+    | ClipDescr
+    | EnsureDtypeDescr
+    | FixedZeroMeanUnitVarianceDescr
+    | ScaleLinearDescr
+    | ScaleRangeDescr
+    | SigmoidDescr
+    | SoftmaxDescr
+    | ZeroMeanUnitVarianceDescr,
     Discriminator("id"),
 ]
 PostprocessingDescr = Annotated[
-    Union[
-        BinarizeDescr,
-        CellposeFlowDynamicsDescr,
-        ClipDescr,
-        CustomProcessingDescr,
-        EnsureDtypeDescr,
-        FixedZeroMeanUnitVarianceDescr,
-        ScaleLinearDescr,
-        ScaleMeanVarianceDescr,
-        ScaleRangeDescr,
-        SigmoidDescr,
-        SoftmaxDescr,
-        StardistPostprocessingDescr,
-        ZeroMeanUnitVarianceDescr,
-    ],
+    BinarizeDescr
+    | CellposeFlowDynamicsDescr
+    | ClipDescr
+    | CustomProcessingDescr
+    | EnsureDtypeDescr
+    | FixedZeroMeanUnitVarianceDescr
+    | ScaleLinearDescr
+    | ScaleMeanVarianceDescr
+    | ScaleRangeDescr
+    | SigmoidDescr
+    | SoftmaxDescr
+    | StardistPostprocessingDescr
+    | ZeroMeanUnitVarianceDescr,
     Discriminator("id"),
 ]
 
@@ -1966,9 +1957,7 @@ class SymmetricPadding(Node):
     mode: Literal["symmetric"] = "symmetric"
 
 
-Padding: TypeAlias = Union[
-    ConstantPadding, EdgePadding, ReflectPadding, SymmetricPadding
-]
+Padding: TypeAlias = ConstantPadding | EdgePadding | ReflectPadding | SymmetricPadding
 
 
 class ModelId(ResourceId):
@@ -2034,7 +2023,7 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     """
 
     preprocessing: list[PreprocessingDescr] = Field(
-        default_factory=cast(Callable[[], List[PreprocessingDescr]], list)
+        default_factory=cast(Callable[[], list[PreprocessingDescr]], list)
     )
     """Description of how this input should be preprocessed.
 
@@ -2370,7 +2359,7 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     No duplicates are allowed across all inputs and outputs."""
 
     postprocessing: list[PostprocessingDescr] = Field(
-        default_factory=cast(Callable[[], List[PostprocessingDescr]], list)
+        default_factory=cast(Callable[[], list[PostprocessingDescr]], list)
     )
     """Description of how this output should be postprocessed.
 
@@ -2454,7 +2443,7 @@ class _OutputTensorConv(
 _output_tensor_conv = _OutputTensorConv(_OutputTensorDescr_v0_4, OutputTensorDescr)
 
 
-TensorDescr: TypeAlias = Union[InputTensorDescr, OutputTensorDescr]
+TensorDescr: TypeAlias = InputTensorDescr | OutputTensorDescr
 
 
 def get_halos(
@@ -2668,7 +2657,7 @@ class _ArchitectureCallableDescr(Node):
     """Identifier of the callable that returns a torch.nn.Module instance."""
 
     kwargs: dict[str, YamlValue] = Field(
-        default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
+        default_factory=cast(Callable[[], dict[str, YamlValue]], dict)
     )
     """key word arguments for the `callable`"""
 
@@ -2692,7 +2681,7 @@ class _ArchFileConv(
         _CallableFromFile_v0_4,
         ArchitectureFromFileDescr,
         Optional[Sha256],
-        Dict[str, Any],
+        dict[str, Any],
     ]
 ):
     def _convert(
@@ -2723,7 +2712,7 @@ _arch_file_conv = _ArchFileConv(_CallableFromFile_v0_4, ArchitectureFromFileDesc
 
 class _ArchLibConv(
     Converter[
-        _CallableFromDepencency_v0_4, ArchitectureFromLibraryDescr, Dict[str, Any]
+        _CallableFromDepencency_v0_4, ArchitectureFromLibraryDescr, dict[str, Any]
     ]
 ):
     def _convert(
@@ -3313,7 +3302,7 @@ class TrainingDetails(Node, extra="allow"):
     """Loss function used in training, e.g. nn.MSELoss."""
 
     loss_function_kwargs: dict[str, YamlValue] = Field(
-        default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
+        default_factory=cast(Callable[[], dict[str, YamlValue]], dict)
     )
     """key word arguments for the `loss_function`"""
 
@@ -3321,7 +3310,7 @@ class TrainingDetails(Node, extra="allow"):
     """optimizer, e.g. torch.optim.Adam"""
 
     optimizer_kwargs: dict[str, YamlValue] = Field(
-        default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
+        default_factory=cast(Callable[[], dict[str, YamlValue]], dict)
     )
     """key word arguments for the `optimizer`"""
 
@@ -3541,7 +3530,7 @@ class BioimageioConfig(Node, extra="allow"):
     """Input modality, e.g., fluorescence microscopy, electron microscopy"""
 
     target_structure: list[str] = Field(  # TODO: add to differentiated tags
-        default_factory=cast(Callable[[], List[str]], list)
+        default_factory=cast(Callable[[], list[str]], list)
     )
     """Biological structure(s) the model is designed to analyze, e.g., nuclei, mitochondria, cells"""
 
@@ -3575,7 +3564,7 @@ class BioimageioConfig(Node, extra="allow"):
     """GPU memory needed for training. Multiple examples with different image/batch sizes can be given."""
 
     evaluations: list[Evaluation] = Field(
-        default_factory=cast(Callable[[], List[Evaluation]], list)
+        default_factory=cast(Callable[[], list[Evaluation]], list)
     )
     """Quantitative model evaluations.
 
@@ -3625,7 +3614,7 @@ class ModelDescr(GenericModelDescrBase):
     assigned by bioimage.io; version **un**specific."""
 
     authors: FAIR[list[Author]] = Field(
-        default_factory=cast(Callable[[], List[Author]], list)
+        default_factory=cast(Callable[[], list[Author]], list)
     )
     """The authors are the creators of the model RDF and the primary points of contact."""
 
@@ -3975,7 +3964,7 @@ class ModelDescr(GenericModelDescrBase):
         return outputs
 
     packaged_by: list[Author] = Field(
-        default_factory=cast(Callable[[], List[Author]], list)
+        default_factory=cast(Callable[[], list[Author]], list)
     )
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
@@ -4686,11 +4675,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
                         else (FileDescr if TYPE_CHECKING else dict)(
                             source=cast(
                                 FileSource,
-                                (
-                                    str(w.dependencies)[len("conda:") :]
-                                    if str(w.dependencies).startswith("conda:")
-                                    else str(w.dependencies)
-                                ),
+                                (str(w.dependencies).removeprefix("conda:")),
                             )
                         )
                     ),

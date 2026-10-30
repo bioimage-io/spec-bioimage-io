@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from types import MappingProxyType
-from typing import Any, Literal, TypeVar, Union, overload
+from typing import Annotated, Any, Literal, TypeAlias, TypeVar, overload
 
 from pydantic import Discriminator
-from typing_extensions import Annotated, TypeAlias
 
 from ._description_impl import DISCOVER, build_description_impl, get_rd_class_impl
 from ._internal.common_nodes import InvalidDescr
@@ -32,33 +31,17 @@ LATEST: Literal["latest"] = "latest"
 """placeholder for the latest available format version"""
 
 
-LatestResourceDescr: TypeAlias = Union[
-    Annotated[
-        Union[
-            ApplicationDescr,
-            DatasetDescr,
-            ModelDescr,
-            NotebookDescr,
-        ],
-        Discriminator("type"),
-    ],
-    GenericDescr,
-]
+LatestResourceDescr: TypeAlias = Annotated[ApplicationDescr | DatasetDescr | ModelDescr | NotebookDescr, Discriminator("type")] | GenericDescr
 """A resource description following the latest specification format"""
 
 
 SpecificResourceDescr: TypeAlias = Annotated[
-    Union[
-        AnyApplicationDescr,
-        AnyDatasetDescr,
-        AnyModelDescr,
-        AnyNotebookDescr,
-    ],
+    AnyApplicationDescr | AnyDatasetDescr | AnyModelDescr | AnyNotebookDescr,
     Discriminator("type"),
 ]
 """Any of the implemented, non-generic resource descriptions"""
 
-ResourceDescr: TypeAlias = Union[SpecificResourceDescr, AnyGenericDescr]
+ResourceDescr: TypeAlias = SpecificResourceDescr | AnyGenericDescr
 """Any of the implemented resource descriptions"""
 
 

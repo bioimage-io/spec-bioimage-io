@@ -1,13 +1,13 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from datetime import datetime, timezone
 from keyword import iskeyword
-from typing import Any, ClassVar, Sequence, TypeVar
+from typing import Annotated, Any, ClassVar, Literal, TypeVar
 
 import annotated_types
 from dateutil.parser import isoparse
 from pydantic import RootModel, StringConstraints
-from typing_extensions import Annotated, Literal
 
 from .constants import DOI_REGEX, SI_UNIT_REGEX
 from .field_warning import AfterWarner

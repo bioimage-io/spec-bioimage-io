@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from typing import (
     TYPE_CHECKING,
     Annotated,
     Any,
-    Callable,
     ClassVar,
     Literal,
-    Union,
     cast,
+    get_args,
 )
 
 import numpy as np
@@ -30,7 +29,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Self, assert_never, get_args
+from typing_extensions import Self, assert_never
 
 from .._internal.common_nodes import (
     KwargsNode,
@@ -187,7 +186,7 @@ class CallableFromFile(ValidatedStringWithInnerNode[CallableFromFileNode]):
 
 
 CustomCallable = Annotated[
-    Union[CallableFromFile, CallableFromDepencency], Field(union_mode="left_to_right")
+    CallableFromFile | CallableFromDepencency, Field(union_mode="left_to_right")
 ]
 
 
@@ -875,26 +874,22 @@ class ScaleMeanVarianceDescr(NodeWithExplicitlySetFields):
 
 
 PreprocessingDescr = Annotated[
-    Union[
-        BinarizeDescr,
-        ClipDescr,
-        ScaleLinearDescr,
-        SigmoidDescr,
-        ZeroMeanUnitVarianceDescr,
-        ScaleRangeDescr,
-    ],
+    BinarizeDescr
+    | ClipDescr
+    | ScaleLinearDescr
+    | SigmoidDescr
+    | ZeroMeanUnitVarianceDescr
+    | ScaleRangeDescr,
     Discriminator("name"),
 ]
 PostprocessingDescr = Annotated[
-    Union[
-        BinarizeDescr,
-        ClipDescr,
-        ScaleLinearDescr,
-        SigmoidDescr,
-        ZeroMeanUnitVarianceDescr,
-        ScaleRangeDescr,
-        ScaleMeanVarianceDescr,
-    ],
+    BinarizeDescr
+    | ClipDescr
+    | ScaleLinearDescr
+    | SigmoidDescr
+    | ZeroMeanUnitVarianceDescr
+    | ScaleRangeDescr
+    | ScaleMeanVarianceDescr,
     Discriminator("name"),
 ]
 

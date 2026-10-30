@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from typing import Any, ClassVar
+from typing import Annotated, Any, ClassVar
 
 import annotated_types
 import pytest
 from pydantic import RootModel, ValidationError
-from typing_extensions import Annotated
 
 
 def test_valid_validated_string():

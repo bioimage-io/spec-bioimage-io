@@ -3,13 +3,12 @@ from __future__ import annotations
 import dataclasses
 import re
 import sys
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from functools import wraps
 from inspect import isfunction, signature
 from typing import (
     Any,
-    Callable,
     TypeVar,
 )
 

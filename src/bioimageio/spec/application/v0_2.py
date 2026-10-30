@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, Literal
+from typing import TYPE_CHECKING, Annotated, ClassVar, Literal
 
 from pydantic import Field
-from typing_extensions import Annotated
 
 from .._internal.common_nodes import Node
 from .._internal.io_packaging import FileSource_package

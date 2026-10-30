@@ -6,14 +6,13 @@ import zipfile
 from contextlib import nullcontext
 from functools import partial
 from pathlib import Path
-from typing import Any, ClassVar, Protocol, runtime_checkable
+from typing import Annotated, Any, ClassVar, Protocol, runtime_checkable
 from zipfile import ZipFile
 
 import pydantic
 import zipp  # pyright: ignore[reportMissingTypeStubs]
 from annotated_types import Predicate
 from pydantic import RootModel, StringConstraints
-from typing_extensions import Annotated
 
 from .root_url import RootHttpUrl
 from .validated_string import ValidatedString

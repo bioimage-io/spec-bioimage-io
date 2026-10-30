@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import string
+from collections.abc import Callable, Mapping, Sequence
 from typing import (
     TYPE_CHECKING,
+    Annotated,
     Any,
-    Callable,
     ClassVar,
-    List,
     Literal,
-    Mapping,
-    Sequence,
     TypeVar,
     cast,
 )
@@ -25,7 +23,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Annotated, Self, assert_never
+from typing_extensions import Self, assert_never
 
 from .._internal.common_nodes import Node, ResourceDescrBase
 from .._internal.constants import TAG_CATEGORIES
@@ -95,7 +93,7 @@ _FileSource_cover = Annotated[
 
 class AttachmentsDescr(Node, extra="allow"):
     files: list[FileSource_package] = Field(
-        default_factory=cast(Callable[[], List[FileSource]], list)
+        default_factory=cast(Callable[[], list[FileSource]], list)
     )
     """File attachments"""
 
@@ -217,7 +215,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     description: str
 
     covers: list[_FileSource_cover] = Field(
-        default_factory=cast(Callable[[], List[_FileSource_cover]], list),
+        default_factory=cast(Callable[[], list[_FileSource_cover]], list),
         examples=[["cover.png"]],
         description=(
             "Cover images. Please use an image smaller than 500KB and an aspect"

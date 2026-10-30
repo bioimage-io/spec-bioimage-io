@@ -4,10 +4,9 @@
 Implementations of all released minor versions are available in submodules.
 """
 
-from typing import Union
+from typing import Annotated, TypeAlias, Union
 
 from pydantic import Discriminator, Field
-from typing_extensions import Annotated, TypeAlias
 
 from . import v0_2, v0_3
 
@@ -16,10 +15,7 @@ ApplicationDescr_v0_2 = v0_2.ApplicationDescr
 ApplicationDescr_v0_3 = v0_3.ApplicationDescr
 
 AnyApplicationDescr: TypeAlias = Annotated[
-    Union[
-        Annotated[ApplicationDescr_v0_2, Field(title="application 0.2")],
-        Annotated[ApplicationDescr_v0_3, Field(title="application 0.3")],
-    ],
+    Annotated[ApplicationDescr_v0_2, Field(title="application 0.2")] | Annotated[ApplicationDescr_v0_3, Field(title="application 0.3")],
     Discriminator("format_version"),
     Field(title="application"),
 ]

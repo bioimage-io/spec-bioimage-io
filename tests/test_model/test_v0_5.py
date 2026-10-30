@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from collections.abc import Callable, Mapping
 from copy import deepcopy
 from datetime import datetime, timezone
 from types import MappingProxyType
-from typing import Any, Callable, Mapping
+from typing import Any
 
 import pytest
 from pydantic import RootModel, ValidationError
