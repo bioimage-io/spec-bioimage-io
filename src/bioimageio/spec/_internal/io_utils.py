@@ -4,11 +4,12 @@ import collections.abc
 import io
 import shutil
 import zipfile
+from collections.abc import Callable, Mapping
 from contextlib import nullcontext
 from difflib import get_close_matches
 from pathlib import Path
 from types import MappingProxyType
-from typing import IO, Any, Callable, Dict, Mapping, cast
+from typing import IO, Any, cast
 from zipfile import ZipFile
 
 import httpx
@@ -285,7 +286,7 @@ def open_bioimageio_yaml(
     )
 
 
-_IdMap = RootModel[Dict[str, LightHttpFileDescr]]
+_IdMap = RootModel[dict[str, LightHttpFileDescr]]
 
 
 def _get_id_map_impl(url: str) -> dict[str, LightHttpFileDescr]:

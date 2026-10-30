@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, Literal, Union
-
-from typing_extensions import Annotated
+from typing import TYPE_CHECKING, Annotated, ClassVar, Literal, Union
 
 from .._internal.common_nodes import Node
 from .._internal.io import WithSuffix

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import warnings
 from pathlib import Path
+from typing import Annotated
 
 from pydantic import (
     AnyUrl,
@@ -10,7 +11,6 @@ from pydantic import (
     WrapSerializer,
 )
 from typing_extensions import (
-    Annotated,
     assert_never,
 )
 

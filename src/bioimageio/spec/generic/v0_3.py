@@ -1,22 +1,21 @@
 from __future__ import annotations
 
 import string
+from collections.abc import Callable, Sequence
 from typing import (
     TYPE_CHECKING,
+    Annotated,
     Any,
-    Callable,
     ClassVar,
-    List,
     Literal,
-    Sequence,
     TypeVar,
     cast,
+    get_args,
 )
 
 import annotated_types
 from annotated_types import Len, LowerCase, MaxLen, MinLen
 from pydantic import Field, RootModel, ValidationInfo, field_validator, model_validator
-from typing_extensions import Annotated, get_args
 
 from .._internal.common_nodes import Node, ResourceDescrBase
 from .._internal.constants import TAG_CATEGORIES
@@ -286,7 +285,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     """A string containing a brief description."""
 
     covers: list[_FileDescr_cover] = Field(
-        default_factory=cast(Callable[[], List[_FileDescr_cover]], list),
+        default_factory=cast(Callable[[], list[_FileDescr_cover]], list),
         description=(
             "Cover images. Please use an image smaller than 500KB and an aspect"
             " ratio width to height of 2:1 or 1:1.\nThe supported image formats"
@@ -314,17 +313,17 @@ class GenericModelDescrBase(ResourceDescrBase):
     """UTF-8 emoji for display alongside the `id`."""
 
     authors: FAIR[list[Author]] = Field(
-        default_factory=cast(Callable[[], List[Author]], list)
+        default_factory=cast(Callable[[], list[Author]], list)
     )
     """The authors are the creators of this resource description and the primary points of contact."""
 
     attachments: list[FileDescr_package] = Field(
-        default_factory=cast(Callable[[], List[FileDescr]], list)
+        default_factory=cast(Callable[[], list[FileDescr]], list)
     )
     """file attachments"""
 
     cite: FAIR[list[CiteEntry]] = Field(
-        default_factory=cast(Callable[[], List[CiteEntry]], list)
+        default_factory=cast(Callable[[], list[CiteEntry]], list)
     )
     """citations"""
 
@@ -389,7 +388,7 @@ class GenericModelDescrBase(ResourceDescrBase):
     """The person who uploaded the model (e.g. to bioimage.io)"""
 
     maintainers: list[Maintainer] = Field(
-        default_factory=cast(Callable[[], List[Maintainer]], list)
+        default_factory=cast(Callable[[], list[Maintainer]], list)
     )
     """Maintainers of this resource.
     If not specified, `authors` are maintainers and at least some of them has to specify their `github_user` name"""

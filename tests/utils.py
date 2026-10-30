@@ -3,17 +3,15 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Collection, Mapping, Sequence
 from contextlib import nullcontext
 from copy import deepcopy
 from io import StringIO
 from pathlib import Path
 from typing import (
     Any,
-    Collection,
     ContextManager,
-    Mapping,
     Protocol,
-    Sequence,
 )
 from zipfile import ZipFile
 

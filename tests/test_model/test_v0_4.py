@@ -553,3 +553,71 @@ def test_get_output_tensor_sizes_with_scaling():
     assert model.get_output_tensor_sizes(
         {TensorName("input"): {"b": 2, "c": 1, "y": 10, "x": 10}}
     ) == {TensorName("output"): {"b": 2, "c": 1, "y": 40, "x": 40}}
+
+
+@pytest.fixture(scope="module")
+def two_input_model() -> ModelDescr:
+    from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
+
+    root = UNET2D_ROOT.parent / "upsample_test_model"
+    data = dict(open_bioimageio_yaml(root / "v0_4.bioimageio.yaml").content)
+    ipt0 = data["inputs"][0]
+    out0 = data["outputs"][0]
+    ipt1 = {**ipt0, "name": "input1"}
+    out1 = {
+        **out0,
+        "name": "output1",
+        "shape": {**out0["shape"], "reference_tensor": "input1"},
+    }
+    data["inputs"] = [ipt0, ipt1]
+    data["outputs"] = [out0, out1]
+    data["test_inputs"] = ["test_input.npy"] * 2
+    data["test_outputs"] = ["test_output.npy"] * 2
+    with ValidationContext(root=root, perform_io_checks=False):
+        model = ModelDescr.model_validate(data)
+    assert isinstance(model, ModelDescr)
+    return model
+
+
+def _sizes_v0_4(extra: dict[str, int] | None = None):
+    return {
+        TensorName(t): {"b": 1, "c": 1, "y": 10, "x": 10, **(extra or {})}
+        for t in ("input", "input1")
+    }
+
+
+def test_get_output_tensor_sizes_two_inputs(two_input_model: ModelDescr):
+    assert two_input_model.get_output_tensor_sizes(_sizes_v0_4()) == {
+        TensorName(t): {"b": 1, "c": 1, "y": 40, "x": 40} for t in ("output", "output1")
+    }
+
+
+def test_get_output_tensor_sizes_extra_axis_passthrough(two_input_model: ModelDescr):
+    assert two_input_model.get_output_tensor_sizes(_sizes_v0_4({"z": 3})) == {
+        TensorName(t): {"b": 1, "c": 1, "y": 40, "x": 40, "z": 3}
+        for t in ("output", "output1")
+    }
+
+
+def test_get_output_tensor_sizes_batch_size_mismatch(two_input_model: ModelDescr):
+    sizes = _sizes_v0_4()
+    sizes[TensorName("input")]["b"] = 2
+    sizes[TensorName("input1")]["b"] = 3
+    with pytest.raises(ValueError, match="batch size mismatch"):
+        two_input_model.get_output_tensor_sizes(sizes)
+
+
+def test_get_output_tensor_sizes_inconsistent_extra_axis_sizes(
+    two_input_model: ModelDescr,
+):
+    sizes = _sizes_v0_4({"z": 2})
+    sizes[TensorName("input1")]["z"] = 3
+    with pytest.raises(ValueError, match="inconsistent sizes across input tensors"):
+        two_input_model.get_output_tensor_sizes(sizes)
+
+
+def test_get_output_tensor_sizes_mismatching_extra_axes(two_input_model: ModelDescr):
+    sizes = _sizes_v0_4()
+    sizes[TensorName("input")]["z"] = 2
+    with pytest.raises(ValueError, match="same set of additonal axes"):
+        two_input_model.get_output_tensor_sizes(sizes)

@@ -2,7 +2,7 @@
 name = "bioimageio.spec"
 description = "Parser and validator library for bioimage.io specifications"
 authors = [{ name = "Fynn Beuttenmüller", email = "thefynnbe@gmail.com" }]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 readme = "README.md"
 dependencies = [
     "annotated-types>=0.5.0,<1",
@@ -26,13 +26,11 @@ dependencies = [
     "tqdm",
     "typing-extensions",
     "zipp",
-    'eval-type-backport;python_version<"3.10"', # TODO: remove when py3.10 is lowest supported version
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -104,7 +102,7 @@ exclude = [
 ]
 include = ["src", "tests"]
 pythonPlatform = "All"
-pythonVersion = "3.8"
+pythonVersion = "3.10"
 reportDuplicateImport = "error"
 reportImplicitStringConcatenation = "error"
 reportImportCycles = true
@@ -138,7 +136,7 @@ testpaths = ["example", "src", "tests"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py38"
+target-version = "py310"
 exclude = [
     "bioimageio_cache",
     "scripts/pdoc/original.py",

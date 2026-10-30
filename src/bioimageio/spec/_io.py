@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Callable, Literal, TextIO, cast, overload
+from collections.abc import Callable
+from typing import Literal, TextIO, cast, overload
 from zipfile import ZipFile
 
 from loguru import logger

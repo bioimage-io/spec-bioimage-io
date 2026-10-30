@@ -3,14 +3,13 @@ from __future__ import annotations
 import os
 from functools import cached_property
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 import platformdirs
 from genericache import DiskCache
 from genericache.digest import UrlDigest
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing_extensions import Annotated
 
 from .root_url import RootHttpUrl
 

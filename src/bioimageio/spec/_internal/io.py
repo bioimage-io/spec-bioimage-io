@@ -6,6 +6,7 @@ import sys
 import warnings
 import zipfile
 from abc import abstractmethod
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from contextlib import nullcontext
 from copy import deepcopy
 from dataclasses import dataclass, field
@@ -17,19 +18,14 @@ from pathlib import Path, PurePath, PurePosixPath
 from tempfile import mkdtemp
 from typing import (
     TYPE_CHECKING,
+    Annotated,
     Any,
-    Callable,
-    Dict,
     Generic,
-    Iterable,
-    List,
     Literal,
-    Mapping,
-    Sequence,
-    Tuple,
+    TypeAlias,
     TypedDict,
+    TypeGuard,
     TypeVar,
-    Union,
     overload,
 )
 from urllib.parse import urlparse, urlsplit, urlunsplit
@@ -53,12 +49,9 @@ from pydantic import (
 from pydantic_core import core_schema
 from tqdm import tqdm
 from typing_extensions import (
-    Annotated,
     LiteralString,
     NotRequired,
     Self,
-    TypeAlias,
-    TypeGuard,
     Unpack,
     assert_never,
 )
@@ -83,13 +76,12 @@ from .progress import ProgressbarLike
 from .root_url import FtpUrl, RootHttpUrl
 from .type_guards import is_dict, is_list, is_mapping, is_sequence
 from .url import HttpUrl
-from .utils import SLOTS
 from .validation_context import get_validation_context
 from .version_type import Version
 
 AbsolutePathT = TypeVar(
     "AbsolutePathT",
-    bound=Union[HttpUrl, AbsoluteDirectory, AbsoluteFilePath, ZipPath],
+    bound=HttpUrl | AbsoluteDirectory | AbsoluteFilePath | ZipPath,
 )
 
 
@@ -207,7 +199,7 @@ class RelativePathBase(RootModel[PurePath], Generic[AbsolutePathT], frozen=True)
 
 
 class RelativeFilePath(
-    RelativePathBase[Union[AbsoluteFilePath, HttpUrl, ZipPath]], frozen=True
+    RelativePathBase[AbsoluteFilePath | HttpUrl | ZipPath], frozen=True
 ):
     """A path relative to the `rdf.yaml` file (also if the RDF source is a URL)."""
 
@@ -238,7 +230,7 @@ class RelativeFilePath(
 
 
 class RelativeDirectory(
-    RelativePathBase[Union[AbsoluteDirectory, HttpUrl, ZipPath]], frozen=True
+    RelativePathBase[AbsoluteDirectory | HttpUrl | ZipPath], frozen=True
 ):
     def get_absolute(
         self, root: RootHttpUrl | Path | pydantic.AnyUrl | ZipFile
@@ -258,7 +250,7 @@ class RelativeDirectory(
         return RelativeDirectory(self.root.parent)
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class WithSuffix:
     suffix: LiteralString | tuple[LiteralString, ...]
     case_sensitive: bool
@@ -293,7 +285,7 @@ RelativeZarrPath = Annotated[
 ]
 
 ZarrUrl: TypeAlias = Annotated[
-    Union[RootHttpUrl, FtpUrl],
+    RootHttpUrl | FtpUrl,
     pydantic.Field(title="ZarrUrl"),
     WithSuffix(".zarr", case_sensitive=True, allow_any_parent_suffix=True),
 ]
@@ -301,11 +293,11 @@ ZarrUrl: TypeAlias = Annotated[
 
 
 FileSource: TypeAlias = Annotated[
-    Union[HttpUrl, RelativeFilePath, FilePath],
+    HttpUrl | RelativeFilePath | FilePath,
     Field(title="FileSource", union_mode="left_to_right"),
 ]
 ZarrSource: TypeAlias = Annotated[
-    Union[ZarrUrl, RelativeZarrPath, ZarrPath],
+    ZarrUrl | RelativeZarrPath | ZarrPath,
     Field(title="ZarrSource", union_mode="left_to_right"),
 ]
 
@@ -385,13 +377,13 @@ class FileDescr(Node):
         return self.source.suffix
 
 
-PermissiveFileSource: TypeAlias = Union[
-    FileSource, str, pydantic.HttpUrl, FileDescr, ZipPath
-]
+PermissiveFileSource: TypeAlias = (
+    FileSource | str | pydantic.HttpUrl | FileDescr | ZipPath
+)
 
 
 path_or_url_adapter: TypeAdapter[FilePath | DirectoryPath | HttpUrl] = TypeAdapter(
-    Union[FilePath, DirectoryPath, HttpUrl]
+    FilePath | DirectoryPath | HttpUrl
 )
 
 
@@ -472,72 +464,67 @@ def ensure_is_valid_bioimageio_yaml_name(file_name: FileName) -> FileName:
 
 
 # types as loaded from YAML 1.2 (with ruyaml)
-YamlLeafValue: TypeAlias = Union[
-    bool, _date, _datetime, int, float, str, None
-]  # note: order relevant for deserializing
-YamlKey: TypeAlias = Union[  # YAML Arrays are cast to tuples if used as key in mappings
-    YamlLeafValue, Tuple[YamlLeafValue, ...]  # (nesting is not allowed though)
-]
+YamlLeafValue: TypeAlias = (
+    bool | _date | _datetime | int | float | str | None
+)  # note: order relevant for deserializing
+# YAML Arrays are cast to tuples if used as key in mappings, nesting is not allowed though
+YamlKey: TypeAlias = YamlLeafValue | tuple[YamlLeafValue, ...]
 if TYPE_CHECKING:
-    YamlValue: TypeAlias = Union[
-        YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]
-    ]
-    YamlValueView: TypeAlias = Union[
-        YamlLeafValue, Sequence["YamlValueView"], Mapping[YamlKey, "YamlValueView"]
-    ]
+    YamlValue: TypeAlias = (
+        YamlLeafValue | list["YamlValue"] | dict[YamlKey, "YamlValue"]
+    )
+    YamlValueView: TypeAlias = (
+        YamlLeafValue | Sequence["YamlValueView"] | Mapping[YamlKey, "YamlValueView"]
+    )
 else:
     # for pydantic validation we need to use `TypeAliasType`,
     # see https://docs.pydantic.dev/latest/concepts/types/#named-recursive-types
     # however this results in a partially unknown type with the current pyright 1.1.388
     YamlValue: TypeAlias = _TypeAliasType(
         "YamlValue",
-        Union[YamlLeafValue, List["YamlValue"], Dict[YamlKey, "YamlValue"]],
+        YamlLeafValue | list["YamlValue"] | dict[YamlKey, "YamlValue"],
     )
     YamlValueView: TypeAlias = _TypeAliasType(
         "YamlValueView",
-        Union[
-            YamlLeafValue,
-            Sequence["YamlValueView"],
-            Mapping[YamlKey, "YamlValueView"],
-        ],
+        YamlLeafValue | Sequence["YamlValueView"] | Mapping[YamlKey, "YamlValueView"],
     )
 
 
-BioimageioYamlContent = Dict[str, YamlValue]
+BioimageioYamlContent = dict[str, YamlValue]
 BioimageioYamlContentView = Mapping[str, YamlValueView]
 
-IncompleteDescrLeaf = Union[Node, YamlValue, PermissiveFileSource, Version]
+IncompleteDescrLeaf = Node | YamlValue | PermissiveFileSource | Version
 """Leaf value of a partial description"""
 
-IncompleteDescrInner = Union[
-    IncompleteDescrLeaf,
-    List["IncompleteDescrInner"],
-    Dict[YamlKey, "IncompleteDescrInner"],
-]
+IncompleteDescrInner = (
+    IncompleteDescrLeaf
+    | list["IncompleteDescrInner"]
+    | dict[YamlKey, "IncompleteDescrInner"]
+)
+
 """An inner node of an incomplete resource description --- YAML values and description nodes mixed."""
 
-IncompleteDescr = Dict[str, IncompleteDescrInner]
+IncompleteDescr = dict[str, IncompleteDescrInner]
 """An incomplete resource description --- YAML values and description nodes mixed."""
 
 
-IncompleteDescrLeafView = Union[Node, YamlValueView, PermissiveFileSource, Version]
+IncompleteDescrLeafView = Node | YamlValueView | PermissiveFileSource | Version
 """Non-editable leaf value of an incomplete description"""
 
-IncompleteDescrInnerView = Union[
-    IncompleteDescrLeafView,
-    Sequence["IncompleteDescrInnerView"],
-    Mapping[YamlKey, "IncompleteDescrInnerView"],
-    # Mapping[str, YamlValueView],  # not sure why this is explicit Mapping is needed
-]
+IncompleteDescrInnerView = (
+    IncompleteDescrLeafView
+    | Sequence["IncompleteDescrInnerView"]
+    | Mapping[YamlKey, "IncompleteDescrInnerView"]
+)
 """A inner node of a non-editable incomplete resource description --- YAML value views and Node instances mixed."""
 
 IncompleteDescrView = Mapping[str, IncompleteDescrInnerView]
 """A non-editable incomplete resource description --- YAML mappings and Node instances mixed."""
 
 
-BioimageioYamlSource: TypeAlias = Union[
-    PermissiveFileSource, ZipFile, BioimageioYamlContent, BioimageioYamlContentView
-]
+BioimageioYamlSource: TypeAlias = (
+    PermissiveFileSource | ZipFile | BioimageioYamlContent | BioimageioYamlContentView
+)
 
 
 @overload
@@ -633,7 +620,7 @@ def is_yaml_value_read_only(value: Any) -> TypeGuard[YamlValueView]:
     )
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class OpenedBioimageioYaml:
     content: BioimageioYamlContent = field(repr=False)
     original_root: AbsoluteDirectory | RootHttpUrl | ZipFile
@@ -642,14 +629,14 @@ class OpenedBioimageioYaml:
     unparsed_content: str = field(repr=False)
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class LocalFile:
     path: FilePath
     original_root: AbsoluteDirectory | RootHttpUrl | ZipFile
     original_file_name: FileName
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class FileInZip:
     path: ZipPath
     original_root: RootHttpUrl | ZipFile
@@ -1035,7 +1022,7 @@ def _extract_file_descrs_impl(
             _extract_file_descrs_impl(v, collected)
 
 
-F = TypeVar("F", bound=Union[ZarrSource, FileSource, FileDescr])
+F = TypeVar("F", bound=ZarrSource | FileSource | FileDescr)
 
 
 def validate_suffix(

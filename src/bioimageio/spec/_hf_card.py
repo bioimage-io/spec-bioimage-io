@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import collections.abc
 import warnings
+from collections.abc import Sequence
 from functools import partial
 from pathlib import PurePosixPath
-from typing import Any, Sequence
+from typing import Any
 
 import numpy as np
 from imageio.v3 import imwrite  # pyright: ignore[reportUnknownVariableType]

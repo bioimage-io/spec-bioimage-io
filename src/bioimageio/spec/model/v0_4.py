@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from typing import (
     TYPE_CHECKING,
     Annotated,
     Any,
-    Callable,
     ClassVar,
     Literal,
-    Union,
     cast,
+    get_args,
 )
 
 import numpy as np
@@ -30,7 +29,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
-from typing_extensions import Self, assert_never, get_args
+from typing_extensions import Self, assert_never
 
 from .._internal.common_nodes import (
     KwargsNode,
@@ -187,7 +186,7 @@ class CallableFromFile(ValidatedStringWithInnerNode[CallableFromFileNode]):
 
 
 CustomCallable = Annotated[
-    Union[CallableFromFile, CallableFromDepencency], Field(union_mode="left_to_right")
+    CallableFromFile | CallableFromDepencency, Field(union_mode="left_to_right")
 ]
 
 
@@ -875,26 +874,22 @@ class ScaleMeanVarianceDescr(NodeWithExplicitlySetFields):
 
 
 PreprocessingDescr = Annotated[
-    Union[
-        BinarizeDescr,
-        ClipDescr,
-        ScaleLinearDescr,
-        SigmoidDescr,
-        ZeroMeanUnitVarianceDescr,
-        ScaleRangeDescr,
-    ],
+    BinarizeDescr
+    | ClipDescr
+    | ScaleLinearDescr
+    | SigmoidDescr
+    | ZeroMeanUnitVarianceDescr
+    | ScaleRangeDescr,
     Discriminator("name"),
 ]
 PostprocessingDescr = Annotated[
-    Union[
-        BinarizeDescr,
-        ClipDescr,
-        ScaleLinearDescr,
-        SigmoidDescr,
-        ZeroMeanUnitVarianceDescr,
-        ScaleRangeDescr,
-        ScaleMeanVarianceDescr,
-    ],
+    BinarizeDescr
+    | ClipDescr
+    | ScaleLinearDescr
+    | SigmoidDescr
+    | ZeroMeanUnitVarianceDescr
+    | ScaleRangeDescr
+    | ScaleMeanVarianceDescr,
     Discriminator("name"),
 ]
 
@@ -1363,11 +1358,39 @@ class ModelDescr(GenericModelDescrBase):
     ) -> dict[TensorName, dict[AxesStr, int]]:
         """backport of model.v0_5.ModelDescr.get_output_tensor_sizes()"""
         batch_size = self.get_batch_size(input_sizes)
+        input_descrs = {t.name: t for t in self.inputs}
+        stackable_input_axes: dict[AxesStr, int] = {}
+        stackable_input_axes_per_input: dict[TensorName, set[AxesStr]] = {}
+        for m, in_sizes in input_sizes.items():
+            if m not in input_descrs:
+                logger.warning("Ignoring unexpected input tensor '{}'.", m)
+                continue
+
+            stackable_input_axes_per_input[m] = set()
+            for a, s in in_sizes.items():
+                if a not in input_descrs[m].axes:
+                    stackable_input_axes_per_input[m].add(a)
+                    if a not in stackable_input_axes:
+                        stackable_input_axes[a] = s
+                    elif stackable_input_axes[a] != s:
+                        raise ValueError(
+                            f"Input axis '{a}' has inconsistent sizes across input tensors: {stackable_input_axes[a]} vs {s}"
+                        )
+
+        if not all(
+            stackable_per_input == set(stackable_input_axes)
+            for stackable_per_input in stackable_input_axes_per_input.values()
+        ):
+            raise ValueError(
+                "Not all input tensors have the same set of additonal axes that could otherwise be treated as a stacked batch dimension. "
+                + f"Extra axes per input: {stackable_input_axes_per_input}"
+            )
+
         input_sizes_refs = {
             ipt.name: {
                 ax: (ax, input_sizes[ipt.name][ax])
                 for ax in ipt.axes
-                if ax != "b" and "b" in input_sizes[ipt.name]
+                if ax != "b" and ax in input_sizes[ipt.name]
             }
             for ipt in self.inputs
             if ipt.name in input_sizes
@@ -1408,6 +1431,10 @@ class ModelDescr(GenericModelDescrBase):
                     assert_never(out.shape)
 
                 output_sizes[out.name][ax] = s
+                if ax == "b":
+                    # insert extra input dimensions to be passed through like the batch axis
+                    for a, s in stackable_input_axes.items():
+                        output_sizes[out.name][a] = s
 
         return output_sizes
 

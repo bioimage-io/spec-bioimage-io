@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from contextvars import ContextVar, Token
 from copy import copy
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Dict, List, Literal, Optional, cast
+from typing import Literal, cast
 from urllib.parse import urlsplit, urlunsplit
 from zipfile import ZipFile
 
@@ -16,11 +17,10 @@ from ._settings import settings
 from .io_basics import FileName, Sha256
 from .progress import ProgressbarLike
 from .root_url import RootHttpUrl
-from .utils import SLOTS
 from .warning_levels import WarningLevel
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class ValidationContextBase:
     file_name: FileName | None = None
     """File name of the bioimageio YAML file."""
@@ -36,7 +36,7 @@ class ValidationContextBase:
 
     known_files: dict[str, Sha256 | None] = field(
         default_factory=cast(  # TODO: (py>3.8) use dict[str, Optional[Sha256]]
-            Callable[[], Dict[str, Optional[Sha256]]], dict
+            Callable[[], dict[str, Sha256 | None]], dict
         )
     )
     """Allows to bypass download and hashing of referenced files
@@ -82,7 +82,7 @@ class ValidationContext(ValidationContextBase):
     _context_tokens: list[Token[ValidationContext | None]] = field(
         init=False,
         default_factory=cast(
-            "Callable[[], List[Token[ValidationContext | None]]]", list
+            "Callable[[], list[Token[ValidationContext | None]]]", list
         ),
     )
 
@@ -158,7 +158,10 @@ class ValidationContext(ValidationContextBase):
         raise_errors: bool | None = None,
         update_hashes: bool | None = None,
         original_source_name: str | None = None,
-        progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
+        progressbar: bool
+        | ProgressbarLike
+        | Callable[[], ProgressbarLike]
+        | None = None,
     ) -> Self:
         if known_files is None and root is not None and self.root != root:
             # reset known files if root changes, but no new known_files are given
@@ -186,9 +189,7 @@ class ValidationContext(ValidationContextBase):
                 if original_source_name is None
                 else original_source_name
             ),
-            progressbar=(
-                self.progressbar if progressbar is None else progressbar
-            ),
+            progressbar=(self.progressbar if progressbar is None else progressbar),
         )
 
     @property

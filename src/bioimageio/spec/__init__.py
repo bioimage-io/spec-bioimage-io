@@ -11,8 +11,9 @@ Note:
 """
 
 # ruff: disable[E402]
+from typing import TypeAlias
+
 from loguru import logger
-from typing_extensions import TypeAlias
 
 logger.disable("bioimageio.spec")
 
