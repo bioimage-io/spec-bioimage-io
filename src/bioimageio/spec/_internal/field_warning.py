@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 import inspect
-from typing import TYPE_CHECKING, Any, Literal, Union
+from typing import TYPE_CHECKING, Any, Literal
 
 import pydantic.functional_validators
 from annotated_types import BaseMetadata, GroupedMetadata
@@ -16,7 +16,6 @@ from pydantic_core.core_schema import (
 )
 from typing_extensions import LiteralString, TypeForm
 
-from .utils import SLOTS
 from .validation_context import get_validation_context
 from .warning_levels import WARNING, WarningSeverity
 
@@ -24,9 +23,9 @@ if TYPE_CHECKING:
     from pydantic.functional_validators import _V2Validator  # type: ignore
 
 
-ValidatorFunction = Union[NoInfoValidatorFunction, WithInfoValidatorFunction]
+ValidatorFunction = NoInfoValidatorFunction | WithInfoValidatorFunction
 
-AnnotationMetaData = Union[BaseMetadata, GroupedMetadata]
+AnnotationMetaData = BaseMetadata | GroupedMetadata
 
 
 def warn(
@@ -35,7 +34,7 @@ def warn(
     severity: WarningSeverity = WARNING,
 ):
     """treat a type validation as a warning"""
-    validator = TypeAdapter(typ)
+    validator: TypeAdapter[Any] = TypeAdapter(typ)
 
     return AfterWarner(
         validator.validate_python, severity=severity, msg=msg, context={"typ": typ}
@@ -112,7 +111,7 @@ def as_warning(
     return wrapper
 
 
-@dataclasses.dataclass(frozen=True, **SLOTS)
+@dataclasses.dataclass(frozen=True, slots=True)
 class AfterWarner(pydantic.functional_validators.AfterValidator):
     """Like AfterValidator, but wraps validation `func` `as_warning`"""
 
@@ -134,7 +133,7 @@ class AfterWarner(pydantic.functional_validators.AfterValidator):
         )
 
 
-@dataclasses.dataclass(frozen=True, **SLOTS)
+@dataclasses.dataclass(frozen=True, slots=True)
 class BeforeWarner(pydantic.functional_validators.BeforeValidator):
     """Like BeforeValidator, but wraps validation `func` `as_warning`"""
 

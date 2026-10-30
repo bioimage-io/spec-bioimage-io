@@ -4,7 +4,7 @@
 Implementations of all released minor versions are available in submodules.
 """
 
-from typing import Annotated, TypeAlias, Union
+from typing import Annotated, TypeAlias
 
 from pydantic import Discriminator, Field
 
@@ -15,7 +15,8 @@ NotebookDescr_v0_2 = v0_2.NotebookDescr
 NotebookDescr_v0_3 = v0_3.NotebookDescr
 
 AnyNotebookDescr: TypeAlias = Annotated[
-    Annotated[NotebookDescr_v0_2, Field(title="notebook 0.2")] | Annotated[NotebookDescr_v0_3, Field(title="notebook 0.3")],
+    Annotated[NotebookDescr_v0_2, Field(title="notebook 0.2")]
+    | Annotated[NotebookDescr_v0_3, Field(title="notebook 0.3")],
     Discriminator("format_version"),
     Field(title="notebook"),
 ]

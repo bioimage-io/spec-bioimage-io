@@ -4,7 +4,7 @@
 Implementations of all released minor versions are available in submodules.
 """
 
-from typing import Annotated, TypeAlias, Union
+from typing import Annotated, TypeAlias
 
 from pydantic import Discriminator, Field
 
@@ -15,7 +15,8 @@ DatasetDescr_v0_2 = v0_2.DatasetDescr
 DatasetDescr_v0_3 = v0_3.DatasetDescr
 
 AnyDatasetDescr: TypeAlias = Annotated[
-    Annotated[DatasetDescr_v0_2, Field(title="dataset 0.2")] | Annotated[DatasetDescr_v0_3, Field(title="dataset 0.3")],
+    Annotated[DatasetDescr_v0_2, Field(title="dataset 0.2")]
+    | Annotated[DatasetDescr_v0_3, Field(title="dataset 0.3")],
     Discriminator("format_version"),
     Field(title="dataset"),
 ]

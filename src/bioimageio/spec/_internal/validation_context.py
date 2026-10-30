@@ -17,11 +17,10 @@ from ._settings import settings
 from .io_basics import FileName, Sha256
 from .progress import ProgressbarLike
 from .root_url import RootHttpUrl
-from .utils import SLOTS
 from .warning_levels import WarningLevel
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class ValidationContextBase:
     file_name: FileName | None = None
     """File name of the bioimageio YAML file."""
@@ -159,7 +158,10 @@ class ValidationContext(ValidationContextBase):
         raise_errors: bool | None = None,
         update_hashes: bool | None = None,
         original_source_name: str | None = None,
-        progressbar: bool | ProgressbarLike | Callable[[], ProgressbarLike] | None = None,
+        progressbar: bool
+        | ProgressbarLike
+        | Callable[[], ProgressbarLike]
+        | None = None,
     ) -> Self:
         if known_files is None and root is not None and self.root != root:
             # reset known files if root changes, but no new known_files are given
@@ -187,9 +189,7 @@ class ValidationContext(ValidationContextBase):
                 if original_source_name is None
                 else original_source_name
             ),
-            progressbar=(
-                self.progressbar if progressbar is None else progressbar
-            ),
+            progressbar=(self.progressbar if progressbar is None else progressbar),
         )
 
     @property
