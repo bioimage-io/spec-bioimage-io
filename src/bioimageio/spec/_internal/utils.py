@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import dataclasses
 import re
-import sys
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
+from functools import cache as cache
 from functools import wraps
+from importlib.resources import files as files
 from inspect import isfunction, signature
 from typing import (
     Any,
@@ -17,26 +18,8 @@ from exceptiongroup import ExceptionGroup
 from ruyaml import Optional
 from typing_extensions import ParamSpec
 
-if sys.version_info < (3, 10):  # pragma: no cover
-    SLOTS: dict[str, bool] = {}
-else:
-    SLOTS = {"slots": True}
-
-
 K = TypeVar("K")
 V = TypeVar("V")
-
-if sys.version_info < (3, 9):  # pragma: no cover
-    from functools import lru_cache as cache
-    from pathlib import Path
-
-    def files(package_name: str):
-        assert package_name == "bioimageio.spec", package_name
-        return Path(__file__).parent.parent
-
-else:
-    from functools import cache as cache
-    from importlib.resources import files as files
 
 
 def get_format_version_tuple(format_version: Any) -> Optional[tuple[int, int, int]]:

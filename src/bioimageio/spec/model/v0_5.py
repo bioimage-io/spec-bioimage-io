@@ -22,10 +22,8 @@ from typing import (
     Generic,
     Literal,
     NamedTuple,
-    Optional,
     TypeAlias,
     TypeVar,
-    Union,
     cast,
     get_args,
     overload,
@@ -687,9 +685,9 @@ INPUT_AXIS_TYPES = (
 )
 """intended for isinstance comparisons in py<3.10"""
 
-_InputAxisUnion = Union[
-    BatchAxis, ChannelAxis, IndexInputAxis, TimeInputAxis, SpaceInputAxis
-]
+_InputAxisUnion = (
+    BatchAxis | ChannelAxis | IndexInputAxis | TimeInputAxis | SpaceInputAxis
+)
 InputAxis = Annotated[_InputAxisUnion, Discriminator("type")]
 
 
@@ -741,9 +739,13 @@ _SpaceOutputAxisUnion = Annotated[
 ]
 
 
-_OutputAxisUnion = Union[
-    BatchAxis, ChannelAxis, IndexOutputAxis, _TimeOutputAxisUnion, _SpaceOutputAxisUnion
-]
+_OutputAxisUnion = (
+    BatchAxis
+    | ChannelAxis
+    | IndexOutputAxis
+    | _TimeOutputAxisUnion
+    | _SpaceOutputAxisUnion
+)
 OutputAxis = Annotated[_OutputAxisUnion, Discriminator("type")]
 
 OUTPUT_AXIS_TYPES = (
@@ -758,17 +760,17 @@ OUTPUT_AXIS_TYPES = (
 """intended for isinstance comparisons in py<3.10"""
 
 
-AnyAxis = Union[InputAxis, OutputAxis]
+AnyAxis = InputAxis | OutputAxis
 
 ANY_AXIS_TYPES = INPUT_AXIS_TYPES + OUTPUT_AXIS_TYPES
 """intended for isinstance comparisons in py<3.10"""
 
-TVs = Union[
-    NotEmpty[list[int]],
-    NotEmpty[list[float]],
-    NotEmpty[list[bool]],
-    NotEmpty[list[str]],
-]
+TVs = (
+    NotEmpty[list[int]]
+    | NotEmpty[list[float]]
+    | NotEmpty[list[bool]]
+    | NotEmpty[list[str]]
+)
 
 
 NominalOrOrdinalDType = Literal[
@@ -906,7 +908,7 @@ class IntervalOrRatioDataDescr(Node):
         return data
 
 
-TensorDataDescr = Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr]
+TensorDataDescr = NominalOrOrdinalDataDescr | IntervalOrRatioDataDescr
 
 
 class BinarizeKwargs(KwargsNode):
@@ -2303,7 +2305,7 @@ class _InputTensorConv(
         _InputTensorDescr_v0_4,
         InputTensorDescr,
         FileSource,
-        Optional[FileSource],
+        FileSource | None,
         Mapping[_TensorName_v0_4, Mapping[str, int]],
     ]
 ):
@@ -2404,7 +2406,7 @@ class _OutputTensorConv(
         _OutputTensorDescr_v0_4,
         OutputTensorDescr,
         FileSource,
-        Optional[FileSource],
+        FileSource | None,
         Mapping[_TensorName_v0_4, Mapping[str, int]],
     ]
 ):
@@ -2680,7 +2682,7 @@ class _ArchFileConv(
     Converter[
         _CallableFromFile_v0_4,
         ArchitectureFromFileDescr,
-        Optional[Sha256],
+        Sha256 | None,
         dict[str, Any],
     ]
 ):
@@ -2879,15 +2881,15 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     """Version of the PyTorch library used."""
 
 
-SpecificWeightsDescr = Union[
-    KerasHdf5WeightsDescr,
-    KerasV3WeightsDescr,
-    OnnxWeightsDescr,
-    PytorchStateDictWeightsDescr,
-    TensorflowJsWeightsDescr,
-    TensorflowSavedModelBundleWeightsDescr,
-    TorchscriptWeightsDescr,
-]
+SpecificWeightsDescr = (
+    KerasHdf5WeightsDescr
+    | KerasV3WeightsDescr
+    | OnnxWeightsDescr
+    | PytorchStateDictWeightsDescr
+    | TensorflowJsWeightsDescr
+    | TensorflowSavedModelBundleWeightsDescr
+    | TorchscriptWeightsDescr
+)
 
 
 class WeightsDescr(Node):
@@ -4157,7 +4159,7 @@ class ModelDescr(GenericModelDescrBase):
             ipt_descr = input_descrs[m]
             stackable_input_axes_per_input[m] = set()
             for a, s in in_sizes.items():
-                if a not in ipt_descr:
+                if a not in [ax.id for ax in ipt_descr.axes]:
                     stackable_input_axes_per_input[m].add(a)
                     if a not in stackable_input_axes:
                         stackable_input_axes[a] = s

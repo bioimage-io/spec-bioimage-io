@@ -7,10 +7,9 @@ from typing import Literal, cast
 
 from .io import FileDescr
 from .io_basics import FileName
-from .utils import SLOTS
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class PackagingContext:
     _context_tokens: list[Token[PackagingContext | None]] = field(
         init=False,

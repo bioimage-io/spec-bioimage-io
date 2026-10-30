@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated, ClassVar, Literal, Union
+from typing import TYPE_CHECKING, Annotated, ClassVar, Literal
 
 from .._internal.common_nodes import Node
 from .._internal.io import WithSuffix
@@ -27,11 +27,11 @@ class NotebookId(ResourceId):
 
 
 _WithNotebookSuffix = WithSuffix(".ipynb", case_sensitive=True)
-NotebookSource = Union[
-    Annotated[HttpUrl, _WithNotebookSuffix],
-    Annotated[FilePath, _WithNotebookSuffix],
-    Annotated[RelativeFilePath, _WithNotebookSuffix],
-]
+NotebookSource = (
+    Annotated[HttpUrl, _WithNotebookSuffix]
+    | Annotated[FilePath, _WithNotebookSuffix]
+    | Annotated[RelativeFilePath, _WithNotebookSuffix]
+)
 
 
 class NotebookDescr(GenericDescrBase):
