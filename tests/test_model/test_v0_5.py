@@ -818,3 +818,53 @@ def test_validate_tensors_size_reference_float():
 
     with pytest.raises(ValueError, match="invalid for referenced size"):
         validate_tensors({ipt.id: (ipt, array), out.id: (out, array[:, :, :43])})
+
+
+@pytest.fixture(scope="module")
+def multi_tensor_model() -> ModelDescr:
+    model = load_model_description(
+        UNET2D_ROOT.parent / "unet2d_multi_tensor" / "bioimageio.yaml",
+        perform_io_checks=False,
+    )
+    assert isinstance(model, ModelDescr)
+    return model
+
+
+def _sizes(extra: Mapping[str, int] | None = None, batch: int = 1):
+    extra = dict(extra or {})
+    return {
+        TensorId(t): {
+            AxisId("batch"): batch,
+            AxisId("channel"): 1,
+            AxisId("y"): 256,
+            AxisId("x"): 256,
+            **{AxisId(k): v for k, v in extra.items()},
+        }
+        for t in ("input0", "input1")
+    }
+
+
+def test_get_output_tensor_sizes_batch_size_mismatch(multi_tensor_model: ModelDescr):
+    sizes = _sizes()
+    sizes[TensorId("input0")][AxisId("batch")] = 2
+    sizes[TensorId("input1")][AxisId("batch")] = 3
+    with pytest.raises(ValueError, match="batch size mismatch"):
+        multi_tensor_model.get_output_tensor_sizes(sizes)
+
+
+def test_get_output_tensor_sizes_inconsistent_extra_axis_sizes(
+    multi_tensor_model: ModelDescr,
+):
+    sizes = _sizes({"extra": 2})
+    sizes[TensorId("input1")][AxisId("extra")] = 3
+    with pytest.raises(ValueError, match="inconsistent sizes across input tensors"):
+        multi_tensor_model.get_output_tensor_sizes(sizes)
+
+
+def test_get_output_tensor_sizes_mismatching_extra_axes(
+    multi_tensor_model: ModelDescr,
+):
+    sizes = _sizes()
+    sizes[TensorId("input0")][AxisId("extra")] = 2
+    with pytest.raises(ValueError, match="same set of additonal axes"):
+        multi_tensor_model.get_output_tensor_sizes(sizes)

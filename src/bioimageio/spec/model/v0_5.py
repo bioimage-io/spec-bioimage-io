@@ -4145,6 +4145,7 @@ class ModelDescr(GenericModelDescrBase):
         self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]
     ) -> dict[TensorId, dict[AxisId, int]]:
         """Returns the tensor output sizes for given **input_sizes**.
+        Unknown input axes are passed through (assuming they would be stacked to/unstacked from the batch axis).
         Data-dependent output sizes are set to -1.
 
         Note:
@@ -4154,6 +4155,37 @@ class ModelDescr(GenericModelDescrBase):
         """
         # get tensor sizes for valid inputs that can be parameterized by batch size and axis size parameters `n` (for each parameterized axis)
         batch_size = self.get_batch_size(input_sizes)
+        stackable_input_axes: dict[AxisId, int] = {}
+        stackable_input_axes_per_input: dict[TensorId, set[AxisId]] = {}
+        for m, in_sizes in input_sizes.items():
+            input_descrs = {t.id: t for t in self.inputs}
+            if m not in input_descrs:
+                logger.warning(
+                    "Ignoring unexpected input tensor '{}'.",
+                    m,
+                )
+                continue
+            ipt_descr = input_descrs[m]
+            stackable_input_axes_per_input[m] = set()
+            for a, s in in_sizes.items():
+                if a not in ipt_descr:
+                    stackable_input_axes_per_input[m].add(a)
+                    if a not in stackable_input_axes:
+                        stackable_input_axes[a] = s
+                    elif stackable_input_axes[a] != s:
+                        raise ValueError(
+                            f"Input axis '{a}' has inconsistent sizes across input tensors: {stackable_input_axes[a]} vs {s}"
+                        )
+
+        if not all(
+            stackable_per_input == set(stackable_input_axes)
+            for stackable_per_input in stackable_input_axes_per_input.values()
+        ):
+            raise ValueError(
+                "Not all input tensors have the same set of additonal axes that could otherwise be treated as a stacked batch dimension. "
+                + f"Extra axes per input: {stackable_input_axes_per_input}"
+            )
+
         ns = self.get_ns(input_sizes)
         valid_tensor_sizes = self.get_tensor_sizes(ns, batch_size=batch_size)
 
@@ -4200,6 +4232,10 @@ class ModelDescr(GenericModelDescrBase):
                     assert_never(ax.size)
 
                 output_sizes[out.id][ax.id] = s
+                if isinstance(ax, BatchAxis):
+                    # insert extra input dimensions to be passed through like the batch axis
+                    for a, s in stackable_input_axes.items():
+                        output_sizes[out.id][a] = s
 
         if valid_tensor_sizes.outputs != output_sizes:
             if valid_tensor_sizes.inputs != input_sizes:
