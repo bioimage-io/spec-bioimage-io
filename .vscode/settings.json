@@ -24,6 +24,7 @@
         }
     ],
     "python.languageServer": "Pylance",
+    "python.analysis.diagnosticMode": "workspace",
     "editor.formatOnSave": true,
     "[python]": {
         "editor.defaultFormatter": "charliermarsh.ruff",
