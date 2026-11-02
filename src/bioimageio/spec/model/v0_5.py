@@ -54,7 +54,6 @@ from typing_extensions import Self, assert_never
 from .._internal.common_nodes import (
     InvalidDescr,
     KwargsNode,
-    Node,
     NodeWithExplicitlySetFields,
 )
 from .._internal.constants import DTYPE_LIMITS
@@ -75,6 +74,7 @@ from .._internal.io_packaging import (
     package_file_descr_serializer,
 )
 from .._internal.io_utils import load_array, open_bioimageio_yaml
+from .._internal.node import Node
 from .._internal.node_converter import Converter
 from .._internal.type_guards import is_dict, is_sequence
 from .._internal.types import (
