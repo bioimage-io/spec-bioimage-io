@@ -35,4 +35,9 @@
             "source.organizeImports.ruff": "explicit"
         }
     },
+    "[markdown]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll.markdownlint": "explicit"
+        }
+    },
 }

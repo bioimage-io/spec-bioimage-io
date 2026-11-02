@@ -8,21 +8,21 @@
 
 # Specifications for bioimage.io
 
-This repository contains the specifications of the standard format defined by the bioimage.io community for the content (i.e., models, datasets and applications) in the [bioimage.io website](https://bioimage.io).
-Each item in the content is always described using a YAML 1.2 file named `rdf.yaml` or `bioimageio.yaml`.
-This `rdf.yaml` \ `bioimageio.yaml`--- along with the files referenced in it --- can be downloaded from or uploaded to the [bioimage.io website](https://bioimage.io) and may be produced or consumed by bioimage.io-compatible consumers (e.g., image analysis software like ilastik).
+bioimageio.spec contains the specifications of the standard format defined by the bioimage.io community to describe resources (i.e., models, datasets and applications) shared via the [bioimage.io website](https://bioimage.io).
+Each shared resource is described using a YAML 1.2 file named `rdf.yaml` or `bioimageio.yaml`.
+This `rdf.yaml` / `bioimageio.yaml`--- along with the files referenced in it --- can be downloaded from or uploaded to the [bioimage.io website](https://bioimage.io) and may be produced or consumed by bioimage.io-compatible consumers (e.g., image analysis software like ilastik).
 
 [These](https://bioimage-io.github.io/spec-bioimage-io/#format-version-overview) are the latest format specifications that bioimage.io-compatible resources should comply to.
 
-Note that the Python package PyYAML does not support YAML 1.2 .
+Note that the Python package [PyYAML does not support YAML 1.2](https://github.com/yaml/pyyaml/issues/116).
 We therefore use and recommend [ruyaml](https://ruyaml.readthedocs.io/en/latest/).
 For differences see <https://ruamelyaml.readthedocs.io/en/latest/pyyaml>.
 
-Please also note that the best way to check whether your `rdf.yaml` file is fully bioimage.io-compliant, is to call `bioimageio.core.test_description` from the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package.
+Please also note that the best way to check whether your `bioimageio.yaml` file is fully bioimage.io-compliant, is to call `bioimageio.core.test_description` from the [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package.
 The [bioimageio.core](https://github.com/bioimage-io/core-bioimage-io-python) Python package also provides the bioimageio command line interface (CLI) with the `test` command:
 
 ```terminal
-bioimageio test path/to/your/rdf.yaml
+bioimageio test path/to/your/bioimageio.yaml
 ```
 
 ## Documentation
