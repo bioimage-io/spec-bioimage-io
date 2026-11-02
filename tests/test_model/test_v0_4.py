@@ -560,7 +560,9 @@ def two_input_model() -> ModelDescr:
     from bioimageio.spec._internal.io_utils import open_bioimageio_yaml
 
     root = UNET2D_ROOT.parent / "upsample_test_model"
-    data = dict(open_bioimageio_yaml(root / "v0_4.bioimageio.yaml").content)
+    data: dict[str, Any] = dict(
+        open_bioimageio_yaml(root / "v0_4.bioimageio.yaml").content
+    )
     ipt0 = data["inputs"][0]
     out0 = data["outputs"][0]
     ipt1 = {**ipt0, "name": "input1"}
@@ -604,7 +606,7 @@ def test_get_output_tensor_sizes_batch_size_mismatch(two_input_model: ModelDescr
     sizes[TensorName("input")]["b"] = 2
     sizes[TensorName("input1")]["b"] = 3
     with pytest.raises(ValueError, match="batch size mismatch"):
-        two_input_model.get_output_tensor_sizes(sizes)
+        _ = two_input_model.get_output_tensor_sizes(sizes)
 
 
 def test_get_output_tensor_sizes_inconsistent_extra_axis_sizes(
@@ -613,11 +615,11 @@ def test_get_output_tensor_sizes_inconsistent_extra_axis_sizes(
     sizes = _sizes_v0_4({"z": 2})
     sizes[TensorName("input1")]["z"] = 3
     with pytest.raises(ValueError, match="inconsistent sizes across input tensors"):
-        two_input_model.get_output_tensor_sizes(sizes)
+        _ = two_input_model.get_output_tensor_sizes(sizes)
 
 
 def test_get_output_tensor_sizes_mismatching_extra_axes(two_input_model: ModelDescr):
     sizes = _sizes_v0_4()
     sizes[TensorName("input")]["z"] = 2
     with pytest.raises(ValueError, match="same set of additonal axes"):
-        two_input_model.get_output_tensor_sizes(sizes)
+        _ = two_input_model.get_output_tensor_sizes(sizes)

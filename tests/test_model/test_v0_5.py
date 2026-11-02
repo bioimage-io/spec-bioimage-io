@@ -777,6 +777,7 @@ def test_SizeReference_get_size_floatingpoint():
     )
     y = SpaceOutputAxis(id=AxisId("y"), size=sr, scale=0.24, unit="micrometer")
 
+    assert isinstance(y.size, SizeReference)
     assert y.size.get_size(y, x, n=0) == 44
 
 
@@ -850,7 +851,7 @@ def test_get_output_tensor_sizes_batch_size_mismatch(multi_tensor_model: ModelDe
     sizes[TensorId("input0")][AxisId("batch")] = 2
     sizes[TensorId("input1")][AxisId("batch")] = 3
     with pytest.raises(ValueError, match="batch size mismatch"):
-        multi_tensor_model.get_output_tensor_sizes(sizes)
+        _ = multi_tensor_model.get_output_tensor_sizes(sizes)
 
 
 def test_get_output_tensor_sizes_inconsistent_extra_axis_sizes(
@@ -859,7 +860,7 @@ def test_get_output_tensor_sizes_inconsistent_extra_axis_sizes(
     sizes = _sizes({"extra": 2})
     sizes[TensorId("input1")][AxisId("extra")] = 3
     with pytest.raises(ValueError, match="inconsistent sizes across input tensors"):
-        multi_tensor_model.get_output_tensor_sizes(sizes)
+        _ = multi_tensor_model.get_output_tensor_sizes(sizes)
 
 
 def test_get_output_tensor_sizes_mismatching_extra_axes(
@@ -868,4 +869,4 @@ def test_get_output_tensor_sizes_mismatching_extra_axes(
     sizes = _sizes()
     sizes[TensorId("input0")][AxisId("extra")] = 2
     with pytest.raises(ValueError, match="same set of additonal axes"):
-        multi_tensor_model.get_output_tensor_sizes(sizes)
+        _ = multi_tensor_model.get_output_tensor_sizes(sizes)
