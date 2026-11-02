@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../../../../images/favicon.ico">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
     
     
       
@@ -29,10 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1180,11 +1180,11 @@
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_3.NotebookSource" class="headerlink" title="Anchor link to this section for reference">¤</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">NotebookSource</span> <span class="o">=</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec.notebook.v0_2._WithNotebookSuffix">_WithNotebookSuffix</span></span><span class="p">],</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FilePath">FilePath</a></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec.notebook.v0_2._WithNotebookSuffix">_WithNotebookSuffix</span></span><span class="p">],</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.RelativeFilePath">RelativeFilePath</a></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec.notebook.v0_2._WithNotebookSuffix">_WithNotebookSuffix</span></span><span class="p">],</span>
-<span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">NotebookSource</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec.notebook.v0_2._WithNotebookSuffix">_WithNotebookSuffix</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FilePath">FilePath</a></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec.notebook.v0_2._WithNotebookSuffix">_WithNotebookSuffix</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.RelativeFilePath">RelativeFilePath</a></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec.notebook.v0_2._WithNotebookSuffix">_WithNotebookSuffix</span></span><span class="p">]</span>
+<span class="p">)</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -1509,12 +1509,12 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dict_from_kwargs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -1539,14 +1539,14 @@
 
 <a href="#bioimageio.spec.notebook.v0_3.Author.model_validate" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">model_validate</span><span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Author.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Author.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Author.model_validate(strict)">strict</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.Author.model_validate(extra)">extra</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"allow"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">"forbid"</span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Author.model_validate(from_attributes)">from_attributes</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Author.model_validate(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.Author.model_validate(by_alias)">by_alias</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.Author.model_validate(by_name)">by_name</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1574,7 +1574,7 @@
 <h4 id="bioimageio.spec.notebook.v0_3.Author.model_validate(obj)" class="doc doc-heading doc-heading-parameter">                  <code>obj</code>
 <a href="#bioimageio.spec.notebook.v0_3.Author.model_validate(obj)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="typing.Any">Any</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+                  <code><span title="typing.Any">Any</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1622,7 +1622,7 @@
 <h4 id="bioimageio.spec.notebook.v0_3.Author.model_validate(context)" class="doc doc-heading doc-heading-parameter">                  <code>context</code>
 <a href="#bioimageio.spec.notebook.v0_3.Author.model_validate(context)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
+                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1686,7 +1686,8 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
@@ -1728,8 +1729,7 @@
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">model_validate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -1895,7 +1895,7 @@
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.BadgeDescr.icon">icon</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FilePath">FilePath</a> | <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.RelativeFilePath">RelativeFilePath</a>, <span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span>(<span title="bioimageio.spec._internal.io.wo_special_file_name">wo_special_file_name</span>), <span title="bioimageio.spec._internal.io_packaging.include_in_package">include_in_package</span>] | <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a> | <span title="pydantic">pydantic</span>.<a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.HttpUrl">HttpUrl</a> | None</code>)
+                (<code><span title="typing.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FilePath">FilePath</a> | <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.RelativeFilePath">RelativeFilePath</a>, <span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span>(<span title="bioimageio.spec._internal.io.wo_special_file_name">wo_special_file_name</span>), <span title="bioimageio.spec._internal.io_packaging.include_in_package">include_in_package</span>] | <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a> | <span title="pydantic">pydantic</span>.<a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.HttpUrl&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/networks/#pydantic.networks.HttpUrl">HttpUrl</a> | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.BadgeDescr.url">url</a></code>
@@ -1928,7 +1928,7 @@
 
 <a href="#bioimageio.spec.notebook.v0_3.BadgeDescr.icon" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">icon</span><span class="p">:</span> <span class="p">(</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.FilePath">FilePath</a></span> <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.RelativeFilePath">RelativeFilePath</a></span><span class="p">,</span>
         <span class="n"><span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span></span><span class="p">(</span><span class="n"><span title="bioimageio.spec._internal.io.wo_special_file_name">wo_special_file_name</span></span><span class="p">),</span>
         <span class="n"><span title="bioimageio.spec._internal.io_packaging.include_in_package">include_in_package</span></span><span class="p">,</span>
@@ -2024,12 +2024,12 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dict_from_kwargs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -2054,14 +2054,14 @@
 
 <a href="#bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">model_validate</span><span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate(strict)">strict</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate(extra)">extra</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"allow"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">"forbid"</span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate(from_attributes)">from_attributes</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate(by_alias)">by_alias</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate(by_name)">by_name</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2089,7 +2089,7 @@
 <h4 id="bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate(obj)" class="doc doc-heading doc-heading-parameter">                  <code>obj</code>
 <a href="#bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate(obj)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="typing.Any">Any</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+                  <code><span title="typing.Any">Any</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2137,7 +2137,7 @@
 <h4 id="bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate(context)" class="doc doc-heading doc-heading-parameter">                  <code>context</code>
 <a href="#bioimageio.spec.notebook.v0_3.BadgeDescr.model_validate(context)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
+                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2201,7 +2201,8 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
@@ -2243,8 +2244,7 @@
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">model_validate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -2373,12 +2373,12 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dict_from_kwargs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -2403,14 +2403,14 @@
 
 <a href="#bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">model_validate</span><span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate(strict)">strict</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate(extra)">extra</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"allow"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">"forbid"</span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate(from_attributes)">from_attributes</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate(by_alias)">by_alias</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate(by_name)">by_name</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2438,7 +2438,7 @@
 <h4 id="bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate(obj)" class="doc doc-heading doc-heading-parameter">                  <code>obj</code>
 <a href="#bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate(obj)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="typing.Any">Any</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+                  <code><span title="typing.Any">Any</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2486,7 +2486,7 @@
 <h4 id="bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate(context)" class="doc doc-heading doc-heading-parameter">                  <code>context</code>
 <a href="#bioimageio.spec.notebook.v0_3.BioimageioConfig.model_validate(context)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
+                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2550,7 +2550,8 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
@@ -2592,8 +2593,7 @@
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">model_validate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -2866,12 +2866,12 @@ Note:
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dict_from_kwargs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -2896,14 +2896,14 @@ Note:
 
 <a href="#bioimageio.spec.notebook.v0_3.CiteEntry.model_validate" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">model_validate</span><span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.CiteEntry.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.CiteEntry.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.CiteEntry.model_validate(strict)">strict</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.CiteEntry.model_validate(extra)">extra</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"allow"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">"forbid"</span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.CiteEntry.model_validate(from_attributes)">from_attributes</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.CiteEntry.model_validate(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.CiteEntry.model_validate(by_alias)">by_alias</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.CiteEntry.model_validate(by_name)">by_name</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2931,7 +2931,7 @@ Note:
 <h4 id="bioimageio.spec.notebook.v0_3.CiteEntry.model_validate(obj)" class="doc doc-heading doc-heading-parameter">                  <code>obj</code>
 <a href="#bioimageio.spec.notebook.v0_3.CiteEntry.model_validate(obj)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="typing.Any">Any</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+                  <code><span title="typing.Any">Any</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2979,7 +2979,7 @@ Note:
 <h4 id="bioimageio.spec.notebook.v0_3.CiteEntry.model_validate(context)" class="doc doc-heading doc-heading-parameter">                  <code>context</code>
 <a href="#bioimageio.spec.notebook.v0_3.CiteEntry.model_validate(context)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
+                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -3043,7 +3043,8 @@ Note:
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
@@ -3085,8 +3086,7 @@ Note:
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">model_validate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -3270,9 +3270,9 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/generic/v0_3.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Allows to access the config as a dictionary."""</span>
     <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -3300,9 +3300,9 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/generic/v0_3.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Allows to set the config as a dictionary."""</span>
     <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -3334,12 +3334,12 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dict_from_kwargs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -3364,14 +3364,14 @@ or if you think such a field should exist.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.Config.model_validate" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">model_validate</span><span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Config.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Config.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Config.model_validate(strict)">strict</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.Config.model_validate(extra)">extra</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"allow"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">"forbid"</span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Config.model_validate(from_attributes)">from_attributes</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Config.model_validate(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.Config.model_validate(by_alias)">by_alias</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.Config.model_validate(by_name)">by_name</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3399,7 +3399,7 @@ or if you think such a field should exist.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.Config.model_validate(obj)" class="doc doc-heading doc-heading-parameter">                  <code>obj</code>
 <a href="#bioimageio.spec.notebook.v0_3.Config.model_validate(obj)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="typing.Any">Any</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+                  <code><span title="typing.Any">Any</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -3447,7 +3447,7 @@ or if you think such a field should exist.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.Config.model_validate(context)" class="doc doc-heading doc-heading-parameter">                  <code>context</code>
 <a href="#bioimageio.spec.notebook.v0_3.Config.model_validate(context)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
+                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -3511,7 +3511,8 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
@@ -3553,8 +3554,7 @@ or if you think such a field should exist.</p>
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">model_validate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -4044,7 +4044,7 @@ or if you think such a field should exist.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.Doi.root_model" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root_model</span><span class="p">:</span> <span class="n"><span title="type">type</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.StringConstraints&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.StringConstraints">StringConstraints</a></span><span class="p">(</span><span class="n"><span title="pydantic.StringConstraints(pattern)">pattern</span></span><span class="o">=</span><span class="n"><span title="bioimageio.spec._internal.constants.DOI_REGEX">DOI_REGEX</span></span><span class="p">)]</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.StringConstraints&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.StringConstraints">StringConstraints</a></span><span class="p">(</span><span class="n"><span title="pydantic.StringConstraints(pattern)">pattern</span></span><span class="o">=</span><span class="n"><span title="bioimageio.spec._internal.constants.DOI_REGEX">DOI_REGEX</span></span><span class="p">)]</span>
 <span class="p">]</span>
 </code></pre></div>
 
@@ -4282,6 +4282,12 @@ or if you think such a field should exist.</p>
             </li>
         </ul>
 
+        <p>Validators:</p>
+        <ul>
+            <li>
+              <code><span title="bioimageio.spec._internal.io.FileDescr._validate_sha256">_validate_sha256</span></code>
+            </li>
+        </ul>
 
 
 
@@ -4392,12 +4398,12 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dict_from_kwargs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -4420,7 +4426,7 @@ or if you think such a field should exist.</p>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">download</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.FileDescr.download(progressbar)">progressbar</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.ProgressbarLike">ProgressbarLike</a></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[],</span> <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.ProgressbarLike">ProgressbarLike</a></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Callable">Callable</span></span><span class="p">[[],</span> <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.ProgressbarLike">ProgressbarLike</a></span><span class="p">]</span>
     <span class="o">|</span> <span class="n"><span title="bool">bool</span></span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span>
@@ -4434,16 +4440,16 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">372</span>
-<span class="normal">373</span>
-<span class="normal">374</span>
-<span class="normal">375</span>
-<span class="normal">376</span>
-<span class="normal">377</span>
-<span class="normal">378</span>
-<span class="normal">379</span>
-<span class="normal">380</span>
-<span class="normal">381</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">download</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">ProgressbarLike</span>
@@ -4470,7 +4476,7 @@ or if you think such a field should exist.</p>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">get_reader</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.FileDescr.get_reader(progressbar)">progressbar</span></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.ProgressbarLike">ProgressbarLike</a></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[],</span> <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.ProgressbarLike">ProgressbarLike</a></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Callable">Callable</span></span><span class="p">[[],</span> <span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.ProgressbarLike">ProgressbarLike</a></span><span class="p">]</span>
     <span class="o">|</span> <span class="n"><span title="bool">bool</span></span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span>
@@ -4484,16 +4490,16 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">361</span>
-<span class="normal">362</span>
-<span class="normal">363</span>
-<span class="normal">364</span>
-<span class="normal">365</span>
-<span class="normal">366</span>
-<span class="normal">367</span>
-<span class="normal">368</span>
-<span class="normal">369</span>
-<span class="normal">370</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_reader</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="n">ProgressbarLike</span>
@@ -4522,14 +4528,14 @@ or if you think such a field should exist.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.FileDescr.model_validate" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">model_validate</span><span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.FileDescr.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.FileDescr.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.FileDescr.model_validate(strict)">strict</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.FileDescr.model_validate(extra)">extra</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"allow"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">"forbid"</span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.FileDescr.model_validate(from_attributes)">from_attributes</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.FileDescr.model_validate(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.FileDescr.model_validate(by_alias)">by_alias</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.FileDescr.model_validate(by_name)">by_name</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4557,7 +4563,7 @@ or if you think such a field should exist.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.FileDescr.model_validate(obj)" class="doc doc-heading doc-heading-parameter">                  <code>obj</code>
 <a href="#bioimageio.spec.notebook.v0_3.FileDescr.model_validate(obj)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="typing.Any">Any</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+                  <code><span title="typing.Any">Any</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -4605,7 +4611,7 @@ or if you think such a field should exist.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.FileDescr.model_validate(context)" class="doc doc-heading doc-heading-parameter">                  <code>context</code>
 <a href="#bioimageio.spec.notebook.v0_3.FileDescr.model_validate(context)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
+                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -4669,7 +4675,8 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
@@ -4711,8 +4718,7 @@ or if you think such a field should exist.</p>
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">model_validate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -4781,7 +4787,15 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">327</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
 <span class="normal">328</span>
 <span class="normal">329</span>
 <span class="normal">330</span>
@@ -4805,15 +4819,7 @@ or if you think such a field should exist.</p>
 <span class="normal">348</span>
 <span class="normal">349</span>
 <span class="normal">350</span>
-<span class="normal">351</span>
-<span class="normal">352</span>
-<span class="normal">353</span>
-<span class="normal">354</span>
-<span class="normal">355</span>
-<span class="normal">356</span>
-<span class="normal">357</span>
-<span class="normal">358</span>
-<span class="normal">359</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">351</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">validate_sha256</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_recompute</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""validate the sha256 hash value of the **source** file"""</span>
     <span class="n">context</span> <span class="o">=</span> <span class="n">get_validation_context</span><span class="p">()</span>
     <span class="n">src_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
@@ -5216,7 +5222,7 @@ or if you think such a field should exist.</p>
           <tr class="doc-section-item">
             <td><code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.HttpUrl.parents">parents</a></code></td>
             <td>
-                  <code><span title="typing.Iterable">Iterable</span>[<a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a>]</code>
+                  <code><span title="collections.abc.Iterable">Iterable</span>[<a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5352,7 +5358,7 @@ or if you think such a field should exist.</p>
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_3.HttpUrl.parents" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">parents</span><span class="p">:</span> <span class="n"><span title="typing.Iterable">Iterable</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span><span class="p">]</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">parents</span><span class="p">:</span> <span class="n"><span title="collections.abc.Iterable">Iterable</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.RootHttpUrl">RootHttpUrl</a></span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5621,8 +5627,7 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/root_url.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">52</span>
-<span class="normal">53</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">53</span>
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
@@ -5633,7 +5638,8 @@ or if you think such a field should exist.</p>
 <span class="normal">61</span>
 <span class="normal">62</span>
 <span class="normal">63</span>
-<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RootHttpUrl</span><span class="p">:</span>
+<span class="normal">64</span>
+<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RootHttpUrl</span><span class="p">:</span>
     <span class="n">parsed</span> <span class="o">=</span> <span class="n">urlsplit</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">RootHttpUrl</span><span class="p">(</span>
         <span class="n">urlunsplit</span><span class="p">(</span>
@@ -5671,9 +5677,9 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/root_url.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">absolute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">absolute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""analog to `absolute` method of pathlib."""</span>
     <span class="k">return</span> <span class="bp">self</span>
 </code></pre></div></td></tr></table></div>
@@ -6203,12 +6209,12 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dict_from_kwargs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -6233,14 +6239,14 @@ or if you think such a field should exist.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">model_validate</span><span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate(strict)">strict</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate(extra)">extra</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"allow"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">"forbid"</span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate(from_attributes)">from_attributes</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate(by_alias)">by_alias</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate(by_name)">by_name</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -6268,7 +6274,7 @@ or if you think such a field should exist.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate(obj)" class="doc doc-heading doc-heading-parameter">                  <code>obj</code>
 <a href="#bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate(obj)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="typing.Any">Any</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+                  <code><span title="typing.Any">Any</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6316,7 +6322,7 @@ or if you think such a field should exist.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate(context)" class="doc doc-heading doc-heading-parameter">                  <code>context</code>
 <a href="#bioimageio.spec.notebook.v0_3.LinkedNotebook.model_validate(context)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
+                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6380,7 +6386,8 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
@@ -6422,8 +6429,7 @@ or if you think such a field should exist.</p>
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">model_validate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -6652,12 +6658,12 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dict_from_kwargs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -6682,14 +6688,14 @@ or if you think such a field should exist.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.LinkedResource.model_validate" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">model_validate</span><span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LinkedResource.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LinkedResource.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LinkedResource.model_validate(strict)">strict</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.LinkedResource.model_validate(extra)">extra</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"allow"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">"forbid"</span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LinkedResource.model_validate(from_attributes)">from_attributes</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LinkedResource.model_validate(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.LinkedResource.model_validate(by_alias)">by_alias</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.LinkedResource.model_validate(by_name)">by_name</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -6717,7 +6723,7 @@ or if you think such a field should exist.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.LinkedResource.model_validate(obj)" class="doc doc-heading doc-heading-parameter">                  <code>obj</code>
 <a href="#bioimageio.spec.notebook.v0_3.LinkedResource.model_validate(obj)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="typing.Any">Any</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+                  <code><span title="typing.Any">Any</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6765,7 +6771,7 @@ or if you think such a field should exist.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.LinkedResource.model_validate(context)" class="doc doc-heading doc-heading-parameter">                  <code>context</code>
 <a href="#bioimageio.spec.notebook.v0_3.LinkedResource.model_validate(context)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
+                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6829,7 +6835,8 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
@@ -6871,8 +6878,7 @@ or if you think such a field should exist.</p>
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">model_validate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -7041,7 +7047,7 @@ or if you think such a field should exist.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_3/#bioimageio.spec.generic.v0_3.Maintainer.name">name</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span>, <span title="bioimageio.spec._internal.validator_annotations.Predicate">Predicate</span>(<span title="bioimageio.spec.generic.v0_3._has_no_slash">_has_no_slash</span>)] | None</code>)
+                (<code><span title="typing.Annotated">Annotated</span>[<span title="str">str</span>, <span title="bioimageio.spec._internal.validator_annotations.Predicate">Predicate</span>(<span title="bioimageio.spec.generic.v0_3._has_no_slash">_has_no_slash</span>)] | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_3/#bioimageio.spec.generic.v0_3.Maintainer.github_user">github_user</a></code>
@@ -7153,7 +7159,7 @@ or if you think such a field should exist.</p>
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_3.Maintainer.name" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">name</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.validator_annotations.Predicate">Predicate</span></span><span class="p">(</span><span class="n"><span title="bioimageio.spec.generic.v0_3._has_no_slash">_has_no_slash</span></span><span class="p">)]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">name</span><span class="p">:</span> <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.validator_annotations.Predicate">Predicate</span></span><span class="p">(</span><span class="n"><span title="bioimageio.spec.generic.v0_3._has_no_slash">_has_no_slash</span></span><span class="p">)]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -7214,12 +7220,12 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dict_from_kwargs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -7244,14 +7250,14 @@ or if you think such a field should exist.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.Maintainer.model_validate" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">model_validate</span><span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Maintainer.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Maintainer.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Maintainer.model_validate(strict)">strict</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.Maintainer.model_validate(extra)">extra</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"allow"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">"forbid"</span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Maintainer.model_validate(from_attributes)">from_attributes</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Maintainer.model_validate(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.Maintainer.model_validate(by_alias)">by_alias</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.Maintainer.model_validate(by_name)">by_name</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -7279,7 +7285,7 @@ or if you think such a field should exist.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.Maintainer.model_validate(obj)" class="doc doc-heading doc-heading-parameter">                  <code>obj</code>
 <a href="#bioimageio.spec.notebook.v0_3.Maintainer.model_validate(obj)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="typing.Any">Any</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+                  <code><span title="typing.Any">Any</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7327,7 +7333,7 @@ or if you think such a field should exist.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.Maintainer.model_validate(context)" class="doc doc-heading doc-heading-parameter">                  <code>context</code>
 <a href="#bioimageio.spec.notebook.v0_3.Maintainer.model_validate(context)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
+                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7391,7 +7397,8 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
@@ -7433,8 +7440,7 @@ or if you think such a field should exist.</p>
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">model_validate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -7505,9 +7511,9 @@ or if you think such a field should exist.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/generic/v0_3.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"github_user"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"github_user"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_github_user</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">validate_github_user</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -8960,11 +8966,11 @@ or if you think such a field should exist.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.name">name</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span>, <span title="bioimageio.spec._internal.validator_annotations.RestrictCharacters">RestrictCharacters</span>(<span title="string">string</span>.<span title="string.ascii_letters">ascii_letters</span> + <span title="string">string</span>.<span title="string.digits">digits</span> + &#39;_+- ()&#39;)]</code>)
+                (<code><span title="typing.Annotated">Annotated</span>[<span title="str">str</span>, <span title="bioimageio.spec._internal.validator_annotations.RestrictCharacters">RestrictCharacters</span>(<span title="string">string</span>.<span title="string.ascii_letters">ascii_letters</span> + <span title="string">string</span>.<span title="string.digits">digits</span> + &#39;_+- ()&#39;)]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.description">description</a></code>
-                (<code><span title="bioimageio.spec._internal.types.FAIR">FAIR</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span>, <span title="annotated_types.MaxLen">MaxLen</span>(1024), <span title="bioimageio.spec._internal.field_warning.warn">warn</span>(<span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span>, <span title="annotated_types.MaxLen">MaxLen</span>(512)], &#39;Description longer than 512 characters.&#39;)]]</code>)
+                (<code><span title="bioimageio.spec._internal.types.FAIR">FAIR</span>[<span title="typing.Annotated">Annotated</span>[<span title="str">str</span>, <span title="annotated_types.MaxLen">MaxLen</span>(1024), <span title="bioimageio.spec._internal.field_warning.warn">warn</span>(<span title="typing.Annotated">Annotated</span>[<span title="str">str</span>, <span title="annotated_types.MaxLen">MaxLen</span>(512)], &#39;Description longer than 512 characters.&#39;)]]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.covers">covers</a></code>
@@ -8976,7 +8982,7 @@ or if you think such a field should exist.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.id_emoji">id_emoji</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span>, <span title="annotated_types.Len">Len</span>(<span title="annotated_types.Len(min_length)">min_length</span>=1, <span title="annotated_types.Len(max_length)">max_length</span>=2), <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;🦈&#39;, &#39;🦥&#39;])] | None</code>)
+                (<code><span title="typing.Annotated">Annotated</span>[<span title="str">str</span>, <span title="annotated_types.Len">Len</span>(<span title="annotated_types.Len(min_length)">min_length</span>=1, <span title="annotated_types.Len(max_length)">max_length</span>=2), <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[&#39;🦈&#39;, &#39;🦥&#39;])] | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.authors">authors</a></code>
@@ -8992,7 +8998,7 @@ or if you think such a field should exist.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.license">license</a></code>
-                (<code><span title="bioimageio.spec._internal.types.FAIR">FAIR</span>[<span title="typing_extensions.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LicenseId">LicenseId</a> | <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.DeprecatedLicenseId">DeprecatedLicenseId</a> | None | <span title="bioimageio.spec._internal.io_packaging.FileDescr_package">FileDescr_package</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(union_mode)">union_mode</span>=&#39;left_to_right&#39;, <span title="pydantic.Field(examples)">examples</span>=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]]</code>)
+                (<code><span title="bioimageio.spec._internal.types.FAIR">FAIR</span>[<span title="typing.Annotated">Annotated</span>[<a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LicenseId">LicenseId</a> | <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.DeprecatedLicenseId">DeprecatedLicenseId</a> | None | <span title="bioimageio.spec._internal.io_packaging.FileDescr_package">FileDescr_package</span>, <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(union_mode)">union_mode</span>=&#39;left_to_right&#39;, <span title="pydantic.Field(examples)">examples</span>=[&#39;CC0-1.0&#39;, &#39;MIT&#39;, &#39;BSD-2-Clause&#39;])]]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.git_repo">git_repo</a></code>
@@ -9000,7 +9006,7 @@ or if you think such a field should exist.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.icon">icon</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span>, <span title="annotated_types.Len">Len</span>(<span title="annotated_types.Len(min_length)">min_length</span>=1, <span title="annotated_types.Len(max_length)">max_length</span>=2)] | <span title="bioimageio.spec._internal.io_packaging.FileDescr_package">FileDescr_package</span> | None</code>)
+                (<code><span title="typing.Annotated">Annotated</span>[<span title="str">str</span>, <span title="annotated_types.Len">Len</span>(<span title="annotated_types.Len(min_length)">min_length</span>=1, <span title="annotated_types.Len(max_length)">max_length</span>=2)] | <span title="bioimageio.spec._internal.io_packaging.FileDescr_package">FileDescr_package</span> | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.links">links</a></code>
@@ -9016,7 +9022,7 @@ or if you think such a field should exist.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.tags">tags</a></code>
-                (<code><span title="bioimageio.spec._internal.types.FAIR">FAIR</span>[<span title="typing_extensions.Annotated">Annotated</span>[<span title="list">list</span>[<span title="str">str</span>], <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[(&#39;unet2d&#39;, &#39;pytorch&#39;, &#39;nucleus&#39;, &#39;segmentation&#39;, &#39;dsb2018&#39;)])]]</code>)
+                (<code><span title="bioimageio.spec._internal.types.FAIR">FAIR</span>[<span title="typing.Annotated">Annotated</span>[<span title="list">list</span>[<span title="str">str</span>], <a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a>(<span title="pydantic.Field(examples)">examples</span>=[(&#39;unet2d&#39;, &#39;pytorch&#39;, &#39;nucleus&#39;, &#39;segmentation&#39;, &#39;dsb2018&#39;)])]]</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.version">version</a></code>
@@ -9024,7 +9030,7 @@ or if you think such a field should exist.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.version_comment">version_comment</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span>, <span title="annotated_types.MaxLen">MaxLen</span>(512)] | None</code>)
+                (<code><span title="typing.Annotated">Annotated</span>[<span title="str">str</span>, <span title="annotated_types.MaxLen">MaxLen</span>(512)] | None</code>)
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.format_version">format_version</a></code>
@@ -9056,6 +9062,18 @@ or if you think such a field should exist.</p>
             </li>
         </ul>
 
+        <p>Validators:</p>
+        <ul>
+            <li>
+              <code><span title="bioimageio.spec.notebook.v0_3.NotebookDescr._set_fields_explicitly">_set_fields_explicitly</span></code>
+            </li>
+            <li>
+              <code><span title="bioimageio.spec.notebook.v0_3.NotebookDescr._ignore_future_patch">_ignore_future_patch</span></code>
+            </li>
+            <li>
+              <code><span title="bioimageio.spec.notebook.v0_3.NotebookDescr._set_init_validation_summary">_set_init_validation_summary</span></code>
+            </li>
+        </ul>
 
 
 
@@ -9247,11 +9265,11 @@ an altered rdf.yaml file with local references to the downloaded files.)</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.description" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">description</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.types.FAIR">FAIR</span></span><span class="p">[</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><span title="str">str</span></span><span class="p">,</span>
         <span class="n"><span title="annotated_types.MaxLen">MaxLen</span></span><span class="p">(</span><span class="mi">1024</span><span class="p">),</span>
         <span class="n"><span title="bioimageio.spec._internal.field_warning.warn">warn</span></span><span class="p">(</span>
-            <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="annotated_types.MaxLen">MaxLen</span></span><span class="p">(</span><span class="mi">512</span><span class="p">)],</span>
+            <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="annotated_types.MaxLen">MaxLen</span></span><span class="p">(</span><span class="mi">512</span><span class="p">)],</span>
             <span class="s2">"Description longer than 512 characters."</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">]</span>
@@ -9380,7 +9398,7 @@ The recommended documentation source file name is <code>README.md</code>. An <co
 
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.icon" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">icon</span><span class="p">:</span> <span class="p">(</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="annotated_types.Len">Len</span></span><span class="p">(</span><span class="n"><span title="annotated_types.Len(min_length)">min_length</span></span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n"><span title="annotated_types.Len(max_length)">max_length</span></span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="annotated_types.Len">Len</span></span><span class="p">(</span><span class="n"><span title="annotated_types.Len(min_length)">min_length</span></span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n"><span title="annotated_types.Len(max_length)">max_length</span></span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
     <span class="o">|</span> <span class="n"><span title="bioimageio.spec._internal.io_packaging.FileDescr_package">FileDescr_package</span></span>
     <span class="o">|</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span>
@@ -9435,7 +9453,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.id_emoji" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">id_emoji</span><span class="p">:</span> <span class="p">(</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><span title="str">str</span></span><span class="p">,</span>
         <span class="n"><span title="annotated_types.Len">Len</span></span><span class="p">(</span><span class="n"><span title="annotated_types.Len(min_length)">min_length</span></span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n"><span title="annotated_types.Len(max_length)">max_length</span></span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
         <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span><span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span><span class="s2">"🦈"</span><span class="p">,</span> <span class="s2">"🦥"</span><span class="p">]),</span>
@@ -9536,7 +9554,7 @@ assigned by bioimage.io; version <strong>un</strong>specific.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.license" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">license</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.types.FAIR">FAIR</span></span><span class="p">[</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.LicenseId">LicenseId</a></span>
         <span class="o">|</span> <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.DeprecatedLicenseId">DeprecatedLicenseId</a></span>
         <span class="o">|</span> <span class="kc">None</span>
@@ -9622,7 +9640,7 @@ If not specified, <code>authors</code> are maintainers and at least some of them
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.name" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">name</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">name</span><span class="p">:</span> <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
     <span class="n"><span title="str">str</span></span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec._internal.validator_annotations.RestrictCharacters">RestrictCharacters</span></span><span class="p">(</span>
         <span class="n"><span title="string">string</span></span><span class="o">.</span><span class="n"><span title="string.ascii_letters">ascii_letters</span></span> <span class="o">+</span> <span class="n"><span title="string">string</span></span><span class="o">.</span><span class="n"><span title="string.digits">digits</span></span> <span class="o">+</span> <span class="s2">"_+- ()"</span>
@@ -9729,7 +9747,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
 
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.tags" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">tags</span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.types.FAIR">FAIR</span></span><span class="p">[</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span>
         <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.Field&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/fields/#pydantic.fields.Field">Field</a></span><span class="p">(</span>
             <span class="n"><span title="pydantic.Field(examples)">examples</span></span><span class="o">=</span><span class="p">[</span>
@@ -9864,7 +9882,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
   </span>
 
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.version_comment" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">version_comment</span><span class="p">:</span> <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="annotated_types.MaxLen">MaxLen</span></span><span class="p">(</span><span class="mi">512</span><span class="p">)]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">version_comment</span><span class="p">:</span> <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="annotated_types.MaxLen">MaxLen</span></span><span class="p">(</span><span class="mi">512</span><span class="p">)]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -9900,7 +9918,9 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">201</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
 <span class="normal">202</span>
 <span class="normal">203</span>
 <span class="normal">204</span>
@@ -9910,9 +9930,7 @@ May only contains letters, digits, underscore, minus, parentheses and spaces.</p
 <span class="normal">208</span>
 <span class="normal">209</span>
 <span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
-<span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">__pydantic_init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__pydantic_init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="c1"># set classvar implemented_format_version_tuple</span>
@@ -9957,12 +9975,12 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/generic/v0_3.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">303</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">302</span>
+<span class="normal">303</span>
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span>
-<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_from_old_format_wo_validation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">BioimageioYamlContent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Convert metadata following an older format version to this classes' format</span>
 <span class="sd">    without validating the result.</span>
@@ -9997,12 +10015,12 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dict_from_kwargs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -10035,7 +10053,9 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">392</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
 <span class="normal">393</span>
 <span class="normal">394</span>
 <span class="normal">395</span>
@@ -10049,9 +10069,7 @@ without validating the result.</p>
 <span class="normal">403</span>
 <span class="normal">404</span>
 <span class="normal">405</span>
-<span class="normal">406</span>
-<span class="normal">407</span>
-<span class="normal">408</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_package_content</span><span class="p">(</span>
+<span class="normal">406</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_package_content</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">local_files_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">FileName</span><span class="p">,</span> <span class="n">FileDescr</span> <span class="o">|</span> <span class="n">BioimageioYamlContent</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Returns package content without creating the package."""</span>
@@ -10100,7 +10118,9 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">226</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
 <span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span>
@@ -10137,9 +10157,7 @@ without validating the result.</p>
 <span class="normal">260</span>
 <span class="normal">261</span>
 <span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">263</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">IncompleteDescrView</span><span class="p">,</span>
@@ -10210,16 +10228,16 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">215</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
 <span class="normal">216</span>
 <span class="normal">217</span>
 <span class="normal">218</span>
 <span class="normal">219</span>
 <span class="normal">220</span>
 <span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">222</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_from_kwargs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span>
     <span class="n">context</span><span class="p">:</span> <span class="n">ValidationContext</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -10248,14 +10266,14 @@ without validating the result.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">model_validate</span><span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate(strict)">strict</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate(extra)">extra</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"allow"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">"forbid"</span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate(from_attributes)">from_attributes</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate(by_alias)">by_alias</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate(by_name)">by_name</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -10283,7 +10301,7 @@ without validating the result.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate(obj)" class="doc doc-heading doc-heading-parameter">                  <code>obj</code>
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate(obj)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="typing.Any">Any</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+                  <code><span title="typing.Any">Any</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10331,7 +10349,7 @@ without validating the result.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate(context)" class="doc doc-heading doc-heading-parameter">                  <code>context</code>
 <a href="#bioimageio.spec.notebook.v0_3.NotebookDescr.model_validate(context)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
+                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10395,7 +10413,8 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
@@ -10437,8 +10456,7 @@ without validating the result.</p>
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">model_validate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -10542,7 +10560,9 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/common_nodes.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">359</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
 <span class="normal">360</span>
 <span class="normal">361</span>
 <span class="normal">362</span>
@@ -10571,9 +10591,7 @@ without validating the result.</p>
 <span class="normal">385</span>
 <span class="normal">386</span>
 <span class="normal">387</span>
-<span class="normal">388</span>
-<span class="normal">389</span>
-<span class="normal">390</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">package</span><span class="p">(</span>
+<span class="normal">388</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">package</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">dest</span><span class="p">:</span> <span class="n">ZipFile</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
@@ -10634,7 +10652,8 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/generic/v0_3.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">424</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">423</span>
+<span class="normal">424</span>
 <span class="normal">425</span>
 <span class="normal">426</span>
 <span class="normal">427</span>
@@ -10650,8 +10669,7 @@ without validating the result.</p>
 <span class="normal">437</span>
 <span class="normal">438</span>
 <span class="normal">439</span>
-<span class="normal">440</span>
-<span class="normal">441</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@as_warning</span>
+<span class="normal">440</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@as_warning</span>
 <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"tags"</span><span class="p">)</span>
 <span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">warn_about_tag_categories</span><span class="p">(</span>
@@ -10832,7 +10850,7 @@ without validating the result.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.NotebookId.root_model" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root_model</span><span class="p">:</span> <span class="n"><span title="type">type</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><a class="autorefs autorefs-internal" href="../../model/v0_4/#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span>
         <span class="n"><span title="bioimageio.spec._internal.validator_annotations.RestrictCharacters">RestrictCharacters</span></span><span class="p">(</span>
             <span class="n"><span title="string">string</span></span><span class="o">.</span><span class="n"><span title="string.ascii_lowercase">ascii_lowercase</span></span> <span class="o">+</span> <span class="n"><span title="string">string</span></span><span class="o">.</span><span class="n"><span title="string.digits">digits</span></span> <span class="o">+</span> <span class="s2">"_-/."</span>
@@ -11132,7 +11150,7 @@ without validating the result.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.OrcidId.root_model" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root_model</span><span class="p">:</span> <span class="n"><span title="type">type</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span></span><span class="p">(</span><span class="n"><span title="bioimageio.spec._internal.types._validate_orcid_id">_validate_orcid_id</span></span><span class="p">)]</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span></span><span class="p">(</span><span class="n"><span title="bioimageio.spec._internal.types._validate_orcid_id">_validate_orcid_id</span></span><span class="p">)]</span>
 <span class="p">]</span>
 </code></pre></div>
 
@@ -11287,7 +11305,7 @@ without validating the result.</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><span title="bioimageio.spec._internal.io.RelativePathBase">RelativePathBase</span>[<span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.AbsoluteFilePath">AbsoluteFilePath</a>, <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a>, <a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.ZipPath">ZipPath</a>]]</code></p>
+              Bases: <code><span title="bioimageio.spec._internal.io.RelativePathBase">RelativePathBase</span>[<a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.AbsoluteFilePath">AbsoluteFilePath</a> | <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.HttpUrl">HttpUrl</a> | <a class="autorefs autorefs-internal" href="../../common/#bioimageio.spec.common.ZipPath">ZipPath</a>]</code></p>
 
             <div style="display: none">
               <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.RelativeFilePath" id="mermaid-link-bioimageio.spec.notebook.v0_3.RelativeFilePath"></a>
@@ -11583,8 +11601,8 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">156</span>
-<span class="normal">157</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">148</span>
+<span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">"RelativePath('</span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">')"</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -11609,8 +11627,8 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
-<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
+<span class="normal">146</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -11638,14 +11656,14 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">absolute</span><span class="p">(</span>  <span class="c1"># method not property analog to `pathlib.Path.absolute()`</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">absolute</span><span class="p">(</span>  <span class="c1"># method not property analog to `pathlib.Path.absolute()`</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbsolutePathT</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""get the absolute path/url</span>
@@ -11676,9 +11694,9 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@model_serializer</span><span class="p">()</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@model_serializer</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -11706,19 +11724,19 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">221</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
 <span class="normal">222</span>
 <span class="normal">223</span>
 <span class="normal">224</span>
-<span class="normal">225</span>
-<span class="normal">226</span>
-<span class="normal">227</span>
-<span class="normal">228</span>
-<span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
-<span class="normal">233</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_absolute</span><span class="p">(</span>
+<span class="normal">225</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_absolute</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">RootHttpUrl</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">pydantic</span><span class="o">.</span><span class="n">AnyUrl</span> <span class="o">|</span> <span class="n">ZipFile</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbsoluteFilePath</span> <span class="o">|</span> <span class="n">HttpUrl</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">:</span>
     <span class="n">absolute</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_absolute_impl</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
@@ -11756,12 +11774,12 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""add validation @private"""</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>  <span class="c1"># an empty path can only be a directory</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s2"> is not a valid file path."</span><span class="p">)</span>
@@ -11985,7 +12003,7 @@ without validating the result.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.ResourceId.root_model" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root_model</span><span class="p">:</span> <span class="n"><span title="type">type</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><a class="autorefs autorefs-internal" href="../../model/v0_4/#bioimageio.spec.model.v0_4.NotEmpty">NotEmpty</a></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span>
         <span class="n"><span title="bioimageio.spec._internal.validator_annotations.RestrictCharacters">RestrictCharacters</span></span><span class="p">(</span>
             <span class="n"><span title="string">string</span></span><span class="o">.</span><span class="n"><span title="string.ascii_lowercase">ascii_lowercase</span></span> <span class="o">+</span> <span class="n"><span title="string">string</span></span><span class="o">.</span><span class="n"><span title="string.digits">digits</span></span> <span class="o">+</span> <span class="s2">"_-/."</span>
@@ -12364,7 +12382,7 @@ without validating the result.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.Sha256.root_model" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">root_model</span><span class="p">:</span> <span class="n"><span title="type">type</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]]</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a></span><span class="p">[</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span>
         <span class="n"><span title="str">str</span></span><span class="p">,</span>
         <span class="n"><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.StringConstraints&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/types/#pydantic.types.StringConstraints">StringConstraints</a></span><span class="p">(</span>
             <span class="n"><span title="pydantic.StringConstraints(strip_whitespace)">strip_whitespace</span></span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -12575,7 +12593,7 @@ without validating the result.</p>
             </li>
             <li>
               <code><a class="autorefs autorefs-internal" href="../../generic/v0_2/#bioimageio.spec.generic.v0_2.Uploader.name">name</a></code>
-                (<code><span title="typing_extensions.Annotated">Annotated</span>[<span title="str">str</span>, <span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span>(<span title="bioimageio.spec.generic.v0_2._remove_slashes">_remove_slashes</span>)] | None</code>)
+                (<code><span title="typing.Annotated">Annotated</span>[<span title="str">str</span>, <span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span>(<span title="bioimageio.spec.generic.v0_2._remove_slashes">_remove_slashes</span>)] | None</code>)
             </li>
         </ul>
 
@@ -12629,7 +12647,7 @@ without validating the result.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.Uploader.name" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="n">name</span><span class="p">:</span> <span class="p">(</span>
-    <span class="n"><span title="typing_extensions.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span></span><span class="p">(</span><span class="n"><span title="bioimageio.spec.generic.v0_2._remove_slashes">_remove_slashes</span></span><span class="p">)]</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n"><span title="typing.Annotated">Annotated</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="bioimageio.spec._internal.validator_annotations.AfterValidator">AfterValidator</span></span><span class="p">(</span><span class="n"><span title="bioimageio.spec.generic.v0_2._remove_slashes">_remove_slashes</span></span><span class="p">)]</span> <span class="o">|</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
@@ -12668,12 +12686,12 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
+<span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dict_from_kwargs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">P</span><span class="o">.</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -12698,14 +12716,14 @@ without validating the result.</p>
 
 <a href="#bioimageio.spec.notebook.v0_3.Uploader.model_validate" class="headerlink" title="Anchor link to this section for reference">¤</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span class="nf">model_validate</span><span class="p">(</span>
-    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Uploader.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
+    <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Uploader.model_validate(obj)">obj</a></span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Uploader.model_validate(strict)">strict</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.Uploader.model_validate(extra)">extra</span></span><span class="p">:</span> <span class="n"><span title="typing.Literal">Literal</span></span><span class="p">[</span><span class="s2">"allow"</span><span class="p">,</span> <span class="s2">"ignore"</span><span class="p">,</span> <span class="s2">"forbid"</span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Uploader.model_validate(from_attributes)">from_attributes</a></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Uploader.model_validate(context)">context</a></span><span class="p">:</span> <span class="n"><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span></span>
-    <span class="o">|</span> <span class="n"><span title="typing.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
+    <span class="o">|</span> <span class="n"><span title="collections.abc.Mapping">Mapping</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
     <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.Uploader.model_validate(by_alias)">by_alias</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n"><span title="bioimageio.spec.notebook.v0_3.Uploader.model_validate(by_name)">by_name</span></span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -12733,7 +12751,7 @@ without validating the result.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.Uploader.model_validate(obj)" class="doc doc-heading doc-heading-parameter">                  <code>obj</code>
 <a href="#bioimageio.spec.notebook.v0_3.Uploader.model_validate(obj)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="typing.Any">Any</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+                  <code><span title="typing.Any">Any</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -12781,7 +12799,7 @@ without validating the result.</p>
 <h4 id="bioimageio.spec.notebook.v0_3.Uploader.model_validate(context)" class="doc doc-heading doc-heading-parameter">                  <code>context</code>
 <a href="#bioimageio.spec.notebook.v0_3.Uploader.model_validate(context)" class="headerlink" title="Anchor link to this section for reference">¤</a></h4>            </td>
             <td>
-                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="typing.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
+                  <code><span title="bioimageio.spec._internal.validation_context.ValidationContext">ValidationContext</span> | <span title="collections.abc.Mapping">Mapping</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>] | None</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -12845,7 +12863,8 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/node.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
@@ -12887,8 +12906,7 @@ without validating the result.</p>
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">model_validate</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -12959,7 +12977,7 @@ without validating the result.</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a>[<span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="int">int</span>, <span title="float">float</span>]]</code></p>
+              Bases: <code><a class="autorefs autorefs-external" title="&lt;code&gt;pydantic.RootModel&lt;/code&gt;" href="https://docs.pydantic.dev/latest/api/pydantic/root_model/#pydantic.root_model.RootModel">RootModel</a>[<span title="str">str</span> | <span title="int">int</span> | <span title="float">float</span>]</code></p>
 
             <div style="display: none">
               <a class="autorefs autorefs-internal" href="#bioimageio.spec.notebook.v0_3.Version" id="mermaid-link-bioimageio.spec.notebook.v0_3.Version"></a>
@@ -13954,10 +13972,10 @@ post-release suffixes.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../../../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.c21346df.min.js"></script>
       
         <script src="../../../../../assets/_markdown_exec_pyodide.js"></script>
       

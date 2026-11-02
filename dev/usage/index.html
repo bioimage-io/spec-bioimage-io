@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../images/favicon.ico">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
     
     
       
@@ -33,10 +33,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -523,7 +523,7 @@
   <a href="#recommendations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        💁 Recommendations
+        Recommendations
       
     </span>
   </a>
@@ -545,7 +545,7 @@
   <a href="#bioimageio-command-line-interface-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ⌨ bioimageio command-line interface (CLI)
+        bioimageio command-line interface (CLI)
       
     </span>
   </a>
@@ -553,10 +553,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
+  <a href="#api-overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🖥 Installation
+        API overview
       
     </span>
   </a>
@@ -567,7 +567,7 @@
   <a href="#environment-variables" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🏞 Environment variables
+        Environment variables
       
     </span>
   </a>
@@ -578,7 +578,7 @@
   <a href="#logging" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🗎 Logging
+        Logging
       
     </span>
   </a>
@@ -792,7 +792,7 @@
   <a href="#recommendations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        💁 Recommendations
+        Recommendations
       
     </span>
   </a>
@@ -814,7 +814,7 @@
   <a href="#bioimageio-command-line-interface-cli" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ⌨ bioimageio command-line interface (CLI)
+        bioimageio command-line interface (CLI)
       
     </span>
   </a>
@@ -822,10 +822,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
+  <a href="#api-overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🖥 Installation
+        API overview
       
     </span>
   </a>
@@ -836,7 +836,7 @@
   <a href="#environment-variables" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🏞 Environment variables
+        Environment variables
       
     </span>
   </a>
@@ -847,7 +847,7 @@
   <a href="#logging" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🗎 Logging
+        Logging
       
     </span>
   </a>
@@ -894,7 +894,7 @@
 
 
 <h1 id="usage">Usage<a class="headerlink" href="#usage" title="Anchor link to this section for reference">¤</a></h1>
-<h2 id="recommendations">💁 Recommendations<a class="headerlink" href="#recommendations" title="Anchor link to this section for reference">¤</a></h2>
+<h2 id="recommendations">Recommendations<a class="headerlink" href="#recommendations" title="Anchor link to this section for reference">¤</a></h2>
 <ul>
 <li>Use the <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.core Python package</a> to not only validate the format of your <code>bioimageio.yaml</code>/<code>rdf.yaml</code> file, but also test and deploy it (e.g. model inference).</li>
 <li>bioimageio.spec keeps evolving. Try to use and upgrade to the most current format version!
@@ -904,25 +904,29 @@
 <p>We provide some <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/main/example_descriptions/">bioimageio.yaml/rdf.yaml example files</a> to describe models, applications, notebooks and datasets; more examples are available at <a href="https://bioimage.io">bioimage.io</a>.
 There is also an <a href="https://github.com/bioimage-io/spec-bioimage-io/blob/main/example/load_model_and_create_your_own.ipynb">example notebook</a> demonstrating how to programmatically access the models, applications, notebooks and datasets descriptions in Python.
 For integration of bioimageio resources we recommend the <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.core</a> Python package.</p>
-<h2 id="bioimageio-command-line-interface-cli">⌨ bioimageio command-line interface (CLI)<a class="headerlink" href="#bioimageio-command-line-interface-cli" title="Anchor link to this section for reference">¤</a></h2>
+<h2 id="bioimageio-command-line-interface-cli">bioimageio command-line interface (CLI)<a class="headerlink" href="#bioimageio-command-line-interface-cli" title="Anchor link to this section for reference">¤</a></h2>
 <p>The bioimageio CLI has moved to <a href="https://github.com/bioimage-io/core-bioimage-io-python">bioimageio.core</a>.</p>
-<h2 id="installation">🖥 Installation<a class="headerlink" href="#installation" title="Anchor link to this section for reference">¤</a></h2>
-<p>bioimageio.spec can be installed with either <code>conda</code> or <code>pip</code>.
-We recommend installing <code>bioimageio.core</code> instead to get access to the Python programmatic features available in the BioImage.IO community:</p>
-<div class="language-console highlight"><pre><span></span><code><span class="go">conda install -c conda-forge bioimageio.core</span>
-</code></pre></div>
-<p>or</p>
-<div class="language-console highlight"><pre><span></span><code><span class="go">pip install -U bioimageio.core</span>
-</code></pre></div>
-<p>Still, for a lighter package or just testing, you can install the <code>bioimageio.spec</code> package solely:</p>
-<div class="language-console highlight"><pre><span></span><code><span class="go">conda install -c conda-forge bioimageio.spec</span>
-</code></pre></div>
-<p>or</p>
-<div class="language-console highlight"><pre><span></span><code><span class="go">pip install -U bioimageio.spec</span>
-</code></pre></div>
-<h2 id="environment-variables">🏞 Environment variables<a class="headerlink" href="#environment-variables" title="Anchor link to this section for reference">¤</a></h2>
+<h2 id="api-overview">API overview<a class="headerlink" href="#api-overview" title="Anchor link to this section for reference">¤</a></h2>
+<p>bioimageio.spec implements type and format version specific <code>pydantic.BaseModel</code> models for resources shared on bioimage.io.</p>
+<p>The return type of <a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.load_description"><code>load_description</code></a> is <a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.ResourceDescr"><code>ResourceDescr</code></a>.
+This is a <code>typing.Union</code> over various format type and format version specific and unspecific classes including <a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.InvalidDescr"><code>InvalidDescr</code></a> and <a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.GenericDescr"><code>GenericDescr</code></a>.
+The individual <code>*Descr</code>-classes of this <code>Union</code> can be instantiated in code to create a bioimage.io resource description in the first place.</p>
+<p>For more narrow type hints and runtime-checks during loading dedicated <code>load_*_description</code> methods may be used:</p>
+<ul>
+<li><a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.load_model_description"><code>load_model_description</code></a></li>
+<li><a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.load_dataset_description"><code>load_dataset_description</code></a></li>
+</ul>
+<p>Another way to narrow/check the return type is to call <a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.load_description"><code>load_description</code></a>/<a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.load_model_description"><code>load_model_description</code></a>... with <code>format_version="latest"</code>, returning <a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.LatestResourceDescr"><code>LatestResourceDescr</code></a>/<a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.ModelDescr"><code>ModelDescr</code></a> (instead of <a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.AnyModelDescr"><code>AnyModelDescr</code></a>)/... .</p>
+<p>To export resource descriptions:</p>
+<ul>
+<li><a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.save_bioimageio_package"><code>save_bioimageio_package</code></a> saves the metadata alongside referenced files as a zip*archive (recommended)</li>
+<li><a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.save_bioimageio_package_as_folder"><code>save_bioimageio_package_as_folder</code></a></li>
+<li><a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.save_bioimageio_package_to_stream"><code>save_bioimageio_package_to_stream</code></a></li>
+<li><a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.save_bioimageio_yaml_only"><code>save_bioimageio_yaml_only</code></a> (save only the metadata without referenced files)</li>
+</ul>
+<h2 id="environment-variables">Environment variables<a class="headerlink" href="#environment-variables" title="Anchor link to this section for reference">¤</a></h2>
 <p>See <a class="autorefs autorefs-internal" href="../api/#bioimageio.spec.settings">bioimageio.spec.settings</a></p>
-<h2 id="logging">🗎 Logging<a class="headerlink" href="#logging" title="Anchor link to this section for reference">¤</a></h2>
+<h2 id="logging">Logging<a class="headerlink" href="#logging" title="Anchor link to this section for reference">¤</a></h2>
 <p>bioimageio.spec (and bioimageio.core) use <a href="https://loguru.readthedocs.io/en/stable/">loguru</a> for logging.
 To enable logs from bioimageio.spec (and bioimageio.core) use:</p>
 <div class="language-python highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
@@ -1044,10 +1048,10 @@ To enable logs from bioimageio.spec (and bioimageio.core) use:</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
       
         <script src="../assets/_markdown_exec_pyodide.js"></script>
       
