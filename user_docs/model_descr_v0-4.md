@@ -160,11 +160,11 @@ The minimum shape change
 ### `inputs.preprocessing`<sub> list</sub> ≝ `[]`
 Description of how this input should be preprocessed.
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec.model.v0_4.BinarizeDescr, bioimageio.spec.model.v0_4.ClipDescr, bioimageio.spec.model.v0_4.ScaleLinearDescr, bioimageio.spec.model.v0_4.SigmoidDescr, bioimageio.spec.model.v0_4.ZeroMeanUnitVarianceDescr, bioimageio.spec.model.v0_4.ScaleRangeDescr], Discriminator(discriminator='name', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>list[typing.Annotated[bioimageio.spec.model.v0_4.BinarizeDescr | bioimageio.spec.model.v0_4.ClipDescr | bioimageio.spec.model.v0_4.ScaleLinearDescr | bioimageio.spec.model.v0_4.SigmoidDescr | bioimageio.spec.model.v0_4.ZeroMeanUnitVarianceDescr | bioimageio.spec.model.v0_4.ScaleRangeDescr, Discriminator(discriminator='name', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec.model.v0_4.BinarizeDescr, bioimageio.spec.model.v0_4.ClipDescr, bioimageio.spec.model.v0_4.ScaleLinearDescr, bioimageio.spec.model.v0_4.SigmoidDescr, bioimageio.spec.model.v0_4.ZeroMeanUnitVarianceDescr, bioimageio.spec.model.v0_4.ScaleRangeDescr], Discriminator(discriminator='name', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+list[typing.Annotated[bioimageio.spec.model.v0_4.BinarizeDescr | bioimageio.spec.model.v0_4.ClipDescr | bioimageio.spec.model.v0_4.ScaleLinearDescr | bioimageio.spec.model.v0_4.SigmoidDescr | bioimageio.spec.model.v0_4.ZeroMeanUnitVarianceDescr | bioimageio.spec.model.v0_4.ScaleRangeDescr, Discriminator(discriminator='name', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BinarizeDescr:**
 #### `inputs.preprocessing.name`<sub> Literal[binarize]</sub>
@@ -483,11 +483,11 @@ collections.abc.Sequence[int] | None
 ### `outputs.postprocessing`<sub> list</sub> ≝ `[]`
 Description of how this output should be postprocessed.
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec.model.v0_4.BinarizeDescr, bioimageio.spec.model.v0_4.ClipDescr, bioimageio.spec.model.v0_4.ScaleLinearDescr, bioimageio.spec.model.v0_4.SigmoidDescr, bioimageio.spec.model.v0_4.ZeroMeanUnitVarianceDescr, bioimageio.spec.model.v0_4.ScaleRangeDescr, bioimageio.spec.model.v0_4.ScaleMeanVarianceDescr], Discriminator(discriminator='name', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>list[typing.Annotated[bioimageio.spec.model.v0_4.BinarizeDescr | bioimageio.spec.model.v0_4.ClipDescr | bioimageio.spec.model.v0_4.ScaleLinearDescr | bioimageio.spec.model.v0_4.SigmoidDescr | bioimageio.spec.model.v0_4.ZeroMeanUnitVarianceDescr | bioimageio.spec.model.v0_4.ScaleRangeDescr | bioimageio.spec.model.v0_4.ScaleMeanVarianceDescr, Discriminator(discriminator='name', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec.model.v0_4.BinarizeDescr, bioimageio.spec.model.v0_4.ClipDescr, bioimageio.spec.model.v0_4.ScaleLinearDescr, bioimageio.spec.model.v0_4.SigmoidDescr, bioimageio.spec.model.v0_4.ZeroMeanUnitVarianceDescr, bioimageio.spec.model.v0_4.ScaleRangeDescr, bioimageio.spec.model.v0_4.ScaleMeanVarianceDescr], Discriminator(discriminator='name', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+list[typing.Annotated[bioimageio.spec.model.v0_4.BinarizeDescr | bioimageio.spec.model.v0_4.ClipDescr | bioimageio.spec.model.v0_4.ScaleLinearDescr | bioimageio.spec.model.v0_4.SigmoidDescr | bioimageio.spec.model.v0_4.ZeroMeanUnitVarianceDescr | bioimageio.spec.model.v0_4.ScaleRangeDescr | bioimageio.spec.model.v0_4.ScaleMeanVarianceDescr, Discriminator(discriminator='name', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BinarizeDescr:**
 #### `outputs.postprocessing.name`<sub> Literal[binarize]</sub>
@@ -751,22 +751,22 @@ Each test input should be a file with an ndarray in
 [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
 The extension must be '.npy'.
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix='.npy', case_sensitive=True, allow_any_parent_suffix=False)]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix='.npy', case_sensitive=True, allow_any_parent_suffix=False)]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix='.npy', case_sensitive=True, allow_any_parent_suffix=False)]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix='.npy', case_sensitive=True, allow_any_parent_suffix=False)]]
 
 </details>
 
 ## `test_outputs`<sub> list</sub>
 Analog to `test_inputs`.
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix='.npy', case_sensitive=True, allow_any_parent_suffix=False)]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix='.npy', case_sensitive=True, allow_any_parent_suffix=False)]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix='.npy', case_sensitive=True, allow_any_parent_suffix=False)]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix='.npy', case_sensitive=True, allow_any_parent_suffix=False)]]
 
 </details>
 
@@ -820,11 +820,11 @@ Attachments that are specific to this weights entry.
 ##### `weights.keras_hdf5.attachments.files`<sub> list</sub> ≝ `[]`
 File attachments
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </details>
 
@@ -932,11 +932,11 @@ Attachments that are specific to this weights entry.
 ##### `weights.onnx.attachments.files`<sub> list</sub> ≝ `[]`
 File attachments
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </details>
 
@@ -1043,11 +1043,11 @@ Attachments that are specific to this weights entry.
 ##### `weights.pytorch_state_dict.attachments.files`<sub> list</sub> ≝ `[]`
 File attachments
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </details>
 
@@ -1114,14 +1114,14 @@ need to have this field.
 
 Optional[Literal[keras_hdf5, onnx, pytorch_state_dict, tensorflow_js, tensorflow_saved_model_bundle, torchscript]]
 
-#### `weights.pytorch_state_dict.architecture`<sub> Union</sub>
+#### `weights.pytorch_state_dict.architecture`<sub> CallableFromFile | bioimageio.sp</sub>
 callable returning a torch.nn.Module instance.
 Local implementation: `<relative path to file>:<identifier of implementation within the file>`.
 Implementation in a dependency: `<dependency-package>.<[dependency-module]>.<identifier>`.
 [*Examples:*](#weightspytorch_state_dictarchitecture) ['my_function.py:MyNetworkClass', 'my_module.submodule.get_my_model']
 
 
-Union[CallableFromFile, CallableFromDepencency]
+CallableFromFile | bioimageio.spec.model.v0_4.CallableFromDepencency
 
 #### `weights.pytorch_state_dict.architecture_sha256`<sub> _internal.io_basics.Sha256 | Non</sub> ≝ `None`
 The SHA256 of the architecture source file, if the architecture is not defined in a module listed in `dependencies`
@@ -1183,11 +1183,11 @@ Attachments that are specific to this weights entry.
 ##### `weights.tensorflow_js.attachments.files`<sub> list</sub> ≝ `[]`
 File attachments
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </details>
 
@@ -1295,11 +1295,11 @@ Attachments that are specific to this weights entry.
 ##### `weights.tensorflow_saved_model_bundle.attachments.files`<sub> list</sub> ≝ `[]`
 File attachments
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </details>
 
@@ -1407,11 +1407,11 @@ Attachments that are specific to this weights entry.
 ##### `weights.torchscript.attachments.files`<sub> list</sub> ≝ `[]`
 File attachments
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </details>
 
@@ -1500,11 +1500,11 @@ file and other attachments
 ### `attachments.files`<sub> list</sub> ≝ `[]`
 File attachments
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </details>
 
@@ -1566,11 +1566,11 @@ Cover images. Please use an image smaller than 500KB and an aspect ratio width t
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')
 [*Example:*](#covers) ['cover.png']
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False, allow_any_parent_suffix=False)]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False, allow_any_parent_suffix=False)]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False, allow_any_parent_suffix=False)]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False, allow_any_parent_suffix=False)]]
 
 </details>
 
@@ -1765,22 +1765,22 @@ URLs/relative paths to sample inputs to illustrate possible inputs for the model
 for example stored as PNG or TIFF images.
 The sample files primarily serve to inform a human user about an example use case
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </details>
 
 ## `sample_outputs`<sub> list</sub> ≝ `[]`
 URLs/relative paths to sample outputs corresponding to the `sample_inputs`.
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </details>
 
@@ -1825,11 +1825,11 @@ Cover images. Please use an image smaller than 500KB and an aspect ratio width t
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')
 [*Example:*](#training_datacovers) ['cover.png']
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False, allow_any_parent_suffix=False)]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False, allow_any_parent_suffix=False)]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False, allow_any_parent_suffix=False)]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False, allow_any_parent_suffix=False)]]
 
 </details>
 
@@ -1891,11 +1891,11 @@ file and other attachments
 #### `training_data.attachments.files`<sub> list</sub> ≝ `[]`
 File attachments
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </details>
 
@@ -2112,7 +2112,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[_local.Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None

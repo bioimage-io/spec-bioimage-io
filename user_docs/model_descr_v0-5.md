@@ -26,10 +26,10 @@ The `format_version` is important for any consumer software to understand how to
 
 
 
-## `inputs`<sub> Sequence</sub>
+## `inputs`<sub> collections.abc.Sequence</sub>
 Describes the input tensors expected by this model.
 
-<details><summary>Sequence[bioimageio.spec.model.v0_5.InputTensorDescr]
+<details><summary>collections.abc.Sequence[bioimageio.spec.model.v0_5.InputTensorDescr]
 
 </summary>
 
@@ -46,14 +46,14 @@ free text description
 
 
 
-### `inputs.axes`<sub> Sequence</sub>
+### `inputs.axes`<sub> collections.abc.Sequence</sub>
 tensor axes
 
-<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexInputAxis, bioimageio.spec.model.v0_5.TimeInputAxis, bioimageio.spec.model.v0_5.SpaceInputAxis], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>collections.abc.Sequence[typing.Annotated[bioimageio.spec.model.v0_5.BatchAxis | bioimageio.spec.model.v0_5.ChannelAxis | bioimageio.spec.model.v0_5.IndexInputAxis | bioimageio.spec.model.v0_5.TimeInputAxis | bioimageio.spec.model.v0_5.SpaceInputAxis, Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexInputAxis, bioimageio.spec.model.v0_5.TimeInputAxis, bioimageio.spec.model.v0_5.SpaceInputAxis], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+collections.abc.Sequence[typing.Annotated[bioimageio.spec.model.v0_5.BatchAxis | bioimageio.spec.model.v0_5.ChannelAxis | bioimageio.spec.model.v0_5.IndexInputAxis | bioimageio.spec.model.v0_5.TimeInputAxis | bioimageio.spec.model.v0_5.SpaceInputAxis, Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BatchAxis:**
 #### `inputs.axes.id`<sub> AxisId</sub> ≝ `batch`
@@ -391,7 +391,7 @@ The file extension must be '.npy'.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `inputs.test_tensor.source`<sub> Union</sub>
@@ -421,7 +421,7 @@ The image dimensionality has to match the number of axes specified in this tenso
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `inputs.sample_tensor.source`<sub> Union</sub>
@@ -442,14 +442,14 @@ _internal.io_basics.Sha256 | None
 Description of the tensor's data values, optionally per channel.
 If specified per channel, the data `type` needs to match across channels.
 
-<details><summary>Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr, Sequence[typing.Union[bioimageio.spec.model.v0_5.NominalOrOrdinalDataDescr, bioimageio.spec.model.v0_5.IntervalOrRatioDataDescr]]*]
+<details><summary>Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr, collections.abc.Sequence[bioimageio.spec.model.v0_5.NominalOrOrdinalDataDescr | bioimageio.spec.model.v0_5.IntervalOrRatioDataDescr]*]
 
 </summary>
 
 Union of
 - NominalOrOrdinalDataDescr
 - IntervalOrRatioDataDescr
-- Sequence[typing.Union[bioimageio.spec.model.v0_5.NominalOrOrdinalDataDescr, bioimageio.spec.model.v0_5.IntervalOrRatioDataDescr]]
+- collections.abc.Sequence[bioimageio.spec.model.v0_5.NominalOrOrdinalDataDescr | bioimageio.spec.model.v0_5.IntervalOrRatioDataDescr]
   (MinLen(min_length=1))
 
 
@@ -461,15 +461,15 @@ String `values` are interpreted as labels for tensor values 0, ..., N.
 Note: as YAML 1.2 does not natively support a "set" datatype,
 nominal values should be given as a sequence (aka list/array) as well.
 
-<details><summary>Union[Sequence[int]*, Sequence[float]*, Sequence[bool]*, Sequence[str]*]
+<details><summary>Union[list[int]*, list[float]*, list[bool]*, list[str]*]
 
 </summary>
 
 Union of
-- Sequence[int] (MinLen(min_length=1))
-- Sequence[float] (MinLen(min_length=1))
-- Sequence[bool] (MinLen(min_length=1))
-- Sequence[str] (MinLen(min_length=1))
+- list[int] (MinLen(min_length=1))
+- list[float] (MinLen(min_length=1))
+- list[bool] (MinLen(min_length=1))
+- list[str] (MinLen(min_length=1))
 
 
 </details>
@@ -526,15 +526,15 @@ String `values` are interpreted as labels for tensor values 0, ..., N.
 Note: as YAML 1.2 does not natively support a "set" datatype,
 nominal values should be given as a sequence (aka list/array) as well.
 
-<details><summary>Union[Sequence[int]*, Sequence[float]*, Sequence[bool]*, Sequence[str]*]
+<details><summary>Union[list[int]*, list[float]*, list[bool]*, list[str]*]
 
 </summary>
 
 Union of
-- Sequence[int] (MinLen(min_length=1))
-- Sequence[float] (MinLen(min_length=1))
-- Sequence[bool] (MinLen(min_length=1))
-- Sequence[str] (MinLen(min_length=1))
+- list[int] (MinLen(min_length=1))
+- list[float] (MinLen(min_length=1))
+- list[bool] (MinLen(min_length=1))
+- list[str] (MinLen(min_length=1))
 
 
 </details>
@@ -596,7 +596,7 @@ indicates that this tensor may be `None`
 
 
 
-### `inputs.pad`<sub> Union</sub> ≝ `None`
+### `inputs.pad`<sub> ConstantPadding | bioimageio.spe</sub> ≝ `None`
 Explicitly specify how to pad this input tensor.
 
 Use `axes[i].pad` to specify padding width.
@@ -604,10 +604,11 @@ Use `axes[i].pad` to specify padding width.
 Note:
   Non-blockwise sample prediction only applies padding for axes with a `pad` specification.
 
-<details><summary>Union[ConstantPadding, EdgePadding, ReflectPadding, SymmetricPadding, None]
+<details><summary>ConstantPadding | bioimageio.spec.model.v0_5.EdgePadding | bioimageio.spec.model.v0_5.ReflectPadding | bioimageio.spec.model.v0_5.SymmetricPadding | None
 
 </summary>
 
+ConstantPadding | bioimageio.spec.model.v0_5.EdgePadding | bioimageio.spec.model.v0_5.ReflectPadding | bioimageio.spec.model.v0_5.SymmetricPadding | None
 
 **ConstantPadding:**
 #### `inputs.pad.mode`<sub> Literal[constant]</sub> ≝ `constant`
@@ -650,11 +651,11 @@ notes:
   'ensure_dtype' step is added to ensure preprocessing steps are not unintentionally
   changing the data type.
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BinarizeDescr, bioimageio.spec.model.v0_5.ClipDescr, bioimageio.spec.model.v0_5.EnsureDtypeDescr, bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceDescr, bioimageio.spec.model.v0_5.ScaleLinearDescr, bioimageio.spec.model.v0_5.ScaleRangeDescr, bioimageio.spec.model.v0_5.SigmoidDescr, bioimageio.spec.model.v0_5.SoftmaxDescr, bioimageio.spec.model.v0_5.ZeroMeanUnitVarianceDescr], Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>list[typing.Annotated[bioimageio.spec.model.v0_5.BinarizeDescr | bioimageio.spec.model.v0_5.ClipDescr | bioimageio.spec.model.v0_5.EnsureDtypeDescr | bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceDescr | bioimageio.spec.model.v0_5.ScaleLinearDescr | bioimageio.spec.model.v0_5.ScaleRangeDescr | bioimageio.spec.model.v0_5.SigmoidDescr | bioimageio.spec.model.v0_5.SoftmaxDescr | bioimageio.spec.model.v0_5.ZeroMeanUnitVarianceDescr, Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BinarizeDescr, bioimageio.spec.model.v0_5.ClipDescr, bioimageio.spec.model.v0_5.EnsureDtypeDescr, bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceDescr, bioimageio.spec.model.v0_5.ScaleLinearDescr, bioimageio.spec.model.v0_5.ScaleRangeDescr, bioimageio.spec.model.v0_5.SigmoidDescr, bioimageio.spec.model.v0_5.SoftmaxDescr, bioimageio.spec.model.v0_5.ZeroMeanUnitVarianceDescr], Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+list[typing.Annotated[bioimageio.spec.model.v0_5.BinarizeDescr | bioimageio.spec.model.v0_5.ClipDescr | bioimageio.spec.model.v0_5.EnsureDtypeDescr | bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceDescr | bioimageio.spec.model.v0_5.ScaleLinearDescr | bioimageio.spec.model.v0_5.ScaleRangeDescr | bioimageio.spec.model.v0_5.SigmoidDescr | bioimageio.spec.model.v0_5.SoftmaxDescr | bioimageio.spec.model.v0_5.ZeroMeanUnitVarianceDescr, Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BinarizeDescr:**
 #### `inputs.preprocessing.id`<sub> Literal[binarize]</sub>
@@ -739,7 +740,7 @@ In range (1, 100].
 
 Optional[float (Interval(gt=1, ge=None, lt=None, le=100))]
 
-##### `inputs.preprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `inputs.preprocessing.kwargs.axes`<sub> collections.abc.Sequence</sub> ≝ `None`
 The subset of axes to determine percentiles jointly,
 
 i.e. axes to reduce to compute min/max from `min_percentile`/`max_percentile`.
@@ -753,7 +754,7 @@ Default: Compute percentiles over all axes jointly.
 [*Example:*](#inputspreprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
-Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
+collections.abc.Sequence[bioimageio.spec.model.v0_5.AxisId] | None
 
 </details>
 
@@ -889,7 +890,7 @@ Union[float, list[float] (MinLen(min_length=1))]
 
 
 **ScaleRangeKwargs:**
-##### `inputs.preprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `inputs.preprocessing.kwargs.axes`<sub> collections.abc.Sequence</sub> ≝ `None`
 The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
 For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
 resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -898,7 +899,7 @@ Default: Scale all axes jointly.
 [*Example:*](#inputspreprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
-Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
+collections.abc.Sequence[bioimageio.spec.model.v0_5.AxisId] | None
 
 ##### `inputs.preprocessing.kwargs.min_percentile`<sub> float</sub> ≝ `0.0`
 The lower percentile used to determine the value to align with zero.
@@ -976,7 +977,7 @@ Note:
 
 
 **ZeroMeanUnitVarianceKwargs:**
-##### `inputs.preprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `inputs.preprocessing.kwargs.axes`<sub> collections.abc.Sequence</sub> ≝ `None`
 The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
 For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
 resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -985,7 +986,7 @@ Default: Scale all axes jointly.
 [*Example:*](#inputspreprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
-Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
+collections.abc.Sequence[bioimageio.spec.model.v0_5.AxisId] | None
 
 ##### `inputs.preprocessing.kwargs.eps`<sub> float</sub> ≝ `1e-06`
 epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.
@@ -1006,10 +1007,10 @@ We recommend to chose a name that refers to the model's task and image modality.
 
 
 
-## `outputs`<sub> Sequence</sub>
+## `outputs`<sub> collections.abc.Sequence</sub>
 Describes the output tensors.
 
-<details><summary>Sequence[bioimageio.spec.model.v0_5.OutputTensorDescr]
+<details><summary>collections.abc.Sequence[bioimageio.spec.model.v0_5.OutputTensorDescr]
 
 </summary>
 
@@ -1026,14 +1027,14 @@ free text description
 
 
 
-### `outputs.axes`<sub> Sequence</sub>
+### `outputs.axes`<sub> collections.abc.Sequence</sub>
 tensor axes
 
-<details><summary>Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f4c821053a0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f4c821053a0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>collections.abc.Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x78adee8f0ea0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x78adee8f0ea0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f4c821053a0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x7f4c821053a0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+collections.abc.Sequence[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BatchAxis, bioimageio.spec.model.v0_5.ChannelAxis, bioimageio.spec.model.v0_5.IndexOutputAxis, typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.TimeOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x78adee8f0ea0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)], typing.Annotated[typing.Union[typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxis, Tag(tag='wo_halo')], typing.Annotated[bioimageio.spec.model.v0_5.SpaceOutputAxisWithHalo, Tag(tag='with_halo')]], Discriminator(discriminator=<function _get_halo_axis_discriminator_value at 0x78adee8f0ea0>, custom_error_type=None, custom_error_message=None, custom_error_context=None)]], Discriminator(discriminator='type', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BatchAxis:**
 #### `outputs.axes.id`<sub> AxisId</sub> ≝ `batch`
@@ -1507,7 +1508,7 @@ The file extension must be '.npy'.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `outputs.test_tensor.source`<sub> Union</sub>
@@ -1537,7 +1538,7 @@ The image dimensionality has to match the number of axes specified in this tenso
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'))]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'))]
 
 **_internal.io.FileDescr:**
 #### `outputs.sample_tensor.source`<sub> Union</sub>
@@ -1558,14 +1559,14 @@ _internal.io_basics.Sha256 | None
 Description of the tensor's data values, optionally per channel.
 If specified per channel, the data `type` needs to match across channels.
 
-<details><summary>Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr, Sequence[typing.Union[bioimageio.spec.model.v0_5.NominalOrOrdinalDataDescr, bioimageio.spec.model.v0_5.IntervalOrRatioDataDescr]]*]
+<details><summary>Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr, collections.abc.Sequence[bioimageio.spec.model.v0_5.NominalOrOrdinalDataDescr | bioimageio.spec.model.v0_5.IntervalOrRatioDataDescr]*]
 
 </summary>
 
 Union of
 - NominalOrOrdinalDataDescr
 - IntervalOrRatioDataDescr
-- Sequence[typing.Union[bioimageio.spec.model.v0_5.NominalOrOrdinalDataDescr, bioimageio.spec.model.v0_5.IntervalOrRatioDataDescr]]
+- collections.abc.Sequence[bioimageio.spec.model.v0_5.NominalOrOrdinalDataDescr | bioimageio.spec.model.v0_5.IntervalOrRatioDataDescr]
   (MinLen(min_length=1))
 
 
@@ -1577,15 +1578,15 @@ String `values` are interpreted as labels for tensor values 0, ..., N.
 Note: as YAML 1.2 does not natively support a "set" datatype,
 nominal values should be given as a sequence (aka list/array) as well.
 
-<details><summary>Union[Sequence[int]*, Sequence[float]*, Sequence[bool]*, Sequence[str]*]
+<details><summary>Union[list[int]*, list[float]*, list[bool]*, list[str]*]
 
 </summary>
 
 Union of
-- Sequence[int] (MinLen(min_length=1))
-- Sequence[float] (MinLen(min_length=1))
-- Sequence[bool] (MinLen(min_length=1))
-- Sequence[str] (MinLen(min_length=1))
+- list[int] (MinLen(min_length=1))
+- list[float] (MinLen(min_length=1))
+- list[bool] (MinLen(min_length=1))
+- list[str] (MinLen(min_length=1))
 
 
 </details>
@@ -1642,15 +1643,15 @@ String `values` are interpreted as labels for tensor values 0, ..., N.
 Note: as YAML 1.2 does not natively support a "set" datatype,
 nominal values should be given as a sequence (aka list/array) as well.
 
-<details><summary>Union[Sequence[int]*, Sequence[float]*, Sequence[bool]*, Sequence[str]*]
+<details><summary>Union[list[int]*, list[float]*, list[bool]*, list[str]*]
 
 </summary>
 
 Union of
-- Sequence[int] (MinLen(min_length=1))
-- Sequence[float] (MinLen(min_length=1))
-- Sequence[bool] (MinLen(min_length=1))
-- Sequence[str] (MinLen(min_length=1))
+- list[int] (MinLen(min_length=1))
+- list[float] (MinLen(min_length=1))
+- list[bool] (MinLen(min_length=1))
+- list[str] (MinLen(min_length=1))
 
 
 </details>
@@ -1707,11 +1708,11 @@ Description of how this output should be postprocessed.
 note: `postprocessing` always ends with an 'ensure_dtype' operation.
       If not given this is added to cast to this tensor's `data.type`.
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BinarizeDescr, bioimageio.spec.model.v0_5.CellposeFlowDynamicsDescr, bioimageio.spec.model.v0_5.ClipDescr, bioimageio.spec.model.v0_5.CustomProcessingDescr, bioimageio.spec.model.v0_5.EnsureDtypeDescr, bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceDescr, bioimageio.spec.model.v0_5.ScaleLinearDescr, bioimageio.spec.model.v0_5.ScaleMeanVarianceDescr, bioimageio.spec.model.v0_5.ScaleRangeDescr, bioimageio.spec.model.v0_5.SigmoidDescr, bioimageio.spec.model.v0_5.SoftmaxDescr, bioimageio.spec.model.v0_5.StardistPostprocessingDescr, bioimageio.spec.model.v0_5.ZeroMeanUnitVarianceDescr], Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+<details><summary>list[typing.Annotated[bioimageio.spec.model.v0_5.BinarizeDescr | bioimageio.spec.model.v0_5.CellposeFlowDynamicsDescr | bioimageio.spec.model.v0_5.ClipDescr | bioimageio.spec.model.v0_5.CustomProcessingDescr | bioimageio.spec.model.v0_5.EnsureDtypeDescr | bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceDescr | bioimageio.spec.model.v0_5.ScaleLinearDescr | bioimageio.spec.model.v0_5.ScaleMeanVarianceDescr | bioimageio.spec.model.v0_5.ScaleRangeDescr | bioimageio.spec.model.v0_5.SigmoidDescr | bioimageio.spec.model.v0_5.SoftmaxDescr | bioimageio.spec.model.v0_5.StardistPostprocessingDescr | bioimageio.spec.model.v0_5.ZeroMeanUnitVarianceDescr, Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec.model.v0_5.BinarizeDescr, bioimageio.spec.model.v0_5.CellposeFlowDynamicsDescr, bioimageio.spec.model.v0_5.ClipDescr, bioimageio.spec.model.v0_5.CustomProcessingDescr, bioimageio.spec.model.v0_5.EnsureDtypeDescr, bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceDescr, bioimageio.spec.model.v0_5.ScaleLinearDescr, bioimageio.spec.model.v0_5.ScaleMeanVarianceDescr, bioimageio.spec.model.v0_5.ScaleRangeDescr, bioimageio.spec.model.v0_5.SigmoidDescr, bioimageio.spec.model.v0_5.SoftmaxDescr, bioimageio.spec.model.v0_5.StardistPostprocessingDescr, bioimageio.spec.model.v0_5.ZeroMeanUnitVarianceDescr], Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
+list[typing.Annotated[bioimageio.spec.model.v0_5.BinarizeDescr | bioimageio.spec.model.v0_5.CellposeFlowDynamicsDescr | bioimageio.spec.model.v0_5.ClipDescr | bioimageio.spec.model.v0_5.CustomProcessingDescr | bioimageio.spec.model.v0_5.EnsureDtypeDescr | bioimageio.spec.model.v0_5.FixedZeroMeanUnitVarianceDescr | bioimageio.spec.model.v0_5.ScaleLinearDescr | bioimageio.spec.model.v0_5.ScaleMeanVarianceDescr | bioimageio.spec.model.v0_5.ScaleRangeDescr | bioimageio.spec.model.v0_5.SigmoidDescr | bioimageio.spec.model.v0_5.SoftmaxDescr | bioimageio.spec.model.v0_5.StardistPostprocessingDescr | bioimageio.spec.model.v0_5.ZeroMeanUnitVarianceDescr, Discriminator(discriminator='id', custom_error_type=None, custom_error_message=None, custom_error_context=None)]]
 
 **BinarizeDescr:**
 #### `outputs.postprocessing.id`<sub> Literal[binarize]</sub>
@@ -1838,7 +1839,7 @@ In range (1, 100].
 
 Optional[float (Interval(gt=1, ge=None, lt=None, le=100))]
 
-##### `outputs.postprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.axes`<sub> collections.abc.Sequence</sub> ≝ `None`
 The subset of axes to determine percentiles jointly,
 
 i.e. axes to reduce to compute min/max from `min_percentile`/`max_percentile`.
@@ -1852,7 +1853,7 @@ Default: Compute percentiles over all axes jointly.
 [*Example:*](#outputspostprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
-Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
+collections.abc.Sequence[bioimageio.spec.model.v0_5.AxisId] | None
 
 </details>
 
@@ -2026,7 +2027,7 @@ ID of unprocessed input tensor to match.
 
 
 
-##### `outputs.postprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.axes`<sub> collections.abc.Sequence</sub> ≝ `None`
 The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
 For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
 resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -2035,7 +2036,7 @@ Default: Scale all axes jointly.
 [*Example:*](#outputspostprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
-Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
+collections.abc.Sequence[bioimageio.spec.model.v0_5.AxisId] | None
 
 ##### `outputs.postprocessing.kwargs.eps`<sub> float</sub> ≝ `1e-06`
 Epsilon for numeric stability:
@@ -2060,7 +2061,7 @@ Epsilon for numeric stability:
 
 
 **ScaleRangeKwargs:**
-##### `outputs.postprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.axes`<sub> collections.abc.Sequence</sub> ≝ `None`
 The subset of axes to normalize jointly, i.e. axes to reduce to compute the min/max percentile value.
 For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
 resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -2069,7 +2070,7 @@ Default: Scale all axes jointly.
 [*Example:*](#outputspostprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
-Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
+collections.abc.Sequence[bioimageio.spec.model.v0_5.AxisId] | None
 
 ##### `outputs.postprocessing.kwargs.min_percentile`<sub> float</sub> ≝ `0.0`
 The lower percentile used to determine the value to align with zero.
@@ -2227,7 +2228,7 @@ Optional label to apply to any area of overlapping predicted objects.
 
 
 **ZeroMeanUnitVarianceKwargs:**
-##### `outputs.postprocessing.kwargs.axes`<sub> Optional</sub> ≝ `None`
+##### `outputs.postprocessing.kwargs.axes`<sub> collections.abc.Sequence</sub> ≝ `None`
 The subset of axes to normalize jointly, i.e. axes to reduce to compute mean/std.
 For example to normalize 'batch', 'x' and 'y' jointly in a tensor ('batch', 'channel', 'y', 'x')
 resulting in a tensor of equal shape normalized per channel, specify `axes=('batch', 'x', 'y')`.
@@ -2236,7 +2237,7 @@ Default: Scale all axes jointly.
 [*Example:*](#outputspostprocessingkwargsaxes) ('batch', 'x', 'y')
 
 
-Optional[Sequence[bioimageio.spec.model.v0_5.AxisId]]
+collections.abc.Sequence[bioimageio.spec.model.v0_5.AxisId] | None
 
 ##### `outputs.postprocessing.kwargs.eps`<sub> float</sub> ≝ `1e-06`
 epsilon for numeric stability: `out = (tensor - mean) / (std + eps)`.
@@ -2552,7 +2553,7 @@ Source of the external ONNX data file holding the weights.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.data', case_sensitive=True, allow_any_parent_suffix=False); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.data', case_sensitive=True, allow_any_parent_suffix=False); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.onnx.external_data.source`<sub> Union</sub>
@@ -2728,7 +2729,7 @@ The conda environment file should include pytorch and any version pinning has to
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True, allow_any_parent_suffix=False); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True, allow_any_parent_suffix=False); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.pytorch_state_dict.dependencies.source`<sub> Union</sub>
@@ -2949,7 +2950,7 @@ Should include tensorflow and any version pinning has to be compatible with **te
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True, allow_any_parent_suffix=False); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix=('.yaml', '.yml'), case_sensitive=True, allow_any_parent_suffix=False); )]
 
 **_internal.io.FileDescr:**
 ##### `weights.tensorflow_saved_model_bundle.dependencies.source`<sub> Union</sub>
@@ -3066,11 +3067,11 @@ Version of the PyTorch library used.
 ## `attachments`<sub> list</sub> ≝ `[]`
 file attachments
 
-<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 **_internal.io.FileDescr:**
 ### `attachments.source`<sub> Union</sub>
@@ -3184,7 +3185,7 @@ BioimageioConfig(reproducibility_tolerance=(ContinuousReproducibilityTolerance(m
 
 
 **BioimageioConfig:**
-#### `config.bioimageio.reproducibility_tolerance`<sub> Sequence</sub> ≝ 🡇
+#### `config.bioimageio.reproducibility_tolerance`<sub> collections.abc.Sequence</sub> ≝ 🡇
 ```python
 (ContinuousReproducibilityTolerance(mismatched_elements_per_million=100, weights_formats=(), relative_tolerance=0.001, absolute_tolerance=0.001, output_ids='any_continuous_output'),
 DiscreteReproducibilityTolerance(mismatched_elements_per_million=1000, weights_formats=(), relative_tolerance=0, absolute_tolerance=0, output_ids='any_discrete_output'))
@@ -3195,11 +3196,11 @@ from the model's test inputs.
 Only the first entry matching tensor id and weights format is considered.
 For defaults see [`ContinuousReproducibilityTolerance`][ContinuousReproducibilityTolerance]/[`DiscreteReproducibilityTolerance`][DiscreteReproducibilityTolerance]
 
-<details><summary>Sequence[bioimageio.spec.model.v0_5.ReproducibilityTolerance | bioimageio.spec.model.v0_5.ContinuousReproducibilityTolerance | bioimageio.spec.model.v0_5.DiscreteReproducibilityTolerance]
+<details><summary>collections.abc.Sequence[bioimageio.spec.model.v0_5.ReproducibilityTolerance | bioimageio.spec.model.v0_5.ContinuousReproducibilityTolerance | bioimageio.spec.model.v0_5.DiscreteReproducibilityTolerance]
 
 </summary>
 
-Sequence[bioimageio.spec.model.v0_5.ReproducibilityTolerance | bioimageio.spec.model.v0_5.ContinuousReproducibilityTolerance | bioimageio.spec.model.v0_5.DiscreteReproducibilityTolerance]
+collections.abc.Sequence[bioimageio.spec.model.v0_5.ReproducibilityTolerance | bioimageio.spec.model.v0_5.ContinuousReproducibilityTolerance | bioimageio.spec.model.v0_5.DiscreteReproducibilityTolerance]
 
 **ReproducibilityTolerance:**
 ##### `config.bioimageio.reproducibility_tolerance.mismatched_elements_per_million`<sub> int</sub> ≝ `100`
@@ -3207,14 +3208,14 @@ Maximum number of mismatched elements/pixels per million to tolerate.
 
 
 
-##### `config.bioimageio.reproducibility_tolerance.weights_formats`<sub> Sequence</sub> ≝ `()`
+##### `config.bioimageio.reproducibility_tolerance.weights_formats`<sub> collections.abc.Sequence</sub> ≝ `()`
 Limits the weights formats these details apply to.
 
-<details><summary>Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
+<details><summary>collections.abc.Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
 
 </summary>
 
-Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
+collections.abc.Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
 
 </details>
 
@@ -3233,13 +3234,13 @@ Needs to be 0 for discrete (integer and boolean) outputs.
 
 
 
-##### `config.bioimageio.reproducibility_tolerance.output_ids`<sub> Sequence</sub> ≝ `()`
+##### `config.bioimageio.reproducibility_tolerance.output_ids`<sub> collections.abc.Sequence</sub> ≝ `()`
 Limits the output tensor IDs these reproducibility details apply to.
 
 If empty, the reproducibility details apply to all outputs.
 
 
-Sequence[bioimageio.spec.model.v0_5.TensorId]
+collections.abc.Sequence[bioimageio.spec.model.v0_5.TensorId]
 
 **ContinuousReproducibilityTolerance:**
 ##### `config.bioimageio.reproducibility_tolerance.mismatched_elements_per_million`<sub> int</sub> ≝ `100`
@@ -3247,14 +3248,14 @@ Maximum number of mismatched elements/pixels per million to tolerate.
 
 
 
-##### `config.bioimageio.reproducibility_tolerance.weights_formats`<sub> Sequence</sub> ≝ `()`
+##### `config.bioimageio.reproducibility_tolerance.weights_formats`<sub> collections.abc.Sequence</sub> ≝ `()`
 Limits the weights formats these details apply to.
 
-<details><summary>Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
+<details><summary>collections.abc.Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
 
 </summary>
 
-Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
+collections.abc.Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
 
 </details>
 
@@ -3288,14 +3289,14 @@ since a single pixel mismatch can be more significant than for continuous output
 
 
 
-##### `config.bioimageio.reproducibility_tolerance.weights_formats`<sub> Sequence</sub> ≝ `()`
+##### `config.bioimageio.reproducibility_tolerance.weights_formats`<sub> collections.abc.Sequence</sub> ≝ `()`
 Limits the weights formats these details apply to.
 
-<details><summary>Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
+<details><summary>collections.abc.Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
 
 </summary>
 
-Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
+collections.abc.Sequence[typing.Literal['keras_hdf5', 'keras_v3', 'onnx', 'pytorch_state_dict', 'tensorflow_js', 'tensorflow_saved_model_bundle', 'torchscript']]
 
 </details>
 
@@ -3660,11 +3661,11 @@ Cover images. Please use an image smaller than 500KB and an aspect ratio width t
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 [*Example:*](#covers) [{'source': 'cover.png'}]
 
-<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False, allow_any_parent_suffix=False)]]
+<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False, allow_any_parent_suffix=False)]]
 
 </summary>
 
-list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False, allow_any_parent_suffix=False)]]
+list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False, allow_any_parent_suffix=False)]]
 
 **_internal.io.FileDescr:**
 ### `covers.source`<sub> Union</sub>
@@ -3697,7 +3698,7 @@ with details on how to quantitatively validate the model on unseen data.
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True, allow_any_parent_suffix=False); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True, allow_any_parent_suffix=False); )]
 
 **_internal.io.FileDescr:**
 ### `documentation.source`<sub> Union</sub>
@@ -3730,7 +3731,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -3774,7 +3775,7 @@ Union of
 - _internal.license_id.DeprecatedLicenseId
 - None
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 
 **_internal.io.FileDescr:**
@@ -3932,7 +3933,7 @@ Associated tags
 
 
 
-## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2026, 10, 16, 9, 28, 33, 50521, tzinfo=datetime.timezone.utc)`
+## `timestamp`<sub> _internal.types.Datetime</sub> ≝ `root=datetime.datetime(2026, 11, 2, 14, 29, 34, 566916, tzinfo=datetime.timezone.utc)`
 Timestamp in [ISO 8601](#https://en.wikipedia.org/wiki/ISO_8601) format
 with a few restrictions listed [here](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat).
 (In Python a datetime object is valid, too).
@@ -3977,11 +3978,11 @@ Cover images. Please use an image smaller than 500KB and an aspect ratio width t
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg')
 [*Example:*](#training_datacovers) [{'source': 'cover.png'}]
 
-<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False, allow_any_parent_suffix=False)]]
+<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False, allow_any_parent_suffix=False)]]
 
 </summary>
 
-list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False, allow_any_parent_suffix=False)]]
+list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg'), case_sensitive=False, allow_any_parent_suffix=False)]]
 
 **_internal.io.FileDescr:**
 #### `training_data.covers.source`<sub> Union</sub>
@@ -4007,7 +4008,7 @@ The recommended documentation source file name is `README.md`. An `.md` suffix i
 </summary>
 
 Optional[_internal.io.FileDescr
-(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True, allow_any_parent_suffix=False); )]
+(AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'); WithSuffix(suffix='.md', case_sensitive=True, allow_any_parent_suffix=False); )]
 
 **_internal.io.FileDescr:**
 #### `training_data.documentation.source`<sub> Union</sub>
@@ -4073,11 +4074,11 @@ https://support.orcid.org/hc/en-us/articles/360006897674-Structure-of-the-ORCID-
 ### `training_data.attachments`<sub> list</sub> ≝ `[]`
 file attachments
 
-<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[bioimageio.spec._internal.io.FileDescr, AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 **_internal.io.FileDescr:**
 #### `training_data.attachments.source`<sub> Union</sub>
@@ -4138,7 +4139,7 @@ Union of
 - _internal.license_id.DeprecatedLicenseId
 - None
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'))
 
 
 **_internal.io.FileDescr:**
@@ -4172,7 +4173,7 @@ An icon for illustration, e.g. on bioimage.io
 Union of
 - str (Len(min_length=1, max_length=2))
 - _internal.io.FileDescr
-  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x7f4c82382a20>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); WrapSerializer(func=<function package_file_descr_serializer at 0x78adeeb8c9a0>, return_type=PydanticUndefined, when_used='unless-none'))
 - None
 
 
@@ -4309,7 +4310,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[_local.Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
@@ -4395,11 +4396,11 @@ Cover images. Please use an image smaller than 500KB and an aspect ratio width t
 The supported image formats are: ('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff')
 [*Example:*](#training_datacovers) ['cover.png']
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False, allow_any_parent_suffix=False)]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False, allow_any_parent_suffix=False)]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False, allow_any_parent_suffix=False)]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'), WithSuffix(suffix=('.gif', '.jpeg', '.jpg', '.png', '.svg', '.tif', '.tiff'), case_sensitive=False, allow_any_parent_suffix=False)]]
 
 </details>
 
@@ -4461,11 +4462,11 @@ file and other attachments
 #### `training_data.attachments.files`<sub> list</sub> ≝ `[]`
 File attachments
 
-<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+<details><summary>list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </summary>
 
-list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x7f4c90b3f1a0>), PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none')]]
+list[typing.Annotated[typing.Union[bioimageio.spec._internal.url.HttpUrl, bioimageio.spec._internal.io.RelativeFilePath, typing.Annotated[pathlib._local.Path, PathType(path_type='file'), FieldInfo(annotation=NoneType, required=True, title='FilePath')]], FieldInfo(annotation=NoneType, required=True, title='FileSource', metadata=[_PydanticGeneralMetadata(union_mode='left_to_right')]), AfterValidator(func=<function wo_special_file_name at 0x78adfd26d4e0>), PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none')]]
 
 </details>
 
@@ -4682,7 +4683,7 @@ badge icon (included in bioimage.io package if not a URL)
 
 Union of
 - Union[_local.Path (PathType(path_type='file'); ), _internal.io.RelativeFilePath]
-  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x7f4c82382520>, return_type=PydanticUndefined, when_used='unless-none'))
+  (AfterValidator(wo_special_file_name); PrettyPlainSerializer(func=<function _package_serializer at 0x78adeeb8cae0>, return_type=PydanticUndefined, when_used='unless-none'))
 - _internal.url.HttpUrl
 - pydantic.networks.HttpUrl
 - None
