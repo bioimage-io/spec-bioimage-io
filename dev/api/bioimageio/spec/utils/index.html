@@ -3060,13 +3060,13 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io_utils.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">398</span>
-<span class="normal">399</span>
-<span class="normal">400</span>
-<span class="normal">401</span>
-<span class="normal">402</span>
-<span class="normal">403</span>
-<span class="normal">404</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_array</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">PermissiveFileSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_array</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">PermissiveFileSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""load a numpy ndarray from a .npy file"""</span>
     <span class="n">reader</span> <span class="o">=</span> <span class="n">get_reader</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">allow_pickle</span><span class="p">:</span>
@@ -3340,7 +3340,12 @@
 <span class="normal">283</span>
 <span class="normal">284</span>
 <span class="normal">285</span>
-<span class="normal">286</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">open_bioimageio_yaml</span><span class="p">(</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">open_bioimageio_yaml</span><span class="p">(</span>
     <span class="n">source</span><span class="p">:</span> <span class="n">PermissiveFileSource</span> <span class="o">|</span> <span class="n">ZipFile</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">,</span>
     <span class="o">/</span><span class="p">,</span>
     <span class="n">progressbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">ProgressbarLike</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">ProgressbarLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3398,11 +3403,14 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span>
 
-        <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">collection_http_pattern</span><span class="p">:</span>
+        <span class="n">collection_patterns</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">collection_http_pattern</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">collection_patterns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">collection_patterns</span> <span class="o">=</span> <span class="p">(</span><span class="n">collection_patterns</span><span class="p">,)</span> <span class="k">if</span> <span class="n">collection_patterns</span> <span class="k">else</span> <span class="p">()</span>
+
+        <span class="n">collection_pattern_errors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">collection_patterns</span><span class="p">:</span>
             <span class="k">with</span> <span class="n">ValidationContext</span><span class="p">(</span><span class="n">perform_io_checks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-                <span class="n">url</span> <span class="o">=</span> <span class="n">HttpUrl</span><span class="p">(</span>
-                    <span class="n">settings</span><span class="o">.</span><span class="n">collection_http_pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bioimageio_id</span><span class="o">=</span><span class="n">source</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">HttpUrl</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bioimageio_id</span><span class="o">=</span><span class="n">source</span><span class="p">))</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">r</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">follow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -3410,9 +3418,9 @@
                 <span class="n">unparsed_content</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
                 <span class="n">content</span> <span class="o">=</span> <span class="n">_sanitize_bioimageio_yaml</span><span class="p">(</span><span class="n">read_yaml</span><span class="p">(</span><span class="n">unparsed_content</span><span class="p">))</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e_coll_pattern</span><span class="p">:</span>
-                <span class="n">collection_pattern_error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"BIOIMAGEIO_COLLECTION_HTTP_PATTERN: Failed to get bioimageio.yaml from </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e_coll_pattern</span><span class="si">}</span><span class="s2">"</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">collection_pattern_error_msg</span><span class="p">)</span>
-                <span class="n">collection_pattern_error_msg</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">collection_pattern_error_msg</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"BIOIMAGEIO_COLLECTION_HTTP_PATTERN: Failed to get bioimageio.yaml from </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e_coll_pattern</span><span class="si">}</span><span class="s2">"</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+                <span class="n">collection_pattern_errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"loaded </span><span class="si">{}</span><span class="s2"> from </span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
                 <span class="n">original_file_name</span> <span class="o">=</span> <span class="p">(</span>
@@ -3425,8 +3433,10 @@
                     <span class="n">original_source_name</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
                     <span class="n">unparsed_content</span><span class="o">=</span><span class="n">unparsed_content</span><span class="p">,</span>
                 <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">collection_pattern_error_msg</span> <span class="o">=</span> <span class="s2">""</span>
+
+        <span class="n">collection_pattern_error_msg</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">collection_pattern_errors</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"/"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">id_map</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -3564,11 +3574,11 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/_internal/io_utils.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">407</span>
-<span class="normal">408</span>
-<span class="normal">409</span>
-<span class="normal">410</span>
-<span class="normal">411</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_array</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_array</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">ZipPath</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""save a numpy ndarray to a .npy file"""</span>
     <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">)</span>
