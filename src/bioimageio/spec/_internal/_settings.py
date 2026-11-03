@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Sequence
 from functools import cached_property
 from pathlib import Path
 from typing import Annotated, Any
@@ -47,15 +48,17 @@ class Settings(
     CI: Annotated[bool | str, Field(alias="CI")] = False
     """Wether or not the execution happens in a continuous integration (CI) environment."""
 
-    collection_http_pattern: str = (
-        "https://hypha.aicell.io/bioimage-io/artifacts/{bioimageio_id}/files/rdf.yaml"
+    collection_http_pattern: str | Sequence[str] = (
+        "https://hypha.aicell.io/bioimage-io/artifacts/{bioimageio_id}/files/bioimageio.yaml",
+        "https://hypha.aicell.io/bioimage-io/artifacts/{bioimageio_id}/files/rdf.yaml",
     )
-    """A pattern to map bioimageio IDs to bioimageio.yaml URLs.
+    """A pattern or ordered sequence of patterns to map bioimageio IDs to bioimageio.yaml URLs.
     Notes:
     - '{bioimageio_id}' is replaced with user query,
       e.g. "affable-shark" when calling `load_description("affable-shark")`.
+    - Multiple patterns are tried in order until one succeeds.
     - This method takes precedence over resolving via `id_map`.
-    - If this endpoints fails, we fall back to `id_map`.
+    - If all endpoints fail, we fall back to `id_map`.
     """
 
     github_username: str | None = None

@@ -194,11 +194,14 @@ def open_bioimageio_yaml(
         if not isinstance(source, str):
             raise
 
-        if settings.collection_http_pattern:
+        collection_patterns = settings.collection_http_pattern
+        if isinstance(collection_patterns, str):
+            collection_patterns = (collection_patterns,) if collection_patterns else ()
+
+        collection_pattern_errors: list[str] = []
+        for pattern in collection_patterns:
             with ValidationContext(perform_io_checks=False):
-                url = HttpUrl(
-                    settings.collection_http_pattern.format(bioimageio_id=source)
-                )
+                url = HttpUrl(pattern.format(bioimageio_id=source))
 
             try:
                 r = httpx.get(url, follow_redirects=True)
@@ -206,9 +209,9 @@ def open_bioimageio_yaml(
                 unparsed_content = r.content.decode(encoding="utf-8")
                 content = _sanitize_bioimageio_yaml(read_yaml(unparsed_content))
             except Exception as e_coll_pattern:
-                collection_pattern_error_msg = f"BIOIMAGEIO_COLLECTION_HTTP_PATTERN: Failed to get bioimageio.yaml from {url}: {e_coll_pattern}"
-                logger.warning(collection_pattern_error_msg)
-                collection_pattern_error_msg = "\n" + collection_pattern_error_msg
+                error_msg = f"BIOIMAGEIO_COLLECTION_HTTP_PATTERN: Failed to get bioimageio.yaml from {url}: {e_coll_pattern}"
+                logger.warning(error_msg)
+                collection_pattern_errors.append(error_msg)
             else:
                 logger.info("loaded {} from {}", source, url)
                 original_file_name = (
@@ -221,8 +224,10 @@ def open_bioimageio_yaml(
                     original_source_name=url,
                     unparsed_content=unparsed_content,
                 )
-        else:
-            collection_pattern_error_msg = ""
+
+        collection_pattern_error_msg = "".join(
+            f"\n{error}" for error in collection_pattern_errors
+        )
 
         if not isinstance(settings.id_map, str) or "/" not in settings.id_map:
             raise ValueError(
