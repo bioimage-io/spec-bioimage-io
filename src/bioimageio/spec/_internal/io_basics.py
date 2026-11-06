@@ -30,9 +30,13 @@ AbsoluteFilePath = Annotated[
     pydantic.Field(title="AbsoluteFilePath"),
 ]
 
-BIOIMAGEIO_YAML = "rdf.yaml"
-ALTERNATIVE_BIOIMAGEIO_YAML_NAMES = ("bioimageio.yaml", "model.yaml")
-ALL_BIOIMAGEIO_YAML_NAMES = (BIOIMAGEIO_YAML,) + ALTERNATIVE_BIOIMAGEIO_YAML_NAMES
+BIOIMAGEIO_YAML = "bioimageio.yaml"
+DEPRECATED_BIOIMAGEIO_YAML = "rdf.yaml"
+ALTERNATIVE_BIOIMAGEIO_YAML_NAMES = ("model.yaml",)
+ALL_BIOIMAGEIO_YAML_NAMES = (
+    BIOIMAGEIO_YAML,
+    DEPRECATED_BIOIMAGEIO_YAML,
+) + ALTERNATIVE_BIOIMAGEIO_YAML_NAMES
 
 ZipPath = zipp.Path  # not zipfile.Path due to https://bugs.python.org/issue40564
 
