@@ -13,6 +13,7 @@ This changelog includes implementation details and might reference [changes to t
 ### bioimageio.spec 0.5.14.4
 
 - fix floating point rounding issue in model.v0_5.SizeReference
+- default to packaging resources with a `bioimageio.yaml` file (instead of `rdf.yaml`)
 
 ### bioimageio.spec 0.5.14.3
 
@@ -37,7 +38,6 @@ This changelog includes implementation details and might reference [changes to t
 ### bioimageio.spec 0.5.13.0
 
 - released [model spec 0.5.13](#model-0513)
-
 
 ### bioimageio.spec 0.5.12.0
 

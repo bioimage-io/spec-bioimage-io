@@ -1,165 +1,176 @@
 %YAML 1.2
 ---
-authors:
-  - github_user: constantinpape
-    name: Constantin Pape
-cite:
-  - doi: 10.5281/zenodo.5108853
-    text: training library
-  - doi: 10.1007/978-3-319-24574-4_28
-    text: architecture
-config:
-  bioimageio:
-    reproducibility_tolerance:
-      - absolute_tolerance: 1e-05
-        relative_tolerance: 1e-3
-        mismatched_elements_per_million: 100
+name: Multi-tensor
+description: Multi tensor
 covers:
   - source: cover.jpg
-description: Multi tensor
+    sha256: 23018eae7c943d484d4d384229593aa79523fb7b5ca64f8410e81391ac934bbe
 documentation:
   source: documentation.md
-format_version: 0.5.14
-git_repo: https://github.com/constantinpape/torch-em.git
-inputs:
-  - axes:
-      - type: batch
-      - channel_names:
-          - channel0
-        type: channel
-      - id: 'y'
-        size:
-          min: 32
-          step: 16
-        type: space
-      - size:
-          min: 32
-          step: 16
-        type: space
-    id: input0
-    preprocessing:
-      - id: ensure_dtype
-        kwargs:
-          dtype: float32
-      - id: zero_mean_unit_variance
-        kwargs:
-          axes:
-            - batch
-            - channel
-            - 'y'
-            - x
-      - id: ensure_dtype
-        kwargs:
-          dtype: float32
-    test_tensor:
-      sha256: f0af5576a51eae4ef0ab8d905b2cca1e51ee8fcd4162f3d53f14059a81993ad7
-      source: test_input_0.npy
-  - axes:
-      - type: batch
-      - channel_names:
-          - channel0
-        type: channel
-      - id: 'y'
-        size:
-          min: 32
-          step: 16
-        type: space
-      - size:
-          min: 32
-          step: 16
-        type: space
-    id: input1
-    preprocessing:
-      - id: ensure_dtype
-        kwargs:
-          dtype: float32
-      - id: zero_mean_unit_variance
-        kwargs:
-          axes:
-            - batch
-            - channel
-            - 'y'
-            - x
-      - id: ensure_dtype
-        kwargs:
-          dtype: float32
-    test_tensor:
-      sha256: ade979299d3ade2cf8ff62d90a7a81e46e44b0e1c620db8b290fd06ffbbe4008
-      source: test_input_1.npy
+  sha256: b0d02a1131b5d00c6e5dc87b338b5c3d79b4b47cb5fa8c12a9224bbd7a60bf29
+authors:
+  - name: Constantin Pape
+    github_user: constantinpape
+cite:
+  - text: training library
+    doi: 10.5281/zenodo.5108853
+  - text: architecture
+    doi: 10.1007/978-3-319-24574-4_28
 license: CC-BY-4.0
+git_repo: https://github.com/constantinpape/torch-em.git
 links:
   - ilastik/ilastik
-name: Multi-tensor
-outputs:
-  - axes:
-      - type: batch
-      - channel_names:
-          - channel0
-        type: channel
-      - id: 'y'
-        size:
-          axis_id: 'y'
-          tensor_id: input0
-        halo: 4
-        type: space
-      - size:
-          axis_id: x
-          tensor_id: input0
-        halo: 4
-        type: space
-    id: output0
-    postprocessing:
-      - id: ensure_dtype
-        kwargs:
-          dtype: float32
-    test_tensor:
-      sha256: f6100725e80f5243b46a02b3efcf8ed9d9619e88a43e0716f37df956b27e2fe7
-      source: test_output_0.npy
-  - axes:
-      - type: batch
-      - channel_names:
-          - channel0
-        type: channel
-      - id: 'y'
-        size:
-          axis_id: 'y'
-          tensor_id: input1
-        halo: 4
-        type: space
-      - size:
-          axis_id: x
-          tensor_id: input1
-        halo: 4
-        type: space
-    id: output1
-    postprocessing:
-      - id: ensure_dtype
-        kwargs:
-          dtype: float32
-    test_tensor:
-      sha256: e8d8e76263a38632f52742d24cf9ef13e76dc3aa1c6e0c6f29254ec82a15fccf
-      source: test_output_1.npy
 tags:
   - segmentation
-timestamp: '2021-09-13T15:55:34+00:00'
+format_version: 0.5.14
 type: model
+inputs:
+  - id: input0
+    axes:
+      - type: batch
+      - type: channel
+        channel_names:
+          - channel0
+      - size:
+          min: 32
+          step: 16
+        id: y
+        type: space
+      - size:
+          min: 32
+          step: 16
+        type: space
+    test_tensor:
+      source: test_input_0.npy
+      sha256: f0af5576a51eae4ef0ab8d905b2cca1e51ee8fcd4162f3d53f14059a81993ad7
+    preprocessing:
+      - id: ensure_dtype
+        kwargs:
+          dtype: float32
+      - id: zero_mean_unit_variance
+        kwargs:
+          axes:
+            - batch
+            - channel
+            - y
+            - x
+      - id: ensure_dtype
+        kwargs:
+          dtype: float32
+  - id: input1
+    axes:
+      - type: batch
+      - type: channel
+        channel_names:
+          - channel0
+      - size:
+          min: 32
+          step: 16
+        id: y
+        type: space
+      - size:
+          min: 32
+          step: 16
+        type: space
+    test_tensor:
+      source: test_input_1.npy
+      sha256: ade979299d3ade2cf8ff62d90a7a81e46e44b0e1c620db8b290fd06ffbbe4008
+    preprocessing:
+      - id: ensure_dtype
+        kwargs:
+          dtype: float32
+      - id: zero_mean_unit_variance
+        kwargs:
+          axes:
+            - batch
+            - channel
+            - y
+            - x
+      - id: ensure_dtype
+        kwargs:
+          dtype: float32
+outputs:
+  - id: output0
+    axes:
+      - type: batch
+      - type: channel
+        channel_names:
+          - channel0
+      - halo: 4
+        size:
+          tensor_id: input0
+          axis_id: y
+        id: y
+        type: space
+      - halo: 4
+        size:
+          tensor_id: input0
+          axis_id: x
+        type: space
+    test_tensor:
+      source: test_output_0.npy
+      sha256: f6100725e80f5243b46a02b3efcf8ed9d9619e88a43e0716f37df956b27e2fe7
+    postprocessing:
+      - id: ensure_dtype
+        kwargs:
+          dtype: float32
+  - id: output1
+    axes:
+      - type: batch
+      - type: channel
+        channel_names:
+          - channel0
+      - halo: 4
+        size:
+          tensor_id: input1
+          axis_id: y
+        id: y
+        type: space
+      - halo: 4
+        size:
+          tensor_id: input1
+          axis_id: x
+        type: space
+    test_tensor:
+      source: test_output_1.npy
+      sha256: e8d8e76263a38632f52742d24cf9ef13e76dc3aa1c6e0c6f29254ec82a15fccf
+    postprocessing:
+      - id: ensure_dtype
+        kwargs:
+          dtype: float32
+timestamp: '2021-09-13T15:55:34+00:00'
 weights:
+  onnx:
+    source: weights.onnx
+    sha256: 5199a823244a2b6aa87fe50c3fbdbe5bceab697d15f6392eb2ea0bed54d8f854
+    parent: pytorch_state_dict
+    comment: Converted with bioimageio.core 0.12.0, dynamo=True.
+    opset_version: 18
+    external_data:
+      source: weights.onnx.data
+      sha256: d0c196ae3aea90863efc3258708b7140b18a6a40e45941835efdb18d9ac77313
   pytorch_state_dict:
+    source: weights.pt
+    sha256: c498522b3f2b02429b41fe9dbcb722ce0d7ad4cae7fcf8059cee27857ae49b00
     architecture:
+      source: multi_tensor_unet.py
+      sha256: 3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2
       callable: MultiTensorUNet
       kwargs:
         depth: 3
         in_channels: 2
         initial_features: 16
         out_channels: 2
-      sha256: 3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2
-      source: multi_tensor_unet.py
     pytorch_version: 1.6
-    sha256: c498522b3f2b02429b41fe9dbcb722ce0d7ad4cae7fcf8059cee27857ae49b00
-    source: weights.pt
   torchscript:
-    comment: Converted with bioimageio.core 0.7.0 with use_tracing=True.
-    parent: pytorch_state_dict
-    pytorch_version: 2.5.1
-    sha256: 5a6800f5796e5485525621f0b6846c2a25cee36f60bb6cca74cd5bc2ee259a90
     source: weights_torchscript_traced.pt
+    sha256: ea38ede47ebec785cf035281377e72f75e5e56e12078ef89ddbc0a6e68f21cbb
+    parent: pytorch_state_dict
+    comment: Converted with bioimageio.core 0.12.0 with use_tracing=True.
+    pytorch_version: 2.14.1
+config:
+  bioimageio:
+    reproducibility_tolerance:
+      - mismatched_elements_per_million: 100
+        relative_tolerance: 0.001
+        absolute_tolerance: 1e-05
