@@ -23,14 +23,15 @@ AUTOGEN_BODY_MULTIPLE = """\"\"\"{info.target} resource description format
 Implementations of all released minor versions are available in submodules.
 \"\"\"
 
-from typing import Union
+from typing import Annotated, TypeAlias
 
 from pydantic import Discriminator, Field
-from typing_extensions import Annotated, TypeAlias
 
 {info.all_version_modules_imports}
 
-Any{info.target_node}: TypeAlias = Annotated[Union[{info.all_target_nodes_plain_aliases_annotated}], Discriminator("format_version"), Field(title="{info.target}")]
+Any{info.target_node}: TypeAlias = Annotated[
+    {info.all_target_nodes_plain_aliases_annotated},
+    Discriminator("format_version"), Field(title="{info.target}")]
 \"\"\"Union of any released {info.target} desription\"\"\"
 """
 
@@ -94,7 +95,7 @@ class Info:
         self.all_target_nodes_plain_aliases = ", ".join(
             [f"{self.target_node}_{vm}" for vm in self.all_version_modules]
         )
-        self.all_target_nodes_plain_aliases_annotated = ", ".join(
+        self.all_target_nodes_plain_aliases_annotated = " | ".join(
             [
                 f'Annotated[{self.target_node}_{vm}, Field(title="{self.target} {vm.strip("v").replace("_", ".")}")]'
                 for vm in self.all_version_modules

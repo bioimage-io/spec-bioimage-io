@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping, Sequence
 from types import MappingProxyType
-from typing import Mapping, NamedTuple, Sequence
+from typing import NamedTuple
 
 from .utils import files
 

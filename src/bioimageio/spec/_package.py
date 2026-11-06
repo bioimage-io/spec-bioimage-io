@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import collections.abc
 import shutil
+from collections.abc import Sequence
 from io import BytesIO
 from pathlib import Path
 from tempfile import NamedTemporaryFile, mkdtemp
-from typing import IO, Literal, Sequence
+from typing import IO, Literal
 from zipfile import ZIP_DEFLATED
 
 from loguru import logger

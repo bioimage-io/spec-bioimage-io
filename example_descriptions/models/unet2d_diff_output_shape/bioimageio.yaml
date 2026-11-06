@@ -15,14 +15,14 @@ covers:
 description: Different output shape
 documentation:
   source: documentation.md
-format_version: 0.5.13
+format_version: 0.5.14
 git_repo: https://github.com/constantinpape/torch-em.git
 inputs:
   - axes:
       - { type: batch }
       - channel_names: [channel0]
         type: channel
-      - id: y
+      - id: 'y'
         size: { min: 32, step: 16 }
         type: space
       - size: { min: 32, step: 16 }
@@ -31,8 +31,6 @@ inputs:
       - id: ensure_dtype
         kwargs: { dtype: float32 }
       - id: zero_mean_unit_variance
-        kwargs:
-          axes: [channel, y, x]
       - id: ensure_dtype
         kwargs: { dtype: float32 }
     test_tensor:
@@ -51,9 +49,11 @@ outputs:
       - id: y
         scale: 2.0
         size: { axis_id: y, tensor_id: input }
+        halo: 2
         type: space
       - scale: 2.0
         size: { axis_id: x, tensor_id: input }
+        halo: 2
         type: space
     postprocessing:
       - id: ensure_dtype
@@ -72,7 +72,7 @@ weights:
       callable: ResizeUNet
       kwargs:
         { depth: 3, in_channels: 1, initial_features: 16, out_channels: 1 }
-      sha256: 491c9992d478a6adfeb756fe36d4d1b9913416645d91aad3dd4182eff763efc8
+      sha256: a4b1b23c5c9a0e9c1d3e8d86abaf8c3d9b8e6d8fe2c267a722c91fa72978aa03
       source: resize_unet.py
     pytorch_version: 1.6
     sha256: 2c475874f358eb75dc5f3b6af8d186e4fbf8da3acf43fb6662f0d5de21b0a838

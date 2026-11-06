@@ -4,11 +4,12 @@ import collections.abc
 import io
 import shutil
 import zipfile
+from collections.abc import Callable, Mapping
 from contextlib import nullcontext
 from difflib import get_close_matches
 from pathlib import Path
 from types import MappingProxyType
-from typing import IO, Any, Callable, Dict, Mapping, cast
+from typing import IO, Any, cast
 from zipfile import ZipFile
 
 import httpx
@@ -25,7 +26,6 @@ from .io import (
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
     BioimageioYamlContentView,
-    BytesReader,
     FileDescr,
     HashKwargs,
     LightHttpFileDescr,
@@ -38,10 +38,11 @@ from .io import (
     identify_bioimageio_yaml_file_name,
     interprete_file_source,
 )
-from .io_basics import AbsoluteDirectory, FileName, ZipPath
+from .io_basics import AbsoluteDirectory, BytesReader, FileName, ZipPath
 from .progress import ProgressbarLike
+from .root_url import RootHttpUrl
 from .types import PermissiveFileSource
-from .url import HttpUrl, RootHttpUrl
+from .url import HttpUrl
 from .utils import cache
 from .validation_context import ValidationContext, get_validation_context
 
@@ -193,11 +194,14 @@ def open_bioimageio_yaml(
         if not isinstance(source, str):
             raise
 
-        if settings.collection_http_pattern:
+        collection_patterns = settings.collection_http_pattern
+        if isinstance(collection_patterns, str):
+            collection_patterns = (collection_patterns,) if collection_patterns else ()
+
+        collection_pattern_errors: list[str] = []
+        for pattern in collection_patterns:
             with ValidationContext(perform_io_checks=False):
-                url = HttpUrl(
-                    settings.collection_http_pattern.format(bioimageio_id=source)
-                )
+                url = HttpUrl(pattern.format(bioimageio_id=source))
 
             try:
                 r = httpx.get(url, follow_redirects=True)
@@ -205,9 +209,9 @@ def open_bioimageio_yaml(
                 unparsed_content = r.content.decode(encoding="utf-8")
                 content = _sanitize_bioimageio_yaml(read_yaml(unparsed_content))
             except Exception as e_coll_pattern:
-                collection_pattern_error_msg = f"BIOIMAGEIO_COLLECTION_HTTP_PATTERN: Failed to get bioimageio.yaml from {url}: {e_coll_pattern}"
-                logger.warning(collection_pattern_error_msg)
-                collection_pattern_error_msg = "\n" + collection_pattern_error_msg
+                error_msg = f"BIOIMAGEIO_COLLECTION_HTTP_PATTERN: Failed to get bioimageio.yaml from {url}: {e_coll_pattern}"
+                logger.warning(error_msg)
+                collection_pattern_errors.append(error_msg)
             else:
                 logger.info("loaded {} from {}", source, url)
                 original_file_name = (
@@ -220,8 +224,10 @@ def open_bioimageio_yaml(
                     original_source_name=url,
                     unparsed_content=unparsed_content,
                 )
-        else:
-            collection_pattern_error_msg = ""
+
+        collection_pattern_error_msg = "".join(
+            f"\n{error}" for error in collection_pattern_errors
+        )
 
         if not isinstance(settings.id_map, str) or "/" not in settings.id_map:
             raise ValueError(
@@ -285,7 +291,7 @@ def open_bioimageio_yaml(
     )
 
 
-_IdMap = RootModel[Dict[str, LightHttpFileDescr]]
+_IdMap = RootModel[dict[str, LightHttpFileDescr]]
 
 
 def _get_id_map_impl(url: str) -> dict[str, LightHttpFileDescr]:

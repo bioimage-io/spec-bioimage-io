@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal, Union
+from typing import Literal
 
 from typing_extensions import assert_never
 
@@ -11,19 +11,19 @@ from .conda_env import BioimageioCondaEnv, PipDeps
 from .model import v0_4, v0_5
 from .model.v0_5 import Version
 
-SupportedWeightsEntry = Union[
-    v0_4.KerasHdf5WeightsDescr,
-    v0_4.OnnxWeightsDescr,
-    v0_4.PytorchStateDictWeightsDescr,
-    v0_4.TensorflowSavedModelBundleWeightsDescr,
-    v0_4.TorchscriptWeightsDescr,
-    v0_5.KerasHdf5WeightsDescr,
-    v0_5.KerasV3WeightsDescr,
-    v0_5.OnnxWeightsDescr,
-    v0_5.PytorchStateDictWeightsDescr,
-    v0_5.TensorflowSavedModelBundleWeightsDescr,
-    v0_5.TorchscriptWeightsDescr,
-]
+SupportedWeightsEntry = (
+    v0_4.KerasHdf5WeightsDescr
+    | v0_4.OnnxWeightsDescr
+    | v0_4.PytorchStateDictWeightsDescr
+    | v0_4.TensorflowSavedModelBundleWeightsDescr
+    | v0_4.TorchscriptWeightsDescr
+    | v0_5.KerasHdf5WeightsDescr
+    | v0_5.KerasV3WeightsDescr
+    | v0_5.OnnxWeightsDescr
+    | v0_5.PytorchStateDictWeightsDescr
+    | v0_5.TensorflowSavedModelBundleWeightsDescr
+    | v0_5.TorchscriptWeightsDescr
+)
 
 
 def get_conda_env(
@@ -105,7 +105,7 @@ def _get_default_pytorch_env(
     pytorch_version: Version | None = None,
 ) -> BioimageioCondaEnv:
     if pytorch_version is None:
-        pytorch_version = Version("1.10.1")
+        pytorch_version = Version("2.14.1")
 
     channels = ["conda-forge", "nodefaults"]
 
@@ -154,6 +154,13 @@ def _get_default_pytorch_env(
         "2.8.0": "torchvision==0.23.0",
         "2.9.0": "torchvision==0.24.0",
         "2.9.1": "torchvision==0.24.1",
+        "2.10.0": "torchvision==0.25.0",
+        "2.11.0": "torchvision==0.26.0",
+        "2.12.0": "torchvision==0.27.0",
+        "2.12.1": "torchvision==0.27.1",
+        "2.13.0": "torchvision==0.28.0",
+        "2.14.0": "torchvision==0.29.0",
+        "2.14.1": "torchvision==0.29.1",
     }.get(v)
     if additional_deps is None:
         set_github_warning(

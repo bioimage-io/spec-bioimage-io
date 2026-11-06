@@ -3,10 +3,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import (
     Any,
-    Dict,
     Final,
     Generic,
-    Union,
     cast,
 )
 
@@ -22,7 +20,7 @@ from .utils import (
 )
 from .validated_string import ValidatedString
 
-SRC = TypeVar("SRC", bound=Union[Node, ValidatedString])
+SRC = TypeVar("SRC", bound=Node | ValidatedString)
 TGT = TypeVar("TGT", bound=Node)
 
 
@@ -101,4 +99,4 @@ class Converter(ABC, Generic[SRC, TGT, Unpack[CArgs]]):
         return assert_all_params_set_explicitly(self.tgt)(**data)
 
     def convert_as_dict(self, source: SRC, /, *args: Unpack[CArgs]) -> dict[str, Any]:
-        return cast(Dict[str, Any], self._convert(source, dict, *args))
+        return cast(dict[str, Any], self._convert(source, dict, *args))

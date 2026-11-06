@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Collection, Iterable, Mapping
+from collections.abc import Collection, Iterable, Mapping
+from typing import Any
 
 import httpx
 import pytest

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import collections.abc
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 from .._internal.io import BioimageioYamlContent
 from .._internal.type_guards import is_mapping

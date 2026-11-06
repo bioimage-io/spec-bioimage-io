@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, Literal
+from typing import TYPE_CHECKING, Annotated, ClassVar, Literal
 
 from pydantic import Field
-from typing_extensions import Annotated
 
 from .._internal.io import FileDescr as FileDescr
 from .._internal.io_basics import Sha256 as Sha256

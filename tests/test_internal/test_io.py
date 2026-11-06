@@ -1,6 +1,6 @@
 import io
 from pathlib import Path, PurePath
-from typing import Annotated, Any, Union
+from typing import Annotated, Any
 from zipfile import ZipFile
 
 import httpx
@@ -107,8 +107,9 @@ def test_known_files(tmp_path: Path):
         b: FileDescr
 
     # missing file ref in known files
-    with pytest.raises(ValueError), ValidationContext(
-        perform_io_checks=False, known_files={file_name: None}
+    with (
+        pytest.raises(ValueError),
+        ValidationContext(perform_io_checks=False, known_files={file_name: None}),
     ):
         _ = TestNode(
             a=FileDescr(source=file_path),
@@ -240,7 +241,7 @@ def test_serialize_relative_file_path_from_left_to_right_union():
     path = Path(__file__).absolute()
     path_str = str(path)
     file_path = RootModel[
-        Annotated[Union[RelativeFilePath, FilePath], Field(union_mode="left_to_right")]
+        Annotated[RelativeFilePath | FilePath, Field(union_mode="left_to_right")]
     ](path)
     assert isinstance(file_path, RootModel)
     assert not isinstance(file_path.root, RelativeFilePath)
@@ -257,7 +258,7 @@ def test_serialize_relative_file_path_from_union():
 
     path = Path(__file__).absolute()
     path_str = str(path)
-    file_path = RootModel[Union[RelativeFilePath, FilePath]](path)
+    file_path = RootModel[RelativeFilePath | FilePath](path)
 
     data = file_path.model_dump(mode="json")
 

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC
+from collections.abc import Iterable
 from pathlib import PurePosixPath
-from typing import Any, ClassVar, Generic, Iterable, TypeVar
+from typing import Any, ClassVar, Generic, TypeVar
 from urllib.parse import urlsplit, urlunsplit
 
 import pydantic

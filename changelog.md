@@ -10,6 +10,11 @@ In this file we log both:
 
 This changelog includes implementation details and might reference [changes to the Resource Description Format](#changes-to-the-resource-description-format), e.g. in entry [bioimageio.spec 0.5.2](#bioimageiospec-052).
 
+### bioimageio.spec 0.5.14.4
+
+- fix floating point rounding issue in model.v0_5.SizeReference
+- default to packaging resources with a `bioimageio.yaml` file (instead of `rdf.yaml`)
+
 ### bioimageio.spec 0.5.14.3
 
 - enforce that `SizeReference.axis_id` matches axis id of the axis whith that size reference. (out.x -> in.x is allowed, while out.y -> in.x is illegal)
@@ -33,7 +38,6 @@ This changelog includes implementation details and might reference [changes to t
 ### bioimageio.spec 0.5.13.0
 
 - released [model spec 0.5.13](#model-0513)
-
 
 ### bioimageio.spec 0.5.12.0
 

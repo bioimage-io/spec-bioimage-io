@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import warnings
-from typing import Any, Callable, List, Union, cast
+from collections.abc import Callable
+from typing import Any, cast
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -37,7 +38,7 @@ class CondaEnv(BaseModel):
     name: str | None = None
     channels: list[str] = Field(default_factory=list)
     dependencies: list[str | PipDeps] = Field(
-        default_factory=cast(Callable[[], List[Union[str, PipDeps]]], list)
+        default_factory=cast(Callable[[], list[str | PipDeps]], list)
     )
 
     @field_validator("name", mode="after")

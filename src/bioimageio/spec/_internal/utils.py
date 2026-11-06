@@ -2,15 +2,14 @@ from __future__ import annotations
 
 import dataclasses
 import re
-import sys
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
+from functools import cache as cache
 from functools import wraps
+from importlib.resources import files as files
 from inspect import isfunction, signature
 from typing import (
     Any,
-    Callable,
-    Dict,
-    Iterable,
     TypeVar,
 )
 
@@ -19,27 +18,8 @@ from exceptiongroup import ExceptionGroup
 from ruyaml import Optional
 from typing_extensions import ParamSpec
 
-if sys.version_info < (3, 10):  # pragma: no cover
-    SLOTS: dict[str, bool] = {}
-else:
-    SLOTS = {"slots": True}
-
-
 K = TypeVar("K")
 V = TypeVar("V")
-NestedDict = Dict[K, "NestedDict[K, V] | V"]
-
-if sys.version_info < (3, 9):  # pragma: no cover
-    from functools import lru_cache as cache
-    from pathlib import Path
-
-    def files(package_name: str):
-        assert package_name == "bioimageio.spec", package_name
-        return Path(__file__).parent.parent
-
-else:
-    from functools import cache as cache
-    from importlib.resources import files as files
 
 
 def get_format_version_tuple(format_version: Any) -> Optional[tuple[int, int, int]]:
@@ -55,39 +35,7 @@ def get_format_version_tuple(format_version: Any) -> Optional[tuple[int, int, in
     return parsed
 
 
-def nest_dict(flat_dict: dict[tuple[K, ...], V]) -> NestedDict[K, V]:
-    res: NestedDict[K, V] = {}
-    for k, v in flat_dict.items():
-        node: dict[K, NestedDict[K, V] | V] | NestedDict[K, V] = res
-        for kk in k[:-1]:
-            if not isinstance(node, dict):
-                raise ValueError(f"nesting level collision for flat key {k} at {kk}")
-            d: NestedDict[K, V] = {}
-            node = node.setdefault(kk, d)  # type: ignore
-
-        if not isinstance(node, dict):
-            raise ValueError(f"nesting level collision for flat key {k}")
-
-        node[k[-1]] = v
-
-    return res
-
-
 FirstK = TypeVar("FirstK")
-
-
-def nest_dict_with_narrow_first_key(
-    flat_dict: dict[tuple[K, ...], V], first_k: type[FirstK]
-) -> dict[FirstK, NestedDict[K, V] | V]:
-    """convenience function to annotate a special version of a NestedDict.
-    Root level keys are of a narrower type than the nested keys. If not a ValueError is raisd.
-    """
-    nested = nest_dict(flat_dict)
-    invalid_first_keys = [k for k in nested if not isinstance(k, first_k)]
-    if invalid_first_keys:
-        raise ValueError(f"Invalid root level keys: {invalid_first_keys}")
-
-    return nested  # type: ignore
 
 
 def unindent(text: str, ignore_first_line: bool = False):
