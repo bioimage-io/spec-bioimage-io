@@ -36,6 +36,9 @@ from ._description import validate_format as validate_format
 from ._get_conda_env import get_conda_env as get_conda_env
 from ._internal import common_nodes, validation_context
 from ._internal import settings as settings
+from ._internal.validation_context import (
+    get_validation_context as get_validation_context,
+)
 from ._io import load_dataset_description as load_dataset_description
 from ._io import load_description as load_description
 from ._io import (
@@ -67,13 +70,12 @@ AnyDatasetDescr: TypeAlias = dataset.AnyDatasetDescr
 AnyGenericDescr: TypeAlias = generic.AnyGenericDescr
 AnyModelDescr: TypeAlias = model.AnyModelDescr
 AnyNotebookDescr: TypeAlias = notebook.AnyNotebookDescr
-ApplicationDescr = application.ApplicationDescr
-BioimageioCondaEnv = conda_env.BioimageioCondaEnv
-DatasetDescr = dataset.DatasetDescr
-GenericDescr = generic.GenericDescr
-get_validation_context = validation_context.get_validation_context
-InvalidDescr = common_nodes.InvalidDescr
-ModelDescr = model.ModelDescr
-NotebookDescr = notebook.NotebookDescr
-ValidationContext = validation_context.ValidationContext
-ValidationSummary = summary.ValidationSummary
+ApplicationDescr: TypeAlias = application.ApplicationDescr
+BioimageioCondaEnv: TypeAlias = conda_env.BioimageioCondaEnv
+DatasetDescr: TypeAlias = dataset.DatasetDescr
+GenericDescr: TypeAlias = generic.GenericDescr
+InvalidDescr: TypeAlias = common_nodes.InvalidDescr
+ModelDescr: TypeAlias = model.ModelDescr
+NotebookDescr: TypeAlias = notebook.NotebookDescr
+ValidationContext: TypeAlias = validation_context.ValidationContext
+ValidationSummary: TypeAlias = summary.ValidationSummary
