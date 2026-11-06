@@ -26,7 +26,6 @@ from .io import (
     BIOIMAGEIO_YAML,
     BioimageioYamlContent,
     BioimageioYamlContentView,
-    BytesReader,
     FileDescr,
     HashKwargs,
     LightHttpFileDescr,
@@ -39,10 +38,11 @@ from .io import (
     identify_bioimageio_yaml_file_name,
     interprete_file_source,
 )
-from .io_basics import AbsoluteDirectory, FileName, ZipPath
+from .io_basics import AbsoluteDirectory, BytesReader, FileName, ZipPath
 from .progress import ProgressbarLike
+from .root_url import RootHttpUrl
 from .types import PermissiveFileSource
-from .url import HttpUrl, RootHttpUrl
+from .url import HttpUrl
 from .utils import cache
 from .validation_context import ValidationContext, get_validation_context
 
