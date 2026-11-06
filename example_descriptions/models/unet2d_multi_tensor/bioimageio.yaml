@@ -19,7 +19,7 @@ covers:
 description: Multi tensor
 documentation:
   source: documentation.md
-format_version: 0.5.11
+format_version: 0.5.14
 git_repo: https://github.com/constantinpape/torch-em.git
 inputs:
   - axes:
@@ -27,7 +27,7 @@ inputs:
       - channel_names:
           - channel0
         type: channel
-      - id: y
+      - id: 'y'
         size:
           min: 32
           step: 16
@@ -44,8 +44,9 @@ inputs:
       - id: zero_mean_unit_variance
         kwargs:
           axes:
+            - batch
             - channel
-            - y
+            - 'y'
             - x
       - id: ensure_dtype
         kwargs:
@@ -58,7 +59,7 @@ inputs:
       - channel_names:
           - channel0
         type: channel
-      - id: y
+      - id: 'y'
         size:
           min: 32
           step: 16
@@ -75,8 +76,9 @@ inputs:
       - id: zero_mean_unit_variance
         kwargs:
           axes:
+            - batch
             - channel
-            - y
+            - 'y'
             - x
       - id: ensure_dtype
         kwargs:
@@ -94,14 +96,16 @@ outputs:
       - channel_names:
           - channel0
         type: channel
-      - id: y
+      - id: 'y'
         size:
-          axis_id: y
+          axis_id: 'y'
           tensor_id: input0
+        halo: 4
         type: space
       - size:
           axis_id: x
           tensor_id: input0
+        halo: 4
         type: space
     id: output0
     postprocessing:
@@ -116,14 +120,16 @@ outputs:
       - channel_names:
           - channel0
         type: channel
-      - id: y
+      - id: 'y'
         size:
-          axis_id: y
+          axis_id: 'y'
           tensor_id: input1
+        halo: 4
         type: space
       - size:
           axis_id: x
           tensor_id: input1
+        halo: 4
         type: space
     id: output1
     postprocessing:

@@ -21,6 +21,7 @@ repos:
         language: system
         always_run: false
         pass_filenames: true
+        files: ^.*\.py$
       - id: generate passthrough modules
         name: generate passthrough modules
         entry: python scripts/generate_version_submodule_imports.py generate
