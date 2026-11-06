@@ -230,9 +230,9 @@ def test_keras3_backends(backend: str, version: str, expected: str):
     [
         (
             None,
-            "1.10.1",
-            "0.11.2",
-            ["mkl ==2024.0.0", "setuptools <70.0.0", "numpy <2"],
+            "2.14.1",
+            "0.29.1",
+            [],
         ),
         ("2", "2.0.0", "0.15.0", ["mkl ==2024.0.0", "setuptools <70.0.0", "numpy <2"]),
         ("2.1", "2.1.0", "0.16.0", ["setuptools <70.0.0", "numpy <2"]),
