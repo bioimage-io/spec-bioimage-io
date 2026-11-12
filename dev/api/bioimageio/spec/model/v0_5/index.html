@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../../../../images/favicon.ico">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.8.1">
     
     
       
@@ -5635,7 +5635,7 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6230,7 +6230,7 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -6792,7 +6792,7 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -7277,7 +7277,7 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8157,7 +8157,7 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -8810,7 +8810,7 @@ otherwise (the default) it may be chosen arbitrarily depending on available memo
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9374,7 +9374,7 @@ otherwise (the default) it may be chosen arbitrarily depending on available memo
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -9911,7 +9911,7 @@ otherwise (the default) it may be chosen arbitrarily depending on available memo
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10495,7 +10495,7 @@ will be set to one, values below the threshold to zero.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -10988,7 +10988,7 @@ will be set to one, values below the threshold to zero.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -12631,7 +12631,7 @@ For defaults see <a class="autorefs autorefs-internal" href="#bioimageio.spec.mo
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -13051,16 +13051,28 @@ For defaults see <a class="autorefs autorefs-internal" href="#bioimageio.spec.mo
           
 
             <details class="mkdocstrings-source">
-              <summary>Source code in <code>src/bioimageio/spec/_internal/validated_string.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
+              <summary>Source code in <code>src/bioimageio/spec/_internal/validated_string_with_inner_node.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
 <span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
-<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">35</span>
+<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">__get_pydantic_core_schema__</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">GetCoreSchemaHandler</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CoreSchema</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">no_info_after_validator_function</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">handler</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">core_schema</span><span class="o">.</span><span class="n">no_info_after_validator_function</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">handler</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+        <span class="n">serialization</span><span class="o">=</span><span class="n">core_schema</span><span class="o">.</span><span class="n">wrap_serializer_function_ser_schema</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_serialize</span><span class="p">,</span> <span class="n">info_arg</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -13566,7 +13578,7 @@ For defaults see <a class="autorefs autorefs-internal" href="#bioimageio.spec.mo
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -14172,7 +14184,7 @@ For defaults see <a class="autorefs autorefs-internal" href="#bioimageio.spec.mo
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -14843,7 +14855,7 @@ For defaults see <a class="autorefs autorefs-internal" href="#bioimageio.spec.mo
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -15336,7 +15348,7 @@ Note:
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -15931,7 +15943,7 @@ Note:
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -16617,7 +16629,7 @@ To clip samples independently, leave out the 'batch' axis.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -17821,7 +17833,7 @@ To clip samples independently, leave out the 'batch' axis.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -18243,7 +18255,7 @@ To clip samples independently, leave out the 'batch' axis.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -18792,7 +18804,7 @@ Needs to be 0 for discrete (integer and boolean) outputs.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -19711,7 +19723,7 @@ a callable satisfy this protocol.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -20230,7 +20242,7 @@ a callable satisfy this protocol.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -23242,7 +23254,7 @@ without validating the result.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -23724,9 +23736,7 @@ without validating the result.</p>
         <span class="p">),</span>
         <span class="n"><span title="annotated_types">annotated_types</span></span><span class="o">.</span><span class="n"><span title="annotated_types.Predicate">Predicate</span></span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="p">(</span>
-                    <span class="n"><span title="s">s</span></span><span class="o">.</span><span class="n"><span title="s.startswith">startswith</span></span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span> <span class="ow">or</span> <span class="n"><span title="s">s</span></span><span class="o">.</span><span class="n"><span title="s.endswith">endswith</span></span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="ow">not</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"/"</span><span class="p">))</span>
             <span class="p">)</span>
         <span class="p">),</span>
     <span class="p">]</span>
@@ -24695,7 +24705,7 @@ since a single pixel mismatch can be more significant than for continuous output
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -25421,7 +25431,7 @@ since a single pixel mismatch can be more significant than for continuous output
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -25991,7 +26001,7 @@ casts it to uint8, which is what the neural network in this example expects.
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -26487,7 +26497,7 @@ casts it to uint8, which is what the neural network in this example expects.
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -27112,7 +27122,7 @@ casts it to uint8, which is what the neural network in this example expects.
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -28043,7 +28053,7 @@ An 'overall' factor may be included to summarize performance across all conditio
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -28633,7 +28643,7 @@ An 'overall' factor may be included to summarize performance across all conditio
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -29290,7 +29300,7 @@ Size must match <code>mean</code> values.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -29934,7 +29944,7 @@ axes.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -30444,7 +30454,7 @@ axes.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -32200,7 +32210,7 @@ axes.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -32944,7 +32954,7 @@ input axis.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -33650,7 +33660,7 @@ input axis.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -36010,7 +36020,7 @@ The file extension must be '.npy'.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -36600,7 +36610,7 @@ The file extension must be '.npy'.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -37498,7 +37508,7 @@ need to have this field.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -38539,7 +38549,7 @@ need to have this field.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -39364,7 +39374,7 @@ need to have this field.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -39813,7 +39823,7 @@ need to have this field.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -40262,7 +40272,7 @@ need to have this field.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -40824,7 +40834,7 @@ need to have this field.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -51948,7 +51958,7 @@ This is likely the case if the input sizes are not valid according to the model 
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -52505,9 +52515,7 @@ This includes checks of tensor shapes and dtypes, but not of the actual values.<
         <span class="p">),</span>
         <span class="n"><span title="annotated_types">annotated_types</span></span><span class="o">.</span><span class="n"><span title="annotated_types.Predicate">Predicate</span></span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="p">(</span>
-                    <span class="n"><span title="s">s</span></span><span class="o">.</span><span class="n"><span title="s.startswith">startswith</span></span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span> <span class="ow">or</span> <span class="n"><span title="s">s</span></span><span class="o">.</span><span class="n"><span title="s.endswith">endswith</span></span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="ow">not</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"/"</span><span class="p">))</span>
             <span class="p">)</span>
         <span class="p">),</span>
     <span class="p">]</span>
@@ -53061,7 +53069,7 @@ nominal values should be given as a sequence (aka list/array) as well.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -54046,7 +54054,7 @@ need to have this field.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -57278,7 +57286,7 @@ The file extension must be '.npy'.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -57786,7 +57794,7 @@ The file extension must be '.npy'.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -59049,7 +59057,7 @@ If <code>architecture.depencencies</code> is specified it has to include pytorch
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -59522,7 +59530,7 @@ If <code>architecture.depencencies</code> is specified it has to include pytorch
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -60582,7 +60590,7 @@ Needs to be 0 for discrete (integer and boolean) outputs.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -60987,9 +60995,7 @@ Needs to be 0 for discrete (integer and boolean) outputs.</p>
         <span class="p">),</span>
         <span class="n"><span title="annotated_types">annotated_types</span></span><span class="o">.</span><span class="n"><span title="annotated_types.Predicate">Predicate</span></span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="p">(</span>
-                    <span class="n"><span title="s">s</span></span><span class="o">.</span><span class="n"><span title="s.startswith">startswith</span></span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span> <span class="ow">or</span> <span class="n"><span title="s">s</span></span><span class="o">.</span><span class="n"><span title="s.endswith">endswith</span></span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
-                <span class="p">)</span>
+                <span class="ow">not</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"/"</span><span class="p">))</span>
             <span class="p">)</span>
         <span class="p">),</span>
     <span class="p">]</span>
@@ -61425,7 +61431,7 @@ Needs to be 0 for discrete (integer and boolean) outputs.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -62002,7 +62008,7 @@ Needs to be 0 for discrete (integer and boolean) outputs.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -62637,7 +62643,7 @@ Needs to be 0 for discrete (integer and boolean) outputs.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -63150,7 +63156,7 @@ Needs to be 0 for discrete (integer and boolean) outputs.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -63709,7 +63715,7 @@ Needs to be 0 for discrete (integer and boolean) outputs.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -64282,7 +64288,7 @@ Default: Scale all axes jointly.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -64923,7 +64929,7 @@ Default: Scale all axes jointly.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -65635,7 +65641,7 @@ Default: The tensor itself.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -66815,7 +66821,7 @@ Default: The tensor itself.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -67559,7 +67565,7 @@ and no fixed <strong>ref_size</strong> is given,
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -68098,7 +68104,7 @@ and no fixed <strong>ref_size</strong> is given,
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -68579,7 +68585,7 @@ Note:
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -69224,7 +69230,7 @@ Note:
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -70027,7 +70033,7 @@ input axis.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -70758,7 +70764,7 @@ input axis.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -71515,7 +71521,7 @@ To document a halo that is already cropped by the model use <code>size.offset</c
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -72262,7 +72268,7 @@ The IEEE Winter Conference on Applications of Computer Vision (WACV), Snowmass V
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -72920,7 +72926,7 @@ The IEEE Winter Conference on Applications of Computer Vision (WACV), Snowmass V
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -73689,7 +73695,7 @@ The IEEE Winter Conference on Applications of Computer Vision (WACV), Snowmass V
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -74072,7 +74078,7 @@ The IEEE Winter Conference on Applications of Computer Vision (WACV), Snowmass V
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -76032,7 +76038,7 @@ The file extension must be '.npy'.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -77266,7 +77272,7 @@ All required files/folders should be a zip archive.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -78352,7 +78358,7 @@ All required files/folders should be a zip archive.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -79079,7 +79085,7 @@ All required files/folders should be a zip archive.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -79874,7 +79880,7 @@ input axis.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -80597,7 +80603,7 @@ input axis.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -81346,7 +81352,7 @@ To document a halo that is already cropped by the model use <code>size.offset</c
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -82244,7 +82250,7 @@ need to have this field.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -83182,7 +83188,7 @@ need to have this field.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -83614,7 +83620,7 @@ need to have this field.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -86629,7 +86635,7 @@ post-release suffixes.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -87478,7 +87484,7 @@ need to have this field.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -88032,7 +88038,7 @@ To document a halo that is already cropped by the model use <code>size.offset</c
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -88592,7 +88598,7 @@ To document a halo that is already cropped by the model use <code>size.offset</c
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -89125,7 +89131,7 @@ Default: Scale all axes jointly.</p>
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="ValidationError">ValidationError</span></code>
+                  <code>ValidationError</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -90531,7 +90537,7 @@ Default: Scale all axes jointly.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../../../../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.code.select", "content.footnote.tooltips", "content.tabs.link", "content.tooltips", "header.autohide", "navigation.expand", "navigation.footer", "navigation.indexes", "navigation.instant", "navigation.instant.prefetch", "navigation.instant.preview", "navigation.instant.progress", "navigation.path", "navigation.prune", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"alias": true, "provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
         <script src="../../../../../assets/_markdown_exec_pyodide.js"></script>
       
