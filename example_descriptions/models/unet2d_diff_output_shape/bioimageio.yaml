@@ -60,7 +60,7 @@ outputs:
         kwargs: { dtype: float32 }
     test_tensor:
       {
-        sha256: c826bcd21d076db39a08d3bfd22c49c778934c8449dc26ec3b7a90cdea50752a,
+        sha256: e995336bfba077343664ccd84cf79bb2026d27ff0dfc0772dd48e139104b5f81,
         source: test_output.npy,
       }
 tags: [segmentation]
