@@ -614,11 +614,17 @@ class IndexAxisBase(AxisBase):
 
 
 class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
-    concatenable: bool = False
+    concatenable: bool | Literal["applicable", "reproducible"] = "reproducible"
     """If a model has a `concatenable` input axis, it can be processed blockwise,
     splitting a longer sample axis into blocks matching its input tensor description.
+
     Output axes are concatenable if they have a [SizeReference][] to a concatenable
     input axis. Each concatenable input axis must be referenced by an output axis.
+
+    Set `concatenable` to `applicable` if the model can be meaningfully applied blockwise,
+    but its outputs may change beyond the specified numerical tolerance for reproducibility,
+    for example due to the use of instance norm within the model.
+    `True` is an alias for `reproducible` and is provided for backwards compatibility.
     """
 
 
@@ -647,11 +653,17 @@ class TimeAxisBase(AxisBase):
 
 
 class TimeInputAxis(TimeAxisBase, _WithInputAxisSize):
-    concatenable: bool = False
+    concatenable: bool | Literal["applicable", "reproducible"] = "reproducible"
     """If a model has a `concatenable` input axis, it can be processed blockwise,
     splitting a longer sample axis into blocks matching its input tensor description.
+
     Output axes are concatenable if they have a [SizeReference][] to a concatenable
     input axis. Each concatenable input axis must be referenced by an output axis.
+
+    Set `concatenable` to `applicable` if the model can be meaningfully applied blockwise,
+    but its outputs may change beyond the specified numerical tolerance for reproducibility,
+    for example due to the use of instance norm within the model.
+    `True` is an alias for `reproducible` and is provided for backwards compatibility.
     """
 
 
@@ -670,11 +682,17 @@ class SpaceAxisBase(AxisBase):
 
 
 class SpaceInputAxis(SpaceAxisBase, _WithInputAxisSize):
-    concatenable: bool = False
+    concatenable: bool | Literal["applicable", "reproducible"] = "reproducible"
     """If a model has a `concatenable` input axis, it can be processed blockwise,
     splitting a longer sample axis into blocks matching its input tensor description.
+
     Output axes are concatenable if they have a [SizeReference][] to a concatenable
     input axis. Each concatenable input axis must be referenced by an output axis.
+
+    Set `concatenable` to `applicable` if the model can be meaningfully applied blockwise,
+    but its outputs may change beyond the specified numerical tolerance for reproducibility,
+    for example due to the use of instance norm within the model.
+    `True` is an alias for `reproducible` and is provided for backwards compatibility.
     """
 
 
@@ -1816,7 +1834,10 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
     Using the model with the test input tensors is expected to yield the test output tensors.
     Each test tensor has be a an ndarray in the
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
-    The file extension must be '.npy'."""
+    The file extension must be '.npy'.
+    Its shape must be valid and along any reproducibly concatenable input axis with parameterized size
+    larger than the minimal allowed axis size (so blockwise reproducibility checks can be performed).
+    """
 
     sample_tensor: FAIR[FileDescr_package | None] = None
     """A sample tensor to illustrate a possible input/output for the model,
@@ -3596,11 +3617,11 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    implemented_format_version: ClassVar[Literal["0.5.14"]] = "0.5.14"
+    implemented_format_version: ClassVar[Literal["0.5.15"]] = "0.5.15"
     if TYPE_CHECKING:
-        format_version: Literal["0.5.14"] = "0.5.14"
+        format_version: Literal["0.5.15"] = "0.5.15"
     else:
-        format_version: Literal["0.5.14"]
+        format_version: Literal["0.5.15"]
         """Version of the bioimage.io model description specification used.
         When creating a new model always use the latest micro/patch version described here.
         The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -3807,6 +3828,23 @@ class ModelDescr(GenericModelDescrBase):
             pad_inputs="allow",
             crop_outputs="allow",
         )
+
+        for descr, array in test_inputs.values():
+            if array is None:
+                continue
+
+            axis_sizes = descr.get_axis_sizes_for_array(array)
+            for axis in descr.axes:
+                if (
+                    axis.concatenable in (True, "reproducible")
+                    and isinstance(axis.size, ParameterizedSize)
+                    and axis_sizes[axis.id] <= axis.size.min
+                ):
+                    raise ValueError(
+                        f"inputs[{descr.id}].axes[{axis.id}]: test_tensor axis size "
+                        + f"{axis_sizes[axis.id]} must be larger than minimum size "
+                        + f"{axis.size.min} for concatenable='reproducible'"
+                    )
 
         seen_output_ids: set[TensorId] = (
             set()
@@ -4518,6 +4556,25 @@ class ModelDescr(GenericModelDescrBase):
             ):
                 convert_plain_covers_and_docs_and_icon(data)
 
+            if fv_tuple < (0, 5, 15):
+                # before 0.5.15 input axes were not concatenable by default
+                ipts = data.get("inputs") or []  # pyright: ignore[reportUnknownVariableType]
+                if isinstance(ipts, Sequence):
+                    for ipt in ipts:  # pyright: ignore[reportUnknownVariableType]
+                        if not isinstance(ipt, dict):
+                            continue
+
+                        axes = ipt.get("axes") or []  # pyright: ignore[reportUnknownVariableType]
+                        if not isinstance(axes, Sequence):
+                            continue
+                        for ax in axes:  # pyright: ignore[reportUnknownVariableType]
+                            if isinstance(ax, dict) and ax.get("type") in (
+                                "index",
+                                "time",
+                                "space",
+                            ):
+                                ax.setdefault("concatenable", False)
+
 
 class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
     def _convert(
@@ -4577,7 +4634,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             covers=[{"source": c} for c in src.covers],  # pyright: ignore[reportArgumentType]
             description=src.description,
             documentation={"source": src.documentation} if src.documentation else None,  # pyright: ignore[reportArgumentType]
-            format_version="0.5.14",
+            format_version="0.5.15",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon={"source": src.icon} if src.icon else None,  # pyright: ignore[reportArgumentType]
             id=None if src.id is None else ModelId(src.id),

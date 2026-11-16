@@ -47,6 +47,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
     },
     "models/unet2d_multi_tensor/bioimageio.yaml": {
         "channel_colors",
+        "inputs.axes.concatenable",
         "dependencies",
         "weights",
     },

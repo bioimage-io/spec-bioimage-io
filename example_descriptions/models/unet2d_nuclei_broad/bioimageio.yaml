@@ -31,7 +31,7 @@ tags:
   - nucleus
   - segmentation
   - dsb2018
-format_version: 0.5.11
+format_version: 0.5.15
 type: model
 documentation:
   source: README.md
@@ -44,11 +44,13 @@ inputs:
       - type: channel
         channel_names:
           - raw_intensity
-      - size: 512
+      - size: { min: 144, step: 16 }
         id: y
         type: space
-      - size: 512
+        concatenable: reproducible
+      - size: { min: 144, step: 16 }
         type: space
+        concatenable: reproducible
     test_tensor:
       source: test_input.npy
       sha256: 92768a2e0f2643c80b57afa5494019a5aafe5b0d92fe36ae740763adf3594a57
@@ -75,13 +77,13 @@ outputs:
       - type: channel
         channel_names:
           - probability
-      - halo: 32
+      - halo: 64
         size:
           tensor_id: raw
           axis_id: y
         id: y
         type: space
-      - halo: 32
+      - halo: 64
         size:
           tensor_id: raw
           axis_id: x
@@ -107,9 +109,13 @@ training_data:
 weights:
   onnx:
     source: weights.onnx
-    sha256: 85f5ac80fa977fea3562ef97c8c5950288be2c4f4cdb5d994807df97008ce088
+    sha256: 9f85ce3b6330f72f1eb0fa99e4a53e0da274e439dd92bdda5d155d0ac660bd9d
     parent: pytorch_state_dict
-    opset_version: 20
+    comment: Converted with bioimageio.core 0.12.0, dynamo=True.
+    opset_version: 18
+    external_data:
+      source: weights.onnx.data
+      sha256: d52d021ebc8aa5bc14d78218ba38e3ba3338a5a0330e134402d34fe125635b5b
   pytorch_state_dict:
     source: http://files.ilastik.org/bioimageio_test/unet2d_nuclei_broad_weights.torch
     sha256: e4d3885bccbe41cbf6c1d825f3cd2b707c7021ead5593156007e407a16b27cf2

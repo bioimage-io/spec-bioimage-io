@@ -15,7 +15,7 @@ covers:
 description: Different output shape
 documentation:
   source: documentation.md
-format_version: 0.5.14
+format_version: 0.5.15
 git_repo: https://github.com/constantinpape/torch-em.git
 inputs:
   - axes:
@@ -23,12 +23,12 @@ inputs:
       - channel_names: [channel0]
         type: channel
       - id: 'y'
-        size: { min: 32, step: 16 }
+        size: { min: 16, step: 16 }
         type: space
-        concatenable: false # due to InstanceNorm
-      - size: { min: 32, step: 16 }
+        concatenable: applicable # due to InstanceNorm
+      - size: { min: 16, step: 16 }
         type: space
-        concatenable: false # due to InstanceNorm
+        concatenable: applicable # due to InstanceNorm
     preprocessing:
       - id: ensure_dtype
         kwargs: { dtype: float32 }

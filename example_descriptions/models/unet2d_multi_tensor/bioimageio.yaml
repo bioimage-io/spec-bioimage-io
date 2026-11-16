@@ -22,7 +22,7 @@ links:
   - ilastik/ilastik
 tags:
   - segmentation
-format_version: 0.5.14
+format_version: 0.5.15
 type: model
 inputs:
   - id: input0
@@ -32,14 +32,17 @@ inputs:
         channel_names:
           - channel0
       - size:
-          min: 32
+          min: 144
           step: 16
-        id: y
+        id: 'y'
         type: space
+        concatenable: reproducible
       - size:
-          min: 32
+          min: 144
           step: 16
+        id: x
         type: space
+        concatenable: reproducible
     test_tensor:
       source: test_input_0.npy
       sha256: f0af5576a51eae4ef0ab8d905b2cca1e51ee8fcd4162f3d53f14059a81993ad7
@@ -52,7 +55,7 @@ inputs:
           axes:
             - batch
             - channel
-            - y
+            - 'y'
             - x
       - id: ensure_dtype
         kwargs:
@@ -64,14 +67,16 @@ inputs:
         channel_names:
           - channel0
       - size:
-          min: 32
+          min: 144
           step: 16
-        id: y
+        id: 'y'
         type: space
+        concatenable: reproducible
       - size:
-          min: 32
+          min: 144
           step: 16
         type: space
+        concatenable: reproducible
     test_tensor:
       source: test_input_1.npy
       sha256: ade979299d3ade2cf8ff62d90a7a81e46e44b0e1c620db8b290fd06ffbbe4008
@@ -84,7 +89,7 @@ inputs:
           axes:
             - batch
             - channel
-            - y
+            - 'y'
             - x
       - id: ensure_dtype
         kwargs:
@@ -96,13 +101,13 @@ outputs:
       - type: channel
         channel_names:
           - channel0
-      - halo: 12
+      - halo: 64
         size:
           tensor_id: input0
-          axis_id: y
-        id: y
+          axis_id: 'y'
+        id: 'y'
         type: space
-      - halo: 12
+      - halo: 64
         size:
           tensor_id: input0
           axis_id: x
@@ -120,13 +125,13 @@ outputs:
       - type: channel
         channel_names:
           - channel0
-      - halo: 12
+      - halo: 64
         size:
           tensor_id: input1
-          axis_id: y
-        id: y
+          axis_id: 'y'
+        id: 'y'
         type: space
-      - halo: 12
+      - halo: 64
         size:
           tensor_id: input1
           axis_id: x

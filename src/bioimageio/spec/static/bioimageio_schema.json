@@ -1167,10 +1167,21 @@
           "type": "string"
         },
         "concatenable": {
-          "default": false,
-          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.",
-          "title": "Concatenable",
-          "type": "boolean"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "enum": [
+                "applicable",
+                "reproducible"
+              ],
+              "type": "string"
+            }
+          ],
+          "default": "reproducible",
+          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility.",
+          "title": "Concatenable"
         }
       },
       "required": [
@@ -1931,10 +1942,21 @@
           "type": "number"
         },
         "concatenable": {
-          "default": false,
-          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.",
-          "title": "Concatenable",
-          "type": "boolean"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "enum": [
+                "applicable",
+                "reproducible"
+              ],
+              "type": "string"
+            }
+          ],
+          "default": "reproducible",
+          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility.",
+          "title": "Concatenable"
         }
       },
       "required": [
@@ -2500,10 +2522,21 @@
           "type": "number"
         },
         "concatenable": {
-          "default": false,
-          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.",
-          "title": "Concatenable",
-          "type": "boolean"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "enum": [
+                "applicable",
+                "reproducible"
+              ],
+              "type": "string"
+            }
+          ],
+          "default": "reproducible",
+          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility.",
+          "title": "Concatenable"
         }
       },
       "required": [
@@ -11020,7 +11053,7 @@
             }
           ],
           "default": null,
-          "description": "An example tensor to use for testing.\nUsing the model with the test input tensors is expected to yield the test output tensors.\nEach test tensor has be a an ndarray in the\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe file extension must be '.npy'."
+          "description": "An example tensor to use for testing.\nUsing the model with the test input tensors is expected to yield the test output tensors.\nEach test tensor has be a an ndarray in the\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe file extension must be '.npy'.\nIts shape must be valid and along any reproducibly concatenable input axis with parameterized size\nlarger than the minimal allowed axis size (so blockwise reproducibility checks can be performed)."
         },
         "sample_tensor": {
           "anyOf": [
@@ -12240,7 +12273,7 @@
           "title": "Version Comment"
         },
         "format_version": {
-          "const": "0.5.14",
+          "const": "0.5.15",
           "description": "Version of the bioimage.io model description specification used.\nWhen creating a new model always use the latest micro/patch version described here.\nThe `format_version` is important for any consumer software to understand how to parse the fields.",
           "title": "Format Version",
           "type": "string"
@@ -12355,7 +12388,7 @@
         "outputs",
         "weights"
       ],
-      "title": "model 0.5.14",
+      "title": "model 0.5.15",
       "type": "object"
     },
     "bioimageio__spec__model__v0_5__OnnxWeightsDescr": {
@@ -12573,7 +12606,7 @@
             }
           ],
           "default": null,
-          "description": "An example tensor to use for testing.\nUsing the model with the test input tensors is expected to yield the test output tensors.\nEach test tensor has be a an ndarray in the\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe file extension must be '.npy'."
+          "description": "An example tensor to use for testing.\nUsing the model with the test input tensors is expected to yield the test output tensors.\nEach test tensor has be a an ndarray in the\n[numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).\nThe file extension must be '.npy'.\nIts shape must be valid and along any reproducibly concatenable input axis with parameterized size\nlarger than the minimal allowed axis size (so blockwise reproducibility checks can be performed)."
         },
         "sample_tensor": {
           "anyOf": [
@@ -15719,7 +15752,7 @@
         "discriminator": {
           "mapping": {
             "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-            "0.5.14": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+            "0.5.15": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
           },
           "propertyName": "format_version"
         },
@@ -15803,7 +15836,7 @@
       "discriminator": {
         "mapping": {
           "0.4.10": "#/$defs/bioimageio__spec__model__v0_4__ModelDescr",
-          "0.5.14": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
+          "0.5.15": "#/$defs/bioimageio__spec__model__v0_5__ModelDescr"
         },
         "propertyName": "format_version"
       },

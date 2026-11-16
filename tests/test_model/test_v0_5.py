@@ -280,9 +280,12 @@ def model():
                             size=SizeReference(
                                 tensor_id=TensorId("input_1"), axis_id=AxisId("y")
                             ),
+                            concatenable=False,
                         ),
                         SpaceInputAxis(
-                            id=AxisId("y"), size=ParameterizedSize(min=256, step=8)
+                            id=AxisId("y"),
+                            size=ParameterizedSize(min=256, step=8),
+                            concatenable=False,
                         ),
                     ],
                     test_tensor=FileDescr(source=UNET2D_ROOT / "test_input.npy"),
@@ -394,11 +397,15 @@ def test_model(model_data: dict[str, Any], update: dict[str, Any]):
 
 @pytest.mark.parametrize("axis_type", ["index", "time", "space"])
 @pytest.mark.parametrize("referenced", [False, True])
+@pytest.mark.parametrize("concatenable", [True, "applicable", "reproducible"])
 def test_concatenable_input_axis(
-    model_data: dict[str, Any], axis_type: str, referenced: bool
+    model_data: dict[str, Any],
+    axis_type: str,
+    referenced: bool,
+    concatenable: bool | str,
 ):
     input_axis = model_data["inputs"][0]["axes"][3]
-    input_axis.update(type=axis_type, concatenable=True)
+    input_axis.update(type=axis_type, concatenable=concatenable)
     if axis_type == "index":
         input_axis.pop("unit")
         input_axis.pop("scale")
@@ -503,6 +510,7 @@ def test_get_axis_sizes_raises_with_missing_n(model_data: dict[str, Any]):
         "type": "space",
         "id": "x",
         "size": {"min": 10, "step": 5},
+        "concatenable": False,
     }
 
     with ValidationContext(perform_io_checks=False):
@@ -660,6 +668,54 @@ def test_absolute_tolerance(model_data: dict[str, Any]):
 
     with pytest.raises(ValueError), ValidationContext(perform_io_checks=True):
         _ = model_descr._validate_test_tensors()  # type: ignore[reportPrivateUsage]
+
+
+@pytest.mark.parametrize(
+    ("minimum_size", "expect_error"),
+    [(512, True), (504, False)],
+)
+def test_reproducible_concatenable_test_tensor_size(
+    model_data: dict[str, Any], minimum_size: int, expect_error: bool
+):
+    input_axis = model_data["inputs"][0]["axes"][3]
+    input_axis.update(
+        concatenable="reproducible",
+        size={"min": minimum_size, "step": 8},
+    )
+    model_data["outputs"][0]["axes"][3]["size"] = {
+        "tensor_id": "input_1",
+        "axis_id": "y",
+    }
+
+    with ValidationContext(perform_io_checks=False):
+        model_descr = ModelDescr.model_validate(model_data)
+
+    with ValidationContext(perform_io_checks=True):
+        if expect_error:
+            with pytest.raises(ValueError, match="must be larger than minimum size"):
+                _ = model_descr._validate_test_tensors()  # type: ignore[reportPrivateUsage]
+        else:
+            _ = model_descr._validate_test_tensors()  # type: ignore[reportPrivateUsage]
+
+
+def test_old_format_concatenable_defaults_to_false(model_data: dict[str, Any]):
+    model_data["format_version"] = "0.5.14"
+    axes = model_data["inputs"][0]["axes"]
+    for a in axes:
+        _ = a.pop("concatenable", None)
+
+    axes[3]["concatenable"] = True
+    model_data["outputs"][0]["axes"][3]["size"] = {
+        "tensor_id": "input_1",
+        "axis_id": "y",
+    }
+
+    with ValidationContext(perform_io_checks=False):
+        descr = ModelDescr.model_validate(model_data)
+
+    assert descr.format_version == ModelDescr.implemented_format_version
+    assert descr.inputs[0].axes[2].concatenable is False
+    assert descr.inputs[0].axes[3].concatenable is True
 
 
 def test_get_set_weights_descr(model: ModelDescr):
