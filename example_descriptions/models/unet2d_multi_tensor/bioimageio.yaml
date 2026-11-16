@@ -96,13 +96,13 @@ outputs:
       - type: channel
         channel_names:
           - channel0
-      - halo: 4
+      - halo: 12
         size:
           tensor_id: input0
           axis_id: y
         id: y
         type: space
-      - halo: 4
+      - halo: 12
         size:
           tensor_id: input0
           axis_id: x
@@ -120,13 +120,13 @@ outputs:
       - type: channel
         channel_names:
           - channel0
-      - halo: 4
+      - halo: 12
         size:
           tensor_id: input1
           axis_id: y
         id: y
         type: space
-      - halo: 4
+      - halo: 12
         size:
           tensor_id: input1
           axis_id: x
