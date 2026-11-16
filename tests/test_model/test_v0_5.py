@@ -392,6 +392,70 @@ def test_model(model_data: dict[str, Any], update: dict[str, Any]):
     assert summary.status == "valid-format", summary.display()
 
 
+@pytest.mark.parametrize("axis_type", ["index", "time", "space"])
+@pytest.mark.parametrize("referenced", [False, True])
+def test_concatenable_input_axis(
+    model_data: dict[str, Any], axis_type: str, referenced: bool
+):
+    input_axis = model_data["inputs"][0]["axes"][3]
+    input_axis.update(type=axis_type, concatenable=True)
+    if axis_type == "index":
+        input_axis.pop("unit")
+        input_axis.pop("scale")
+    if referenced:
+        model_data["outputs"][0]["axes"][3]["size"] = {
+            "tensor_id": "input_1",
+            "axis_id": "y",
+        }
+
+    with ValidationContext(perform_io_checks=False):
+        if referenced:
+            _ = ModelDescr.model_validate(model_data)
+        else:
+            with pytest.raises(ValidationError, match=r"input_1\.y"):
+                _ = ModelDescr.model_validate(model_data)
+
+
+def test_concatenable_axes_are_matched_by_tensor_id(model_data: dict[str, Any]):
+    second_input = deepcopy(model_data["inputs"][0])
+    second_input["id"] = "input_2"
+    second_input["axes"] = [second_input["axes"][3]]
+    second_input["axes"][0]["concatenable"] = True
+    model_data["inputs"].append(second_input)
+    model_data["outputs"][0]["axes"][3]["size"] = {
+        "tensor_id": "input_1",
+        "axis_id": "y",
+    }
+
+    with (
+        ValidationContext(perform_io_checks=False),
+        pytest.raises(ValidationError, match=r"input_2\.y"),
+    ):
+        _ = ModelDescr.model_validate(model_data)
+
+
+def test_concatenable_axis_can_be_referenced_by_another_output(
+    model_data: dict[str, Any],
+):
+    model_data["inputs"][0]["axes"][3]["concatenable"] = True
+    second_output = deepcopy(model_data["outputs"][0])
+    second_output["id"] = "output_2"
+    second_output["axes"][3]["size"] = {"tensor_id": "input_1", "axis_id": "y"}
+    model_data["outputs"].append(second_output)
+
+    with ValidationContext(perform_io_checks=False):
+        _ = ModelDescr.model_validate(model_data)
+
+
+def test_concatenable_batch_axis_requires_output_batch(model_data: dict[str, Any]):
+    model_data["outputs"][0]["axes"].pop(0)
+    with (
+        ValidationContext(perform_io_checks=False),
+        pytest.raises(ValidationError, match=r"input_1\.batch"),
+    ):
+        _ = ModelDescr.model_validate(model_data)
+
+
 def test_warn_long_name(model_data: dict[str, Any]):
     model_data["name"] = (
         "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"

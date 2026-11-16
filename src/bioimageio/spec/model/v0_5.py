@@ -522,6 +522,8 @@ DEFAULT_TIME_AXIS_ID = AxisId("time")
 
 
 class BatchAxis(AxisBase):
+    """A concatenable batch axis shared implicitly by input and output tensors."""
+
     implemented_type: ClassVar[Literal["batch"]] = "batch"
     if TYPE_CHECKING:
         type: Literal["batch"] = "batch"
@@ -616,7 +618,7 @@ class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
     """If a model has a `concatenable` input axis, it can be processed blockwise,
     splitting a longer sample axis into blocks matching its input tensor description.
     Output axes are concatenable if they have a [SizeReference][] to a concatenable
-    input axis.
+    input axis. Each concatenable input axis must be referenced by an output axis.
     """
 
 
@@ -649,7 +651,7 @@ class TimeInputAxis(TimeAxisBase, _WithInputAxisSize):
     """If a model has a `concatenable` input axis, it can be processed blockwise,
     splitting a longer sample axis into blocks matching its input tensor description.
     Output axes are concatenable if they have a [SizeReference][] to a concatenable
-    input axis.
+    input axis. Each concatenable input axis must be referenced by an output axis.
     """
 
 
@@ -672,7 +674,7 @@ class SpaceInputAxis(SpaceAxisBase, _WithInputAxisSize):
     """If a model has a `concatenable` input axis, it can be processed blockwise,
     splitting a longer sample axis into blocks matching its input tensor description.
     Output axes are concatenable if they have a [SizeReference][] to a concatenable
-    input axis.
+    input axis. Each concatenable input axis must be referenced by an output axis.
     """
 
 
@@ -3884,6 +3886,36 @@ class ModelDescr(GenericModelDescrBase):
 
     outputs: NotEmpty[Sequence[OutputTensorDescr]]
     """Describes the output tensors."""
+
+    @model_validator(mode="after")
+    def _validate_concatenable_input_axes(self) -> Self:
+        output_refs = {
+            (axis.size.tensor_id, axis.size.axis_id)
+            for output in self.outputs
+            for axis in output.axes
+            if isinstance(axis.size, SizeReference)
+        }
+        has_output_batch = any(
+            isinstance(axis, BatchAxis)
+            for output in self.outputs
+            for axis in output.axes
+        )
+        missing = [
+            f"{input_tensor.id}.{axis.id}"
+            for input_tensor in self.inputs
+            for axis in input_tensor.axes
+            if axis.concatenable
+            and (
+                not has_output_batch
+                if isinstance(axis, BatchAxis)
+                else (input_tensor.id, axis.id) not in output_refs
+            )
+        ]
+        if missing:
+            raise ValueError(
+                f"Concatenable input axes must be referenced by an output: {missing}"
+            )
+        return self
 
     @field_validator("outputs", mode="after")
     @classmethod

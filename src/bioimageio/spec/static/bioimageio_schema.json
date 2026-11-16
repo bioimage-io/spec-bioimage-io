@@ -203,6 +203,7 @@
     },
     "BatchAxis": {
       "additionalProperties": false,
+      "description": "A concatenable batch axis shared implicitly by input and output tensors.",
       "properties": {
         "id": {
           "default": "batch",
@@ -1167,7 +1168,7 @@
         },
         "concatenable": {
           "default": false,
-          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis.",
+          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.",
           "title": "Concatenable",
           "type": "boolean"
         }
@@ -1931,7 +1932,7 @@
         },
         "concatenable": {
           "default": false,
-          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis.",
+          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.",
           "title": "Concatenable",
           "type": "boolean"
         }
@@ -2500,7 +2501,7 @@
         },
         "concatenable": {
           "default": false,
-          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis.",
+          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.",
           "title": "Concatenable",
           "type": "boolean"
         }

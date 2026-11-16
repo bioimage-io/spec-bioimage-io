@@ -14,6 +14,7 @@ This changelog includes implementation details and might reference [changes to t
 
 - fix floating point rounding issue in model.v0_5.SizeReference
 - default to packaging resources with a `bioimageio.yaml` file (instead of `rdf.yaml`)
+- Require each concatenable input axis to be referenced by an output axis; input batch axes require an output batch axis.
 
 ### bioimageio.spec 0.5.14.3
 

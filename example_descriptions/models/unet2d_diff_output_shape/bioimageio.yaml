@@ -25,8 +25,10 @@ inputs:
       - id: 'y'
         size: { min: 32, step: 16 }
         type: space
+        concatenable: false # due to InstanceNorm
       - size: { min: 32, step: 16 }
         type: space
+        concatenable: false # due to InstanceNorm
     preprocessing:
       - id: ensure_dtype
         kwargs: { dtype: float32 }
