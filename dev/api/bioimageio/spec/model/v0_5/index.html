@@ -32491,7 +32491,7 @@ axes.</p>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">],</span>
 <span class="w">      </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reproducible"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility."</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility."</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Concatenable"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">},</span>
@@ -32568,7 +32568,7 @@ input axis. Each concatenable input axis must be referenced by an output axis.</
 <p>Set <code>concatenable</code> to <code>applicable</code> if the model can be meaningfully applied blockwise,
 but its outputs may change beyond the specified numerical tolerance for reproducibility,
 for example due to the use of instance norm within the model.
-<code>True</code> is an alias for <code>reproducible</code> and is provided for backwards compatibility.</p>
+<code>True</code> is an alias for <code>applicable</code> and is provided for backwards compatibility.</p>
 
           
     </div>
@@ -34403,7 +34403,7 @@ for example due to the use of instance norm within the model.
 <span class="w">            </span><span class="p">}</span>
 <span class="w">          </span><span class="p">],</span>
 <span class="w">          </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reproducible"</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility."</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility."</span><span class="p">,</span>
 <span class="w">          </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Concatenable"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
@@ -35039,7 +35039,7 @@ for example due to the use of instance norm within the model.
 <span class="w">            </span><span class="p">}</span>
 <span class="w">          </span><span class="p">],</span>
 <span class="w">          </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reproducible"</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility."</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility."</span><span class="p">,</span>
 <span class="w">          </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Concatenable"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
@@ -35170,7 +35170,7 @@ for example due to the use of instance norm within the model.
 <span class="w">            </span><span class="p">}</span>
 <span class="w">          </span><span class="p">],</span>
 <span class="w">          </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reproducible"</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility."</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility."</span><span class="p">,</span>
 <span class="w">          </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Concatenable"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
@@ -42368,7 +42368,7 @@ These fields are typically stored in a YAML file which we call a model resource 
 <span class="w">            </span><span class="p">}</span>
 <span class="w">          </span><span class="p">],</span>
 <span class="w">          </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reproducible"</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility."</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility."</span><span class="p">,</span>
 <span class="w">          </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Concatenable"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
@@ -44188,7 +44188,7 @@ These fields are typically stored in a YAML file which we call a model resource 
 <span class="w">            </span><span class="p">}</span>
 <span class="w">          </span><span class="p">],</span>
 <span class="w">          </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reproducible"</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility."</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility."</span><span class="p">,</span>
 <span class="w">          </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Concatenable"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
@@ -44987,7 +44987,7 @@ These fields are typically stored in a YAML file which we call a model resource 
 <span class="w">            </span><span class="p">}</span>
 <span class="w">          </span><span class="p">],</span>
 <span class="w">          </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reproducible"</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility."</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility."</span><span class="p">,</span>
 <span class="w">          </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Concatenable"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
@@ -50639,11 +50639,7 @@ without validating the result.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4512</span>
-<span class="normal">4513</span>
-<span class="normal">4514</span>
-<span class="normal">4515</span>
-<span class="normal">4516</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4516</span>
 <span class="normal">4517</span>
 <span class="normal">4518</span>
 <span class="normal">4519</span>
@@ -50703,7 +50699,11 @@ without validating the result.</p>
 <span class="normal">4573</span>
 <span class="normal">4574</span>
 <span class="normal">4575</span>
-<span class="normal">4576</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">4576</span>
+<span class="normal">4577</span>
+<span class="normal">4578</span>
+<span class="normal">4579</span>
+<span class="normal">4580</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_from_old_format_wo_validation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Convert metadata following an older format version to this classes' format</span>
 <span class="sd">    without validating the result.</span>
@@ -50937,11 +50937,7 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4376</span>
-<span class="normal">4377</span>
-<span class="normal">4378</span>
-<span class="normal">4379</span>
-<span class="normal">4380</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4380</span>
 <span class="normal">4381</span>
 <span class="normal">4382</span>
 <span class="normal">4383</span>
@@ -51065,7 +51061,11 @@ Or simply whenever you know the full input shape.</p>
 <span class="normal">4501</span>
 <span class="normal">4502</span>
 <span class="normal">4503</span>
-<span class="normal">4504</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes</span><span class="p">(</span>
+<span class="normal">4504</span>
+<span class="normal">4505</span>
+<span class="normal">4506</span>
+<span class="normal">4507</span>
+<span class="normal">4508</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_axis_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">ns</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">]</span> <span class="o">|</span> <span class="n">ParameterizedSize_N</span><span class="p">,</span>
     <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -51223,11 +51223,7 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4185</span>
-<span class="normal">4186</span>
-<span class="normal">4187</span>
-<span class="normal">4188</span>
-<span class="normal">4189</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4189</span>
 <span class="normal">4190</span>
 <span class="normal">4191</span>
 <span class="normal">4192</span>
@@ -51241,7 +51237,11 @@ Or simply whenever you know the full input shape.</p>
 <span class="normal">4200</span>
 <span class="normal">4201</span>
 <span class="normal">4202</span>
-<span class="normal">4203</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="normal">4203</span>
+<span class="normal">4204</span>
+<span class="normal">4205</span>
+<span class="normal">4206</span>
+<span class="normal">4207</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_batch_size</span><span class="p">(</span><span class="n">tensor_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">tensor_with_batchsize</span><span class="p">:</span> <span class="n">TensorId</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -51283,8 +51283,8 @@ Or simply whenever you know the full input shape.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4163</span>
-<span class="normal">4164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4167</span>
+<span class="normal">4168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_input_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -51314,11 +51314,7 @@ such that the valid input size is &gt;= the given input size</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4319</span>
-<span class="normal">4320</span>
-<span class="normal">4321</span>
-<span class="normal">4322</span>
-<span class="normal">4323</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4323</span>
 <span class="normal">4324</span>
 <span class="normal">4325</span>
 <span class="normal">4326</span>
@@ -51336,7 +51332,11 @@ such that the valid input size is &gt;= the given input size</p>
 <span class="normal">4338</span>
 <span class="normal">4339</span>
 <span class="normal">4340</span>
-<span class="normal">4341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]):</span>
+<span class="normal">4341</span>
+<span class="normal">4342</span>
+<span class="normal">4343</span>
+<span class="normal">4344</span>
+<span class="normal">4345</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_ns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]):</span>
 <span class="w">    </span><span class="sd">"""get parameter `n` for each parameterized axis</span>
 <span class="sd">    such that the valid input size is &gt;= the given input size"""</span>
     <span class="n">ret</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -51395,11 +51395,7 @@ This is likely the case if the input sizes are not valid according to the model 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4205</span>
-<span class="normal">4206</span>
-<span class="normal">4207</span>
-<span class="normal">4208</span>
-<span class="normal">4209</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4209</span>
 <span class="normal">4210</span>
 <span class="normal">4211</span>
 <span class="normal">4212</span>
@@ -51507,7 +51503,11 @@ This is likely the case if the input sizes are not valid according to the model 
 <span class="normal">4314</span>
 <span class="normal">4315</span>
 <span class="normal">4316</span>
-<span class="normal">4317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_tensor_sizes</span><span class="p">(</span>
+<span class="normal">4317</span>
+<span class="normal">4318</span>
+<span class="normal">4319</span>
+<span class="normal">4320</span>
+<span class="normal">4321</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_tensor_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">input_sizes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">AxisId</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">"""Returns the tensor output sizes for given **input_sizes**.</span>
@@ -51643,8 +51643,8 @@ This is likely the case if the input sizes are not valid according to the model 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4166</span>
-<span class="normal">4167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4170</span>
+<span class="normal">4171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_output_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_test_arrays</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -51737,11 +51737,7 @@ This is likely the case if the input sizes are not valid according to the model 
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4343</span>
-<span class="normal">4344</span>
-<span class="normal">4345</span>
-<span class="normal">4346</span>
-<span class="normal">4347</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4347</span>
 <span class="normal">4348</span>
 <span class="normal">4349</span>
 <span class="normal">4350</span>
@@ -51768,7 +51764,11 @@ This is likely the case if the input sizes are not valid according to the model 
 <span class="normal">4371</span>
 <span class="normal">4372</span>
 <span class="normal">4373</span>
-<span class="normal">4374</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_tensor_sizes</span><span class="p">(</span>
+<span class="normal">4374</span>
+<span class="normal">4375</span>
+<span class="normal">4376</span>
+<span class="normal">4377</span>
+<span class="normal">4378</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_tensor_sizes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">ns</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">TensorId</span><span class="p">,</span> <span class="n">AxisId</span><span class="p">],</span> <span class="n">ParameterizedSize_N</span><span class="p">]</span> <span class="o">|</span> <span class="n">ParameterizedSize_N</span><span class="p">,</span>
     <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -69693,7 +69693,7 @@ Note:
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">],</span>
 <span class="w">      </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reproducible"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility."</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility."</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Concatenable"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">},</span>
@@ -69778,7 +69778,7 @@ input axis. Each concatenable input axis must be referenced by an output axis.</
 <p>Set <code>concatenable</code> to <code>applicable</code> if the model can be meaningfully applied blockwise,
 but its outputs may change beyond the specified numerical tolerance for reproducibility,
 for example due to the use of instance norm within the model.
-<code>True</code> is an alias for <code>reproducible</code> and is provided for backwards compatibility.</p>
+<code>True</code> is an alias for <code>applicable</code> and is provided for backwards compatibility.</p>
 
           
     </div>
@@ -74613,7 +74613,7 @@ The IEEE Winter Conference on Applications of Computer Vision (WACV), Snowmass V
 <span class="w">            </span><span class="p">}</span>
 <span class="w">          </span><span class="p">],</span>
 <span class="w">          </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reproducible"</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility."</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility."</span><span class="p">,</span>
 <span class="w">          </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Concatenable"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
@@ -75040,7 +75040,7 @@ The IEEE Winter Conference on Applications of Computer Vision (WACV), Snowmass V
 <span class="w">            </span><span class="p">}</span>
 <span class="w">          </span><span class="p">],</span>
 <span class="w">          </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reproducible"</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility."</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility."</span><span class="p">,</span>
 <span class="w">          </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Concatenable"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
@@ -75359,7 +75359,7 @@ The IEEE Winter Conference on Applications of Computer Vision (WACV), Snowmass V
 <span class="w">            </span><span class="p">}</span>
 <span class="w">          </span><span class="p">],</span>
 <span class="w">          </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reproducible"</span><span class="p">,</span>
-<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility."</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility."</span><span class="p">,</span>
 <span class="w">          </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Concatenable"</span>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">},</span>
@@ -79593,7 +79593,7 @@ All required files/folders should be a zip archive.</p>
 <span class="w">        </span><span class="p">}</span>
 <span class="w">      </span><span class="p">],</span>
 <span class="w">      </span><span class="nt">"default"</span><span class="p">:</span><span class="w"> </span><span class="s2">"reproducible"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility."</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a [SizeReference][] to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility."</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Concatenable"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">},</span>
@@ -79678,7 +79678,7 @@ input axis. Each concatenable input axis must be referenced by an output axis.</
 <p>Set <code>concatenable</code> to <code>applicable</code> if the model can be meaningfully applied blockwise,
 but its outputs may change beyond the specified numerical tolerance for reproducibility,
 for example due to the use of instance norm within the model.
-<code>True</code> is an alias for <code>reproducible</code> and is provided for backwards compatibility.</p>
+<code>True</code> is an alias for <code>applicable</code> and is provided for backwards compatibility.</p>
 
           
     </div>
@@ -89740,11 +89740,7 @@ Default: Scale all axes jointly.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/bioimageio/spec/model/v0_5.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4789</span>
-<span class="normal">4790</span>
-<span class="normal">4791</span>
-<span class="normal">4792</span>
-<span class="normal">4793</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4793</span>
 <span class="normal">4794</span>
 <span class="normal">4795</span>
 <span class="normal">4796</span>
@@ -89925,7 +89921,11 @@ Default: Scale all axes jointly.</p>
 <span class="normal">4971</span>
 <span class="normal">4972</span>
 <span class="normal">4973</span>
-<span class="normal">4974</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_covers</span><span class="p">(</span>
+<span class="normal">4974</span>
+<span class="normal">4975</span>
+<span class="normal">4976</span>
+<span class="normal">4977</span>
+<span class="normal">4978</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_covers</span><span class="p">(</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">InputTensorDescr</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">OutputTensorDescr</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">FileDescr</span><span class="p">]:</span>

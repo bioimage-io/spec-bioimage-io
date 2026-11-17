@@ -741,6 +741,7 @@ In this file we log both:</p>
 <li>fix floating point rounding issue in model.v0_5.SizeReference</li>
 <li>default to packaging resources with a <code>bioimageio.yaml</code> file (instead of <code>rdf.yaml</code>)</li>
 <li>Require each concatenable input axis to be referenced by an output axis; input batch axes require an output batch axis.</li>
+<li>Treat legacy <code>concatenable: true</code> as <code>"applicable"</code>, without requiring reproducible blockwise output.</li>
 <li>released <a href="#model-0515">model spec 0.5.15</a></li>
 </ul>
 <h3 id="bioimageiospec-05143">bioimageio.spec 0.5.14.3<a class="headerlink" href="#bioimageiospec-05143" title="Anchor link to this section for reference">¤</a></h3>
@@ -1179,6 +1180,7 @@ If the changes also apply to <code>type</code> model, the coresponding model for
 <ul>
 <li>Non-breaking changes:</li>
 <li><code>concatenable</code> default for IndexInputAxis, SpaceInputAxis and TimeInputAxis changed to <code>"reproducible"</code></li>
+<li>Legacy <code>concatenable: true</code> denotes <code>"applicable"</code>, meaning blocking along that axis is meaningful, but may lead to numerically different results (it is not <code>"reproducible"</code> with reference to non-blockwise proceccing).</li>
 </ul>
 <h3 id="model-0514">model 0.5.14<a class="headerlink" href="#model-0514" title="Anchor link to this section for reference">¤</a></h3>
 <ul>
