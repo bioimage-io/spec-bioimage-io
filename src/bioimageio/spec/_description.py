@@ -31,7 +31,13 @@ LATEST: Literal["latest"] = "latest"
 """placeholder for the latest available format version"""
 
 
-LatestResourceDescr: TypeAlias = Annotated[ApplicationDescr | DatasetDescr | ModelDescr | NotebookDescr, Discriminator("type")] | GenericDescr
+LatestResourceDescr: TypeAlias = (
+    Annotated[
+        ApplicationDescr | DatasetDescr | ModelDescr | NotebookDescr,
+        Discriminator("type"),
+    ]
+    | GenericDescr
+)
 """A resource description following the latest specification format"""
 
 

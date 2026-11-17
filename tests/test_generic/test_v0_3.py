@@ -150,9 +150,7 @@ _type_adapters_for_path: Sequence[TypeAdapter[Any]] = (
     TypeAdapter(Annotated[FilePath, WithSuffix(".md", case_sensitive=True)]),
     TypeAdapter(Annotated[Path, WithSuffix(".md", case_sensitive=True)]),
     TypeAdapter(Annotated[PurePath, WithSuffix(".md", case_sensitive=True)]),
-    TypeAdapter(
-        Annotated[PurePath | HttpUrl, WithSuffix(".md", case_sensitive=True)]
-    ),
+    TypeAdapter(Annotated[PurePath | HttpUrl, WithSuffix(".md", case_sensitive=True)]),
     TypeAdapter(
         Annotated[
             AbsoluteFilePath | RelativeFilePath | HttpUrl,
@@ -163,9 +161,7 @@ _type_adapters_for_path: Sequence[TypeAdapter[Any]] = (
 
 _type_adapters_for_url: Sequence[TypeAdapter[Any]] = (
     TypeAdapter(Annotated[HttpUrl, WithSuffix(".md", case_sensitive=True)]),
-    TypeAdapter(
-        Annotated[PurePath | HttpUrl, WithSuffix(".md", case_sensitive=True)]
-    ),
+    TypeAdapter(Annotated[PurePath | HttpUrl, WithSuffix(".md", case_sensitive=True)]),
     TypeAdapter(
         Annotated[
             AbsoluteFilePath | RelativeFilePath | HttpUrl,
