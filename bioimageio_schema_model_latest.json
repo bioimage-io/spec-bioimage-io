@@ -1282,7 +1282,7 @@
             }
           ],
           "default": "reproducible",
-          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility.",
+          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility.",
           "title": "Concatenable"
         }
       },
@@ -3102,7 +3102,7 @@
             }
           ],
           "default": "reproducible",
-          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility.",
+          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility.",
           "title": "Concatenable"
         }
       },
@@ -3901,7 +3901,7 @@
             }
           ],
           "default": "reproducible",
-          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `reproducible` and is provided for backwards compatibility.",
+          "description": "If a model has a `concatenable` input axis, it can be processed blockwise,\nsplitting a longer sample axis into blocks matching its input tensor description.\n\nOutput axes are concatenable if they have a `SizeReference` to a concatenable\ninput axis. Each concatenable input axis must be referenced by an output axis.\n\nSet `concatenable` to `applicable` if the model can be meaningfully applied blockwise,\nbut its outputs may change beyond the specified numerical tolerance for reproducibility,\nfor example due to the use of instance norm within the model.\n`True` is an alias for `applicable` and is provided for backwards compatibility.",
           "title": "Concatenable"
         }
       },
