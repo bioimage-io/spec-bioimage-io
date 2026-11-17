@@ -3,18 +3,12 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Collection, Mapping, Sequence
 from contextlib import nullcontext
 from copy import deepcopy
 from io import StringIO
 from pathlib import Path
-from typing import (
-    Any,
-    Collection,
-    ContextManager,
-    Mapping,
-    Protocol,
-    Sequence,
-)
+from typing import Any, Protocol
 from zipfile import ZipFile
 
 import jsonschema
@@ -62,9 +56,7 @@ def check_node(
         assert expected_dump_json is unset
         assert expected_dump_python is unset
 
-    error_context: ContextManager[Any] = (
-        pytest.raises(ValidationError) if is_invalid else nullcontext()
-    )
+    error_context = pytest.raises(ValidationError) if is_invalid else nullcontext()
     with error_context:
         node = node_class.model_validate(
             kwargs,
@@ -94,9 +86,7 @@ def check_type(
     is_invalid: bool = False,
 ):
     type_adapter = TypeAdapter(type_)
-    error_context: ContextManager[Any] = (
-        pytest.raises(ValidationError) if is_invalid else nullcontext()
-    )
+    error_context = pytest.raises(ValidationError) if is_invalid else nullcontext()
 
     with error_context:
         actual = type_adapter.validate_python(value)

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from contextlib import nullcontext
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Literal
 
 import httpx
 import pydantic
 from loguru import logger
 from pydantic import RootModel
-from typing_extensions import Literal, assert_never
+from typing_extensions import assert_never
 
 from . import warning_levels
 from ._settings import settings

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Collection, Iterable, Mapping
+from collections.abc import Collection, Iterable, Mapping
+from typing import Any
 
 import httpx
 import pytest
@@ -21,6 +22,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP_DEFAULT: Collection[str] = {
     "documentation",  # plain source to FileDescr(source=...)
     "covers",  # plain source to FileDescr(source=...)
     "config.bioimageio.reproducibility_tolerance",  # added by serializing defaults
+    "inputs.axes.concatenable",  # set to False when converting from format < 0.5.15
 }
 EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
     "affable-shark/1.1": {
@@ -54,6 +56,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP: Mapping[str, Collection[str]] = {
     },
     "philosophical-panda/0.0.11": {
         "outputs",  # int -> float
+        "inputs.axes.concatenable",
         "documentation",  # plain source to FileDescr(source=...)
         "covers",  # plain source to FileDescr(source=...)
         "config.bioimageio.reproducibility_tolerance",  # added by serializing defaults

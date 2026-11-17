@@ -19,7 +19,7 @@ covers:
 description: A 2d U-Net trained on the nuclei broad dataset.
 documentation:
   source: README.md
-format_version: 0.5.11
+format_version: 0.5.14
 git_repo: https://github.com/bioimage-io/spec-bioimage-io/tree/main/example_descriptions/models/unet2d_nuclei_broad
 inputs:
   - axes:
@@ -27,14 +27,16 @@ inputs:
       - channel_names:
           - channel0
         type: channel
-      - id: y
+      - id: 'y'
         scale: 1.0
-        size: 512
+        size: { min: 144, step: 16 }
         type: space
+        concatenable: reproducible
       - id: x
         scale: 1.0
-        size: 512
+        size: { min: 144, step: 16 }
         type: space
+        concatenable: reproducible
     data:
       type: float32
     id: raw
@@ -45,7 +47,8 @@ inputs:
       - id: zero_mean_unit_variance
         kwargs:
           axes:
-            - y
+            - batch
+            - 'y'
             - x
           eps: 1e-06
       - id: ensure_dtype
@@ -69,15 +72,15 @@ outputs:
         scale: 1.0
         size: 1
         type: space
-      - halo: 32
-        id: y
+      - halo: 64
+        id: 'y'
         scale: 1.0
         size:
           axis_id: y
           offset: 0
           tensor_id: raw
         type: space
-      - halo: 32
+      - halo: 64
         id: x
         scale: 1.0
         size:

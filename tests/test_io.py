@@ -2,6 +2,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
+import httpx
 import pytest
 
 from bioimageio.spec._internal.io import BioimageioYamlContent
@@ -145,6 +146,45 @@ def test_open_bioimageio_yaml_forwards_progressbar_to_id_map_entry(
 
     assert opened.content == {"type": "dataset", "format_version": "0.3.0"}
     assert seen_progressbar == [False]
+
+
+def test_open_bioimageio_yaml_tries_collection_http_patterns_in_order(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    from bioimageio.spec._internal import io_utils
+
+    requested_urls: list[str] = []
+
+    def fake_get(url: object, *, follow_redirects: bool) -> httpx.Response:
+        assert follow_redirects
+        requested_urls.append(str(url))
+        return httpx.Response(
+            404 if str(url).endswith("missing.yaml") else 200,
+            content=b"type: dataset\nformat_version: 0.3.0\n",
+            request=httpx.Request("GET", str(url)),
+        )
+
+    def fake_interprete_file_source(source: Any) -> Any:
+        raise FileNotFoundError(source)
+
+    monkeypatch.setattr(io_utils, "interprete_file_source", fake_interprete_file_source)
+    monkeypatch.setattr(io_utils.httpx, "get", fake_get)
+    monkeypatch.setattr(
+        io_utils.settings,
+        "collection_http_pattern",
+        (
+            "https://example.com/{bioimageio_id}/missing.yaml",
+            "https://example.com/{bioimageio_id}/bioimageio.yaml",
+        ),
+    )
+
+    opened = io_utils.open_bioimageio_yaml("collection-id")
+
+    assert requested_urls == [
+        "https://example.com/collection-id/missing.yaml",
+        "https://example.com/collection-id/bioimageio.yaml",
+    ]
+    assert opened.original_file_name == "bioimageio.yaml"
 
 
 def test_load_dataset_description(covid_if_dataset_path: Path, tmp_path: Path):

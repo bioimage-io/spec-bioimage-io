@@ -73,7 +73,9 @@ class UNetBase(nn.Module):
         if self.out_conv is not None:
             x = self.out_conv(x)
 
-        x = torch.nn.functional.interpolate(x, scale_factor=0.5)
+        x = torch.nn.functional.interpolate(
+            x, scale_factor=0.5, mode="bilinear", align_corners=False
+        )
         if self.final_activation is not None:
             x = self.final_activation(x)
 

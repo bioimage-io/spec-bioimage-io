@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import collections.abc
-from typing import Any, Callable, Literal, Mapping, TypeVar
+from collections.abc import Callable, Mapping
+from typing import Any, Literal, TypeVar
 
 from ._internal.common_nodes import InvalidDescr, ResourceDescrBase
 from ._internal.field_validation import issue_warning

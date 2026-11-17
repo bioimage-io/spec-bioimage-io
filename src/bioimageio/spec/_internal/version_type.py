@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Union
+from typing import Any
 
 import packaging.version
 from pydantic import PrivateAttr, RootModel
 
 
-class Version(RootModel[Union[str, int, float]]):
+class Version(RootModel[str | int | float]):
     """wraps a packaging.version.Version instance for validation in pydantic models"""
 
     _version: packaging.version.Version = PrivateAttr()

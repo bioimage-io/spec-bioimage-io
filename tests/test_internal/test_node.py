@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Annotated, Any
 
 import pytest
 from annotated_types import Ge
-from typing_extensions import Annotated
 
 from bioimageio.spec._internal.common_nodes import Node
 from bioimageio.spec._internal.field_warning import warn

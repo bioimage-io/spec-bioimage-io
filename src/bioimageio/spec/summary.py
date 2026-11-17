@@ -11,6 +11,7 @@ from __future__ import annotations
 import html
 import platform
 import subprocess
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from io import StringIO
@@ -20,15 +21,10 @@ from tempfile import TemporaryDirectory
 from textwrap import TextWrapper
 from types import MappingProxyType
 from typing import (
+    Annotated,
     Any,
-    Callable,
-    List,
     Literal,
-    Mapping,
     NamedTuple,
-    Sequence,
-    Tuple,
-    Union,
     cast,
 )
 
@@ -46,7 +42,7 @@ from pydantic import (
     model_validator,
 )
 from pydantic_core.core_schema import ErrorType
-from typing_extensions import Annotated, Self, assert_never
+from typing_extensions import Self, assert_never
 
 from ._internal.io import is_yaml_value
 from ._internal.io_utils import write_yaml
@@ -70,7 +66,7 @@ from .conda_env import CondaEnv
 
 CONDA_CMD = "conda.bat" if platform.system() == "Windows" else "conda"
 
-Loc = Tuple[Union[int, str], ...]
+Loc = tuple[int | str, ...]
 """location of error/warning in a nested data structure"""
 
 WarningSeverityName = Literal["info", "warning", "alert"]
@@ -180,10 +176,10 @@ class ValidationDetail(BaseModel, extra="allow"):
     loc: Loc = ()
     """location in the RDF that this detail applies to"""
     errors: list[ErrorEntry] = Field(
-        default_factory=cast(Callable[[], List[ErrorEntry]], list)
+        default_factory=cast(Callable[[], list[ErrorEntry]], list)
     )
     warnings: list[WarningEntry] = Field(
-        default_factory=cast(Callable[[], List[WarningEntry]], list)
+        default_factory=cast(Callable[[], list[WarningEntry]], list)
     )
 
     context: ValidationContextSummary | None = None

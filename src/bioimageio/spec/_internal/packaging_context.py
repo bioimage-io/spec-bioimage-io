@@ -1,20 +1,20 @@
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
 from contextvars import ContextVar, Token
 from dataclasses import dataclass, field
-from typing import Callable, List, Literal, Sequence, cast
+from typing import Literal, cast
 
 from .io import FileDescr
 from .io_basics import FileName
-from .utils import SLOTS
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class PackagingContext:
     _context_tokens: list[Token[PackagingContext | None]] = field(
         init=False,
         default_factory=cast(
-            "Callable[[], List[Token[PackagingContext | None]]]", list
+            "Callable[[], list[Token[PackagingContext | None]]]", list
         ),
     )
 

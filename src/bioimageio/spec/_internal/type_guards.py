@@ -3,12 +3,11 @@ They widen the type to T[Any], which is not always correct."""
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
-from typing import Any, Hashable, TypeVar
+from collections.abc import Hashable, Mapping, Sequence
+from typing import Any, TypeGuard, TypeVar
 
 import numpy as np
 from numpy.typing import NDArray
-from typing_extensions import TypeGuard
 
 T = TypeVar("T")
 K = TypeVar("K", bound=Hashable)

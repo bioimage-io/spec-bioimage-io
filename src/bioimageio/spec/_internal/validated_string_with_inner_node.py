@@ -3,7 +3,13 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Generic, TypeVar
 
-from pydantic import SerializationInfo, SerializerFunctionWrapHandler, model_serializer
+from pydantic import (
+    GetCoreSchemaHandler,
+    SerializationInfo,
+    SerializerFunctionWrapHandler,
+)
+from pydantic_core import core_schema
+from pydantic_core.core_schema import CoreSchema
 
 from .node import Node
 from .validated_string import ValidatedString
@@ -17,7 +23,18 @@ class ValidatedStringWithInnerNode(ABC, ValidatedString, Generic[InnerNodeT]):
     _inner_node_class: type[InnerNodeT]
     _inner_node: InnerNodeT  # initalized in _after_validator called in __new__
 
-    @model_serializer(mode="wrap")
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> CoreSchema:
+        return core_schema.no_info_after_validator_function(
+            cls,
+            handler(str),
+            serialization=core_schema.wrap_serializer_function_ser_schema(
+                cls._serialize, info_arg=True
+            ),
+        )
+
     def _serialize(
         self, handler: SerializerFunctionWrapHandler, info: SerializationInfo
     ):

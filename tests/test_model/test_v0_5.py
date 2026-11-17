@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from collections.abc import Callable, Mapping
 from copy import deepcopy
 from datetime import datetime, timezone
 from types import MappingProxyType
-from typing import Any, Callable, Mapping
+from typing import Any
 
 import pytest
 from pydantic import RootModel, ValidationError
@@ -279,9 +280,12 @@ def model():
                             size=SizeReference(
                                 tensor_id=TensorId("input_1"), axis_id=AxisId("y")
                             ),
+                            concatenable=False,
                         ),
                         SpaceInputAxis(
-                            id=AxisId("y"), size=ParameterizedSize(min=256, step=8)
+                            id=AxisId("y"),
+                            size=ParameterizedSize(min=256, step=8),
+                            concatenable=False,
                         ),
                     ],
                     test_tensor=FileDescr(source=UNET2D_ROOT / "test_input.npy"),
@@ -391,6 +395,74 @@ def test_model(model_data: dict[str, Any], update: dict[str, Any]):
     assert summary.status == "valid-format", summary.display()
 
 
+@pytest.mark.parametrize("axis_type", ["index", "time", "space"])
+@pytest.mark.parametrize("referenced", [False, True])
+@pytest.mark.parametrize("concatenable", [True, "applicable", "reproducible"])
+def test_concatenable_input_axis(
+    model_data: dict[str, Any],
+    axis_type: str,
+    referenced: bool,
+    concatenable: bool | str,
+):
+    input_axis = model_data["inputs"][0]["axes"][3]
+    input_axis.update(type=axis_type, concatenable=concatenable)
+    if axis_type == "index":
+        input_axis.pop("unit")
+        input_axis.pop("scale")
+    if referenced:
+        model_data["outputs"][0]["axes"][3]["size"] = {
+            "tensor_id": "input_1",
+            "axis_id": "y",
+        }
+
+    with ValidationContext(perform_io_checks=False):
+        if referenced:
+            _ = ModelDescr.model_validate(model_data)
+        else:
+            with pytest.raises(ValidationError, match=r"input_1\.y"):
+                _ = ModelDescr.model_validate(model_data)
+
+
+def test_concatenable_axes_are_matched_by_tensor_id(model_data: dict[str, Any]):
+    second_input = deepcopy(model_data["inputs"][0])
+    second_input["id"] = "input_2"
+    second_input["axes"] = [second_input["axes"][3]]
+    second_input["axes"][0]["concatenable"] = True
+    model_data["inputs"].append(second_input)
+    model_data["outputs"][0]["axes"][3]["size"] = {
+        "tensor_id": "input_1",
+        "axis_id": "y",
+    }
+
+    with (
+        ValidationContext(perform_io_checks=False),
+        pytest.raises(ValidationError, match=r"input_2\.y"),
+    ):
+        _ = ModelDescr.model_validate(model_data)
+
+
+def test_concatenable_axis_can_be_referenced_by_another_output(
+    model_data: dict[str, Any],
+):
+    model_data["inputs"][0]["axes"][3]["concatenable"] = True
+    second_output = deepcopy(model_data["outputs"][0])
+    second_output["id"] = "output_2"
+    second_output["axes"][3]["size"] = {"tensor_id": "input_1", "axis_id": "y"}
+    model_data["outputs"].append(second_output)
+
+    with ValidationContext(perform_io_checks=False):
+        _ = ModelDescr.model_validate(model_data)
+
+
+def test_concatenable_batch_axis_requires_output_batch(model_data: dict[str, Any]):
+    model_data["outputs"][0]["axes"].pop(0)
+    with (
+        ValidationContext(perform_io_checks=False),
+        pytest.raises(ValidationError, match=r"input_1\.batch"),
+    ):
+        _ = ModelDescr.model_validate(model_data)
+
+
 def test_warn_long_name(model_data: dict[str, Any]):
     model_data["name"] = (
         "veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery loooooooooooooooong name"
@@ -438,6 +510,7 @@ def test_get_axis_sizes_raises_with_missing_n(model_data: dict[str, Any]):
         "type": "space",
         "id": "x",
         "size": {"min": 10, "step": 5},
+        "concatenable": False,
     }
 
     with ValidationContext(perform_io_checks=False):
@@ -595,6 +668,62 @@ def test_absolute_tolerance(model_data: dict[str, Any]):
 
     with pytest.raises(ValueError), ValidationContext(perform_io_checks=True):
         _ = model_descr._validate_test_tensors()  # type: ignore[reportPrivateUsage]
+
+
+@pytest.mark.parametrize(
+    ("concatenable", "minimum_size", "expect_error"),
+    [
+        ("reproducible", 512, True),
+        ("reproducible", 504, False),
+        (True, 512, False),
+        ("applicable", 512, False),
+    ],
+)
+def test_reproducible_concatenable_test_tensor_size(
+    model_data: dict[str, Any],
+    concatenable: bool | str,
+    minimum_size: int,
+    expect_error: bool,
+):
+    input_axis = model_data["inputs"][0]["axes"][3]
+    input_axis.update(
+        concatenable=concatenable,
+        size={"min": minimum_size, "step": 8},
+    )
+    model_data["outputs"][0]["axes"][3]["size"] = {
+        "tensor_id": "input_1",
+        "axis_id": "y",
+    }
+
+    with ValidationContext(perform_io_checks=False):
+        model_descr = ModelDescr.model_validate(model_data)
+
+    with ValidationContext(perform_io_checks=True):
+        if expect_error:
+            with pytest.raises(ValueError, match="must be larger than minimum size"):
+                _ = model_descr._validate_test_tensors()  # type: ignore[reportPrivateUsage]
+        else:
+            _ = model_descr._validate_test_tensors()  # type: ignore[reportPrivateUsage]
+
+
+def test_old_format_concatenable_defaults_to_false(model_data: dict[str, Any]):
+    model_data["format_version"] = "0.5.14"
+    axes = model_data["inputs"][0]["axes"]
+    for a in axes:
+        _ = a.pop("concatenable", None)
+
+    axes[3]["concatenable"] = True
+    model_data["outputs"][0]["axes"][3]["size"] = {
+        "tensor_id": "input_1",
+        "axis_id": "y",
+    }
+
+    with ValidationContext(perform_io_checks=False):
+        descr = ModelDescr.model_validate(model_data)
+
+    assert descr.format_version == ModelDescr.implemented_format_version
+    assert descr.inputs[0].axes[2].concatenable is False
+    assert descr.inputs[0].axes[3].concatenable is True
 
 
 def test_get_set_weights_descr(model: ModelDescr):
@@ -776,6 +905,7 @@ def test_SizeReference_get_size_floatingpoint():
     )
     y = SpaceOutputAxis(id=AxisId("y"), size=sr, scale=0.24, unit="micrometer")
 
+    assert isinstance(y.size, SizeReference)
     assert y.size.get_size(y, x, n=0) == 44
 
 
@@ -818,3 +948,53 @@ def test_validate_tensors_size_reference_float():
 
     with pytest.raises(ValueError, match="invalid for referenced size"):
         validate_tensors({ipt.id: (ipt, array), out.id: (out, array[:, :, :43])})
+
+
+@pytest.fixture(scope="module")
+def multi_tensor_model() -> ModelDescr:
+    model = load_model_description(
+        UNET2D_ROOT.parent / "unet2d_multi_tensor" / "bioimageio.yaml",
+        perform_io_checks=False,
+    )
+    assert isinstance(model, ModelDescr)
+    return model
+
+
+def _sizes(extra: Mapping[str, int] | None = None, batch: int = 1):
+    extra = dict(extra or {})
+    return {
+        TensorId(t): {
+            AxisId("batch"): batch,
+            AxisId("channel"): 1,
+            AxisId("y"): 256,
+            AxisId("x"): 256,
+            **{AxisId(k): v for k, v in extra.items()},
+        }
+        for t in ("input0", "input1")
+    }
+
+
+def test_get_output_tensor_sizes_batch_size_mismatch(multi_tensor_model: ModelDescr):
+    sizes = _sizes()
+    sizes[TensorId("input0")][AxisId("batch")] = 2
+    sizes[TensorId("input1")][AxisId("batch")] = 3
+    with pytest.raises(ValueError, match="batch size mismatch"):
+        _ = multi_tensor_model.get_output_tensor_sizes(sizes)
+
+
+def test_get_output_tensor_sizes_inconsistent_extra_axis_sizes(
+    multi_tensor_model: ModelDescr,
+):
+    sizes = _sizes({"extra": 2})
+    sizes[TensorId("input1")][AxisId("extra")] = 3
+    with pytest.raises(ValueError, match="inconsistent sizes across input tensors"):
+        _ = multi_tensor_model.get_output_tensor_sizes(sizes)
+
+
+def test_get_output_tensor_sizes_mismatching_extra_axes(
+    multi_tensor_model: ModelDescr,
+):
+    sizes = _sizes()
+    sizes[TensorId("input0")][AxisId("extra")] = 2
+    with pytest.raises(ValueError, match="same set of additonal axes"):
+        _ = multi_tensor_model.get_output_tensor_sizes(sizes)

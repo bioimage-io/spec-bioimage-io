@@ -1,0 +1,1581 @@
+
+pytorch2.14.1:ß“
+˝
+input0
+input1catnode_cat"Concat*
+axis†Já
+	namespacez: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/cat: aten.cat.defaultJú
+pkg.torch.onnx.class_hierarchyz['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'aten.cat.default']JÜ
+pkg.torch.onnx.fx_nodel%cat : [num_users=1] = call_function[target=torch.ops.aten.cat.default](args = ([%x0, %x1], 1), kwargs = {})J)
+pkg.torch.onnx.name_scopes['', 'cat']JÈ
+pkg.torch.onnx.stack_trace File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 91, in forward
+    x = torch.cat(x, dim=1)
+å
+cat
+encoder.blocks.0.block.0.weight
+encoder.blocks.0.block.0.biasconv2dnode_conv2d"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†Jÿ
+	namespace : multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.blocks.0: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/encoder.blocks.0.block: torch.nn.modules.container.Sequential/encoder.blocks.0.block.0: torch.nn.modules.conv.Conv2d/conv2d: aten.conv2d.defaultJ©
+pkg.torch.onnx.class_hierarchyÜ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J⁄
+pkg.torch.onnx.fx_nodeø%conv2d : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%cat, %p_encoder_blocks_0_block_0_weight, %p_encoder_blocks_0_block_0_bias, [1, 1], [1, 1]), kwargs = {})JÅ
+pkg.torch.onnx.name_scopesc['', 'encoder', 'encoder.blocks.0', 'encoder.blocks.0.block', 'encoder.blocks.0.block.0', 'conv2d']JÃ
+pkg.torch.onnx.stack_trace≠File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 162, in forward
+    x = block(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+ˆ
+conv2drelu	node_relu"ReluJÿ
+	namespace : multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.blocks.0: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/encoder.blocks.0.block: torch.nn.modules.container.Sequential/encoder.blocks.0.block.1: torch.nn.modules.activation.ReLU/relu: aten.relu.defaultJ´
+pkg.torch.onnx.class_hierarchyà['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']JÉ
+pkg.torch.onnx.fx_nodei%relu : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d,), kwargs = {})J
+pkg.torch.onnx.name_scopesa['', 'encoder', 'encoder.blocks.0', 'encoder.blocks.0.block', 'encoder.blocks.0.block.1', 'relu']Jƒ
+pkg.torch.onnx.stack_trace•File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 162, in forward
+    x = block(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+ò
+relu
+encoder.blocks.0.block.2.weight
+encoder.blocks.0.block.2.biasconv2d_1node_conv2d_1"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.blocks.0: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/encoder.blocks.0.block: torch.nn.modules.container.Sequential/encoder.blocks.0.block.2: torch.nn.modules.conv.Conv2d/conv2d_1: aten.conv2d.defaultJ©
+pkg.torch.onnx.class_hierarchyÜ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J›
+pkg.torch.onnx.fx_node¬%conv2d_1 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%relu, %p_encoder_blocks_0_block_2_weight, %p_encoder_blocks_0_block_2_bias, [1, 1], [1, 1]), kwargs = {})JÉ
+pkg.torch.onnx.name_scopese['', 'encoder', 'encoder.blocks.0', 'encoder.blocks.0.block', 'encoder.blocks.0.block.2', 'conv2d_1']JÃ
+pkg.torch.onnx.stack_trace≠File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 162, in forward
+    x = block(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+Ö
+conv2d_1relu_1node_relu_1"ReluJ⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.blocks.0: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/encoder.blocks.0.block: torch.nn.modules.container.Sequential/encoder.blocks.0.block.3: torch.nn.modules.activation.ReLU/relu_1: aten.relu.defaultJ´
+pkg.torch.onnx.class_hierarchyà['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Já
+pkg.torch.onnx.fx_nodem%relu_1 : [num_users=2] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_1,), kwargs = {})JÅ
+pkg.torch.onnx.name_scopesc['', 'encoder', 'encoder.blocks.0', 'encoder.blocks.0.block', 'encoder.blocks.0.block.3', 'relu_1']Jƒ
+pkg.torch.onnx.stack_trace•File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 162, in forward
+    x = block(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+⁄
+relu_1
+max_pool2dnode_max_pool2d"MaxPool*
+storage_order †*
+	ceil_mode †*
+pads@ @ @ @ †*
+kernel_shape@@†*
+strides@@†*
+	dilations@@†*
+auto_pad"NOTSET†J∞
+	namespace¢: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.poolers.0: torch.nn.modules.pooling.MaxPool2d/max_pool2d: aten.max_pool2d.defaultJ®
+pkg.torch.onnx.class_hierarchyÖ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'torch.nn.modules.pooling.MaxPool2d', 'aten.max_pool2d.default']Jü
+pkg.torch.onnx.fx_nodeÑ%max_pool2d : [num_users=1] = call_function[target=torch.ops.aten.max_pool2d.default](args = (%relu_1, [2, 2], [2, 2]), kwargs = {})JP
+pkg.torch.onnx.name_scopes2['', 'encoder', 'encoder.poolers.0', 'max_pool2d']J»
+pkg.torch.onnx.stack_trace©File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 164, in forward
+    x = pooler(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/pooling.py", line 224, in forward
+    return F.max_pool2d(
+§
+
+max_pool2d
+encoder.blocks.1.block.0.weight
+encoder.blocks.1.block.0.biasconv2d_2node_conv2d_2"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.blocks.1: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/encoder.blocks.1.block: torch.nn.modules.container.Sequential/encoder.blocks.1.block.0: torch.nn.modules.conv.Conv2d/conv2d_2: aten.conv2d.defaultJ©
+pkg.torch.onnx.class_hierarchyÜ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J„
+pkg.torch.onnx.fx_node»%conv2d_2 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%max_pool2d, %p_encoder_blocks_1_block_0_weight, %p_encoder_blocks_1_block_0_bias, [1, 1], [1, 1]), kwargs = {})JÉ
+pkg.torch.onnx.name_scopese['', 'encoder', 'encoder.blocks.1', 'encoder.blocks.1.block', 'encoder.blocks.1.block.0', 'conv2d_2']JÃ
+pkg.torch.onnx.stack_trace≠File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 162, in forward
+    x = block(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+Ö
+conv2d_2relu_2node_relu_2"ReluJ⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.blocks.1: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/encoder.blocks.1.block: torch.nn.modules.container.Sequential/encoder.blocks.1.block.1: torch.nn.modules.activation.ReLU/relu_2: aten.relu.defaultJ´
+pkg.torch.onnx.class_hierarchyà['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Já
+pkg.torch.onnx.fx_nodem%relu_2 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_2,), kwargs = {})JÅ
+pkg.torch.onnx.name_scopesc['', 'encoder', 'encoder.blocks.1', 'encoder.blocks.1.block', 'encoder.blocks.1.block.1', 'relu_2']Jƒ
+pkg.torch.onnx.stack_trace•File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 162, in forward
+    x = block(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+ú
+relu_2
+encoder.blocks.1.block.2.weight
+encoder.blocks.1.block.2.biasconv2d_3node_conv2d_3"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.blocks.1: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/encoder.blocks.1.block: torch.nn.modules.container.Sequential/encoder.blocks.1.block.2: torch.nn.modules.conv.Conv2d/conv2d_3: aten.conv2d.defaultJ©
+pkg.torch.onnx.class_hierarchyÜ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']Jﬂ
+pkg.torch.onnx.fx_nodeƒ%conv2d_3 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%relu_2, %p_encoder_blocks_1_block_2_weight, %p_encoder_blocks_1_block_2_bias, [1, 1], [1, 1]), kwargs = {})JÉ
+pkg.torch.onnx.name_scopese['', 'encoder', 'encoder.blocks.1', 'encoder.blocks.1.block', 'encoder.blocks.1.block.2', 'conv2d_3']JÃ
+pkg.torch.onnx.stack_trace≠File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 162, in forward
+    x = block(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+Ö
+conv2d_3relu_3node_relu_3"ReluJ⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.blocks.1: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/encoder.blocks.1.block: torch.nn.modules.container.Sequential/encoder.blocks.1.block.3: torch.nn.modules.activation.ReLU/relu_3: aten.relu.defaultJ´
+pkg.torch.onnx.class_hierarchyà['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Já
+pkg.torch.onnx.fx_nodem%relu_3 : [num_users=2] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_3,), kwargs = {})JÅ
+pkg.torch.onnx.name_scopesc['', 'encoder', 'encoder.blocks.1', 'encoder.blocks.1.block', 'encoder.blocks.1.block.3', 'relu_3']Jƒ
+pkg.torch.onnx.stack_trace•File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 162, in forward
+    x = block(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+‰
+relu_3max_pool2d_1node_max_pool2d_1"MaxPool*
+storage_order †*
+	ceil_mode †*
+pads@ @ @ @ †*
+kernel_shape@@†*
+strides@@†*
+	dilations@@†*
+auto_pad"NOTSET†J≤
+	namespace§: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.poolers.1: torch.nn.modules.pooling.MaxPool2d/max_pool2d_1: aten.max_pool2d.defaultJ®
+pkg.torch.onnx.class_hierarchyÖ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'torch.nn.modules.pooling.MaxPool2d', 'aten.max_pool2d.default']J°
+pkg.torch.onnx.fx_nodeÜ%max_pool2d_1 : [num_users=1] = call_function[target=torch.ops.aten.max_pool2d.default](args = (%relu_3, [2, 2], [2, 2]), kwargs = {})JR
+pkg.torch.onnx.name_scopes4['', 'encoder', 'encoder.poolers.1', 'max_pool2d_1']J»
+pkg.torch.onnx.stack_trace©File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 164, in forward
+    x = pooler(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/pooling.py", line 224, in forward
+    return F.max_pool2d(
+®
+max_pool2d_1
+encoder.blocks.2.block.0.weight
+encoder.blocks.2.block.0.biasconv2d_4node_conv2d_4"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.blocks.2: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/encoder.blocks.2.block: torch.nn.modules.container.Sequential/encoder.blocks.2.block.0: torch.nn.modules.conv.Conv2d/conv2d_4: aten.conv2d.defaultJ©
+pkg.torch.onnx.class_hierarchyÜ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']JÂ
+pkg.torch.onnx.fx_node %conv2d_4 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%max_pool2d_1, %p_encoder_blocks_2_block_0_weight, %p_encoder_blocks_2_block_0_bias, [1, 1], [1, 1]), kwargs = {})JÉ
+pkg.torch.onnx.name_scopese['', 'encoder', 'encoder.blocks.2', 'encoder.blocks.2.block', 'encoder.blocks.2.block.0', 'conv2d_4']JÃ
+pkg.torch.onnx.stack_trace≠File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 162, in forward
+    x = block(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+Ö
+conv2d_4relu_4node_relu_4"ReluJ⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.blocks.2: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/encoder.blocks.2.block: torch.nn.modules.container.Sequential/encoder.blocks.2.block.1: torch.nn.modules.activation.ReLU/relu_4: aten.relu.defaultJ´
+pkg.torch.onnx.class_hierarchyà['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Já
+pkg.torch.onnx.fx_nodem%relu_4 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_4,), kwargs = {})JÅ
+pkg.torch.onnx.name_scopesc['', 'encoder', 'encoder.blocks.2', 'encoder.blocks.2.block', 'encoder.blocks.2.block.1', 'relu_4']Jƒ
+pkg.torch.onnx.stack_trace•File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 162, in forward
+    x = block(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+ú
+relu_4
+encoder.blocks.2.block.2.weight
+encoder.blocks.2.block.2.biasconv2d_5node_conv2d_5"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.blocks.2: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/encoder.blocks.2.block: torch.nn.modules.container.Sequential/encoder.blocks.2.block.2: torch.nn.modules.conv.Conv2d/conv2d_5: aten.conv2d.defaultJ©
+pkg.torch.onnx.class_hierarchyÜ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']Jﬂ
+pkg.torch.onnx.fx_nodeƒ%conv2d_5 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%relu_4, %p_encoder_blocks_2_block_2_weight, %p_encoder_blocks_2_block_2_bias, [1, 1], [1, 1]), kwargs = {})JÉ
+pkg.torch.onnx.name_scopese['', 'encoder', 'encoder.blocks.2', 'encoder.blocks.2.block', 'encoder.blocks.2.block.2', 'conv2d_5']JÃ
+pkg.torch.onnx.stack_trace≠File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 162, in forward
+    x = block(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+Ö
+conv2d_5relu_5node_relu_5"ReluJ⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.blocks.2: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/encoder.blocks.2.block: torch.nn.modules.container.Sequential/encoder.blocks.2.block.3: torch.nn.modules.activation.ReLU/relu_5: aten.relu.defaultJ´
+pkg.torch.onnx.class_hierarchyà['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Já
+pkg.torch.onnx.fx_nodem%relu_5 : [num_users=2] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_5,), kwargs = {})JÅ
+pkg.torch.onnx.name_scopesc['', 'encoder', 'encoder.blocks.2', 'encoder.blocks.2.block', 'encoder.blocks.2.block.3', 'relu_5']Jƒ
+pkg.torch.onnx.stack_trace•File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 162, in forward
+    x = block(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+‰
+relu_5max_pool2d_2node_max_pool2d_2"MaxPool*
+storage_order †*
+	ceil_mode †*
+pads@ @ @ @ †*
+kernel_shape@@†*
+strides@@†*
+	dilations@@†*
+auto_pad"NOTSET†J≤
+	namespace§: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/encoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder/encoder.poolers.2: torch.nn.modules.pooling.MaxPool2d/max_pool2d_2: aten.max_pool2d.defaultJ®
+pkg.torch.onnx.class_hierarchyÖ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Encoder', 'torch.nn.modules.pooling.MaxPool2d', 'aten.max_pool2d.default']J°
+pkg.torch.onnx.fx_nodeÜ%max_pool2d_2 : [num_users=1] = call_function[target=torch.ops.aten.max_pool2d.default](args = (%relu_5, [2, 2], [2, 2]), kwargs = {})JR
+pkg.torch.onnx.name_scopes4['', 'encoder', 'encoder.poolers.2', 'max_pool2d_2']J»
+pkg.torch.onnx.stack_trace©File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 164, in forward
+    x = pooler(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/pooling.py", line 224, in forward
+    return F.max_pool2d(
+ü
+max_pool2d_2
+base.block.0.weight
+base.block.0.biasconv2d_6node_conv2d_6"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J“
+	namespaceƒ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/base: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/base.block: torch.nn.modules.container.Sequential/base.block.0: torch.nn.modules.conv.Conv2d/conv2d_6: aten.conv2d.defaultJÀ
+pkg.torch.onnx.class_hierarchy®['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']JÕ
+pkg.torch.onnx.fx_node≤%conv2d_6 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%max_pool2d_2, %p_base_block_0_weight, %p_base_block_0_bias, [1, 1], [1, 1]), kwargs = {})JT
+pkg.torch.onnx.name_scopes6['', 'base', 'base.block', 'base.block.0', 'conv2d_6']Jâ
+pkg.torch.onnx.stack_traceÍFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+¨
+conv2d_6relu_6node_relu_6"ReluJ“
+	namespaceƒ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/base: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/base.block: torch.nn.modules.container.Sequential/base.block.1: torch.nn.modules.activation.ReLU/relu_6: aten.relu.defaultJÕ
+pkg.torch.onnx.class_hierarchy™['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Já
+pkg.torch.onnx.fx_nodem%relu_6 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_6,), kwargs = {})JR
+pkg.torch.onnx.name_scopes4['', 'base', 'base.block', 'base.block.1', 'relu_6']JÅ
+pkg.torch.onnx.stack_trace‚File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+ì
+relu_6
+base.block.2.weight
+base.block.2.biasconv2d_7node_conv2d_7"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J“
+	namespaceƒ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/base: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/base.block: torch.nn.modules.container.Sequential/base.block.2: torch.nn.modules.conv.Conv2d/conv2d_7: aten.conv2d.defaultJÀ
+pkg.torch.onnx.class_hierarchy®['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J«
+pkg.torch.onnx.fx_node¨%conv2d_7 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%relu_6, %p_base_block_2_weight, %p_base_block_2_bias, [1, 1], [1, 1]), kwargs = {})JT
+pkg.torch.onnx.name_scopes6['', 'base', 'base.block', 'base.block.2', 'conv2d_7']Jâ
+pkg.torch.onnx.stack_traceÍFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+¨
+conv2d_7relu_7node_relu_7"ReluJ“
+	namespaceƒ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/base: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/base.block: torch.nn.modules.container.Sequential/base.block.3: torch.nn.modules.activation.ReLU/relu_7: aten.relu.defaultJÕ
+pkg.torch.onnx.class_hierarchy™['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Já
+pkg.torch.onnx.fx_nodem%relu_7 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_7,), kwargs = {})JR
+pkg.torch.onnx.name_scopes4['', 'base', 'base.block', 'base.block.3', 'relu_7']JÅ
+pkg.torch.onnx.stack_trace‚File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+ª
+relu_7
+ 
+val_23upsample_bilinear2dnode_upsample_bilinear2d"Resize*
+extrapolation_value    †*&
+keep_aspect_ratio_policy"stretch†*
+	antialias †*
+nearest_mode"floor†*
+exclude_outside †*
+cubic_coeff_a  @ø†*/
+coordinate_transformation_mode"
+half_pixel†*
+mode"linear†J˚
+	namespaceÌ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.samplers.0: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Upsampler2d/upsample_bilinear2d: aten.upsample_bilinear2d.vecJÈ
+pkg.torch.onnx.class_hierarchy∆['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Upsampler2d', 'aten.upsample_bilinear2d.vec']J∂
+pkg.torch.onnx.fx_nodeõ%upsample_bilinear2d : [num_users=1] = call_function[target=torch.ops.aten.upsample_bilinear2d.vec](args = (%relu_7, None, False, [2.0, 2.0]), kwargs = {})JZ
+pkg.torch.onnx.name_scopes<['', 'decoder', 'decoder.samplers.0', 'upsample_bilinear2d']Jà
+pkg.torch.onnx.stack_traceÈFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 241, in forward
+    x = sampler(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 316, in forward
+    x = nn.functional.interpolate(
+á
+upsample_bilinear2d
+decoder.samplers.0.conv.weight
+decoder.samplers.0.conv.biasconv2d_8node_conv2d_8"Conv*
+group†*
+pads@ @ @ @ †*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†Jù
+	namespaceè: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.samplers.0: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Upsampler2d/decoder.samplers.0.conv: torch.nn.modules.conv.Conv2d/conv2d_8: aten.conv2d.defaultJÄ
+pkg.torch.onnx.class_hierarchy›['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Upsampler2d', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J⁄
+pkg.torch.onnx.fx_nodeø%conv2d_8 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%upsample_bilinear2d, %p_decoder_samplers_0_conv_weight, %p_decoder_samplers_0_conv_bias), kwargs = {})Jj
+pkg.torch.onnx.name_scopesL['', 'decoder', 'decoder.samplers.0', 'decoder.samplers.0.conv', 'conv2d_8']J±
+pkg.torch.onnx.stack_traceíFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 241, in forward
+    x = sampler(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 319, in forward
+    x = self.conv(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+»	
+conv2d_8
+relu_5cat_1
+node_cat_1"Concat*
+axis†JÓ
+	namespace‡: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/cat_1: aten.cat.defaultJ˚
+pkg.torch.onnx.class_hierarchyÿ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'aten.cat.default']Jî
+pkg.torch.onnx.fx_nodez%cat_1 : [num_users=1] = call_function[target=torch.ops.aten.cat.default](args = ([%conv2d_8, %slice_14], 1), kwargs = {})J6
+pkg.torch.onnx.name_scopes['', 'decoder', 'cat_1']JÕ
+pkg.torch.onnx.stack_traceÆFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+∂
+cat_1
+decoder.blocks.0.block.0.weight
+decoder.blocks.0.block.0.biasconv2d_9node_conv2d_9"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.blocks.0: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/decoder.blocks.0.block: torch.nn.modules.container.Sequential/decoder.blocks.0.block.0: torch.nn.modules.conv.Conv2d/conv2d_9: aten.conv2d.defaultJ©
+pkg.torch.onnx.class_hierarchyÜ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']Jﬁ
+pkg.torch.onnx.fx_node√%conv2d_9 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%cat_1, %p_decoder_blocks_0_block_0_weight, %p_decoder_blocks_0_block_0_bias, [1, 1], [1, 1]), kwargs = {})JÉ
+pkg.torch.onnx.name_scopese['', 'decoder', 'decoder.blocks.0', 'decoder.blocks.0.block', 'decoder.blocks.0.block.0', 'conv2d_9']JË
+pkg.torch.onnx.stack_trace…File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+°
+conv2d_9relu_8node_relu_8"ReluJ⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.blocks.0: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/decoder.blocks.0.block: torch.nn.modules.container.Sequential/decoder.blocks.0.block.1: torch.nn.modules.activation.ReLU/relu_8: aten.relu.defaultJ´
+pkg.torch.onnx.class_hierarchyà['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Já
+pkg.torch.onnx.fx_nodem%relu_8 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_9,), kwargs = {})JÅ
+pkg.torch.onnx.name_scopesc['', 'decoder', 'decoder.blocks.0', 'decoder.blocks.0.block', 'decoder.blocks.0.block.1', 'relu_8']J‡
+pkg.torch.onnx.stack_trace¡File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+Ω
+relu_8
+decoder.blocks.0.block.2.weight
+decoder.blocks.0.block.2.bias	conv2d_10node_conv2d_10"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J€
+	namespaceÕ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.blocks.0: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/decoder.blocks.0.block: torch.nn.modules.container.Sequential/decoder.blocks.0.block.2: torch.nn.modules.conv.Conv2d/conv2d_10: aten.conv2d.defaultJ©
+pkg.torch.onnx.class_hierarchyÜ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J‡
+pkg.torch.onnx.fx_node≈%conv2d_10 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%relu_8, %p_decoder_blocks_0_block_2_weight, %p_decoder_blocks_0_block_2_bias, [1, 1], [1, 1]), kwargs = {})JÑ
+pkg.torch.onnx.name_scopesf['', 'decoder', 'decoder.blocks.0', 'decoder.blocks.0.block', 'decoder.blocks.0.block.2', 'conv2d_10']JË
+pkg.torch.onnx.stack_trace…File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+£
+	conv2d_10relu_9node_relu_9"ReluJ⁄
+	namespaceÃ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.blocks.0: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/decoder.blocks.0.block: torch.nn.modules.container.Sequential/decoder.blocks.0.block.3: torch.nn.modules.activation.ReLU/relu_9: aten.relu.defaultJ´
+pkg.torch.onnx.class_hierarchyà['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Jà
+pkg.torch.onnx.fx_noden%relu_9 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_10,), kwargs = {})JÅ
+pkg.torch.onnx.name_scopesc['', 'decoder', 'decoder.blocks.0', 'decoder.blocks.0.block', 'decoder.blocks.0.block.3', 'relu_9']J‡
+pkg.torch.onnx.stack_trace¡File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+≈
+relu_9
+ 
+val_23upsample_bilinear2d_1node_upsample_bilinear2d_1"Resize*
+extrapolation_value    †*&
+keep_aspect_ratio_policy"stretch†*
+	antialias †*
+nearest_mode"floor†*
+exclude_outside †*
+cubic_coeff_a  @ø†*/
+coordinate_transformation_mode"
+half_pixel†*
+mode"linear†J˝
+	namespaceÔ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.samplers.1: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Upsampler2d/upsample_bilinear2d_1: aten.upsample_bilinear2d.vecJÈ
+pkg.torch.onnx.class_hierarchy∆['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Upsampler2d', 'aten.upsample_bilinear2d.vec']J∏
+pkg.torch.onnx.fx_nodeù%upsample_bilinear2d_1 : [num_users=1] = call_function[target=torch.ops.aten.upsample_bilinear2d.vec](args = (%relu_9, None, False, [2.0, 2.0]), kwargs = {})J\
+pkg.torch.onnx.name_scopes>['', 'decoder', 'decoder.samplers.1', 'upsample_bilinear2d_1']Jà
+pkg.torch.onnx.stack_traceÈFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 241, in forward
+    x = sampler(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 316, in forward
+    x = nn.functional.interpolate(
+ê
+upsample_bilinear2d_1
+decoder.samplers.1.conv.weight
+decoder.samplers.1.conv.bias	conv2d_11node_conv2d_11"Conv*
+group†*
+pads@ @ @ @ †*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†Jû
+	namespaceê: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.samplers.1: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Upsampler2d/decoder.samplers.1.conv: torch.nn.modules.conv.Conv2d/conv2d_11: aten.conv2d.defaultJÄ
+pkg.torch.onnx.class_hierarchy›['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Upsampler2d', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J›
+pkg.torch.onnx.fx_node¬%conv2d_11 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%upsample_bilinear2d_1, %p_decoder_samplers_1_conv_weight, %p_decoder_samplers_1_conv_bias), kwargs = {})Jk
+pkg.torch.onnx.name_scopesM['', 'decoder', 'decoder.samplers.1', 'decoder.samplers.1.conv', 'conv2d_11']J±
+pkg.torch.onnx.stack_traceíFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 241, in forward
+    x = sampler(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 319, in forward
+    x = self.conv(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+ 	
+	conv2d_11
+relu_3cat_2
+node_cat_2"Concat*
+axis†JÓ
+	namespace‡: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/cat_2: aten.cat.defaultJ˚
+pkg.torch.onnx.class_hierarchyÿ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'aten.cat.default']Jï
+pkg.torch.onnx.fx_node{%cat_2 : [num_users=1] = call_function[target=torch.ops.aten.cat.default](args = ([%conv2d_11, %slice_28], 1), kwargs = {})J6
+pkg.torch.onnx.name_scopes['', 'decoder', 'cat_2']JÕ
+pkg.torch.onnx.stack_traceÆFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+ª
+cat_2
+decoder.blocks.1.block.0.weight
+decoder.blocks.1.block.0.bias	conv2d_12node_conv2d_12"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J€
+	namespaceÕ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.blocks.1: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/decoder.blocks.1.block: torch.nn.modules.container.Sequential/decoder.blocks.1.block.0: torch.nn.modules.conv.Conv2d/conv2d_12: aten.conv2d.defaultJ©
+pkg.torch.onnx.class_hierarchyÜ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']Jﬂ
+pkg.torch.onnx.fx_nodeƒ%conv2d_12 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%cat_2, %p_decoder_blocks_1_block_0_weight, %p_decoder_blocks_1_block_0_bias, [1, 1], [1, 1]), kwargs = {})JÑ
+pkg.torch.onnx.name_scopesf['', 'decoder', 'decoder.blocks.1', 'decoder.blocks.1.block', 'decoder.blocks.1.block.0', 'conv2d_12']JË
+pkg.torch.onnx.stack_trace…File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+®
+	conv2d_12relu_10node_relu_10"ReluJ€
+	namespaceÕ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.blocks.1: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/decoder.blocks.1.block: torch.nn.modules.container.Sequential/decoder.blocks.1.block.1: torch.nn.modules.activation.ReLU/relu_10: aten.relu.defaultJ´
+pkg.torch.onnx.class_hierarchyà['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Jâ
+pkg.torch.onnx.fx_nodeo%relu_10 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_12,), kwargs = {})JÇ
+pkg.torch.onnx.name_scopesd['', 'decoder', 'decoder.blocks.1', 'decoder.blocks.1.block', 'decoder.blocks.1.block.1', 'relu_10']J‡
+pkg.torch.onnx.stack_trace¡File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+ø
+relu_10
+decoder.blocks.1.block.2.weight
+decoder.blocks.1.block.2.bias	conv2d_13node_conv2d_13"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J€
+	namespaceÕ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.blocks.1: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/decoder.blocks.1.block: torch.nn.modules.container.Sequential/decoder.blocks.1.block.2: torch.nn.modules.conv.Conv2d/conv2d_13: aten.conv2d.defaultJ©
+pkg.torch.onnx.class_hierarchyÜ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J·
+pkg.torch.onnx.fx_node∆%conv2d_13 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%relu_10, %p_decoder_blocks_1_block_2_weight, %p_decoder_blocks_1_block_2_bias, [1, 1], [1, 1]), kwargs = {})JÑ
+pkg.torch.onnx.name_scopesf['', 'decoder', 'decoder.blocks.1', 'decoder.blocks.1.block', 'decoder.blocks.1.block.2', 'conv2d_13']JË
+pkg.torch.onnx.stack_trace…File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+®
+	conv2d_13relu_11node_relu_11"ReluJ€
+	namespaceÕ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.blocks.1: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/decoder.blocks.1.block: torch.nn.modules.container.Sequential/decoder.blocks.1.block.3: torch.nn.modules.activation.ReLU/relu_11: aten.relu.defaultJ´
+pkg.torch.onnx.class_hierarchyà['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Jâ
+pkg.torch.onnx.fx_nodeo%relu_11 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_13,), kwargs = {})JÇ
+pkg.torch.onnx.name_scopesd['', 'decoder', 'decoder.blocks.1', 'decoder.blocks.1.block', 'decoder.blocks.1.block.3', 'relu_11']J‡
+pkg.torch.onnx.stack_trace¡File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+«
+relu_11
+ 
+val_23upsample_bilinear2d_2node_upsample_bilinear2d_2"Resize*
+extrapolation_value    †*&
+keep_aspect_ratio_policy"stretch†*
+	antialias †*
+nearest_mode"floor†*
+exclude_outside †*
+cubic_coeff_a  @ø†*/
+coordinate_transformation_mode"
+half_pixel†*
+mode"linear†J˝
+	namespaceÔ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.samplers.2: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Upsampler2d/upsample_bilinear2d_2: aten.upsample_bilinear2d.vecJÈ
+pkg.torch.onnx.class_hierarchy∆['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Upsampler2d', 'aten.upsample_bilinear2d.vec']Jπ
+pkg.torch.onnx.fx_nodeû%upsample_bilinear2d_2 : [num_users=1] = call_function[target=torch.ops.aten.upsample_bilinear2d.vec](args = (%relu_11, None, False, [2.0, 2.0]), kwargs = {})J\
+pkg.torch.onnx.name_scopes>['', 'decoder', 'decoder.samplers.2', 'upsample_bilinear2d_2']Jà
+pkg.torch.onnx.stack_traceÈFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 241, in forward
+    x = sampler(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 316, in forward
+    x = nn.functional.interpolate(
+ê
+upsample_bilinear2d_2
+decoder.samplers.2.conv.weight
+decoder.samplers.2.conv.bias	conv2d_14node_conv2d_14"Conv*
+group†*
+pads@ @ @ @ †*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†Jû
+	namespaceê: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.samplers.2: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Upsampler2d/decoder.samplers.2.conv: torch.nn.modules.conv.Conv2d/conv2d_14: aten.conv2d.defaultJÄ
+pkg.torch.onnx.class_hierarchy›['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Upsampler2d', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J›
+pkg.torch.onnx.fx_node¬%conv2d_14 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%upsample_bilinear2d_2, %p_decoder_samplers_2_conv_weight, %p_decoder_samplers_2_conv_bias), kwargs = {})Jk
+pkg.torch.onnx.name_scopesM['', 'decoder', 'decoder.samplers.2', 'decoder.samplers.2.conv', 'conv2d_14']J±
+pkg.torch.onnx.stack_traceíFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 241, in forward
+    x = sampler(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 319, in forward
+    x = self.conv(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+ 	
+	conv2d_14
+relu_1cat_3
+node_cat_3"Concat*
+axis†JÓ
+	namespace‡: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/cat_3: aten.cat.defaultJ˚
+pkg.torch.onnx.class_hierarchyÿ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'aten.cat.default']Jï
+pkg.torch.onnx.fx_node{%cat_3 : [num_users=1] = call_function[target=torch.ops.aten.cat.default](args = ([%conv2d_14, %slice_42], 1), kwargs = {})J6
+pkg.torch.onnx.name_scopes['', 'decoder', 'cat_3']JÕ
+pkg.torch.onnx.stack_traceÆFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+ª
+cat_3
+decoder.blocks.2.block.0.weight
+decoder.blocks.2.block.0.bias	conv2d_15node_conv2d_15"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J€
+	namespaceÕ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.blocks.2: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/decoder.blocks.2.block: torch.nn.modules.container.Sequential/decoder.blocks.2.block.0: torch.nn.modules.conv.Conv2d/conv2d_15: aten.conv2d.defaultJ©
+pkg.torch.onnx.class_hierarchyÜ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']Jﬂ
+pkg.torch.onnx.fx_nodeƒ%conv2d_15 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%cat_3, %p_decoder_blocks_2_block_0_weight, %p_decoder_blocks_2_block_0_bias, [1, 1], [1, 1]), kwargs = {})JÑ
+pkg.torch.onnx.name_scopesf['', 'decoder', 'decoder.blocks.2', 'decoder.blocks.2.block', 'decoder.blocks.2.block.0', 'conv2d_15']JË
+pkg.torch.onnx.stack_trace…File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+®
+	conv2d_15relu_12node_relu_12"ReluJ€
+	namespaceÕ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.blocks.2: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/decoder.blocks.2.block: torch.nn.modules.container.Sequential/decoder.blocks.2.block.1: torch.nn.modules.activation.ReLU/relu_12: aten.relu.defaultJ´
+pkg.torch.onnx.class_hierarchyà['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Jâ
+pkg.torch.onnx.fx_nodeo%relu_12 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_15,), kwargs = {})JÇ
+pkg.torch.onnx.name_scopesd['', 'decoder', 'decoder.blocks.2', 'decoder.blocks.2.block', 'decoder.blocks.2.block.1', 'relu_12']J‡
+pkg.torch.onnx.stack_trace¡File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+ø
+relu_12
+decoder.blocks.2.block.2.weight
+decoder.blocks.2.block.2.bias	conv2d_16node_conv2d_16"Conv*
+group†*
+pads@@@@†*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J€
+	namespaceÕ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.blocks.2: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/decoder.blocks.2.block: torch.nn.modules.container.Sequential/decoder.blocks.2.block.2: torch.nn.modules.conv.Conv2d/conv2d_16: aten.conv2d.defaultJ©
+pkg.torch.onnx.class_hierarchyÜ['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J·
+pkg.torch.onnx.fx_node∆%conv2d_16 : [num_users=1] = call_function[target=torch.ops.aten.conv2d.default](args = (%relu_12, %p_decoder_blocks_2_block_2_weight, %p_decoder_blocks_2_block_2_bias, [1, 1], [1, 1]), kwargs = {})JÑ
+pkg.torch.onnx.name_scopesf['', 'decoder', 'decoder.blocks.2', 'decoder.blocks.2.block', 'decoder.blocks.2.block.2', 'conv2d_16']JË
+pkg.torch.onnx.stack_trace…File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+®
+	conv2d_16relu_13node_relu_13"ReluJ€
+	namespaceÕ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/decoder: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder/decoder.blocks.2: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d/decoder.blocks.2.block: torch.nn.modules.container.Sequential/decoder.blocks.2.block.3: torch.nn.modules.activation.ReLU/relu_13: aten.relu.defaultJ´
+pkg.torch.onnx.class_hierarchyà['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.Decoder', 'multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.ConvBlock2d', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Jâ
+pkg.torch.onnx.fx_nodeo%relu_13 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%conv2d_16,), kwargs = {})JÇ
+pkg.torch.onnx.name_scopesd['', 'decoder', 'decoder.blocks.2', 'decoder.blocks.2.block', 'decoder.blocks.2.block.3', 'relu_13']J‡
+pkg.torch.onnx.stack_trace¡File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 242, in forward
+    x = block(self._concat(x, from_encoder))
+  File "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 303, in forward
+    return self.block(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/container.py", line 259, in forward
+    input = module(input)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+÷	
+relu_13
+out_conv.weight
+out_conv.bias	conv2d_17node_conv2d_17"Conv*
+group†*
+pads@ @ @ @ †*
+kernel_shape@@†*
+strides@@†*
+auto_pad"NOTSET†*
+	dilations@@†J∏
+	namespace™: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/out_conv: torch.nn.modules.conv.Conv2d/conv2d_17: aten.conv2d.defaultJ¿
+pkg.torch.onnx.class_hierarchyù['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'torch.nn.modules.conv.Conv2d', 'aten.conv2d.default']J±
+pkg.torch.onnx.fx_nodeñ%conv2d_17 : [num_users=2] = call_function[target=torch.ops.aten.conv2d.default](args = (%relu_13, %p_out_conv_weight, %p_out_conv_bias), kwargs = {})J;
+pkg.torch.onnx.name_scopes['', 'out_conv', 'conv2d_17']J•
+pkg.torch.onnx.stack_traceÜFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 92, in forward
+    out = self._apply_default(x)
+  File "/Users/beuttenm/miniforge3/envs/dev2/lib/python3.13/site-packages/torch/nn/modules/conv.py", line 565, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+œ
+	conv2d_17
+val_162
+val_165
+val_165
+val_165output0node_slice_44"SliceJé
+	namespaceÄ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/slice_44: aten.slice.TensorJù
+pkg.torch.onnx.class_hierarchy{['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'aten.slice.Tensor']Jë
+pkg.torch.onnx.fx_nodew%slice_44 : [num_users=1] = call_function[target=torch.ops.aten.slice.Tensor](args = (%slice_43, 1, 0, 1), kwargs = {})J.
+pkg.torch.onnx.name_scopes['', 'slice_44']Jâ
+pkg.torch.onnx.stack_traceÍFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 94, in forward
+    return [out[:, i : i + 1] for i in range(out.shape[1])]
+œ
+	conv2d_17
+val_165
+val_185
+val_165
+val_165output1node_slice_46"SliceJé
+	namespaceÄ: multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet/slice_46: aten.slice.TensorJù
+pkg.torch.onnx.class_hierarchy{['multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.MultiTensorUNet', 'aten.slice.Tensor']Jë
+pkg.torch.onnx.fx_nodew%slice_46 : [num_users=1] = call_function[target=torch.ops.aten.slice.Tensor](args = (%slice_45, 1, 1, 2), kwargs = {})J.
+pkg.torch.onnx.name_scopes['', 'slice_46']Jâ
+pkg.torch.onnx.stack_traceÍFile "/var/folders/g6/k6cm2px52_1fk8vxy9qdc95c0000gr/T/tmp1g4lsafb/multi_tensor_unet_3662a909d274f819f02dda11b268d2f7cd4b2fec37865f6821722b247677f8c2.py", line 94, in forward
+    return [out[:, i : i + 1] for i in range(out.shape[1])]
+main_graph*lBencoder.blocks.0.block.0.weightj
+locationweights.onnx.dataj
+offset1024j
+length1152p*eBencoder.blocks.0.block.0.biasJ@¶ÿ5ΩãJ«æ5L>6#Ω≤©ôΩÒ[/>#PiæâÜæƒ.
+æÇOk>±◊NΩ‚M>Ô≈>ˆæ'P÷Ω±[≤=*mBencoder.blocks.0.block.2.weightj
+locationweights.onnx.dataj
+offset12416j
+length9216p*eBencoder.blocks.0.block.2.biasJ@ å¬=∏;>¯1ñ<_G“Ω>bŒΩp-Ω> <ºJ[@=öº_9÷Ω`«:Ω êÃ=.RëΩ‘zt<R=Ù=˝Ùé=*n Bencoder.blocks.1.block.0.weightj
+locationweights.onnx.dataj
+offset30848j
+length18432p*¶ Bencoder.blocks.1.block.0.biasJÄi“Ω&≈Ω¶fŒΩ⁄]°ΩÙ£º¬‰?=Á«äΩÙÑŒºUüΩ:u—=BÚΩFL=ó'Ω∫.”=6µ<»"=v—∑;ÉùµΩ9˝⁄Ω#<Ò<´aΩÜÖ=ÃπeΩÅ>=/*4=û«æÅ»∫<¯ñöΩVíºJ‹º=ÚæìrÀΩ*o  Bencoder.blocks.1.block.2.weightj
+locationweights.onnx.dataj
+offset100480j
+length36864p*¶ Bencoder.blocks.1.block.2.biasJÄ® Ω=:ôÍ;;Äº˙jΩp˙sΩIÕ[æxªΩ{Ädº"0 =ÏƒΩ(ffº¨ŸΩ∞éºÛ 1ΩÌ¬ª9ÛÙj=Ñ”ÄΩ˙∫pªUò≤ºÜ˛†=¿I›º˛2	>$¶,∫0kèΩ1¡ ΩQpIΩ2¨ºtfpΩ·|Áº˘xΩ®Ó{Ωr	<*o@ Bencoder.blocks.2.block.0.weightj
+locationweights.onnx.dataj
+offset174208j
+length73728p*¶@Bencoder.blocks.2.block.0.biasJÄ;~ôΩ‹T§Ωõ›íΩêÅoºı\QΩ…a÷∫π.æ3Ç)ΩrNªùXÇΩÙÉ…ΩπÿΩøÊΩÙÕ\Ω;ìc=B±òΩKˆ‡ºÆÇ‹Ω¡˝IΩaÆÚΩ’œº¡,Xº≈∫8º=¡çΩÉ—rº¿˝LºÚÅ“º-´ÃΩr◊–ºˇ‡BæH€Ω∏yµΩv7EΩ&Ï=Ω˜jΩp'©ΩVy¶º›^Nºu3ΩDΩLPtΩÿH Ω¸Û	Ωdá÷=nvΩ€ìΩ»≤Ω*IÑº(≥.ΩMt£=iŒΩ¢(ΩN)Aº^Ÿ}ΩΩ2º+_èΩÒ¡¿ºJsgΩ’π:ΩB“ÚºÿW®Ω˝g"ΩÕC◊º*p@@Bencoder.blocks.2.block.2.weightj
+locationweights.onnx.dataj
+offset321664j
+length147456p*¶@Bencoder.blocks.2.block.2.biasJÄ(6ºÒm+º
+∆ºπΩcô;mçº¬à_º∑ÓÑΩ,	º%ÿ¯<ˆ±3=Ê∂Ïº˘Q„ª„“Ωä)–ªE·Æª#Öj<D§OΩó©Ωº‡éöΩÕb9Ωù,Ω>Öƒ<-;RΩ `Ä∫nÃZΩ\{)Ωú£“;™ΩJ˛“=9|<ºìí®Ω¶<Ωmˇ;≥◊9ºóiTΩoΩq…ºñRºá*ºˇ-<∂ªŸºA
+äΩb∆º[®ìΩ~x]<Ø#Ωœ•¢= ‡ÿ∫Ì?ΩVÚF<—*ΩL¸M=MãîΩ4’Ω∂DΩóR–ª¬¸ººz:í&º	ßNΩèTØºN‘º¡î≈º*eÄ@Bbase.block.0.weightj
+locationweights.onnx.dataj
+offset616576j
+length294912p*UÄBbase.block.0.biasj
+locationweights.onnx.dataj
+offset0j
+length512p*gÄÄBbase.block.2.weightj
+locationweights.onnx.dataj
+offset1206400j
+length589824p*WÄBbase.block.2.biasj
+locationweights.onnx.dataj
+offset512j
+length512p*q@ÄBdecoder.blocks.0.block.0.weightj
+locationweights.onnx.dataj
+offset911488j
+length294912p*¶@Bdecoder.blocks.0.block.0.biasJÄ]∫oΩµ¶’=mE:ΩûrÖΩ•=·∫⁄c£9π—1=@—∑Ω/∫Ω†'Ê<÷ÇÃ<Jtr=ÆÁΩ8»yΩl¡…ΩÍùqΩî˝ùº∞•ﬂºº¬<.Ö^ΩŒ=…@æ5ˆΩóÀàΩPuº^{{<ﬂçºù£ºHV∆;Ú˜˜<Ÿx<3·÷º6§=?˘`ΩÒ,Ω=;ÜΩŒÇÁΩÌπöΩ≥røª÷ﬂ©ΩÚaæy¨ΩÆ<®6vΩ£T=ÿ'=˝"=ëI<D˜ΩùıjΩ≤*ÇºEUΩ∑=nÊÈºèì¶<2Ñ	æ.ÍΩÀg˛<;¥ºÍc‚ª◊^6Ωl“ÒºﬁrΩ?eƒº*p@@Bdecoder.blocks.0.block.2.weightj
+locationweights.onnx.dataj
+offset469120j
+length147456p*¶@Bdecoder.blocks.0.block.2.biasJÄF§Ω◊º-¸¿º—ı6πf|ô;Ö≠7=t[ß<®‰π;ªtÖ=ÇÓb=zÅ™ºê˙4<ãwΩ!]!ªOñ]Ω“<Ω÷‘~;è‚ü=®zΩ#îØΩÅ;(<§KÛΩ∞±ãΩ4√√;D[Ω6t%Ω˚Z{<OΩ=Ï∞=ä9=ØoP=X\‚<“;^Ω	&B;HÃùΩIºÑΩöt#ºÛR’ªó˚=˜Ï
+>fÀ¶<…N≥º≤Æ<«B™;è@éº≥ÿRΩ?˚$=
+∆$=Ö+âΩ1· <—÷<“ˇ$Ωç Ω‰¥œºæ-fΩûˆÿ<'Ü=∞ 9=Ò\ZΩ\-ÙΩ⁄91=<põ<}Ë„<£9¯<*o @Bdecoder.blocks.1.block.0.weightj
+locationweights.onnx.dataj
+offset247936j
+length73728p*¶ Bdecoder.blocks.1.block.0.biasJÄ)º&Ωˇœå=K!º;√‡öΩÚtâ<T˝º&0ìΩ ∆=\{°<÷˝èæS!NΩù±1æ2t=ç^Õº–DÿΩr˚æ˝`?;89ç=îŸgΩµÕO;íÚz=Øµ®<Ô ®Ω‡JRºÌ˙ æ“¿&=≈6Ω4∂<F◊ﬂ;F¶Û=ßÃ<:¡Ω*o  Bdecoder.blocks.1.block.2.weightj
+locationweights.onnx.dataj
+offset137344j
+length36864p*¶ Bdecoder.blocks.1.block.2.biasJÄﬁÖñº‘·º’SƒΩ\4ëΩŒCΩé#∂ºööΩi7Á=y÷º¶àâΩt= ëb;äà
+>?,=|Ôò=ˇékºÇ=°pΩ‰áµ=˙Ò˙=i∂ˆ=√ï∞=üˆ‚Ω˛ÀªΩjQà=ß∞¿ºd1ï=x¶º…g∫;DÖØºÕ°Ç<l≥¿<*n Bdecoder.blocks.2.block.0.weightj
+locationweights.onnx.dataj
+offset49280j
+length18432p*eBdecoder.blocks.2.block.0.biasJ@ä#ÿ=hcA=Õ›?=µJ“=xƒH=põ=îµò=Y-=/"º√Z¬ªYﬂ=?sΩ_ÿÑ<¡kúΩZ{G>ç·>*mBdecoder.blocks.2.block.2.weightj
+locationweights.onnx.dataj
+offset21632j
+length9216p*eBdecoder.blocks.2.block.2.biasJ@¿FYΩQΩ">+ÒÆΩÿœF=:…>œ°}<Ìö˚Ω∆Ú=Û)q=Ÿy≥Ω√¢ë=Q-¢<5‡'ªêäºWª>tN(=*n@ÄBdecoder.samplers.0.conv.weightj
+locationweights.onnx.dataj
+offset67712j
+length32768p*•@Bdecoder.samplers.0.conv.biasJÄ"WmºY˚óΩƒèı<%•óΩ÷<ΩÁQ Ω6=‹@A=’›;◊‚Õºå=¡-ºΩe™&Ωûµã=˚”ø=%˘=?häºhRª=FJ∂=l^´<î2|Ωõ∆Ωî™=˛’<¶Ëo=6§=*¢<XŒÜΩÆL'ºî£#<Œ{=Y	mΩ∆TºΩÑ´#=>œ+Ω =K…Iº∫¬â=Ô€¢;∏ı„<
+–=∞Ñ<úH”;ŒëºÛdªéçΩº∏Ω$(›ºC	oΩÆãì∫à–Ω@ƒa=m<y?Ä<‰Ç=£gÒ<∂ıâ=í;á=˚∞ª˝Úk=%º=Â7Ω$∑;Œ=~=*k @Bdecoder.samplers.1.conv.weightj
+locationweights.onnx.dataj
+offset4224j
+length8192p*• Bdecoder.samplers.1.conv.biasJÄm'∂Ω∂>C÷g=_ ≥Ω'XIºa◊¢Ωeﬂò<1C<)m=â–πÍ¢=ÉÒ9;`ﬁ√:o]Ò=o7=ô∑·=ÂäΩZ†ΩM∞*æJ÷;à≠>=¯§Û=5ã	æÔDæ‘Éª5øk=°Q˜<§’◊Ω◊¡Pº.¨">HœÑº‰i√=*k Bdecoder.samplers.2.conv.weightj
+locationweights.onnx.dataj
+offset2176j
+length2048p*dBdecoder.samplers.2.conv.biasJ@¬Ç>»ÅC>≈B≥Ωhè
+>î¨¥<^>oJë=ëMd<∑8æ±@≈=9AÜæ∞äSæô¬Üæ¸hº=„‚æΩª∂º*ûBout_conv.weightJÄ~S5ºåY>Ê‘Ωöm˜ΩsC>Ïª=YÅ˘>ç6
+>ÿìV<eó€;- ='ªæ©5->*@>´∏CΩI˚)æ ı=KPT>ïl"æu‘h>≤§==ÃX¶Ω€T <ËK>,Ü=QC>‚,U=˝}U>±Iæ{Ùæbqà>k5Åæ*Bout_conv.biasJ»QΩ<MŸΩ*Bval_162J        *Bval_165J       *Bval_185J       *Bval_23J  Ä?  Ä?   @   @Z‹
+input0+
+)%
+batch
+
+
+input0_y
+
+input0_x"=
+/pkg.torch.export.graph_signature.InputSpec.kind
+USER_INPUT"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"'
+!pkg.torch.onnx.original_node_namex0Z‹
+input1+
+)%
+batch
+
+
+input0_y
+
+input0_x"=
+/pkg.torch.export.graph_signature.InputSpec.kind
+USER_INPUT"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"'
+!pkg.torch.onnx.original_node_namex1b¶
+output0+
+)%
+batch
+
+
+input0_y
+
+input0_x"?
+0pkg.torch.export.graph_signature.OutputSpec.kindUSER_OUTPUT"-
+!pkg.torch.onnx.original_node_nameslice_44b¶
+output1+
+)%
+batch
+
+
+input0_y
+
+input0_x"?
+0pkg.torch.export.graph_signature.OutputSpec.kindUSER_OUTPUT"-
+!pkg.torch.onnx.original_node_nameslice_46j˛
+encoder.blocks.0.block.0.weight
+
+
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"F
+!pkg.torch.onnx.original_node_name!p_encoder_blocks_0_block_0_weightjÓ
+encoder.blocks.0.block.0.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"D
+!pkg.torch.onnx.original_node_namep_encoder_blocks_0_block_0_biasj˛
+encoder.blocks.0.block.2.weight
+
+
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"F
+!pkg.torch.onnx.original_node_name!p_encoder_blocks_0_block_2_weightjÓ
+encoder.blocks.0.block.2.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"D
+!pkg.torch.onnx.original_node_namep_encoder_blocks_0_block_2_biasj˛
+encoder.blocks.1.block.0.weight
+
+ 
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"F
+!pkg.torch.onnx.original_node_name!p_encoder_blocks_1_block_0_weightjÓ
+encoder.blocks.1.block.0.bias
+
+
+ "<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"D
+!pkg.torch.onnx.original_node_namep_encoder_blocks_1_block_0_biasj˛
+encoder.blocks.1.block.2.weight
+
+ 
+ 
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"F
+!pkg.torch.onnx.original_node_name!p_encoder_blocks_1_block_2_weightjÓ
+encoder.blocks.1.block.2.bias
+
+
+ "<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"D
+!pkg.torch.onnx.original_node_namep_encoder_blocks_1_block_2_biasj˛
+encoder.blocks.2.block.0.weight
+
+@
+ 
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"F
+!pkg.torch.onnx.original_node_name!p_encoder_blocks_2_block_0_weightjÓ
+encoder.blocks.2.block.0.bias
+
+
+@"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"D
+!pkg.torch.onnx.original_node_namep_encoder_blocks_2_block_0_biasj˛
+encoder.blocks.2.block.2.weight
+
+@
+@
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"F
+!pkg.torch.onnx.original_node_name!p_encoder_blocks_2_block_2_weightjÓ
+encoder.blocks.2.block.2.bias
+
+
+@"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"D
+!pkg.torch.onnx.original_node_namep_encoder_blocks_2_block_2_biasjÁ
+base.block.0.weight
+
+Ä
+@
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone":
+!pkg.torch.onnx.original_node_namep_base_block_0_weightj◊
+base.block.0.bias
+	
+Ä"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"8
+!pkg.torch.onnx.original_node_namep_base_block_0_biasjË
+base.block.2.weight
+
+Ä
+Ä
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone":
+!pkg.torch.onnx.original_node_namep_base_block_2_weightj◊
+base.block.2.bias
+	
+Ä"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"8
+!pkg.torch.onnx.original_node_namep_base_block_2_biasjˇ
+decoder.blocks.0.block.0.weight
+
+@
+Ä
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"F
+!pkg.torch.onnx.original_node_name!p_decoder_blocks_0_block_0_weightjÓ
+decoder.blocks.0.block.0.bias
+
+
+@"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"D
+!pkg.torch.onnx.original_node_namep_decoder_blocks_0_block_0_biasj˛
+decoder.blocks.0.block.2.weight
+
+@
+@
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"F
+!pkg.torch.onnx.original_node_name!p_decoder_blocks_0_block_2_weightjÓ
+decoder.blocks.0.block.2.bias
+
+
+@"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"D
+!pkg.torch.onnx.original_node_namep_decoder_blocks_0_block_2_biasj˛
+decoder.blocks.1.block.0.weight
+
+ 
+@
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"F
+!pkg.torch.onnx.original_node_name!p_decoder_blocks_1_block_0_weightjÓ
+decoder.blocks.1.block.0.bias
+
+
+ "<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"D
+!pkg.torch.onnx.original_node_namep_decoder_blocks_1_block_0_biasj˛
+decoder.blocks.1.block.2.weight
+
+ 
+ 
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"F
+!pkg.torch.onnx.original_node_name!p_decoder_blocks_1_block_2_weightjÓ
+decoder.blocks.1.block.2.bias
+
+
+ "<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"D
+!pkg.torch.onnx.original_node_namep_decoder_blocks_1_block_2_biasj˛
+decoder.blocks.2.block.0.weight
+
+
+ 
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"F
+!pkg.torch.onnx.original_node_name!p_decoder_blocks_2_block_0_weightjÓ
+decoder.blocks.2.block.0.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"D
+!pkg.torch.onnx.original_node_namep_decoder_blocks_2_block_0_biasj˛
+decoder.blocks.2.block.2.weight
+
+
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"F
+!pkg.torch.onnx.original_node_name!p_decoder_blocks_2_block_2_weightjÓ
+decoder.blocks.2.block.2.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"D
+!pkg.torch.onnx.original_node_namep_decoder_blocks_2_block_2_biasj˝
+decoder.samplers.0.conv.weight
+
+@
+Ä
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"E
+!pkg.torch.onnx.original_node_name p_decoder_samplers_0_conv_weightjÏ
+decoder.samplers.0.conv.bias
+
+
+@"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"C
+!pkg.torch.onnx.original_node_namep_decoder_samplers_0_conv_biasj¸
+decoder.samplers.1.conv.weight
+
+ 
+@
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"E
+!pkg.torch.onnx.original_node_name p_decoder_samplers_1_conv_weightjÏ
+decoder.samplers.1.conv.bias
+
+
+ "<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"C
+!pkg.torch.onnx.original_node_namep_decoder_samplers_1_conv_biasj¸
+decoder.samplers.2.conv.weight
+
+
+ 
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"E
+!pkg.torch.onnx.original_node_name p_decoder_samplers_2_conv_weightjÏ
+decoder.samplers.2.conv.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"C
+!pkg.torch.onnx.original_node_namep_decoder_samplers_2_conv_biasjﬁ
+out_conv.weight
+
+
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"6
+!pkg.torch.onnx.original_node_namep_out_conv_weightjŒ
+out_conv.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"4
+!pkg.torch.onnx.original_node_namep_out_conv_biasj_
+val_162
+
+
+"H
+$pkg.onnxscript.optimizer.folded_from ['val_160', 'val_161', 'val_24']j_
+val_165
+
+
+"H
+$pkg.onnxscript.optimizer.folded_from ['val_163', 'val_164', 'val_41']j^
+val_185
+
+
+"G
+$pkg.onnxscript.optimizer.folded_from['val_183', 'val_184', 'val_7']j
+val_23
+
+
+j2
+cat+
+)%
+batch
+
+
+input0_y
+
+input0_xj5
+conv2d+
+)%
+batch
+
+
+input0_y
+
+input0_xj3
+relu+
+)%
+batch
+
+
+input0_y
+
+input0_xj7
+conv2d_1+
+)%
+batch
+
+
+input0_y
+
+input0_xj5
+relu_1+
+)%
+batch
+
+
+input0_y
+
+input0_xj3
+
+max_pool2d%
+#
+batch
+
+4*s34
+4*s62j1
+conv2d_2%
+#
+batch
+ 
+4*s34
+4*s62j/
+relu_2%
+#
+batch
+ 
+4*s34
+4*s62j1
+conv2d_3%
+#
+batch
+ 
+4*s34
+4*s62j/
+relu_3%
+#
+batch
+ 
+4*s34
+4*s62j5
+max_pool2d_1%
+#
+batch
+ 
+2*s34
+2*s62j1
+conv2d_4%
+#
+batch
+@
+2*s34
+2*s62j/
+relu_4%
+#
+batch
+@
+2*s34
+2*s62j1
+conv2d_5%
+#
+batch
+@
+2*s34
+2*s62j/
+relu_5%
+#
+batch
+@
+2*s34
+2*s62j1
+max_pool2d_2!
+
+batch
+@
+s34
+s62j.
+conv2d_6"
+ 
+batch
+Ä
+s34
+s62j,
+relu_6"
+ 
+batch
+Ä
+s34
+s62j.
+conv2d_7"
+ 
+batch
+Ä
+s34
+s62j,
+relu_7"
+ 
+batch
+Ä
+s34
+s62j=
+upsample_bilinear2d&
+$ 
+batch
+Ä
+2*s34
+2*s62j1
+conv2d_8%
+#
+batch
+@
+2*s34
+2*s62j/
+cat_1&
+$ 
+batch
+Ä
+2*s34
+2*s62j1
+conv2d_9%
+#
+batch
+@
+2*s34
+2*s62j/
+relu_8%
+#
+batch
+@
+2*s34
+2*s62j2
+	conv2d_10%
+#
+batch
+@
+2*s34
+2*s62j/
+relu_9%
+#
+batch
+@
+2*s34
+2*s62j>
+upsample_bilinear2d_1%
+#
+batch
+@
+4*s34
+4*s62j2
+	conv2d_11%
+#
+batch
+ 
+4*s34
+4*s62j.
+cat_2%
+#
+batch
+@
+4*s34
+4*s62j2
+	conv2d_12%
+#
+batch
+ 
+4*s34
+4*s62j0
+relu_10%
+#
+batch
+ 
+4*s34
+4*s62j2
+	conv2d_13%
+#
+batch
+ 
+4*s34
+4*s62j0
+relu_11%
+#
+batch
+ 
+4*s34
+4*s62jD
+upsample_bilinear2d_2+
+)%
+batch
+ 
+
+input0_y
+
+input0_xj8
+	conv2d_14+
+)%
+batch
+
+
+input0_y
+
+input0_xj4
+cat_3+
+)%
+batch
+ 
+
+input0_y
+
+input0_xj8
+	conv2d_15+
+)%
+batch
+
+
+input0_y
+
+input0_xj6
+relu_12+
+)%
+batch
+
+
+input0_y
+
+input0_xj8
+	conv2d_16+
+)%
+batch
+
+
+input0_y
+
+input0_xj6
+relu_13+
+)%
+batch
+
+
+input0_y
+
+input0_xj8
+	conv2d_17+
+)%
+batch
+
+
+input0_y
+
+input0_xÇ∏
+0pkg.torch.export.ExportedProgram.graph_signatureÉ
+# inputs
+p_encoder_blocks_0_block_0_weight: PARAMETER target='encoder.blocks.0.block.0.weight'
+p_encoder_blocks_0_block_0_bias: PARAMETER target='encoder.blocks.0.block.0.bias'
+p_encoder_blocks_0_block_2_weight: PARAMETER target='encoder.blocks.0.block.2.weight'
+p_encoder_blocks_0_block_2_bias: PARAMETER target='encoder.blocks.0.block.2.bias'
+p_encoder_blocks_1_block_0_weight: PARAMETER target='encoder.blocks.1.block.0.weight'
+p_encoder_blocks_1_block_0_bias: PARAMETER target='encoder.blocks.1.block.0.bias'
+p_encoder_blocks_1_block_2_weight: PARAMETER target='encoder.blocks.1.block.2.weight'
+p_encoder_blocks_1_block_2_bias: PARAMETER target='encoder.blocks.1.block.2.bias'
+p_encoder_blocks_2_block_0_weight: PARAMETER target='encoder.blocks.2.block.0.weight'
+p_encoder_blocks_2_block_0_bias: PARAMETER target='encoder.blocks.2.block.0.bias'
+p_encoder_blocks_2_block_2_weight: PARAMETER target='encoder.blocks.2.block.2.weight'
+p_encoder_blocks_2_block_2_bias: PARAMETER target='encoder.blocks.2.block.2.bias'
+p_base_block_0_weight: PARAMETER target='base.block.0.weight'
+p_base_block_0_bias: PARAMETER target='base.block.0.bias'
+p_base_block_2_weight: PARAMETER target='base.block.2.weight'
+p_base_block_2_bias: PARAMETER target='base.block.2.bias'
+p_decoder_blocks_0_block_0_weight: PARAMETER target='decoder.blocks.0.block.0.weight'
+p_decoder_blocks_0_block_0_bias: PARAMETER target='decoder.blocks.0.block.0.bias'
+p_decoder_blocks_0_block_2_weight: PARAMETER target='decoder.blocks.0.block.2.weight'
+p_decoder_blocks_0_block_2_bias: PARAMETER target='decoder.blocks.0.block.2.bias'
+p_decoder_blocks_1_block_0_weight: PARAMETER target='decoder.blocks.1.block.0.weight'
+p_decoder_blocks_1_block_0_bias: PARAMETER target='decoder.blocks.1.block.0.bias'
+p_decoder_blocks_1_block_2_weight: PARAMETER target='decoder.blocks.1.block.2.weight'
+p_decoder_blocks_1_block_2_bias: PARAMETER target='decoder.blocks.1.block.2.bias'
+p_decoder_blocks_2_block_0_weight: PARAMETER target='decoder.blocks.2.block.0.weight'
+p_decoder_blocks_2_block_0_bias: PARAMETER target='decoder.blocks.2.block.0.bias'
+p_decoder_blocks_2_block_2_weight: PARAMETER target='decoder.blocks.2.block.2.weight'
+p_decoder_blocks_2_block_2_bias: PARAMETER target='decoder.blocks.2.block.2.bias'
+p_decoder_samplers_0_conv_weight: PARAMETER target='decoder.samplers.0.conv.weight'
+p_decoder_samplers_0_conv_bias: PARAMETER target='decoder.samplers.0.conv.bias'
+p_decoder_samplers_1_conv_weight: PARAMETER target='decoder.samplers.1.conv.weight'
+p_decoder_samplers_1_conv_bias: PARAMETER target='decoder.samplers.1.conv.bias'
+p_decoder_samplers_2_conv_weight: PARAMETER target='decoder.samplers.2.conv.weight'
+p_decoder_samplers_2_conv_bias: PARAMETER target='decoder.samplers.2.conv.bias'
+p_out_conv_weight: PARAMETER target='out_conv.weight'
+p_out_conv_bias: PARAMETER target='out_conv.bias'
+x0: USER_INPUT
+x1: USER_INPUT
+
+# outputs
+slice_44: USER_OUTPUT
+slice_46: USER_OUTPUT
+Ç∆
+2pkg.torch.export.ExportedProgram.range_constraintsè{u3: VR[0, int_oo], u5: VR[0, int_oo], s4: VR[1, int_oo], 8*s34: VR[32, int_oo], 8*s62: VR[32, int_oo], s34: VR[4, int_oo], s62: VR[4, int_oo]}B
+ 

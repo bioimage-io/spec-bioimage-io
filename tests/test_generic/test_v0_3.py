@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from pathlib import Path, PurePath
-from typing import Any, Sequence, Union
+from typing import Annotated, Any
 
 import pytest
 from pydantic import (
@@ -9,7 +10,7 @@ from pydantic import (
     TypeAdapter,
     ValidationError,
 )
-from typing_extensions import Annotated, assert_never
+from typing_extensions import assert_never
 
 from bioimageio.spec._internal.io import (
     RelativeFilePath,
@@ -149,12 +150,10 @@ _type_adapters_for_path: Sequence[TypeAdapter[Any]] = (
     TypeAdapter(Annotated[FilePath, WithSuffix(".md", case_sensitive=True)]),
     TypeAdapter(Annotated[Path, WithSuffix(".md", case_sensitive=True)]),
     TypeAdapter(Annotated[PurePath, WithSuffix(".md", case_sensitive=True)]),
-    TypeAdapter(
-        Annotated[Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)]
-    ),
+    TypeAdapter(Annotated[PurePath | HttpUrl, WithSuffix(".md", case_sensitive=True)]),
     TypeAdapter(
         Annotated[
-            Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+            AbsoluteFilePath | RelativeFilePath | HttpUrl,
             WithSuffix(".md", case_sensitive=True),
         ]
     ),
@@ -162,12 +161,10 @@ _type_adapters_for_path: Sequence[TypeAdapter[Any]] = (
 
 _type_adapters_for_url: Sequence[TypeAdapter[Any]] = (
     TypeAdapter(Annotated[HttpUrl, WithSuffix(".md", case_sensitive=True)]),
-    TypeAdapter(
-        Annotated[Union[PurePath, HttpUrl], WithSuffix(".md", case_sensitive=True)]
-    ),
+    TypeAdapter(Annotated[PurePath | HttpUrl, WithSuffix(".md", case_sensitive=True)]),
     TypeAdapter(
         Annotated[
-            Union[AbsoluteFilePath, RelativeFilePath, HttpUrl],
+            AbsoluteFilePath | RelativeFilePath | HttpUrl,
             WithSuffix(".md", case_sensitive=True),
         ]
     ),

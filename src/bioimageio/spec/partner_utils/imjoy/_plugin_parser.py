@@ -8,8 +8,9 @@ import copy
 import json
 import uuid
 import warnings
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 from urllib.parse import urljoin
 
 import httpx

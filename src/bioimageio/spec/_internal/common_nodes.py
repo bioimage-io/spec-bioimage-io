@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
+from collections.abc import Callable, Iterable, Mapping
 from inspect import signature
 from io import BytesIO
 from pathlib import Path
@@ -9,11 +10,8 @@ from typing import (
     IO,
     TYPE_CHECKING,
     Any,
-    Callable,
     ClassVar,
-    Iterable,
     Literal,
-    Mapping,
     Protocol,
     TypeVar,
 )

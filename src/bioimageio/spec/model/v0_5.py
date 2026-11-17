@@ -5,6 +5,7 @@ import re
 import string
 import warnings
 from abc import ABC
+from collections.abc import Callable, Mapping, Sequence
 from copy import deepcopy
 from fractions import Fraction
 from functools import partial
@@ -15,20 +16,16 @@ from tempfile import mkdtemp
 from textwrap import dedent
 from typing import (
     TYPE_CHECKING,
+    Annotated,
     Any,
-    Callable,
     ClassVar,
-    Dict,
     Generic,
-    List,
     Literal,
-    Mapping,
     NamedTuple,
-    Optional,
-    Sequence,
+    TypeAlias,
     TypeVar,
-    Union,
     cast,
+    get_args,
     overload,
 )
 
@@ -52,12 +49,11 @@ from pydantic import (
     model_serializer,
     model_validator,
 )
-from typing_extensions import Annotated, Self, TypeAlias, assert_never, get_args
+from typing_extensions import Self, assert_never
 
 from .._internal.common_nodes import (
     InvalidDescr,
     KwargsNode,
-    Node,
     NodeWithExplicitlySetFields,
 )
 from .._internal.constants import DTYPE_LIMITS
@@ -78,6 +74,7 @@ from .._internal.io_packaging import (
     package_file_descr_serializer,
 )
 from .._internal.io_utils import load_array, open_bioimageio_yaml
+from .._internal.node import Node
 from .._internal.node_converter import Converter
 from .._internal.type_guards import is_dict, is_sequence
 from .._internal.types import (
@@ -525,6 +522,8 @@ DEFAULT_TIME_AXIS_ID = AxisId("time")
 
 
 class BatchAxis(AxisBase):
+    """A concatenable batch axis shared implicitly by input and output tensors."""
+
     implemented_type: ClassVar[Literal["batch"]] = "batch"
     if TYPE_CHECKING:
         type: Literal["batch"] = "batch"
@@ -542,7 +541,7 @@ class BatchAxis(AxisBase):
 
     @property
     def concatenable(self):
-        return True
+        return "reproducible"
 
     @property
     def unit(self):
@@ -615,11 +614,17 @@ class IndexAxisBase(AxisBase):
 
 
 class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
-    concatenable: bool = False
+    concatenable: bool | Literal["applicable", "reproducible"] = "reproducible"
     """If a model has a `concatenable` input axis, it can be processed blockwise,
     splitting a longer sample axis into blocks matching its input tensor description.
+
     Output axes are concatenable if they have a [SizeReference][] to a concatenable
-    input axis.
+    input axis. Each concatenable input axis must be referenced by an output axis.
+
+    Set `concatenable` to `applicable` if the model can be meaningfully applied blockwise,
+    but its outputs may change beyond the specified numerical tolerance for reproducibility,
+    for example due to the use of instance norm within the model.
+    `True` is an alias for `applicable` and is provided for backwards compatibility.
     """
 
 
@@ -648,11 +653,17 @@ class TimeAxisBase(AxisBase):
 
 
 class TimeInputAxis(TimeAxisBase, _WithInputAxisSize):
-    concatenable: bool = False
+    concatenable: bool | Literal["applicable", "reproducible"] = "reproducible"
     """If a model has a `concatenable` input axis, it can be processed blockwise,
     splitting a longer sample axis into blocks matching its input tensor description.
+
     Output axes are concatenable if they have a [SizeReference][] to a concatenable
-    input axis.
+    input axis. Each concatenable input axis must be referenced by an output axis.
+
+    Set `concatenable` to `applicable` if the model can be meaningfully applied blockwise,
+    but its outputs may change beyond the specified numerical tolerance for reproducibility,
+    for example due to the use of instance norm within the model.
+    `True` is an alias for `applicable` and is provided for backwards compatibility.
     """
 
 
@@ -671,11 +682,17 @@ class SpaceAxisBase(AxisBase):
 
 
 class SpaceInputAxis(SpaceAxisBase, _WithInputAxisSize):
-    concatenable: bool = False
+    concatenable: bool | Literal["applicable", "reproducible"] = "reproducible"
     """If a model has a `concatenable` input axis, it can be processed blockwise,
     splitting a longer sample axis into blocks matching its input tensor description.
+
     Output axes are concatenable if they have a [SizeReference][] to a concatenable
-    input axis.
+    input axis. Each concatenable input axis must be referenced by an output axis.
+
+    Set `concatenable` to `applicable` if the model can be meaningfully applied blockwise,
+    but its outputs may change beyond the specified numerical tolerance for reproducibility,
+    for example due to the use of instance norm within the model.
+    `True` is an alias for `applicable` and is provided for backwards compatibility.
     """
 
 
@@ -688,9 +705,9 @@ INPUT_AXIS_TYPES = (
 )
 """intended for isinstance comparisons in py<3.10"""
 
-_InputAxisUnion = Union[
-    BatchAxis, ChannelAxis, IndexInputAxis, TimeInputAxis, SpaceInputAxis
-]
+_InputAxisUnion = (
+    BatchAxis | ChannelAxis | IndexInputAxis | TimeInputAxis | SpaceInputAxis
+)
 InputAxis = Annotated[_InputAxisUnion, Discriminator("type")]
 
 
@@ -721,10 +738,8 @@ def _get_halo_axis_discriminator_value(v: Any) -> Literal["with_halo", "wo_halo"
 
 
 _TimeOutputAxisUnion = Annotated[
-    Union[
-        Annotated[TimeOutputAxis, Tag("wo_halo")],
-        Annotated[TimeOutputAxisWithHalo, Tag("with_halo")],
-    ],
+    Annotated[TimeOutputAxis, Tag("wo_halo")]
+    | Annotated[TimeOutputAxisWithHalo, Tag("with_halo")],
     Discriminator(_get_halo_axis_discriminator_value),
 ]
 
@@ -738,17 +753,19 @@ class SpaceOutputAxisWithHalo(SpaceAxisBase, WithHalo):
 
 
 _SpaceOutputAxisUnion = Annotated[
-    Union[
-        Annotated[SpaceOutputAxis, Tag("wo_halo")],
-        Annotated[SpaceOutputAxisWithHalo, Tag("with_halo")],
-    ],
+    Annotated[SpaceOutputAxis, Tag("wo_halo")]
+    | Annotated[SpaceOutputAxisWithHalo, Tag("with_halo")],
     Discriminator(_get_halo_axis_discriminator_value),
 ]
 
 
-_OutputAxisUnion = Union[
-    BatchAxis, ChannelAxis, IndexOutputAxis, _TimeOutputAxisUnion, _SpaceOutputAxisUnion
-]
+_OutputAxisUnion = (
+    BatchAxis
+    | ChannelAxis
+    | IndexOutputAxis
+    | _TimeOutputAxisUnion
+    | _SpaceOutputAxisUnion
+)
 OutputAxis = Annotated[_OutputAxisUnion, Discriminator("type")]
 
 OUTPUT_AXIS_TYPES = (
@@ -763,17 +780,17 @@ OUTPUT_AXIS_TYPES = (
 """intended for isinstance comparisons in py<3.10"""
 
 
-AnyAxis = Union[InputAxis, OutputAxis]
+AnyAxis = InputAxis | OutputAxis
 
 ANY_AXIS_TYPES = INPUT_AXIS_TYPES + OUTPUT_AXIS_TYPES
 """intended for isinstance comparisons in py<3.10"""
 
-TVs = Union[
-    NotEmpty[List[int]],
-    NotEmpty[List[float]],
-    NotEmpty[List[bool]],
-    NotEmpty[List[str]],
-]
+TVs = (
+    NotEmpty[list[int]]
+    | NotEmpty[list[float]]
+    | NotEmpty[list[bool]]
+    | NotEmpty[list[str]]
+)
 
 
 NominalOrOrdinalDType = Literal[
@@ -911,7 +928,7 @@ class IntervalOrRatioDataDescr(Node):
         return data
 
 
-TensorDataDescr = Union[NominalOrOrdinalDataDescr, IntervalOrRatioDataDescr]
+TensorDataDescr = NominalOrOrdinalDataDescr | IntervalOrRatioDataDescr
 
 
 class BinarizeKwargs(KwargsNode):
@@ -1456,7 +1473,7 @@ class CustomProcessingDescr(NodeWithExplicitlySetFields, FileDescr):
     """Python source file (included when packaging the model)."""
 
     kwargs: dict[str, YamlValue] = Field(
-        default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
+        default_factory=cast(Callable[[], dict[str, YamlValue]], dict)
     )
     """Keyword arguments forwarded to the callable (``__init__`` or factory)."""
 
@@ -1748,35 +1765,31 @@ class ScaleMeanVarianceDescr(NodeWithExplicitlySetFields):
 
 
 PreprocessingDescr = Annotated[
-    Union[
-        BinarizeDescr,
-        ClipDescr,
-        EnsureDtypeDescr,
-        FixedZeroMeanUnitVarianceDescr,
-        ScaleLinearDescr,
-        ScaleRangeDescr,
-        SigmoidDescr,
-        SoftmaxDescr,
-        ZeroMeanUnitVarianceDescr,
-    ],
+    BinarizeDescr
+    | ClipDescr
+    | EnsureDtypeDescr
+    | FixedZeroMeanUnitVarianceDescr
+    | ScaleLinearDescr
+    | ScaleRangeDescr
+    | SigmoidDescr
+    | SoftmaxDescr
+    | ZeroMeanUnitVarianceDescr,
     Discriminator("id"),
 ]
 PostprocessingDescr = Annotated[
-    Union[
-        BinarizeDescr,
-        CellposeFlowDynamicsDescr,
-        ClipDescr,
-        CustomProcessingDescr,
-        EnsureDtypeDescr,
-        FixedZeroMeanUnitVarianceDescr,
-        ScaleLinearDescr,
-        ScaleMeanVarianceDescr,
-        ScaleRangeDescr,
-        SigmoidDescr,
-        SoftmaxDescr,
-        StardistPostprocessingDescr,
-        ZeroMeanUnitVarianceDescr,
-    ],
+    BinarizeDescr
+    | CellposeFlowDynamicsDescr
+    | ClipDescr
+    | CustomProcessingDescr
+    | EnsureDtypeDescr
+    | FixedZeroMeanUnitVarianceDescr
+    | ScaleLinearDescr
+    | ScaleMeanVarianceDescr
+    | ScaleRangeDescr
+    | SigmoidDescr
+    | SoftmaxDescr
+    | StardistPostprocessingDescr
+    | ZeroMeanUnitVarianceDescr,
     Discriminator("id"),
 ]
 
@@ -1821,7 +1834,10 @@ class TensorDescrBase(Node, Generic[IO_AxisT]):
     Using the model with the test input tensors is expected to yield the test output tensors.
     Each test tensor has be a an ndarray in the
     [numpy.lib file format](https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format).
-    The file extension must be '.npy'."""
+    The file extension must be '.npy'.
+    Its shape must be valid and along any reproducibly concatenable input axis with parameterized size
+    larger than the minimal allowed axis size (so blockwise reproducibility checks can be performed).
+    """
 
     sample_tensor: FAIR[FileDescr_package | None] = None
     """A sample tensor to illustrate a possible input/output for the model,
@@ -1966,9 +1982,7 @@ class SymmetricPadding(Node):
     mode: Literal["symmetric"] = "symmetric"
 
 
-Padding: TypeAlias = Union[
-    ConstantPadding, EdgePadding, ReflectPadding, SymmetricPadding
-]
+Padding: TypeAlias = ConstantPadding | EdgePadding | ReflectPadding | SymmetricPadding
 
 
 class ModelId(ResourceId):
@@ -2034,7 +2048,7 @@ class InputTensorDescr(TensorDescrBase[InputAxis]):
     """
 
     preprocessing: list[PreprocessingDescr] = Field(
-        default_factory=cast(Callable[[], List[PreprocessingDescr]], list)
+        default_factory=cast(Callable[[], list[PreprocessingDescr]], list)
     )
     """Description of how this input should be preprocessed.
 
@@ -2314,7 +2328,7 @@ class _InputTensorConv(
         _InputTensorDescr_v0_4,
         InputTensorDescr,
         FileSource,
-        Optional[FileSource],
+        FileSource | None,
         Mapping[_TensorName_v0_4, Mapping[str, int]],
     ]
 ):
@@ -2370,7 +2384,7 @@ class OutputTensorDescr(TensorDescrBase[OutputAxis]):
     No duplicates are allowed across all inputs and outputs."""
 
     postprocessing: list[PostprocessingDescr] = Field(
-        default_factory=cast(Callable[[], List[PostprocessingDescr]], list)
+        default_factory=cast(Callable[[], list[PostprocessingDescr]], list)
     )
     """Description of how this output should be postprocessed.
 
@@ -2415,7 +2429,7 @@ class _OutputTensorConv(
         _OutputTensorDescr_v0_4,
         OutputTensorDescr,
         FileSource,
-        Optional[FileSource],
+        FileSource | None,
         Mapping[_TensorName_v0_4, Mapping[str, int]],
     ]
 ):
@@ -2454,7 +2468,7 @@ class _OutputTensorConv(
 _output_tensor_conv = _OutputTensorConv(_OutputTensorDescr_v0_4, OutputTensorDescr)
 
 
-TensorDescr: TypeAlias = Union[InputTensorDescr, OutputTensorDescr]
+TensorDescr: TypeAlias = InputTensorDescr | OutputTensorDescr
 
 
 def get_halos(
@@ -2668,7 +2682,7 @@ class _ArchitectureCallableDescr(Node):
     """Identifier of the callable that returns a torch.nn.Module instance."""
 
     kwargs: dict[str, YamlValue] = Field(
-        default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
+        default_factory=cast(Callable[[], dict[str, YamlValue]], dict)
     )
     """key word arguments for the `callable`"""
 
@@ -2691,8 +2705,8 @@ class _ArchFileConv(
     Converter[
         _CallableFromFile_v0_4,
         ArchitectureFromFileDescr,
-        Optional[Sha256],
-        Dict[str, Any],
+        Sha256 | None,
+        dict[str, Any],
     ]
 ):
     def _convert(
@@ -2723,7 +2737,7 @@ _arch_file_conv = _ArchFileConv(_CallableFromFile_v0_4, ArchitectureFromFileDesc
 
 class _ArchLibConv(
     Converter[
-        _CallableFromDepencency_v0_4, ArchitectureFromLibraryDescr, Dict[str, Any]
+        _CallableFromDepencency_v0_4, ArchitectureFromLibraryDescr, dict[str, Any]
     ]
 ):
     def _convert(
@@ -2890,15 +2904,15 @@ class TorchscriptWeightsDescr(WeightsEntryDescrBase):
     """Version of the PyTorch library used."""
 
 
-SpecificWeightsDescr = Union[
-    KerasHdf5WeightsDescr,
-    KerasV3WeightsDescr,
-    OnnxWeightsDescr,
-    PytorchStateDictWeightsDescr,
-    TensorflowJsWeightsDescr,
-    TensorflowSavedModelBundleWeightsDescr,
-    TorchscriptWeightsDescr,
-]
+SpecificWeightsDescr = (
+    KerasHdf5WeightsDescr
+    | KerasV3WeightsDescr
+    | OnnxWeightsDescr
+    | PytorchStateDictWeightsDescr
+    | TensorflowJsWeightsDescr
+    | TensorflowSavedModelBundleWeightsDescr
+    | TorchscriptWeightsDescr
+)
 
 
 class WeightsDescr(Node):
@@ -3313,7 +3327,7 @@ class TrainingDetails(Node, extra="allow"):
     """Loss function used in training, e.g. nn.MSELoss."""
 
     loss_function_kwargs: dict[str, YamlValue] = Field(
-        default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
+        default_factory=cast(Callable[[], dict[str, YamlValue]], dict)
     )
     """key word arguments for the `loss_function`"""
 
@@ -3321,7 +3335,7 @@ class TrainingDetails(Node, extra="allow"):
     """optimizer, e.g. torch.optim.Adam"""
 
     optimizer_kwargs: dict[str, YamlValue] = Field(
-        default_factory=cast(Callable[[], Dict[str, YamlValue]], dict)
+        default_factory=cast(Callable[[], dict[str, YamlValue]], dict)
     )
     """key word arguments for the `optimizer`"""
 
@@ -3541,7 +3555,7 @@ class BioimageioConfig(Node, extra="allow"):
     """Input modality, e.g., fluorescence microscopy, electron microscopy"""
 
     target_structure: list[str] = Field(  # TODO: add to differentiated tags
-        default_factory=cast(Callable[[], List[str]], list)
+        default_factory=cast(Callable[[], list[str]], list)
     )
     """Biological structure(s) the model is designed to analyze, e.g., nuclei, mitochondria, cells"""
 
@@ -3575,7 +3589,7 @@ class BioimageioConfig(Node, extra="allow"):
     """GPU memory needed for training. Multiple examples with different image/batch sizes can be given."""
 
     evaluations: list[Evaluation] = Field(
-        default_factory=cast(Callable[[], List[Evaluation]], list)
+        default_factory=cast(Callable[[], list[Evaluation]], list)
     )
     """Quantitative model evaluations.
 
@@ -3603,11 +3617,11 @@ class ModelDescr(GenericModelDescrBase):
     These fields are typically stored in a YAML file which we call a model resource description file (model RDF).
     """
 
-    implemented_format_version: ClassVar[Literal["0.5.14"]] = "0.5.14"
+    implemented_format_version: ClassVar[Literal["0.5.15"]] = "0.5.15"
     if TYPE_CHECKING:
-        format_version: Literal["0.5.14"] = "0.5.14"
+        format_version: Literal["0.5.15"] = "0.5.15"
     else:
-        format_version: Literal["0.5.14"]
+        format_version: Literal["0.5.15"]
         """Version of the bioimage.io model description specification used.
         When creating a new model always use the latest micro/patch version described here.
         The `format_version` is important for any consumer software to understand how to parse the fields.
@@ -3625,7 +3639,7 @@ class ModelDescr(GenericModelDescrBase):
     assigned by bioimage.io; version **un**specific."""
 
     authors: FAIR[list[Author]] = Field(
-        default_factory=cast(Callable[[], List[Author]], list)
+        default_factory=cast(Callable[[], list[Author]], list)
     )
     """The authors are the creators of the model RDF and the primary points of contact."""
 
@@ -3815,6 +3829,23 @@ class ModelDescr(GenericModelDescrBase):
             crop_outputs="allow",
         )
 
+        for descr, array in test_inputs.values():
+            if array is None:
+                continue
+
+            axis_sizes = descr.get_axis_sizes_for_array(array)
+            for axis in descr.axes:
+                if (
+                    axis.concatenable == "reproducible"
+                    and isinstance(axis.size, ParameterizedSize)
+                    and axis_sizes[axis.id] <= axis.size.min
+                ):
+                    raise ValueError(
+                        f"inputs[{descr.id}].axes[{axis.id}]: test_tensor axis size "
+                        + f"{axis_sizes[axis.id]} must be larger than minimum size "
+                        + f"{axis.size.min} for concatenable='reproducible'"
+                    )
+
         seen_output_ids: set[TensorId] = (
             set()
         )  # reproducibility tolerance is only applicable to the first matching output tensor id
@@ -3893,6 +3924,40 @@ class ModelDescr(GenericModelDescrBase):
 
     outputs: NotEmpty[Sequence[OutputTensorDescr]]
     """Describes the output tensors."""
+
+    @model_validator(mode="after")
+    def _validate_concatenable_input_axes(self) -> Self:
+        output_refs = {
+            (axis.size.tensor_id, axis.size.axis_id)
+            for output in self.outputs
+            for axis in output.axes
+            if isinstance(axis.size, SizeReference)
+        }
+        has_output_batch = any(
+            isinstance(axis, BatchAxis)
+            for output in self.outputs
+            for axis in output.axes
+        )
+        missing = [
+            f"{input_tensor.id}.{axis.id}"
+            for input_tensor in self.inputs
+            for axis in input_tensor.axes
+            if axis.concatenable
+            and (
+                not has_output_batch
+                if isinstance(axis, BatchAxis)
+                else (input_tensor.id, axis.id) not in output_refs
+            )
+        ]
+        if missing:
+            raise ValueError(
+                f"Concatenable input axes must be referenced by an output axis size: {missing}."
+                + " Either set `concatenable: false` for these input axes,"
+                + " or add an output axis with a `size` reference"
+                + " (`tensor_id`, `axis_id`) to each of them"
+                + " (for a batch axis: add a batch axis to an output tensor)."
+            )
+        return self
 
     @field_validator("outputs", mode="after")
     @classmethod
@@ -3975,7 +4040,7 @@ class ModelDescr(GenericModelDescrBase):
         return outputs
 
     packaged_by: list[Author] = Field(
-        default_factory=cast(Callable[[], List[Author]], list)
+        default_factory=cast(Callable[[], list[Author]], list)
     )
     """The persons that have packaged and uploaded this model.
     Only required if those persons differ from the `authors`."""
@@ -4145,6 +4210,7 @@ class ModelDescr(GenericModelDescrBase):
         self, input_sizes: Mapping[TensorId, Mapping[AxisId, int]]
     ) -> dict[TensorId, dict[AxisId, int]]:
         """Returns the tensor output sizes for given **input_sizes**.
+        Unknown input axes are passed through (assuming they would be stacked to/unstacked from the batch axis).
         Data-dependent output sizes are set to -1.
 
         Note:
@@ -4154,6 +4220,37 @@ class ModelDescr(GenericModelDescrBase):
         """
         # get tensor sizes for valid inputs that can be parameterized by batch size and axis size parameters `n` (for each parameterized axis)
         batch_size = self.get_batch_size(input_sizes)
+        stackable_input_axes: dict[AxisId, int] = {}
+        stackable_input_axes_per_input: dict[TensorId, set[AxisId]] = {}
+        for m, in_sizes in input_sizes.items():
+            input_descrs = {t.id: t for t in self.inputs}
+            if m not in input_descrs:
+                logger.warning(
+                    "Ignoring unexpected input tensor '{}'.",
+                    m,
+                )
+                continue
+            ipt_descr = input_descrs[m]
+            stackable_input_axes_per_input[m] = set()
+            for a, s in in_sizes.items():
+                if a not in [ax.id for ax in ipt_descr.axes]:
+                    stackable_input_axes_per_input[m].add(a)
+                    if a not in stackable_input_axes:
+                        stackable_input_axes[a] = s
+                    elif stackable_input_axes[a] != s:
+                        raise ValueError(
+                            f"Input axis '{a}' has inconsistent sizes across input tensors: {stackable_input_axes[a]} vs {s}"
+                        )
+
+        if not all(
+            stackable_per_input == set(stackable_input_axes)
+            for stackable_per_input in stackable_input_axes_per_input.values()
+        ):
+            raise ValueError(
+                "Not all input tensors have the same set of additonal axes that could otherwise be treated as a stacked batch dimension. "
+                + f"Extra axes per input: {stackable_input_axes_per_input}"
+            )
+
         ns = self.get_ns(input_sizes)
         valid_tensor_sizes = self.get_tensor_sizes(ns, batch_size=batch_size)
 
@@ -4200,6 +4297,10 @@ class ModelDescr(GenericModelDescrBase):
                     assert_never(ax.size)
 
                 output_sizes[out.id][ax.id] = s
+                if isinstance(ax, BatchAxis):
+                    # insert extra input dimensions to be passed through like the batch axis
+                    for a, s in stackable_input_axes.items():
+                        output_sizes[out.id][a] = s
 
         if valid_tensor_sizes.outputs != output_sizes:
             if valid_tensor_sizes.inputs != input_sizes:
@@ -4459,6 +4560,25 @@ class ModelDescr(GenericModelDescrBase):
             ):
                 convert_plain_covers_and_docs_and_icon(data)
 
+            if fv_tuple < (0, 5, 15):
+                # before 0.5.15 input axes were not concatenable by default
+                ipts = data.get("inputs") or []  # pyright: ignore[reportUnknownVariableType]
+                if isinstance(ipts, Sequence):
+                    for ipt in ipts:  # pyright: ignore[reportUnknownVariableType]
+                        if not isinstance(ipt, dict):
+                            continue
+
+                        axes = ipt.get("axes") or []  # pyright: ignore[reportUnknownVariableType]
+                        if not isinstance(axes, Sequence):
+                            continue
+                        for ax in axes:  # pyright: ignore[reportUnknownVariableType]
+                            if isinstance(ax, dict) and ax.get("type") in (
+                                "index",
+                                "time",
+                                "space",
+                            ):
+                                ax.setdefault("concatenable", False)
+
 
 class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
     def _convert(
@@ -4518,7 +4638,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
             covers=[{"source": c} for c in src.covers],  # pyright: ignore[reportArgumentType]
             description=src.description,
             documentation={"source": src.documentation} if src.documentation else None,  # pyright: ignore[reportArgumentType]
-            format_version="0.5.14",
+            format_version="0.5.15",
             git_repo=src.git_repo,  # pyright: ignore[reportArgumentType]
             icon={"source": src.icon} if src.icon else None,  # pyright: ignore[reportArgumentType]
             id=None if src.id is None else ModelId(src.id),
@@ -4650,11 +4770,7 @@ class _ModelConv(Converter[_ModelDescr_v0_4, ModelDescr]):
                         else (FileDescr if TYPE_CHECKING else dict)(
                             source=cast(
                                 FileSource,
-                                (
-                                    str(w.dependencies)[len("conda:") :]
-                                    if str(w.dependencies).startswith("conda:")
-                                    else str(w.dependencies)
-                                ),
+                                (str(w.dependencies).removeprefix("conda:")),
                             )
                         )
                     ),

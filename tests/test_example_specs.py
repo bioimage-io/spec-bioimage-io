@@ -1,5 +1,9 @@
+import shutil
+import subprocess
+import sys
+from collections.abc import Iterable, Mapping
 from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any
 
 import pytest
 
@@ -43,6 +47,7 @@ EXCLUDE_FIELDS_FROM_ROUNDTRIP = {
     },
     "models/unet2d_multi_tensor/bioimageio.yaml": {
         "channel_colors",
+        "inputs.axes.concatenable",
         "dependencies",
         "weights",
     },
@@ -93,3 +98,50 @@ def test_invalid_example_descr_paths(
         bioimageio_json_schema=bioimageio_json_schema,
         perform_io_checks=False,
     )
+
+
+def test_unet2d_diff_output_shape_reference(tmp_path: Path):
+    np = pytest.importorskip("numpy")
+    pytest.importorskip("torch")
+    model_dir = EXAMPLE_DESCRIPTIONS / "models/unet2d_diff_output_shape"
+    copied_model = tmp_path / "model"
+    _ = shutil.copytree(
+        model_dir, copied_model, ignore=shutil.ignore_patterns("__pycache__")
+    )
+    _ = subprocess.run(
+        [sys.executable, str(copied_model / "create_test_output.py")],
+        cwd=tmp_path,
+        check=True,
+    )
+    actual = np.load(copied_model / "test_output.npy")
+    expected = np.load(model_dir / "test_output.npy")
+    assert actual.shape == (1, 1, 128, 128)
+    assert actual.dtype == np.float32
+    np.testing.assert_allclose(actual, expected, rtol=1e-3, atol=1e-4)
+
+
+def test_unet2d_multi_tensor_reference(tmp_path: Path):
+    np = pytest.importorskip("numpy")
+    pytest.importorskip("torch")
+    model_dir = EXAMPLE_DESCRIPTIONS / "models/unet2d_multi_tensor"
+    copied_model = tmp_path / "model"
+    copied_model.mkdir()
+    for name in (
+        "create_test_output.py",
+        "multi_tensor_unet.py",
+        "weights.pt",
+        "test_input_0.npy",
+        "test_input_1.npy",
+    ):
+        _ = shutil.copy(model_dir / name, copied_model / name)
+    _ = subprocess.run(
+        [sys.executable, str(copied_model / "create_test_output.py")],
+        cwd=tmp_path,
+        check=True,
+    )
+    for i in range(2):
+        actual = np.load(copied_model / f"test_output_{i}.npy")
+        expected = np.load(model_dir / f"test_output_{i}.npy")
+        assert actual.shape == np.load(model_dir / f"test_input_{i}.npy").shape
+        assert actual.dtype == np.float32
+        np.testing.assert_allclose(actual, expected, rtol=1e-3, atol=1e-5)

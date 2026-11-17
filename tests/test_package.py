@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from deepdiff.diff import DeepDiff
 
-from bioimageio.spec.model import v0_5
+from bioimageio.spec.model import v0_4, v0_5
 
 
 def test_package(unet2d_path: Path):
@@ -29,6 +29,23 @@ def test_package(unet2d_path: Path):
 
     diff = DeepDiff(rdf1, rdf2)
     assert not diff, diff.pretty()
+
+
+def test_package_v0_4_local_architecture(unet2d_path_old: Path):
+    from bioimageio.spec import get_package_content, load_model_description
+
+    descr = load_model_description(unet2d_path_old, perform_io_checks=False)
+    assert isinstance(
+        descr.weights.pytorch_state_dict, v0_4.PytorchStateDictWeightsDescr
+    )
+    assert isinstance(
+        descr.weights.pytorch_state_dict.architecture, v0_4.CallableFromFile
+    )
+    architecture = descr.weights.pytorch_state_dict.architecture.source_file
+
+    package_content = get_package_content(descr, local_files_only=True)
+
+    assert str(architecture) in package_content
 
 
 def test_package_invalid():

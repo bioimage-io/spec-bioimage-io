@@ -8,31 +8,29 @@ from pydantic import GetCoreSchemaHandler, functional_validators
 from pydantic_core import CoreSchema
 from pydantic_core.core_schema import no_info_after_validator_function
 
-from .utils import SLOTS
-
 
 # TODO: make sure we use this one everywhere and not the vanilla pydantic one
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class AfterValidator(functional_validators.AfterValidator):
     def __str__(self):
         return f"AfterValidator({self.func.__name__})"
 
 
 # TODO: make sure we use this one everywhere and not the vanilla pydantic one
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class BeforeValidator(functional_validators.BeforeValidator):
     def __str__(self):
         return f"BeforeValidator({self.func.__name__})"
 
 
 # TODO: make sure we use this one everywhere and not the vanilla pydantic one
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class Predicate(annotated_types.Predicate):
     def __str__(self):
         return f"Predicate({self.func.__name__})"
 
 
-@dataclass(frozen=True, **SLOTS)
+@dataclass(frozen=True, slots=True)
 class RestrictCharacters:
     alphabet: str
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, ClassVar, Dict, Literal, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Literal, cast
 
 from pydantic import model_validator
 
@@ -72,7 +72,7 @@ class DatasetDescr(GenericDescrBase):
                 return data
 
             return cast(
-                Dict[str, Any],
+                dict[str, Any],
                 (cls if TYPE_CHECKING else dict)(
                     attachments=(
                         []
