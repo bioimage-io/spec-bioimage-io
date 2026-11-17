@@ -15,6 +15,7 @@ This changelog includes implementation details and might reference [changes to t
 - fix floating point rounding issue in model.v0_5.SizeReference
 - default to packaging resources with a `bioimageio.yaml` file (instead of `rdf.yaml`)
 - Require each concatenable input axis to be referenced by an output axis; input batch axes require an output batch axis.
+- Treat legacy `concatenable: true` as `"applicable"`, without requiring reproducible blockwise output.
 - released [model spec 0.5.15](#model-0515)
 
 ### bioimageio.spec 0.5.14.3
@@ -438,6 +439,7 @@ If the changes also apply to `type` model, the coresponding model format version
 
 - Non-breaking changes:
   - `concatenable` default for IndexInputAxis, SpaceInputAxis and TimeInputAxis changed to `"reproducible"`
+  - Legacy `concatenable: true` denotes `"applicable"`, meaning blocking along that axis is meaningful, but may lead to numerically different results (it is not `"reproducible"` with reference to non-blockwise proceccing).
 
 ### model 0.5.14
 

@@ -671,15 +671,23 @@ def test_absolute_tolerance(model_data: dict[str, Any]):
 
 
 @pytest.mark.parametrize(
-    ("minimum_size", "expect_error"),
-    [(512, True), (504, False)],
+    ("concatenable", "minimum_size", "expect_error"),
+    [
+        ("reproducible", 512, True),
+        ("reproducible", 504, False),
+        (True, 512, False),
+        ("applicable", 512, False),
+    ],
 )
 def test_reproducible_concatenable_test_tensor_size(
-    model_data: dict[str, Any], minimum_size: int, expect_error: bool
+    model_data: dict[str, Any],
+    concatenable: bool | str,
+    minimum_size: int,
+    expect_error: bool,
 ):
     input_axis = model_data["inputs"][0]["axes"][3]
     input_axis.update(
-        concatenable="reproducible",
+        concatenable=concatenable,
         size={"min": minimum_size, "step": 8},
     )
     model_data["outputs"][0]["axes"][3]["size"] = {

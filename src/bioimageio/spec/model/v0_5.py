@@ -541,7 +541,7 @@ class BatchAxis(AxisBase):
 
     @property
     def concatenable(self):
-        return True
+        return "reproducible"
 
     @property
     def unit(self):
@@ -624,7 +624,7 @@ class IndexInputAxis(IndexAxisBase, _WithInputAxisSize):
     Set `concatenable` to `applicable` if the model can be meaningfully applied blockwise,
     but its outputs may change beyond the specified numerical tolerance for reproducibility,
     for example due to the use of instance norm within the model.
-    `True` is an alias for `reproducible` and is provided for backwards compatibility.
+    `True` is an alias for `applicable` and is provided for backwards compatibility.
     """
 
 
@@ -663,7 +663,7 @@ class TimeInputAxis(TimeAxisBase, _WithInputAxisSize):
     Set `concatenable` to `applicable` if the model can be meaningfully applied blockwise,
     but its outputs may change beyond the specified numerical tolerance for reproducibility,
     for example due to the use of instance norm within the model.
-    `True` is an alias for `reproducible` and is provided for backwards compatibility.
+    `True` is an alias for `applicable` and is provided for backwards compatibility.
     """
 
 
@@ -692,7 +692,7 @@ class SpaceInputAxis(SpaceAxisBase, _WithInputAxisSize):
     Set `concatenable` to `applicable` if the model can be meaningfully applied blockwise,
     but its outputs may change beyond the specified numerical tolerance for reproducibility,
     for example due to the use of instance norm within the model.
-    `True` is an alias for `reproducible` and is provided for backwards compatibility.
+    `True` is an alias for `applicable` and is provided for backwards compatibility.
     """
 
 
@@ -3836,7 +3836,7 @@ class ModelDescr(GenericModelDescrBase):
             axis_sizes = descr.get_axis_sizes_for_array(array)
             for axis in descr.axes:
                 if (
-                    axis.concatenable in (True, "reproducible")
+                    axis.concatenable == "reproducible"
                     and isinstance(axis.size, ParameterizedSize)
                     and axis_sizes[axis.id] <= axis.size.min
                 ):
@@ -3951,7 +3951,11 @@ class ModelDescr(GenericModelDescrBase):
         ]
         if missing:
             raise ValueError(
-                f"Concatenable input axes must be referenced by an output: {missing}"
+                f"Concatenable input axes must be referenced by an output axis size: {missing}."
+                + " Either set `concatenable: false` for these input axes,"
+                + " or add an output axis with a `size` reference"
+                + " (`tensor_id`, `axis_id`) to each of them"
+                + " (for a batch axis: add a batch axis to an output tensor)."
             )
         return self
 
